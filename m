@@ -1,114 +1,159 @@
-Received: from sonic310-14.consmr.mail.bf2.yahoo.com (sonic310-14.consmr.mail.bf2.yahoo.com [74.6.135.124])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA64D51AFD8
-	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 15:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048E151617F
+	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 15:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791904408; cv=none; b=J3Fq9pPrKqTNLMPJjgjHL7+XVuqFQHwGQy8ZUpjCrG2Q2tqBYqlIpYOklYJv8mCYkUKgZe56PpY+H9wuCDyJdxjoDIPBZTeU88+zzO75QZrJCSOBquKWoR3WsA2tnkt0gua1bDpejHRY2Z54+QYdJRVknHtLV2DmbHfoO9q7Jtc=
+	t=1791904503; cv=none; b=qbAhaRJGwb6aFRqdOKbZjrSEu6dMYDfNTn8R0u8mdf+NNNb/Q1qomRibBfCQc6cEW8PCD1zNh8JjmSSO5O4dNJTSHQ/HCEy4alN/tsZsGvm3BP7lUH4Xa+kL8XGwAtNmYdbJezoBbBVXkGhuocNvqlnUoQgscmJEmoWuroZJWNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791904408; c=relaxed/simple;
-	bh=VWy8kOV5fpxV1rES9+rwWAo2HS95BTyvhW0F6FbOIyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OiBE8HXdFJvI73DNLY+HMTTbtU7Hp6i4DLe9cgyu8nAYOd1eljFwkFzfk1+vxiKy/BB8Cd9Gs2ecHimcHWudb7c1v1eaoEdK2GJAe0KFQoLcwi90aRFVvJbikwx+wT+ujhuuCoKcqE5AtTCS3HrgV+xFTgrHlAD3QUh4ZnQFT48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PtYbF22A; arc=none smtp.client-ip=74.6.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+	s=arc-20240116; t=1791904503; c=relaxed/simple;
+	bh=VgO+C+8KDYSTE6ugGfRNQKKkE0G27if6p6FDk0jABBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NJ6PPbRxIzli/sn9AHP3137sVI3AgFdmSJ+gs+kYvAdGO7VW3spPJ0DMcazQPPpsYNBN6f2bujbMZDbYZU32jKJNNmxfhujPlpAU3kC0OCj46CVr+R38QT7fdOYpB7AFc1lm1zzQo2oPjfZ8chp7cvl+9vhTqjbBJXVg8PBTBUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Pri0HHGe; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PtYbF22A"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1791904405; bh=8CabwxGpw7QPwiwrmZsN8gni+LU43IXDehbaUPw+ozI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PtYbF22AjCydqZYKfK1+5YGHznj1DzR4VJvg6IFy8RhpQw7Q/K7PDYe0XhFMjNSLdQsb9Z3znJ+IN6pdvPR7RfyhFUNvUeh3bDYAOXVhzvTv4MEGLKEf+UOmvQRXepyJzyNy9YBTJR/qkpOJ2MBBxBbiQ8Hbo+iboP8eO9YMFzeyk247Uv+YCmTWaSlsnoMbhJxYXpoBowUjM26tN+TzAH2UHOtGuQ/VEBuvIFH+c2bV3r1h+WRyLsgTg6O0LC5bMJkn7LyRn1B5ycAKo8qvzRQfl6KYnGCHlf+L7hua0EJklvrAeVD67fv186RHwYhuPTVwXd/GCzD9gO76s4ZVKQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1791904405; bh=Gfq3O0CiKPflBA23nNJaVaMPJskvZTeUcIbAnxCRspt=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=mKxgkDHcp1uvnfsI/qGVPQznvT7Gr74r+nvKy/+m7XHHAl/5HBxR9mIAkLSJCF/tLlSBMSCcpjU0wEIVy3UftLtrtw88Wje/HXPIqafLSakFE3KbeY0llI8Pu0jjr+lKJKfCkwk1G5Sd009g/+OahZSsU7nNVIc3D2WC1xHWXZhXqlBJPFxpXUGVgN4CQNjMib5nUTgzrdeD38nTl2iEEwJjTtIchV69YSGfrhYAE9P+uy1fEO8+nB1FaLvu6NLMOqX6ExJym27n0hdWsaF3REs2WjAR1fZqMVGNPb4cPCcvyTHLpMfAHzDWmVo1EMPbK3vA3ZrpuNAHDqskmuESBw==
-X-YMail-OSG: gJgxy3IVM1mZ7XAYp4Rr2laLCAMsgib0PHD.dxk9mBSDPTN4r2G8BaR7FW.FRiQ
- MXvqVK1y7z5ENAq82IcHoyn3bf5Pi23yrt7gmGWnQGRJpkEUj3hts9oXP5kOwWsv0n7uEX25mwH0
- cTgWmNvXaLY2Y_G2YZhtUDWq1nN_cu3ctxy6VSzVduNpcvV0CZun5n.beGqRH4ocEV_8Sx3P7IuK
- kfQTN_1DZ1cixunwsE8wCGs8mSqVnJgVn4rOyFz7zyFju3DxqIel3_yFbQXvnN3ZaCQ4JCnPpA_p
- 66eh1nPsbBXICwrG9sNRcX_.7d70ZvXFqLp4IDXW3_kJvPVCtMqToRxhskn0tlEpY0BFQDyEMCyU
- xvGiKzAQNUyt0rELZa2eLTKx_MU9a6jgthuAxu4ZZ6cB12B0BuD3MP9f.b1HmPAiCzRheKfQ9sQJ
- itfX.4CJgUPjnpSkzwbQz.CdGElKxzZaIz06iKCjUP3QOwKojsViBQ6k0MM2lmrAtg5Vc8cLebZk
- P4WdowcsPRb.MogqzE2uhDQOteNYuMSOm6jlzy8dMOTGDbkwLoAtPAtrOKk3jYFUk6WDa6JPJOhL
- g58TtQGpBF8hn6A1Qn6XUftfMPI52tfckIVx7UkMjTXXngeOKT9Rm3PGPS1mmlWImzMF3SKmA2OU
- 9RVhT0XtaK9jlxs79RaIgBjfCxy7Rgt5e0gp5OYZyrwXN6bG7fO6vkF_spjy8VCOob7FBEeKxFjj
- jWUxIWVOniOMlzmkPwdOFSwdkEZQ5hgox4XKfVM1bqGsB4Rto3sitCvjpnuBdJOxraY_.M5.9lVP
- q904aQGKRpKNoBQVenfJmf1_CEBeLO..3sgs0Bp1jOa3OcY1p_jTWDWiY7Y4PgrQf5bx3bah2PiC
- GEmVORyY4Pu13vYG11LD2CQNIaT02l97WGRkHX9uLHpraWyPFlmHu3KPWzeC6AqVLFvLmKs21kAf
- 45fptbhi8.9njzHcRbQ7EGxbkpycHjk0QXucVKDesq35JOePtA7wfZQVpHs4TdHfWT7RPrTR8Chy
- dzmYS9VOmoNub9WdBC4qKiFWrZNIHvmN0BoOwKl_hATOoP..Y8rzpgQyZJjEb56.7tq12jls20HM
- wlptF5WDKr1tWH5.T_G8kTYb_Fz0LG1yV7mFHnclOXs7okvqqvSGtR9h936Bg2WK4f4h3TT9iN.L
- ljTfH5V1uGmKzva0pJZczDMjFL4VO0838mjFpexj.zv1fi_xqhUVSyYzhqcitVbENWVdL7Yq9Nru
- h5vV3mX05V061R9fLBC6KkhINiPCRXxkSnczF2u7NiAJEvexTHL1cvp9O1dy13_38wnIySD.L7tx
- e8hVIrl_CW982im1QgKq7yYLclTKBLepOXYmQkWM1QzMZljYhv0addPEHGURn6N1rckL001fQSAA
- giT92u4WDr1VjnARblE35B.U8DaS8Ek8TllLD.dvWT9S6OQ0TVl3D2IUszoFM9E.yqOq1.qeAOIn
- 3PYmDSND83zUH6XHIMyuT4beCJS8W9zKfHDeesXFi3V7GKMKSH93VREnTlQigva4rLbCYJs2csCO
- n2exc9wQ4qdYikhQdyK3XWUmcrvYYUxK3CKkWKlfiOfK5Ay2FyJvWzNLrmoOnma5NaDP_UxQhteW
- aPS3_Bl_g37G0zmoJ.mrCguEiYsuQ0vAD36.VvlvqFp3hbAxe6ps1czsBlk2.0U1zfLyVj467sDP
- MmRKek_JLuu8z4LxiZbHNtWi3_DDU1F.Aj6j9YXjSR5tkcuNuwFJc0oB3nRiNqbZTm4LnxDHtiN_
- I.Z1rQLI3WLhwziQk3yeGQ3JNsRPmi6kPikm3.Tgzg6RgwCbE2GlU8em3LO6_p5A8BnuVu_Q5Uhj
- prMWLSQJ5eUPA6AjjsNU0HVp1J78dtRkZ__q55yJtRNSn0vosotLUWUO4O.nfPv1XfKzX6SEPgwL
- TmjtDqpBCo5fP5OvkB.IXhisTgK2zSxjQjLmCk2LRkq0achM3wdR3Kp0J4BFuJgsLXLzuWNi6d_j
- iYW2KWg2l0XfG2gNb2gR6xswkbsRR.WHi6kQYurP7L_KeRGOqYQJG2UOSmkwFltzv76XDUXXUqZs
- Oajq1kDilYPCqRDLQdrkvZc9zlZMySattgsjVUwCXLv_qHCPUd7XMza08HvyRzUy14ESbIWQxhbL
- RkrwL015E8McAeUSrmLC1GxoV1SBPnaqP9hHRbBKugNXT7OszzTkQkpZZchMBMjSUL66hFbaSdex
- 8fL3pYDPYjsw31tt1qBPBVv8UWc22fZ81W.9l5O5Ht5k-
-X-Sonic-MF: <deaner92@yahoo.com>
-X-Sonic-ID: 5157e8c7-a71a-4ed1-b34a-cdaf6e57793e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Tue, 13 Oct 2026 15:13:25 +0000
-Received: by hermes--production-bf1-6d6877594b-tqwxv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID efe0f48b2b69dba20bedb55f2cbb6290;
-          Tue, 13 Oct 2026 15:13:22 +0000 (UTC)
-Message-ID: <47090350-2dcd-4d7b-a73e-681f68ff3a1c@yahoo.com>
-Date: Tue, 13 Oct 2026 09:13:17 -0600
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Pri0HHGe"
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-53397325663so31887061cf.1
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 08:15:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1791904501; x=1792509301; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=5Kz+IQfSF4Bo0R4irbQAkdmm6GDBbYpLf1oqZAlKJ38=;
+        b=Pri0HHGegmXriEZla+YoNwvO9Pz/wZj7gSbnxqVwOQhypuH5HZrRYlu+somg/mDrqv
+         gRsIy5o9u0lLS8ozZmr+1mIYVtk4CKbLB5MFeOMRm573PpffeO/QZQb/EFWYGWEr4Xck
+         Pp2BN5RzutvBm/2bieQiJYQtoyD6skdUghgRbW4SEK65DnEE4BlGoZDj03tR/lRsdBtQ
+         HDvMAlQze+B815jn0CPg/AWE6MRar7kRUbqDq/BXvhIbjVlTTI/vBVYkWJ8/WMNwLflz
+         eVnxL5UEarKh4Sk6sqSp1k3/Hzr1KOZqmnjFp6exYUDeclJE3GKgljIiL642PO/c9WSW
+         7+2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791904501; x=1792509301;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=5Kz+IQfSF4Bo0R4irbQAkdmm6GDBbYpLf1oqZAlKJ38=;
+        b=NaQWyptpwxL/eslHj0U9aOKyckxW48hN+uA2SCmHhM44yruhkHC0YrqwOsVbe+/2R2
+         5jDtuFAflA91+EHoTuK67kQ5t0H5ia9B174MHDJitkj6fMMy+BHfbX4P4lZ6AF7Xj9X9
+         NiBDNR99YXzAkNOu930Zqw65zo5W7HVYhewOQaDYIJs/fvVTOvIrtBlbLBwmBegtiDH7
+         lV1e3MR/yWZQFE36IDcZjfsec8oGno4+gIgAPsh25OI4kwwVZTsft6lbrQ0jWbvh1Jk4
+         epVXzaglvhEajGvOCzxtHqDw1XiwkH456TXasYxZMfyjuSzH3t01d7CyYYgpd9NGnt/i
+         Rz3Q==
+X-Forwarded-Encrypted: i=1; AKwUvBwlTAke9VxPQk8hO3KfzXUaWVcJwJvU9ISt/w880qG1RnWxeSUw0MOKfZaqZi7Sq33LkO1ekqFcTrUz6A==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJvh7sosPrvrwWphvgiYd6Cswk3yamHHhkgo39lUKEB8hoQxw8H
+	3S6WtKc5G9TeBODlZz3vKNX2SHBfqy4j8KrvSNMfpdI5LZErzM9ydfTzq+eZdl/xd8k=
+X-Gm-Gg: AYBFou0hbyE5F8zs8SfCT33e/F+gIiuWDTN+EVYZ+wjEj0hzxUpvAO2s9rHvBuU7OYk
+	NYklBl9DStn4Yq72FhVdWMISsVSKZ/lOuqfw0NqAoG/wswx/3kSk2vSPNQLJhtcdW6t9VuaTneF
+	PA16jhhuPLayb8PLbrZHooO+yakW98jnxvp7CvIA/QA6It+dB49qWX5YF495ZjXOem/GsEan5SI
+	RO2VUryYfh/Mf17NiYhPWSABOCWmjIl/Ha+dDQ4DH5Nat7uFlcp6wl5jHxzKdThJER4xEhROD/J
+	7bDSOcSAWfIc3n0OSGHUZTbAX+xNi8+urPmjzaihSimBqoQ6RXRjr5kvmqJX1NLR854jcXGzSch
+	8a6CduE185/uEzhN2JwxU7RYspox3Vmwese1dexr5yAX2SmLpz9u0a4M2lG2RplbdefHO7w3jln
+	+wMVtXumKFRaC2snws7fMx8lg6XATMd9aqTi3dM36t2H2IhJohmws8Dan4LbzNw/v3CCGPaoj2D
+	Dmq9pSR1A5yuzUP1kx9lvY1gNhpgVicvmqmnk9/Hfw9p9/XOBMug6uWT7sml1MO1G8=
+X-Received: by 2002:a05:622a:e4d5:20b0:535:a5f9:752c with SMTP id d75a77b69052e-535a5f97acemr137130051cf.75.1791904499634;
+        Tue, 13 Oct 2026 08:14:59 -0700 (PDT)
+Received: from ziepe.ca (hlfxns010zw-159-2-239-150.pppoe-dynamic.high-speed.ns.bellaliant.net. [159.2.239.150])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5359b7e32cesm100542321cf.28.2026.10.13.08.14.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 08:14:58 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1xGeDS-00000009ss0-0PwU;
+	Tue, 13 Oct 2026 12:14:58 -0300
+Date: Tue, 13 Oct 2026 12:14:58 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Nicolin Chen <nicolinc@nvidia.com>,
+	Will Deacon <will@kernel.org>,
+	"Joerg Roedel (AMD)" <joro@8bytes.org>,
+	Jean-Philippe Brucker <jpb@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Krishna Reddy <vdumpa@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH RFC v6 5/5] iommu/arm-smmu-v3: Wire up shared-SID STE
+ ordering and feature gating
+Message-ID: <20261013151458.GL14213@ziepe.ca>
+References: <20261011-smmu-shared-sid-v6-0-cb76b89dc612@nxp.com>
+ <20261011-smmu-shared-sid-v6-5-cb76b89dc612@nxp.com>
+ <aszfVNP6DGzWYdK0@shlinux89>
+ <as1zR1wc7ERxvR1F@nvidia.com>
+ <e8c22eb2-ed1f-47c7-b2ac-c56ead1cba8b@arm.com>
+ <20261013124400.GI14213@ziepe.ca>
+ <as5ERENDfgC6FB0b@shlinux89>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] staging: nvec: use guard(mutex) in nvec_write_sync()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Marc Dietrich <marvin24@gmx.de>, ac100@lists.launchpad.net,
- linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, outreachy@lists.linux.dev,
- Julia Lawall <julia.lawall@inria.fr>
-References: <20261012222926.7754-1-deaner92.ref@yahoo.com>
- <20261012222926.7754-1-deaner92@yahoo.com>
- <2026101335-expansive-veteran-c4d6@gregkh>
-Content-Language: en-US
-From: Jeremy Clifton <deaner92@yahoo.com>
-In-Reply-To: <2026101335-expansive-veteran-c4d6@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.26668 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <as5ERENDfgC6FB0b@shlinux89>
 
-OK, it's understood. I'll look for another candidate.
-
-Thanks for your feedback.
-
-Jeremy
-
-On 10/13/26 12:15 AM, Greg Kroah-Hartman wrote:
-> On Mon, Oct 12, 2026 at 10:29:26PM +0000, Jeremy Dean Clifton wrote:
->> The three return paths of nvec_write_sync() each release
->> sync_write_mutex with explicit unlock calls.
->>
->> Use guard(mutex) to unlock the lock automatically on any return
->> path.
->>
->> This removes the three mutex_unlock() calls.
->>
->> No functional change.
->>
->> Signed-off-by: Jeremy Dean Clifton <deaner92@yahoo.com>
->> ---
->> v2:
->>   - Reword the commit message to state the motivation and to make
->>     clear that removing the mutex_unlock() calls is the result of
->>     the change (Julia Lawall).
->> v1: https://lore.kernel.org/all/20261012171312.5998-1-deaner92@yahoo.com/
+On Tue, Oct 13, 2026 at 10:46:28PM +0800, Peng Fan wrote:
+> Hi Nicolin, Robin, Jason
 > 
-> Please read the archives for why I will not take guard() rewrites of
-> staging drivers (nor do I want to see you use a LLM in here either.)
+> On Tue, Oct 13, 2026 at 09:44:00AM -0300, Jason Gunthorpe wrote:
+> >On Tue, Oct 13, 2026 at 12:22:06PM +0100, Robin Murphy wrote:
+> >> If we're not going to support PASID for shared streams (which I suggest we
+> >> don't...) than we shouldn't strictly need to worry about CD tables anyway.
+> >> So rather than having to special-case CD table sharing for shared streams,
+> >> perhaps it might make sense to generalise back to a "default" per-domain CD
+> >> for non-PASID use, which can then get switched for the private per-stream
+> >> cd_table if and when a device does enable PASID?
+> >
+> >If we have stared STEs then the group becomes the per-STE data
+> >structure not the master.. We don't have any way right now to do that,
+> >but it would make some sense for the group to store the shared CD
 > 
-> sorry,
+> Thanks for the detailed feedback, reply you all here.
 > 
-> greg k-h
+> For the CD table question: since shared-SID masters are in the same
+> group and always use the same domain, the CD content is identical.
+> With skip_shared_ste(), only stream->master's STE (and thus its
+> cd_table) is active in hardware.  The other masters' cd_tables are
+> allocated but never referenced by the STE.
+> 
+> I see two options:
+> 
+> A) Keep skip_shared_ste() and add arm_smmu_cd_owner() to redirect
+>    all cd_table operations to stream->master. This is a minimal
+>    change that works for our use case (platform devices, no PASID,
+>    no domain switching).
+> 
+> B) Drop skip_shared_ste() entirely and share the CD table at the
+>    group or domain level. This is cleaner but a larger change.
+> 
+> I'm leaning towards (A) for now to keep the series focused on the
+> simple shared-SID case.  Would that be acceptable, or do you prefer
+> we go with (B) from the start?
 
+I think the skip is in the wrong place perhaps?
+
+The group is always guarenteed to have all the masters in it.
+
+So we could split them into primary masters and secondary ones. The
+secondary ones are all the devices thare share SIDs with the primary.
+
+The group list is guarenteed to have all masters in it, so we can
+simply fully skip attach from the secondary. It is guarenteed by the
+group that a primary will have already attached to the STE with
+exactly the same domain so the secondary just needs to do NOP.
+
+If you do that then all these questions go away since there is only
+ever one thing writing the STE, it is always stable and no issue.
+
+This does leave a problem for master remove to switch the STE to one
+of the secondaries, but that sounds like it could be managed through
+the release domain mechanism, just nominate a secondary to be primary
+and execute an attach on it in the normal way. The hitless STE
+mechanism will make it work safely.
+
+Jason
