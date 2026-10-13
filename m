@@ -1,371 +1,256 @@
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011041.outbound.protection.outlook.com [52.101.57.41])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95423CE4B5;
-	Tue, 13 Oct 2026 07:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791874941; cv=fail; b=LQDA3q686fOHlTx/ojVY7MUImgLfA/uj1t8camAuSFHkc81WJgmEo/yJSzLc0WAQa0ubX4eJs9fyMolIM6AqWGCJz5LtbLmE5jX288Tuik514kqWC3ccIxFvzqsqGDE9VOO0ScQH86/IlbzETw8cLlf1XTUHXhW6omt6027rQX0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791874941; c=relaxed/simple;
-	bh=u43uUkRBpVJaV8rPw9ylnvn53CGDpdnNVVrhGLeloII=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B1VkeO5n/ac3ZzIAJ8Ql0pYWGb+TK98VJ+v5wt1iVUe7MfgOBQkCKdFG+qs+chPoctpKN42CHieNJ8ee5htEA8wOC5/PfbMMiq9zrGlShUD46hJB1wTljOnxA4D+sS2zdlGS5w7NVvTM0NfpkHxCy5tPDv+72BYuBt0a+kXS6OY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qjjQuRQ4; arc=fail smtp.client-ip=52.101.57.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8774F2E2840;
+	Tue, 13 Oct 2026 07:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791876805; cv=none; b=FapMFY4COrPsZluxXBD5WvUGKfJ56KHnqw/wZ6ktl2n9pC8kwODsdI5DnDrUcDZfE6fRftdL1KRPUxS7WHoBpFloKUVgIixvbrQgmSCvEv6sS0AolnDTncPlsiyzB/CkAEmfA2ecklCvj7Bu1tFdfQVG+SnJaN4qUEQnvyftUqs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791876805; c=relaxed/simple;
+	bh=NzspRS2hDrJsjAe8AK0YYi1dL16p14T9VINuEY50WDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=guQOTuYPF2XXlDbzvsSzi66z+A8/R8OkOp68jy33FdqQayoHnM2MHQEwGaQLxAncVovwGnpw0y848TZI9fVMtmixx3R+ZcRyxd4iMBN2FGncGf0vfp1/szOjSfA7wHjG1KYQxP2nkC37dWV9wb/eAXzR6XFZ5ghqirRrllvPFhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bFRfs8gF; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qjjQuRQ4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PmMRZ6JGmjSrQZSBgMiVTNsLkpXCD3tU3oUemZcBHZEkM//rDmuCukjeXKwWncviPcgnGUJJyFfDdwQvXqyD0O9MOUT/HDIJdgHG1JJKgOTPGa/LM9Mj55p+8Cls9GBIwUcfew+k5HzvGlrFpixRibm2fJuqXxoHxlcyrlgaObqsNAhEBOlI8vdki6ETuygef9Zvd4eEGoCOWCsHAkSFw/UFow6F1MDtvfflVT+ENXucAbmVkbInkf06Sb/paq7RQ5p0bciHJXbIBU3pgWcynfMBYsB9BgLbCTnNhUVMIhWqJnrcHn1OFY78MYHnFpop32WjwmWONE3vz0+oHkFPzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4x/LCd1m2tNlWAeFPT4iODDD2i/CW+dr6tFm/LxOUpw=;
- b=aKXkqY1G2aXD0gKCgn5jd0rn0qOzeCsv9XecaUYnXJoeAA/ZOr+6cZkJJayTf7tEOZuafImVFEvaLJKBJNADqoHcDs+LRLnIxQVYR6mbdR4JGiV5NlFyg8RYFCXvLriVGm5gY9gPnCbhi57nx05FXHWrmAV4WnD9ER1HWCh8ar6XO5WmrozqV0qUQpOHkQ+J8PBUZQhMrURJ2xJqSRGmdhnFY6oh5W2KY4EeZmVWbDJcrLmG5o3393POjXCs72an3j0uSbq+cOxZvgAU3IkWNYj6MYAU3+vuxSQteI+5vQX9n+C58yKRmyrcPCY3PWVQWTPkrvj4ywuGFzZRqm2ybg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4x/LCd1m2tNlWAeFPT4iODDD2i/CW+dr6tFm/LxOUpw=;
- b=qjjQuRQ44/j4JTGZZoVWFOJQ0muP8NK2o5WzuSHfRW2VCYRpd3NZeu0fchjma78boSoEyAF4+ubPKdGbIr6bROkKqkZapfWM+R6PKyWlLM1/pIB3ZsNe7s8SX49Z5tbQW3fRDdIs0u8B3aCd0hngTAJcdub4mzYLVlWrYyRMdXPDF3rrwayHd/AYmWBqM3h5ZCuRd5zoT/yvXkrbMVoQyAujsUsqQMe3N392/qcjK0uQm4uTCGY3iMyyoJmPcaKdmbNFeXJWS0R9FkOUZhfHC+z8h9lt+ZWpT8CuVPDza4Q+CpuTgGu887fTBvBRrOjoMi44b3+Qh0xbFAI660mt2Q==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LY0PR12MB727857.namprd12.prod.outlook.com
- (2603:10b6:408:3ba::5) by CY8PR12MB7416.namprd12.prod.outlook.com
- (2603:10b6:930:5c::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Tue, 13 Oct
- 2026 07:02:16 +0000
-Received: from LY0PR12MB727857.namprd12.prod.outlook.com
- ([fe80::843e:82cd:41ca:f522]) by LY0PR12MB727857.namprd12.prod.outlook.com
- ([fe80::843e:82cd:41ca:f522%5]) with mapi id 15.21.0496.021; Tue, 13 Oct 2026
- 07:02:16 +0000
-From: Srirangan Madhavan <smadhavan@nvidia.com>
-To: mark.rutland@arm.com,
-	lpieralisi@kernel.org,
-	sudeep.holla@kernel.org,
-	conor@kernel.org,
-	jic23@kernel.org
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	andre.przywara@arm.com,
-	aneesh.kumar@kernel.org,
-	Souvik.Chakravarty@arm.com,
-	treding@nvidia.com,
-	jonathanh@nvidia.com,
-	bence.csokas@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	Srirangan Madhavan <smadhavan@nvidia.com>
-Subject: [PATCH v4 2/2] cache: add SMCCC-backed cache invalidate provider
-Date: Tue, 13 Oct 2026 07:02:05 +0000
-Message-ID: <20261013070205.3566865-3-smadhavan@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261013070205.3566865-1-smadhavan@nvidia.com>
-References: <20261013070205.3566865-1-smadhavan@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR03CA0139.namprd03.prod.outlook.com
- (2603:10b6:303:8c::24) To LY0PR12MB727857.namprd12.prod.outlook.com
- (2603:10b6:408:3ba::5)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bFRfs8gF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1791876802; x=1823412802;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=NzspRS2hDrJsjAe8AK0YYi1dL16p14T9VINuEY50WDA=;
+  b=bFRfs8gFtJYPRvsEwQnkjIiT6kZygTHZrKXXIbugGiOQQnYj3Sep/8+l
+   s99BKD7zOaivQFrXhQ6N9zm0o9uS/u6i9E84L/uZ+Dc+VAfCxUOUCpOSY
+   DFIT4XEYsVSHdoVJO+1A3HRKDs618nMZKQdSkZYOwmnPEE8dhQ/kDCBEv
+   zSuyuIOmDB73AULfA9AvKUeNxIQ1j2swOeD5JHCEvx+m/2/02TfSgGpEp
+   oRmLmw3nnEnhVRv3UpHlievPG/4ujN9mmPLTh9W9HJfhLMB8Uh7H2wl/A
+   xTBEyw41v2vuINTqixuzSJirhZSuOAb1W22TDuXczU8O2n9POxroZuYMr
+   A==;
+X-CSE-ConnectionGUID: hwEWDvBWRJSi02AGJCO0Sw==
+X-CSE-MsgGUID: 9lZRQQh5S7GeTT4VtmO1yw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11933"; a="466071"
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="466071"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 00:33:21 -0700
+X-CSE-ConnectionGUID: xXh+qmemSsK620RE9vOEtA==
+X-CSE-MsgGUID: vIyL18cTQ/SYvrImMz4a5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="1193790"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 00:33:13 -0700
+Date: Tue, 13 Oct 2026 10:33:10 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <ray.jui@broadcom.com>,
+	Scott Branden <scott.branden@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chaitanya Vadrevu <chaitanya.vadrevu@emerson.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-parisc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] serial: 8250: make port operations work on struct
+ uart_8250_port
+Message-ID: <as3etnbZatn4sbfx@ashevche-desk.local>
+References: <cover.1791873876.git.jirislaby@kernel.org>
+ <c59fa203f325e0fe7601ea0fbc0d222c8b37f9eb.1791873876.git.jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LY0PR12MB727857:EE_|CY8PR12MB7416:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6130395a-0550-4fd8-e169-08df28f7ea14
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|7416014|376014|366016|10067099003|261009223027099003|5023799004|11063799006|6133799003|18002099003|22082099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	AoE+7O+c8/W9t0ALfDHDdIXO4/tsRZma97zxMCmlF1wYVaqHGp/lwOTb1+7oA5DIKYQMvLb1I4UJ38S7ACyk1K+CKhuo3gBROUwBQH0bzwof1FtmQd7WU/3xYZRi9ss4u5IaGP7PFCuv7y2+dI1CU6BXOaTlZd9j1AgFAARqVVqPKmHEzsnn+A53Zn6vey2HAq8QQ7QXeHrMS5fHYZlG/Fvqa80yA3o47k5QrEx9AQgw5Zegzu6u3RRqDzpjzgh3tHbaJJxSID2CDv9YKQn1yAN0uks2cJKvylqDet2JJXZlIP8lAL/CIniaj8ASNE+n7hYBYZhnK4Jr8tUVORazmAuWcHQcXmUHxPqIBeQ/r1xaKkQyCmgi4nYWxE8FiLydCX+Fb1s4r/5oL2t0BzM/LnTHmtf1ttwCc4kFr0XevWVvoyDku+nuIpj1STyTcHMPQDoXUlBIyjbNn6qidEV8U4M0C0JFBdPpFSofnjS29rvwh8YC1wvyxt2fGvQUCgi6dGXXWzapgOmxgFuLefGPbOf7MSxHcTjL6OyCZrnJU16uzHx2nV1monU9daZZ7YgXS0aDtpe6xtRzZ9y9Mbrj7N3wJA+wYNBA7vUHvD0AeT8uMulbc9+FoL+1wEDvUV2gEDNHpk8cb4ZdxBldqwqZJgLQ/cB0W2QP8TFM9xpsEG4=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LY0PR12MB727857.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(7416014)(376014)(366016)(10067099003)(261009223027099003)(5023799004)(11063799006)(6133799003)(18002099003)(22082099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wCM4JreRcfVyNEwaS7D2oMXBwOH5zwyUaFXcwrEgWNEc2ZSEOdg1jK1refkw?=
- =?us-ascii?Q?CbI7edmm2jem9jEa/XNJ/fecoRwKmBEGNwQxiQ89/6BfNqUa/kLSNnYdKeei?=
- =?us-ascii?Q?KNnIqjwe0SMWMzKweFBKsOMpvWKo3yTeWo3K1XfK6ceMrfQtjru4LVUsuoDY?=
- =?us-ascii?Q?xCy3SOBV+uhMQqBm2tKBgIElmlv57cucQXf1bcs9QFMliMMIhQO0d42BdWfj?=
- =?us-ascii?Q?ef0g/SKx/gsJgL4di8RTS2ZwTMvfAHrMP8WXSRXmcbHRu7CbEhKxz+xevFEa?=
- =?us-ascii?Q?qYWzoBKmn9RX+W2h9BRgVzc4qcs4zMh3l2YJzIbEJbSW7TISEzX2kpY0iEOu?=
- =?us-ascii?Q?s0GWtL2LLJpCCbHY4ydnkdikFPVRPwtf1PT2U0rkmEwaYjBA1kNWZA3WqrZ8?=
- =?us-ascii?Q?SwawfcVvUtxgymsS78hzaSgZ/65hcJhLD/8K6B+k9RNDrLrh8wo8yQ3XzN9w?=
- =?us-ascii?Q?NjM0O2IZcX/ED3zX0f77XLHSlddt6rtavAsDOeYO96R/KEkw3rr8R5r0cmFv?=
- =?us-ascii?Q?VVrG8m9blBdRjhVMH6DDeOPVF379HCEZH90tChmSH0I1zC/K03d1gyHXOOjw?=
- =?us-ascii?Q?3YM5Rt1tKqyEvwMTHc9a5BnryaitmIIx/1Eyz6RD56qBQO/2XH89Dy1PO6uY?=
- =?us-ascii?Q?Ym7N0OK9oF/WVMz1DbRMaJEL9G171Zn9Fzay+1UYPy4X32CZ8tCC6XkXOp4a?=
- =?us-ascii?Q?55V9W9Q7IqwupVZABxSB1lwkALVFQM13ZeugSY1t3UxLKV9bHLH4kynkcApa?=
- =?us-ascii?Q?b81Aie6XvCYGpUOAqmPyd60pIGQKtsflbcY0Tnc0iI0EJhEPi7NNtKykq4qk?=
- =?us-ascii?Q?nFIIJvSJZydk/LaAqLaoTZVmjSU5Nr1KDcfaOZJ7v7+JgGFq+mBwdwTgyFBt?=
- =?us-ascii?Q?6A+/tC6+UKwrDNfUmjr1ZmQhqTQPJso1RNvjj6eMUbrpfzqRcv8V0qc0SenG?=
- =?us-ascii?Q?mszds9pMk8JBOi3LptP1LhXZtKpOymIlji91eIKCi5QOztM+1LKD7kVyX2lp?=
- =?us-ascii?Q?zpHa55JoIJCXDd0HVPo77r1NbA0tAoyH8XcofHOmkpUm9KqUvUk8g0xFesN2?=
- =?us-ascii?Q?EyH3ytsLwL3MSdlAP48xmS5GTG1XnsqXg+08EU9ulV7TU1TCTmfaTIcia6KZ?=
- =?us-ascii?Q?DVBtv1nXvuCmBwhmIluDc9F9IH/o3d/xZFSvZnTrC9hOghImAzhXl+MUMjCE?=
- =?us-ascii?Q?ocohBs6ZXC+wK8bqyk1xXDLOyC6JUE2UIXEIcxaTwBKf494hQHBvt8Z7MhqU?=
- =?us-ascii?Q?FEtlgxyIbBADHiEANKNKe9hUqjJl5h8oCbJBVSZd62cKHVJHEcU46m5J2k8V?=
- =?us-ascii?Q?MnBVi5LyoO8UaBlw4cityIVM8aLOIBlaCmQHjyA2xFevjmJTxkUSI7GDvUyO?=
- =?us-ascii?Q?G7PngX1wH5HeuSRfFH6Kg7MU9CwefirQnh/wcBH31nvpTZVlciH6J6QRe5/K?=
- =?us-ascii?Q?IU0pWuR2uH1LZHiX94dZhfqIkds+PbAALDnLGus5y1F8hH2Qqr2h/MDPYduc?=
- =?us-ascii?Q?CkAS7AVdg/H4uIKEMbYPp2kocJ7DhUEDVqyuXrB+q0yNz2IRog87RX/aKEba?=
- =?us-ascii?Q?l1JGKZ2bx4+uIl+0AL9e/TXavfNkr5QI5fWFPC8QFjfJ1p59Bks4I04kOMUo?=
- =?us-ascii?Q?//QG5AWw/Zy5C1t2QxfRL4qnjzI1E+cjlH/BTFxCBh1aof7L0uI7tV9AyYmh?=
- =?us-ascii?Q?ujnQKJe6TZY3yDWAvo+PgNsWGdL2xMAaI28pJW+jJ23wyaaGqpSMOhebTPP4?=
- =?us-ascii?Q?G3tRBOykFQ=3D=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6130395a-0550-4fd8-e169-08df28f7ea14
-X-MS-Exchange-CrossTenant-AuthSource: LY0PR12MB727857.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2026 07:02:15.9742
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4ag6TExc3LwBC5FQ1lDSZVitVwmK7NdR1n8Urkuzm4qAi6j4r+t7SpWAnp6dbzcMWfL5w0CfrCSe7XHnb0Cd4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7416
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c59fa203f325e0fe7601ea0fbc0d222c8b37f9eb.1791873876.git.jirislaby@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Add a cache maintenance provider for the cache clean+invalidate interface
-defined by Arm DEN0028 v1.7.
+On Tue, Oct 13, 2026 at 08:48:51AM +0200, Jiri Slaby (SUSE) wrote:
+> serial8250_register_8250_port() returns a line number and the other
+> port operations (serial8250_unregister_port(), serial8250_suspend_port(),
+> serial8250_resume_port()) accept it. Many drivers then convert the line
+> back to the port using serial8250_get_port() anyway.
+> 
+> Switch the interface to struct uart_8250_port:
+> * serial8250_register_8250_port() now returns the registered port, or
+> an ERR_PTR() on failure.
+> * serial8250_unregister_port(), serial8250_suspend_port() and
+> serial8250_resume_port() accept the port.
+> 
+> Convert all users accordingly. Drivers store the port pointer instead
+> of the line number. Several drivers kept a private struct only to hold
+> the line (airoha, dfl, em, fsl, ioc3); these are dropped and the port
+> is stored as drvdata directly.
+> 
+> This also fixes two latent issues:
+> * For a CIR port, serial8250_register_8250_port() used to return 0.
+> Callers stored this as the line, so a later unregister/suspend/resume
+> operated on ttyS0. Now the CIR port itself is returned.
+> * 8250_acorn checked ports[i] > 0 on removal, so a port registered as
+> line 0 was never unregistered.
+> 
+> There are no more users of serial8250_get_port() outside of the 8250
+> core, so drop its EXPORT.
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
 
-Register the interface attributes function as an SMCCC device and bind the
-provider through the SMCCC bus. The provider reads the firmware attributes
-during probe and serializes cache maintenance calls. It handles transient
-BUSY and RATE_LIMITED responses with bounded retries. It also registers
-with the generic cache coherency framework used by memregion callers.
+> Cc: "Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
 
-Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
----
- drivers/cache/Kconfig           |  11 +++
- drivers/cache/Makefile          |   2 +
- drivers/cache/arm_smccc_cache.c | 161 ++++++++++++++++++++++++++++++++
- drivers/firmware/smccc/smccc.c  |   5 +
- 4 files changed, 179 insertions(+)
- create mode 100644 drivers/cache/arm_smccc_cache.c
+Why not having Ilpo's Cc in the below list?
 
-diff --git a/drivers/cache/Kconfig b/drivers/cache/Kconfig
-index 1518449d47b5..57fd1823dec5 100644
---- a/drivers/cache/Kconfig
-+++ b/drivers/cache/Kconfig
-@@ -42,6 +42,17 @@ menuconfig CACHEMAINT_FOR_HOTPLUG
- 
- if CACHEMAINT_FOR_HOTPLUG
- 
-+config ARM_SMCCC_CACHE
-+	bool "Arm SMCCC cache maintenance provider"
-+	depends on ARM64 && HAVE_ARM_SMCCC_DISCOVERY
-+	help
-+	  Enable support for the Arm SMCCC cache clean+invalidate
-+	  interface as a provider for memory hotplug-like cache
-+	  maintenance operations.
-+	  The provider registers only when firmware advertises the
-+	  SMCCC calls and attributes, so systems without firmware support
-+	  continue without this registered provider.
-+
- config HISI_SOC_HHA
- 	tristate "HiSilicon Hydra Home Agent (HHA) device driver"
- 	depends on (ARM64 && ACPI) || COMPILE_TEST
-diff --git a/drivers/cache/Makefile b/drivers/cache/Makefile
-index b3362b15d6c1..55736a032d6f 100644
---- a/drivers/cache/Makefile
-+++ b/drivers/cache/Makefile
-@@ -4,4 +4,6 @@ obj-$(CONFIG_AX45MP_L2_CACHE)		+= ax45mp_cache.o
- obj-$(CONFIG_SIFIVE_CCACHE)		+= sifive_ccache.o
- obj-$(CONFIG_STARFIVE_STARLINK_CACHE)	+= starfive_starlink_cache.o
- 
-+# Providers below depend on CACHEMAINT_FOR_HOTPLUG.
-+obj-$(CONFIG_ARM_SMCCC_CACHE)		+= arm_smccc_cache.o
- obj-$(CONFIG_HISI_SOC_HHA)		+= hisi_soc_hha.o
-diff --git a/drivers/cache/arm_smccc_cache.c b/drivers/cache/arm_smccc_cache.c
-new file mode 100644
-index 000000000000..aca71113eb1c
---- /dev/null
-+++ b/drivers/cache/arm_smccc_cache.c
-@@ -0,0 +1,161 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2026 NVIDIA Corporation
-+ *
-+ * Arm SMCCC cache maintenance provider using the cache clean+invalidate
-+ * interface defined by Arm DEN0028 v1.7.
-+ */
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/arm-smccc-bus.h>
-+#include <linux/cache_coherency.h>
-+#include <linux/cleanup.h>
-+#include <linux/container_of.h>
-+#include <linux/delay.h>
-+#include <linux/errno.h>
-+#include <linux/math.h>
-+#include <linux/minmax.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/nmi.h>
-+#include <linux/time64.h>
-+#include <linux/types.h>
-+#include <linux/wordpart.h>
-+
-+#define SMCCC_CACHE_MAX_RETRIES		5
-+#define SMCCC_CACHE_DEFAULT_DELAY_US	1000UL
-+#define SMCCC_CACHE_MAX_DELAY_US	20000UL
-+
-+struct smccc_cache {
-+	/* Must be first member */
-+	struct cache_coherency_ops_inst cci;
-+	struct mutex lock; /* Serializes SMCCC cache maintenance calls. */
-+	u64 rate_limit;
-+	u32 latency_us;
-+};
-+
-+static int smccc_cache_status_to_errno(s32 status)
-+{
-+	switch (status) {
-+	case SMCCC_RET_SUCCESS:
-+		return 0;
-+	case SMCCC_RET_NOT_SUPPORTED:
-+		return -EOPNOTSUPP;
-+	case SMCCC_RET_INVALID_PARAMETER:
-+		return -EINVAL;
-+	case SMCCC_RET_RATE_LIMITED:
-+		return -EAGAIN;
-+	case SMCCC_RET_BUSY:
-+		return -EBUSY;
-+	default:
-+		return -EIO;
-+	}
-+}
-+
-+static unsigned long smccc_cache_delay_us(const struct smccc_cache *cache)
-+{
-+	unsigned long delay_us = 0;
-+
-+	if (cache->rate_limit)
-+		delay_us = DIV_ROUND_UP_ULL(USEC_PER_SEC, cache->rate_limit);
-+
-+	if (cache->latency_us)
-+		delay_us = max(delay_us, (unsigned long)cache->latency_us);
-+
-+	/*
-+	 * Firmware may advertise neither a rate limit nor a latency hint; use
-+	 * a small bounded backoff instead of retrying in a tight loop.
-+	 */
-+	if (!delay_us)
-+		delay_us = SMCCC_CACHE_DEFAULT_DELAY_US;
-+
-+	return min(delay_us, SMCCC_CACHE_MAX_DELAY_US);
-+}
-+
-+static int smccc_cache_wbinv(struct cache_coherency_ops_inst *cci,
-+			     struct cc_inval_params *invp)
-+{
-+	struct smccc_cache *cache = container_of(cci, struct smccc_cache, cci);
-+	unsigned long delay_us = smccc_cache_delay_us(cache);
-+	struct arm_smccc_res res = {};
-+	int ret;
-+
-+	if (!invp->size)
-+		return -EINVAL;
-+
-+	/*
-+	 * Serialize the full retry sequence. With the default bounds, a caller
-+	 * may hold the mutex across up to five 20ms backoff sleeps.
-+	 */
-+	guard(mutex)(&cache->lock);
-+
-+	for (unsigned int i = 0; i < SMCCC_CACHE_MAX_RETRIES; i++) {
-+		/* Long firmware operations can trigger watchdog checks. */
-+		touch_nmi_watchdog();
-+
-+		arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION,
-+				     invp->addr, invp->size, 0UL, &res);
-+
-+		ret = smccc_cache_status_to_errno((s32)res.a0);
-+		if (!ret)
-+			return 0;
-+
-+		if (ret != -EBUSY && ret != -EAGAIN)
-+			return ret;
-+
-+		fsleep(delay_us);
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct cache_coherency_ops smccc_cache_ops = {
-+	.wbinv = smccc_cache_wbinv,
-+};
-+
-+static int smccc_cache_probe(struct arm_smccc_device *sdev)
-+{
-+	struct arm_smccc_res res = {};
-+	struct smccc_cache *cache;
-+	int ret;
-+
-+	arm_smccc_1_1_invoke(sdev->func_id, &res);
-+	if ((s32)res.a0)
-+		return -ENODEV;
-+
-+	cache = cache_coherency_ops_instance_alloc(&smccc_cache_ops,
-+						   struct smccc_cache, cci);
-+	if (!cache)
-+		return -ENOMEM;
-+
-+	mutex_init(&cache->lock);
-+	cache->latency_us = lower_32_bits(res.a2);
-+	cache->rate_limit = res.a3;
-+
-+	ret = cache_coherency_ops_instance_register(&cache->cci);
-+	if (ret) {
-+		mutex_destroy(&cache->lock);
-+		cache_coherency_ops_instance_put(&cache->cci);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct arm_smccc_device_id smccc_cache_id_table[] = {
-+	{ .func_id = ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION_ATTRIBUTES },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(arm_smccc, smccc_cache_id_table);
-+
-+static struct arm_smccc_driver smccc_cache_driver = {
-+	.name = KBUILD_MODNAME,
-+	.probe = smccc_cache_probe,
-+	.id_table = smccc_cache_id_table,
-+};
-+module_arm_smccc_driver(smccc_cache_driver);
-+
-+MODULE_IMPORT_NS("CACHE_COHERENCY");
-+MODULE_AUTHOR("Srirangan Madhavan");
-+MODULE_DESCRIPTION("Arm SMCCC cache maintenance provider");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/firmware/smccc/smccc.c b/drivers/firmware/smccc/smccc.c
-index 5dc768ac4143..5a5d50d17410 100644
---- a/drivers/firmware/smccc/smccc.c
-+++ b/drivers/firmware/smccc/smccc.c
-@@ -100,6 +100,11 @@ static const struct smccc_device_info smccc_devices[] __initconst = {
- 		.requires_smc   = true,
- 		.device_name    = "arm-rsi",
- 	},
-+	{
-+		.func_id        = ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION_ATTRIBUTES,
-+		.requires_smc   = false,
-+		.device_name    = "arm-smccc-cache",
-+	},
- };
- 
- static bool __init smccc_probe_smccc_device(const struct smccc_device_info *smccc_dev)
+> Assisted-by: LLM
+> ---
+> Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Cc: Richard Cochran <richardcochran@gmail.com>
+> Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@kernel.org>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Joel Stanley <joel@jms.id.au>
+> Cc: Andrew Jeffery <andrew@codeconstruct.com.au>
+> Cc: Ryan Chen <ryan_chen@aspeedtech.com>
+> Cc: Billy Tsai <billy_tsai@aspeedtech.com>
+> Cc: Florian Fainelli <florian.fainelli@broadcom.com>
+> Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+> Cc: Ray Jui <ray.jui@broadcom.com>
+> Cc: Scott Branden <scott.branden@broadcom.com>
+> Cc: Al Cooper <alcooperx@gmail.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Paul Cercueil <paul@crapouillou.net>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Cc: Chaitanya Vadrevu <chaitanya.vadrevu@emerson.com>
+> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+> Cc: Helge Deller <deller@gmx.de>
+> Cc: Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>
+> Cc: Thierry Reding <thierry.reding@kernel.org>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Kees Cook <kees@kernel.org>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: "Uwe Kleine-König (The Capable Hub)" <u.kleine-koenig@baylibre.com>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-serial@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-aspeed@lists.ozlabs.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-mips@vger.kernel.org
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-parisc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+
+> [v2] include err.h (Ilpo)
+> ---
+
+...
+
+>  	seq_printf(s, "%7s: /dev/ptp%d\n", "PTP", ptp_clock_index(bp->ptp));
+>  	for (i = 0; i < __PORT_COUNT; i++) {
+
+What about
+
+		struct uart_8250_port *uport = bp->port[i].uport;
+
+here and use it accordingly in the below code?
+
+> -		if (bp->port[i].line != -1)
+> +		if (bp->port[i].uport)
+>  			seq_printf(s, "%7s: /dev/ttyS%d\n", ptp_ocp_tty_port_name(i),
+> -				   bp->port[i].line);
+> +				   bp->port[i].uport->port.line);
+>  	}
+
+...
+
+>  	for (i = 0; i < __PORT_COUNT; i++)
+> -		if (bp->port[i].line != -1)
+> -			serial8250_unregister_port(bp->port[i].line);
+> +		if (bp->port[i].uport)
+> +			serial8250_unregister_port(bp->port[i].uport);
+
+Since it takes a pointer now, make it error pointer and NULL-aware
+
+	if (IS_ERR_OR_NULL(...))
+		return;
+
+there. With that being done, all this redundant NULL-checks will gone.
+
+...
+
+> static void serial_card_remove(struct expansion_card *ec)
+
+>  	ecard_set_drvdata(ec, NULL);
+>  
+>  	for (i = 0; i < info->num_ports; i++)
+> -		if (info->ports[i] > 0)
+> +		if (!IS_ERR_OR_NULL(info->ports[i]))
+>  			serial8250_unregister_port(info->ports[i]);
+
+See my point?
+
+...
+
+> static int aspeed_vuart_probe(struct platform_device *pdev)
+
+>  	if (of_property_read_bool(np, "auto-flow-control"))
+>  		port.capabilities |= UART_CAP_AFE;
+>  
+> -	rc = serial8250_register_8250_port(&port);
+> -	if (rc < 0)
+> +	struct uart_8250_port *uport = serial8250_register_8250_port(&port);
+> +	if (IS_ERR(uport)) {
+> +		rc = PTR_ERR(uport);
+>  		goto err_sysfs_remove;
+> +	}
+
+You can get rid of these {} by using PTR_ERR_OR_ZERO(). Also do not define
+variables in the middle of the code (it's only allowed for auto cleanup
+variables and for-loop iterators).
+
+...
+
+I stopped here, I believe there are many similar cases which may be amended in
+the same way as pointed out above.
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
