@@ -1,160 +1,123 @@
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010064.outbound.protection.outlook.com [52.101.193.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic305-3.consmr.mail.bf2.yahoo.com (sonic305-3.consmr.mail.bf2.yahoo.com [74.6.133.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09773490BEE;
-	Tue, 13 Oct 2026 19:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791920037; cv=fail; b=XYTUrLe+hhLo+94oceQYyg8hwE2G4JwiWe1bENvXvyqV1VwFFCGlC1zcvc5tpU2AK78AILIBhyn72jqWMXzTOMl9vlq82xxbesSVHJzT7dR7Y2Frgvz0RJ9OLpF2fXP5QUGZuSubr0RutJL10rl0YF+dT0IS0w85b7UdVPCkeBA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791920037; c=relaxed/simple;
-	bh=7GKagMjp9w4UZCKTV793POlGSHcCYhBUivtmap38B1o=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdFKxCEO1Rxqg/PfwUskmRHCURAcDJuKttwvIIVz3KaG1bo2kUXQDoQji79PXVktwk9GspOq2CQ2v593BE0T7ladVZ87/Y9gLj6A+Xymr5tof3hgiAGIoccVTWk5lMup9oZashopGFZAd7XabFRN00A4Zd+/fWZu59747MoFg14=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aMgtdzsn; arc=fail smtp.client-ip=52.101.193.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8324DD3B7
+	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 23:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.133.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791934752; cv=none; b=uhMQJuO/jnp+shPnyWIA72Z5PCqx/jzFdg/slAV6jwfg152IBumTFbWeBGysCWGV7/2J5p4ESBXMimiKppZGe/IyjOvxc03gSomrSbQtY3Q/mv06SQKt4UxICaFR4q5RIGh/FFUs8U+R+uUGNaBIAczIjRuN0FRWYbdGkS/oKw4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791934752; c=relaxed/simple;
+	bh=unrQ123xXTj9mg6azhbRZKBE0GJ2FJNrep2ZLraIK+4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PTPJ5FFo4fUtwOt0pDTC9Yv0iZvlyF1FHW3ktHtQh7g5Y5xW+iT3JkuLdMqJi3YMMT0SG6auxO9xFJ5f6M4C+/NtKDhmk8my5tuDw/KnaTJ2k8KXXkHLLHCkWvRaZCuzn2Hn69WyBGteMb8B8AhciaZDBC04LFdqj3R2cvStdOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=AyJtst+w; arc=none smtp.client-ip=74.6.133.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aMgtdzsn"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xkR2q+xAuBy42531A4N7olBn3//0i1sZdIyb9fUjijNGM8/NhF5vhqjxG43r6VDDRjqC0+1rNJnjgupGqjg91q3OqbxWNzdv98yBH2YlJN/I42XOxgTUGq1jkVZbT43AnYF+Q699rG2NL9Vl2OCETrE5XucoS9dwO0vW7LP4jYyiD6vBth0Kpr+tG0bSyeNMWkE2AzyxuoNR8JvE5pG18BTDNwrhf+bYxpKVYNN4JTOYvIPgwfpdtr42vVZA79DqeBNeFUMCQn1FdzzkmLWXQcigXhNHnEBa3HRsljhCiYzgZdH8CwWIHYooYur6NuEgO/6zUXZm/s/cZLWaCJOrAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vzeiI+gayp9EAe7RxgwBRYceR2ZzbZYo/guosxXjHcE=;
- b=sSRXBmRGF7i++o+mzmVaqknwdky0cNr6sW8/vkUnDLbNwYF+EtRxgjIpmPNTojqj8dYblhKdV82OS8X+Jry+vl2Abw6ronHm1ndhAGIgEJQWqt5rPvlD7QkuPXNUKNRM/EKtxVD7XNCBgUozcv0EdyTwELbSYCnkRJ+KDfdnsT4p7VsMyCWCS1E5uPYcbJ/LVbVM5Jp1sfo1PZfLrxomofI+aOvzlvOBfxiKT6m1QOZa30JR/4tT1FxMVqw0K0WBSt9CcU1rWUfKoIsRBWpvZRBigKZxc/oEkSTSGCZa5hwdjBbmFrKvpRBNQ+pnMIOHYz7HSW2mYeFBKm9DXdm+ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vzeiI+gayp9EAe7RxgwBRYceR2ZzbZYo/guosxXjHcE=;
- b=aMgtdzsnRyVI+0R+pQjLpFuQLoOkYQgkuMvxm15a7zR0aYzsVbZSEf5XittQ24PS7QwzFCnoJJV/ylhgwZ4uUmngY1WinXPcJInVLFwcA5yBSM5LcNLhv6ftQ2w2j4QCnkugoOPemd32cgGiHMkRs13diD8nHQcY5jnPMBcIiCoZMImH1+okn92j24T5ys1ry6xfR+q22LWmIX6N2/CwyQYCnrYG9d6XSNNiIYlcot9tg62GDRR4ueJ/qRsEtlPwsHTmTGbqEOsmX/8oRwZh8J0D3U3LRMbVBq9fveGd6y1YnNihOWBK97cKX1WzNxUkGgrFARBxqXIC030MCG0WiA==
-Received: from BN0PR08CA0004.namprd08.prod.outlook.com (2603:10b6:408:142::22)
- by MW5PR12MB5599.namprd12.prod.outlook.com (2603:10b6:303:194::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Tue, 13 Oct
- 2026 19:33:50 +0000
-Received: from BN1PEPF00018072.namprd04.prod.outlook.com
- (2603:10b6:408:142:cafe::7b) by BN0PR08CA0004.outlook.office365.com
- (2603:10b6:408:142::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.496.5 via Frontend Transport; Tue, 13
- Oct 2026 19:33:48 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.161) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN1PEPF00018072.mail.protection.outlook.com (10.167.245.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Tue, 13 Oct 2026 19:33:47 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Tue, 13 Oct
- 2026 12:33:24 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Tue, 13 Oct
- 2026 12:33:23 -0700
-Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49 via Frontend
- Transport; Tue, 13 Oct 2026 12:33:22 -0700
-Date: Tue, 13 Oct 2026 12:33:19 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Robin Murphy <robin.murphy@arm.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Peng Fan <peng.fan@oss.nxp.com>, "Will
- Deacon" <will@kernel.org>, "Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Jean-Philippe Brucker <jpb@kernel.org>, Thierry Reding
-	<thierry.reding@kernel.org>, Krishna Reddy <vdumpa@nvidia.com>, "Jonathan
- Hunter" <jonathanh@nvidia.com>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH RFC v6 5/5] iommu/arm-smmu-v3: Wire up shared-SID STE
- ordering and feature gating
-Message-ID: <as6HfzpcalIh6SMs@nvidia.com>
-References: <20261011-smmu-shared-sid-v6-0-cb76b89dc612@nxp.com>
- <20261011-smmu-shared-sid-v6-5-cb76b89dc612@nxp.com>
- <aszfVNP6DGzWYdK0@shlinux89>
- <as1zR1wc7ERxvR1F@nvidia.com>
- <e8c22eb2-ed1f-47c7-b2ac-c56ead1cba8b@arm.com>
- <20261013124400.GI14213@ziepe.ca>
- <4d2a05c3-f7f6-4348-a3b4-c8f3ffa79b6c@arm.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="AyJtst+w"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1791934745; bh=ntTdf5da5riDGqp0/lnqznJtGtR2qq5uPORC63l8Kno=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=AyJtst+wHerHDGpyl0T7QkHzGda4jZuiTA2/e7+wapTvJ8BjiR4EMxNuNAq8xYaMJewoBsm5Wkl0w9sSkC+WWW9QypXV9bAQZRzH0bQpDI8huUU3QXCU2j5CD767KbGoKG8yqj6L4UwB7VXtN//EeQ2vKVceIDBVuhOGyAhbiZFSAk3NIpZbHyvg0O0WnGPB2E5HNKFCtTaGvc+LkJ//sMSK6Y8v1lESXLpuJGISCkEXNWvZZ+/ZGGhcdPbaDEYRMdsZD6jTWpjITmoEUefoxY4nQgmCKEHT/JJLdt+cMds/RBdlpE22JwjQgDVkvFWVccZWlN0tGMTgDadfakvZrQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1791934745; bh=oKJg4jOA4ZrTF1arWxOlKFehAEDik4Js39f8DF5mo6g=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=j/ndZB1XY7GA4Uga8xvUwILcHro91TNbTFgx0ivBz/+BD1+vyAlWyro5apSs8WEyWnjiVq6yCJhchBSw5lrdeWJNOReWVheClzSdslDxVoKtywvCzH7FwSYjoiuncSNdwYTvMRxH24qND+cyX2FX4ELGafk2p3GQYuUdUNXv+wk3Ziq6ewpJ/Vwf7X6H03QyZSKP6kiHdn5wG9b7p8jDgQv4emqCOzY1RTRGYwnxEnbi40UK/Fu8r1iej1TC3BZwxqesTUCajRlJcEju8/fdOIfojXdKWzmvbvCES+pctoaFZ5FbW85KfRWIqVNJzE1Hjm3alwi4g5z53EkH5jmbjA==
+X-YMail-OSG: BhmqEuwVM1l4k9JTFM9jnnIs.e97bloKx8dRyHq4ts9WH3_4DKCuvs17y0GgEQ4
+ C1PRHf37Mxe_SLlgMzct9sEdYQ6M8oTTviavSgzhxjg3tfsyCxDwTbI7KcgbD4TGdmbmYkVJGzVA
+ skikEhc4YiYiR26KOPlmaUnfJxiBYjkfnh_XJYoSFWdBw_ZojapNLjsG9awUB1gtBYfd3_bJIRpN
+ Bqxd0UlSuB8I.OyZQ67gY.VXyVE9mrqs4fTl5VoXlD9TFd5NYy58SaIV53BmnzdKzCaEimqvVVV9
+ pfyGqfgzMjhq_FK8rFGGPAYC2VeAmLElo5bnZg5dwJXZfV1znHIWI_onRfkTuofyeASUmJwMTMeL
+ Metz7lKNs_oH1nJWJHTVPZ2RhQuy4rHckazxxxJoY.mWU1GUd6l1y3zYqQM8mO4hLjVvG4xpi1O1
+ 0QIGGHsmfYK46c2nsS22OYWXkprEuUwrmAqsJ1kRMocSSO9RziCo31eNKTtRADml2RP3wwISED.S
+ nMSaXCHe14Rz2frtWc6CFC461G8jRC9NOwuF0qRvm3YbRqJMTeMpPvvvjvtDwrX.hOOuGMAv3Mnq
+ pb4sKbJweD_bHNMbG0gRJ0YvUBM0mpl3i9q9gZde9HVadOCbiZir7J2H7I0_ngnkO1FGY_NS7sqH
+ mkio1pG8PfDQdpWBCaJ3h3FH4b7OkV_4Z6AD2Neq259TI5mz2tzmFqgfXyd5IcWwBh_qorRNaW2A
+ YlopBPPTqwI0Hlldbjizaaww_pwZmzhmliRYFXlJz3F5oeRLYETI0erxYdhFpdSZJBI9Q_tr7KXX
+ mPbiHVekyB9vtlTdZTcqm78L8OABFwpOUgc8F3LRgXZZairXGMmcnimQ8aPYhR.n1XuRRhK8Zih6
+ P83YRSdGXZpJ9i6IFmhRJzmX43XFWDGqPBiEmyOUMmowIFMXvTzNc_ZUjbrk2rYy_3bSOteYPk0W
+ xNsQpruPPTRrq_mLmzASKyAtz8_7uyuvzM45pcl6iv61cAd.T8VKyjFgNzs.3ISvXexdNfeCbrOY
+ 5Ea7hzhlZqsm4esYCaplHlLb6GtM_PVYJzJBWVrVJ_gdNlhRYIFp_eZ1s4UmWl8BctW2QubDMavI
+ 9GH.ojk0Rj.byk243dddzl6haeA6iDn2t2w0QTVzrn_F2EuRjFe5NEHB311HI6dyXmBT5t1D61k.
+ FW97GyGH4OHN3dcA5KVnQVB.FymbnhXAN9ExvRYzny2stzY43a_X5JbbnaB9umdjO7JdZ8XHuvzl
+ TXji.Jm9qIsfWNhjj2GISu8Jh0C4YqJtv5dH.5fgsuOaXq0KVDgOT5NlYFfbzzdf1tVc3YcmwORN
+ 9bdYWs4Xc9.QPnanI1ClQb5cSiBFZuhU7uutTL40gwQ.JEyR_bCRYZDC8WUgmLqT9CL3XNNARJWD
+ _QQLaKN2E3DmgcEEPr.hVfkZ4hHRSdMp7ytvwm_k_gNJ2wnYEH62IVo..IQjndysWt2izQdJzuUu
+ VbFwLhb1IRquuJg6XT4G81h3F6JgITYb.CMnLDYTIh0GtkvK9sZosZHpfSG2vkqIZGCSWspTJCr0
+ Z7QVcLgmy_lPct_i9B7F4NtAtuKJ5R.QQR015oSCHRLzr6mo67ixOh2fJX.p28j4Q3Oeuw95nqk8
+ IfaKlbrpJ_YujhPArPVzUoir05yEZdl18YMcGp9Bo6bn2nmR6rpbnp5xvLBdXb3sFmIss7a2wSCX
+ 3cspLhXGSTQQ4JUBK3sN7kvuOmqVx72DFEaFWY3FtjfX_w2gY5wb9WVpISXB7jrrSY8fQngL2xc8
+ qLJJ0NeIJfhgP8PvHW48FuVl8xn71ddD0rce24EsOzAWshBmW.Am59VMjvxt.dNW1.aDVwBQ7uH2
+ DK6H5yY99CwiPqbBCN14za03JyT7xdI05__EikLh55K6NKZ73xYMsQnSABbjBznARH3rXKtvhD3X
+ m8LTmp1ycTF8NKi02ruN1ZkrJG8pOrpYktPBKA267.I0cYBWI6M8p7HO.5a2VpALgFxTFlCdNbee
+ 8JbNuYz8YrGblUQmbfD1ksc06_OR.Ib_qtcIL7AiL8X.2azXSVl4U29f1MEV50Wr_Yt61dn7RtkG
+ 6C7mVn0YhYArPDntM_VXFFAc6vM2svSNxdExiG3Faicd7N5rNJYN6QFgZXfkYvXKBIXocVu8bhOG
+ kWpI50OBdvCmCvA0dg_i4ZjrU07KA09CyLNz6ObjLpi6eFPFOrBVELiNW20lyhQ_l1onore0uBGS
+ qLOrIg9mAnmn40RfCk4GNgTgSLDJLVsmV4Dn_9kvB1y7DymLhfMU-
+X-Sonic-MF: <deaner92@yahoo.com>
+X-Sonic-ID: 580a666d-c35e-4236-bdc4-9891ef3e9414
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Tue, 13 Oct 2026 23:39:05 +0000
+Received: by hermes--production-bf1-6d6877594b-r7rdv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c9026ab00b60b81d08c481f0c8e2d06a;
+          Tue, 13 Oct 2026 23:18:23 +0000 (UTC)
+Message-ID: <642cd62d-4e44-4e5e-be7c-1f2b0ce4a759@yahoo.com>
+Date: Tue, 13 Oct 2026 17:18:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4d2a05c3-f7f6-4348-a3b4-c8f3ffa79b6c@arm.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00018072:EE_|MW5PR12MB5599:EE_
-X-MS-Office365-Filtering-Correlation-Id: 789ba8b1-6d6b-4d1c-0180-08df2960e704
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700016|23010399003|82310400026|376014|7416014|56012099006|11063799006|4143699003|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	YHQ6YIVvHu4uVyyc1qOayqYO3DNPsoNptiMcCHhOpCvVG5fH3BpRom87ajdP9KarkMqFnAQ1vBku0ZEEs/J2NaPpKHsHr1kfYgOta1Sx/NxgTC91qYWYJCL17dqabAKpyeUwxUOSKZz8tBKpdExVbV9w9pS6hSszTsszKu9PWDwGAgvm5HI4ZcE6HfEQejISIrReL+sYSxkZtVY8Dvward8/BTwV1RZHsBX4s91ZNDyvc64TthX0uNZItq7/jkRBM91SHqT1jbhObGYRLDfPgHMHowl9hym2NXrlj96LNDF+1LkFoG1hLoqjVdXXgnhR7lt7MH7R7UvoxzPaXh5PRus5bbINCdmYGq3Ymo2ycSmiXj2qn0nrTkQM9MJVsVgI2c0qgxGWDpUS/8gM6a4EriMKkWYoo2AvDho2t5eLWz/te7VwRvbLWDr6x6O3Qol4WD8XZQa5LS4tmNcMbcwwee6a5qSRCrp10zfV+E4EGvEmB9DofbFVWt9UOnUszBDJKBUU2HrFHdOjC1c2Cg55EDf7B0wQ1mBkD5RgnQPeYCN0OTLyTgUBxL2Tm3p9/VBhxacSaGFz3RqWtEugiLfccBCPIxfNiApJk4sH7A8ahKMRfCuLajJXK3Zd/I32MBvEg4GVjoEC6MxcgVsyEqBax935B3m8obKj2QoyObwhS7TpC0amvPqhR11zSDNj/986aM71dqy85g1mu6gY8ufyjA==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(23010399003)(82310400026)(376014)(7416014)(56012099006)(11063799006)(4143699003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	PCFai6p/keu6aQQuiIu+aBSK5VYZVFP3Beg4qYQ7yTXWMgTMErz+JAObrNNhwcHIPuwAwAJfEIFYmIXnvXIzOEDByyjjlwXDTqt9ZaqEBGqHCZ25yHYZIcdJWCXRM6Ou4umiyjS1WRQKP/TiV6eRSsYhRzFFYtAMDYb/Bx1DNxihG05DBf/J16gOtAfaHPUfXY9T0aHTzuSBP80wTpcrNMwcx0EfBSwyExJLnqfFvVTYOdJxDrr9o8nnsyMHnLvYHB37cTHJSU+xOwZE4bbo8bU2d+nRzVy5+wpldWqK+sdK7WLr6Ig0Hc03b4U/5X3/qlRYlmEsgGVwIZp2vCV7Eshtm9pgGao372vtaiphCDs/vmGqnZHrgHOyD+D8gEfD56HrrasTweWflKT1Z5bwoWUB0Aq0+XWZ4HEv+9MitnaKesmKB0JdrqDvw6JaC/od
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2026 19:33:47.7432
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 789ba8b1-6d6b-4d1c-0180-08df2960e704
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00018072.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5599
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: nvec: use guard(mutex) in nvec_write_sync()
+To: Temitope Obabi <obabitemitope765@gmail.com>,
+ Thierry Reding <thierry.reding@kernel.org>
+Cc: Julia Lawall <julia.lawall@inria.fr>, Marc Dietrich <marvin24@gmx.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net,
+ linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
+References: <20261012171312.5998-1-deaner92.ref@yahoo.com>
+ <20261012171312.5998-1-deaner92@yahoo.com>
+ <b51c3755-a967-3de3-5f8c-3e4984d6e93c@inria.fr>
+ <492e9a13-b50b-48cb-bd41-3114573c7950@yahoo.com> <as5WES_Ec2KGWQsm@orome>
+ <CALUk5xZtpOH=23mdiT7MYs-gem2NL+EoV=priVxuSubbCocqFQ@mail.gmail.com>
+Content-Language: en-US
+From: Jeremy Clifton <deaner92@yahoo.com>
+In-Reply-To: <CALUk5xZtpOH=23mdiT7MYs-gem2NL+EoV=priVxuSubbCocqFQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.26740 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Oct 13, 2026 at 05:23:21PM +0100, Robin Murphy wrote:
-> On 13/10/2026 1:44 pm, Jason Gunthorpe wrote:
-> > On Tue, Oct 13, 2026 at 12:22:06PM +0100, Robin Murphy wrote:
-> > > If we're not going to support PASID for shared streams (which I suggest we
-> > > don't...) than we shouldn't strictly need to worry about CD tables anyway.
-> > > So rather than having to special-case CD table sharing for shared streams,
-> > > perhaps it might make sense to generalise back to a "default" per-domain CD
-> > > for non-PASID use, which can then get switched for the private per-stream
-> > > cd_table if and when a device does enable PASID?
-> > 
-> > If we have stared STEs then the group becomes the per-STE data
-> > structure not the master.. We don't have any way right now to do that,
-> > but it would make some sense for the group to store the shared CD
+Hi T Obabi,
+
+On 10/13/26 4:58 PM, Temitope Obabi wrote:
+> Hi I have finally installed Ubuntu on my system, I hope am on the right 
+> track
+You need to send plain text.
+Also, there is no need to reply to my v2 message here. Reply to the 
+Welcome 2026 Applicants. If you don't have that email, send out to 
+outreachy@lists.linux.dev with an intro.
+
+Look into plain text. >
+> On Tue, 13 Oct 2026, 7:57 pm Thierry Reding, <thierry.reding@kernel.org 
+> <mailto:thierry.reding@kernel.org>> wrote:
 > 
-> That would be precisely the aforementioned special case that I'd hope to
-> avoid. My point is that the CD represents the domain context, so we really
-> shouldn't have to have multiple copies of that per-device _or_ per-group,
-> _unless_ it is attached via a PASID, since in that case it does need to be
-> copied into a per-device CD table (since the per-domain CD table was indeed
-> the wrong move in hindsight).
+>     On Mon, Oct 12, 2026 at 03:41:48PM -0600, Jeremy Clifton wrote:
+>      > Thank you so much for your guidance and feedback.
+>      >
+>      > It is the result that the patch will produce. All the unlock
+>     calls will
+>      > be deleted and the out of memory path will have no braces, as per
+>      > the style guidelines.
+>      >
+>      > The motivation behind the patch is to defer usage of manual locks
+>      > for new and improved guards, disallowing lock leaks.
+>      >
+>      > This way, there can be no error producing path by not calling unlock.
+>      >
+>      > Shall I send a v2 with motivation included?
 > 
-> So what I'm saying is that if we're going to make anything share CDs, then
-> ideally we should just make all non-PASID devices always directly share the
-> domain's own CD, then if we just enforce that any devices sharing StreamIDs
-> must be non-PASID devices, it should all work out, we save some memory in
-> the normal case, and never have to be concerned with rewriting any STE with
-> a different S1ContextPtr for the _same_ domain except when enabling or
-> disabling PASID for the (single) device owning that STE.
+>     Not a big deal in this case, but you might want to read up on how to
+>     properly reply to emails:
+> 
+>     https://subspace.kernel.org/etiquette.html#do-not-top-post-when-
+>     replying <https://subspace.kernel.org/etiquette.html#do-not-top-
+>     post-when-replying>
+> 
+>     Thierry
+> 
 
-FWIW, master->ats_always_on would be a special case here: it is
-non-PASID but needs s1cdmax to be non zero.
-
-But yea, that sounds like a good approach, though requires a big
-refactor.
-
-Thanks
-Nicolin
