@@ -1,239 +1,161 @@
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010027.outbound.protection.outlook.com [52.101.201.27])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836C63AFD07
-	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 08:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791881487; cv=fail; b=ldfeHw/dR61EJaCgu+50MYxBLVm10uCNZThtJoCtjY249G36V+DggT1mnaXIXz71uqMePybsZGE9p44kr60yBLDQoW7kOb+bmpdfqwDKz66ZZ3sOnqCzylrqcjWCJyA/RaSSk9HHiLYgL8riMatfWFvET0eNrzL9clpUbQSuljQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791881487; c=relaxed/simple;
-	bh=TB6gcYvvZ+f7pSG3JOqBxgGTOejQ/Qw4ShJ5SMXEmFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XqXKpp1VWtkusBhT+xNNTl8Na+E106/3IgsVU3vESt4AD1Gre2vmjuoLvyAnDkAaYzGQHfJeV9W0Xw1/WIMsbvfAENxeoHsd22WYVu/prJRCVJ3JbXCMesoMCudNS56eaQVuIJzt+ZI3FMMugx4cWUvaIivVo46IoL9GpfMUIo0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PNKiSlRV; arc=fail smtp.client-ip=52.101.201.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA05D395AE4;
+	Tue, 13 Oct 2026 09:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791882572; cv=none; b=ubGue2RrpHng5NlaGyGFKmG6z1x7znFNClKy4xVvcoKx5tMW76sqctPc0YZuE/S2oObGN4imE83LaJwzYl5kAWjnxZ2hh8jMNaP7r6ONhgGMAg/lE6+Cqzy09PWEiBOXvgEx0+L6CgyQjq4afRCo/8LPAxJwp+qGxojTAO8LyMk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791882572; c=relaxed/simple;
+	bh=IQ/UNuFHURdJ5ziTLh4qZrD8MOsGX3B11CY5vdjd4ZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FU1G4ecdDUbUi/WDiLX1eZMGnCLIREscso5TsSBEUPMpKHlgS6SEqZNz1lY5kFsk3Fk+q6A4KSTM/YtxyHFUmvQRwA+/fPcLXlhTqZBQaK0S8Q9pu72LB+5jskUPhHfXcSA8i5RH3hCpXISk8vsEIizUrcTvwlhEJhYDiTMJ8hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hwG7vtZ6; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PNKiSlRV"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TLeMfVu0AF1v+6vmK0pznP0rwKP3yU+eAXfGx4dwNItx1DdFQwYrxKHni/19V9kj+T1Sic0Msahdz/LykACsepki1O5jqP4abjtb6O9663TE5j3KGKPZwUc+m0sxa2m9y36Be5U5jIlkU+8u3pyrIwaM4qI8xhEXBsRlNNDkLlKYR8Jpp44XL9xqKIg4FnsBZ91KXsyWWuW+k9UTyubg39SCMvHJl+7tgbkyO8WZIb/24akaDR/an7DRGMPN7SIYgjjFtnJtKQnP3xm7aP+KETpjXr8xndWXksEqYrUEO9IGrz2Jwz2KivrbIrsmzl1S/z2tNuIySUBZz8EiIrqteg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t6Q7rwM4SmGnECPIs7WE8d425h940haE+TccVnsoIQs=;
- b=jyfgFn75eWA1YugYZc0Pbhv39cqb3JNr/T1Xp/VMVLZnwjxv06UepQwQrSBRFkDy0LjBqLUU6FQjUy356ITOYfgBadZKbE6Xe97mbRksf6Dm1HuzMN0ZnoaL6XuPLNTuoJP3PLsPYL2u9Rk1nHgmBWjS4qkiKH0kkZGbTXOEGVWhgELkW5f77uXhdEIq94xRwvJS6iPG6HV6Ac9C/9fIX5AsAGBvEzEpxZg8w8rFiNbfWZZVh0joS494GO3uunl85hEV6bsm4YKkUCTQZmHUCxYT4f28+EY8RIHBBCsHo6dIuwyWY0I7CiLOE27Onund6tPmpGCa36dVovWFcc1zyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t6Q7rwM4SmGnECPIs7WE8d425h940haE+TccVnsoIQs=;
- b=PNKiSlRVhkC6Qz8H0FgPpwrgUh9j7BNsf79398zIAVk6yGeMFGM55GFe6utKRTUCgFR/PAI23cHUUwwcsBlOMSxZiiDvoP1FWyjyoDthrtWctOcZQUGesYYnMR85Jas1mw5woRiB+sFsBw8aijnoUc8Pq6S2i+e5N3OL6otiZY8GUxnnsj40c+W43WOrrOk1y9l1pMHRv9EXWkBWdr9Cyq9rr0g2QxmGmWyw53traWHHHMPciAsuV2zeiz6Ac+jrsuEDqa4owBc5u0TpFOTRqqM7uTB/FMqr9+BBaILUqhWXVcGiW52c04SJqzeLoWPKEB8jqthKydaGOxcp1gBR0Q==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by BY5PR12MB4226.namprd12.prod.outlook.com (2603:10b6:a03:203::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.15; Tue, 13 Oct
- 2026 08:51:22 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0496.021; Tue, 13 Oct 2026
- 08:51:22 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Aaron Kling <webgeek1234@gmail.com>,
- Thierry Reding <thierry.reding@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
-Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
-Date: Tue, 13 Oct 2026 17:51:20 +0900
-Message-ID: <YuEtlKWiT96iasuBtZCX1A@nvidia.com>
-In-Reply-To: <BMe1VOJ9Rf6tF74Mkc7tPQ@nvidia.com>
-References:
- <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
- <aoQ4he4rBJSTPBbR@orome> <BMe1VOJ9Rf6tF74Mkc7tPQ@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TY4P286CA0092.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:369::8) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hwG7vtZ6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1791882571; x=1823418571;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IQ/UNuFHURdJ5ziTLh4qZrD8MOsGX3B11CY5vdjd4ZM=;
+  b=hwG7vtZ6YBR7AfXPt3DffO1F6MMLYFDQchc4k9T2NfR2dDokx/8E9Mej
+   ZHpA6HCI6U+FsX+rNWpqN8HVMBYL1IJJqtIqtKP9RWXrWgzp8N/CNJ7E9
+   OFgovNi5Z3U6KINz9JdhtblHU8BlUk3mfkw4VloBFmDxf359h+iSaYlCS
+   ORL36WNZT0nN37qSpJxxP8O+L8qk79jC5wCopYVdKxnVhxhlKMxL+pnCa
+   IN77ybNQBHPPrveoNRrnyfbd4IroAJaDMTg2Jlt55g2RTvuioon8OHA4A
+   2EkAqVjd4dYmS3RjmGnYuFlFZ//dcUZYt5BXm6wq7pW8gcYXw3E1LDRJe
+   w==;
+X-CSE-ConnectionGUID: fPqzkKJTSviPLrXKqzkBKg==
+X-CSE-MsgGUID: AaWK8NZNSZy+UpjoFEwQnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11933"; a="595188"
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="595188"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 02:09:30 -0700
+X-CSE-ConnectionGUID: BgXYAbCpQMSPY4ai3EmgtQ==
+X-CSE-MsgGUID: Z+SacHifQmOu6wFBhA0rHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,155,1787036400"; 
+   d="scan'208";a="1196513"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.48])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2026 02:09:20 -0700
+Date: Tue, 13 Oct 2026 12:09:18 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <ray.jui@broadcom.com>,
+	Scott Branden <scott.branden@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chaitanya Vadrevu <chaitanya.vadrevu@emerson.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-parisc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] serial: 8250: make port operations work on struct
+ uart_8250_port
+Message-ID: <as31PsESOgLUhMB6@ashevche-desk.local>
+References: <cover.1791873876.git.jirislaby@kernel.org>
+ <c59fa203f325e0fe7601ea0fbc0d222c8b37f9eb.1791873876.git.jirislaby@kernel.org>
+ <as3etnbZatn4sbfx@ashevche-desk.local>
+ <c6b08f53-b5ee-44c8-93d1-54fdf5994ed2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|BY5PR12MB4226:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16c4bee4-9e45-49ff-abc8-08df2907282a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|23010399003|18002099003|22082099003|11063799006|10067099003|4143699003|56012099006|261009223027099003;
-X-Microsoft-Antispam-Message-Info:
-	Sc3Ux3vC5NSZBe4uJUvHUdDQiOabf5380oy9gv6xG7lWn5LVxJbuQcjbmyUCKUckzrsH/wnOUEjMRtnWBz/yIyL3/MDKsg52rx1UgJeWjt30v4zGNQs6s1o4Mrgvy1/r3QX4W3BwT2OoAp1vMgMbAOUkWJeTXk4sCxinwzMnAsp5DeBXHG+OzlyDzgb/Eby3xPGb5DgLP6Sjn/9NIQJ74owOHIzjyKVszICaOnhmJtl37sBmvjXggQXCm1bwPbENlJdbOsAlVmbcji8aj189/bo1Vm4FJNfJ6OFSI3Xd7abwxNU347OiWrRob5+lNh06D+E4V+DeI+Ai3CRtjquEjKfan9xknR0Noz4dEAz4Ve+T5ul2AwSheI9g2V9Tfs+PkwzQePbm/ebBhGVHoopusp6AL3TT+iLOxiAqX35t0Fhja37i9WvGfXjD8uRU/6Rjb0wWym1+p+c8+EQOsSdNsAu0STja+UsDHHcqVuLUpX31/rYDmeqsSmPvYfR3RYpoAwq9tZdW+m9+C7VsxoA2G4RL3OWxNvAPnGEGhSO4j9KO1FTPr/xmgT94XUr60q2erXyx4PJKAsAJnhDejAd4TkdUL50oE4xW7Q8MZ222X8G5IJ2vrEVlBjPKqliZ2ObAguQ4ddm5VA6Vtkni3SI9jUEHWZXz3j0vKRkn6xg31no=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(23010399003)(18002099003)(22082099003)(11063799006)(10067099003)(4143699003)(56012099006)(261009223027099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WGZ1ek5ZdFV1UHNTdGxIbWpEcTd6VDZPNk9kM0I5b0ZNN00xRnQvY0tDV1NH?=
- =?utf-8?B?VXduZUpCb3h0aGQ4alg1WmM4RHRRdmhOL01uSHNvOCtsZDQvYlVLQVh1aHZv?=
- =?utf-8?B?aWREMUxjaGR0dm5BVm9EaUFIVnFuYXlJNXdjWE82bWxTRkJjRWZacWZIdDhn?=
- =?utf-8?B?a2FpRGtWVUl5VHFLdnVNVWR1NGhsVk1FcEp6ZG4xUEtUSVVIWXh0bXlRS2Yr?=
- =?utf-8?B?UEpiM2RlOExtenRaUXFKY05CTzhwSHE0a3JNNTNVZi80eGdlcUUxb1oyem95?=
- =?utf-8?B?OXh5cnVxTElyQXlnUk9hL0pHRHRacGtiYTFJUWx5ejRlc3BiZC92dzlTbVgz?=
- =?utf-8?B?WlZGc0xqKzhySDZBUklOSVdCeCtBNHIyL2UyRzQ4WFIzUm5EMjR4MVhpcUdz?=
- =?utf-8?B?RTN2ZmVRYVFnOG44d1dNYzdzRXptQ2ZMZHY2NCtwUEl5bTRjdDFjaFVXamRP?=
- =?utf-8?B?REY1ZU0rRVZHekM5aVFXalpETGh2MmhyZXBsZ0NhMmkxdC9TbHJtQUFFQWZH?=
- =?utf-8?B?Rm53dldZWFdRQWtuL3hhYTRQYWE2dU04ODRwMTFDVEhSTWlnRkIvRkV6d0JW?=
- =?utf-8?B?VVV1YkxWdVQ4QmxaVXh2NVFCZnJZYkFBNHRmc3Fsb0ZFZTh4VzJCbzFVcVJO?=
- =?utf-8?B?d2RjdktUT0FoNFU0TWJlcExEdkpCMGNsN0l5dVV4MDYyWmJKeDFpdnhzeGJZ?=
- =?utf-8?B?a3dBdEYyaVY4cXRqMFBxZGgwSXYzVmVIbjBoM2JBTEMyaVIxVTZNWGsxVWNL?=
- =?utf-8?B?NGN3czFCNmpkL1lQa21ucVdVRGVuS3NRUDM1d3lUYUJiOFMxVTdlK1d4QzBm?=
- =?utf-8?B?WFlMY0g2b1RsRU42VjVYZ2hQUE5OaENXYkFic1F2VDRIRG5ZMGszKzJGQkhj?=
- =?utf-8?B?d1dPR3RlZE1HelkxSHlaY2c1c1JwWU5aaWZxdnp1OUFGNHNLc3QweXJ2OWVw?=
- =?utf-8?B?b1BMbEtudHhxOE9XcXJzM2gyMEhGbWdkaFNuS2kwdGE1S1hZS0NXUDVlMjFy?=
- =?utf-8?B?dG5kUlZMcGVwOStWbFJ3TDNTZjNHeVhxVDErbHIvZ0ZYRFBMT1Z1TktyR2la?=
- =?utf-8?B?ZVdzUGNuVEVud2ZMNjA2TDFUcVRNRmNHb09tMHI3TzE0Tzl1c292RlBBa094?=
- =?utf-8?B?MHZMb3Q4Y1VLRGFkUG9lY0NRVHg5NTd3eDFoZ20zUnhGVDVnL3FBOE1CUUVw?=
- =?utf-8?B?ak5uVFBzcVE5WkpEZWtOZmFuOVBocVlrMUVwd2VDVDd5THI0VitFcjUzK3Yv?=
- =?utf-8?B?VHVrM2NMRXJJdmlFNFUrcE1KeVJzVTVsck9Jc1EwMC9lcVp1Z2dJRllSbW9M?=
- =?utf-8?B?Mi92cnYwSFRvUC9UcG5MVGYzcTkwN1RsemVra2FKK1E4czd6dlhoTDlBaTBm?=
- =?utf-8?B?TkxXVkhvYWF6d1Q5Um5CbW1UQ2JkNUNqc3UyTnZxWFd5UVBRcHUzOTg2M0dI?=
- =?utf-8?B?SCtmVVp6UjB6bHQ1T0tSZmN0SEN5ckFLQ2ViY0pWMTlwNjVCNU82dzRrUmRN?=
- =?utf-8?B?QjIrQVpwdzJFS2E5RmN0YldHQVlaS0o0YS9qR1k2aXoyV3Y5TFlta1IzQytz?=
- =?utf-8?B?OGx4cmo2R293UDhsaTJMczQ3MlZkQldtU2VyOHU5VmgyR2lSVEMzbUdWY3cz?=
- =?utf-8?B?SjBnVEROS2NWcEVkVTFUL0ZkVGNrNnRIaU16NnpCbk8wOW1iTGFmQ0lpT1hL?=
- =?utf-8?B?aFFLVFpQQUxNTEo4T01ySnRsbG9tQld5Snl0K2x6ZUhIMTg2blFqbnpTdTE2?=
- =?utf-8?B?elVDTURoc0g3NjJEdVk1djFCclplMkVCNjVQT1ZNM1VxZDZyNWt1aFR2Vm9S?=
- =?utf-8?B?dllzNExQd2wwVEtBRlFGY3VjdTgxenJSeHdsNzFWdUJ0cmlZcVNuNDdzeDkz?=
- =?utf-8?B?c043SGJHRHRaeU5FcUtZWU9Wbytjb2Fra2NjdkhHTFVLYlArckdVQlRKeGl5?=
- =?utf-8?B?T0dJT0ZBMmJXODVxNW15OFZHK2ZyYTZJTm5LMFo3dndYU29CaHVLQlkxZ2ds?=
- =?utf-8?B?MCs5NlNNa3pqZEcwRVZueFFQME1yUjFnUmp1cjMvKzllWWJRbENsRi9Yc0RE?=
- =?utf-8?B?aHhZQTZCK1M3cFZRN1ZwUElMUi9OSDF4WnZrSlpFR3VHRzQrSklxU2FCU04v?=
- =?utf-8?B?dWxyYVY4dXBZVHlLbytMZjdsUlZZTjhCVkRtUzFScDdOTXU4cFF5ZHhIcE50?=
- =?utf-8?B?OHZ0OEphc2pLSzJTTXc2N0w2enhHdlg2Mm01WEUybzE5SkxrcS9CS3FNVlY4?=
- =?utf-8?B?b0NBTU1yblhFK0lLVzVDbk5MRk95b0NLWEVpeFFVc21tUXp4YTM2WUM0MXhG?=
- =?utf-8?B?NjNXVTY0OG5uNDZKNkJ6ZDg0UDM4UTRKZkgzQTEzZ0xQQTl5aWkyNFVWenE5?=
- =?utf-8?Q?TjumlZcDqE06oxE2D1Ng3W2eUB51A0VVlrpficPsqXtM2?=
-X-MS-Exchange-AntiSpam-MessageData-1: Ncjvi4DnBwN4IQ==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16c4bee4-9e45-49ff-abc8-08df2907282a
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2026 08:51:22.8090
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xqhMGW06hMF1aKqOPjHgeQX83nT9yremw9toTh96kvHWq9UF/f+6pSkOGzSKcjPwWb7UgCVUfpBQxEcts4dNsw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4226
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6b08f53-b5ee-44c8-93d1-54fdf5994ed2@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tuesday, October 13, 2026 5:49=E2=80=AFPM Mikko Perttunen wrote:
-> On Tuesday, August 18, 2026 7:49=E2=80=AFPM Thierry Reding wrote:
-> > On Mon, Aug 17, 2026 at 12:17:27PM -0500, Aaron Kling wrote:
-> > > On Mon, May 11, 2026 at 3:02=E2=80=AFAM Mikko Perttunen <mperttunen@n=
-vidia.com> wrote:
-> > > >
-> > > > On Monday, May 11, 2026 12:05=E2=80=AFPM Aaron Kling wrote:
-> > > > > On Fri, Nov 14, 2025 at 2:17=E2=80=AFPM Aaron Kling <webgeek1234@=
-gmail.com> wrote:
-> > > > > >
-> > > > > > On Fri, Aug 1, 2025 at 4:56=E2=80=AFAM Thierry Reding <thierry.=
-reding@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Thu, Jul 31, 2025 at 04:22:32PM -0500, Aaron Kling wrote:
-> > > > > > > > This was originally discussed on the freedesktop issue trac=
-ker [0],
-> > > > > > > > but there hasn't been a response there in 6 months. So I'm =
-reopening
-> > > > > > > > the discussion here.
-> > > > > > > >
-> > > > > > > > * Nvdec firmware. The driver has been in the kernel for ove=
-r three
-> > > > > > > > years and there's still no available freely licensed firmwa=
-re to use
-> > > > > > > > with it.
-> > > > > > > > * T234 vic firmware. The driver has supported the arch for =
-almost
-> > > > > > > > three years and freely licensed firmware still isn't availa=
-ble.
-> > > > > > > > * Nvjpg firmware. The driver is awaiting final approval, pr=
-obably
-> > > > > > > > worth it to release the firmware with everything else.
-> > > > > > > >
-> > > > > > > > * T194 nouveau firmware. This does not have driver support,=
- but there
-> > > > > > > > has been some interest in working on it. Making the firmwar=
-e
-> > > > > > > > available, even if it isn't merged to linux-firmware, would=
- be one
-> > > > > > > > less blocker for someone that doesn't work at Nvidia to wor=
-k on
-> > > > > > > > support.
-> > > > > > > >
-> > > > > > > > Aaron Kling
-> > > > > > > >
-> > > > > > > > [0] https://gitlab.freedesktop.org/drm/tegra/-/issues/4
-> > > > > > >
-> > > > > > > I will continue to look into this, but it'll not be high prio=
-rity. Too
-> > > > > > > many other things going on.
-> > > > > >
-> > > > > > After some discussion with nouveau developers, it was pointed o=
-ut to
-> > > > > > me that the gsp on ga10b doesn't do much and the setup is more =
-like
-> > > > > > prior tegra gpus. And that it wouldn't make sense to support ga=
-10b on
-> > > > > > nova. So I would like to expand the request for gv11b nouveau f=
-irmware
-> > > > > > to also include ga10b. Perhaps not directly pushed to linux-fir=
-mware
-> > > > > > until they can be verified working, but made available so drive=
-r
-> > > > > > development can happen.
-> > > > >
-> > > > > It has been over eight months since the last response. Nvjpg driv=
-er
-> > > > > support has been merged in the meantime. Has any progress been ma=
-de on
-> > > > > any of the firmware releases?
-> > > > >
-> > > > > Aaron
-> > > >
-> > > > I have the multimedia engine firmware files on my todo-list. I'm
-> > > > planning to send these out after Tegra264 VIC support is ready to s=
-end.
-> > > > Unfortunately there have been some delays in that.
-> > > >
-> > > > Mikko
-> > >=20
-> > > The Tegra264 VIC series has been picked up into -next. Is there any
-> > > update on the firmware release process?
-> >=20
-> > We're still working on it, it's just taking a really long time.
-> >=20
-> > Thierry
->=20
-> Firmware files for VIC, NVDEC, NVENC, NVJPG, OFA, and XUSB for Tegra124=20
-> and later are now in linux-firmware:
->=20
->     https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmwa=
-re.git/commit/?id=3Dbdeb9f0f93f18d10b281217e66e81838527ce55a
->=20
-> Thanks for your patience. I was about to lose mine a few times.
->=20
-> Mikko
->=20
->=20
->=20
+On Tue, Oct 13, 2026 at 09:53:26AM +0200, Jiri Slaby wrote:
+> On 13. 10. 26, 9:33, Andy Shevchenko wrote:
+> > On Tue, Oct 13, 2026 at 08:48:51AM +0200, Jiri Slaby (SUSE) wrote:
 
-I'd like to add that I'm looking at GV11B and GA10B support and=20
-associated firmware as well.
+...
 
-Mikko
+> > > -	rc = serial8250_register_8250_port(&port);
+> > > -	if (rc < 0)
+> > > +	struct uart_8250_port *uport = serial8250_register_8250_port(&port);
+> > > +	if (IS_ERR(uport)) {
+> > > +		rc = PTR_ERR(uport);
+> > >   		goto err_sysfs_remove;
+> > > +	}
+> 
+> > Also do not define
+> > variables in the middle of the code (it's only allowed for auto cleanup
+> > variables and for-loop iterators).
+> 
+> Why, actually?
 
+Because it's the style. Linus also told it many times (I am tired to repeat
+this, I leave it to you to find his words on lore.kernel.org).
+
+> First, it is used in the kernel quite a few times already
+> [1]. Second, while it is sort of c++ism (and I like to use modern c++), it
+> makes the life of the variable a lot more obvious.
+> 
+> [1] eg. see output of: rg -U -C 5 '}\n+\s+struct .*\*.*=' drivers/
+
+(you made me to install something I haven't heard about, it's better to use
+ `git grep` though)
+
+Note excluded __free() if I get regexp correctly
+
+$ rg -U -l '}\n+\s+struct .*\*[^)]*=' drivers/ | less
+drivers/ufs/host/ufs-qcom.c
+drivers/dma/xilinx/xilinx_dma.c
+drivers/dma/idxd/init.c
+drivers/media/platform/raspberrypi/rp1-cfe/csi2.c
+drivers/gpib/agilent_82357a/agilent_82357a.c
+drivers/gpib/ni_usb/ni_usb_gpib.c
+drivers/tty/serial/samsung_tty.c
+drivers/s390/scsi/zfcp_scsi.c
+drivers/gpio/gpiolib-shared.c
+drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
+drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_dmub.c
+drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+drivers/gpu/drm/msm/msm_gem_vma.c
+drivers/gpu/drm/amd/display/dc/clk_mgr/clk_mgr.c
+drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+
+So, less than dozen of drivers doing wrong is not an argument, try something
+better. But thanks, I will check and address this in some of the above.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
