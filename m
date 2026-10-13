@@ -1,104 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CFC352032;
-	Tue, 13 Oct 2026 16:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86DE471407;
+	Tue, 13 Oct 2026 16:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791908484; cv=none; b=gMckaLTFs6oz3dSK3+7gf5acuzTaVboU7myQAHNG8HUdUSUasQ0IWVlugwVrmITHJN9XNdCXugSpEhMJa3I6Z2O7p2a4cKICl8haknJOxaqBlAndiSzAVjLB9gJ6r7hmEKJk00lERJ1PAIdTJ66wkYtbpPaGlWnJMN2d8XsH6vE=
+	t=1791908607; cv=none; b=hIz17dCtPS0mwkW3o6kMw6z8ERPe+9FsUJ/gMkhl61TDxx8n3u8nVH3OVFkj+C8mySprhRV/vy75GfpQnScqKDDeBr1nU1I6MdEPsdplpKa7xMXwPUp/tBsGTuL7CDtvc35+E1cnI0KV7ny6FnOQvbP9x3LLvRia70sP3CAf2mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791908484; c=relaxed/simple;
-	bh=iaLpGPozs+lcxhbWVKUuCuOgErc+jjy6A6ykJAGe/Xw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ltmBQjFvcPna00/KuPsHU23FGcqNFXD1BxXkm+wQWvDigqLTnt8dTja2PFQ6bWx1TTeTtO0WKqLkj2Ws2F5FVs6o/GJ+vN3fIgrV81eY5HMO8JM1zTaKCdD9XFLDh/JaBr0DI5OHWSh//jRdBixUTBev0rV+dnRJJLn7WA9JuwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AkKs3tVO; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791908607; c=relaxed/simple;
+	bh=KjKzlUft5xNV3o/eqcbVESlWEYwfRH38VPCouMzjfIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iWg231IYn5U9y7Qq7Va24KlQ2GnsFuW4sbIUBU/sp2F1Xq7+OQ+lSnsgMXlr9LRdBabdgQeu3k3LtQ+cyLOWjVGuuR+FVEzIRxjmgH8hVq5IrWwLZMJP7k9z/fOBagyKY10MYF3uWCIvy9DoCVlcKFuy1nBUgK23dhxm7FMwO2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=R7FsTosr; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkKs3tVO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E00011F000FF;
-	Tue, 13 Oct 2026 16:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791908483;
-	bh=4/N960r9v7bsfzgPbbFS0xVE+vxTj7/cpdvbyuoLrW0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=AkKs3tVO31Vti006Bt2XmFfdeWGPEjQtyXYAj27w6H8q77mkPNecZmr+MDKakL1YN
-	 +XDPUi9wsGqLTK6SdQ0/WEyqVqlSGD7pgxtDI3U54csF0gZFjHrLQNbH5GX/F57NNS
-	 1KrhD0NvWzFbCe1hFX0Uu/4QwvUpHdYNr7kkXw0QsgUpkp4m/HVomRvH3pXFYLFWyw
-	 kbGPD+9ALAxL4o/fA7VC7v+WjDs9vVXQpW/uNoHU4gNJ+SUrO9GaLwqZiUarpRV+T1
-	 u4LUeXrGyy24VEaLK0oFrZ8jwroSqLH9RukTIZMKg7U3M2HkMv2Lj+38DtcgpkwxBp
-	 GR03rY4ab1XyA==
-Date: Tue, 13 Oct 2026 18:21:21 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: phucduc.bui@gmail.com
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, kwilczynski@kernel.org, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Manikanta Maddireddy <mmaddireddy@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>, 
-	Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] PCI: tegra194: Propagate REFCLK select GPIO errors
-Message-ID: <as5adjyCjltieSWK@orome>
-References: <20261012094815.28160-1-phucduc.bui@gmail.com>
- <20261012094815.28160-2-phucduc.bui@gmail.com>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="R7FsTosr"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D03EB169C;
+	Tue, 13 Oct 2026 09:23:21 -0700 (PDT)
+Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 295413F871;
+	Tue, 13 Oct 2026 09:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1791908605; bh=KjKzlUft5xNV3o/eqcbVESlWEYwfRH38VPCouMzjfIs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R7FsTosr3Xgh6POSYmp6YKYdBHjOI4Eg3ZXseaXZo+5lMCpZk3B5wCT84+LhzPjcG
+	 Z4sArXt+D+iIqYMMqy2k7kM/w+MGjOhsYm47G0CmeOIz7pcrnKDzflot5kGo1nPOFl
+	 RaehSl84mJ5SsiVj/EQ8KwwA5+bi2VSFiM7Tbbwo=
+Message-ID: <4d2a05c3-f7f6-4348-a3b4-c8f3ffa79b6c@arm.com>
+Date: Tue, 13 Oct 2026 17:23:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gmhx34dld5gay6lo"
-Content-Disposition: inline
-In-Reply-To: <20261012094815.28160-2-phucduc.bui@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v6 5/5] iommu/arm-smmu-v3: Wire up shared-SID STE
+ ordering and feature gating
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, Peng Fan <peng.fan@oss.nxp.com>,
+ Will Deacon <will@kernel.org>, "Joerg Roedel (AMD)" <joro@8bytes.org>,
+ Jean-Philippe Brucker <jpb@kernel.org>,
+ Thierry Reding <thierry.reding@kernel.org>, Krishna Reddy
+ <vdumpa@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Peng Fan <peng.fan@nxp.com>
+References: <20261011-smmu-shared-sid-v6-0-cb76b89dc612@nxp.com>
+ <20261011-smmu-shared-sid-v6-5-cb76b89dc612@nxp.com>
+ <aszfVNP6DGzWYdK0@shlinux89> <as1zR1wc7ERxvR1F@nvidia.com>
+ <e8c22eb2-ed1f-47c7-b2ac-c56ead1cba8b@arm.com>
+ <20261013124400.GI14213@ziepe.ca>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20261013124400.GI14213@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 13/10/2026 1:44 pm, Jason Gunthorpe wrote:
+> On Tue, Oct 13, 2026 at 12:22:06PM +0100, Robin Murphy wrote:
+>> If we're not going to support PASID for shared streams (which I suggest we
+>> don't...) than we shouldn't strictly need to worry about CD tables anyway.
+>> So rather than having to special-case CD table sharing for shared streams,
+>> perhaps it might make sense to generalise back to a "default" per-domain CD
+>> for non-PASID use, which can then get switched for the private per-stream
+>> cd_table if and when a device does enable PASID?
+> 
+> If we have stared STEs then the group becomes the per-STE data
+> structure not the master.. We don't have any way right now to do that,
+> but it would make some sense for the group to store the shared CD
 
---gmhx34dld5gay6lo
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] PCI: tegra194: Propagate REFCLK select GPIO errors
-MIME-Version: 1.0
+That would be precisely the aforementioned special case that I'd hope to 
+avoid. My point is that the CD represents the domain context, so we 
+really shouldn't have to have multiple copies of that per-device _or_ 
+per-group, _unless_ it is attached via a PASID, since in that case it 
+does need to be copied into a per-device CD table (since the per-domain 
+CD table was indeed the wrong move in hindsight).
 
-On Mon, Oct 12, 2026 at 04:48:15PM +0700, phucduc.bui@gmail.com wrote:
-> From: bui duc phuc <phucduc.bui@gmail.com>
->=20
-> devm_gpiod_get_optional() returns NULL when the optional GPIO is not
-> present, but may return -EPROBE_DEFER or other errors.
->=20
-> The current code treats GPIO lookup errors as if the GPIO were not
-> present.
->=20
-> Check the return value and propagate errors from the REFCLK select GPIO
-> lookup.
->=20
-> Reviewed-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
-> ---
->=20
-> Changes in v2:
->  - Follow the subject line capitalization style.
->=20
->  drivers/pci/controller/dwc/pcie-tegra194.c | 15 +++------------
+So what I'm saying is that if we're going to make anything share CDs, 
+then ideally we should just make all non-PASID devices always directly 
+share the domain's own CD, then if we just enforce that any devices 
+sharing StreamIDs must be non-PASID devices, it should all work out, we 
+save some memory in the normal case, and never have to be concerned with 
+rewriting any STE with a different S1ContextPtr for the _same_ domain 
+except when enabling or disabling PASID for the (single) device owning 
+that STE.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-
---gmhx34dld5gay6lo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrOWoAACgkQ3SOs138+
-s6GgWBAAv61x3yEIfwh7djws4UsxaJLDwhkBPrKb/KfTHTBHEEZHzmuVmldhuf2a
-HU1/O04A8OLW1yndlh55323rlQfgtz6TfQofeOx+1MWZoDt2O46zTRMuzbqzVPpe
-iIyPXKh7v3ehA9KrlPy1d6q55cDRfnAPbFdaLyByzBJCXAJpuidoHvoVKgOw26mS
-VEvvWVUydh49QZwU9Cd2NngxsDAiWUJzVH/3UIVVW4ct81WUugUzoUYsDf6g4SlD
-XjXEC8pu419Km/KfJrcf72/pw/879efqHOTC2he187gJfBUkYbx8L6WKVgJP3Fgc
-VuaB26V9vVOsvb7Uho6pxh/X7VvLBisJcSiA7bHxVs6DZPONvSvs9DtO8KMjKu3Y
-gvek8V0grPc/xQMExaNKGGIU32kDjJRoO1l6NfSXk4/LeCCkjnPG85uLgp1TFww0
-paZwncrg/5JWLd3uMnsqCvtTKTlaKFpcezGPKNw6wcN3cZIrUITEX/X4j4g9sTXb
-rVxU8+3GnjtFyKBhvUVm6CXEDC/mgnwKJHBgV2KVoB3WI96sOGjddizAfnLHqUhX
-b5YegwCjsAfZBj2DdO6sU7zNf63F3XlY7rtPz6KkFbSc5lWEi+CjHUKqSiuCGyMp
-tBrnnDcXks9My5wQSJ6r0ibKatlmx9ECAhpGmGSAOXhAyU3y0Jg=
-=a+Ne
------END PGP SIGNATURE-----
-
---gmhx34dld5gay6lo--
+Thanks,
+Robin.
