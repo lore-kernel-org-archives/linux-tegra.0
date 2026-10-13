@@ -1,162 +1,134 @@
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614BF51DB1B
-	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 16:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791908842; cv=pass; b=kblQutg0PaLdNSrDlz5f71MfPNPM/MlynR/xoWRKXlAKF2f9wyyN8RnNnYLcMaaK/KztCbPWkYFB+MlY1JQ7pbh6wOMtg4sQIyhJC+Leo0uR3JlM4qmfMC5+GMZC9oW6PC4yFh0xbTUfx2qFc7PDLQrpdlNHKSctSt5XXyQihj4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791908842; c=relaxed/simple;
-	bh=w0IXztAu98K98cCd8kCaVJg3QAtMwDa5REUQqF4U6dg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bw8vGwGGfmBkG4uZPsmt/vDxKWA7E4rM8ZKko6/LRNVU2N/Jl2mr0BFHxabsXSoHBWjP0xBDHy67zg7nG9m5NB1IAoLnA6LmDNvK64BMmJFvNajdb+z0MWcmRhBOhxRgPcAtz0rFL2h6ggfCrYXGHW3lcTSswdIciNfArjKumO4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kAwz60jT; arc=pass smtp.client-ip=74.125.82.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DF3522EF3
+	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 17:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791912185; cv=none; b=LIJc3T0Zj6e324a8IuhzOFmhZLxoGV8KKq3fzskC0/fQiLngUoacze/srgP2AUZyWphTlbfIHDVcDd60v75aF/iPy+4GlLFlPvNgR/WsltUNbu1DBrcPkZdy9kgJqiqibTWpwxj60DvOi8MgyART8MhUHEVB4bq1ozAZlOLGKWQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791912185; c=relaxed/simple;
+	bh=FPhD9ffWsuT6nz+M1b9LWG6gr1ud8CZdaBviPnSmlZ8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=aLrtpaPRt03zFu7p4EzquGGAHnTRk+jNk7wW4/dLk1v0TZoly6TM+6guxol7w8BBYuPI2f0fnSdhZavJgtHij2MEIWKGVLZMl8H8vzItLNR9iCcngFVW/4lBnjf/ceXbgq56Aadm0TtorWU/9nZv3D/Fb6jLnDfXdTnWPYXT5LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=MqU5W01C; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MXSUiBhn; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kAwz60jT"
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-33fb4680717so54311eec.1
-        for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 09:27:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791908839; cv=none;
-        d=google.com; s=arc-20260327;
-        b=T7jaszhKbDQy602jdPuynUZ84eJgLOkTcbS+9zdoLqpv+/h0Iyk+k+dmfYJlGvfZW8
-         J8XUkLRmfAg3ogDJ4HcH8bk7/S4wyIFHsgc2AT8B6kfEmAuUusHbvb2nOTEHP/hno6eP
-         GQmAc/zOWCdtzHRMLB4Z4Gw3kudpBuzjlFzcDTk5MNPxXI/jzgEh+gv+5BU7B2xf6kq/
-         XZFr7aKcXydaA38ML7Qp04zcq52wH3B4YCPT5Sct4+CfMq4I0ID2adHbJfMV9vmpGn3r
-         epPNpNxuFu99CcV6y9Vp9JUttb3YGr5ZO4uPrdCTw5Xf8vRz09ch4w6IPQYesYi41MJs
-         7Cfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=XFVRy1ENi3+Slhs3K96teAausjQ0Dg9HVOBBYOnCZ+4=;
-        fh=nJ7xUN7iPVgpor4ineEkCx1mkQfBDLlUcrcGFeDFcl0=;
-        b=dBayyzfOZ3B62CccolBFmzJ9dit/USQaJQgvzua5BfARGdXGZUeFstpy0GnV1JhPBl
-         z/5WNixQzk6/o4iUtj9f3xhpNjYsq+xLzZii90kikoc+SRM9rwQpU1VDhQEQL0BOpMC7
-         8p0xtGNVvPyP+ZTMzMtXZlTNyNXiYnjQs7CAYRka87yEEqU957PD+1nD9yVOkveoQMHz
-         ASkulDHldEUVSRUybhT2FN38acUioX6S+v+jNojjgfqjoIF0or/SMOpGpuTxYQTg7b1H
-         clZLOviyMvDNV2lm4J8FhOVMFiJXc3O6Yxp0tOQDFamjs0bYJ9rRT36Gp/1s5XOTLydE
-         Co2w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791908839; x=1792513639; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=XFVRy1ENi3+Slhs3K96teAausjQ0Dg9HVOBBYOnCZ+4=;
-        b=kAwz60jTjbXZ1371SUWeIG50qMgcdtsu5vM68Do4i7fJ9AvXrLYXxi9ATctv5C4yfu
-         iKRFsv0E+0bVccekECc7CRwDvTecF/0JE3S2LAHroLpe712G+NNAZKESuMmUoSHLjYfV
-         h8rpk5auJVECMX+ymh3Yp3z9dK+JvPvT0mjjf+i77PwAB5KG7sl53zFvVFwtsZBTYl5e
-         wgES8+x8HofSP+HdUOmGgjJaDgxtqUqjfH9aw0FzADG4EOZUqi4MEAMnoAsMS3enx59F
-         P/52p8VFiL50edSVcTU+xfNQUFwJO8xk+bHdZK4/CouCoF5NTSi6OgwQHLGtmBKVJdII
-         P2LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791908839; x=1792513639;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=XFVRy1ENi3+Slhs3K96teAausjQ0Dg9HVOBBYOnCZ+4=;
-        b=GmEPT0CbIKvYiv9P2XIdMtfcFYluTXfyqnbwRvQkHRlmwdhy0M1WqHDjBKbe2d8QUH
-         S9Ub692js96honbZmDWBsU/C1NQB72VWILMwL6tScUtfGjctMddusvulDXnoCp6ebrqH
-         qrf/xqJMQDKN6MfFd+caZffxIrWFU551UpsnGwihb/AxFIqwP2IWkM79vaJjx2KyqWAK
-         +7FYgnIBg14XetMgEDUxL3jcs0lea16EYv0cFpTxlNvzGAEJsNmK6tG0s8jablYIAHp+
-         vYH+pRf78oQxMSfqpk+rwayF/cwcdUXb0AByERLj2ojDBsyEFuSYDVTzN+GOo+bAxEpC
-         aSyA==
-X-Forwarded-Encrypted: i=1; AKwUvBzGVud4vI2kIlmVo/cPrjpPBCJTsO3+IKc/DrnbAX2x/KJ83JRIA9yiYzLWqxe+luJZAwI9CumB6qSJEQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLpt4WYhYoEOHajL1nXQ4VtO00a1uZY7yVlDRn3nzmemyQt2onU
-	9AY3nwYSBLuODTYm/ktge1esVm9CBB7Y4ZLlCnNLLaVREw+vjRSPi5wVQkGmFEoUxpW3p0AL13B
-	7Y6ma7xLE7/g+70JSLm8H0jrOAF8TXno=
-X-Gm-Gg: AYBFou2L/DK71oAod3ka/XTkMeNU/Mi31t6VSUrg72oDsk4XbRA3IebFYrYKv8iCDwv
-	hGDWdBSVHDYjRQx7l5eZzjNGRyRLQTHTE/mcsd5XBuiQf3jEZv0UqXXhtKYiRkN2wAFAvKUZOi5
-	4Fjs52oJCkana0jx/zcmGR/s2q/ACuQp73xQSguK8AkanKD3BynI6oeeDoUu/A9FWrZc/9bPHoT
-	67G77pZDA7ZHgZWBVCoO02Nx3czEHAzDnAPbdD5cIWDKDZNxtceVXV97obgzZdwScSRGPjEQoyQ
-	tYCE5LifjDCXDa9DhBHAGUqOmL4fhcXEsuTzs6WsB2OhpYtpnlHxetVfam5QJkx5lpPQIdGyPtY
-	gtoJnNs8cPjCiIFxGer83pqc=
-X-Received: by 2002:a05:7300:e002:b0:35d:5a2c:2321 with SMTP id
- 5a478bee46e88-35d5a2c2980mr575512eec.20.1791908839126; Tue, 13 Oct 2026
- 09:27:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="MqU5W01C";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MXSUiBhn"
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailfout.stl.internal (Postfix) with ESMTP id D90931D0004C
+	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 13:23:03 -0400 (EDT)
+Received: from ams-imap-03 ([10.64.2.23])
+  by ams-compute-02.internal (MEProxy); Tue, 13 Oct 2026 13:23:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1791912177;
+	 x=1791998577; bh=hS+qW1UQlVePGqIuKEKUuB6UIO/AI0dB5jkfcB1qbck=; b=
+	MqU5W01CRjiCM9rI8jQDnsnpQOhXvs2twy2N77PTz7GpiFFJ1QYLw2PGcN27rDqV
+	82o+dYLcrfjQc1jGo3NEbcDNL0t7MT0n9qdWKAiax/JhRs/Y/G5T+dMFNUpPDwNH
+	dtGT0dgEo+ZXI5pAu32v2HD+mUeytpjDDAg/HAw3bldSw0xNBNNyV5wIG/Lyr1YD
+	S/vAfH2Yru32MLW7Y14X3Vc0HTSZLUI7n01Kz0HlTNCUn/oR5gW5YA8wvwBQjRKy
+	s6uNKCFWEzmn5rzCm5N2QyIjEbeGq49WOM1QHYT/eG3HSQS0PJlCQuEZCuHDfSUC
+	h00pW1u9gxd5Sx6jcrE89Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791912177; x=
+	1791998577; bh=hS+qW1UQlVePGqIuKEKUuB6UIO/AI0dB5jkfcB1qbck=; b=M
+	XSUiBhnWHuQzwhGDm8nsaYrYVCseWnABH4XdT8pIANkyjhQfTdmrOgeEq2ol9397
+	7p+96ZZfMMZCJZwz2XgCjnlVnIqcQSIDHaz7FnUd0u7Vo1a0kjQg82jv8fAArurG
+	BlLaRrlYfOUkc/dkz5HUkxAVywyZD6WwkVGZ76+A508QI/O7vCctCzvIJCIDkB0T
+	cTvHI5/p6OsQEdcMUItPiDiS4GZ+krFuBr5a3+q/zIok4rdDkQv+P1wclyG4a3dq
+	pOzkoeU3huWZdYXTa5zefnFgTMzt7dDJ/4RG3QLdTyOU8fLrLYWfcPcg+j3gf3/L
+	vGfyQN7yJA313N38MNLZQ==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+	action=sign d=arndb.de a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1791912177; d=arndb.de;
+	mf=PGFybmRAYXJuZGIuZGU+;
+	rt=PGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZz4=;
+	s=fm1:rsa-sha256:OqM7vK8peE8FTMi47IaC8suWiXGTdnfDs1p4eKRxliNKLy4
+	O1BrEdvg0kBHqkaFO/L+u03tAQBFl2aWwKwTeUUzaGWGUnfp77VkDoEU7dI+wzqR
+	XRHQArbFlfN69+YXxf6wZYFOv+UTgKnWqqjhqEiE5RPq2dLlvTjrwF2Jyz5A/0fm
+	k5cc5hrq2Op5Q8aZDFhU1JoXrqyQkKqpIa8zN/zYsq9Py288PoEoFjNgCe9Xjmzr
+	gnclag5hHduCHTNlIRhuZgqOzafamDoQU1RaJnTfbYYy9eylgaTG0ipJo/sEfj7O
+	rxFiUzJEbooFiJ5CY00X74Lnsj0Oa+ZsADclGbA==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:oZom5o/iezk5oczVBlgZAdby/ePS/EmvxfPVKjfndZU=:FPhD9ffWsuT6nz+M1b9LWG6gr1ud8CZdaBviPnSmlZ8=;
+X-ME-Sender: <xms:72jOahNNMSXZR0T7sW8fbo-qtEKIM7TmUjzeTc5XxvJnPkj5vIQ-OA>
+    <xme:72jOauy2T4Q4zFTAgVPRT4U_dyBbL5t90_TEfA76-wCdoGnYk8UuRtTuyl7pf4pkX
+    T5ZhxW9ziFDHQpXl4Lu6Ao2CaqEVcSAqyoujFjyPYibGUKiCN2hmfdn>
+X-ME-Proxy-Cause: dmFkZTER14THpZh+OBkvXnHUH8+jwzP/jo3zDW19YD/663+030AVqUF3ibyrM5gqg6OznS
+    qN36Na38t0R/OlIEUa1di5k5DqlLqaEtO44cdxP3yuyOdDaSCJ++RH+Kw7XC8AGc9vG6xA
+    LNjrjLuolzYXxuJUE3WNZJA9vX3leKG2KAN4SXvtlmeBcCeJd+uDdctMLXlvY5IEFUsX2y
+    MMtdmyTx/gGugSyLgjiftgztjrUykNVUlm48UkS9VLlCbe7H2rQJIkBmay1swYdKKcp9mE
+    HbvGDbdyXT4QJ7i5g4WPqQAhw4j/tTVDnB/h3O4Sq18tnYqG3AQ+hjgn0Wev7JvxQlu5iJ
+    pxKZAUiOtKLb5d9qkyqGj2ayesf6UtmIgIjzHsUxRQrtP4k0T+VMnu5EG9eKTZjy4a8A/1
+    0xydyt8TsnhAl8rQh3QmjTTtGPkoed5JUgLnCXrUp5GKjFPbIY3cgtIjVYYnKuNa4edb3A
+    aoDfxMDPoO05PUDdKiKn2jZ5vxSfW2KooWIE57T8hcRX6uF4ShaB0yd+M1VTIn9AEXKISC
+    Sz/XHJXI93GjqQRCsHmJKaXuL/m0hYp7IkU9e3lDNlsVgyz1qEC8m9H/cVBQ0PX0jDokyy
+    2rOxBW5LMyX0Dye66ilMDQK3r5FZMDGnJ6FI2D8iwrlBS1NGV2LqCmeLOfQw
+X-ME-Proxy: <xmx:8GjOapP-1Hf3BV8okHkUe5NwRlpw5nlEIv1VbVCsEHLdPIv6dwv8pQ>
+    <xmx:8GjOaohduAN1nM9tuoxNBsOVdLXMOsd6PSnR2m7B_Ke_knC5VaiXMg>
+    <xmx:8GjOass7jtZQ1FUz6RSW3140Jmo0VyrzLmOueOMHJa51_V8eWJS6uQ>
+    <xmx:8GjOasjY4H37UaxeUMh8qy3i_zuYHmnN6jlT-AGGTrxKinaw8P8jXw>
+    <xmx:8WjOakJ7TJazOR1kQ_WHgD8rqsHy77Xo9zQPz1LPKR7OgMowAU3gE_tR>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id 042BB32A008E; Tue, 13 Oct 2026 13:22:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261004154456.145362-1-clamor95@gmail.com> <CAPVz0n1HOWAXMwfeCBV76Z+N+6mgynXW5GeMebnqYQubNDqpOw@mail.gmail.com>
- <CAPVz0n2SmOY3Cw2HpnpYd8eFXw7B=2mjP6LMhKCu5niN=KnOQg@mail.gmail.com> <as5XpdpNm4cRGNcj@orome>
-In-Reply-To: <as5XpdpNm4cRGNcj@orome>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 13 Oct 2026 19:27:07 +0300
-X-Gm-Features: AclHuK_-dlj4_NR-HXsrfbWG6hEOQBskE9gcB79-TNecmzBROYTdvzz-we1jX0Q
-Message-ID: <CAPVz0n3ki1MdkUnK=znzt=uSrwRMbyXfdvGzNrxuB7_mCK9F8w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] ARM: tegra: lg-x3: Add newly supported devices and fixes
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ion Agorria <ion@agorria.com>, 
-	Jon Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: Ar0hN4MWufik
+Date: Tue, 13 Oct 2026 19:22:23 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thierry Reding" <thierry.reding@kernel.org>, arm <arm@kernel.org>,
+ soc@kernel.org
+Cc: "Jon Hunter" <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>,
+ linux-acpi@vger.kernel.org
+Message-Id: <928b3eaf-32da-43a9-9ca5-d59ef8a3b330@app.fastmail.com>
+In-Reply-To: <20261003095924.1370238-4-thierry.reding@kernel.org>
+References: <20261003095924.1370238-1-thierry.reding@kernel.org>
+ <20261003095924.1370238-4-thierry.reding@kernel.org>
+Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-=D0=B2=D1=82, 13 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 19:1=
-6 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+On Sat, Oct 3, 2026, at 11:59, Thierry Reding wrote:
+> ----------------------------------------------------------------
+> firmware/tegra: Changes for v7.4-rc1
 >
-> On Mon, Oct 12, 2026 at 01:56:48PM +0300, Svyatoslav Ryhel wrote:
-> > =D0=BF=D0=BD, 12 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE =
-13:55 Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > =D0=BD=D0=B4, 4 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE=
- 18:45 Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > >
-> > > > Add nodes for recently supported device (ALS, LED controllers, hapt=
-ics)
-> > > > along with minor tweaks and fixups.
-> > > >
-> > > > ---
-> > > > Changes in v2:
-> > > > - added USB configuration update commit
-> > > > - added p895 power LED trigger update commit
-> > > > ---
-> > > >
-> > > > Svyatoslav Ryhel (9):
-> > > >   ARM: tegra: lg-x3: Adjust WiFi node
-> > > >   ARM: tegra: lg-x3: Remove pinctrl-* properties duplication
-> > > >   ARM: tegra: lg-x3: Lower supported suspend mode
-> > > >   ARM: tegra: lg-x3: Add light sensor node
-> > > >   ARM: tegra: lg-x3: Add flash LEDs controller node
-> > > >   ARM: tegra: lg-x3: Add haptic engine node
-> > > >   ARM: tegra: lg-x3: Add backlight LED controller node
-> > > >   ARM: tegra: lg-x3: Update USB configuration
-> > > >   ARM: tegra: p895: Update power LED trigger
-> > > >
-> > > >  arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts |   5 +-
-> > > >  arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts |   7 +-
-> > > >  arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi  | 125 +++++++++++++++=
-+++-
-> > > >  3 files changed, 127 insertions(+), 10 deletions(-)
-> > > >
-> > > > --
-> > > > 2.53.0
-> > > >
-> > >
-> > > Hello Thierry!
-> > > May you please pick this patch set if you are ok with it?
-> > > Thank you!
-> >
-> > Oh, you already did. Apologies!
+> The bulk of this adds ACPI support to BPMP as well as a mechanism to
+> throttle bandwidth for various high speed interconnects. Some smaller
+> cleanup and typofixes are also included.
 >
-> I picked up version 1. This v2 came in too late. Pull requests go out
-> before -rc6, which in this case was v7.3-rc6, released on October 4.
->
-> Looks like only the last two patches were added in v2, with no other
-> changes to the other patches, so I can pick up the last two after the
-> merge window closes. If you don't hear from me after the first week
-> after v7.4-rc1, you may want to resend the last two patches again.
->
+> ----------------------------------------------------------------
+> Aniruddha Rao (6):
+>       firmware: tegra: bpmp: Move channel initialization to helper
+>       firmware: tegra: bpmp: Add ACPI support
 
-That is correct, v2 has only those 2 patches added. If you don't mind,
-I will include those 2 patches in a different patch set, you don't
-have to worry about them in this patch sequence.
+[adding ACPI maintainers to Cc]
 
-> Thierry
+I'd like some clarification about the process here, as I see that the
+ACPI support patch ee98ea41ee3f ("firmware: tegra: bpmp: Add ACPI support")
+only has a signoff from both of you and no other review tag.
+
+Where is the ACPI binding documentation for this driver, and who is
+responsible for reviewing it?
+
+      Arnd
