@@ -1,180 +1,314 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E287B51589C;
-	Wed, 14 Oct 2026 14:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D96F3515C8;
+	Wed, 14 Oct 2026 15:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791988852; cv=none; b=p/mqhU6DCcBjrxv5iHnW34vqOoAaCYFgYuOQmHXTsDyUSB52oF7J3LVDMQqgjxYKHkM5ZxvQQvdqS9Uhv/JkR6HV91nYDxQnVSSEvAarBPhoWZLbAGBJC9dErbNyg933Wf+1Pgov7VSbIjGIS2fcXCIc8I83vXNdNiYOJ5bl6Xs=
+	t=1791992328; cv=none; b=A2toFw2432mBQJm26Stx4f5XwcKILk+AOYdv2WYaw/578q/j+nWjj7QKSI2/twlkqLyR+mr6x6dVbBKLG9z+GvcO2/gH1gHHfNwE7miSf3+vnuKNUOgEBAsEoI7vfaZbH2f31siO2NdWVQDjzpA4GepX+dPlNT+Cbdbi9Oqh6CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791988852; c=relaxed/simple;
-	bh=b0twN2SIOpKMdB7PTsiPZsIPhoL+xHL1EsRTRcYBBtg=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=LhpVF11XTsmP+9VUAuEslVlhNCiFdEQ9ry9pdIhNLNwFL/ajl2jrCa8YKkrcBhf3u4/eNxVyOjrM2gvPB/7daAc0Hq1p1X6ITkZtLycicjFRFyJUaQzsIAWdXwmVeIMZyxzSjWYwd8TwkmFoD9FppTxu5PA1b8MSe0eA5+PQe+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C0021F000C5;
-	Wed, 14 Oct 2026 14:40:44 +0000 (UTC)
+	s=arc-20240116; t=1791992328; c=relaxed/simple;
+	bh=Oiqufe2I/A241rB3raCMpXyOoJ8QvyAZHk4EbPCq3aM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=II9m9jpkXS2E52W1nAFOoxKEcXV4A5hVelnCsMwH0NSuF58Wn+AB9EBkHFzzEDIROAHAX6OIdNQgmtrK79I38Fcq0y6T7scEv0+fppHreHcje7Y/eXx8qlPac7ps3YPpleZWoL6Rw/PLUzEpTI1sFCeEkALmth4M2Odo17xlwrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=YFOtl9Zf; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="YFOtl9Zf"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BEC91570;
+	Wed, 14 Oct 2026 08:38:42 -0700 (PDT)
+Received: from [10.33.8.90] (e142021.arm.com [10.33.8.90])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 556913F7B4;
+	Wed, 14 Oct 2026 08:38:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1791992325; bh=Oiqufe2I/A241rB3raCMpXyOoJ8QvyAZHk4EbPCq3aM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YFOtl9Zf+7JSSJkrbK/vmteEdKGYxzDK5DfYraK93ZnOcF3HUPoIigdjVnTneEg4e
+	 mbj2DCykTRzevF6/Shr5vNnqcrnRJ3cMP6ekus/DYC8T1Y04ei5VY44Io1+uigOu3X
+	 d5kWopS0zjWEYx9SFJl8PkH9Bj6e0E9ohar36y6g=
+Message-ID: <23e9b66f-083a-4a77-8214-25f30c08057a@arm.com>
+Date: Wed, 14 Oct 2026 16:38:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] cache: add SMCCC-backed cache invalidate provider
+To: Srirangan Madhavan <smadhavan@nvidia.com>, mark.rutland@arm.com,
+ lpieralisi@kernel.org, sudeep.holla@kernel.org, conor@kernel.org,
+ jic23@kernel.org
+Cc: catalin.marinas@arm.com, will@kernel.org, aneesh.kumar@kernel.org,
+ Souvik.Chakravarty@arm.com, treding@nvidia.com, jonathanh@nvidia.com,
+ bence.csokas@arm.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20261013070205.3566865-1-smadhavan@nvidia.com>
+ <20261013070205.3566865-3-smadhavan@nvidia.com>
+Content-Language: en-GB
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <20261013070205.3566865-3-smadhavan@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 11/11] PCI: endpoint: test: Do not relocate fixed MSI-X
- tables
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>, 
- Koichiro Den <den@valinux.co.jp>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Krzysztof Wilczynski <kwilczynski@kernel.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
- Rob Herring <robh@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
- Vidya Sagar <vidyas@nvidia.com>, 
- Marco Crivellari <marco.crivellari@suse.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <arPjAeYzVbe5_qo8@ryzen>
-References: <20260923072237.1139013-1-mmaddireddy@nvidia.com>
- <20260923072237.1139013-12-mmaddireddy@nvidia.com>
- <arPjAeYzVbe5_qo8@ryzen>
-Date: Wed, 14 Oct 2026 20:10:32 +0530
-Message-Id: <179198883276.63727.4456977474157450415.b4-reply@b4>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4947;
- i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
- bh=b0twN2SIOpKMdB7PTsiPZsIPhoL+xHL1EsRTRcYBBtg=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBqz5RjAg8poMtbeaH0vJCMnLKb27Vmmd+O/4uL4
- xJ+oytygLWJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCas+UYwAKCRBVnxHm/pHO
- 9V71B/49NAqThU39U/9AA9irEPsKkNuzOVZNn/nFlme5BsMIRI7/mEty0cXNxLj/xTgMqasa0bd
- BVFQH0EhlRn+fZZNvNQ2Avgco9dk7q/Gc1e2stqK0KrbFiDl3bmk9tHRoQePFdEX64hGOEQeTck
- ZQFbFsh7Z1ahRgPyo/bXnFwxNYrSy5rY76GchSwRwYLux/V/rLqrSoN2aXtJ1odkzkGXcq0W2YW
- lvDiKGGrpoFQl6cbbpSl7cFxg0smjPKfhMkOXo+bNnsdrjv8TqYrBPpU480g6E9IjaYjRPKJYr5
- aZ0eywwpYBYxwHUwsQhiUVvWSBlapzSD4DQe6twC8xPSQO94
-X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On 2026-09-23 16:32 +0200, Niklas Cassel wrote:
-> On Wed, Sep 23, 2026 at 12:52:37PM +0530, Manikanta Maddireddy wrote:
-> > Some endpoint controllers expose MSI-X table/PBA storage at fixed,
-> > hardware-owned BARs. Such BARs are described to endpoint functions as
-> > BAR_RESERVED with PCI_EPC_BAR_RSVD_MSIX_TBL_RAM, so the function driver
-> > must not reprogram the MSI-X Table/PBA capability to point into ordinary
-> > function BAR memory.
-> > 
-> > pci_epf_test always allocates MSI-X storage after its test registers and
-> > calls pci_epc_set_msix(). On controllers with fixed MSI-X storage, this
-> > overwrites the controller-defined MSI-X layout. For example, the generic
-> > DesignWare path derives the PBA offset from the number of vectors, which
-> > can make the host program the wrong MSI-X storage and prevent MSI-X
-> > delivery.
-> > 
-> > Detect fixed MSI-X table BARs and leave the controller-owned MSI-X
-> > capability layout unchanged. Keep allocating and programming MSI-X
-> > storage in the test BAR only for controllers that do not advertise fixed
-> > MSI-X table storage.
-> > 
-> > Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> > ---
-> >  drivers/pci/endpoint/functions/pci-epf-test.c | 27 +++++++++++++++++--
-> >  1 file changed, 25 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > index d4905aa8e4c0..82d4714e998c 100644
-> > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > @@ -83,6 +83,7 @@ struct pci_epf_test {
-> >  	struct config_group	group;
-> >  	enum pci_barno		test_reg_bar;
-> >  	size_t			msix_table_offset;
-> > +	bool			msix_table_fixed;
-> >  	struct delayed_work	cmd_handler;
-> >  	struct dma_chan		*dma_chan_tx;
-> >  	struct dma_chan		*dma_chan_rx;
-> > @@ -98,6 +99,26 @@ struct pci_epf_test {
-> >  	size_t			bar_size[PCI_STD_NUM_BARS];
-> >  };
-> >  
-> > +static bool pci_epf_test_msix_table_fixed(const struct pci_epc_features *features)
-> > +{
-> > +	enum pci_barno bar;
-> > +	int i;
-> > +
-> > +	for (bar = BAR_0; bar < PCI_STD_NUM_BARS; bar++) {
-> > +		const struct pci_epc_bar_desc *desc = &features->bar[bar];
-> > +
-> > +		if (desc->type != BAR_RESERVED)
-> > +			continue;
-> > +
-> > +		for (i = 0; i < desc->nr_rsvd_regions; i++) {
-> > +			if (desc->rsvd_regions[i].type == PCI_EPC_BAR_RSVD_MSIX_TBL_RAM)
-> > +				return true;
-> > +		}
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> >  struct pci_epf_test_reg {
-> >  	__le32 magic;
-> >  	__le32 command;
-> > @@ -1214,7 +1235,7 @@ static int pci_epf_test_epc_init(struct pci_epf *epf)
-> >  		}
-> >  	}
-> >  
-> > -	if (epc_features->msix_capable) {
-> > +	if (epc_features->msix_capable && !epf_test->msix_table_fixed) {
-> >  		ret = pci_epc_set_msix(epc, epf->func_no, epf->vfunc_no,
-> >  				       epf->msix_interrupts,
-> >  				       epf_test->test_reg_bar,
-> > @@ -1282,7 +1303,9 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
-> >  
-> >  	test_reg_bar_size = ALIGN(sizeof(struct pci_epf_test_reg), 128);
-> >  
-> > -	if (epc_features->msix_capable) {
-> > +	epf_test->msix_table_fixed = pci_epf_test_msix_table_fixed(epc_features);
-> > +
-> > +	if (epc_features->msix_capable && !epf_test->msix_table_fixed) {
-> >  		msix_table_size = PCI_MSIX_ENTRY_SIZE * epf->msix_interrupts;
-> >  		epf_test->msix_table_offset = test_reg_bar_size;
-> >  		/* Align to QWORD or 8 Bytes */
-> 
-> Here you are only updating pci-epf-test. What about the other EPF drivers?
-> 
+Hi,
 
-How can we test those other EPF drivers if there is no hw setup available? TBH,
-we don't need to add all functionalities to all EPF drivers. Adding them to
-pci-epf-test driver is enough. If other EPF driver maintainers want to add the
-missing features, then they can add them after testing on relevant hw setup.
+thanks for adapting this to the SMCCC bus, that part looks good. Some 
+minor things:
 
+On 10/13/26 09:02, Srirangan Madhavan wrote:
+> Add a cache maintenance provider for the cache clean+invalidate interface
+> defined by Arm DEN0028 v1.7.
 > 
-> Also, if you run then pci_endpoint kselftest, with the default 2048 MSI-X
-> interrupts. Are really all 2048 MSI-X successful?
+> Register the interface attributes function as an SMCCC device and bind the
+> provider through the SMCCC bus. The provider reads the firmware attributes
+> during probe and serializes cache maintenance calls. It handles transient
+> BUSY and RATE_LIMITED responses with bounded retries. It also registers
+> with the generic cache coherency framework used by memregion callers.
 > 
-> It seems that often the "hardware owned" MSI-X table is much smaller than
-> that. See e.g. Koichiro's series which tries to use "hardware owned" MSI-X
-> table, but if the "hardware owned" MSI-X table is too small to hold all
-> 2048 MSI-X IRQs, then "hardware owned" MSI-X table would not be used:
+> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+> ---
+>   drivers/cache/Kconfig           |  11 +++
+>   drivers/cache/Makefile          |   2 +
+>   drivers/cache/arm_smccc_cache.c | 161 ++++++++++++++++++++++++++++++++
+>   drivers/firmware/smccc/smccc.c  |   5 +
+>   4 files changed, 179 insertions(+)
+>   create mode 100644 drivers/cache/arm_smccc_cache.c
 > 
-> https://lore.kernel.org/linux-pci/20260830151948.3547577-2-den@valinux.co.jp/
-> 
-> +	if (layout->table_size < table_size || layout->pba_size < pba_size)
-> +		return -ENOSPC;
-> 
-> 
-> 
-> Apparently NTB EPF needs to read the MSI-X table from RAM:
-> https://lore.kernel.org/linux-pci/pj5vpwwd5tr5tuvhdq3bcpefnq27r6ljvwoysguz2o4tglcqx5@l7zmb6wjnhla/
-> 
-> Which is why he also decided to let an EPF driver choose if it should
-> use "hardware owned" MSI-X table or not.
-> 
+> diff --git a/drivers/cache/Kconfig b/drivers/cache/Kconfig
+> index 1518449d47b5..57fd1823dec5 100644
+> --- a/drivers/cache/Kconfig
+> +++ b/drivers/cache/Kconfig
+> @@ -42,6 +42,17 @@ menuconfig CACHEMAINT_FOR_HOTPLUG
+>   
+>   if CACHEMAINT_FOR_HOTPLUG
+>   
+> +config ARM_SMCCC_CACHE
+> +	bool "Arm SMCCC cache maintenance provider"
+> +	depends on ARM64 && HAVE_ARM_SMCCC_DISCOVERY
+> +	help
+> +	  Enable support for the Arm SMCCC cache clean+invalidate
+> +	  interface as a provider for memory hotplug-like cache
+> +	  maintenance operations.
+> +	  The provider registers only when firmware advertises the
+> +	  SMCCC calls and attributes, so systems without firmware support
+> +	  continue without this registered provider.
+> +
+>   config HISI_SOC_HHA
+>   	tristate "HiSilicon Hydra Home Agent (HHA) device driver"
+>   	depends on (ARM64 && ACPI) || COMPILE_TEST
+> diff --git a/drivers/cache/Makefile b/drivers/cache/Makefile
+> index b3362b15d6c1..55736a032d6f 100644
+> --- a/drivers/cache/Makefile
+> +++ b/drivers/cache/Makefile
+> @@ -4,4 +4,6 @@ obj-$(CONFIG_AX45MP_L2_CACHE)		+= ax45mp_cache.o
+>   obj-$(CONFIG_SIFIVE_CCACHE)		+= sifive_ccache.o
+>   obj-$(CONFIG_STARFIVE_STARLINK_CACHE)	+= starfive_starlink_cache.o
+>   
+> +# Providers below depend on CACHEMAINT_FOR_HOTPLUG.
+> +obj-$(CONFIG_ARM_SMCCC_CACHE)		+= arm_smccc_cache.o
+>   obj-$(CONFIG_HISI_SOC_HHA)		+= hisi_soc_hha.o
+> diff --git a/drivers/cache/arm_smccc_cache.c b/drivers/cache/arm_smccc_cache.c
+> new file mode 100644
+> index 000000000000..aca71113eb1c
+> --- /dev/null
+> +++ b/drivers/cache/arm_smccc_cache.c
+> @@ -0,0 +1,161 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2026 NVIDIA Corporation
+> + *
+> + * Arm SMCCC cache maintenance provider using the cache clean+invalidate
+> + * interface defined by Arm DEN0028 v1.7.
+> + */
+> +
+> +#include <linux/arm-smccc.h>
+> +#include <linux/arm-smccc-bus.h>
+> +#include <linux/cache_coherency.h>
+> +#include <linux/cleanup.h>
+> +#include <linux/container_of.h>
+> +#include <linux/delay.h>
+> +#include <linux/errno.h>
+> +#include <linux/math.h>
+> +#include <linux/minmax.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/nmi.h>
+> +#include <linux/time64.h>
+> +#include <linux/types.h>
+> +#include <linux/wordpart.h>
+> +
+> +#define SMCCC_CACHE_MAX_RETRIES		5
+> +#define SMCCC_CACHE_DEFAULT_DELAY_US	1000UL
+> +#define SMCCC_CACHE_MAX_DELAY_US	20000UL
+> +
+> +struct smccc_cache {
+> +	/* Must be first member */
+> +	struct cache_coherency_ops_inst cci;
+> +	struct mutex lock; /* Serializes SMCCC cache maintenance calls. */
+> +	u64 rate_limit;
+> +	u32 latency_us;
+> +};
+> +
+> +static int smccc_cache_status_to_errno(s32 status)
+> +{
+> +	switch (status) {
+> +	case SMCCC_RET_SUCCESS:
+> +		return 0;
+> +	case SMCCC_RET_NOT_SUPPORTED:
+> +		return -EOPNOTSUPP;
+> +	case SMCCC_RET_INVALID_PARAMETER:
+> +		return -EINVAL;
+> +	case SMCCC_RET_RATE_LIMITED:
+> +		return -EAGAIN;
+> +	case SMCCC_RET_BUSY:
+> +		return -EBUSY;
+> +	default:
+> +		return -EIO;
+> +	}
+> +}
+> +
+> +static unsigned long smccc_cache_delay_us(const struct smccc_cache *cache)
+> +{
+> +	unsigned long delay_us = 0;
+> +
+> +	if (cache->rate_limit)
+> +		delay_us = DIV_ROUND_UP_ULL(USEC_PER_SEC, cache->rate_limit);
+> +
+> +	if (cache->latency_us)
+> +		delay_us = max(delay_us, (unsigned long)cache->latency_us);
 
-Yeah, makes sense. Otherwise, we will see kselftests failures.
+If I understand the spec correctly, then the provided latency value 
+reports the time it takes to execute the call. So this might be used to 
+decide if we can tolerate the blackout time, but I don't think we make 
+this decision in the kernel, or have the interface to do so.
+So I don't think we need to parse this value, or use it for calculating 
+the back-off time, and you can just remove this part.
 
-- Mani
+> +
+> +	/*
+> +	 * Firmware may advertise neither a rate limit nor a latency hint; use
+> +	 * a small bounded backoff instead of retrying in a tight loop.
+> +	 */
+> +	if (!delay_us)
+> +		delay_us = SMCCC_CACHE_DEFAULT_DELAY_US;
+> +
+> +	return min(delay_us, SMCCC_CACHE_MAX_DELAY_US);
+> +}
+> +
+> +static int smccc_cache_wbinv(struct cache_coherency_ops_inst *cci,
+> +			     struct cc_inval_params *invp)
+> +{
+> +	struct smccc_cache *cache = container_of(cci, struct smccc_cache, cci);
+> +	unsigned long delay_us = smccc_cache_delay_us(cache);
+> +	struct arm_smccc_res res = {};
+> +	int ret;
+> +
+> +	if (!invp->size)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * Serialize the full retry sequence. With the default bounds, a caller
+> +	 * may hold the mutex across up to five 20ms backoff sleeps.
+> +	 */
+> +	guard(mutex)(&cache->lock);
+> +
+> +	for (unsigned int i = 0; i < SMCCC_CACHE_MAX_RETRIES; i++) {
+> +		/* Long firmware operations can trigger watchdog checks. */
+> +		touch_nmi_watchdog();
+> +
+> +		arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION,
+> +				     invp->addr, invp->size, 0UL, &res);
+> +
+> +		ret = smccc_cache_status_to_errno((s32)res.a0);
+> +		if (!ret)
+> +			return 0;
+> +
+> +		if (ret != -EBUSY && ret != -EAGAIN)
+> +			return ret;
+> +
+> +		fsleep(delay_us);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct cache_coherency_ops smccc_cache_ops = {
+> +	.wbinv = smccc_cache_wbinv,
+> +};
+> +
+> +static int smccc_cache_probe(struct arm_smccc_device *sdev)
+> +{
+> +	struct arm_smccc_res res = {};
+> +	struct smccc_cache *cache;
+> +	int ret;
+> +
+> +	arm_smccc_1_1_invoke(sdev->func_id, &res);
+
+I think you should provide the explicit function ID name here, and not 
+rely on which function exactly is used to probe for the interface's 
+existence.
+
+> +	if ((s32)res.a0)
+> +		return -ENODEV;
+> +
+> +	cache = cache_coherency_ops_instance_alloc(&smccc_cache_ops,
+> +						   struct smccc_cache, cci);
+> +	if (!cache)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&cache->lock);
+> +	cache->latency_us = lower_32_bits(res.a2);
+> +	cache->rate_limit = res.a3;
+
+According to the spec you would need lower_32_bits() for a3 as well - if 
+we are going to use this value. But I don't think we need to, see above.
+
+Cheers,
+Andre
+
+> +
+> +	ret = cache_coherency_ops_instance_register(&cache->cci);
+> +	if (ret) {
+> +		mutex_destroy(&cache->lock);
+> +		cache_coherency_ops_instance_put(&cache->cci);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct arm_smccc_device_id smccc_cache_id_table[] = {
+> +	{ .func_id = ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION_ATTRIBUTES },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(arm_smccc, smccc_cache_id_table);
+> +
+> +static struct arm_smccc_driver smccc_cache_driver = {
+> +	.name = KBUILD_MODNAME,
+> +	.probe = smccc_cache_probe,
+> +	.id_table = smccc_cache_id_table,
+> +};
+> +module_arm_smccc_driver(smccc_cache_driver);
+> +
+> +MODULE_IMPORT_NS("CACHE_COHERENCY");
+> +MODULE_AUTHOR("Srirangan Madhavan");
+> +MODULE_DESCRIPTION("Arm SMCCC cache maintenance provider");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/firmware/smccc/smccc.c b/drivers/firmware/smccc/smccc.c
+> index 5dc768ac4143..5a5d50d17410 100644
+> --- a/drivers/firmware/smccc/smccc.c
+> +++ b/drivers/firmware/smccc/smccc.c
+> @@ -100,6 +100,11 @@ static const struct smccc_device_info smccc_devices[] __initconst = {
+>   		.requires_smc   = true,
+>   		.device_name    = "arm-rsi",
+>   	},
+> +	{
+> +		.func_id        = ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION_ATTRIBUTES,
+> +		.requires_smc   = false,
+> +		.device_name    = "arm-smccc-cache",
+> +	},
+>   };
+>   
+>   static bool __init smccc_probe_smccc_device(const struct smccc_device_info *smccc_dev)
 
