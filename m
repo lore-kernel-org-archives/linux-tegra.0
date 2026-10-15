@@ -1,203 +1,165 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011054.outbound.protection.outlook.com [40.107.130.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E0E499F06;
-	Thu, 15 Oct 2026 07:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.54
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792050309; cv=fail; b=jWStHFXk2lYOzwrZvILbnHbdyALxEHU0wg+bSb8W/yCYqCzjIhHKQju53x8oM8DkkQxnBsFw2GBXXq9VaBQhoxUxyWF3LiQNtw5jBtP9ywEJMBHThaUnIY8bGo6CGL+9o5E7zlwcvNBNMRRjvqK28kVVnmc1/9joe2pW5c8jmJE=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792050309; c=relaxed/simple;
-	bh=cDbDwICgWMUga1LrHYdpjq4nsnbFmnJdk9YQaSxHB24=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=n9NeffPCYahSpUrNIejAkABUvEJBv1OkiV46qssV1+YUKXPHNK+K3LqPaH0nR6OONPZAy3dXu9m72D7Kum+Pb6t1aMZDvpl269Mw0Atr3Nq7iWZ2zPrDyL3D5Aj5Y/GIovoBwpKTKzPhoTP3lJOkNgwkLViFGvTLGL7Xw82mGos=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=F9F5TJZw; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=F9F5TJZw; arc=fail smtp.client-ip=40.107.130.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251734E06CB
+	for <linux-tegra@vger.kernel.org>; Thu, 15 Oct 2026 08:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792054441; cv=none; b=jMZkZzCfMwH6PNdKdzr22wX7QR/TTX1Nch8w4Q6Gn7DM8vhqSpBf8F9v/nRl7jaIjxcfeWotwdUDt/+xzab5LQpYJPSGCBEoK2CHg848mmVAir6AWvPhNi3VmO7pfjrpuF8Zc1QigRHmXRjRT1+sbyz2SqS/qdrH0Nn/G3mgucw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792054441; c=relaxed/simple;
+	bh=b96pYTcMW63e49quyJO5xjiSMV8TZP92gd9i71el7b0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EmM91iJBQuWj1H2cNTKTMf9GlPlKUqfpBqz01IYb0B+0LsYiXkFlGhJqbuszoZZZ56hws4VEl68I3/oRgwn61WyxNotuRqoyqlV21+Xx6Y+wzqM1N5QBBvxX6Q0L+x8nzIP+bW1trzc6ZvqT6QTf1onv36KtiWy3aVXwzPj3MJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=f9wZCKCZ; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="F9F5TJZw";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="F9F5TJZw"
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=A8E3aQFyHrfTsfaYdkTgT7OAJG5raXByXyN1nF7MbkLDTrE1lRdK10sUReCCpl6ChkjqLnjhR5nFCDTa8f1jaU3oCP8fida2Lr7+qGBH+A62DVr9TWKWUPCNV/HNVwt4TMOhqQUtMFIcsiqXq6CCr7zAW4NMMHBNgJPEuWTkfj+oD4ocYqJ4Wgi0c+tI0nTwOxRhxhaJGiSkHfza89jWOUf3/ppIO8ybZ2TiOzGerU89HAIqITsDBeO35mACiT7QGIMmWyULl3lhmASGg0iHq4bSxrzLQ6aHDXJNt1+sY1BuPpmI/TCWdtnm8QyjttMkBx71BBPZZ7juc656R6KNMg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g8DBi2BFsMNQDEz+bZomEKr7eQA3crxmgei98Zzcz6w=;
- b=cp0rphZiT2OK2GL+EggpVmPu6OsVnXQgQcCAVh0GtKh+AHPqoBThFdSamKH55OP9EF2nbTBbgChoIu5Q+Uov93Hy+w89DO9okjF5n75bqUdjnYppWwRoYs/mc22b9Ob7lAfU1tz5yMl53nnfmTqkFd3LC4YcDxqX9zatYjXu++GQu8cfDbp8iLDMxzcKcpdhonX/o7UnQSpMxjZ3gnzF8QONQr0xFBJtmHF7MJ0gN783LdH4PPSaQ78SxP6XMlaN3K6Rz5ahpLF/T9i1byR3M+YJW59seIBv6Ft3IyRFtzWUzPrHLBfFpAAFRJZGsVOuNclWYri6atWNMBagViBQjg==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=nvidia.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g8DBi2BFsMNQDEz+bZomEKr7eQA3crxmgei98Zzcz6w=;
- b=F9F5TJZwvPD2PawB0SyWuIlmSqtGoGqqMk1COPusw8IknImCGBrJiBUtMihzaDQ+uXoMmOFrm6Gfn09xCKtOCecjoFAfmwpir0giNvfDHVqJPzSDPSLL8feSARph2gRxTpfFxZc1zF8ZYgx9RfysLwp5IuPQI4m9gAT6Je4z3q4=
-Received: from FR0P281CA0216.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:ac::20)
- by PAWPR08MB9759.eurprd08.prod.outlook.com (2603:10a6:102:2ee::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.7; Thu, 15 Oct
- 2026 07:44:47 +0000
-Received: from ZR1PEPF0000E464.eurprd04.prod.outlook.com
- (2603:10a6:d10:ac:cafe::a5) by FR0P281CA0216.outlook.office365.com
- (2603:10a6:d10:ac::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.4 via Frontend Transport; Thu, 15
- Oct 2026 07:44:47 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 4.158.2.129) smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- ZR1PEPF0000E464.mail.protection.outlook.com (10.167.241.57) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.522.6
- via Frontend Transport; Thu, 15 Oct 2026 07:44:46 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BMB870rvj7GUjagYzR2hv6cKmsIWu3SV/5r6leDXBHBwh8LS5aZFjuo9YXGfbCXkk9V99BokiA43qDMeIIxjayXdeScS7x9zp3xMzdUycHMzJ2s8H1XtVaLdSOJV71iLB5xk9euCx/0OHYDiv5sNC/ZugbthxQosd4AaSPcRXZdBbNi/G01MyMJaG0JbkDgWV/O/rjLRelzmKH2Mbu5IfhNI2yMuE0H3aY+wXYF1haCEYdyYwT9Szvv1vs3OSbVXrFHTbg+eJd5Z10qHFzyQ+qzQugx6ezvw28TMtPPWSeKCTxaJJmV4cyZ+1yfCXWur726EmQ8p+VLHIT9ue/ayfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g8DBi2BFsMNQDEz+bZomEKr7eQA3crxmgei98Zzcz6w=;
- b=f/n+Nw+z5xrAOKL9d53/o0jSYoy+R2OsRWARwAeLSW7NfESV4nYe+x8G+FKHv1EBDcEOAoX5R6zFNV1hvpJ+vwzN2rA72LYV0lLmOx+lyYChS9ov3iP4cFAS3vtFAPq15fti3FYIil1wX2fkBe6HJbl2UyZ0wRvBBAuXQEwsMY0l2eg+bH041TIM+M+ZQWh0OPs+jsIAWSClYGORt7LmPkmx63sOhEdhdrhEHC+u+ko4wPYhOJu0Wlik0MjrtyXgZmqNGKNVU7fJ4TuYyxRmxPR4RxOVO15hBDUfILKpkryuQCx+vuOAh9vBq8mB9WWf3bqBDCnIQYETOM94df83Sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g8DBi2BFsMNQDEz+bZomEKr7eQA3crxmgei98Zzcz6w=;
- b=F9F5TJZwvPD2PawB0SyWuIlmSqtGoGqqMk1COPusw8IknImCGBrJiBUtMihzaDQ+uXoMmOFrm6Gfn09xCKtOCecjoFAfmwpir0giNvfDHVqJPzSDPSLL8feSARph2gRxTpfFxZc1zF8ZYgx9RfysLwp5IuPQI4m9gAT6Je4z3q4=
-Authentication-Results-Original: mx.microsoft.com 1; dkim=none (message not
- signed) header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10455.eurprd08.prod.outlook.com
- (2603:10a6:150:16f::10) by DU0PR08MB9509.eurprd08.prod.outlook.com
- (2603:10a6:10:44f::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.10; Thu, 15 Oct
- 2026 07:43:56 +0000
-Received: from GV1PR08MB10455.eurprd08.prod.outlook.com
- ([fe80::af66:6019:a08:d04]) by GV1PR08MB10455.eurprd08.prod.outlook.com
- ([fe80::af66:6019:a08:d04%5]) with mapi id 15.21.0546.006; Thu, 15 Oct 2026
- 07:43:54 +0000
-Message-ID: <c0c04151-1ba9-473c-86a4-e066d6881858@arm.com>
-Date: Thu, 15 Oct 2026 09:43:52 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] cache: add SMCCC-backed cache invalidate provider
-To: Andre Przywara <andre.przywara@arm.com>,
- Srirangan Madhavan <smadhavan@nvidia.com>, mark.rutland@arm.com,
- lpieralisi@kernel.org, sudeep.holla@kernel.org, conor@kernel.org,
- jic23@kernel.org
-Cc: catalin.marinas@arm.com, will@kernel.org, aneesh.kumar@kernel.org,
- Souvik.Chakravarty@arm.com, treding@nvidia.com, jonathanh@nvidia.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20261013070205.3566865-1-smadhavan@nvidia.com>
- <20261013070205.3566865-3-smadhavan@nvidia.com>
- <23e9b66f-083a-4a77-8214-25f30c08057a@arm.com>
-Content-Language: en-US
-From: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence.csokas@arm.com>
-In-Reply-To: <23e9b66f-083a-4a77-8214-25f30c08057a@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0019.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:151::6) To GV1PR08MB10455.eurprd08.prod.outlook.com
- (2603:10a6:150:16f::10)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="f9wZCKCZ"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-48bbb06e746so806793f8f.3
+        for <linux-tegra@vger.kernel.org>; Thu, 15 Oct 2026 01:53:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1792054433; x=1792659233; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=bqtoLOebW3MOpzoS9qJgbIfmlFf7fkdqcloPGFqkfJw=;
+        b=f9wZCKCZUphj7XKbyZNyAfAkowHrERTIpC8V7QKdZK5sQrvqm4Dzd7Km2I6e4F/hUV
+         mCJOTnHREyZcy99n/rah3jKjjBNoVQYrB/wBRDlPN5GIZKuXOZ3FyLB/ob0SvJoXdfdD
+         cEeq707eyuBHIVjs2WukkN9Yil82+HpK2mKw8PGuQ/4B7MCMDOGR2V8D8q88Akyl/8wi
+         pxLimomQZRIzMLVAkR4xzzSFF9dRKB3h01x1vEFDXTzyI9P1Z9rF/9L/zjv5YkrQ3MRc
+         gGl8QQ+ig4MTzy0pe/ExoNSPiA6TxvuQcfLlDVjrKdoHWisB+Hw+anHt9zTGP9laEMft
+         2rhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792054433; x=1792659233;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=bqtoLOebW3MOpzoS9qJgbIfmlFf7fkdqcloPGFqkfJw=;
+        b=XXA1dMBBe2IJP4gVXyABdGBTNDA4OsO8ZS42hoJsoQYQCC5/SsRIbUGryxRmta1+Am
+         8RqWCP2hiSaASzjts0OW5JUCun1gMr5tdnDExS8MvE1premXvgZfmXtO/SheSx2P70vP
+         h/CJ+dFPDm/1L/Y6AhyLth2FeqD61hGDVLercLq1dKayI8tcwtec0aJnwrKWEPCtJsiq
+         qLhRCcBZY+8+hn0ky6rfvLNTpGRPSUpYUnZ2oWpJ3pRzfFcSg6C3bodUAmXeTyrCHgRi
+         jMNXA7w8m0cZaw8hvUD9o2WhGMJCoK75m+dpEDgXPvQaaquHJXOFDYfTyMK5C9AX6QeA
+         U7uQ==
+X-Forwarded-Encrypted: i=1; AKwUvBy+aeW+ha7NLwHWVcVIfuHF9r8DDGIKBxprrE/jlYGvmH6a7A9wK7Bz0f5xnIvAwV7XE7sZcNXzMp2sZQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKgG/56uTfleEDO1wA8Evd3m9+wifKCYNsUM87sKHXbirEkut3h
+	wLoBPHL9ydWLASBBxYv64cbjUN04gSeV0OqhXOnMo0pD87+9ZQTEMqTGmDOxO3twH4pDnmXEKXP
+	gk4nM
+X-Gm-Gg: AYBFou3SRILhMP2FIQa2yPVnatseyz6473h4ry81ZYJTVejW7Bb39v+1h63r4PKl93w
+	CFH2yHl3sOI4cZEMdVArVs/rL7u4qMk7aflofJugns9DZFPkoqFfBg8qNhivWTc7wFvQTA9jxYx
+	5rE/qW9+iEszo81e28CtwOUt4evOcTgKo0S6wULK9vWNRAbA58Zs4zdNKFEzVa9v1artrIm8HAx
+	1jkvObTS8Ih8NcwUsSH2q0/i2+tbRa0MZBugG6TuVO7cJQTd7HjyCgMDvNh5WxKUCUeFA4bIXQR
+	3ow34FJCp5QfAI9oCOh19kz6gwzRDLs96+FuAoBBvHukQwLg52BbhKQhkmxVi5pdSjYPLbdtt6l
+	CguVXogKEW+psaiVViCIeuE+1DfvGZigV7n1jon7YP0XaeZ7mtV42tECGe5pCJLLTqs36riSKYF
+	D1HKk5e2g/IS2MII7awPhHhyi22kqjrveZqQRL91lieZPGhPWKk7P2r/L5Dxk/MeII407SOMLYN
+	BbYfAFST0qrwIEirvD6q4q8NMAUl6t3EjmGdfTitDkkqT7UWACpZ/2bvuTBnC30VqDXPgcR
+X-Received: by 2002:a5d:5386:0:b0:487:767:b301 with SMTP id ffacd0b85a97d-48dbacd94c0mr28298777f8f.57.1792054433004;
+        Thu, 15 Oct 2026 01:53:53 -0700 (PDT)
+Received: from localhost (p200300f65f19a90465ab3c5965b67ef9.dip0.t-ipconnect.de. [2003:f6:5f19:a904:65ab:3c59:65b6:7ef9])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48df7bf4642sm1663459f8f.10.2026.10.15.01.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Oct 2026 01:53:51 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-pwm@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sashiko <sashiko-bot@kernel.org>
+Subject: [PATCH] pwm: tegra: Fix value discarding for duty and period
+Date: Thu, 15 Oct 2026 10:53:35 +0200
+Message-ID: <20261015085336.4181137-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10455:EE_|DU0PR08MB9509:EE_|ZR1PEPF0000E464:EE_|PAWPR08MB9759:EE_
-X-MS-Office365-Filtering-Correlation-Id: 429c23cf-62a9-44f9-8440-08df2a902f75
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|23010399003|6133799003|10067099003|18002099003|22082099003|11063799006|4143699003|261009223027099003|5023799004|56012099006;
-X-Microsoft-Antispam-Message-Info-Original:
- 7uJUjwC7gel7mkfW6R0LWgXyqnMTW488+Pxw2fY3Zq2OaQavRoXFyXD8/eapX7RLn+1isCxZw6W26h0nOE8KXVxm3PeBs+CfD/C5/ylK+4o5rrs02RgZBVnWBF+S9owhfFYld9yQocmCWNQf8yb8oxRU/B21lCG/ZVKD+JZ9wqyOGvDdjNHyEFugmKojUeRoWDsnLhA76aaqW96rVbm2XJ/EzUX4hO2NO4NTko77nGNbljEX1EpiKyZ/7ppFWWlRZLqJ5ZABUfiRViqIIb9fPpQD+P0O+6ZEf9y+5y2NnPzi9wUqiiFbJnSuX5FfYMIliD9RIAPIt4zOqm9IF7mZzfDAfFYYbg5bNDH4AoRS2Fp+Onjsoj8sbL4SzH8jYEcfRhjUxZN9CFvWStpxGPn+tBzxxBEZz8pSBBX0eTiPkrtPpQUz+V1djpdb66EHT3OtYZ0xAmJTzZV+XAESA6SqNR/usEvr19oX0q+NnICq+Z3juZPy65C7DPVHnmvgLjtY3HqDcplGZ+meX3ZLf3y0/FDSRpwbtZYM+xImQWcVU2tOgQZ7UxnHIe6HMp66BrP+gElxUpfpaeVq9FSA8AGHn/+HakuEei8iNtt1HKkrSILBNdfCdm/ir9HW6cs6SNG2
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10455.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(23010399003)(6133799003)(10067099003)(18002099003)(22082099003)(11063799006)(4143699003)(261009223027099003)(5023799004)(56012099006);DIR:OUT;SFP:1101;
-X-Exchange-RoutingPolicyChecked:
- y1o3/ZZSsiuSNOWYE6pESyzrs+hPc4lYEBIVU3MYgv0fR7xwp0KLTAs+d8L6BzCob98/zIV5pXoS+HXPOoEAzzVpsmGeawPxOD4nZGTexeqK+MwAX3dnndsVs6OQ4AlHuoQrQPUeQqj+0Qu/NM1iYRtNO23mu5cuvCY8XJOnHit30eSy/yG8Eu4P5d6+ohjVeiY8MkUAgGxYyyBS15oxOEsvS1YvRLqbmaj7IbDa+5Qpg7fYcm+Ns8HVHn4EA0/o6IYdRe3+aYRIGAiz4Ofog41WncXiY3HvmOpe8/3GSngFbcLej0rOMPUol2v/fHKAZ/8n+6AAHhJ6+ceiVIDT/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB9509
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- ZR1PEPF0000E464.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	0b8bf125-5c11-4a89-01ed-08df2a900fec
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|23010399003|82310400026|1800799024|376014|7416014|35042699022|14060799003|6133799003|22082099003|10067099003|18002099003|13003099007|11063799006|5023799004|4143699003|261009223027099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	KEDAbBAYmQVI1snONl+4UhjbBriGWy/axG7Ar/hPX7xcbHVBxNKHi4CNOBVeFKr/XV0WV7dx+KSdsdumkIIgAI0btflRPiFf9Bka9OsxnN5g389VTZN+cfdHD2I+xWf5AgCIUfRD2hJFN7cr+x5rv4iIQtzoqby3dLP5QxNHGDoZ3ftffCqjNKTEA0p/FO9sFbfjp06R7XKOahij3YIt+wCqFLEsVtt26XTSLcIHG47f0aJV2Vd21ikqRvgmNl4RoHYf3Q8QAbD70PgFngXNHi/penOirepqS/P6omMbYgdytp29btdc7Z75bkjC0mZx2tY6a+2FK/ENmzv5OXyarxT+ZlinWWO3IM0a0rCB4nvbS02e//tGoqsYmb77d93CeBNMpOTh12xB11i6oWRxIyeC4nv6U6mjCnnaiJA8lVpf5whey5dsyXjEPuxSK1Ucq6YgKZJ4l+YIXlmvvfCdlmhSoui+JDvZI2KPuNZKbgCpDJRR9dC6NObx6R7CpG7vxZhh39zXuszRaka51+qH5VhEFNBOYm8n8z1w6pJ8VbK6GmHVyXpHzfwLsSFiY69dN8r2Kr9I5Zt1Qn5NURjkGac2k6lXMw/tl+6g6USoedn3NjigG8sDZV3n+mn6a2Nh+WUtcOTTF3fdUoGcxHXnUUIDE8qFelsZcIENxAdRbd4=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(82310400026)(1800799024)(376014)(7416014)(35042699022)(14060799003)(6133799003)(22082099003)(10067099003)(18002099003)(13003099007)(11063799006)(5023799004)(4143699003)(261009223027099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	N9E+Ion7kWcDR8APq6Lpl1M3mym2GHEmCxQ+86J9yq+OrE37lNTZ49qEEBfMHfc5Lbtadi/8vXaTzD4ArrOnZZUYwV+M4NiSpYw0fxnoBG+Ls9X7kcAB0/M+o5vgCCZHk44MqO6s4ygTkObjJkI9/wOvJa05M1M9j1U77kI/F4rcosaAZ6V7O3PqUVT9STEm3dY2JaKMHetpBARY5jRP4VCQlvFJS4q9FSJ1QW6sLUH+Q7P0qT8KVvPxTSEGqFplJbpB2RkvRd83l7GkHV6gSIe6/JGRRfDPVRmeCJQeBQSeBdAyADDoefHxFJLNiwO2fqhs4NLvs34KFiqV+djmIZxHYMyI10Owyr9nXMqCm+s/97pt9RWmmBy6BWNw1wYULsvyuB+jLuBM2CNfdpgWw0QjdCURwHl/WemoxVnwHONPZWF6sxBKW2QWuxQa1TKE
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 07:44:46.8427
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 429c23cf-62a9-44f9-8440-08df2a902f75
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	ZR1PEPF0000E464.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB9759
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3234; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=b96pYTcMW63e49quyJO5xjiSMV8TZP92gd9i71el7b0=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq0JSQABZzvkkCBCI1PN3uhG0gm4AQqjvYAZY0o kOEZeg4T5aJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCatCUkAAKCRCPgPtYfRL+ TtlyB/0cwvGxYVb9u+fbrW3AD2qOu4yAcu4vWMPwadvI21+ZiP3tIYAU0aera6GOC9c03gw7vRD p9BD0VPXN+r/Ev/jbFYhoSIwOvD2/U8VUH3WnTI6dXV+5Kgn4oKBksH8vSKlP93msUfAysDoMpS ZpcKfiqg8IhpdTgJM6P3AHrAF3/juh2e/s6iB/tHE/56FVYZECFbUY9IcaBNwYylAy8JNjDo+KD 0EZ6Nd1v0GP2zSFi+2dmne+nss1lMJZUxbzIIfqSxQW/cUJSo0I6HVQibA2Fp78+KvigQ3uFS99 tWdVG+4/eRlwfa2xsGMUr0gaowoP9Xdda7o0csBeh6tI5z/M
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-Hi,
+tegra_pwm_config() is called with u64 values passed for duty_ns and
+period_ns in tegra_pwm_apply(). Make these parameters u64 instead of int
+to not lose the upper bits for bigger values. If such a discard happens
+the values that are written to hardware become wrong, or (if the
+discarded period value becomes 0) a division by zero happens.
 
-On 2026. 10. 14. 17:38, Andre Przywara wrote:
->> +static int smccc_cache_probe(struct arm_smccc_device *sdev)
->> +{
->> +    struct arm_smccc_res res = {};
->> +    struct smccc_cache *cache;
->> +    int ret;
->> +
->> +    arm_smccc_1_1_invoke(sdev->func_id, &res);
-> 
-> I think you should provide the explicit function ID name here, and not 
-> rely on which function exactly is used to probe for the interface's 
-> existence.
+Adapt the math functions accordingly to not let the now potentially
+bigger values result in overflows.
 
-I thought that was the point of the matcher, that you could in theory 
-assign the same probe handler to any function ID? For example if there's 
-some FW that implements this (or a compatible) function, but at a 
-different ID, you would only update the match table? At least that's how 
-most subsystems (I2C, PCI, USB) do it.
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Link: https://sashiko.dev/#/bug/linux-5c5b97d6-4da6-4d06-9dc7-957419dcd832
+Fixes: fd3ddd4355c0 ("pwm: tegra: Implement .apply() callback")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+Hello,
 
->> +    if ((s32)res.a0)
->> +        return -ENODEV;
->> +
->> +    cache = cache_coherency_ops_instance_alloc(&smccc_cache_ops,
->> +                           struct smccc_cache, cci);
->> +    if (!cache)
->> +        return -ENOMEM;
->> +
->> +    mutex_init(&cache->lock);
->> +    cache->latency_us = lower_32_bits(res.a2);
->> +    cache->rate_limit = res.a3;
-> 
-> According to the spec you would need lower_32_bits() for a3 as well - if 
-> we are going to use this value. But I don't think we need to, see above.
-Where does it say that? My copy of DEN 0028 1.7 H, released 2026/Jul/24, 
-only says the following:
+actually the Fixes: line isn't quite accurate. The problem that the
+arguments are cropped to int from u64 exists since v4.7-rc1 (commit
+5ec803edcb70 ("pwm: Add core infrastructure to allow atomic updates"))
+in the pwm core, but the blamed commit above is the commit where this
+problem was moved to the pwm-tegra driver and thus it's fixable there.
+The problem in the core doesn't exist any more since commit 0829c35dc534
+("pwm: Drop support for legacy drivers") in v6.0-rc1.
 
-   X3 (uint64_t attr_2)
-     Rate Limit: The maximum number of SMCCCC_ARCH_CLEAN_INV_MEMREGION 
-calls allowed per second. If set to 0, it indicates that this field is 
-not reported by the implementation.
+Note this patch changes the rounding of the duty cycle (from somewhat
+round closest to somewhat round down). It would not be hard to keep the
+behaviour by introducing a variant of mul_u64_u64_div_u64() that rounds
+closest, but the rounding is spoiled anyhow by later rounding of the
+period. To actually fix that it would be best to convert the driver to
+the waveform callbacks.
 
-See my second-to-last comment on v2 of this patch:
+Example calculation: Let's assume an input clock (pc->clk_rate) of
+100000 Hz and a request with period_ns = 230399744 and
+duty_ns = 128249857. To translate that into register settings the
+DUTY_SHIFT values will be round down with both approaches and result in
+an actual duty_cycle of 127658000 ns (Δ = -591857 ns) while 128557000 ns
+(Δ = 307143 ns) would also be possible.
 
-https://lore.kernel.org/lkml/591e7ac9-310e-40f4-ab22-161d6ea8f487@arm.com/
+Best regards
+Uwe
 
-Maybe I have an outdated copy already? ;_;
+ drivers/pwm/pwm-tegra.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-Bence
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index 5cdbe120ba2d..8b5ed7998fdd 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -138,22 +138,21 @@ static inline void tegra_pwm_writel(struct pwm_device *pwm, unsigned int offset,
+ }
+ 
+ static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+-			    int duty_ns, int period_ns)
++			    u64 duty_ns, u64 period_ns)
+ {
+ 	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
+-	unsigned long long c = duty_ns;
+ 	unsigned long rate, required_clk_rate;
+ 	u32 val = 0;
+ 	int err;
++	u64 c;
+ 
+ 	/*
+ 	 * Convert from duty_ns / period_ns to a fixed number of duty ticks
+-	 * per TEGRA_PWM_DEPTH cycles and make sure to round to the
+-	 * nearest integer during division.
++	 * per TEGRA_PWM_DEPTH cycles.
+ 	 */
+-	c *= TEGRA_PWM_DEPTH;
+-	c = DIV_ROUND_CLOSEST_ULL(c, period_ns);
++	c = mul_u64_u64_div_u64(duty_ns, TEGRA_PWM_DEPTH, period_ns);
+ 
++	/* The cast here is fine as c <= TEGRA_PWM_DEPTH */
+ 	val = (u32)c << TEGRA_PWM_DUTY_SHIFT;
+ 
+ 	/*
+
+base-commit: 00e917df050d79ac26ec700717680ad6421d2808
+-- 
+2.56.0.rc1
+
