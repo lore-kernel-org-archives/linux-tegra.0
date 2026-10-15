@@ -1,165 +1,165 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012010.outbound.protection.outlook.com [52.101.43.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251734E06CB
-	for <linux-tegra@vger.kernel.org>; Thu, 15 Oct 2026 08:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792054441; cv=none; b=jMZkZzCfMwH6PNdKdzr22wX7QR/TTX1Nch8w4Q6Gn7DM8vhqSpBf8F9v/nRl7jaIjxcfeWotwdUDt/+xzab5LQpYJPSGCBEoK2CHg848mmVAir6AWvPhNi3VmO7pfjrpuF8Zc1QigRHmXRjRT1+sbyz2SqS/qdrH0Nn/G3mgucw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792054441; c=relaxed/simple;
-	bh=b96pYTcMW63e49quyJO5xjiSMV8TZP92gd9i71el7b0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EmM91iJBQuWj1H2cNTKTMf9GlPlKUqfpBqz01IYb0B+0LsYiXkFlGhJqbuszoZZZ56hws4VEl68I3/oRgwn61WyxNotuRqoyqlV21+Xx6Y+wzqM1N5QBBvxX6Q0L+x8nzIP+bW1trzc6ZvqT6QTf1onv36KtiWy3aVXwzPj3MJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=f9wZCKCZ; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF6A4F4024;
+	Thu, 15 Oct 2026 09:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792058327; cv=fail; b=pQ1GMaYTU6Vco66gvrQCpyJWv/8zuOLPTybakfmqfto1tNw8clPOe5ozFMyQeyxWl1OXp6EyJ0zTb0gU+H+2YKlYCN5M6NiER/HGbRBQPSBq4i9XjzzwwzZUSpDWgn7KxVs5CZciipGqum+wKu/h8x4lyE0RUk8oeKuw8k4hLRQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792058327; c=relaxed/simple;
+	bh=M1sxwHffMyVQxo2AH+E7YiLi/5YQzVPvlnU7CyTgnN8=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=oSgl+mnfSi+1K2NcXbmlfV/drXthi4biTD2C6uZ1L9j5CtfG4aY2eGBe4ig65agj4aQnKgfWfKH20rCDgTM9/OAPECcIeYLxN8hUq6dKi0YFMlCpnQTClgOAoOyQPbToK2u2uSkhagPawNJ7vCzHUVXKysbGgW95kVPQf28nkdo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=T4o5kI8m; arc=fail smtp.client-ip=52.101.43.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="f9wZCKCZ"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-48bbb06e746so806793f8f.3
-        for <linux-tegra@vger.kernel.org>; Thu, 15 Oct 2026 01:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1792054433; x=1792659233; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bqtoLOebW3MOpzoS9qJgbIfmlFf7fkdqcloPGFqkfJw=;
-        b=f9wZCKCZUphj7XKbyZNyAfAkowHrERTIpC8V7QKdZK5sQrvqm4Dzd7Km2I6e4F/hUV
-         mCJOTnHREyZcy99n/rah3jKjjBNoVQYrB/wBRDlPN5GIZKuXOZ3FyLB/ob0SvJoXdfdD
-         cEeq707eyuBHIVjs2WukkN9Yil82+HpK2mKw8PGuQ/4B7MCMDOGR2V8D8q88Akyl/8wi
-         pxLimomQZRIzMLVAkR4xzzSFF9dRKB3h01x1vEFDXTzyI9P1Z9rF/9L/zjv5YkrQ3MRc
-         gGl8QQ+ig4MTzy0pe/ExoNSPiA6TxvuQcfLlDVjrKdoHWisB+Hw+anHt9zTGP9laEMft
-         2rhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792054433; x=1792659233;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=bqtoLOebW3MOpzoS9qJgbIfmlFf7fkdqcloPGFqkfJw=;
-        b=XXA1dMBBe2IJP4gVXyABdGBTNDA4OsO8ZS42hoJsoQYQCC5/SsRIbUGryxRmta1+Am
-         8RqWCP2hiSaASzjts0OW5JUCun1gMr5tdnDExS8MvE1premXvgZfmXtO/SheSx2P70vP
-         h/CJ+dFPDm/1L/Y6AhyLth2FeqD61hGDVLercLq1dKayI8tcwtec0aJnwrKWEPCtJsiq
-         qLhRCcBZY+8+hn0ky6rfvLNTpGRPSUpYUnZ2oWpJ3pRzfFcSg6C3bodUAmXeTyrCHgRi
-         jMNXA7w8m0cZaw8hvUD9o2WhGMJCoK75m+dpEDgXPvQaaquHJXOFDYfTyMK5C9AX6QeA
-         U7uQ==
-X-Forwarded-Encrypted: i=1; AKwUvBy+aeW+ha7NLwHWVcVIfuHF9r8DDGIKBxprrE/jlYGvmH6a7A9wK7Bz0f5xnIvAwV7XE7sZcNXzMp2sZQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKgG/56uTfleEDO1wA8Evd3m9+wifKCYNsUM87sKHXbirEkut3h
-	wLoBPHL9ydWLASBBxYv64cbjUN04gSeV0OqhXOnMo0pD87+9ZQTEMqTGmDOxO3twH4pDnmXEKXP
-	gk4nM
-X-Gm-Gg: AYBFou3SRILhMP2FIQa2yPVnatseyz6473h4ry81ZYJTVejW7Bb39v+1h63r4PKl93w
-	CFH2yHl3sOI4cZEMdVArVs/rL7u4qMk7aflofJugns9DZFPkoqFfBg8qNhivWTc7wFvQTA9jxYx
-	5rE/qW9+iEszo81e28CtwOUt4evOcTgKo0S6wULK9vWNRAbA58Zs4zdNKFEzVa9v1artrIm8HAx
-	1jkvObTS8Ih8NcwUsSH2q0/i2+tbRa0MZBugG6TuVO7cJQTd7HjyCgMDvNh5WxKUCUeFA4bIXQR
-	3ow34FJCp5QfAI9oCOh19kz6gwzRDLs96+FuAoBBvHukQwLg52BbhKQhkmxVi5pdSjYPLbdtt6l
-	CguVXogKEW+psaiVViCIeuE+1DfvGZigV7n1jon7YP0XaeZ7mtV42tECGe5pCJLLTqs36riSKYF
-	D1HKk5e2g/IS2MII7awPhHhyi22kqjrveZqQRL91lieZPGhPWKk7P2r/L5Dxk/MeII407SOMLYN
-	BbYfAFST0qrwIEirvD6q4q8NMAUl6t3EjmGdfTitDkkqT7UWACpZ/2bvuTBnC30VqDXPgcR
-X-Received: by 2002:a5d:5386:0:b0:487:767:b301 with SMTP id ffacd0b85a97d-48dbacd94c0mr28298777f8f.57.1792054433004;
-        Thu, 15 Oct 2026 01:53:53 -0700 (PDT)
-Received: from localhost (p200300f65f19a90465ab3c5965b67ef9.dip0.t-ipconnect.de. [2003:f6:5f19:a904:65ab:3c59:65b6:7ef9])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48df7bf4642sm1663459f8f.10.2026.10.15.01.53.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Oct 2026 01:53:51 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-pwm@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sashiko <sashiko-bot@kernel.org>
-Subject: [PATCH] pwm: tegra: Fix value discarding for duty and period
-Date: Thu, 15 Oct 2026 10:53:35 +0200
-Message-ID: <20261015085336.4181137-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="T4o5kI8m"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Nt55c61FAHj9/V9IhIGuAsNBj1fn6zoiA+882rhu1MlI3bKLIgYyMFH7dMy7FAJhs5F/G2oNlVhkPb0ioYPtJ8FRbYsto9M9wpCmBjEim+NY7fpJgTbSAnzDEXLv6env0O1sywsRYml79ddgrdT0DLGfb7V885arrkbXjjbzdQDe3uJJhh70IIvHDCMxXnl1wbug3jfbOVLj250B7IfU//vHm8grqCifKDPGZXPc2sOmo64oru/+L/Mn4aULGb8RcXLM/e9vAAge3VMMpWkWmG0IHxuj4jOmbszgMS66zeaho8Z9Rnq/ot5EM+itX+vm9Sy7ssDcxVJAh7qlH7v9Dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kMSOLclpWydRlldwy6GMZc114/+qXttfYt63oAb+CEA=;
+ b=gg7gW0RSSi3gxJ/tgLrUdI76ZVLDPSz6ZNhk9rhcL3W/1VGZJfkaRr6lVsjahdLcky53v2Wj4P/Un1ZlCEZRNS0JNJxko+BQ3J40DwHJI8Cukh+RD5daTbdYRRi203JkAoN7Qy0+pQgVVRDjo177gJYa9m6RHJr/1y3jUDQPonKAB4v7TvQnR914zn3oCyYJMxgI/ZNlsBpdhrgy3VKS36NARX8zJ8Xxzy1TP1Jru3bu6oxx3hEotNAJohJYpp+yqLUnDVq1EyPCe70boIKIUcudlAYXx+YZFHIM+lTu7m1KfoEkYj3L1mjNT1SwU8IeLs3I5v7pRfQ9+mriCTdTJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kMSOLclpWydRlldwy6GMZc114/+qXttfYt63oAb+CEA=;
+ b=T4o5kI8mRKj9Q4bZASReGeeHvIJJXSLRwSlU4iuYQvunfLVBEYnYDgNf5edphS6iJSVKieoOsxTYKntpSRvNk/sppaa8Ju5sQm0o0G1owE4H9b+ld6fXv8CFRAl7AeVSCFU1M3lJhn71qRtIrtEtNjNgQMcWcluamKNBcgky1dkOhdhG44UOuyf9g+tsXRSMMEZHRc/iJMdrCJtF5rbBmzVcTt0a9kR2MDHaw75p6cht3wdeFGVbf0MPUaFli8aN4w4L3FMqXksTpIgt5A5cupFli4QZDXBPNBAzy1t2tgrV8O/9Tz1EVbcaWC8EZYQWDLNXUxz88cCeervfTfo9Cg==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by CH3PR12MB7668.namprd12.prod.outlook.com (2603:10b6:610:14d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Thu, 15 Oct
+ 2026 09:58:40 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0522.012; Thu, 15 Oct 2026
+ 09:58:40 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH 0/2] Fix NVDEC boot on Tegra210
+Date: Thu, 15 Oct 2026 18:58:01 +0900
+Message-Id: <20261015-b4-t210-pd_nvdec-nesting-v1-0-39a36b622eac@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDMBBA0avIrDuQhGqkVymlmGS008VUMlEK4
+ t0b7fIt/t9AKTMp3JoNMq2s/JEKe2kgvgaZCDlVgzOus8a2GK5YnDU4p6esiSIKaWGZcPSDDz7
+ Evu16qPmcaeTvub4//tYlvCmW4wf7/gO8sHOEfAAAAA==
+X-Change-ID: 20261015-b4-t210-pd_nvdec-nesting-f7a7b7bc8568
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Aaron Kling <webgeek1234@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.16-dev
+X-ClientProxiedBy: OS3P301CA0048.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:604:21c::8) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3234; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=b96pYTcMW63e49quyJO5xjiSMV8TZP92gd9i71el7b0=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq0JSQABZzvkkCBCI1PN3uhG0gm4AQqjvYAZY0o kOEZeg4T5aJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCatCUkAAKCRCPgPtYfRL+ TtlyB/0cwvGxYVb9u+fbrW3AD2qOu4yAcu4vWMPwadvI21+ZiP3tIYAU0aera6GOC9c03gw7vRD p9BD0VPXN+r/Ev/jbFYhoSIwOvD2/U8VUH3WnTI6dXV+5Kgn4oKBksH8vSKlP93msUfAysDoMpS ZpcKfiqg8IhpdTgJM6P3AHrAF3/juh2e/s6iB/tHE/56FVYZECFbUY9IcaBNwYylAy8JNjDo+KD 0EZ6Nd1v0GP2zSFi+2dmne+nss1lMJZUxbzIIfqSxQW/cUJSo0I6HVQibA2Fp78+KvigQ3uFS99 tWdVG+4/eRlwfa2xsGMUr0gaowoP9Xdda7o0csBeh6tI5z/M
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|CH3PR12MB7668:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c49603c-984c-43b5-f5ef-08df2aa2e3a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|10070799003|23010399003|11063799006|18002099003|261009223027099003|56012099006|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	SPaZzOxpNNhblbPs0JftOXOdJTQh43hVrpAjP4EFukR63/qJMdcsM7+kska58iXGMZc4x3zT/fMTNp2jLCnJmuhR5KgmPKq1qdNo4CcWIWm4DFM6E1krlXA3YRLDH0Z2x72RubVfIEVNp+wHJynPuYr4b6hYLNIsxdIQJylXn0CrXyBadE2nfPx1X524VttjIo3XoY6tkZkp2A9u+41C4007okn4tKuw29pQruAppCYfht5bR3LcrzC443EKeLab98lZE8WPBScEIzyq+npLFjtI7OHqWCUuuum1lpLd86T22Fje4/0v1Zi1P5giHuirRBRZVo3JyvVtLB2lgPIyECpZyVck3zs/DvK2n7J+HcZ0GXWNjq4OnZjbftkFxg8Y2dosXEdDmsQTxLGW8nVwyQQksOktZfto7+pxOv7+l89sSdO88lkWvKPqNR3g63oOJXptKp/BHpc85Qr/uR1ADzePUk6MTIVRcLiM9lGfjnI7CkQc3YGByulBT2KbifAh2roSpnwOXlcqZ6z0K2qTwXpeBc5auGTDmkFRnHP36pmoKaZJBAZYmualWxEi+M9fiyfthYuNQjMgPEErM7kJpjKbyKTrN4zTyquwryKsrJmurZqlkZ6Rmj1lOf/SBaMZTCTJbE34tv5eQ8kADV8OnfXWxO9Cib6eNHvdW6DeRx4=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(10070799003)(23010399003)(11063799006)(18002099003)(261009223027099003)(56012099006)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TXFLS2FmdTQvWVBlTWU2Sm1lNHJlK1BkOTlITFJwdzVQc1JTcWE4cklFbm1P?=
+ =?utf-8?B?U3VMRjZIeThpcTIxdG9uOGg5WStuWW9yVDViNG9JdUxVdmRIMEw5UGNrMUdH?=
+ =?utf-8?B?ZlM4TFRUTDhGZk9SRmpzMkt2TmFGL1NpMUNPWmNtQklpRjM2QmhVSTFBRUYz?=
+ =?utf-8?B?VWJKNU41RXNOQlZZNEdtRitmbjV3bDNvZm83dHMwUVRVWDQ0VW9GbXJyNllp?=
+ =?utf-8?B?cWd5WHU4T28ySlBPUVZVcU5NejJLQzk0dlk3Rlh1dXdRc2pjRDZnQ2UzSWpH?=
+ =?utf-8?B?VGZGOVVRaWVjWEdQSDh3L0xrZzJSSVUxOTNia0NpNVZqaTJPcC82Y20xMjN3?=
+ =?utf-8?B?ZUFWTEFjcnlPNlo3NlNDZGpLLzZ2WUJDZm9WZ3ZOalZ1cjd4Rk9NTTlhVFZG?=
+ =?utf-8?B?dDZHQm5uYlNrcnduSEhwSko0TEhIRFVMYThyblpBU1VqSkV4c2VkczFFaERh?=
+ =?utf-8?B?L1JZam4yWE1ueXRFRStxb1l4aUdHT1R5NUhqaUJYOGJhZyszeW1maW5ndmxG?=
+ =?utf-8?B?TzJiZWVVK0IwMG4yeTdablpYTTJIdHQzSFhCUEkyanhzZytFckdaMng4cUU4?=
+ =?utf-8?B?dmlvOGg2emkwQ3NPOGhwYkljVmIzeUsyMlI5M0JyODVjUVJHcU9hWnZWTGVN?=
+ =?utf-8?B?VjcyN0NNWXVjUVlINCtud2FUS1NicWhBdDhKeWFkRDhIK1ptYURmOTIyVmpX?=
+ =?utf-8?B?eUVXQ2pHY3NYZjBaSWNPTkRWTTlxSkgxcVVkeTFOenJkam93akhnSWtyWGZt?=
+ =?utf-8?B?V2ozd2ZvZ21TTnBzV3drK1BXRnowdC83bEFWeXpWMGYrNGZrMVJmenVKSmJV?=
+ =?utf-8?B?RmQ4dU1oYkhrdXJjamVWbEh3QmJlY2tLUHNKSm9tMHp2clhUWDNCdnYyUDA1?=
+ =?utf-8?B?KzNDZWZ5L2NBSEUwanhaNXVHYmNxZVFrWkUydXUwMDlKTzF3aFZ2MnRrSVBy?=
+ =?utf-8?B?K3dxVFkvV21ockpkci9MUUdiMTE5T1Y0ZGF5VlJNZGJocWUrNE5tRjV0ajNt?=
+ =?utf-8?B?UEVzcWJiSWxsSTVnTHY3Sk9JRkpnUHhDRkI5djlsU052NEVRYjdSMFVUVkZ3?=
+ =?utf-8?B?S1ZqUW1QMnY2UEd6OFZpc1dTOGQwejU2WVpvN0sxT1ZJTFlNaVljZTRhUzc5?=
+ =?utf-8?B?Q1JsOXJJcFc3TmxLUmZtRm45ZzZrUlU0emMzMG0zSlV2anh6YWpzWEJEeGsv?=
+ =?utf-8?B?TnkyeEUyT1dBS1hIMW5YaldBQi8yVnpuNGdDVEg3RGtWa3dpREV5c3FvZW9M?=
+ =?utf-8?B?UWVjMStWektrVGFDUWlLMDY3d3dLaENLWlFEOXJtZDlXemdhd3FTNjRvSnM0?=
+ =?utf-8?B?WHBNY0lTUW50U1NkdnpzWWdXcElWbGR5TGk3Ykswd014YUFwcWdvb3JhaUEw?=
+ =?utf-8?B?V3RZV2IrOStzb0FSVnFSdnRFQVVrMEFTMWNjSDZpdjViM0wxV3p4T2t6Nloy?=
+ =?utf-8?B?a3FxRklyNVFVNmREOXkzcGVtYks1T0phKzlGZU81QjdmTDN6b3E4NVdVSGVD?=
+ =?utf-8?B?bWpjdm5PdWdpS2o0Z0xEeUI2eTQ4K3Y5dDNGUDRnTUZEZkZSdE9sTk8xVEhP?=
+ =?utf-8?B?M0Y4Wm5jdXhMSlJ5QmVjdHRmNU53Y3hOdFYxWk4yL29PRzFOWWFxczdYakxv?=
+ =?utf-8?B?WFVBazE3ZG5ZeDIvbEtNTjdmc1BOa0xiNEFHQ3c3VFVabU9rU1JkbkduQjl5?=
+ =?utf-8?B?WHFoZmhRUy8zb0hPeVpFT1ZrdHlmaTdxTXY4TE1GM3RUUk9TREFaTUpFakx6?=
+ =?utf-8?B?cmNsdEtaeE4waXNqTjZtNGtHdGFHbnV4NUNPcUIwRHowZEhNVCt2RkVtUSsy?=
+ =?utf-8?B?VlBRQ1VSR1ZUaG0vTFpUbk5seWhOaU5iZkR2Tlh5RzJsWjJjQTZvajRibldS?=
+ =?utf-8?B?ZGNWRmRVQmV2SGY0cGhxdEV3R3BCV1VDalJSYm5sZnNDeDc0V1JpcGUrb2Yv?=
+ =?utf-8?B?cHcyVlRZcVVaaFc0YnEzQ1N2aUQ2UTNPVFo4b3pJaWdRZDFMaFZWSkxWaFdv?=
+ =?utf-8?B?WEFyaWozM2psT2d4K08yTG1FM1VacnlvZFVnY2czcUxmdGpBMjBwVVpmMDdK?=
+ =?utf-8?B?QnVMVmNMYkxjRFFyU251THlDUUJ3VnJJVnVJcFBBMk9GcXR1MFdEeHdubnRW?=
+ =?utf-8?B?SzRUZk9yY3Fkb2pwRk5JMEZSQVlWSDZhbnNKV3hLYW1OalVPRjVxa3RSQXdl?=
+ =?utf-8?B?S2N2N2plakQ3V3ZNQUlxSkhvSGZzM0taMGxrby95UHI5eGR5MURnT1VXYU9K?=
+ =?utf-8?B?bmE0WHVqL2NkNW1RTzBQVFZYVFRyVEhVS1Y4L3JncVlEMzEyZi9wcVRYZ2Uv?=
+ =?utf-8?B?NS9zNU5lejRrQWRVTmNNQ21ZeXVNcEwzNWVQa3R6UWhvWG9WSXlNWS9FOTY2?=
+ =?utf-8?Q?1OidrSWHmqzrgau3gxVMs4q4ruiWzhDQeaZrwdBIsYf42?=
+X-MS-Exchange-AntiSpam-MessageData-1: gJeZ5FmAYEoJrw==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c49603c-984c-43b5-f5ef-08df2aa2e3a8
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 09:58:40.3713
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mWX3O4WpQHysjJfs4zKGOA2rZ7vP7VgwaGB6nlYUOca7Ty1OgHTUahW+uI1eVyYo/NM5DzM0UHtGz/2PJN2CHA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7668
 
-tegra_pwm_config() is called with u64 values passed for duty_ns and
-period_ns in tegra_pwm_apply(). Make these parameters u64 instead of int
-to not lose the upper bits for bigger values. If such a discard happens
-the values that are written to hardware become wrong, or (if the
-discarded period value becomes 0) a division by zero happens.
+On Tegra210, parts of the NVDEC hardware unit are in the NVJPG power 
+domain. According to the TRM, the NVJPG power domains must always be 
+ungated while the NVDEC power domain is ungated. Model the dependency in 
+device tree.
 
-Adapt the math functions accordingly to not let the now potentially
-bigger values result in overflows.
+The first PMC patch updates the PMC driver to handle cases where a PMC 
+power domain depends on another PMC power domain (other than the core 
+domain). The second device tree patch adds the dependency in the device 
+tree.
 
-Reported-by: Sashiko <sashiko-bot@kernel.org>
-Link: https://sashiko.dev/#/bug/linux-5c5b97d6-4da6-4d06-9dc7-957419dcd832
-Fixes: fd3ddd4355c0 ("pwm: tegra: Implement .apply() callback")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+The PMC patch must be applied before the device tree patch or PMC probe 
+can break.
+
+Cheers
+Mikko
+
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
-Hello,
+Mikko Perttunen (2):
+      soc/tegra: pmc: Support nested PMC power domains
+      arm64: tegra: Make the NVDEC power domain a subdomain of NVJPG on Tegra210
 
-actually the Fixes: line isn't quite accurate. The problem that the
-arguments are cropped to int from u64 exists since v4.7-rc1 (commit
-5ec803edcb70 ("pwm: Add core infrastructure to allow atomic updates"))
-in the pwm core, but the blamed commit above is the commit where this
-problem was moved to the pwm-tegra driver and thus it's fixable there.
-The problem in the core doesn't exist any more since commit 0829c35dc534
-("pwm: Drop support for legacy drivers") in v6.0-rc1.
-
-Note this patch changes the rounding of the duty cycle (from somewhat
-round closest to somewhat round down). It would not be hard to keep the
-behaviour by introducing a variant of mul_u64_u64_div_u64() that rounds
-closest, but the rounding is spoiled anyhow by later rounding of the
-period. To actually fix that it would be best to convert the driver to
-the waveform callbacks.
-
-Example calculation: Let's assume an input clock (pc->clk_rate) of
-100000 Hz and a request with period_ns = 230399744 and
-duty_ns = 128249857. To translate that into register settings the
-DUTY_SHIFT values will be round down with both approaches and result in
-an actual duty_cycle of 127658000 ns (Δ = -591857 ns) while 128557000 ns
-(Δ = 307143 ns) would also be possible.
-
-Best regards
-Uwe
-
- drivers/pwm/pwm-tegra.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 5cdbe120ba2d..8b5ed7998fdd 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -138,22 +138,21 @@ static inline void tegra_pwm_writel(struct pwm_device *pwm, unsigned int offset,
- }
- 
- static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
--			    int duty_ns, int period_ns)
-+			    u64 duty_ns, u64 period_ns)
- {
- 	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
--	unsigned long long c = duty_ns;
- 	unsigned long rate, required_clk_rate;
- 	u32 val = 0;
- 	int err;
-+	u64 c;
- 
- 	/*
- 	 * Convert from duty_ns / period_ns to a fixed number of duty ticks
--	 * per TEGRA_PWM_DEPTH cycles and make sure to round to the
--	 * nearest integer during division.
-+	 * per TEGRA_PWM_DEPTH cycles.
- 	 */
--	c *= TEGRA_PWM_DEPTH;
--	c = DIV_ROUND_CLOSEST_ULL(c, period_ns);
-+	c = mul_u64_u64_div_u64(duty_ns, TEGRA_PWM_DEPTH, period_ns);
- 
-+	/* The cast here is fine as c <= TEGRA_PWM_DEPTH */
- 	val = (u32)c << TEGRA_PWM_DUTY_SHIFT;
- 
- 	/*
-
-base-commit: 00e917df050d79ac26ec700717680ad6421d2808
--- 
-2.56.0.rc1
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi |  1 +
+ drivers/soc/tegra/pmc.c                  | 21 ++++++++++++++++++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+---
+base-commit: d419d682257d813f6cb7a28e42b35d0edf4ad038
+change-id: 20261015-b4-t210-pd_nvdec-nesting-f7a7b7bc8568
 
