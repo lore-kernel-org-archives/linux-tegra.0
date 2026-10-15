@@ -1,173 +1,130 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012010.outbound.protection.outlook.com [52.101.43.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7576850C28C;
-	Thu, 15 Oct 2026 09:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792058333; cv=fail; b=Pn9/cscjenTRPwyMwiC6MrMEYLVnvkgLhKGCKCYAz7g8drVj5s8T6OavHi21icoi848Wwj6gZxjbcBtVcZzIgUW/rj7UR1SN2J90PceDajeG8gLw2efLMFoyIr5L6vgcAUvV/crxj9eh//A8CT6Psh3qSCu5l8YAiVx6+btaYdA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792058333; c=relaxed/simple;
-	bh=A/H+4S4k+ziIgUTQ2Jpdw9BBuH9YGFczaG9jMN6Mz6g=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=IcveyqvXmprauj3gEmbU9U0rtEjpbOvUvucyV4zXNaBuMEEVgBWdhkE3lM6CNrkLwc1zDQw/mxNu0V0gujDJ6hLOaADExH3Tb4L549mNgdN72FnHEE7qBbQqH2w5XgwqxoHIIo8gi4w7pE9RrvYAnYxru68od9n3noEgP1sfWpk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hlrVbHGo; arc=fail smtp.client-ip=52.101.43.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF5B45D923;
+	Thu, 15 Oct 2026 10:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792058608; cv=none; b=mlhy4efN2vHh/1u6C+sMMEArRDuMgRNWlvjeJvPjFD+JPqveYu69LzaeV2+1qbwqBuceD94Au6ZQvLd3x04zIqeCYqFBMmassfRPbPzOXxysEwilFtwXcNQR63V7bksiaw2jNijhDJADWVYsoW0TfwmbOunicruY0M6+0VSiLZc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792058608; c=relaxed/simple;
+	bh=jQfSLed4h//EKi1zFvLaF3DZxizTMwuRBrKZKA0SkCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D9Kyu8EhcAGpnp/nWyA+KQFwEYvwPvwFioVZxpLPv0Foy7i5dztKM+O+hwihtO98nlgZiYOHkF5Y8HZzzdnQ8EJoJysYwqWW/oC2MhngPOVq8YfAsRjciedar+j5Xm11kx5TFcFppLuzvq1lto8LnLRowC4ym60jAZcqOQC9LT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Ospqc/jo; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hlrVbHGo"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K/eytPymZ4aikldPaDw19o5jjSIbVtZWZlUXOkZ5riLpj798VCRN2RslG0isu+SiaLoMJ8m24xtMQn3aEUp4ajuINOehUf/ZtwFBlUV1FW9H0YYfEEzpFApwl9szLLJTtPxoQqbqJY4TIixkpTewoFsmK6eyX1oAM4YKQnM7D866malj4kMCpznkNYrgMB7U0X4I9pKcqCJ1zIcoEMmuYHvSiWAIOYPSL53y4a0w2bvd4dORd3drXh3wqO+sgdXHGLKs4I9z+YzRiqw6/sNj+1oou8+ND3Qb+NvHiKYmyKPj7rLX++JJR6VVGsXZ/SflDGPAHOUFOq2bgL9mloGDxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V8sJUlY5P7DltSfa3K6rbbygR/Id7mbri5lILm3Aicc=;
- b=es7sHTHStlEBw1Y/dRIdTlciOcdAF3XBrKLUB9OUO2x+MejbZlo0Z+AIeVNSjDf2Ce7whi0GSpwGbUuEue2q8uQh68Tm/73TqDFt/4Q+lJYHMpvREr4ooP00ECXHtXjvIimB1LiDmClCPUZpUjNI1L6CYLsWi9Fijp5Irxp6mGWcyIojcbojUrO3vM8gB3EFNHQcL1il+VVgvGZnh+tCO2YXdimWOlx5GCHEEH71LLnQ3Ed32+COlZ0Y8cOXjX86lc+JAUirp4a8bJsg8QwqcLQTr/ovScUIKslP6ojHKZdp8wtuNrRKr3xnNBZDTu8AHNQjUZ/NKTbs7/cTOp3VRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V8sJUlY5P7DltSfa3K6rbbygR/Id7mbri5lILm3Aicc=;
- b=hlrVbHGonIqBh64tQpxv3FT4KMP/rBJBUma6FXnucRSUE2PT67pe0HTXrIxYmTD8ROkXl43UcE6Eq62TSQDGWyi2x8cAxs1gBTgEdqPmIlQ0ihTbDQHLVQVFVKXJM+4+XwQVt8WRzWOFW9XiCKS6oEclWsiJJlXYywUmtgfzPokULFTiRKAaNsAYKxO/828q33Lg7PgkMiq2tuB41BPJ35++Esm4lUYLXG+T3NrXu4DVebSleug//1QsZ79cYZ7dsFcddH3tpIbGO7LU8ArDFfDSDAsGdXvQ+vRlsQ17mZnYrPOrQ8qkYdrrpt++WOPBHmXDZxs/c2WDRxT3hImgsw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by CH3PR12MB7668.namprd12.prod.outlook.com (2603:10b6:610:14d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Thu, 15 Oct
- 2026 09:58:48 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0522.012; Thu, 15 Oct 2026
- 09:58:48 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Date: Thu, 15 Oct 2026 18:58:03 +0900
-Subject: [PATCH 2/2] arm64: tegra: Make the NVDEC power domain a subdomain
- of NVJPG on Tegra210
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261015-b4-t210-pd_nvdec-nesting-v1-2-39a36b622eac@nvidia.com>
-References: <20261015-b4-t210-pd_nvdec-nesting-v1-0-39a36b622eac@nvidia.com>
-In-Reply-To: <20261015-b4-t210-pd_nvdec-nesting-v1-0-39a36b622eac@nvidia.com>
-To: Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.16-dev
-X-ClientProxiedBy: OS7PR01CA0240.jpnprd01.prod.outlook.com
- (2603:1096:604:25d::20) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Ospqc/jo"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A83322F;
+	Thu, 15 Oct 2026 03:03:20 -0700 (PDT)
+Received: from [10.33.8.90] (e142021.arm.com [10.33.8.90])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70B5B3F871;
+	Thu, 15 Oct 2026 03:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1792058603; bh=jQfSLed4h//EKi1zFvLaF3DZxizTMwuRBrKZKA0SkCk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ospqc/jotDB57wXSnGWpaAnDpiiDDQypchsf84aZpuHa47m/33nzc41Dr5AHsIt8v
+	 jjfBUGLOvZh2OtCykrhLpsW1fqaFB1I8QKCmxsXQVprsUY9NFXFXOf8WkrTs/EqZXK
+	 JK5o31xXcjuwy68k94tHKRt1vKs7A4PR48vD3600=
+Message-ID: <03b070de-b0b0-44d9-89ce-891e6c3ac4d2@arm.com>
+Date: Thu, 15 Oct 2026 11:03:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|CH3PR12MB7668:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2bef65d-ff82-44d9-9684-08df2aa2e832
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|10070799003|23010399003|11063799006|22082099003|18002099003|261009223027099003|56012099006|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	OT2+XULeLCb1Dk8cUtzJqYNmNGeE1q8dGjO6WJ+uyaIiKpZEgXKEfOFJmcb6QblvW+DkJGciLSpRnUf6lQKLkoXfhzy2xmtK3DM4XYOtoWKNt6vx3FosRqoYwqqOA6+h9h4KxL1q8LCZexir+h4Ozeks/RNzLStb72C2n0pWJRYn1IomKXcQaWr4DfFcT7ex4anuVlu4+HUZHkPTwYtyY+9lybOoZJFB7P/NZE9zeBKkHUoUKzVTsGGvWqP5U+FAb6i9u2PxDDDC1PBNUENEzJZRK+D7+1o8N4wuzpWdyLTcznFgwNLD2IbsaItUtf8oamQ7FgKP3QHxQ+IUyUHBBjeP/WwtJR0sf6x9jaQELouIbFHXxT/QuDA6zJwVptHriAzdTcD+c5NE5h3oPYplWK4Y7eoESSHDOf5z+YFDABkfqQFeYlg5TXIEgfFRclK6n1aAHJsX2aKgHXS+AmoYjhrjRwVu+ubTf3/gNaSteYKUMurKBK47F55N1OJWct3ilszNBeujPKDkvygaHR5IvUYupD6p7VGtlWARpMGCd6ouD2x2brYOlGE3ma5N9ZSidgY9vfT6tSnOWep1WEbYjRN3nASds98js+Fgrc4emOaElDvz9M59uXQVfzAZECrj73ymp9oG/LdtzylbEiWq+8s9iK41NU5gVvVo5othd08=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(10070799003)(23010399003)(11063799006)(22082099003)(18002099003)(261009223027099003)(56012099006)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MzgvVlZwdVg5OWFWZnN0Y3lHQ3FDQ0J3NzZtODFaeXlLODRweWo4ckJINDZa?=
- =?utf-8?B?RDZhSDkvekpWUXMxLy95dkhEMHBDSlBGcUZPYmpNUzhhNHJxSGh1SUJFQlpB?=
- =?utf-8?B?eURkN0hoS3RCM3p5TFg1U3pFZGFTalVDL2wwbjlYb0ZGSVJ5NmEvWnQwQ05M?=
- =?utf-8?B?MVpaSk9jZzVZR1NrRzBDM3NQMWI2SVJVSTN1R05sWlZxKzF2YVBhWm5mQm94?=
- =?utf-8?B?Sm5DUUZzLy9hRURPRnFsSDBGbVpIVFRtSzV4NkJmY1RyM01vekRpTitYc2tP?=
- =?utf-8?B?UTg2N2UzV28yakNiK3pMU0crTmtUWi81ZkxLY1NiL1R5VDlHVVAySVdIekRO?=
- =?utf-8?B?c0JrVE1NUVlLQTUza2M1ZTNlbU1IVDk0Mlo0UnBVeDZaQkZmS1FseWZpb2l3?=
- =?utf-8?B?bjdhSml0OWN1M0U5Nyt2UlNFY1R6T2ZXU1pIWWVpWXh6TXYrOVhsaklMOTk3?=
- =?utf-8?B?MmZUOVozb0QxcHZneDdST2doSHJRRXRRZERXZ2p2SlRIVTlSb2R1THNZb3FS?=
- =?utf-8?B?cFB3VFpRbGNOQ2JsSC9WU3lqUC9scTM5a3RORVAzZ1BBOVZQTWVTWHIwdUUy?=
- =?utf-8?B?aXAvbDd5NXh4UkpZejVtUmRLaXV1U0xCSURMUUhWTWVHU2FJaXIxbXRrR0hu?=
- =?utf-8?B?QWo1RmlLWHRtRGFOZzd0OFBTcW1oaDMxQnVSNGozWkRseUQ2K3FyS1dXT3dm?=
- =?utf-8?B?K3YzQ1BTUHRJQkQrNDNsMytpN2IyWHc3akhjbk1RV0lzdDB3d1k4TnJucUxw?=
- =?utf-8?B?dC9Yc2VpdmZyN0ZQc0hqZFZVbWZHcWlVUjR4QzhFYnFTZGFFdjhYWEFEMXZG?=
- =?utf-8?B?NWFBVkVYTGpjbnp1TkZ1MDhqOTQ3c0JFL3NnbEZFSmZsV01MYjRHUVhTSzc1?=
- =?utf-8?B?YStTRHBFZUV5dmdEelVZcGxvczAzOVNyNmJmY2RCcUFONDFwRWhaK25qMHRx?=
- =?utf-8?B?MmFFb0p5L3lBQlVvb09XelYzREFTOEoya01NN3k5TUkvTXB6MnQ5QVNZMkVL?=
- =?utf-8?B?dUYrcW1jTVpQZ01RVnQ0eWx4VlZYYktXQUN0alpqazd5L2hieGkxdTNaYkVj?=
- =?utf-8?B?RUxtUzFscksrbUFuNlZzZ2tRYUFETFI2TEZVZGhvcHBOcU4ybzN5Uk02cUgz?=
- =?utf-8?B?YWNFeWk4eE9mZXA5Sm5MNTlMb3RCNmRTdTlFVnRhVkxPVlZlZHRoWFI3WDBP?=
- =?utf-8?B?RFdyK2pBOVAxVzNnYjV3ZDVVcG96V0I4Y21SaERjY3NEMTFsNnB3UC9GcEFS?=
- =?utf-8?B?d2dxK1hMczdqcGp4SU0rUzBwV29UcnpONkdzWmlCUGdYK1c0RERhMm8reS9h?=
- =?utf-8?B?bFNZWXhiNnZqTVpFMTlQK1R6ektHY3lIck85VzQ5R3hmV1hNSzI1OHlEb0hJ?=
- =?utf-8?B?K0h0QlV4ZllTZE53MzRPUWkwZG9yYU5Tb2hTc1BydkdOOVhmQXJKbzJkLzRJ?=
- =?utf-8?B?OW9lZnNLNTlPRXh4NzF4MUc4Q0ttQ0o4aGZhSU5iWlUxL3p3SzVINk9TQmI0?=
- =?utf-8?B?S3RvWWJ2VVR5Mmc5RDBXVjlDN3pMR3UrM3hoR1FRSS9wYWpxZHVpM3hJTG1y?=
- =?utf-8?B?ZmV2dlRyR0RKaXUzcitEOGZsZDVZT1F6U1VHeEw3QzBYOVZqZVZPSDdHeTVp?=
- =?utf-8?B?U3pud2Y4ajNUUVJkRm1kN2piSjRzQ0dBS1RUenRDT2NSNlpjRStWeUMrYUMv?=
- =?utf-8?B?WFhTSTYvcFg5RlgrRjI1aHoxaGxXdHVybFZ6N3VibnVLQnFOWjRITlZ2ZjNs?=
- =?utf-8?B?anp6eGErUjQ3NndCYkIvYkpCZEFHZnVLSk5ub0lvVTZtSHg3OFlGNjRPUzhu?=
- =?utf-8?B?a1c4MXVyM3pGSlBQKy9QNlB0L2xVQUxQL3RnTVZQekUyUnFRWUF3MjByaTgv?=
- =?utf-8?B?NGd4L0haMXhUd1FpcmtzUFdObTlUNElEWkt2M0tEdEJya080YkZkdkZ3Rzcz?=
- =?utf-8?B?SUFSUGFzWVVRay9RbndOMmxTcmNWR0U2Nmt1emxkVGZFSG9McC9hN3gyQ0M4?=
- =?utf-8?B?RmVKQlBWbTBnRmk0MThZY2VQcXB3eC9YVmxid3R4QWZhcGZGcUtxaGhOL3Nj?=
- =?utf-8?B?RlI4MWI0NmpMQmtSUXpoWEl0dTlBVHAxU1JPeWJFcGVhZ053ZFgyd2YxUE9E?=
- =?utf-8?B?UmNGWVdacXdTWTFMS3J5WDhxb3FtdEMvKzhFcXpBeWd2RGtxV284aHJySzIz?=
- =?utf-8?B?eVZEZjR1ZG9tMlRZYmp4b0NsenhnYUcvMzZpdU1WNm9EVWVFOXZlc0k1czVn?=
- =?utf-8?B?OHNJR3BULzgxWlNjdXdkeSsxeG5aWTRaUExLcElGcTNNSVZRQm5TTmdQaEVq?=
- =?utf-8?B?V2Y0TThWVEo4clpUdkplVlo0SFFoM0hBZ1VqVXNNOGYrdjhrbWY0ZEZZWlJy?=
- =?utf-8?Q?fuwF5iej5bUtbx4eh257JxKeYtncPrP+tl1h86S7CrEKX?=
-X-MS-Exchange-AntiSpam-MessageData-1: fyvhzOKu5t279A==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2bef65d-ff82-44d9-9684-08df2aa2e832
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 09:58:47.9687
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NyUIGnIWpx6y+Sg73IhzO5TiZn/ryIesid1fZ0XqCDAKFb1wx2zXTxRQpBB/urghGeU39Ns6SztDbALM17yzNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7668
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] cache: add SMCCC-backed cache invalidate provider
+To: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence.csokas@arm.com>,
+ Srirangan Madhavan <smadhavan@nvidia.com>, mark.rutland@arm.com,
+ lpieralisi@kernel.org, sudeep.holla@kernel.org, conor@kernel.org,
+ jic23@kernel.org
+Cc: catalin.marinas@arm.com, will@kernel.org, aneesh.kumar@kernel.org,
+ Souvik.Chakravarty@arm.com, treding@nvidia.com, jonathanh@nvidia.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20261013070205.3566865-1-smadhavan@nvidia.com>
+ <20261013070205.3566865-3-smadhavan@nvidia.com>
+ <23e9b66f-083a-4a77-8214-25f30c08057a@arm.com>
+ <c0c04151-1ba9-473c-86a4-e066d6881858@arm.com>
+Content-Language: en-GB
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <c0c04151-1ba9-473c-86a4-e066d6881858@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-According to the TRM, on Tegra210 the NVDEC unit is split into the NVJPG
-and NVDEC power domains, and the NVJPG domain has to be powered on
-whenever the NVDEC domain is powered on.
+Hi,
 
-Fix this by modeling the NVDEC domain as a subdomain of NVJPG. This
-fixes the system resetting when attempting to boot NVDEC.
+On 10/15/26 09:43, Bence Csókás wrote:
+> Hi,
+> 
+> On 2026. 10. 14. 17:38, Andre Przywara wrote:
+>>> +static int smccc_cache_probe(struct arm_smccc_device *sdev)
+>>> +{
+>>> +    struct arm_smccc_res res = {};
+>>> +    struct smccc_cache *cache;
+>>> +    int ret;
+>>> +
+>>> +    arm_smccc_1_1_invoke(sdev->func_id, &res);
+>>
+>> I think you should provide the explicit function ID name here, and not 
+>> rely on which function exactly is used to probe for the interface's 
+>> existence.
+> 
+> I thought that was the point of the matcher, that you could in theory
 
-This commit also requires a change to the PMC driver:
+But that probe() function here is not a "matcher" or a check function, 
+that is done in the SMCCC bus generic code, using a function ID that has 
+no side effects and does not return -1.
 
-  "soc/tegra: pmc: Support nested PMC power domains".
+The reason for this SMC call here is to learn the attributes, they are 
+used below to fill the latency and rate_limit fields in the struct.
+So we should then make this explicit, I think, by using the 
+ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION_ATTRIBUTES name.
+> assign the same probe handler to any function ID? For example if there's 
+> some FW that implements this (or a compatible) function, but at a 
+> different ID, you would only update the match table? At least that's how 
+> most subsystems (I2C, PCI, USB) do it.
 
-Without it, the PMC driver fails to find the parent while still
-registering powergates and defers its probe indefinitely.
+Not sure I understand this, this is a driver specifically for the 
+CLEANINV_MEM_REGION SMCCC interface, I don't see how you would reuse 
+that, or plug any other interfaces to it.
 
-Fixes: 961e69a5dc78 ("arm64: tegra: Enable NVDEC and NVENC on Tegra210")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+>>> +    if ((s32)res.a0)
+>>> +        return -ENODEV;
+>>> +
+>>> +    cache = cache_coherency_ops_instance_alloc(&smccc_cache_ops,
+>>> +                           struct smccc_cache, cci);
+>>> +    if (!cache)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    mutex_init(&cache->lock);
+>>> +    cache->latency_us = lower_32_bits(res.a2);
+>>> +    cache->rate_limit = res.a3;
+>>
+>> According to the spec you would need lower_32_bits() for a3 as well - 
+>> if we are going to use this value. But I don't think we need to, see 
+>> above.
+> Where does it say that? My copy of DEN 0028 1.7 H, released 2026/Jul/24, 
+> only says the following:
+> 
+>    X3 (uint64_t attr_2)
+>      Rate Limit: The maximum number of SMCCCC_ARCH_CLEAN_INV_MEMREGION 
+> calls allowed per second. If set to 0, it indicates that this field is 
+> not reported by the implementation.
+> 
+> See my second-to-last comment on v2 of this patch:
+> 
+> https://lore.kernel.org/lkml/591e7ac9-310e-40f4-ab22-161d6ea8f487@arm.com/
+> 
+> Maybe I have an outdated copy already? ;_;
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 49d22506b7b7..08e14bcc9367 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -935,6 +935,7 @@ pd_nvenc: mpe {
- 			pd_nvdec: nvdec {
- 				clocks = <&tegra_car TEGRA210_CLK_NVDEC>;
- 				resets = <&tegra_car 194>;
-+				power-domains = <&pd_nvjpg>;
- 				#power-domain-cells = <0>;
- 			};
- 
+No, I had! Mine said v1.7H, but is was an early version, which had the 
+upper 32 bits of rate_limit as reserved.
+Indeed in the later public version it's a 64-bit field, so ignore my 
+comment. Sorry for the noise!
 
--- 
-2.55.0
+Cheers,
+Andre
 
