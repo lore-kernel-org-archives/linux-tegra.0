@@ -1,97 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4AD485515;
-	Thu, 15 Oct 2026 10:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777154EBAC6;
+	Thu, 15 Oct 2026 11:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792060285; cv=none; b=dKoo4QLCsnMwBoX87yVxQVN1bM61rMmT4JcyUPTbwciNomQIn9s5icJdgkpcU7XfI94Ls2ifc8G4kEchkuNLmXeI30hQRCNKWkWUjWXRVO35xlKoKnHtR41RbVStga2MzKBCTIAxBP3fkxxLdDTu0HhwUyaeGQwjMR6UXFB8EMU=
+	t=1792063693; cv=none; b=WMwIVvRqWr7PTIvWkGGOSQy0B/0erddXWtUlV5crAdtvZV2wGyoNJ8Ny0py13RiCSnRYcejYMLO0oo8+BX8YSTZfpTIzjJ0MXdcvKvXdNSUxrjLeqYrkW+YrqOw29vQl/RwdRMOfABA6c+n4MUVnaZkVIer6DCXfJrOZFeSzEhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792060285; c=relaxed/simple;
-	bh=8s9WPA5xRPW3zkli3mcv126kpJ1ImNBdVQyHu1OlFVg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rHtmx6Ly0zbMbQ/hnMLkYw2NPAtYliz1kRK8rfkYTMPWUTkEKYbcJ3eVL46c7iZwKCODx6EYXAJQPQOoDR+UUMROLZ/KdmOvzFK3NkBuIbqSqY62+vNbn4F8/zRxRqdlDdRC7ZbRvAdp9UGplWNdk4WZsxuQUDSyvC7lCHfd3HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=chhpwKGK; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792063693; c=relaxed/simple;
+	bh=vN8crsMLeMURqPwrucsHxLo2CIhLz3ZK0+yNKV6oupQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jq1qV0NTrdJzf68RmAxDosVUnUXTAFnzdnJWCFt5xoMJsK+mz0KNThij7iFhUFwnUEQJO09LR7Iz/Pi8/hU44N5T15GCVTT9tHpSypNwKelDirND9wa0ENfIcGEvy3kRjzhCrplMagNyeEua0o3JT7+YVcE2XgMdTdEre+EwP3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqRUzdfg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="chhpwKGK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8995F1F000C4;
-	Thu, 15 Oct 2026 10:31:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqRUzdfg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C51C1F000C4;
+	Thu, 15 Oct 2026 11:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792060284;
-	bh=GgG5/7AXvaq/iFfJgULH7jRlgvitqo/IGXQVg44lcGM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=chhpwKGK2BQPGyb3AfW8vvJ1N88u6ydT3rUcMUNR5rMBL7u1HG3QfyFnlaaz4zkOH
-	 gBrP7TwJcIqBRUiwjvEShY1lMz9aLhStI+GALPYSNwVrv3IQfyJXj1IgA6KYFGODn6
-	 hleb3OYUFz5YGG9wKzs4lk49Kwf/PAvLJiextjpFPfpiBhjMO2+9hwj6iyEN7FW9AG
-	 i7Fm0HvQbuDpkmE5UbNo8EkF9ZPLnoTKBABUCA+1P2eAUmf6CpyvIVzAiBJl1hObP/
-	 eU1v5DfI72VieIQuH6JN4HSalRFujonf9DoJAeD26nwUJEDxJ2UjoVFguuumWvvLpP
-	 DgRWrdg/hBaDQ==
+	s=k20260515; t=1792063690;
+	bh=u2QYkuWc9e9/YKClMJHSyEAYi24qLkOSIRtRLWYuFx0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=hqRUzdfgZvZBaBWVqhsAJ8qZmt35+6a3x133Ifa8+nXXp9ANkqme7QADYpe5pCO9q
+	 t23pWjxwzhVXgD3/sjfqtuCEAaYcnD2Ag7IVLcIbh/bHx7y6efj/wghtt/63StEy+a
+	 TvzwB1dV785FmgzvuYdhDThAWvihK+WFETYDLEgb0bPL2QgbbS0XcuRw/sAMlPZN6D
+	 VIkx32hzk36pUyA+e+oXqgCrilfH5l6cg5y+jImjXr29L3bRPMTM2h7JBJV/p2okjq
+	 5fu6+n2ur4NB7S/nE9Iqc/jZP5DIismkq3jw0ziqhnnPPVe0bDKM3sdtXEwlgt1ohn
+	 ObJHJodOVQahw==
+Date: Thu, 15 Oct 2026 12:28:05 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261014120148.126160-1-clamor95@gmail.com>
-References: <20261014120148.126160-1-clamor95@gmail.com>
-Subject: Re: [PATCH v2 0/2] ASoC: tegra: Support WM8994 by machine driver
-Message-Id: <179198365033.228143.4661366281162373638.b4-ty@b4>
-Date: Wed, 14 Oct 2026 14:14:10 +0100
+To: Weibin Liu <liuwb@xiaopeng.com>
+Cc: ldewangan@nvidia.com, linux-spi@vger.kernel.org,
+	thierry.reding@kernel.org, jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org, swarren@nvidia.com,
+	linux-tegra@vger.kernel.org, Guanglei Zhu <zhugl3@xiaopeng.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] spi: tegra20-slink: bound copies to t->len
+Message-ID: <e81a1b15-cc89-4db3-97bd-315e6d5bf3ca@sirena.org.uk>
+References: <20261014-spi-tegra20-slink-copylen-v1-1-0ec779a6357e@xiaopeng.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1444; i=broonie@kernel.org;
- h=from:subject:message-id; bh=8s9WPA5xRPW3zkli3mcv126kpJ1ImNBdVQyHu1OlFVg=;
- b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLIurC7fUFC2eydbPN+qqNMfAuqN+iuy+LKSPgs3nToef
- jxMJCulo5SFQYyLQVZMkSUui/tlfcnrNXwHF7bBzGFlAhnCwMUpABO5wMPI0Le94HUm7343GY+H
- zFxxcbX5F5m0AvbqdGQ1Xp225B33T4a/Au9Ocr5iWuJcKyOhulyfS35ylZRqcfnblVya11W/lzk
- xAwA=
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dgfhA1QFRLLUhNsN"
+Content-Disposition: inline
+In-Reply-To: <20261014-spi-tegra20-slink-copylen-v1-1-0ec779a6357e@xiaopeng.com>
+X-Cookie: Tax and title extra.
 
-On Wed, 14 Oct 2026 15:01:46 +0300, Svyatoslav Ryhel wrote:
-> ASoC: tegra: Support WM8994 by machine driver
-> 
-> Add Wolfson Microelectronics WM8994 codec support to the Tegra ASoC
-> machine driver. The WM8994 codec is found on devices like LG Optimus 2X
-> (P990/star) and Samsung Captivate Glide (SGH-i927).
 
-Applied to
+--dgfhA1QFRLLUhNsN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.4
+On Wed, Oct 14, 2026 at 10:18:16PM +0800, Weibin Liu wrote:
 
-Thanks!
+> +		if (nbytes > t->len - tspi->cur_tx_pos)
+> +			nbytes = t->len - tspi->cur_tx_pos;
 
-[1/2] ASoC: dt-bindings: nvidia,tegra-audio: Document WM8994 CODEC
-      https://git.kernel.org/broonie/sound/c/5b4d158b309a
-[2/2] ASoC: tegra: Support WM8994 by machine driver
-      https://git.kernel.org/broonie/sound/c/e38398539f79
+spi_bpw_to_bytes() - 24 bit words can have padding.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+--dgfhA1QFRLLUhNsN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-----BEGIN PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmrQuMUACgkQJNaLcl1U
+h9B4Qgf/Z2ll+eWiEnYdFjH2tp3iKcGa0d9Gdo6GKXCWrelStsrUiHGT+KqSnTy1
+s0y5kTCdmgR2NRxh8XLgD36ttHv3eok5KLGCKGzze4MIEHBHJSpxXzuLc4CbJHdA
+0zWaDa2G/uFbuEPb28jl6/h9O66I+arG22nzJKAUiRq+dQDDxTwbdBhUEF4OL/NE
+SKbQ+8kS0EjQ/8nOT0dBpY3XTHtYlXPYsGPIQibq/5dYbmkWoBv5Bfn3Grdvaw1S
+moOiuV1qPNEWO2WYyLEA2bl3IP0xnegq5efvZDhKZQ/BrQwYEPwLCbTaLKdDR2Cz
+LWFio3r8eE6UR5JIW7Ft2nHfX28WMw==
+=w8m4
+-----END PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--dgfhA1QFRLLUhNsN--
