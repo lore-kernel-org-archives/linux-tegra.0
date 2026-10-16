@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA0851CF70;
-	Fri, 16 Oct 2026 16:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFEE51DE1D;
+	Fri, 16 Oct 2026 16:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792166832; cv=none; b=JNeP9ZIhcDNHeyJug45VJvtX3eyaEJ6loKz5cpZJX9TUfA0XjRCRfieJOueJRxNidfjL1MoEuUIm7s3TA/smX7S9oqyixr4nCb6DFX9f0WFDTwWLRxxH4Q92INiEEBqbEpsDlRbxWDAW9N2a2oGUdSaRA0nsvbN5wR4i3ibKXjY=
+	t=1792166834; cv=none; b=py/KqgO4fPRTBCBcwXuCdbNPu38m7d5SFbpx480Zny24SdAEx6OyIPen5RI29riV8YADeEHqlFMOkOimwNUex8rSOKwuCw4CMhbe02tlPZEoyCe2Qt68KYxD+SvXlLYtcm1v7jj1mFKlANn1pF6FmvwPe1kMYMWYfxC2H2wZlEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792166832; c=relaxed/simple;
-	bh=cXFizJmXKUZx5MnO0+6LShUGVYjiH0jQOl2THgZ/u9E=;
+	s=arc-20240116; t=1792166834; c=relaxed/simple;
+	bh=u4yIoPDpFwNxIk2tPnuMOUb70kXiRIwgkJ5RWOQp0cg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IE8F8nIeg5Hq+hdglCiyvZRgfMR6wiVUFQjxFda7R2Lil7oQ7CeH21Sn+QiU5nGWvqQbwg19YpSknnih+JnbK0OvrAPvmHBZRZdpvPOKpy+kBG+DoVbb7Va2vbPWuVntjriUNTJH89ShcGSwJ+AP7CGYRIxAwm1l3NCKrF0BzCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/Epq7AM; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=Bg27qN/hYSAOZc3Lr6e52edVCcP/I/Urt8KdkTiZLeo3pN2fl4rnkuCPk+u5RsJ2pjOk00KlShSQLoAKSSHx8DLMv3pVNZcUTF4U7+64OClO8LuDGSvZBZGkZ8FIzlOl5+EXxArQLoInBtO5+8au4Fabu+FJia5uE7vmvTO8V0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvBbqpzt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/Epq7AM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4B691F000C5;
-	Fri, 16 Oct 2026 16:07:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvBbqpzt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C9B1F000C8;
+	Fri, 16 Oct 2026 16:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792166830;
-	bh=HoQcf7n8Q8ynNDAuwTEGdl/f27l9+9gdRy/4HNnkOVc=;
+	s=k20260515; t=1792166833;
+	bh=HkcaHoVEuEF6jyX7l2/gwSTBl3pJicibI4BqOQZqGyA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=F/Epq7AM1gSU+en4YO89dvsAJYKFrWxlTyCrAOyJJiNbc6OeZ/X2SNmQ6iYSi2onm
-	 esSIfTLvS62+8UY9Onu8T823en0EK/29yiaTsTsoMI+TLTYvWyBuDVaYHh7O01yhOI
-	 v1BiekT1LXDDQ/pyrQUP1EOKhUPfNJVqn94Cu/OK3GxoEE4EXOAbWYX6XEn/fGKyNa
-	 bqbZ6ixFMf2tSJp0cGSBK92yXZTxYsj4HQLcclbpoIyHRP5coDVgRix7KAo3gKyXb7
-	 /JDuuI+tLr0uybOzpo0YIu8Acp3Okj+YoNNpWQ4zGiwCsjxongmJGMm5rKTDXHHi4/
-	 Ul4ClICsVsldQ==
+	b=DvBbqpzt1HA3rimcovjh1Gl6D1s64mWvD0b6KWVHdMToeVDnOKkWRBgmIQHS9Hzpe
+	 wRpnmM3H37XPHKalWCSDp5Ue6nVO2XHqQqk6YJ78Cyb8Hv1O5q6uB8tKSTYOFUTYsY
+	 XjToLrg9EV3Fl6zZmt+OV/O4+3vuU9XJnA+fZ7+rSnJ5SGKsH8BeBMMjRz0G2/rbui
+	 DB3jhcYvGMG+yV4dMKCrodHK21CRfrMTTtecKfR5UFhH5pc4f1CoBKjYZLSX5uqRoo
+	 JEG+DzsFjdphHa3imjdX1ekHS9ju4HrmrOzpYZjTb8+8I/F14t5BBRgVRsbhriRCH+
+	 MLFOdwl7bfr/g==
 From: Sasha Levin <sashal@kernel.org>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
@@ -51,9 +51,9 @@ Cc: Sasha Levin <sashal@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/6] arm64: tegra: Add the fuse clock to the Tegra132 GPU
-Date: Fri, 16 Oct 2026 12:06:56 -0400
-Message-ID: <20261016160700.3831336-4-sashal@kernel.org>
+Subject: [PATCH v2 4/6] arm64: tegra: Add the fuse clock to the Tegra186 GPU
+Date: Fri, 16 Oct 2026 12:06:57 -0400
+Message-ID: <20261016160700.3831336-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261016160700.3831336-1-sashal@kernel.org>
 References: <20261016160700.3831336-1-sashal@kernel.org>
@@ -65,31 +65,32 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The GPU needs the fuse clock running while it is powered: the GM20B
-on Tegra210 often fails to initialize without it, and the GK20A on
-Tegra132 is expected to have the same requirement. Describe the fuse
-clock so that the GPU driver can keep it enabled.
+The GPU needs the fuse clock running while it is powered: Tegra194
+already describes it for its GV11B, and the GM20B on Tegra210 often
+fails to initialize without it, so the GP10B on Tegra186 is expected
+to need it as well. Describe the fuse clock so that the GPU driver
+can keep it enabled.
 
 Assisted-by: LLM
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra132.dtsi | 5 +++--
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-index 26cd11a8a4a12..30f0d87aa70c2 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-@@ -195,8 +195,9 @@ gpu@57000000 {
- 			     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 705af0373a090..7d2dd0713de5c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -1883,8 +1883,9 @@ gpu@17000000 {
  		interrupt-names = "stall", "nonstall";
- 		clocks = <&tegra_car TEGRA124_CLK_GPU>,
--			 <&tegra_car TEGRA124_CLK_PLL_P_OUT5>;
+ 
+ 		clocks = <&bpmp TEGRA186_CLK_GPCCLK>,
+-			 <&bpmp TEGRA186_CLK_GPU>;
 -		clock-names = "gpu", "pwr";
-+			 <&tegra_car TEGRA124_CLK_PLL_P_OUT5>,
-+			 <&tegra_car TEGRA124_CLK_FUSE>;
++			 <&bpmp TEGRA186_CLK_GPU>,
++			 <&bpmp TEGRA186_CLK_FUSE>;
 +		clock-names = "gpu", "pwr", "fuse";
- 		resets = <&tegra_car 184>;
+ 		resets = <&bpmp TEGRA186_RESET_GPU>;
  		reset-names = "gpu";
  		status = "disabled";
 -- 
