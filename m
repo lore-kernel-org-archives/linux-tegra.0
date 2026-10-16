@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C6E51DDE8;
-	Fri, 16 Oct 2026 16:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B88524B10;
+	Fri, 16 Oct 2026 16:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792166837; cv=none; b=t2nXMb5+yI+8FcHVfdeqXxmWMpO0luH7XFFb3Clp3db8V5QfQeqIrE3Ngi9iN6+p3Pfpr+zzDTcq3znC2X7uJ9U5vWxnuABxg2iNKdhpeaujQWyw7O+dXljxOBH6FgzkO8OrYSkl880Pu0ZUkd4kfto2XFw50yGw0lsa53A8VOs=
+	t=1792166839; cv=none; b=SKbbhe62+XDGEakJKScQG826YeIfrXCR8VFVMiSXR0eccaQVK5Z4mYmUA4DwJyiAk3dSFjgLCAd2Vvyq5lQ7RvJqkPh+z2nbzeZaSk9cxJHzm0k1GtawWr1W8MUhf6chEP1O7k144QfAcsATUaWhAeZqgHdLyIWdWsNda+QZIQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792166837; c=relaxed/simple;
-	bh=wkYgRpj7hAritirMdr6bVOohvOhh8vutY+i4MfuPKmw=;
+	s=arc-20240116; t=1792166839; c=relaxed/simple;
+	bh=o2w1O5LjB3GXJ+EaSbF+SpSj74RWd+T2NhZAdtphaZI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kdUjyq37QUA0qqe00Nrwcsb6Gjo7GzYOf6l+shvYa5D5a3aH540PsAocKb6LvSsU9cai4dVu/GyAovvjtGv8PTHJTaed1qO1pxMLaqOYfoCvkMkWqUu1iLEKIAD3xrVhCXtvPleejAVcgAS5XPyquBbGvN1MlvUUOvTpS1MhNU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAe7Td8X; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=cic36UbHL28OMB9zvrYwuWKL8W0RYdOphRMzO+LyxVfSa8bgmqiEt6OeMt0v2N+UcG1JwOIEERqrryOfKFnqrYHylt7k9A30o+zWqj1vCf55I9+cYbVZW4KM+hkm2WSwXustnVOB1pS0oM1XuaUc9vrlK+FVLAZwBFdGQ5rNwwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o02l1/1A; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAe7Td8X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A10A11F000C7;
-	Fri, 16 Oct 2026 16:07:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o02l1/1A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 216DC1F000C4;
+	Fri, 16 Oct 2026 16:07:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792166835;
-	bh=bTnvzmPBqQO5bnBnm+XgGen3Y38ypytnbj4pLgrXzZI=;
+	s=k20260515; t=1792166838;
+	bh=g0Lje6TXki26fVUnlaQHkMtbrNZrfbHvxBcQLPWLmSo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=lAe7Td8XOZeaj/f4Z6IveolOWQxjThgFB7mKy/zV25BfXtHsOup8Bu0G9/vSewuAt
-	 4167jHC7JTF54vSJsqo0sWRQJuJWoNPzrIPxswwflYqFS6MMkOZZ6Patq5gNUfhHub
-	 ONYn57NtbuUSCg3JKpjcfkaaLX0U70n0qzwSMKPYGXezcBNMsy3uiAvLmO8oFJbXbG
-	 zWGG8BZbYvt03LYoLhf6Ud7BD23Mh2TJK1uFRM6jw48JEB61iCdX+yo+pF7gY8GPt+
-	 QaaB04gDG8Xgyt+8bp8xMGKr/E4xsNPRmJ3OOccR2xg1Rf1qVQoD4oHMMZdERA4tvk
-	 RKH2Tpr6CgTDQ==
+	b=o02l1/1AfRehMaiRM9H3RwrO3H7Om7ESvoMj3xdRz9JgsEQI+q3N12lp4BXvcpuZ+
+	 k/xLOYuhviCCBPSCM/yrB3NOn87lMFgKdkNtZ+y1eESVMFGg8cuqbXL1pcH+YhxFwC
+	 lz21pmOa2vYXKukeU7tZddy2sldgXgMSVSZ8AB9JTY+3BptYvI8m2RVTENDP0DMJxq
+	 NwNq8CpOeovapYN5D/a0O2C/7g1T+1lL4kml/u3LgQaqCYCJlib3ANzUfRppk25Xg5
+	 Fo9wAZICKWyj/B1ctF6CcvD6no6uB7Zgx3UvklT4m5YTSlSEKSbX8TmUhCR8p0+ZsI
+	 voCiXSDGylqOg==
 From: Sasha Levin <sashal@kernel.org>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
@@ -51,9 +51,9 @@ Cc: Sasha Levin <sashal@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/6] arm64: tegra: Add the fuse clock to the Tegra210 GPU
-Date: Fri, 16 Oct 2026 12:06:58 -0400
-Message-ID: <20261016160700.3831336-6-sashal@kernel.org>
+Subject: [PATCH v2 6/6] drm/nouveau/tegra: Keep the fuse clock enabled while the GPU is powered
+Date: Fri, 16 Oct 2026 12:06:59 -0400
+Message-ID: <20261016160700.3831336-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261016160700.3831336-1-sashal@kernel.org>
 References: <20261016160700.3831336-1-sashal@kernel.org>
@@ -65,32 +65,113 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The GM20B GPU on Tegra210 needs the fuse clock running while it is
-powered. Describe it so that the GPU driver can keep it enabled.
+Since the GPU on the Jetson TX1 was enabled in commit d1b725476104
+("arm64: tegra: p2180: Explicitly enable GPU"), nouveau often fails to
+bring up the GM20B. Either BOOT_0 reads back garbage ("unknown chipset
+(5ffefa47)"), or PRI reads of the GPC PLL time out ("MMIO read of
+00000000 FAULT at 137000 [ TIMEOUT ]"), or the first register reads in
+nvkm_device_ctor() stall until an asynchronous SError. How often depends
+on the board; one board fails on every boot.
+
+nouveau powers the GPU up with the fuse clock gated: since commit
+24a15252ff04 ("soc/tegra: fuse: Add runtime PM support"), the Tegra fuse
+driver only enables that clock around its own fuse reads. NVIDIA's
+downstream nvgpu driver enables the fuse clock along with the other GPU
+clocks whenever the GPU is powered. Do the same: take an optional "fuse"
+clock and keep it enabled from before the GPU rail is turned on until
+after it is turned off. The clock is optional so that device trees that
+lack it keep working as before.
+
+Tested on eight Jetson TX1 devkits, on mainline and on v6.18. Without
+this patch, the GPU failed to come up in 27 of 109 boots; with it, in 11
+of 291, none of them with a garbage BOOT_0. On the board that failed on
+every boot, 38 of 40 boots now succeed. The remaining failures are
+mostly a register read that stalls until an SError; wherever the console
+shows when, nouveau had already finished probing. Such stalls also occur
+without this patch and are a separate problem. The Jetson Nano, which
+shares the Tegra210 GPU node, still works (24 of 24 boots).
 
 Fixes: d1b725476104 ("arm64: tegra: p2180: Explicitly enable GPU")
 Assisted-by: LLM
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ .../gpu/drm/nouveau/include/nvkm/core/tegra.h |  1 +
+ .../drm/nouveau/nvkm/engine/device/tegra.c    | 22 ++++++++++++++-----
+ 2 files changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 5f5e5370d7096..2e84b2bda3142 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -446,8 +446,9 @@ gpu@57000000 {
- 		interrupt-names = "stall", "nonstall";
- 		clocks = <&tegra_car TEGRA210_CLK_GPU>,
- 			 <&tegra_car TEGRA210_CLK_PLL_P_OUT5>,
--			 <&tegra_car TEGRA210_CLK_PLL_G_REF>;
--		clock-names = "gpu", "pwr", "ref";
-+			 <&tegra_car TEGRA210_CLK_PLL_G_REF>,
-+			 <&tegra_car TEGRA210_CLK_FUSE>;
-+		clock-names = "gpu", "pwr", "ref", "fuse";
- 		resets = <&tegra_car 184>;
- 		reset-names = "gpu";
+diff --git a/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h b/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h
+index 6aaa30ef167f6..0189043382d02 100644
+--- a/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h
++++ b/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h
+@@ -15,6 +15,7 @@ struct nvkm_device_tegra {
+ 	struct clk *clk;
+ 	struct clk *clk_ref;
+ 	struct clk *clk_pwr;
++	struct clk *clk_fuse;
  
+ 	struct regulator *vdd;
+ 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index 3c8d0878891ad..74b292659ee9a 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -32,6 +32,10 @@ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
+ {
+ 	int ret;
+ 
++	ret = clk_prepare_enable(tdev->clk_fuse);
++	if (ret)
++		return ret;
++
+ 	if (tdev->vdd) {
+ 		ret = regulator_enable(tdev->vdd);
+ 		if (ret)
+@@ -76,26 +80,26 @@ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
+ 	if (tdev->vdd)
+ 		regulator_disable(tdev->vdd);
+ err_power:
++	clk_disable_unprepare(tdev->clk_fuse);
+ 	return ret;
+ }
+ 
+ static int
+ nvkm_device_tegra_power_down(struct nvkm_device_tegra *tdev)
+ {
+-	int ret;
++	int ret = 0;
+ 
+ 	clk_disable_unprepare(tdev->clk_pwr);
+ 	clk_disable_unprepare(tdev->clk_ref);
+ 	clk_disable_unprepare(tdev->clk);
+ 	udelay(10);
+ 
+-	if (tdev->vdd) {
++	if (tdev->vdd)
+ 		ret = regulator_disable(tdev->vdd);
+-		if (ret)
+-			return ret;
+-	}
+ 
+-	return 0;
++	clk_disable_unprepare(tdev->clk_fuse);
++
++	return ret;
+ }
+ 
+ static void
+@@ -308,6 +312,12 @@ nvkm_device_tegra_new(const struct nvkm_device_tegra_func *func,
+ 		goto free;
+ 	}
+ 
++	tdev->clk_fuse = devm_clk_get_optional(&pdev->dev, "fuse");
++	if (IS_ERR(tdev->clk_fuse)) {
++		ret = PTR_ERR(tdev->clk_fuse);
++		goto free;
++	}
++
+ 	tdev->pmc = devm_tegra_pmc_get(&pdev->dev);
+ 	if (IS_ERR(tdev->pmc)) {
+ 		ret = PTR_ERR(tdev->pmc);
 -- 
 2.53.0
 
