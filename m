@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214E04A2A75;
-	Sun, 18 Oct 2026 22:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248B14B923E;
+	Sun, 18 Oct 2026 22:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792361029; cv=none; b=Me6WDoO3e0epfXm7KA7qciy8zfW2o9vY3mGsZxUaE+pb6RHlqUNWi2eSvRH4iAF4FpLshcI/d8O+RahZ/KFi9AoD92FbayWTvDKiFZtt0UxcuLXsoHV83EXiEA4lk9Moh/1As/T3h/gqHTYrnP0srHoggUngqe1VFfP0rqr2jnw=
+	t=1792361029; cv=none; b=j+UqGJBq8h2THQZymrYs8bzFmHoIwDOdh9B1BCuU9rxUwgFwu4YLuZ08oeA0noDCrqTMFuxYhWGb3MpRcJOcntbidJkVOvweXLksI/vS5C7vTWSRH8m9jPPy5r+tQlvtEI8zdkgwUxDBqv/RFO/245XILSAsI3jPxvge3IIil+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1792361029; c=relaxed/simple;
-	bh=/ZkFDHhCvy2oQzPTFjq1CB7IWK2vavXQ+ak/ihrM1Dw=;
+	bh=09VHhiwJd7bTVssvm/nN2IhGWzCo6OX16LPn+5tjF3o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EnsBmvYmhTs1YqfMgIV1nwVaI3kAq71s2oPLAwBCYGwaAGTWjC9g3YUlnWg6m0w8DS+Y5jxDIHVUG1oYIqFQIRggbjQVDsjmf++PCll6oUzVpjn5QOgplLdWk3stxkU8bNS3gk1Jto7DCg0AavUvpaB5y+icmmdnMKNQUr3PgGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CH9OL99F; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=MHSAEs2c1GdOPdcASaO4FEVIf1nKif5m6ujZd5TZAX4bzGLqmCHdhrhrVgxJkhAPkznBUZmBpgCQB0cQKFeXL3JHUckebhskuCXTMVDVzq4Nv7DhkRS1yaQvLpZdkRxqEj/6nQt3V3VXgagLP9SBEDiPoc9O9kwZrUeG5hdCLPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhw8M8ok; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CH9OL99F"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C9679C2BCF7;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhw8M8ok"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BC40CC2BCFC;
 	Sun, 18 Oct 2026 22:03:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1792361028;
-	bh=/ZkFDHhCvy2oQzPTFjq1CB7IWK2vavXQ+ak/ihrM1Dw=;
+	bh=09VHhiwJd7bTVssvm/nN2IhGWzCo6OX16LPn+5tjF3o=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=CH9OL99FrOROdiIShLDRqP2PSw3RTDAwWV6++kKaz5uAZbDC0a46h3DVLZBf3GjpN
-	 MlgX7fBJiEfNbvNAvK0qhaUBaKkKF35J1l2o+uzEfKocz/Vtd7dCa7+LpwPPAJogdl
-	 08mmJndEXwcFcGHLMKsYaziQgO4BS5aZKDB57YeB6b4uEgSjhokIfCbPjpItiz/Qc1
-	 hH3Wc/0AyaXC2I7XLXENmHI2E3tskKZNohI+s2MVt6vMfW3XtS+PpTrf0GQCqHghpi
-	 7pJJmw1/e0vCaZ7H/B16VYXg5sLEnmcXh6XWM21uqNNvsWccuhYS7llPf1pTHwu7oL
-	 wAQMRooehW3dA==
+	b=lhw8M8ok6wSEaaaIKXRO8hJJAmcN9mMg3WEdGkyPRYHNsZV0YrH9rY8P0RGd37nP7
+	 MvzIU/oBNB6FcYSdQVvSpxZSSeQuHxqK/pS/XrBCTBYxIWXisDyu+xannaTGWhfknk
+	 UCBV5h3WXZ8ilx00aoJ2Dwd9qXAz36l0BKgeGyomYQRobWtw4YfxLS+WViZ3COGT/p
+	 8feuk+L6BbpIV6Ps9pRyW92Av9TcUJo8nfQNHru7XnTbsfcZhYuP0TFNtli35kRd5V
+	 YE2SvyZZSmPRpL11yEfrzYu/z+cDmBCrCfWKFObB4vzktv1zjtIHo/eHUJLJ542sbD
+	 S+YTXj7qEUtCA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF79CCF2C4;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C75FCCA490;
 	Sun, 18 Oct 2026 22:03:48 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sun, 18 Oct 2026 17:03:47 -0500
-Subject: [PATCH v2 2/2] drm/tegra: Support YVU420
+Date: Sun, 18 Oct 2026 17:03:46 -0500
+Subject: [PATCH v2 1/2] drm/tegra: Support swapping chroma planes
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261018-tegra-drm-yvu420-v2-2-512889103ab4@gmail.com>
+Message-Id: <20261018-tegra-drm-yvu420-v2-1-512889103ab4@gmail.com>
 References: <20261018-tegra-drm-yvu420-v2-0-512889103ab4@gmail.com>
 In-Reply-To: <20261018-tegra-drm-yvu420-v2-0-512889103ab4@gmail.com>
 To: Thierry Reding <thierry.reding@kernel.org>, 
@@ -49,11 +49,11 @@ To: Thierry Reding <thierry.reding@kernel.org>,
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792361027; l=2166;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792361027; l=4832;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=zCXQRgMgGrE/4Z64BHhTFEWRbQko1sGdhPQ7CQ9cxNY=;
- b=9/d6cCKyKcBy1HzraYGCfzSBU+a/AboZeVFNdP9190xrnLIVlklda/Eaif4IjIie/Ny8L8erO
- RKLHg4mM3HqBR6Cxa420WDz6/i6si7J1Mkzh271+J3SHVegzL+NX6FS
+ bh=8f9/kgf/w+kZjuzlQw+QdyCPQS3aC0rzLtNVhOjyJ/w=;
+ b=zXJ3DOw+bT6jInahrAwSnUEHLyWh1V3+w2pB1UE/WEWe5DkTmvKyGxaxboMPergZZy/2NiUsN
+ RWQiKFTitlNDrsOSRXuRm+AalDAxZxCqMl3Uf6KGlY2zUvtEHgni77E
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -63,74 +63,138 @@ Reply-To: webgeek1234@gmail.com
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-This format is used by AOSP for video playback among other things.
+The Tegra display controller supports some yuv types, but not their
+chroma swapped variants. For example, yuv420 is supported but yvu420 is
+not. This can be efficiently worked around by just passing the hardware
+said chroma planes backwards. Add a flag to the plane state struct and
+handling to both tegradc and nvdisplay paths.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c    | 3 +++
- drivers/gpu/drm/tegra/hub.c   | 1 +
- drivers/gpu/drm/tegra/plane.c | 8 ++++++++
- 3 files changed, 12 insertions(+)
+ drivers/gpu/drm/tegra/dc.c    |  6 +++++-
+ drivers/gpu/drm/tegra/hub.c   | 14 +++++++++-----
+ drivers/gpu/drm/tegra/plane.c |  5 ++++-
+ drivers/gpu/drm/tegra/plane.h |  3 ++-
+ 4 files changed, 20 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 39c2e920d76a6..61e155ecbfcb7 100644
+index b0bfa946e6979..39c2e920d76a6 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1282,6 +1282,7 @@ static const u32 tegra20_overlay_formats[] = {
- 	DRM_FORMAT_YUYV,
- 	DRM_FORMAT_YUV420,
- 	DRM_FORMAT_YUV422,
-+	DRM_FORMAT_YVU420,
- };
+@@ -740,7 +740,8 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
  
- static const u32 tegra114_overlay_formats[] = {
-@@ -1309,6 +1310,7 @@ static const u32 tegra114_overlay_formats[] = {
- 	DRM_FORMAT_YUYV,
- 	DRM_FORMAT_YUV420,
- 	DRM_FORMAT_YUV422,
-+	DRM_FORMAT_YVU420,
- 	/* semi-planar formats */
- 	DRM_FORMAT_NV12,
- 	DRM_FORMAT_NV21,
-@@ -1349,6 +1351,7 @@ static const u32 tegra124_overlay_formats[] = {
- 	DRM_FORMAT_YUV420, /* YU12 */
- 	DRM_FORMAT_YUV422, /* YU16 */
- 	DRM_FORMAT_YUV444, /* YU24 */
-+	DRM_FORMAT_YVU420, /* YV12 */
- 	/* semi-planar formats */
- 	DRM_FORMAT_NV12,
- 	DRM_FORMAT_NV21,
+ 	err = tegra_plane_format(new_plane_state->fb->format->format,
+ 				 &plane_state->format,
+-				 &plane_state->swap);
++				 &plane_state->swap,
++				 &plane_state->swap_uv);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -872,6 +873,9 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 			window.stride[i] = fb->pitches[i];
+ 	}
+ 
++	if (tegra_plane_state->swap_uv)
++		swap(window.base[1], window.base[2]);
++
+ 	tegra_dc_setup_window(p, &window);
+ }
+ 
 diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index 6427155ac4fdf..f176badfd922b 100644
+index 448f49f3a7d7e..6427155ac4fdf 100644
 --- a/drivers/gpu/drm/tegra/hub.c
 +++ b/drivers/gpu/drm/tegra/hub.c
-@@ -51,6 +51,7 @@ static const u32 tegra_shared_plane_formats[] = {
- 	DRM_FORMAT_YUYV,
- 	DRM_FORMAT_YUV420,
- 	DRM_FORMAT_YUV422,
-+	DRM_FORMAT_YVU420,
- };
+@@ -440,7 +440,8 @@ static int tegra_shared_plane_atomic_check(struct drm_plane *plane,
  
- static const u64 tegra_shared_plane_modifiers[] = {
+ 	err = tegra_plane_format(new_plane_state->fb->format->format,
+ 				 &plane_state->format,
+-				 &plane_state->swap);
++				 &plane_state->swap,
++				 &plane_state->swap_uv);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -664,24 +665,27 @@ static void tegra_shared_plane_atomic_update(struct drm_plane *plane,
+ 	tegra_plane_writel(p, value, DC_WIN_PLANAR_STORAGE);
+ 
+ 	if (yuv && planes > 1) {
+-		base = tegra_plane_state->iova[1] + fb->offsets[1];
++		uint8_t u = tegra_plane_state->swap_uv ? 2 : 1;
++		uint8_t v = tegra_plane_state->swap_uv ? 1 : 2;
++
++		base = tegra_plane_state->iova[u] + fb->offsets[u];
+ 		base |= addr_flag;
+ 
+ 		tegra_plane_writel(p, upper_32_bits(base), DC_WINBUF_START_ADDR_HI_U);
+ 		tegra_plane_writel(p, lower_32_bits(base), DC_WINBUF_START_ADDR_U);
+ 
+ 		if (planes > 2) {
+-			base = tegra_plane_state->iova[2] + fb->offsets[2];
++			base = tegra_plane_state->iova[v] + fb->offsets[v];
+ 			base |= addr_flag;
+ 
+ 			tegra_plane_writel(p, upper_32_bits(base), DC_WINBUF_START_ADDR_HI_V);
+ 			tegra_plane_writel(p, lower_32_bits(base), DC_WINBUF_START_ADDR_V);
+ 		}
+ 
+-		value = PITCH_U(fb->pitches[1]);
++		value = PITCH_U(fb->pitches[u]);
+ 
+ 		if (planes > 2)
+-			value |= PITCH_V(fb->pitches[2]);
++			value |= PITCH_V(fb->pitches[v]);
+ 
+ 		tegra_plane_writel(p, value, DC_WIN_PLANAR_STORAGE_UV);
+ 	} else {
 diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index 757bc552809fe..0771a6cce8984 100644
+index 2148b0c59815c..757bc552809fe 100644
 --- a/drivers/gpu/drm/tegra/plane.c
 +++ b/drivers/gpu/drm/tegra/plane.c
-@@ -433,6 +433,14 @@ int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap, bool *swap_uv)
- 		*format = WIN_COLOR_DEPTH_YCbCr420P;
- 		break;
+@@ -59,6 +59,7 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
+ 	copy->tiling = state->tiling;
+ 	copy->format = state->format;
+ 	copy->swap = state->swap;
++	copy->swap_uv = state->swap_uv;
+ 	copy->reflect_x = state->reflect_x;
+ 	copy->reflect_y = state->reflect_y;
+ 	copy->opaque = state->opaque;
+@@ -319,11 +320,13 @@ int tegra_plane_state_add(struct tegra_plane *plane,
+ 	return 0;
+ }
  
-+	case DRM_FORMAT_YVU420:
-+		if (!swap_uv)
-+			return -EINVAL;
-+
-+		*format = WIN_COLOR_DEPTH_YCbCr420P;
-+		*swap_uv = true;
-+		break;
-+
- 	case DRM_FORMAT_YUV422:
- 		*format = WIN_COLOR_DEPTH_YCbCr422P;
- 		break;
+-int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap)
++int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap, bool *swap_uv)
+ {
+ 	/* assume no swapping of fetched data */
+ 	if (swap)
+ 		*swap = BYTE_SWAP_NOSWAP;
++	if (swap_uv)
++		*swap_uv = false;
+ 
+ 	switch (fourcc) {
+ 	case DRM_FORMAT_ARGB4444:
+diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
+index e33a581e6490e..dba5f1b254e98 100644
+--- a/drivers/gpu/drm/tegra/plane.h
++++ b/drivers/gpu/drm/tegra/plane.h
+@@ -49,6 +49,7 @@ struct tegra_plane_state {
+ 	struct tegra_bo_tiling tiling;
+ 	u32 format;
+ 	u32 swap;
++	bool swap_uv;
+ 
+ 	bool reflect_x;
+ 	bool reflect_y;
+@@ -88,7 +89,7 @@ void tegra_plane_cleanup_fb(struct drm_plane *plane,
+ int tegra_plane_state_add(struct tegra_plane *plane,
+ 			  struct drm_plane_state *state);
+ 
+-int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap);
++int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap, bool *swap_uv);
+ bool tegra_plane_format_is_indexed(unsigned int format);
+ bool tegra_plane_format_is_yuv(unsigned int format, unsigned int *planes, unsigned int *bpc);
+ int tegra_plane_setup_legacy_state(struct tegra_plane *tegra,
 
 -- 
 2.54.0
