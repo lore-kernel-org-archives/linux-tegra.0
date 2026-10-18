@@ -1,211 +1,228 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939DE12D21B;
-	Sat, 17 Oct 2026 09:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C6C17A2E8
+	for <linux-tegra@vger.kernel.org>; Sun, 18 Oct 2026 02:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792229243; cv=none; b=n4M55lHRT5DjFM0BVuyp0bYJUxN4xya1j0zbozB80R0VofwW8rBqQlqrZSFFI6WpX48rB3vIfMw6K/CGZC/ycMy17yH4rR+wn/xi1afCVUzobh5OWUx+sT6TLPDz5Fxugp/wmJt1VbBo0zEiTvNKZvWZcKSTsQzGPLy2kVjL8do=
+	t=1792289904; cv=none; b=APmtAlnSHB5QzzEc21wahT4TkHvZ330iDQ0q5hnon+4HrKJuXnGsIvMzHicg5sZ85/2fIFo7dp896qDObktyCz64kz+L6PJKm2HQMYr0bLwq/IOy6sTgh3cAfxfYCH4E/VVju1iOF1nDXqWS/rYbzLQty/83dR3IdcYdW6QHZAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792229243; c=relaxed/simple;
-	bh=8fCM+ZIyN8PVxzgFF9qasAvMvV+8H88XHgQe8q2Lfx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwGTyYSdDrJ8wy2lb7HVK5qNZxfqfYjOtOqRdT/RNYw7elr+bC1H9VZV0WenANSBl0MHCDoPBYuLjaVlZQwaHu/D7PPgDqZvfFw/2yY4BwEjH+MgN3Wc9Poya/SKF1+aBncI1XQH2Su0XNqKcmgWXiz+VktUjzPn4KaB6++whDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVAuLt/U; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792289904; c=relaxed/simple;
+	bh=Ldrass7YZ/p74jIXxz7+C6GAjM5NGsD+baovS0Mp7zI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BdOZiwQvXLYC0hZHpRPLTXnI/igXtfoH3v1ljVeosSxpwn1BzpkNikwfnipXyKwHYphmEnXlcIoB51CrfJ8dQOTJ56QSlzkEd6nKlGR2bAcAWdVd+wp/52N4VgZoTC/T515XVysBGZ2U+u5LUwb1zdi5FYL/a6sLyG+/jZ3kwEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3ee+uTw; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVAuLt/U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1AAA1F000C4;
-	Sat, 17 Oct 2026 09:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792229242;
-	bh=WJcKlK/pnWllbjb2ycYVXrDMuD9GwRzRABpINzqCzmc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GVAuLt/U+SOqKGKqm0j1WcV5xRu+jofMbuSn8Xa7fydLkr7fbeYhMBxYzrFXqSeIJ
-	 +I0Rf/LeB+xrrcsNg9CU9/0l3quuJo1cWqeKfTRiuATRDkOjKfvYo0YJuhKhCUmXe8
-	 YbXist2DnxQZGDBNQRchNSa7UT4HXmTgWXzJ1hvqpAsQtJ4vR8YgcHtXbB5/8pyl1r
-	 BkVDqqoNED0KtdkHvk83ZNfWiL6xpvGZNPOjNT9pTJZ/iIaRWa+/wP4RDWAS+JqBpT
-	 Kvj3I59fP1vjURJqV4D7AtslvhNJZFx3KgWkvGmHriCv10n5c1yfBZFhY0zB4cXyz3
-	 /ZBfN2WxVuPLQ==
-Date: Sat, 17 Oct 2026 11:27:13 +0200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof Wilczynski <kwilczynski@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Vidya Sagar <vidyas@nvidia.com>, Niklas Cassel <cassel@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/3] PCI: dwc: Add Endpoint reinit helper
-Message-ID: <dee53d7no6nmzsaousuoqleg6dhigkejvkxmpyihc4v4piipwt@opa366n2sakq>
-References: <20260923072554.1141864-1-mmaddireddy@nvidia.com>
- <20260923072554.1141864-2-mmaddireddy@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3ee+uTw"
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-5365b48238dso3457461cf.0
+        for <linux-tegra@vger.kernel.org>; Sat, 17 Oct 2026 19:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792289902; x=1792894702; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6h7cwshK4bhZz90I/AWA8AjZrCXIbK39PmBPiXuKICY=;
+        b=R3ee+uTwprxc2JW14NDU0JtduFzxZnaWS1T1MlwOEjFRaxm/knlA4OC18hfT/Bfp8X
+         Ar8xNgnzfOeyYTj9acl4HCwCqVRaILVss1phmPzkRRKo0Ezre0762/e7a8U4+S/BN1V4
+         oVCeLR5kxZ1vfU5QDSR6c4buJMawfIZS+/Y1UmVz/lhh8Vcsg860ZC5fsIZhfdsNF5cY
+         iF0SAOjjeFdnE7UjW1mukr63bXq3rYdyOeiA+yYGRuWbCqtbgdkJLhq3FFVhXCNL+2x8
+         ixJ7d8NOKYBnDFhMueLibCgHBTZqlDPjepJ8cCcRwEYz22QmZUQGEmfpYuk3rXOeJxFI
+         /dWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792289902; x=1792894702;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6h7cwshK4bhZz90I/AWA8AjZrCXIbK39PmBPiXuKICY=;
+        b=bfidBBHTBK+e5JKdgUIkpqx7+feUnTuJkUoI1YYFoBX97qE/eKj/VHA9ARmrcnVnwS
+         hMTU6tWQbw8gK4E+KVi7p7ibZ02Oj5t39Ny3Gq9dC5nzpvhN08DvuPZ5RoO4a8kIrLxR
+         3JWQk8ceibDS1Kei12SitHuBbNoQ4oNFhNEutMoBql4RJ0vA/GIQQzjgOyoWUpv6Zjo3
+         1lxzRLwUIkDSHwr0f5rOCu9DZKemAdzsvUptfBISmFTmuCqTIKvNOPx47BZuMrhfY3rx
+         4ZK4ABpxfvWVPYzwxU4NJo9B25y3310qMjzQGC+RlcaHcSQDoEWFQFaqmulcuZdiRZnB
+         BmMQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwSLuy7wZVNd6NL4I+RrUfgwrZV1Ko1VeuWOE1euMLzC9EWpQMHOONX0F9SSLkJUi/aGFvMZJZsCyPgVA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYK6GEsM9Zz2PBesvLYDWTLtvwq4UgeDlxkcc7jdL9JX0w4MIdi7
+	45ETorpeq0IKF2kPc5Xgd46nSrvE4pRpLnIaTmzPGn1QIZi2NcQrzqk=
+X-Gm-Gg: AYBFou0Sh6dVwUYJMK/JwEXnjdhtVqeGsEKk3V8B09AHrZfcraIdTLk8bao80BUGbUk
+	VihuUoPiRQ2YBf2D3suWralUf8EkNHdbhwj/H2dRwf5JndQBQfKeVyVHN9yb7Pqx2PsDoAq5npg
+	uGsF12OM3BVrJXTSE4jziaJq1fCKA+fFBYWoKa31GCftNhj5+OjT3eGrw03qMaHtUWHh08aQQo/
+	moRGsVPeS2WaHMaC4pSQxWJ4cBnIhlNm0+qXVcNB4hfq4Gz88ytQDXB7JLPZslVDb1zM691cr9N
+	Wn/T1JAe+pz20da8vEl6MKoRvkeavPAiMKOgnfG/uzycOQUT1s01O5G44Q/A8o/NhO/+SUE1/GA
+	LlqJZdyWaDAjNS2FnptUF3AKBKQCBV/7KQJIUSHL3S8evywhrABzWkteQifXr9RIJaaUXigq5cS
+	j6XWQqNP67Mab3JRyHj9PNNEa003ntlzM/0MSSCqXlEV1XvVT7acNVR+EYFxsjEVlzRKg9kmBg6
+	3IkMHMx/P6Fu5WnfbddK0KyXGg3oTq3XFq+KfQ7MSCzKdrzDYockM8E89U3w4CAJTyRnBuOQIio
+	MoAyUEfym82v8RCqLvLULGAJIMio
+X-Received: by 2002:a05:622b:c8:20b0:535:1683:5a71 with SMTP id d75a77b69052e-53645ff1af1mr42415901cf.38.1792289902347;
+        Sat, 17 Oct 2026 19:18:22 -0700 (PDT)
+Received: from i4-gl-tmk5904-1.ad.psu.edu ([130.203.156.90])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5362aa68f8esm61881881cf.29.2026.10.17.19.18.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Oct 2026 19:18:21 -0700 (PDT)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	stable@vger.kernel.org,
+	Ijae Kim <ae878000@gmail.com>
+Subject: [PATCH v4] ASoC: wm8962: Stop IRQ from requeuing mic_work on remove
+Date: Sat, 17 Oct 2026 22:18:17 -0400
+Message-ID: <20261018021817.3859256-1-mhun512@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260923072554.1141864-2-mmaddireddy@nvidia.com>
 
-On Wed, Sep 23, 2026 at 12:55:52PM +0530, Manikanta Maddireddy wrote:
-> Endpoint controllers can receive a fundamental reset while software
-> resources such as eDMA, debugfs and function state must live for the
-> controller lifetime.
-> 
-> Track whether DWC Endpoint resources are initialized and add helpers
-> that perform full initialization once, then reinitialize only reset-lost
-> registers on later fundamental reset cycles.
-> 
-> A fundamental reset also clears outbound iATU programming. Clear the
-> cached outbound window map, outbound address array and MSI iATU cache
-> before reinitializing registers so stale software state cannot hide a
-> window that was reset by hardware.
-> 
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> ---
->  .../pci/controller/dwc/pcie-designware-ep.c   | 152 +++++++++++++-----
->  drivers/pci/controller/dwc/pcie-designware.h  |  13 ++
->  2 files changed, 124 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index de8ee3db4360..7ba40220b821 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -1155,6 +1155,28 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_raise_msix_irq);
->  
-> +static void dw_pcie_ep_clear_msi_iatu(struct dw_pcie_ep *ep)
-> +{
-> +	ep->msi_iatu_mapped = false;
-> +	ep->msi_iatu_mapped_offset = 0;
-> +	ep->msi_msg_addr = 0;
-> +	ep->msi_map_size = 0;
-> +}
-> +
-> +static void dw_pcie_ep_clear_outbound_atus(struct dw_pcie_ep *ep)
-> +{
+The WM8962 IRQ remains registered to the I2C device when an ASoC card is
+unbound. wm8962_remove() cancels mic_work, but a MICD or MICSCD interrupt
+can queue it again before the component is destroyed. The work then
+accesses the component and reports to the old jack.
 
-I don't think this function clears the OB iATU mappings. It is done in
-dw_pcie_ep_unmap_addr().
+Mask microphone interrupts and disable detection in wm8962_mic_detect(),
+wait for any handler that already read the old mask, and drain mic_work
+before changing the jack pointer. When installing a new jack, unmask its
+interrupts before enabling detection, preserving the existing hardware
+sequence. Call this path from component remove while the component is
+still valid, leaving the IRQ registered for FLL, FIFO and thermal events.
 
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +
-> +	if (ep->ob_window_map)
-> +		bitmap_zero(ep->ob_window_map, pci->num_ob_windows);
-> +
-> +	if (ep->outbound_addr)
-> +		memset(ep->outbound_addr, 0,
-> +		       pci->num_ob_windows * sizeof(*ep->outbound_addr));
-> +
-> +	dw_pcie_ep_clear_msi_iatu(ep);
-> +}
-> +
->  /**
->   * dw_pcie_ep_cleanup - Cleanup DWC EP resources after fundamental reset
->   * @ep: DWC EP device
-> @@ -1169,11 +1191,12 @@ void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)
->  
->  	if (ep->msi_iatu_mapped) {
->  		dw_pcie_ep_unmap_addr(ep->epc, 0, 0, ep->msi_mem_phys);
-> -		ep->msi_iatu_mapped = false;
-> +		dw_pcie_ep_clear_msi_iatu(ep);
->  	}
->  
->  	dwc_pcie_debugfs_deinit(pci);
->  	dw_pcie_edma_remove(pci);
-> +	ep->resources_initialized = false;
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_cleanup);
->  
-> @@ -1307,6 +1330,89 @@ static void dw_pcie_ep_disable_bars(struct dw_pcie_ep *ep)
->  	}
->  }
->  
-> +static void dw_pcie_ep_init_ptm(struct dw_pcie_ep *ep)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +	u32 ptm_cap_base, reg;
-> +
-> +	/*
-> +	 * PCIe r6.0, section 7.9.15 states that for endpoints that support
-> +	 * PTM, this capability structure is required in exactly one
-> +	 * function, which controls the PTM behavior of all PTM capable
-> +	 * functions. This indicates the PTM capability structure
-> +	 * represents controller-level registers rather than per-function
-> +	 * registers.
-> +	 *
-> +	 * Therefore, PTM capability registers are configured using the
-> +	 * standard DBI accessors, instead of func_no indexed per-function
-> +	 * accessors.
-> +	 */
-> +	ptm_cap_base = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_PTM);
-> +
-> +	/*
-> +	 * PTM responder capability can be disabled only after disabling
-> +	 * PTM root capability.
-> +	 */
-> +	if (ptm_cap_base) {
-> +		dw_pcie_dbi_ro_wr_en(pci);
-> +		reg = dw_pcie_readl_dbi(pci, ptm_cap_base + PCI_PTM_CAP);
-> +		reg &= ~PCI_PTM_CAP_ROOT;
-> +		dw_pcie_writel_dbi(pci, ptm_cap_base + PCI_PTM_CAP, reg);
-> +
-> +		reg = dw_pcie_readl_dbi(pci, ptm_cap_base + PCI_PTM_CAP);
-> +		reg &= ~(PCI_PTM_CAP_RES | PCI_PTM_GRANULARITY_MASK);
-> +		dw_pcie_writel_dbi(pci, ptm_cap_base + PCI_PTM_CAP, reg);
-> +		dw_pcie_dbi_ro_wr_dis(pci);
-> +	}
-> +}
-> +
-> +/**
-> + * dw_pcie_ep_reinit_registers - Reinitialize DWC EP reset-lost registers
-> + * @ep: DWC EP device
-> + *
-> + * Reinitialize the EP registers lost after a fundamental reset without
-> + * reallocating EP resources that live until dw_pcie_ep_deinit(). The
-> + * caller must only use this after hardware has reset the iATU; this
-> + * helper invalidates software iATU state but does not disable live
-> + * windows.
-> + */
-> +int dw_pcie_ep_reinit_registers(struct dw_pcie_ep *ep)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +	int ret;
-> +
-> +	dw_pcie_ep_clear_outbound_atus(ep);
-> +
-> +	if (ep->ops->init) {
-> +		ret = ep->ops->init(ep);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	dw_pcie_ep_disable_bars(ep);
-> +	dw_pcie_ep_init_ptm(ep);
-> +	dw_pcie_ep_init_non_sticky_registers(pci);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(dw_pcie_ep_reinit_registers);
-> +
-> +/**
-> + * dw_pcie_ep_init_or_reinit_registers - Initialize or reinitialize DWC EP
-> + * @ep: DWC EP device
-> + *
-> + * Initialize DWC EP resources on first use. If resources are already
-> + * initialized, reinitialize only the reset-lost registers.
-> + */
-> +int dw_pcie_ep_init_or_reinit_registers(struct dw_pcie_ep *ep)
-> +{
+Tegra's card remove callback runs after ASoC removes the codec component
+and PCM runtimes. Drop its redundant microphone cleanup.
 
-This function name looks awkward. Can you fold it inside
-dw_pcie_ep_init_registers() instead?
+Fixes: 0512615db6db ("ASoC: wm8962: Convert interrupt handler to direct regmap usage")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+---
+Changes in v4:
+- Always disable microphone detection before draining the IRQ and work,
+  then unmask microphone interrupts before re-enabling detection for a
+  new jack, as requested by Charles Keepax.
+- Keep the redundant Tegra card remove callback deletion; Charles
+  withdrew his initial objection in the follow-up review.
 
-- Mani
+Changes in v3:
+- Mask microphone interrupts, synchronize the IRQ and cancel mic_work
+  before replacing the jack pointer in wm8962_mic_detect().
+- Use wm8962_mic_detect(component, NULL) from component remove and drop
+  the redundant Tegra card remove callback.
+- Keep the IRQ registered for the other interrupt sources.
 
+Changes in v2:
+- Do not disable the IRQ from wm8962_i2c_remove(); card unbind does not
+  unbind the I2C client.
+- Keep the devm IRQ on the I2C device for FLL, FIFO and thermal events.
+
+Found by inspection. Compile-tested both modified objects with GCC 15,
+W=1, x86_64 and COMPILE_TEST=y. No hardware or runtime testing.
+
+Review: https://lore.kernel.org/r/arY6GbRBjKxJDKVn@opensource.cirrus.com/
+Follow-up: https://lore.kernel.org/r/arY%2FVSKn%2Fsq32sr0@opensource.cirrus.com/
+
+ sound/soc/codecs/wm8962.c      |   36 +++++++++++++++++++++---------------
+ sound/soc/tegra/tegra_wm8962.c |   13 -------------
+ 2 files changed, 21 insertions(+), 28 deletions(-)
+
+diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
+index 8a9598161b35..253b41fff8ab 100644
+--- a/sound/soc/codecs/wm8962.c
++++ b/sound/soc/codecs/wm8962.c
+@@ -3230,21 +3230,29 @@
+ {
+ 	struct wm8962_priv *wm8962 = snd_soc_component_get_drvdata(component);
+ 	struct snd_soc_dapm_context *dapm = snd_soc_component_to_dapm(component);
+-	int irq_mask, enable;
++	int mic_irq_mask = WM8962_MICD_EINT | WM8962_MICSCD_EINT;
++
++	/*
++	 * Mask microphone events, then drain the IRQ and work before
++	 * changing the jack.
++	 */
++	snd_soc_component_update_bits(component, WM8962_INTERRUPT_STATUS_2_MASK,
++				      mic_irq_mask, mic_irq_mask);
++	snd_soc_component_update_bits(component, WM8962_ADDITIONAL_CONTROL_4,
++				      WM8962_MICDET_ENA, 0);
++	if (wm8962->irq)
++		synchronize_irq(wm8962->irq);
++	cancel_delayed_work_sync(&wm8962->mic_work);
+ 
+ 	wm8962->jack = jack;
+ 	if (jack) {
+-		irq_mask = 0;
+-		enable = WM8962_MICDET_ENA;
+-	} else {
+-		irq_mask = WM8962_MICD_EINT | WM8962_MICSCD_EINT;
+-		enable = 0;
+-	}
+-
+-	snd_soc_component_update_bits(component, WM8962_INTERRUPT_STATUS_2_MASK,
+-			    WM8962_MICD_EINT | WM8962_MICSCD_EINT, irq_mask);
+-	snd_soc_component_update_bits(component, WM8962_ADDITIONAL_CONTROL_4,
+-			    WM8962_MICDET_ENA, enable);
++		snd_soc_component_update_bits(component,
++					      WM8962_INTERRUPT_STATUS_2_MASK,
++					      mic_irq_mask, 0);
++		snd_soc_component_update_bits(component,
++					      WM8962_ADDITIONAL_CONTROL_4,
++					      WM8962_MICDET_ENA, WM8962_MICDET_ENA);
++	}
+ 
+ 	/* Send an initial empty report */
+ 	snd_soc_jack_report(wm8962->jack, 0,
+@@ -3592,9 +3600,7 @@
+ 
+ static void wm8962_remove(struct snd_soc_component *component)
+ {
+-	struct wm8962_priv *wm8962 = snd_soc_component_get_drvdata(component);
+-
+-	cancel_delayed_work_sync(&wm8962->mic_work);
++	wm8962_mic_detect(component, NULL);
+ 
+ 	wm8962_free_gpio(component);
+ 	wm8962_free_beep(component);
+diff --git a/sound/soc/tegra/tegra_wm8962.c b/sound/soc/tegra/tegra_wm8962.c
+index 31f9d9181595..a79d464b6a80 100644
+--- a/sound/soc/tegra/tegra_wm8962.c
++++ b/sound/soc/tegra/tegra_wm8962.c
+@@ -97,18 +97,6 @@
+ 	return 0;
+ }
+ 
+-static int tegra_wm8962_remove(struct snd_soc_card *card)
+-{
+-	struct snd_soc_dai_link *link = &card->dai_link[0];
+-	struct snd_soc_pcm_runtime *rtd = snd_soc_get_pcm_runtime(card, link);
+-	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
+-	struct snd_soc_component *component = codec_dai->component;
+-
+-	wm8962_mic_detect(component, NULL);
+-
+-	return 0;
+-}
+-
+ SND_SOC_DAILINK_DEFS(wm8962_hifi,
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+ 	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8962")),
+@@ -129,7 +117,6 @@
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_wm8962_dai,
+ 	.num_links = 1,
+-	.remove = tegra_wm8962_remove,
+ 	.fully_routed = true,
+ };
+ 
+base-commit: 238650ef6c7c7cca08e032527329424c9fbd70e5
 -- 
-மணிவண்ணன் சதாசிவம்
+2.53.0
