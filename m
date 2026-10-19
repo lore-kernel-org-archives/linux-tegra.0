@@ -1,62 +1,64 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB074AA1CD
-	for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2026 09:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8744AD7FA
+	for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2026 09:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792403847; cv=none; b=Cik0JQgb2KmCQJXsssisnPI7EDn7BIb3X3Rxx71JDJX/3nz3J6ZkQLJHmB2pbusLX/NRF1ZBS2BPr7+FjBtjcTAP3b5LBdmrS21IWjxYA8ivr+t327JHMntFA4k7UQfZv4MZ1oLC5kW6YpKd5N6scirImP2dx06GZOQxDKxTw34=
+	t=1792403851; cv=none; b=EdcWBrRKs27QHESJWnIV863OwK5z9W2D3yHXJTgR94HZoX2xsXtYXhMEAUZULD7IkliYnlc7AYaS+xJYfpMjBjPcGq+RpXrVRY+3jj9wfDSMHIsmFU0FTqXQavSwOlcy3pnDGbK6+qh8LcuZmLOckfAHkjyL4+v65zrTx1zWBII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792403847; c=relaxed/simple;
-	bh=XB5CwEO7affGKAmL4pQhgSwl62lNe0rB4dEO0D6OYYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y+t0TAuIUrAsQ3HheGSh0AzlJbjk+9PtNb+1M4GdAfF0E1KXpBPAdY97jzDjyQL7RQnOGwZcmXLdDu3wIPs9hb9HYg4BSi3i8fqW+LWl45bCDMND232XeFA8Q66oDajkPY8Rl/JJID0nuTXf9Nsl6wiR8EE4ShBfDstMAnzBdc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PYWg/Y++; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1792403851; c=relaxed/simple;
+	bh=kRMD3LifFT0eTo3gIXvJVRlHOZTJ+JtZ12j0BXFmzmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BRYLgtwJD+UDlX+kTVj2mw8YF5I+du3s4sBBWIz+TqScrDwp2RZYqyGkMD5X4CzNmjzVbG4+xYnEfZzmOlSpNhfzqn2SC4qaLyRK7s7XZnwewqikmizcuNxfGLnF0Xw7ktALTyH/QPwwW/qFCbUJs8+ql/7p60zs3RjNyzs/Eno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iy0Vs66Z; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYWg/Y++"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48b042c0728so448334f8f.1
-        for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2026 02:57:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iy0Vs66Z"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-48df0fa43c5so1375165f8f.0
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2026 02:57:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792403844; x=1793008644; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=7COsRHRwbFZs67dB0peGMQf1r+S9Yv4n+CsneXuo9SU=;
-        b=PYWg/Y++E+4vO4MVDsolvTL/XjzUBM+YbmVZTKHt0wiIeNRKx+uOpeHKGMBn9EQlmR
-         cNUos4wrulqTvAJacwxghyWKRMIPOATw599VVtINAf36XaDWlA9OzyuGh9Oz8RvNuVUG
-         M0nAb1z3Qj2FGdVZ5fodB6XIXLCcbfILfBHpBGvjMavaUB9yNTeS6c1DitYJZ8PeAycf
-         Op/HqyqVvRaM3CixEQoug7Zkc4Xg+AhWFHH3vHNvp9O4SJ8ta7MNynbJi2zGmQLlfehl
-         19ZK3xad5BPVl1GcbkLpl/Bd4CVnO7ZOWrODGZKexKIXi6ER+gTiXwnQ9erwaoXF5ED0
-         Tubg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792403844; x=1793008644;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792403845; x=1793008645; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=7COsRHRwbFZs67dB0peGMQf1r+S9Yv4n+CsneXuo9SU=;
-        b=Ra9AmHRcvDq0BQEKGPL16gI+7xBYzAbj6qAWBy5/0PI5Xv1H0Yh+lrLORoWayH0Wb5
-         fr6fIhFkI3dhfIgpw7Jj50Sueau4U5zuysALL+rFtKGHpYp9etwV1byeMR/SI4ImFFd7
-         aKxSrsEZR94ct1skiQP+XXHu3Q3VVbun9UVEG5+rtee5aBnn+7kcmvYi/x1VSdC9sC3r
-         mf4LE7OAX3IiPU0OL+Wl4bqrHA2cdpXltUYQD3d9JLi2SUpkp+LytGb2Tt1uFyvqpVIW
-         e5pmFG0NN3X5FeLOWVaRzMxjLXUVZJK8fzDKdSbEQoxGjA8JraO+XVtvUoTIzKjm+E0u
-         B3KA==
-X-Forwarded-Encrypted: i=1; AKwUvBxeCFbdlYQtVoBGRaebSVm7OZqbTvW5oZAj0afTkGbWu2woAGGFSc0PyUJ2kxk0FQERnjXV+hMYiT13kg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIhqJpHcY7jvhOryFmpwL0OGB3NcHGog6c7G4vGbewj9KYh48gf
-	asGLCIvPG6+SPRCAonozxP33u33QJ/Orf+5OZgJIkBDNHQWw6Hzc3SX9
-X-Gm-Gg: AYBFou2JITtK91Yqjte35SkSfpyalzptKcYwEvbMZWMPEd0JlYzL11lmPIbgmceTgau
-	15j1JOJ4lab+561/NpG+A97b+ZDNyzTqrQWZ/LS8VC7WrZvLj4hsqK70uVqPbmunznI2jP0mY5w
-	/CUxloK2pmEeb6RISWqH3T6BTxSbKNCFjYiYDcP/1eLQt+Pv3l1Ev9Cq3Y/q7CLNuDjtyHiRp0i
-	sFg/loMTsvFBO7WtGTyV6g25Bf2SnE5oIzxwGGcAXvMv2FTABQ/8v4Hr5d5qESqMWobH12W+IQa
-	rRArBXiR1Q9JynarsCTunBJBh2MB49AoykFO12Yn74aEc2k4jeC4czYOIEaJYdbLaIUweoUT8AP
-	2UxdM0BqWnKW8UNGThiI4g207AP4yO0D41QKPejAKcHoKnjbJyYYKPOYMhgS20MutMfgbyzfUKL
-	G/l9BrvhQhXPpSzn9KxV5MDQKAKD5TcnqBVWOgHHZsH+GfN3GBysul6dlAAlotU44v4h3xMfAlT
-	MSluK4IqEIn0Z6/4yc=
-X-Received: by 2002:a05:6000:468d:b0:488:80d0:873a with SMTP id ffacd0b85a97d-48e07978df7mr9786078f8f.5.1792403843556;
-        Mon, 19 Oct 2026 02:57:23 -0700 (PDT)
+        bh=klRLuslgHZkHfKV3cIJoQTmbsYS3GX5KrVERzHwo0vI=;
+        b=iy0Vs66Zb/VhXRtLZkYyu9M6Ictt6ZZet/Adhz/cSz+U5B3ZmNJAhvssIi0k1sae50
+         7lHuqLl3Z5TAJZtKZNMVmKbnu8XtdT2HVvud6TgcbBvypQDap04Oi9VNMLqlSghaDK3v
+         L0Mu8iecxa2eElNsRyOFeQwakEzJsOuDtvSQAe8Q5Piz2OztdxAMvKNs0HcghZXF1cu7
+         v3MHnxIX37N+f7FhdBiCF6SqkcYbB0HJfOmt/rLD0hbDlP5yNE5ncvoz629i63TzVD8p
+         2DUtvJyNSE6ezcsszfcm4Opt2Y488/TiQyo2aCqQUR2D5UqeFr2osPYo3BxazyIklIL9
+         mQ8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792403845; x=1793008645;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=klRLuslgHZkHfKV3cIJoQTmbsYS3GX5KrVERzHwo0vI=;
+        b=ZIheBobI24ffwZ5Q0ZHtg7fppGVIznrJef90yaijZYwOtE32ryd0WyJJKYR9vacWTB
+         RoBoV/XqseQYeEFczDI4jUnMN06Iz68LCY2XYT3+EP2qQh/F/guUux+INp27wJabQSNn
+         rQRa7MqNln++231Old5wKx0x4t1Zmn5bYRXCGuZDuFxG1qf10kwrE1gu16JnaWByPIyR
+         bk4CRMSNzy77OqnCbVluwaSTk9eqz/jz2GNdAxQPoAJQudMkqtPJCeo5ohgoNuna7xOx
+         FwT1B2xUxSuiSRShv6KkCtuFEiX//5g5tOO5aVg4wOICt+gGMuQ9/miO406Bd47kTYXV
+         6nlA==
+X-Forwarded-Encrypted: i=1; AKwUvBwBmkvnqXMDxSOKgM4Nh54UVtq9zp9gLOFTNaWPMbjU/Fv++XPAbKYvWlvMpLNwOEM8yHXXWjB+k2L7Rg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIucHazvkb8bgWJLcU7vLozC2R2l5AgEb1P0P0tsDgivejPmGfK
+	3lFKFy49ctsZp0vaLAfeK7fByIGcZyQ6f/kqn6efLPRRWL7pVJsTHxlr
+X-Gm-Gg: AYBFou25lz6DtdbfStk87UWMgiOBzsD6Lj7+Q3JfWEhjfwG3o1U56rijPREAAP7Youm
+	51zkm1xlonA7nLyy/kxfadumVaoF/++9oNrML23laF4SK6Sx7p6A+sYXGCJxKRO3KlQWBm5oMfY
+	fw2ROgucUHMi64TN9c3BcoB0VrbRBEy28nFoQNC+RUK+XLcUTZ932MrS61GYuUgjGs2B04WkdqC
+	Wm5X6Z3C7N7/NxAjZ1Yl7/638eaVlaQ4JB8d6s79FWwSvyWd9k02XcCBMvzUuG02KXvCEr1WqNY
+	fFCT+mfopTbiSuDB4k/UASVbF+y9g3Ku8sfECVBPtgXhRw1Gu5i9w+HLbjYU33LJ4SIv6/QtyQU
+	2FfbRXNkIfR4adLjIXzT3Gj3qRukpudRIwKSg5tFyYTrlgUIZcFdoRUbPEvuP9V8+U6AgyjX0T2
+	GjEmph+3A47kX7WBgcbXwILnMd+PIFa2hO8We3N+l5e4miSec3s2jn3KAUSQ8mnCXbfhGD5JVkm
+	UyR2RjZeFZRwF3zlquoGDfEfCDTqA==
+X-Received: by 2002:a05:6000:4b1d:b0:48b:437:8fbb with SMTP id ffacd0b85a97d-48dfae72117mr23703513f8f.19.1792403845319;
+        Mon, 19 Oct 2026 02:57:25 -0700 (PDT)
 Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd500e75sm21740089f8f.42.2026.10.19.02.57.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd500e75sm21740089f8f.42.2026.10.19.02.57.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 02:57:22 -0700 (PDT)
+        Mon, 19 Oct 2026 02:57:24 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <jesszhan0024@gmail.com>,
@@ -76,10 +78,12 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 0/7] drm/tegra: Add support for Tegra20/Tegra30 8-bit CPU interface
-Date: Mon, 19 Oct 2026 12:56:58 +0300
-Message-ID: <20261019095705.91062-1-clamor95@gmail.com>
+Subject: [PATCH v3 1/7] drm/tegra: dc: Expand available registers layouts
+Date: Mon, 19 Oct 2026 12:56:59 +0300
+Message-ID: <20261019095705.91062-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261019095705.91062-1-clamor95@gmail.com>
+References: <20261019095705.91062-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -88,76 +92,115 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The display controller in Tegra20/30 SoCs features an 8-bit SPI interface
-that closely resembles the MIPI DBI Type B protocol and is referred to as
-'8-bit CPU'.
+Expand existing DC register definitions with additional fields in
+preparation for adding the 8-bit CPU interface.
 
-Add DC parametrization options needed for fine tuning by bridges.
-Add 8-bit CPU interface in form of a bridge linking to RGB port.
-Add 2 DBI Type B panels used in LG Optimus 2X which work with
-the 8-bit CPU interface.
-
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
-Changes in v2:
-- convert enums in the dc header into definitions list
-- add check in RGB if bridge_state is not NULL, if yes, use default flags
-- inverted FLAG_PIXDATA_SAMPLE flag setup logic since default value is set to
-  be on NEGEDGE while v1 set default to be on POSEDGE
-- 8bit-cpu schema renamed to dbi, removed compaible and set as DC child
-- expanded list of required properties
-- 8bit-cpu bridge remodelled into dbi interface as DC child
-- improve gpio handling
-- rework attach to get drvdata from parent
-- add panel supplies description
-- split panel driver into per-panel drivers
-- get DBI interface from the patent directly
+ drivers/gpu/drm/tegra/dc.c |  3 ++-
+ drivers/gpu/drm/tegra/dc.h | 49 +++++++++++++++++++++++++++++++++-----
+ 2 files changed, 45 insertions(+), 7 deletions(-)
 
-I have deliberately left GPIO parsing from device tree since it seems to
-be the most convenient and mainstream method of working with GPIOs.
-
-
-Changes in v3:
-- rgb: fix default bus_flags to match original behavior
-- dbi-schema: remove compatible from required props
-  remove dc@54200000 wrapper from example
-  restrict dbi nodes for tegra20/tegra30 only
-- dbi: remove unused idx from tegra_dbi_priv
-  wrap dbi registration in dc with devm_add_action_or_reset()
-  separate dbi into separate object
-  export tegra_dc_commit() and trace_dc_readl()/dc_readl()
----
-
-Svyatoslav Ryhel (7):
-  drm/tegra: dc: Expand available registers layouts
-  drm/tegra: rgb: Parameterize configuration based on bus flags
-  dt-bindings: display: tegra: Document 8-bit CPU parallel interface
-  drm/tegra: Add support for 8-bit CPU interface
-  dt-bindings: display: panel: Document Hitachi TX10D07VM0BAA and LG
-    LH400WV3 panels
-  drm/panel: Add Hitachi TX10D07VM0BAA MIPI DBI Type B panel driver
-  drm/panel: Add LG LH400WV3-SD04 MIPI DBI Type B panel driver
-
- .../display/panel/hit,tx10d07vm0baa.yaml      |  58 +++
- .../display/tegra/nvidia,tegra-dbi.yaml       | 138 ++++++
- .../display/tegra/nvidia,tegra20-dc.yaml      |  15 +
- drivers/gpu/drm/panel/Kconfig                 |  27 ++
- drivers/gpu/drm/panel/Makefile                |   2 +
- .../drm/panel/panel-hitachi-tx10d07vm0baa.c   | 297 +++++++++++++
- drivers/gpu/drm/panel/panel-lg-lh400wv3.c     | 236 ++++++++++
- drivers/gpu/drm/tegra/Kconfig                 |   7 +
- drivers/gpu/drm/tegra/Makefile                |   3 +
- drivers/gpu/drm/tegra/dbi.c                   | 415 ++++++++++++++++++
- drivers/gpu/drm/tegra/dc.c                    |  32 +-
- drivers/gpu/drm/tegra/dc.h                    |  50 ++-
- drivers/gpu/drm/tegra/rgb.c                   |  41 +-
- drivers/gpu/drm/tegra/trace.c                 |   3 +
- 14 files changed, 1312 insertions(+), 12 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/hit,tx10d07vm0baa.yaml
- create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra-dbi.yaml
- create mode 100644 drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
- create mode 100644 drivers/gpu/drm/panel/panel-lg-lh400wv3.c
- create mode 100644 drivers/gpu/drm/tegra/dbi.c
-
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index b0bfa946e6979..5c67928bcabfa 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2384,7 +2384,8 @@ static void tegra_crtc_atomic_enable(struct drm_crtc *crtc,
+ 
+ 	if (dc->rgb) {
+ 		/* XXX: parameterize? */
+-		value = SC0_H_QUALIFIER_NONE | SC1_H_QUALIFIER_NONE;
++		value = SC0_H_QUALIFIER(SC_H_QUALIFIER_NONE) |
++			SC1_H_QUALIFIER(SC_H_QUALIFIER_NONE);
+ 		tegra_dc_writel(dc, value, DC_DISP_SHIFT_CLOCK_OPTIONS);
+ 	}
+ 
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index 0cb0515968b35..7005df32f485f 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -274,8 +274,11 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+ #define DC_COM_CRC_CHECKSUM			0x301
+ #define DC_COM_PIN_OUTPUT_ENABLE(x) (0x302 + (x))
+ #define DC_COM_PIN_OUTPUT_POLARITY(x) (0x306 + (x))
++#define LSC0_OUTPUT_POLARITY_LOW BIT(24)
+ #define LVS_OUTPUT_POLARITY_LOW (1 << 28)
+ #define LHS_OUTPUT_POLARITY_LOW (1 << 30)
++#define LSPI_OUTPUT_POLARITY_LOW BIT(8)
++#define LDC_OUTPUT_SELECT_V_PULSE1 BIT(14)
+ #define DC_COM_PIN_OUTPUT_DATA(x) (0x30a + (x))
+ #define DC_COM_PIN_INPUT_ENABLE(x) (0x30e + (x))
+ #define DC_COM_PIN_INPUT_DATA(x) (0x312 + (x))
+@@ -303,9 +306,15 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+ #define  UNDERFLOW_REPORT_ENABLE (1 << 0)
+ 
+ #define DC_DISP_DISP_SIGNAL_OPTIONS0		0x400
+-#define H_PULSE0_ENABLE (1 <<  8)
+-#define H_PULSE1_ENABLE (1 << 10)
+-#define H_PULSE2_ENABLE (1 << 12)
++#define H_PULSE0_ENABLE				BIT(8)
++#define H_PULSE1_ENABLE				BIT(10)
++#define H_PULSE2_ENABLE				BIT(12)
++#define V_PULSE0_ENABLE				BIT(16)
++#define V_PULSE1_ENABLE				BIT(18)
++#define V_PULSE2_ENABLE				BIT(19)
++#define V_PULSE3_ENABLE				BIT(20)
++#define M0_ENABLE				BIT(24)
++#define M1_ENABLE				BIT(26)
+ 
+ #define DC_DISP_DISP_SIGNAL_OPTIONS1		0x401
+ 
+@@ -451,12 +460,26 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+ #define BASE_COLOR_SIZE_888    (  8 << 0)
+ #define BASE_COLOR_SIZE_101010 ( 10 << 0)
+ #define BASE_COLOR_SIZE_121212 ( 12 << 0)
++#define DISP_COLOR_SWAP_BGR	BIT(16)
+ #define CMU_ENABLE_ENABLE      (1 << 20)
+ 
+ #define DC_DISP_SHIFT_CLOCK_OPTIONS		0x431
+-#define  SC1_H_QUALIFIER_NONE	(1 << 16)
+-#define  SC0_H_QUALIFIER_NONE	(1 <<  0)
+-
++#define SC0_H_QUALIFIER(x)			(((x) & 0x7) <<  0)
++#define SC1_H_QUALIFIER(x)			(((x) & 0x7) << 16)
++#define SC_H_QUALIFIER_DISABLE			0
++#define SC_H_QUALIFIER_NONE			1
++#define SC_H_QUALIFIER_HACTIVE			2
++#define SC_H_QUALIFIER_EXT_HACTIVE		3
++#define SC_H_QUALIFIER_HPULSE			4
++#define SC_H_QUALIFIER_EXT_HPULSE		5
++#define SC0_V_QUALIFIER(x)			(((x) & 0x7) <<  3)
++#define SC1_V_QUALIFIER(x)			(((x) & 0x7) <<  19)
++#define SC_V_QUALIFIER_NONE			0
++#define SC_V_QUALIFIER_RSVD			1
++#define SC_V_QUALIFIER_VACTIVE			2
++#define SC_V_QUALIFIER_EXT_VACTIVE		3
++#define SC_V_QUALIFIER_VPULSE			4
++#define SC_V_QUALIFIER_EXT_VPULSE		5
+ #define DC_DISP_DATA_ENABLE_OPTIONS		0x432
+ #define DE_SELECT_ACTIVE_BLANK  (0 << 0)
+ #define DE_SELECT_ACTIVE        (1 << 0)
+@@ -493,6 +516,20 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+ #define DC_DISP_CURSOR_POSITION_NS		0x441
+ 
+ #define DC_DISP_INIT_SEQ_CONTROL		0x442
++#define SEND_INIT_SEQUENCE			BIT(0)
++#define INIT_SEQUENCE_MODE_SPI			BIT(1)
++#define INIT_SEQUENCE_MODE_PLCD			0x0
++#define INIT_SEQ_DC_SIGNAL_SHIFT		4
++#define INIT_SEQ_DC_SIGNAL_MASK			(0x7 << INIT_SEQ_DC_SIGNAL_SHIFT)
++#define NO_DC_SIGNAL				0
++#define DC_SIGNAL_VSYNC				1
++#define DC_SIGNAL_VPULSE0			2
++#define DC_SIGNAL_VPULSE1			3
++#define DC_SIGNAL_VPULSE2			4
++#define DC_SIGNAL_VPULSE3			5
++#define INIT_SEQ_DC_CONTROL_SHIFT		7
++#define FRAME_INIT_SEQ_CYCLES_SHIFT		8
++
+ #define DC_DISP_SPI_INIT_SEQ_DATA_A		0x443
+ #define DC_DISP_SPI_INIT_SEQ_DATA_B		0x444
+ #define DC_DISP_SPI_INIT_SEQ_DATA_C		0x445
 -- 
 2.53.0
 
