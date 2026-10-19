@@ -1,47 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505EA5B79A1;
-	Mon, 19 Oct 2026 14:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B0E4C4631;
+	Mon, 19 Oct 2026 14:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418448; cv=none; b=s1Xz+FLKILQJNHL0ccu2cfsFn3NsVN7ngdAsJCW+pqbjRgbI9hl6loV4BTMyiBD2poPbioEsruCpaJds8pY7upWnOq28gnSG51CO+rDBOJTbWGR5pGr2xu0ZcuExk6lw4e1kpuN18oYxP+dXBLcNcg6PEFezMqc8lW5ReoPWvzw=
+	t=1792418473; cv=none; b=MQsqmfxxTH7SO+szx/efPlA3w821Ta7+ET/m9C4oBrttZNowjE36Xi8r2K44l+K7/s5VpR9XGKhc5OdgL5w1b6J7V5KCJ0dLNVvLRRL8bCtGC7mLPcNo43HGrphMAL4wJ7c4b9CROfPtMti/aWPlj52HoCfTT7OdYIaS2QpvVd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418448; c=relaxed/simple;
-	bh=WxDbETXTCvk7MDK8LMlTz8PpFXUsuAQ8lxlFUWSJNes=;
+	s=arc-20240116; t=1792418473; c=relaxed/simple;
+	bh=6XU0lqPH3jdeGC/bl04dSr3cVY9MEoDMm4TloCtq3yc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tyVGU5XsqRHHZdhgCiJpRCMSeVkGcgHDg9QPRW8CLiCqy7Pp2WK5bLKktZiKGcKqlLdb08HYz6VjBPZSIAhNcQy95qcbgjoxz3xqwVYFIOi+9TN+4a1gnS554S/klEItbfQQDK4vOHP1aEua9keGgwZ/OHDgVwnfi83NGxBpBJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkRPM+wV; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=p/yKkZzkPrq8S27kxYyz/bHCz41iz19/X17tI/syZ3fFeR+KCrqVZ/O5D1q4VFHyB49zQp3HKY3DQb6zMfhAXQXLHsKNEqO+UgHdDBKej99nVBe7j/HcKeYn5eJsW/n19erFC+4pRn3tyjhdqOyy3y7nrWHrrHJ3twKHrvMMskY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Id0Q25yC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkRPM+wV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFB61F000C4;
-	Mon, 19 Oct 2026 14:00:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Id0Q25yC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A7D21F000C6;
+	Mon, 19 Oct 2026 14:01:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418445;
-	bh=jEwxnsQF6sHZjugZq/00AG00Xt7EceYd4qsDmz22KOc=;
+	s=k20260515; t=1792418470;
+	bh=QJpIoSxqa3XEZcAypJMC+joetbdaLKnznHB4VQAZ2Ls=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=SkRPM+wVvki+CaYEessUE0RLQnRVLnA1kvQC0H3vr196yfIJk17Vv217irKKt1uGM
-	 11OhZbKvuDQoMIITOL19iJdi3GXwyuuKZl4AHMO4duBxLsae65iKOWJRTuceIlEQwM
-	 9NjCltvtSfttfxULd/qDxMJG+RJ0FDZ5wi8DN1BUNkbb8R+l1N2pIaoxof05ReGpIm
-	 nzXKEjYKyOs0EjrVjjguwZFaT05PxL4rghAeZINFYHHYVDkdzK8bL4SfUyI+pp6ogd
-	 JTN154p5T7OtPJG1ehiHRuWDS0iDLlj3ursSyMSy+whGuKyEC4Tu0eDG5gYv8LvXcd
-	 P5yuK32kshVug==
+	b=Id0Q25yCsEOee2MwdftUJlBZFSh3DpnWOQr9J6Fss2MpcUgqI++SOSPd6SvNdAvEu
+	 gSaN7e8ZZRobZIArmUBl8zcIBuLuKS4isyNh/nsuOnlGT1C5sTHPN0vI6vX17QdjRh
+	 oWj6WjsspM6zUaz0x40pYNeZTaYpefL6l+bxQgvjvuoHPvQt9+tvVp+S649oZze2w9
+	 wDKTMXstMZi7Z7mriHcbgLx8SWUkpAjUTDf1uuMe+xo/pfgZzmypjUwvsFBpBacGJh
+	 YWkdPp9q5/NXMhU447McLuzXonY0tpiM+orAk17iQxnKi8Eq9zXtF0Goe1YClpONxv
+	 fukkpYrKutX6A==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Nicolin Chen <nicolinc@nvidia.com>,
-	Will Deacon <will@kernel.org>,
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
+	hverkuil@kernel.org,
+	mchehab@kernel.org,
 	thierry.reding@kernel.org,
-	joro@8bytes.org,
 	jonathanh@nvidia.com,
 	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
+	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-6.12] iommu/tegra241-cmdqv: Rate-limit the error ISR's log message
-Date: Mon, 19 Oct 2026 09:49:05 -0400
-Message-ID: <20261019135441.1420968-254-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] media: cec: tegra: add missing MODULE_DEVICE_TABLE()
+Date: Mon, 19 Oct 2026 09:49:22 -0400
+Message-ID: <20261019135441.1420968-271-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -57,409 +57,412 @@ X-stable-base: Linux 6.18.57
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Nicolin Chen <nicolinc@nvidia.com>
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
 
-[ Upstream commit a86c36163c9722545d27e92bdad8418fdcaa8b1d ]
+[ Upstream commit 8dcf23edaf4bdf22259f6a47cfddc8bb1467425c ]
 
-tegra241_cmdqv_isr() logs the error-map registers on every error interrupt.
-A malfunctioning device, or a guest deliberately faulting its own VCMDQs,
-can raise these interrupts rapidly, and the unconditional dev_warn() then
-floods the kernel log.
+The driver has an OF match table wired to .of_match_table, but does
+not export the table with MODULE_DEVICE_TABLE().
 
-Rate-limit the message with dev_warn_ratelimited(), and pass the error-map
-registers straight to it so their four MMIO reads run only when the limiter
-prints, instead of building the string on every interrupt.
+Add the missing MODULE_DEVICE_TABLE(of, ...) entry so module alias
+information is generated for OF based module autoloading.
 
-Assisted-by: Claude:claude-opus-4-8
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+This is a source-level fix.  It does not claim dynamic hardware
+reproduction; the evidence is the driver-owned match table, its use by
+the platform driver, and the missing module alias publication.
+
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Signed-off-by: Hans Verkuil <hverkuil+cisco@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-The local checkout is **v7.3-rc4**. The driver and the unconditional ISR
-`dev_warn()` are present here; the change is a small, self-contained
-log-flood / guest-DoS mitigation, so it belongs in this tree.
+This is a one-line OF module-alias fix on a driver that has been in the
+tree since v4.15. Local checkout is **v7.3-rc4** (`7.3.0-rc4`,
+`f0100363d8c37`), not a numbered stable branch. The candidate is
+`8dcf23edaf4bd`.
 
 ===============================================================
 PHASE 1: COMMIT MESSAGE FORENSICS
 ===============================================================
 
-**Step 1.1: PARSE THE SUBJECT LINE**
-Record: **[iommu/tegra241-cmdqv] [Rate-limit] [stop the error ISR from
-printing on every interrupt]**
+Step 1.1: PARSE THE SUBJECT LINE
+Record: `[media/cec/tegra] [add] missing MODULE_DEVICE_TABLE() so OF
+module aliases are generated`
 
-**Step 1.2: PARSE ALL COMMIT MESSAGE TAGS**
+Step 1.2: PARSE ALL COMMIT MESSAGE TAGS
 Record:
-- **Fixes:** none (expected)
-- **Reported-by:** none
-- **Tested-by:** none
-- **Reviewed-by / Acked-by:** none on the commit itself
-- **Link:** none
-- **Cc: stable:** none on this patch
-- **Assisted-by:** Claude:claude-opus-4-8
-- **Signed-off-by:** Nicolin Chen (NVIDIA; author), Will Deacon (arm-
-  smmu maintainer; applied it)
-- Pipeline markers such as Sasha Levin SOB / “[Upstream commit]” were
-  not on the real commit (`a86c36163c972`)
+- Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn> (author)
+- Signed-off-by: Hans Verkuil <hverkuil+cisco@kernel.org> (CEC/Tegra CEC
+  maintainer; applied the patch)
+- No Fixes:, Reported-by:, Tested-by:, Reviewed-by:, Acked-by:, Link:,
+  or Cc: stable
+- Absence of Fixes:/Cc: stable is expected for this review pipeline and
+  is not a negative signal
 
-Notable: no user/syzbot report. The cover letter says the series came
-from **Sashiko** (LLM) review, not a production crash.
-
-**Step 1.3: ANALYZE THE COMMIT BODY TEXT**
+Step 1.3: ANALYZE THE COMMIT BODY TEXT
 Record:
-- **Bug:** `tegra241_cmdqv_isr()` logs error-map registers with
-  unconditional `dev_warn()` on every error interrupt.
-- **Symptom:** kernel log flood.
-- **Trigger (stated):** malfunctioning device, or a **guest deliberately
-  faulting its own VCMDQs**, raising interrupts rapidly.
-- **Root cause:** every interrupt builds a 256-byte string (including
-  four extra MMIO reads) and prints it.
-- **Fix:** `dev_warn_ratelimited()`, and pass the MMIO reads as printk
-  args so they run only when the limiter actually prints.
-- **Version info:** none in the message.
+- Bug: OF match table is wired to `.of_match_table` but not exported via
+  `MODULE_DEVICE_TABLE(of, ...)`.
+- Symptom: when `CONFIG_CEC_TEGRA=m`, depmod/modinfo get no `of:`
+  aliases, so udev will not autoload `tegra_cec.ko` for
+  `nvidia,tegra114-cec` / `tegra124-cec` / `tegra210-cec`.
+- Version info: none in the message. Git shows the match table dates to
+  the original driver (v4.15-rc1).
+- Root cause: missing module-alias publication, not a probe/runtime
+  logic error.
+- Author states this is a source-level finding, not a live hardware
+  repro.
 
-**Step 1.4: DETECT HIDDEN BUG FIXES**
-Record: Not a disguised cleanup. It is an explicit flood/DoS mitigation.
-It does not fix a UAF, leak, or crash by itself.
+Step 1.4: DETECT HIDDEN BUG FIXES
+Record: Not a disguised cleanup. It is an explicit autoload/hardware-
+enablement fix. The “source-level” wording is candor, not a claim that
+nothing is wrong.
 
 ===============================================================
-PHASE 2: DIFF ANALYSIS - LINE BY LINE
+PHASE 2: DIFF ANALYSIS
 ===============================================================
 
-**Step 2.1: INVENTORY THE CHANGES**
+Step 2.1: INVENTORY THE CHANGES
 Record:
-- File: `drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c` (+7 / −9)
-- Function: `tegra241_cmdqv_isr()`
-- Scope: **single-file surgical** (one logging site)
+- File: `drivers/media/cec/platform/tegra/tegra_cec.c` (+1 / -0)
+- Functions: none. Adds `MODULE_DEVICE_TABLE(of, tegra_cec_of_match)`
+  after the existing `tegra_cec_of_match[]` table.
+- Scope: single-file, one-line surgical change.
 
-**Step 2.2: UNDERSTAND THE CODE FLOW CHANGE**
+Step 2.2: UNDERSTAND THE CODE FLOW CHANGE
 Record:
-- **Before:** ISR always `snprintf()`s into `char err_str[256]`, always
-  does four `CMDQ_ERR_MAP` MMIO reads, always `dev_warn()`.
-- **After:** no stack buffer; `dev_warn_ratelimited(...)` with the four
-  `readl_relaxed()` calls as arguments.
-- Path: **error interrupt path** (threaded IRQ). Error *handling* after
-  the log is unchanged.
+- Before: table exists and is assigned to
+  `platform_driver.driver.of_match_table`, so a **already loaded** or
+  **built-in** driver still matches DT nodes.
+- After: `scripts/mod/file2alias.c` also emits `of:` modaliases into the
+  `.ko`, so userspace can autoload the module from sysfs modalias.
+- Path affected: module build / autoload, not probe/remove/IRQ/CEC
+  transfer.
 
-Verified `dev_level_ratelimited()` in `include/linux/dev_printk.h`: the
-`__VA_ARGS__` are only substituted inside `if (__ratelimit(&_rs))`, so
-those MMIO reads run only when a line is printed.
-
-**Step 2.3: IDENTIFY THE BUG MECHANISM**
+Step 2.3: IDENTIFY THE BUG MECHANISM
 Record:
-- **Category:** ISR log flood / availability (guest-triggered printk
-  storm), plus extra MMIO on every interrupt.
-- **Not:** UAF, leak, deadlock, OOB, or NULL deref.
-- **Hardware workaround?** No.
+- Category: hardware enablement / missing device-table export (same
+  family as adding IDs).
+- Mechanism: `MODULE_DEVICE_TABLE()` creates the
+  `__mod_device_table__kmod_*` alias that `file2alias.c` consumes.
+  Without it, the kernel can bind the driver once loaded, but the module
+  will not be loaded automatically.
 
-**Step 2.4: ASSESS THE FIX QUALITY**
+Step 2.4: ASSESS THE FIX QUALITY
 Record:
-- Obviously correct: standard `*_ratelimited` pattern already used in
-  other IOMMU fault paths (`arm-smmu-v3.c`, `virtio-iommu.c`, AMD/Intel,
-  etc.).
-- Minimal; no unrelated edits.
-- Regression risk: **very low**. Worst case is fewer error-map dumps in
-  dmesg (intended). Error recovery is untouched.
-- Red flags: LLM-assisted; no `Fixes:`/`Reported-by`. Not a new API.
+- Obviously correct: sibling CEC platform drivers (`stm32-cec`,
+  `meson/ao-cec`, `s5p_cec`, `stih-cec`, `cec-gpio`) already use the
+  same pattern.
+- Minimal: one line, no API/struct/locking change.
+- Regression risk: very low. Builtin builds are unaffected at runtime;
+  modular builds only gain aliases.
 
 ===============================================================
 PHASE 3: GIT HISTORY INVESTIGATION
 ===============================================================
 
-**Step 3.1: BLAME THE CHANGED LINES**
+Step 3.1: BLAME THE CHANGED LINES
 Record:
-- Unconditional `dev_warn()` + `snprintf` were in the original driver:
-  `918eb5c856f6` (“Add in-kernel support for NVIDIA Tegra241 (Grace)
-  CMDQV”), **2024-08-30**, first in **v6.12-rc1**.
-- This tree is **v7.3-rc4**, so that code is in this lineage.
+- Match table introduced in `9d2d60687c9a06` ("media: tegra-cec: add
+  Tegra HDMI CEC driver", Hans Verkuil, 2017-07-15; first contained in
+  **v4.15-rc1**).
+- Original file had the OF table and `.of_match_table =
+  of_match_ptr(...)` and **no** `MODULE_DEVICE_TABLE`.
+- Bug has been present for the entire life of the driver.
 
-**Step 3.2: FOLLOW THE FIXES: TAG**
-Record: No `Fixes:` tag. N/A. The logging has been there since the
-driver was added.
+Step 3.2: FOLLOW THE FIXES: TAG
+Record: No Fixes: tag. Not applicable. Introduction commit is
+`9d2d60687c9a06`, present in this tree (`git merge-base --is-ancestor`
+of the candidate vs HEAD succeeds).
 
-**Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES**
-Record: This is **v2 11/11** of “Fix error-interrupt races and VINTF
-lifecycle bugs” (Nicolin Chen, 2026-07-14). Cover letter: ordered
-**most-critical-first**; this is the last, smallest issue (“ISR flooding
-the kernel log under repeated guest errors”).
-Standalone: it only changes the log line and does **not** need the
-earlier UAF/lifecycle patches to be correct.
+Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES
+Record (recent on this file):
+- `7bc1f3c8bd673` (2023): drop `of_match_ptr` so the table is always
+  used (build fix for !OF).
+- `8dcf23edaf4bd` (this commit)
+- Later functional CEC fixes (`be627f257ce28`, `bce7236c16c2c`) do not
+  depend on this line.
+- Standalone; not patch X/Y.
 
-**Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS**
-Record: Nicolin Chen is the NVIDIA CMDQV contributor for this file; Will
-Deacon applied the series. Same-day siblings are real
-lifecycle/UAF/bounds fixes. This one is the leftover logging hardening.
+Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS
+Record:
+- Pengpeng Hou submitted a large set of “add missing
+  MODULE_DEVICE_TABLE()” patches (rtc, vdpa, watchdog, fbdev, soc, can,
+  clk, power, this CEC driver). Same recipe, LLM-style commit text.
+- Hans Verkuil is listed maintainer of `ARM/TEGRA HDMI CEC` and applied
+  this patch. That is a strong quality signal for the **change**, even
+  if the author is doing a sweep.
 
-**Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS**
-Record: None required. `dev_warn_ratelimited` is old. The hunk applies
-to the original ISR as well as the post-series ISR.
+Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS
+Record: None. The macro has existed for decades
+(`include/linux/module.h`). The table and `.of_match_table` assignment
+are original. Applies standalone.
 
 ===============================================================
 PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 ===============================================================
 
-**Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION**
+Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION
 Record:
-- `b4 dig -c a86c36163c972` → https://patch.msgid.link/2e9d088c059037d5f
-  c23532820444720b870d2c7.1784059577.git.nicolinc@nvidia.com
-- **v1** (2026-07-02) and **v2** (2026-07-14); committed version is **v2
-  11/11**.
-- No NAK on this patch. Review noise in the thread was about **patch
-  10/11** (dropped); Will applied 01–09 and 11.
-- No reviewer asked for `Cc: stable` on *this* patch. Patch 07/11 in the
-  same series did have `Cc: stable` (unrelated vSID check).
-- WebFetch to lore returned **403**; thread was read from the b4 mbox
-  instead.
+- `b4 dig -c 8dcf23edaf4bd` →
+  https://patch.msgid.link/20260704122631.99057-1-pengpeng@iscas.ac.cn
+- Single revision (v1 only). `b4 dig -a` also matched an unrelated 2024
+  Liao Chen v4l2-subdev series by patch-id search noise; this commit is
+  a standalone v1.
+- Direct lore HTTP fetch returned 403; full thread was saved via `b4 dig
+  -m` to `/tmp/tegra_cec_moddev.mbox`.
+- NVIDIA Tegra developer Mikko Perttunen replied 2026-07-15: objected to
+  the “source-level fix / no dynamic hardware reproduction” paragraph as
+  AI boilerplate, and said **“Otherwise looks fine to me.”** No NAK. No
+  request for v2. Hans applied v1 as-is (that paragraph remained).
+- No reviewer asked for Cc: stable.
 
-**Step 4.2: CHECK WHO REVIEWED THE PATCH**
-Record (`b4 dig -w`): Nicolin Chen, Will Deacon, Robin Murphy, Joerg
-Roedel, Jason Gunthorpe; lists `iommu@`, `linux-arm-kernel`, `linux-
-tegra`. Maintainer **Will Deacon applied it** (“Applied (apart from
-patch 10)”).
+Step 4.2: CHECK WHO REVIEWED THE PATCH
+Record (`b4 dig -w`): To/Cc included Hans Verkuil, Mauro Chehab, Thierry
+Reding, Jonathan Hunter, linux-tegra, linux-media, linux-kernel. Right
+lists and maintainers. Informal ack from Mikko Perttunen (NVIDIA);
+applied by Hans Verkuil.
 
-**Step 4.3: SEARCH FOR THE BUG REPORT**
-Record: No syzbot/bugzilla link. Origin is **Sashiko** static review,
-described in the cover letter. Nicolin also noted Sashiko false
-positives (including a wrong “level-triggered / kdump storm” claim);
-CMDQV is **edge-triggered**, so an *unacked* pending error does not re-
-assert. **Each new error still fires the ISR**, which is the remaining
-flood path this patch addresses.
+Step 4.3: SEARCH FOR THE BUG REPORT
+Record: No Reported-by, bugzilla, or syzbot. Evidence is the missing
+export next to a live OF table. No user report of failed autoload was
+found.
 
-**Step 4.4: CHECK FOR RELATED PATCHES AND SERIES**
-Record: 11-patch series; this patch is independent logging. Not blocked
-on the dropped 10/11.
+Step 4.4: CHECK FOR RELATED PATCHES AND SERIES
+Record: Same-day author sweep of missing `MODULE_DEVICE_TABLE` across
+subsystems. Not a dependent series; each driver patch is self-contained.
+Sibling CEC OF drivers already had the macro.
 
-**Step 4.5: CHECK STABLE MAILING LIST HISTORY**
-Record: **UNVERIFIED** via lore.kernel.org/stable (HTTP 403). The
-submitted 11/11 message itself has no `Cc: stable`.
+Step 4.5: CHECK STABLE MAILING LIST HISTORY
+Record: No lore.kernel.org/stable thread for this exact Tegra CEC patch
+(search did not return a relevant hit). Same-class patches **have** gone
+into stable before, including:
+- `PCI: tegra: Add missing MODULE_DEVICE_TABLE` on 4.19-stable
+- `can: ctucanfd: add missing MODULE_DEVICE_TABLE()` from the same
+  author, committed to linux-stable by Greg Kroah-Hartman
+  (`d937bdb244a75` upstream)
 
 ===============================================================
 PHASE 5: CODE SEMANTIC ANALYSIS
 ===============================================================
 
-semcode MCP: **not available**. Used `git grep` / file reads.
+Step 5.1: IDENTIFY KEY FUNCTIONS IN THE DIFF
+Record: No functions modified. Macro addition adjacent to
+`tegra_cec_of_match[]`. Related structures: `tegra_cec_driver`
+(`module_platform_driver`).
 
-**Step 5.1: IDENTIFY KEY FUNCTIONS**
-Record: `tegra241_cmdqv_isr()` only.
+Step 5.2: TRACE CALLERS
+Record: `tegra_cec_probe` is the platform probe (DT device
+instantiation). `MODULE_DEVICE_TABLE` is not called at runtime;
+`scripts/mod/file2alias.c` `do_table()` consumes the alias at module
+build. Impact surface is autoload of `tegra_cec.ko` only.
 
-**Step 5.2: TRACE CALLERS**
-Record: Registered in `__tegra241_cmdqv_probe()` via
-`request_threaded_irq(..., tegra241_cmdqv_isr, IRQF_ONESHOT, ...)`. Not
-a hardirq; still a hot error path. Hardware: NVIDIA Tegra241 (Grace)
-CMDQ-V (`CONFIG_TEGRA241_CMDQV`).
+Step 5.3: TRACE CALLEES
+Record: N/A for the added line. The driver already includes
+`<linux/module.h>` and `<linux/of.h>`.
 
-**Step 5.3: TRACE CALLEES**
-Record: `readl_relaxed` of VINTF/CMDQ error maps;
-`dev_warn_ratelimited`; then `tegra241_vintf0_handle_error` /
-`tegra241_vintf_user_handle_error`. Those handlers are unchanged.
+Step 5.4: FOLLOW THE CALL CHAIN
+Record: Reachable for users with `CONFIG_CEC_TEGRA=m` on Tegra
+114/124/210 HDMI CEC DT nodes (e.g. Jetson TK1 / older Tegra boards).
+Unprivileged userspace cannot trigger a crash; the user-visible failure
+is “CEC adapter never appears until `modprobe tegra_cec`”. Builtin
+(`=y`) is already fine.
 
-**Step 5.4: FOLLOW THE CALL CHAIN**
-Record: Reachable when CMDQV is enabled (Grace SMMU). A guest with a
-user VINTF/VCMDQ can generate command-queue errors; each new error
-latches and interrupts. That is a userspace/VM-reachable path, not a
-theoretical internal-only site.
-
-**Step 5.5: SEARCH FOR SIMILAR PATTERNS**
-Record: Rate-limited IOMMU fault logs are the normal pattern elsewhere.
-This driver was the outlier with a raw `dev_warn()` in the ISR.
+Step 5.5: SEARCH FOR SIMILAR PATTERNS
+Record: Other CEC platform drivers already export OF tables. This file
+was the outlier. Same missing-macro pattern exists across many drivers
+and is treated as a real autoload bug.
 
 ===============================================================
 PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
 ===============================================================
 
-**Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?**
-Record:
-- `git describe HEAD` → **v7.3-rc4-27-gf0100363d8c37**
-- `make kernelversion` → **7.3.0-rc4**
-- Driver file exists; original ISR logging from `918eb5c856f6` (v6.12).
-- `git merge-base --is-ancestor a86c36163c972 HEAD` → **yes** (already
-  merged here). That is not used as “already selected for stable”; it
-  only confirms this lineage has the driver and the fix.
+Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?
+Record: Yes. File `drivers/media/cec/platform/tegra/tegra_cec.c` exists.
+Pre-commit parent still has the OF table and `.of_match_table` without
+the macro. Candidate **is already an ancestor of HEAD** (`git merge-base
+--is-ancestor 8dcf23edaf4bd HEAD`). Bug introduced v4.15-rc1; present in
+every long-lived stable series that has this driver.
 
-**Step 6.2: CHECK FOR BACKPORT COMPLICATIONS**
-Record: **Clean apply** on this tree (already applied). The hunk does
-not depend on later ISR locking. On a tree that still has the original
-`snprintf`/`dev_warn` ISR, it would apply with at most trivial context.
+Step 6.2: CHECK FOR BACKPORT COMPLICATIONS
+Record: Expected apply: **clean**. Context around the table (compatibles
+tegra114/124/210) is original. Later commits only add the macro and then
+unrelated CEC protocol fixes. Line numbers differ slightly on current
+HEAD because of later edits, but the hunk is trivial.
 
-**Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE**
-Record: No earlier equivalent rate-limit. `a2ee315db4261` only uses
-`WARN_ON_ONCE` for out-of-bounds map bits; it does not throttle the
-“unexpected error reported” line.
+Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE
+Record: This is the fix; it is already in this 7.3-rc4 tree. No earlier
+substitute autoload fix on this file. `7bc1f3c8bd673` only dropped
+`of_match_ptr`; it did not add aliases.
 
 ===============================================================
 PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
 ===============================================================
 
-**Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY**
-Record: **drivers/iommu/arm/arm-smmu-v3** (NVIDIA Grace CMDQ-V).
-**PERIPHERAL/IMPORTANT for that platform**: only `CONFIG_TEGRA241_CMDQV`
-/ Tegra241 (Grace) systems, including virtualization hosts using user
-VINTFs.
+Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY
+Record: `drivers/media/cec/platform/tegra/` — HDMI CEC on NVIDIA Tegra.
+Criticality: **PERIPHERAL** (SoC-specific media driver), but real
+product hardware (Jetson TK1 and Tegra X1 designs were the original test
+targets).
 
-**Step 7.2: ASSESS SUBSYSTEM ACTIVITY**
-Record: Actively developed in 2026 (large Sashiko fix series + iommufd
-work). Logging bug itself is old (v6.12).
+Step 7.2: ASSESS SUBSYSTEM ACTIVITY
+Record: Low churn. Driver added 2017; occasional correctness fixes.
+Mature. The missing macro is long-standing, not a regression from recent
+refactoring.
 
 ===============================================================
 PHASE 8: IMPACT AND RISK ASSESSMENT
 ===============================================================
 
-**Step 8.1: DETERMINE WHO IS AFFECTED**
-Record: **platform-specific / config-specific** — NVIDIA Grace +
-`CONFIG_TEGRA241_CMDQV`. Hosts that expose guest VCMDQs are the
-interesting population.
+Step 8.1: DETERMINE WHO IS AFFECTED
+Record: Driver-specific / config-specific: `CONFIG_CEC_TEGRA=m` on DT
+platforms with `nvidia,tegra114-cec`, `nvidia,tegra124-cec`, or
+`nvidia,tegra210-cec`. Not universal.
 
-**Step 8.2: DETERMINE THE TRIGGER CONDITIONS**
-Record: CMDQV error IRQ. Commonness: rare on healthy HW; can be
-**frequent** if a device malfunctions or a **guest injects VCMDQ
-errors**. Unprivileged guest with VCMDQ access can trigger it. Not every
-boot.
+Step 8.2: DETERMINE THE TRIGGER CONDITIONS
+Record: Every boot/hotplug of that DT node when the driver is a module
+and nothing else loads it. Common on distros that package CEC as a
+module; irrelevant if the vendor kernel builds it in. Not a race. Not
+triggerable as a crash by unprivileged users.
 
-**Step 8.3: DETERMINE THE FAILURE MODE SEVERITY**
+Step 8.3: DETERMINE THE FAILURE MODE SEVERITY
+Record: HDMI CEC device never binds until manual `modprobe`. No oops,
+leak, or corruption. Severity: **MEDIUM** for those boards
+(feature/hardware dead), **LOW** globally. This is the same user-visible
+class as “device ID missing so the module never loads.”
+
+Step 8.4: CALCULATE RISK-BENEFIT RATIO
 Record:
-- Direct effect: dmesg/console flood; extra MMIO + `snprintf` on every
-  interrupt.
-- Indirect: printk/console contention, lost messages, possible stalls on
-  a slow console.
-- Not an oops, UAF, or data corruption.
-- **Severity: MEDIUM** (availability / “oh, that’s not good”), with a
-  stated guest DoS path.
-
-**Step 8.4: CALCULATE RISK-BENEFIT RATIO**
-Record:
-- **Benefit:** medium for Grace virtualization hosts; low for everyone
-  else.
-- **Risk:** very low (7 lines, logging only).
-- **Ratio:** favorable. Official stable rules allow “oh, that’s not
-  good” and require an exploit explanation for “could be a problem”
-  issues; the message gives that explanation.
+- Benefit: restores intended autoload for modular Tegra CEC; matches
+  every other CEC OF driver.
+- Risk: one compile-time alias line; no runtime path change.
+- Ratio: high benefit for affected users, negligible risk.
 
 ===============================================================
 PHASE 9: FINAL SYNTHESIS
 ===============================================================
 
-**Step 9.1: COMPILE THE EVIDENCE**
+Step 9.1: COMPILE THE EVIDENCE
 
-FOR:
-- Real, described flood: guest or bad device can fire the error IRQ
-  repeatedly; each new error still interrupts (edge-triggered, latched
-  per event).
-- Tiny, obviously correct, matches other IOMMU drivers.
-- Error handling unchanged; MMIO for the log runs only when printing.
-- Driver and buggy logging exist in **this** 7.3-rc4 tree (since v6.12).
-- Applied by the arm-smmu maintainer; no NAK on this patch.
-- Official rules: not a trivia cleanup; exploit path is written down.
+FOR backporting:
+- Real bug: OF match table used by the platform driver is not published
+  to module aliases.
+- `CEC_TEGRA` is **tristate**; modular builds are first-class.
+- One line, obviously correct, no new API.
+- Same pattern as the documented **device-ID / hardware enablement**
+  exception.
+- Maintainer-applied (Hans Verkuil); NVIDIA engineer said the change
+  looks fine.
+- Sibling CEC drivers already have `MODULE_DEVICE_TABLE(of, ...)`.
+- Bug present since v4.15; no prerequisites.
+- Same class of patches has historically been accepted into stable
+  (including this author’s `can: ctucanfd` MODULE_DEVICE_TABLE fix).
 
 AGAINST:
-- No production `Reported-by`; LLM-found.
-- Least-critical patch in its series (11/11).
-- Threaded IRQ (`IRQF_ONESHOT`), so not a hardirq printk.
-- Unacked-guest *storm* was already ruled out as a false positive; this
-  only limits *new*-error spam.
-- Not a crash/corruption/UAF.
+- Not a crash, UAF, deadlock, or security hole.
+- No end-user report; author did not claim hardware reproduction.
+- Peripheral SoC driver; small user population.
+- Author is doing a mass static-analysis sweep; commit text was called
+  out as AI boilerplate.
+- Builtin kernels are unaffected.
 
 UNRESOLVED:
-- Could not query lore.kernel.org/stable (403).
-- No Tested-by.
+- Could not HTTP-fetch lore (403); discussion recovered from `b4 dig -m`
+  instead.
+- Could not find a stable-list thread for **this** SHA.
 
-**Step 9.2: APPLY THE STABLE RULES CHECKLIST**
-1. Obviously correct and tested? **PASS** — standard ratelimit;
-   maintainer applied. No extra tester tag.
-2. Fixes a real bug that affects users? **PASS** — log flood / guest-
-   driven interrupt spam on Grace CMDQV; users of that hardware exist.
-3. Important issue? **PASS** (low end) — not oops/corruption; it is an
-   explained availability issue (“oh, that’s not good” / guest printk
-   DoS), which the documented rules allow.
-4. Small and contained? **PASS** — ~16 lines, one function.
-5. No new features or APIs? **PASS**.
-6. Can apply to the local tree? **PASS** — pre-image exists here; apply
-   is clean.
+Step 9.2: APPLY THE STABLE RULES CHECKLIST
+1. Obviously correct and tested? **PASS** — one well-known macro;
+   applied by the subsystem maintainer; NVIDIA developer agreed. Build-
+   tested at least (author/reviewer).
+2. Fixes a real bug that affects users? **PASS** — modular autoload for
+   real Tegra CEC DT compatibles.
+3. Important issue? **PASS** under the hardware-enablement exception
+   (device does not come up). Not CRITICAL crash/corruption.
+4. Small and contained? **PASS** — +1 line, one file.
+5. No new features or APIs? **PASS** — publishes an existing table.
+6. Can apply to the local tree? **PASS** — file and table exist; hunk is
+   trivial. (This 7.3-rc4 tree already contains the commit.)
 
-**Step 9.3: CHECK FOR EXCEPTION CATEGORIES**
-Record: None (not a device ID, quirk table, DT, build, or docs fix).
-Qualifies as a normal small bugfix, not via an exception.
+Step 9.3: CHECK FOR EXCEPTION CATEGORIES
+Record: **Device ID / module alias publication for an existing driver.**
+Closest listed exception is new device IDs; this is the matching half
+(exporting the IDs the driver already matches). Also analogous to
+quirks/DT enablement: it makes already-supported hardware actually
+attach when built as a module.
 
-**Step 9.4: MAKE YOUR DECISION**
-This tree contains the Tegra241 CMDQV driver and the original
-unconditional ISR `dev_warn()`. The patch is a 7-line, obviously correct
-rate-limit that closes a guest-reachable log flood without touching
-recovery logic. Benefit is limited to Grace CMDQV, but risk is
-negligible, so it meets the bar for this tree.
+Step 9.4: MAKE YOUR DECISION
+The local tree is mainline **7.3.0-rc4**. The driver and buggy omission
+exist here and in any stable series that still has `tegra_cec`. The
+patch is a one-line, maintainer-acked autoload fix with no runtime risk.
+That is stable material.
 
-What it solves for users here: a VM or failing CMDQ can spam the host
-log and extra MMIO on every error IRQ. That is not a panic, but it is a
-real host-side availability nuisance on this platform.
+What problem it solves for stable users: with `CONFIG_CEC_TEGRA=m`, udev
+never loads the module from the DT compatible, so HDMI CEC stays dead
+until a manual modprobe. Distros that ship this as a module on
+Jetson/Tegra boards hit that.
+
+Risk vs benefit: benefit is hardware actually probing; risk is
+essentially zero.
 
 Verification:
-- [Phase 1] Tags: Assisted-by Claude; SOB Nicolin Chen + Will Deacon; no
-  Fixes/Reported-by/Cc: stable on this commit
-- [Phase 2] Diff: `tegra241_cmdqv_isr()` snprintf+dev_warn →
-  dev_warn_ratelimited; +7/−9
-- [Phase 2] Confirmed `dev_level_ratelimited` only evaluates args when
-  `__ratelimit()` allows print
-- [Phase 3] `git blame` / original file: logging from `918eb5c856f6`
-  (v6.12-rc1)
-- [Phase 3] `git describe --contains 918eb5c856f6` →
-  v6.12-rc1~149^2^2~19
-- [Phase 3] Series: v2 11/11; parent is VINTF0 leak fix, not a
-  functional prereq
-- [Phase 4] `b4 dig -c a86c36163c972`: lore/patch.msgid.link match; v1
-  then v2
-- [Phase 4] `b4 dig -a`: v1 2026-07-02, v2 2026-07-14 (applied)
-- [Phase 4] `b4 dig -w`: iommu maintainers on To/Cc; Will applied 11/11,
-  dropped 10/11
-- [Phase 4] mbox: cover letter lists log flood; no comments/NAK on
-  11/11; Cc: stable only on 07/11
-- [Phase 4] WebFetch lore/stable: 403; stable-list search UNVERIFIED
-- [Phase 5] Caller: `request_threaded_irq` in `__tegra241_cmdqv_probe`;
-  CONFIG_TEGRA241_CMDQV
-- [Phase 6] `git describe HEAD` → v7.3-rc4-27-gf0100363d8c37; `make
-  kernelversion` → 7.3.0-rc4
-- [Phase 6] `git merge-base --is-ancestor a86c36163c972 HEAD` → ancestor
-  (code exists here)
-- [Phase 8] Failure mode: printk flood / guest DoS, severity MEDIUM
-- UNVERIFIED: lore.kernel.org/stable discussion (HTTP 403)
+- [Phase 1] Parsed tags: author + Hans Verkuil SOB only; no
+  Fixes/Reported-by/Cc: stable
+- [Phase 1] Body describes missing OF alias publication, not a crash
+- [Phase 2] Diff: +1 line `MODULE_DEVICE_TABLE(of, tegra_cec_of_match)`
+  in `tegra_cec.c`
+- [Phase 2] Confirmed `.of_match_table = tegra_cec_of_match` already
+  present
+- [Phase 3] `git blame`: table from `9d2d60687c9a06` (v4.15-rc1); macro
+  from `8dcf23edaf4bd`
+- [Phase 3] Original driver dump: no MODULE_DEVICE_TABLE
+- [Phase 3] Author sweep of similar one-liners; Hans is MAINTAINERS
+  owner of ARM/TEGRA HDMI CEC
+- [Phase 4] `b4 dig -c 8dcf23edaf4bd`:
+  https://patch.msgid.link/20260704122631.99057-1-pengpeng@iscas.ac.cn
+- [Phase 4] `b4 dig -a`: single v1; no later revision
+- [Phase 4] `b4 dig -w`: linux-media, linux-tegra, Hans, Mauro, Thierry
+  Reding, Jonathan Hunter
+- [Phase 4] mbox: Mikko Perttunen “Otherwise looks fine to me”;
+  complaint was about AI commit-message padding only
+- [Phase 4] lore WebFetch 403; content taken from mbox
+- [Phase 4] No stable@ thread for this SHA; same-class
+  MODULE_DEVICE_TABLE patches have landed in stable
+- [Phase 5] Kconfig `CEC_TEGRA` is tristate; Makefile
+  `obj-$(CONFIG_CEC_TEGRA) += tegra_cec.o`
+- [Phase 5] `MODULE_DEVICE_TABLE` in `include/linux/module.h` creates
+  file2alias symbol; `scripts/mod/file2alias.c` `do_table()` consumes it
+- [Phase 5] Other CEC OF drivers already have the macro
+- [Phase 6] `git describe HEAD`: v7.3-rc4-27-gf0100363d8c37; `make
+  kernelversion`: 7.3.0-rc4
+- [Phase 6] `git merge-base --is-ancestor 8dcf23edaf4bd HEAD`: yes
+  (already in this tree)
+- [Phase 6] Backport difficulty: clean one-liner
+- [Phase 7] Peripheral media driver, maintainer-applied
+- [Phase 8] Failure mode: module not autoloaded → CEC unused; severity
+  MEDIUM for Tegra modular users, not a panic
+- UNVERIFIED: live udev autoload on real Tegra hardware (author did not
+  claim it)
 
 **YES**
 
- drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/media/cec/platform/tegra/tegra_cec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index fdbd487848e64..8c9530873ed98 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -350,21 +350,19 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
- {
- 	struct tegra241_cmdqv *cmdqv = (struct tegra241_cmdqv *)devid;
- 	void __iomem *reg_vintf_map = REG_CMDQV(cmdqv, VINTF_ERR_MAP);
--	char err_str[256];
- 	u64 vintf_map;
+diff --git a/drivers/media/cec/platform/tegra/tegra_cec.c b/drivers/media/cec/platform/tegra/tegra_cec.c
+index 3ed50097262f6..fe66336e734f8 100644
+--- a/drivers/media/cec/platform/tegra/tegra_cec.c
++++ b/drivers/media/cec/platform/tegra/tegra_cec.c
+@@ -458,6 +458,7 @@ static const struct of_device_id tegra_cec_of_match[] = {
+ 	{ .compatible = "nvidia,tegra210-cec", },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, tegra_cec_of_match);
  
- 	/* Use readl_relaxed() as register addresses are not 64-bit aligned */
- 	vintf_map = (u64)readl_relaxed(reg_vintf_map + 0x4) << 32 |
- 		    (u64)readl_relaxed(reg_vintf_map);
- 
--	snprintf(err_str, sizeof(err_str),
--		 "vintf_map: %016llx, vcmdq_map %08x:%08x:%08x:%08x", vintf_map,
--		 readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(3))),
--		 readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(2))),
--		 readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(1))),
--		 readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(0))));
--
--	dev_warn(cmdqv->dev, "unexpected error reported. %s\n", err_str);
-+	dev_warn_ratelimited(
-+		cmdqv->dev,
-+		"unexpected error reported. vintf_map: %016llx, vcmdq_map %08x:%08x:%08x:%08x\n",
-+		vintf_map, readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(3))),
-+		readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(2))),
-+		readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(1))),
-+		readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(0))));
- 
- 	/* Handle VINTF0 and its LVCMDQs */
- 	if (vintf_map & BIT_ULL(0)) {
+ static struct platform_driver tegra_cec_driver = {
+ 	.driver = {
 -- 
 2.53.0
 
