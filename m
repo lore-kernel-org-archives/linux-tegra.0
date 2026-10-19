@@ -1,64 +1,64 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8953F4A64D5
-	for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2026 09:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5E24A2A75
+	for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2026 09:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792403858; cv=none; b=tYe4AVM78g+dvJatWuq0idcFTdogiTcgIgPecsTl2rg4728nAkxSZ7Mx7mQf12fF34lj1nrr9Ky/iRrhWeSNNSVv68HE54VDn/cEqtAFT9R5hDKBVFBQxBaEHQiSUSbiWuRClj0k1MpU6xDTZytGt9o1ISQH7kLjzALhpf6zC98=
+	t=1792403860; cv=none; b=tSevdlwjNaOytTRuAUllOYj0VUTBMZW2PTD6VkOUeZviyQJRv8ZpOY8Vfzjg5VAC+QiQkUUObp9q4aLA1UVckJexYiNjJRKslfK/SITeGHfPTkz+ajg82huyMFI3/B1Q2rTEBJkHviWjenDMk7kkmOUbWS04cEGvCW9jzyem1r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792403858; c=relaxed/simple;
-	bh=2h7ePiOQxejNRl8e1ndTlpV4W+pfg9dWRBWZ+NSV16U=;
+	s=arc-20240116; t=1792403860; c=relaxed/simple;
+	bh=gOvexMUpNDoLu8Fyf+jZcrGEhsQpvOrTCml/3XWBHt4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i2iwlfc4D5oPcJZZduiN5Grl3RF0Qij/3tWjLy5xIJmCzl3GX6cAzkEAiqI5qlC5+0ATRA4KiZBaimS6HrvkVWKb2bYpbwC9+fh3RRfl0CQA+lGryy6IX1M03SlpM9eyyI2nEFi2YufKFgtx6BUs5lOyaVC+NumPnrJhL28XDl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRyILqfb; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=siZAqMkYKrjcqBxtdJGoU3pB0xT9C5WV0rW8V7kAjG9X+6XbPzptSVBm5ChSej270oz/nJWAmkFwqyKNBI72ITvwwyQJiRJ7DzkDzgtWSpIxrDcno+VK+fS9U97tMILsrno22jJjCIDIIa6rHOipxLOoQPCyUm/O6pzDyWDzbyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WdajyxXM; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRyILqfb"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a1ec92f655so4476795e9.0
-        for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2026 02:57:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdajyxXM"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a01933b584so13503895e9.0
+        for <linux-tegra@vger.kernel.org>; Mon, 19 Oct 2026 02:57:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792403853; x=1793008653; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792403857; x=1793008657; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=6FSYoheTDmA4DpRaSb6YIPC1UctKcu1GqLxb7xH0SzE=;
-        b=bRyILqfbyWG1QolQ34HMxziHIxHz+OiKpt4FiPSJzvOxGtr271qpzJEzMusPmqFY9u
-         LawxN3DoGc7ZpfzbLu6kN+mWTQEU8LpcWQQDeqYL994OxBh27tZ1VNcmb99Fbv1UvU7s
-         zSJcnpldyUBMaSTLxpILte4P1pMbrHoFZv558gD34wHSqH6iL3MKIpBimUi9HAZeUNRq
-         S7xJg9CFUXgRhWQ215AEJ+ppjv0Syau5IiC7KZ359VantUykJsF5P3ir0Yrt+XF+D15F
-         LVCVjVcp34eD1i3UBnueTPqfXb+Z6PdXk4g6PqdNUtEoFC0E1oDBmC5mJSUOST8SOuO9
-         TxDw==
+        bh=L+kDEcjvxo1VdT9r0bV/+sDHRVkc+YOrgN2LIdxxt1E=;
+        b=WdajyxXMdFw4id22xNdRHR5EZ2EiyCJbZYb6AWLD5sa40R1mYCARnPVCPhY3f/e1KS
+         iuag9nDXFkUS9+sr10UVZuf2O1bpUKHJcoLBiH6xDuIESGVPxMudUk7F7z4kUp8hsMjo
+         HXfXtkBnzfq8pNN3TbkkYOWO+J/GxqxvEvEf49N8Pu2Atcq24ndZkmmNG6jdDYK24S0u
+         7P6ePqud0GNDRNvylFB93Cg8eCFIG+4qMYh7jQp7k3YPOElNYSFKyEyB8aEwDcYBYQhp
+         qjlN6EMVi+HakNZoF4tiyXwAYMfSFHu9DtM9GnKRwAqNx3roorL3qld9fUttfnIWSzZn
+         O63g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792403853; x=1793008653;
+        d=1e100.net; s=20260707; t=1792403857; x=1793008657;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=6FSYoheTDmA4DpRaSb6YIPC1UctKcu1GqLxb7xH0SzE=;
-        b=B7dyFVB0EsQJOZO1mpihkMahjMr09jtJeE5L1tx0Ww2RoGnM3sieE1jsnB46csKR10
-         E8/cvqG8l0pJ9aE1qDJ2aG5lSdzay9Vn4drfxruOCDLazXDh65x/3MZNqALwOcXXyvuA
-         L7jrIM291xcSrQ/UAF7NfMaBDEU1TJmuKYAOmirnlW/8ksja5pZ5vGHE7FAVt7YAaO21
-         kxMdP6M49m3q0wuOBZuWhBDdaM5n92wbrna1L6a5ZplpzoundhF/lonuBlWStoNML06u
-         EvZFXwUJeEWmXVtghoRIFGES0SJgipbRm/tZzDKRyC9tSBbZL3eYwyJE4Qyxyjvv+Z3T
-         eCwA==
-X-Forwarded-Encrypted: i=1; AKwUvBxfSILjtpWM356cGsAIlnKxeFibOlCM+rWLr323RS+MUOcb3mp49fmmwoArsK6AhS7yDYtp8WH7532P3w==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJQFs+PmdtoPtHF0+OvGtjLojcMMp+bdOubiJ0wPG8Y5P0dmdMn
-	WiLEuasYxuRl/hoERW06O4tutTGkvJYOxdOTbtTqvkunjstBE/rIqICv
-X-Gm-Gg: AYBFou3eSuXnpuCDkKD9ARnOlAck4CcYnMmWzJdmlCf7CRtxduug/zkw5iSpZ8/VT70
-	6LQHJU1EUuycV4a7aNQAbN0yjM8jc8tB4Gz9sDGYnLTs5DGv3LgBE7cp5kyhrU6pdEGQaTG0a6z
-	nGPpiq2HpzvWGnZtYYBuWmkyvd4kkId0Y7l0R3rjsPjfaJoHPQzpScwwn/X/6XLfsxvQIVzVRcF
-	ooz4e+IeHWRlII+hB2W9h7Y5bcAmDLjosuw8r/Pt3/FCGYS1INXTXZkB4v2bP9D5RBdS2ONRBRl
-	KyiYX5BIcKIy6+eMuoP6fuSLGAcNXL6vRZnxeTjCqgEjUAaDOLjRh/azuMG7QMoeGaX0zjleh4w
-	22W9Scep3d88KOwTCU6YWS/In4lVgzc5AnS7EzY6Zhdwj2kjkKkZyGe2bqH9BFsw7VdfW/hmpz8
-	8o7Fcs1L5p2hyuqz+XDZhfttj8YIFpOvDSeftnhnXVZvNwYNO3MMQMfelMUecxsB3wzV60C6V0e
-	wvXgbX8liGNrcdhCD8=
-X-Received: by 2002:a05:600c:4f88:b0:4a1:9c71:9f17 with SMTP id 5b1f17b1804b1-4a1d75fe190mr145198735e9.9.1792403852594;
-        Mon, 19 Oct 2026 02:57:32 -0700 (PDT)
+        bh=L+kDEcjvxo1VdT9r0bV/+sDHRVkc+YOrgN2LIdxxt1E=;
+        b=bzxmISdG1DgpDnH36AKsgAvZADQNCr8GwZ6daA5CF5lx5s9wvaORPfeo49VTBXZPVm
+         MSzxJmVIoqLN81kfOzTgSbga7IZUOcJHoQmyINxsI9/IrgCUu9tVU0fphEo3BAy6k0ic
+         CI9g7gUdysulV9sOR2sMeJO2CZC1ewr4+ORFwthoPd/JgJUsptORaYuw/JSZcfh2zBN4
+         bg6M79aC1RBtGut5g8fQOnXOLuuBYcyQVImsX96TZVAFqd60mgnw+RmsTvrMsKGR5nBG
+         QHAN/msMNRBLSqETguytssVylhni9xKIk5yDQ/Fcd0xNTLllRMGkgyBJMtX3XJdCy2Mx
+         P98A==
+X-Forwarded-Encrypted: i=1; AKwUvBw/4fgv02t+YGADV42askWOnhpjxSLS6CxS/Vx1bBaWPTtvgDq9Vz/UjPVm92RZRaQfasfQDhvELKin+w==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ1XKb6OEJgXrVabvAbX6WYMl8tDVjuSIbT5eEvf3IB8ubu6Mkx
+	k/vQK5o/P+y+Vp/4W4Wqx7S6o8ViErCRO8uv3j5e1nlC8evHnCGyXALQ
+X-Gm-Gg: AYBFou3gtjtvCVpmzpMDAtHpGdkK7L3whlzjC1kpVxXnUDnaW/MSazN/jqQw5Bpq/mq
+	YUedJts5k8Bpa2/JKFFpaFf0qmtj48DAzdnSq83lcjvKy9PZVmxTdyEkAjWAtEPRl0pseKqQHvo
+	E4/V4oY9g6RW6ACpprtOObPLBOB6mtS/+iAzR3RuG1R1DNBkq67Wl99fZeR3Pze3u4RYWKUK0ol
+	tV+DhFSe1/XUUB/uhJ6Rtok1bexR3YqS5cbdxh6NdF+MwK2Y3bNDjE1W8OX3irFKC/Vlwd5Sj1o
+	3qY8H1Edlc61vgp70icprW8vF+8Bi6o3RRJbig7zydlCSM67JMeYPcCvrFWGWTFt4E9exym792Y
+	gl8qy0pp0abj1kEi1UM39hEUiMBx8UCQBaK+KsByWqdO6uYIp3c0kJx4u+rOro/CDCLQR1zolqc
+	FlqGuSVUklQZtHWGJWBPzDfFlJt0tAluP0wEoooq3ec/eCoXCZTDYSKn//gdxrTyCdfGV3hc7vT
+	gX8UmvK+MTi777CM3D3ouLrFlrYyQ==
+X-Received: by 2002:a05:600c:8b25:b0:49f:fe39:5bc8 with SMTP id 5b1f17b1804b1-4a1d75f987dmr191840115e9.12.1792403856223;
+        Mon, 19 Oct 2026 02:57:36 -0700 (PDT)
 Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd500e75sm21740089f8f.42.2026.10.19.02.57.30
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd500e75sm21740089f8f.42.2026.10.19.02.57.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 02:57:31 -0700 (PDT)
+        Mon, 19 Oct 2026 02:57:35 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <jesszhan0024@gmail.com>,
@@ -78,9 +78,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 4/7] drm/tegra: Add support for 8-bit CPU interface
-Date: Mon, 19 Oct 2026 12:57:02 +0300
-Message-ID: <20261019095705.91062-5-clamor95@gmail.com>
+Subject: [PATCH v3 6/7] drm/panel: Add Hitachi TX10D07VM0BAA MIPI DBI Type B panel driver
+Date: Mon, 19 Oct 2026 12:57:04 +0300
+Message-ID: <20261019095705.91062-7-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019095705.91062-1-clamor95@gmail.com>
 References: <20261019095705.91062-1-clamor95@gmail.com>
@@ -92,557 +92,357 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The display controller in Tegra20/30 SoCs features an 8-bit SPI interface
-that closely resembles the MIPI DBI Type B protocol and is referred to as
-'8-bit CPU'. Each display controller provides two such interfaces, which
-can be used to send MIPI DCS commands to initialize and control the panel
-while image data is transmitted via 16/18/24-line RGB.
-
-The '8-bit CPU', although being the DC interface, is modeled using a
-bridge framework for flexibility and convenience. This implementation does
-not change the existing codebase besides registering a fragment and can be
-enabled/disabled without losing other Tegra DRM functionality.
+Add a driver for panel used in LG Optimus 2X P990. Panel is 4" WVGA MIPI
+DBI Type B linked to DRM encoder via RGB to DBI bridge.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- drivers/gpu/drm/tegra/Kconfig  |   7 +
- drivers/gpu/drm/tegra/Makefile |   3 +
- drivers/gpu/drm/tegra/dbi.c    | 415 +++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/dc.c     |  29 +++
- drivers/gpu/drm/tegra/dc.h     |   1 +
- drivers/gpu/drm/tegra/trace.c  |   3 +
- 6 files changed, 458 insertions(+)
- create mode 100644 drivers/gpu/drm/tegra/dbi.c
+ drivers/gpu/drm/panel/Kconfig                 |  14 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../drm/panel/panel-hitachi-tx10d07vm0baa.c   | 297 ++++++++++++++++++
+ 3 files changed, 312 insertions(+)
+ create mode 100644 drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
 
-diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
-index 8a3b16aac5d68..ce3a424398713 100644
---- a/drivers/gpu/drm/tegra/Kconfig
-+++ b/drivers/gpu/drm/tegra/Kconfig
-@@ -30,6 +30,13 @@ config DRM_TEGRA
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 53a1fc2913fee..5f68b78526c3e 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -274,6 +274,20 @@ config DRM_PANEL_HIMAX_HX8394
  
- if DRM_TEGRA
+ 	  If M is selected the module will be called panel-himax-hx8394.
  
-+config DRM_TEGRA_DBI
-+	tristate "Enable MIPI DBI type B communication protocol for Tegra 20/30"
++config DRM_PANEL_HITACHI_TX10D07VM0BAA
++	tristate "Hitachi TX10D07VM0BAA MIPI DBI Type B panel"
++	depends on OF
++	depends on BACKLIGHT_CLASS_DEVICE
++	select DRM_MIPI_DBI
++	select VIDEOMODE_HELPERS
 +	help
-+	  Tegra20 and Tegra30 feature 8 bit CPU driver panel control
-+	  protocol (similar to MIPI DBI Type B). This option allows use
-+	  it to set up and control compatible panel.
++	  Say Y here if you want to enable support for the HITACHI
++	  TX10D07VM0BAA MIPI DBI Type B panel found in the LG Optimus 2X
++	  P990 smartphone.
 +
- config DRM_TEGRA_DEBUG
- 	bool "NVIDIA Tegra DRM debug support"
- 	help
-diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index e399b40d64a1d..d67e53248a082 100644
---- a/drivers/gpu/drm/tegra/Makefile
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -33,3 +33,6 @@ tegra-drm-y += trace.o
- tegra-drm-$(CONFIG_DRM_FBDEV_EMULATION) += fbdev.o
- 
- obj-$(CONFIG_DRM_TEGRA) += tegra-drm.o
++	  To compile this driver as a module, choose M here: the module will
++	  be called panel-hitachi-tx10d07vm0baa.
 +
-+obj-$(CONFIG_DRM_TEGRA_DBI) += tegra-dbi.o
-+tegra-dbi-y := dbi.o
-diff --git a/drivers/gpu/drm/tegra/dbi.c b/drivers/gpu/drm/tegra/dbi.c
+ config DRM_PANEL_HYDIS_HV101HD1
+ 	tristate "Hydis HV101HD1 panel"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index f2c9c80a218f0..414267a49d922 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -27,6 +27,7 @@ obj-$(CONFIG_DRM_PANEL_HIMAX_HX83112A) += panel-himax-hx83112a.o
+ obj-$(CONFIG_DRM_PANEL_HIMAX_HX83112B) += panel-himax-hx83112b.o
+ obj-$(CONFIG_DRM_PANEL_HIMAX_HX83121A) += panel-himax-hx83121a.o
+ obj-$(CONFIG_DRM_PANEL_HIMAX_HX8394) += panel-himax-hx8394.o
++obj-$(CONFIG_DRM_PANEL_HITACHI_TX10D07VM0BAA) += panel-hitachi-tx10d07vm0baa.o
+ obj-$(CONFIG_DRM_PANEL_HYDIS_HV101HD1) += panel-hydis-hv101hd1.o
+ obj-$(CONFIG_DRM_PANEL_ILITEK_ILI7807S) += panel-ilitek-ili7807s.o
+ obj-$(CONFIG_DRM_PANEL_ILITEK_ILI7836A) += panel-ilitek-ili7836a.o
+diff --git a/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c b/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
 new file mode 100644
-index 0000000000000..4b3966dea0438
+index 0000000000000..c3434cb96c86c
 --- /dev/null
-+++ b/drivers/gpu/drm/tegra/dbi.c
-@@ -0,0 +1,415 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
+@@ -0,0 +1,297 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +
++#include <linux/array_size.h>
 +#include <linux/delay.h>
-+#include <linux/device.h>
 +#include <linux/err.h>
 +#include <linux/gpio/consumer.h>
-+#include <linux/kernel.h>
 +#include <linux/media-bus-format.h>
 +#include <linux/module.h>
 +#include <linux/of_platform.h>
-+#include <linux/property.h>
 +#include <linux/platform_device.h>
-+
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_drv.h>
-+#include <drm/drm_mipi_dbi.h>
-+#include <drm/drm_of.h>
-+#include <drm/drm_panel.h>
++#include <linux/property.h>
++#include <linux/regulator/consumer.h>
 +
 +#include <video/mipi_display.h>
 +
-+#include "dc.h"
++#include <drm/drm_mipi_dbi.h>
++#include <drm/drm_modes.h>
++#include <drm/drm_of.h>
++#include <drm/drm_panel.h>
++#include <drm/drm_probe_helper.h>
 +
-+#define TEGRA_DBI_COMMAND			0
-+#define TEGRA_DBI_DATA				1
-+#define TEGRA_DBI_DATA_PINS_MAX			8
-+
-+struct tegra_dbi_output {
-+	struct drm_panel *panel;
-+	struct drm_bridge *bridge;
++static const struct regulator_bulk_data hitachi_tx10d07vm0baa_supplies[] = {
++	{ .supply = "avci" }, { .supply = "iovcc" },
 +};
 +
-+struct tegra_dbi_priv {
-+	struct mipi_dbi dbi;		/* must be first */
-+	struct device *dev;
-+	struct tegra_dc *dc;
++struct hitachi_tx10d07vm0baa {
++	struct drm_panel panel;
++	struct mipi_dbi *dbi;
 +
-+	struct gpio_desc *dc_gpio;
-+	struct gpio_desc *rw_gpio;
-+	struct gpio_desc *cs_gpio;
-+	struct gpio_descs *data_gpios;
-+
-+	struct drm_bridge bridge;
-+	struct tegra_dbi_output output;
-+
-+	u32 spi_init_seq[4];
-+	u32 bus_width;
-+	bool prepared;
++	struct regulator_bulk_data *supplies;
++	struct gpio_desc *reset_gpio;
 +};
 +
-+static inline struct tegra_dbi_priv *mipi_dbi_to_tegra_dbi(struct mipi_dbi *dbi)
++static inline struct hitachi_tx10d07vm0baa *to_hitachi_tx10d07vm0baa(struct drm_panel *panel)
 +{
-+	return container_of(dbi, struct tegra_dbi_priv, dbi);
++	return container_of(panel, struct hitachi_tx10d07vm0baa, panel);
 +}
 +
-+static inline struct tegra_dbi_priv *bridge_to_tegra_dbi(struct drm_bridge *bridge)
++#define panel_dbi_command(priv, cmd, seq...) \
++({ \
++	const u8 d[] = { seq }; \
++	struct drm_panel *panel = &(priv)->panel; \
++	struct device *dev = panel->dev; \
++	int ret; \
++	ret = mipi_dbi_command_stackbuf((priv)->dbi, cmd, d, ARRAY_SIZE(d)); \
++	if (ret) \
++		dev_err_ratelimited(dev, "error %d when sending command %#02x\n", ret, cmd); \
++	ret; \
++})
++
++static int hitachi_tx10d07vm0baa_prepare(struct drm_panel *panel)
 +{
-+	return container_of(bridge, struct tegra_dbi_priv, bridge);
-+}
-+
-+static void tegra_dbi_write(struct tegra_dbi_priv *priv, u8 type, u8 value)
-+{
-+	DECLARE_BITMAP(value_bitmap, 8);
-+
-+	value_bitmap[0] = value;
-+
-+	gpiod_set_value(priv->dc_gpio, type);
-+
-+	gpiod_set_value(priv->cs_gpio, 0);
-+	gpiod_set_value(priv->rw_gpio, 0);
-+
-+	gpiod_set_array_value(priv->data_gpios->ndescs, priv->data_gpios->desc,
-+			      priv->data_gpios->info, value_bitmap);
-+
-+	gpiod_set_value(priv->cs_gpio, 1);
-+	gpiod_set_value(priv->rw_gpio, 1);
-+
-+	udelay(10);
-+}
-+
-+static int tegra_dbi_dbi_command(struct mipi_dbi *dbi, u8 *cmd, u8 *param, size_t num)
-+{
-+	struct tegra_dbi_priv *priv = mipi_dbi_to_tegra_dbi(dbi);
-+	u8 command = *cmd;
-+
-+	if (!priv->data_gpios)
-+		return 0;
-+
-+	tegra_dbi_write(priv, TEGRA_DBI_COMMAND, command);
-+
-+	for (int i = 0; i < num; i++)
-+		tegra_dbi_write(priv, TEGRA_DBI_DATA, param[i]);
-+
-+	return 0;
-+}
-+
-+static int tegra_dbi_prepare_gpios(struct tegra_dbi_priv *priv)
-+{
-+	struct device *dev = priv->dev;
++	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
++	struct device *dev = panel->dev;
 +	int ret;
 +
-+	if (priv->prepared)
-+		return 0;
-+
-+	/*
-+	 * Control and data GPIOs are shared between SPI and DPI. The bridge
-+	 * driver must get and put the required GPIOs each time DCS commands
-+	 * are transmitted.
-+	 */
-+
-+	priv->cs_gpio = gpiod_get(dev, "cs", GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->cs_gpio)) {
-+		dev_err(dev, "Failed to get CS GPIO: %ld\n", PTR_ERR(priv->cs_gpio));
-+		return PTR_ERR(priv->cs_gpio);
-+	}
-+
-+	priv->rw_gpio = gpiod_get(dev, "rw", GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->rw_gpio)) {
-+		ret = PTR_ERR(priv->rw_gpio);
-+		dev_err(dev, "Failed to get RW GPIO: %d\n", ret);
-+		goto free_cs;
-+	}
-+
-+	priv->dc_gpio = gpiod_get(dev, "dc", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->dc_gpio)) {
-+		ret = PTR_ERR(priv->dc_gpio);
-+		dev_err(dev, "Failed to get DC GPIO: %d\n", ret);
-+		goto free_rw;
-+	}
-+
-+	priv->data_gpios = gpiod_get_array(dev, "data", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->data_gpios)) {
-+		ret = PTR_ERR(priv->data_gpios);
-+		dev_err(dev, "Failed to get data gpios %d\n", ret);
-+		goto free_dc;
-+	}
-+
-+	if (priv->data_gpios && priv->data_gpios->ndescs > TEGRA_DBI_DATA_PINS_MAX) {
-+		ret = -EINVAL;
-+		dev_err(dev, "Too many data gpios\n");
-+		goto free_data;
-+	}
-+
-+	priv->prepared = true;
-+
-+	return 0;
-+
-+free_data:
-+	gpiod_put_array(priv->data_gpios);
-+free_dc:
-+	gpiod_put(priv->dc_gpio);
-+free_rw:
-+	gpiod_put(priv->rw_gpio);
-+free_cs:
-+	gpiod_put(priv->cs_gpio);
-+
-+	return ret;
-+}
-+
-+static void tegra_dbi_atomic_enable(struct drm_bridge *bridge,
-+				    struct drm_atomic_commit *state)
-+{
-+	struct tegra_dbi_priv *priv = bridge_to_tegra_dbi(bridge);
-+	struct tegra_dc *dc = priv->dc;
-+	u32 value;
-+	int ret;
-+
-+	value = tegra_dc_readl(dc, DC_CMD_DISPLAY_COMMAND);
-+	value &= ~DISP_CTRL_MODE_MASK;
-+	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_COMMAND);
-+
-+	/* Disable all options except cursor if enabled */
-+	value = tegra_dc_readl(dc, DC_DISP_DISP_WIN_OPTIONS);
-+	value &= CURSOR_ENABLE;
-+	tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
-+
-+	tegra_dc_commit(dc);
-+
-+	tegra_dc_writel(dc, V_PULSE1_ENABLE, DC_DISP_DISP_SIGNAL_OPTIONS0);
-+	tegra_dc_writel(dc, PULSE_POLARITY_LOW, DC_DISP_V_PULSE1_CONTROL);
-+
-+	tegra_dc_writel(dc, PULSE_END(1), DC_DISP_V_PULSE0_POSITION_A);
-+	tegra_dc_writel(dc, 0, DC_DISP_V_PULSE0_POSITION_B);
-+	tegra_dc_writel(dc, 0, DC_DISP_V_PULSE0_POSITION_C);
-+
-+	value = 1 << FRAME_INIT_SEQ_CYCLES_SHIFT |
-+		DC_SIGNAL_VPULSE1 << INIT_SEQ_DC_SIGNAL_SHIFT |
-+		INIT_SEQUENCE_MODE_PLCD | SEND_INIT_SEQUENCE;
-+	tegra_dc_writel(dc, value, DC_DISP_INIT_SEQ_CONTROL);
-+
-+	tegra_dc_writel(dc, priv->spi_init_seq[0], DC_DISP_SPI_INIT_SEQ_DATA_A);
-+	tegra_dc_writel(dc, priv->spi_init_seq[1], DC_DISP_SPI_INIT_SEQ_DATA_B);
-+	tegra_dc_writel(dc, priv->spi_init_seq[2], DC_DISP_SPI_INIT_SEQ_DATA_C);
-+	tegra_dc_writel(dc, priv->spi_init_seq[3], DC_DISP_SPI_INIT_SEQ_DATA_D);
-+
-+	value = tegra_dc_readl(dc, DC_CMD_DISPLAY_COMMAND);
-+	value &= ~DISP_CTRL_MODE_MASK;
-+	value |= DISP_CTRL_MODE_C_DISPLAY;
-+	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_COMMAND);
-+
-+	/* set LDC pin to V Pulse 1 */
-+	value = tegra_dc_readl(dc, DC_COM_PIN_OUTPUT_SELECT(6));
-+	value |= LDC_OUTPUT_SELECT_V_PULSE1;
-+	tegra_dc_writel(dc, value, DC_COM_PIN_OUTPUT_SELECT(6));
-+
-+	value = SC1_H_QUALIFIER(SC_H_QUALIFIER_NONE) |
-+		SC0_V_QUALIFIER(SC_V_QUALIFIER_VACTIVE) |
-+		SC0_H_QUALIFIER(SC_H_QUALIFIER_HACTIVE);
-+	tegra_dc_writel(dc, value, DC_DISP_SHIFT_CLOCK_OPTIONS);
-+
-+	value = tegra_dc_readl(dc, DC_DISP_DISP_COLOR_CONTROL);
-+	value &= ~BASE_COLOR_SIZE_MASK;
-+
-+	switch (priv->bus_width) {
-+	case 16:
-+		value |= BASE_COLOR_SIZE_565;
-+		break;
-+	case 18:
-+		value |= BASE_COLOR_SIZE_666;
-+		break;
-+	case 24:
-+	default:
-+		value |= BASE_COLOR_SIZE_888;
-+		break;
-+	}
-+
-+	tegra_dc_writel(dc, value, DC_DISP_DISP_COLOR_CONTROL);
-+
-+	ret = tegra_dbi_prepare_gpios(priv);
-+	if (ret)
-+		return;
-+
-+	if (priv->output.panel)
-+		drm_panel_enable(priv->output.panel);
-+
-+	gpiod_set_value(priv->cs_gpio, 0);
-+
-+	gpiod_put(priv->dc_gpio);
-+	gpiod_put(priv->rw_gpio);
-+	gpiod_put(priv->cs_gpio);
-+
-+	gpiod_put_array(priv->data_gpios);
-+	priv->prepared = false;
-+}
-+
-+static void tegra_dbi_atomic_disable(struct drm_bridge *bridge,
-+				     struct drm_atomic_commit *state)
-+{
-+	struct tegra_dbi_priv *priv = bridge_to_tegra_dbi(bridge);
-+	int ret;
-+
-+	ret = tegra_dbi_prepare_gpios(priv);
-+	if (ret)
-+		return;
-+
-+	if (priv->output.panel)
-+		drm_panel_disable(priv->output.panel);
-+
-+	gpiod_set_value(priv->cs_gpio, 0);
-+
-+	gpiod_put(priv->dc_gpio);
-+	gpiod_put(priv->rw_gpio);
-+	gpiod_put(priv->cs_gpio);
-+
-+	gpiod_put_array(priv->data_gpios);
-+	priv->prepared = false;
-+}
-+
-+static int tegra_dbi_atomic_check(struct drm_bridge *bridge,
-+				  struct drm_bridge_state *bridge_state,
-+				  struct drm_crtc_state *crtc_state,
-+				  struct drm_connector_state *conn_state)
-+{
-+	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
-+
-+	/* Set safe default bus flags if panel does not specify them */
-+	if (!bridge_state->input_bus_cfg.flags)
-+		bridge_state->input_bus_cfg.flags = bridge->timings->input_bus_flags;
-+
-+	/* Default to positive sync */
-+	if (!(adjusted_mode->flags &
-+	      (DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_NHSYNC)))
-+		adjusted_mode->flags |= DRM_MODE_FLAG_PHSYNC;
-+
-+	if (!(adjusted_mode->flags &
-+	      (DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC)))
-+		adjusted_mode->flags |= DRM_MODE_FLAG_PVSYNC;
-+
-+	return 0;
-+}
-+
-+static int tegra_dbi_attach(struct drm_bridge *bridge,
-+			    struct drm_encoder *encoder,
-+			    enum drm_bridge_attach_flags flags)
-+{
-+	struct tegra_dbi_priv *priv = bridge_to_tegra_dbi(bridge);
-+	struct device *dev = priv->dev;
-+
-+	priv->dc = dev_get_drvdata(dev->parent);
-+	if (!priv->dc)
++	priv->dbi = dev_get_drvdata(dev->parent);
++	if (!priv->dbi)
 +		return -ENODEV;
 +
-+	return drm_bridge_attach(bridge->encoder, priv->output.bridge, bridge,
-+				 flags);
-+}
++	gpiod_set_value_cansleep(priv->reset_gpio, 1);
 +
-+static enum drm_mode_status tegra_dbi_mode_valid(struct drm_bridge *bridge,
-+						 const struct drm_display_info *info,
-+						 const struct drm_display_mode *mode)
-+{
-+	if (mode->hdisplay > 800)
-+		return MODE_H_ILLEGAL;
++	ret = regulator_bulk_enable(ARRAY_SIZE(hitachi_tx10d07vm0baa_supplies), priv->supplies);
++	if (ret) {
++		dev_err(dev, "failed to enable power supplies: %d\n", ret);
++		return ret;
++	}
 +
-+	if (mode->vdisplay > 800)
-+		return MODE_V_ILLEGAL;
++	usleep_range(1000, 2000);
 +
-+	return MODE_OK;
-+}
++	gpiod_set_value_cansleep(priv->reset_gpio, 0);
 +
-+static const struct drm_bridge_funcs tegra_dbi_funcs = {
-+	.attach = tegra_dbi_attach,
-+	.mode_valid = tegra_dbi_mode_valid,
++	usleep_range(10000, 11000);
 +
-+	.atomic_enable = tegra_dbi_atomic_enable,
-+	.atomic_disable = tegra_dbi_atomic_disable,
-+	.atomic_check = tegra_dbi_atomic_check,
-+
-+	.atomic_create_state = drm_atomic_helper_bridge_create_state,
-+	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	return 0;
 +};
 +
-+static const struct drm_bridge_timings default_tegra_dbi_timings = {
-+	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE |
-+			   DRM_BUS_FLAG_SYNC_SAMPLE_NEGEDGE |
-+			   DRM_BUS_FLAG_DE_HIGH,
++static int hitachi_tx10d07vm0baa_enable(struct drm_panel *panel)
++{
++	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
++
++	panel_dbi_command(priv, MIPI_DCS_SET_PARTIAL_ROWS, 0x00, 0x00, 0x03, 0x1f);
++	panel_dbi_command(priv, MIPI_DCS_SET_SCROLL_AREA, 0x00, 0x00, 0x03, 0x20,
++			  0x00, 0x00);
++
++	panel_dbi_command(priv, MIPI_DCS_SET_ADDRESS_MODE, 0x0a);
++	panel_dbi_command(priv, MIPI_DCS_SET_SCROLL_START, 0x00, 0x00);
++
++	panel_dbi_command(priv, MIPI_DCS_SET_PIXEL_FORMAT, MIPI_DCS_PIXEL_FMT_24BIT);
++	panel_dbi_command(priv, MIPI_DCS_SET_TEAR_SCANLINE, 0x00, 0x00);
++
++	panel_dbi_command(priv, 0x71, 0x00);		/* Ex_Vsync_en */
++
++	panel_dbi_command(priv, 0xb2, 0x00);		/* VCSEL */
++	panel_dbi_command(priv, 0xb4, 0xaa);		/* setvgmpm */
++	panel_dbi_command(priv, 0xb5, 0x33);		/* rbias1 */
++	panel_dbi_command(priv, 0xb6, 0x03);		/* rbias2 */
++
++	panel_dbi_command(priv, 0xb7, 0x1a, 0x33, 0x03, 0x03,
++			  0x03, 0x00, 0x00, 0x01, 0x02, 0x00,
++			  0x00, 0x04, 0x00, 0x01, 0x01, 0x01);	/* set_ddvdhp */
++	panel_dbi_command(priv, 0xb8, 0x1c, 0x53, 0x03, 0x03,
++			  0x00, 0x01, 0x02, 0x00, 0x00, 0x04,
++			  0x00, 0x01, 0x01);			/* set_ddvdhm */
++
++	panel_dbi_command(priv, 0xb9, 0x0a, 0x01, 0x01, 0x00,
++			  0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgh */
++	panel_dbi_command(priv, 0xba, 0x0f, 0x01, 0x01, 0x00,
++			  0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgl */
++	panel_dbi_command(priv, 0xbb, 0x00, 0x00, 0x00, 0x00,
++			  0x01, 0x02, 0x01);			/* set_vcl */
++
++	panel_dbi_command(priv, 0xc1, 0x01);		/* number of lines */
++	panel_dbi_command(priv, 0xc2, 0x08);		/* number of fp lines */
++	panel_dbi_command(priv, 0xc3, 0x04);		/* gateset(1) */
++	panel_dbi_command(priv, 0xc4, 0x4c);		/* 1h period */
++	panel_dbi_command(priv, 0xc5, 0x03);		/* source precharge */
++	panel_dbi_command(priv, 0xc6, 0xc4, 0x04);	/* source precharge timing */
++	panel_dbi_command(priv, 0xc7, 0x00);		/* source level */
++	panel_dbi_command(priv, 0xc8, 0x02);		/* number of bp lines */
++	panel_dbi_command(priv, 0xc9, 0x10);		/* gateset(2) */
++	panel_dbi_command(priv, 0xca, 0x04, 0x04);	/* gateset(3) */
++	panel_dbi_command(priv, 0xcb, 0x03);		/* gateset(4) */
++	panel_dbi_command(priv, 0xcc, 0x12);		/* gateset(5) */
++	panel_dbi_command(priv, 0xcd, 0x12);		/* gateset(6) */
++	panel_dbi_command(priv, 0xce, 0x30);		/* gateset(7) */
++	panel_dbi_command(priv, 0xcf, 0x30);		/* gateset(8) */
++	panel_dbi_command(priv, 0xd0, 0x40);		/* gateset(9) */
++	panel_dbi_command(priv, 0xd1, 0x22);		/* flhw */
++	panel_dbi_command(priv, 0xd2, 0x22);		/* vckhw */
++	panel_dbi_command(priv, 0xd3, 0x04);		/* flt */
++	panel_dbi_command(priv, 0xd4, 0x14);		/* tctrl */
++	panel_dbi_command(priv, 0xd6, 0x02);		/* dotinv */
++	panel_dbi_command(priv, 0xd7, 0x00);		/* on/off sequence period */
++
++	panel_dbi_command(priv, 0xd8, 0x01, 0x05, 0x06, 0x0d,
++			  0x18, 0x09, 0x22, 0x23, 0x00);		/* ponseqa */
++	panel_dbi_command(priv, 0xd9, 0x24, 0x01);			/* ponseqb */
++	panel_dbi_command(priv, 0xde, 0x09, 0x0f, 0x21, 0x12,
++			  0x04);					/* ponseqc */
++
++	panel_dbi_command(priv, 0xdf, 0x02, 0x06, 0x06, 0x06,
++			  0x06, 0x00);					/* pofseqa */
++	panel_dbi_command(priv, 0xe0, 0x01);				/* pofseqb */
++
++	panel_dbi_command(priv, MIPI_DCS_SET_DISPLAY_BRIGHTNESS, 0xff);
++	panel_dbi_command(priv, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x40);
++
++	panel_dbi_command(priv, 0xe2, 0x00, 0x00);		/* cabc pwm */
++	panel_dbi_command(priv, 0xe3, 0x03);			/* cabc */
++	panel_dbi_command(priv, 0xe4, 0x66, 0x7b, 0x90, 0xa5,
++			  0xbb, 0xc7, 0xe1, 0xe5);		/* cabc brightness */
++	panel_dbi_command(priv, 0xe5, 0xc5, 0xc5, 0xc9, 0xc9,
++			  0xd1, 0xe1, 0xf1, 0xfe);		/* cabc brightness */
++	panel_dbi_command(priv, 0xe7, 0x2a);			/* cabc */
++	panel_dbi_command(priv, 0xe8, 0x00);			/* brt_rev */
++	panel_dbi_command(priv, 0xe9, 0x00);			/* tefreq */
++
++	panel_dbi_command(priv, 0xea, 0x01);			/* high speed ram */
++
++	panel_dbi_command(priv, 0xeb, 0x00, 0x33, 0x0e, 0x15,
++			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r pos */
++	panel_dbi_command(priv, 0xec, 0x00, 0x33, 0x0e, 0x15,
++			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r neg */
++	panel_dbi_command(priv, 0xed, 0x00, 0x33, 0x0e, 0x15,
++			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g pos */
++	panel_dbi_command(priv, 0xee, 0x00, 0x33, 0x0e, 0x15,
++			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g neg */
++	panel_dbi_command(priv, 0xef, 0x00, 0x33, 0x0e, 0x15,
++			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b pos */
++	panel_dbi_command(priv, 0xf0, 0x00, 0x33, 0x0e, 0x15,
++			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b neg */
++
++	panel_dbi_command(priv, MIPI_DCS_EXIT_SLEEP_MODE);
++	msleep(110);
++
++	panel_dbi_command(priv, MIPI_DCS_SET_DISPLAY_ON);
++
++	return 0;
++}
++
++static int hitachi_tx10d07vm0baa_disable(struct drm_panel *panel)
++{
++	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
++
++	panel_dbi_command(priv, MIPI_DCS_SET_DISPLAY_OFF);
++	msleep(35);
++
++	panel_dbi_command(priv, MIPI_DCS_ENTER_SLEEP_MODE);
++	msleep(50);
++
++	return 0;
++}
++
++static int hitachi_tx10d07vm0baa_unprepare(struct drm_panel *panel)
++{
++	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
++
++	gpiod_set_value_cansleep(priv->reset_gpio, 1);
++	regulator_bulk_disable(ARRAY_SIZE(hitachi_tx10d07vm0baa_supplies), priv->supplies);
++
++	msleep(50);
++
++	return 0;
++}
++
++static const struct drm_display_mode hitachi_tx10d07vm0baa_mode = {
++	.clock = (480 + 10 + 10 + 10) * (800 + 4 + 4 + 4) * 60 / 1000,
++	.hdisplay = 480,
++	.hsync_start = 480 + 10,
++	.hsync_end = 480 + 10 + 10,
++	.htotal = 480 + 10 + 10 + 10,
++	.vdisplay = 800,
++	.vsync_start = 800 + 4,
++	.vsync_end = 800 + 4 + 4,
++	.vtotal = 800 + 4 + 4 + 4,
++	.width_mm = 86,
++	.height_mm = 52,
++	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
 +};
 +
-+static int tegra_dbi_probe(struct platform_device *pdev)
++static int hitachi_tx10d07vm0baa_get_modes(struct drm_panel *panel,
++					   struct drm_connector *connector)
 +{
-+	struct tegra_dbi_priv *priv;
++	u32 bus_format = MEDIA_BUS_FMT_RGB888_1X24;
++
++	drm_display_info_set_bus_formats(&connector->display_info,
++					 &bus_format, 1);
++
++	connector->display_info.bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE |
++					    DRM_BUS_FLAG_SYNC_SAMPLE_NEGEDGE |
++					    DRM_BUS_FLAG_DE_HIGH |
++					    DRM_BUS_FLAG_DATA_LSB_TO_MSB;
++
++	return drm_connector_helper_get_modes_fixed(connector, &hitachi_tx10d07vm0baa_mode);
++}
++
++static const struct drm_panel_funcs hitachi_tx10d07vm0baa_panel_funcs = {
++	.prepare = hitachi_tx10d07vm0baa_prepare,
++	.enable = hitachi_tx10d07vm0baa_enable,
++	.disable = hitachi_tx10d07vm0baa_disable,
++	.unprepare = hitachi_tx10d07vm0baa_unprepare,
++	.get_modes = hitachi_tx10d07vm0baa_get_modes,
++};
++
++static int hitachi_tx10d07vm0baa_probe(struct platform_device *pdev)
++{
 +	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct drm_bridge *bridge;
-+	struct drm_panel *panel;
-+	struct device_node *ep;
++	struct hitachi_tx10d07vm0baa *priv;
 +	int ret;
 +
-+	priv = devm_drm_bridge_alloc(dev, struct tegra_dbi_priv, bridge,
-+				     &tegra_dbi_funcs);
++	priv = devm_drm_panel_alloc(dev, struct hitachi_tx10d07vm0baa, panel,
++				    &hitachi_tx10d07vm0baa_panel_funcs, DRM_MODE_CONNECTOR_DPI);
 +	if (IS_ERR(priv))
 +		return PTR_ERR(priv);
 +
-+	priv->dev = dev;
-+
-+	ret = device_property_read_u32_array(dev, "nvidia,init-sequence",
-+					     priv->spi_init_seq, 4);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to get init sequence\n");
-+
-+	ret = devm_of_platform_populate(dev);
++	ret = devm_regulator_bulk_get_const(dev, ARRAY_SIZE(hitachi_tx10d07vm0baa_supplies),
++					    hitachi_tx10d07vm0baa_supplies, &priv->supplies);
 +	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to probe children\n");
++		return dev_err_probe(dev, ret, "Failed to get supplies\n");
 +
-+	/* Initialize MIPI DBI interface */
-+	mutex_init(&priv->dbi.cmdlock);
-+	priv->dbi.command = tegra_dbi_dbi_command;
++	priv->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(priv->reset_gpio))
++		return dev_err_probe(dev, PTR_ERR(priv->reset_gpio),
++				     "Failed to get reset gpio\n");
 +
-+	ret = drm_of_find_panel_or_bridge(np, 1, 0, &panel, &bridge);
++	ret = drm_panel_of_backlight(&priv->panel);
 +	if (ret)
-+		return ret;
++		return dev_err_probe(dev, ret, "Failed to get backlight\n");
 +
-+	if (panel) {
-+		bridge = devm_drm_panel_bridge_add_typed(dev, panel,
-+							 DRM_MODE_CONNECTOR_DPI);
-+		if (IS_ERR(bridge))
-+			return PTR_ERR(bridge);
-+	}
-+
-+	priv->output.bridge = bridge;
-+	priv->output.panel = panel;
-+
-+	/* get input ep (port0/endpoint0) */
-+	ret = -EINVAL;
-+	ep = of_graph_get_endpoint_by_regs(np, 0, 0);
-+	if (ep) {
-+		ret = of_property_read_u32(ep, "bus-width", &priv->bus_width);
-+		of_node_put(ep);
-+	}
-+
++	ret = devm_drm_panel_add(dev, &priv->panel);
 +	if (ret)
-+		priv->bus_width = 24;
-+
-+	priv->bridge.of_node = np;
-+	priv->bridge.timings = &default_tegra_dbi_timings;
-+
-+	ret = devm_drm_bridge_add(dev, &priv->bridge);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to add bridge\n");
++		return dev_err_probe(dev, ret, "Failed to add panel\n");
 +
 +	platform_set_drvdata(pdev, priv);
 +
 +	return 0;
 +}
 +
-+static struct platform_driver tegra_dbi_driver = {
-+	.driver.name = "tegra-dbi",
-+	.probe = tegra_dbi_probe,
++static const struct of_device_id hitachi_tx10d07vm0baa_of_match[] = {
++	{ .compatible = "hit,tx10d07vm0baa" },
++	{ /* sentinel */ }
 +};
-+module_platform_driver(tegra_dbi_driver);
++MODULE_DEVICE_TABLE(of, hitachi_tx10d07vm0baa_of_match);
++
++static struct platform_driver hitachi_tx10d07vm0baa_driver = {
++	.driver = {
++		.name = "panel-hitachi-tx10d07vm0baa",
++		.of_match_table = hitachi_tx10d07vm0baa_of_match,
++	},
++	.probe = hitachi_tx10d07vm0baa_probe,
++};
++module_platform_driver(hitachi_tx10d07vm0baa_driver);
 +
 +MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
-+MODULE_DESCRIPTION("Nvidia Tegra20/30 MIPI-DBI Type B driver");
++MODULE_DESCRIPTION("HITACHI TX10D07VM0BAA MIPI DBI Type B panel driver");
 +MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 5c67928bcabfa..8f12d30cd2d8b 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -223,6 +223,7 @@ void tegra_dc_commit(struct tegra_dc *dc)
- 	tegra_dc_writel(dc, GENERAL_ACT_REQ << 8, DC_CMD_STATE_CONTROL);
- 	tegra_dc_writel(dc, GENERAL_ACT_REQ, DC_CMD_STATE_CONTROL);
- }
-+EXPORT_SYMBOL_GPL(tegra_dc_commit);
- 
- static inline u32 compute_dda_inc(unsigned int in, unsigned int out, bool v,
- 				  unsigned int bpp)
-@@ -3279,9 +3280,15 @@ static int tegra_dc_init_opp_table(struct tegra_dc *dc)
- 	return 0;
- }
- 
-+static void tegra_dc_release_dbi_pdev(void *pdev)
-+{
-+	platform_device_unregister(pdev);
-+}
-+
- static int tegra_dc_probe(struct platform_device *pdev)
- {
- 	u64 dma_mask = dma_get_mask(pdev->dev.parent);
-+	struct device_node *dbi_np;
- 	struct tegra_dc *dc;
- 	int err;
- 
-@@ -3382,6 +3389,28 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	dbi_np = of_get_available_child_by_name(pdev->dev.of_node, "dbi");
-+	if (dbi_np) {
-+		struct platform_device_info dbi_info = {
-+			.parent = &pdev->dev,
-+			.name = "tegra-dbi",
-+			.id = PLATFORM_DEVID_AUTO,
-+			.fwnode = of_fwnode_handle(dbi_np),
-+			.of_node_reused = true,
-+		};
-+
-+		dc->dbi = platform_device_register_full(&dbi_info);
-+		of_node_put(dbi_np);
-+		if (IS_ERR(dc->dbi))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(dc->dbi),
-+					     "Failed to create DBI device\n");
-+
-+		err = devm_add_action_or_reset(&pdev->dev, tegra_dc_release_dbi_pdev,
-+					       dc->dbi);
-+		if (err)
-+			return err;
-+	}
-+
- 	err = tegra_dc_rgb_probe(dc);
- 	if (err < 0 && err != -ENODEV)
- 		return dev_err_probe(&pdev->dev, err,
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 7005df32f485f..27dbee57f8f72 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -95,6 +95,7 @@ struct tegra_dc {
- 
- 	struct tegra_output *rgb;
- 	struct tegra_pmc *pmc;
-+	struct platform_device *dbi;
- 
- 	struct tegra_dc_stats stats;
- 	struct list_head list;
-diff --git a/drivers/gpu/drm/tegra/trace.c b/drivers/gpu/drm/tegra/trace.c
-index 006f65c72a344..3aeb3825e2100 100644
---- a/drivers/gpu/drm/tegra/trace.c
-+++ b/drivers/gpu/drm/tegra/trace.c
-@@ -1,2 +1,5 @@
- #define CREATE_TRACE_POINTS
- #include "trace.h"
-+
-+EXPORT_TRACEPOINT_SYMBOL_GPL(dc_readl);
-+EXPORT_TRACEPOINT_SYMBOL_GPL(dc_writel);
 -- 
 2.53.0
 
