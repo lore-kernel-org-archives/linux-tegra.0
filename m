@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.194.37
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.43.4
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792428302;
-	b=MZskVF+O56uHlYZaFyvP8hTIrR4HOQ+x1CnvqTpuzWRT3NQP06f91IZyZbxARZ49h/k5
-	 P1o955sBlZwSsTxrvlIbAJpzE7yvraoZNZ7MhrFvYnqfRwLxGmefD7tAFgEf+K1idjTzQ
-	 fPfXpjXmeHHpvai87ysww+FRNrfzZdqY0nXjLpvGhnl5/Gv+cXrdLB5aggvl+eBLsRAm9
-	 EE1TiApOuizUDs782dOguQoG7zPrSczX7wEXX9K/+arswA4KNuiBhW4bDUsJmUiuD8rk7
-	 bXMnbn0M8J4BCMOVjNDpCkpwiMSH4+5OzNgWRjCC89VGj+NNFd9e/JSXQdJ7tuKbklQ==
+	t=1792428310;
+	b=UTGATmjooLMfjGW7vM1onG08idUnjaXD6EwcIZ0XHKvjZYcarXovbZSy970P6rlJX26R
+	 JZbzGmmdJntmK6/qFmjiIVwILd22olaBpU2zvZJ8hLBz3Yh6/vLUuqbsn39Mh3ReYrXmg
+	 QM67s2O4KJ7ypcupoGf9CFb9DHcnH0tlO+apXyoIV1OpelcGm9/3zwehOnErEBPnwspxT
+	 YZxdgv9uc1XTDpZ3+iqmCzkWjsehKkxEkroiNUG4BtTR5SZalswrucsrmEXdcNgNr3aaj
+	 25wOQjTrbcEMCg/shA4q/Cshv+keO2FOrG0lG4JNu/P9LuxE7Z5gagt7gPSSL4am/LA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792428302;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792428310;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:
 	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
 	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
@@ -26,35 +26,35 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
 	 X-MS-Exchange-CrossTenant-FromEntityHeader:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=BxOFuWfHCobRcTLmWpyLhiNcwOEdVTys81sfY1IHbQM=;
-	b=jNsd54rZvJ9djZu/7pyE68TPXOVlm0y++Lca4Smu4XWvwWNGwEXAugRHI+gv5Sbts0D7
-	 e/qFq3rSZoGgZG5DJUi77YJ0aE1oewG1fH4lCEpzbdgm1Ro38jw122ckQNqG6LbudOf/e
-	 4UpEKSo+DIqEeRiWz5FmsrX4Tuci9ZnwvQ0ulNavXBpR7k7Yp/B8xoOzyelu+hX4ezAdl
-	 7OHrC04N/BtNJXt6ULUtKS3Fq0L8ypBAJWfpeB/BMUVti1muc9/qZszh+UcKhR7KWv/mD
-	 ZRH8l49GlU53X2GiQSMXao0XWkECfZaxdJQBBx4ypxsuudFWT2rHppQRM8A3aOTjk9g==
+	bh=29/nPZPWma39enXdkXbVxvQeVO/gkslg3pYY2a3vmlA=;
+	b=tf4WKXQ/yTBOfQkS7dqhsAFAYJRGTah+6at8/YD479vKOrmDdhA3zxTx8+7OdkunbwrW
+	 xfJqbz2K/vepHhvpxGeriMMPmaCqbEUKjGkyabPp9c5e83KLGNm7gvXsU3Lx3QFObyAmS
+	 unjhe5SvdZJPCWU/Mo9JTkhHxTPePmGTCGbzS4B/l16BjnHw54HTKDtAzLhKh5cLNCZ7Z
+	 0z1I8LiLu8/kNB08ODRQuGvd/43vXXIb1XQnt9JI9jWDt73U719imlVGNdxsfZDD9G8Io
+	 ehvNbRbOZo8Yuudy9QIaaWNhKYI1HY4VDhBfOoGoEuZI9O2BF/sf9+uKfnUGf/i6wEg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=nvidia.com;
 	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=IB7tFqA5;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.194.37
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011037.outbound.protection.outlook.com [40.93.194.37])
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=GKw7zSRY;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.43.4
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012004.outbound.protection.outlook.com [52.101.43.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914F1606A319;
-	Mon, 19 Oct 2026 16:45:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 914F1606A319
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E8C606A322;
+	Mon, 19 Oct 2026 16:45:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 69E8C606A322
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=IB7tFqA5
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=GKw7zSRY
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ws9TaIK0Oic9rnYhqukM+W8a8PgDSt0DwuXXeqsuCOmS8m8euo3/icVxb4o1A1CHx/DozHmVZmT3OQQ0LZZOXqWBK5ypo+wUrodbSReA9S3fV72UEwtIY7tb3pcHFFsPnu6IFuZQvWbzN+rYnK++seK0C/C4mnhMbzGSSCmKGlaU7yV73+l8Z6Ui21bx0fi81FQeGAcWIufpZUupbxb0VWWCM+0gXCF/XfklxGyla9cN4cBUYxZseAfsvtF90hOHdDxd7A55jTGk8tXZhzQa96OcMi6LfamHUr6TM21IiFq84wgKIXCkeMn/nCIlD/f+l/KVA0WZjpOGlLGHQJivrw==
+ b=pGgnzwURST8nFCxxAR7x5FzrKMecOgZVbGU5zSfaUkOUfqVP2WnFms44B25jFChr03gvftqF3vZXJGLs1XjnGN2nZIFrSrGcBFjI6Z1PXo9eGec5iNCAdpugSNpeLazKn24xt71jcAJN2ADSjH6yNa7RPDpa0a2HmKgBBvJczLI3yd+gGTyVnYvR+NIM417skdaeL1FIYffao52zJB2599A7pclp1plRgC3dXnM2qRH8PM11RUhL+P+6dgMp8fbvCubicXIBsT68L2i1PT2pE3aR1oJsIKV+nvw/wzMI/HDUY03cXhNV7ixLdKVmXmk4n7+uxnTqWWAyA1EACOHJxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BxOFuWfHCobRcTLmWpyLhiNcwOEdVTys81sfY1IHbQM=;
- b=eUWN3z6uU6WhE+wL9lZHNZjNtHGXJoJ6zS3YNSLfjgs7ZUvRQc9xUT19nlc9Gr54QbRR2la7GGfBGohWahz90VrvwmC0lZO0v8xYBBzDtZSPEqOxruCwT+c9xTMOa2UoMVxMc4iulwdVxIfUQ+pYhDjuYDhbLmC2eBIEJU7aeQVnEieyTEPRUAA2uKaIE1itm1R1w5X7xeYCDrrWfo9rlp/2OQN4QaEW8yXJf3Na1odW7GSKv33gQn5k8L6xHXXlie5f2tSQ7h+rced1fVjAG+AONK+RdSyfY3EmPO/c7R12DC8zM8N0U5fXW4u8x1z3rZgoM6BnXWdcvjy2TWtmyg==
+ bh=29/nPZPWma39enXdkXbVxvQeVO/gkslg3pYY2a3vmlA=;
+ b=qYS1lg+OU5XdOBmvthCmNrKD5sQI64VqSWsR5noshwulcTZ5o86Qxl7aWFnGHMMk2sBqD24oIcnIPCoggj7ak/yQoT7VFoJVB7lghx2ZHEHh74mRQ4XEOUUwH35UXwAigprsd9oitNQ/olyyC3iIgsEOJj3ZDVAk/7aJWye4XKVorO+XP41wsDem3eVrqWpsll/53KJTHZLwTCx5PkY+UC9w34z+QPtJ9PBA0oeG8gvEqDzNZlQ14fr/PuqvBQhbHXb3/TJW0ZSfnFwZftn+zj5e8rN9EX3X7010p6RZ3d3+w97dQ7gcZObvjDkoONkh9YPJJIRjeJ5XrS1CUr5wmg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -62,18 +62,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BxOFuWfHCobRcTLmWpyLhiNcwOEdVTys81sfY1IHbQM=;
- b=IB7tFqA5bmYNmrXOUA/ePe38avfdWMFSBYK+om8qwFv6avMM1e0MnbmbXqLlU01pC9hBAY8D/E8r0odj7D1/KSHILlzOp7S0SFY3GxdRxq02ogJbXJIKp5DU2kx95L4Fr4Srq31CLqBm5bINu9l+oaqEnRSiuwfq1Fi8nnoRDF/m9fmNE5iyqELeXCWY7WIYU/TSlaBfbpGTIm3M1m5G5t8aTom6n54gE1/p6++M3vhkl/5ojzSpp3ZS5+n04S3Jnm4XKdeXzU9fOW6X3Y+Er/F87emkgNlLWSq3yJMqiDRjXJH5s2uHa1Bc7kMI/HKbBJuVnO19cRTLvfEK5j4m+w==
-Received: from SJ0PR05CA0085.namprd05.prod.outlook.com (2603:10b6:a03:332::30)
- by LV5PR12MB9753.namprd12.prod.outlook.com (2603:10b6:408:2b6::12) with
+ bh=29/nPZPWma39enXdkXbVxvQeVO/gkslg3pYY2a3vmlA=;
+ b=GKw7zSRYhZVNZ9xy9skoZ4uS0k3jpJpsLk9xSSZCTcR8F80BX/zxa2m7WXO9Yym6yDB7aGGadztUkUf/1eZ21XyywdKqfBCbWoGTaU1FNKjFNeqM0t6UzhPzI7GQFVvdewEDV872lvsEEl/lM9zONWc67lFsVTYftGYJWkRvsS7ayV7OMhIWf6D4DgWpRwVNeaCwpCquTfbKNuT9Qzz2JnxT+L7wT2YhbzO2niP0FUkkgxYElV/HNvXQ4liSCZJGD+u9UUoqpw8oAFkKxGx7pW0sdjlCPKl3jjeI0SJ1CLqeoJZs94pWbfs2trxlrpzAxkECQYeX66MSyT3rLkjR/g==
+Received: from PH8P221CA0053.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:346::18)
+ by LV5PR12MB9827.namprd12.prod.outlook.com (2603:10b6:408:305::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Mon, 19 Oct
- 2026 16:44:56 +0000
-Received: from PH3PEPF00059619.namprd05.prod.outlook.com
- (2603:10b6:a03:332:cafe::3f) by SJ0PR05CA0085.outlook.office365.com
- (2603:10b6:a03:332::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.14 via Frontend Transport; Mon,
- 19 Oct 2026 16:44:56 +0000
+ 2026 16:45:04 +0000
+Received: from PH3PEPF0005961C.namprd05.prod.outlook.com
+ (2603:10b6:510:346:cafe::48) by PH8P221CA0053.outlook.office365.com
+ (2603:10b6:510:346::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.20 via Frontend Transport; Mon,
+ 19 Oct 2026 16:45:04 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 216.228.117.161) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -81,20 +81,20 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- PH3PEPF00059619.mail.protection.outlook.com (10.167.243.23) with Microsoft
+ PH3PEPF0005961C.mail.protection.outlook.com (10.167.243.26) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Mon, 19 Oct 2026 16:44:56 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ 15.21.522.6 via Frontend Transport; Mon, 19 Oct 2026 16:45:04 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 19 Oct
- 2026 09:44:31 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 09:44:38 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Mon, 19 Oct
- 2026 09:44:31 -0700
+ 2026 09:44:38 -0700
 Received: from build-bwicaksono-noble-20260804.internal (10.127.8.11) by
  mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.49 via
- Frontend Transport; Mon, 19 Oct 2026 09:44:30 -0700
+ Frontend Transport; Mon, 19 Oct 2026 09:44:37 -0700
 From: Besar Wicaksono <bwicaksono@nvidia.com>
 To: <acme@kernel.org>, <namhyung@kernel.org>, <irogers@google.com>
 CC: <linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
@@ -106,9 +106,9 @@ CC: <linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
 	<jolsa@kernel.org>, <adrian.hunter@intel.com>, <ctshao@google.com>, "Besar
  Wicaksono" <bwicaksono@nvidia.com>
-Subject: [PATCH 4/6] perf jevents: Add support for NVIDIA Tegra410 PCIE-TGT PMU aliasing
-Date: Mon, 19 Oct 2026 16:42:39 +0000
-Message-ID: <20261019164241.403644-5-bwicaksono@nvidia.com>
+Subject: [PATCH 6/6] perf jevents: Add support for NVIDIA Tegra410 C2C PMU aliasing
+Date: Mon, 19 Oct 2026 16:42:41 +0000
+Message-ID: <20261019164241.403644-7-bwicaksono@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261019164241.403644-1-bwicaksono@nvidia.com>
 References: <20261019164241.403644-1-bwicaksono@nvidia.com>
@@ -126,136 +126,311 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH3PEPF00059619:EE_|LV5PR12MB9753:EE_
-X-MS-Office365-Filtering-Correlation-Id: 881e53af-18f1-4857-65ca-08df2e004eb4
+X-MS-TrafficTypeDiagnostic: PH3PEPF0005961C:EE_|LV5PR12MB9827:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9663c110-e2c0-4b19-7482-08df2e005340
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700016|23010399003|82310400026|1800799024|261009223027099003|10067099003|56012099006|6133799003|22082099003|18002099003|11063799006;
+	BCL:0;ARA:13230040|376014|7416014|36860700016|82310400026|1800799024|23010399003|11063799006|56012099006|261009223027099003|261009221227099003|10067099003|22082099003|18002099003|6133799003;
 X-Microsoft-Antispam-Message-Info:
-	8FL0nc+UBcuRcjjKsc8kR1wSzWA/30bpM+YZMNXlYdwHEMEQsKMVlgpcOzKpefKMvKQ+aXHu06zmfQpMTl0E88eNe6Irqq8JNCqcknFS57Q9n40YSZZMQ6et0fKTfSlKMC+SdzVAQc2WZ1RjbEAitw7UOmiaCWI7vOWJBz3qfRyL8azXTrwWZUajJ9KZHw2OTtCJPNEzMswAG7qibpMo+1vcOkAo/lTqAfCTYi75dBCVp8LZKWBM++sJdY1lfsEGwYsNFLU3yg5EZpI0JCJO3KvXS88QPFSImQrksF7MIs7Oe9JH0tqyJpBx3h/Mz+4/TrXJ6jDxRfuhl+rVjft3t8cknvAs1IZALRdOA8ibsGctAcaqj5csyxvR5Um9gNFvDJqwdhRtkg2JGo8aiLmShlh1NLsB+vveBGOSfkbGs5kFd9nJwJ5ni4YWiqnb0s7u6UaFkcvlGQFvQ7XZtl1t8bWqu8NKVWDlYWdLhEZGzsdaJ+DuJjCz8LdNEqJCpRV5Fni5e0uEtvF6q3XkLEQ0RUaBkFCq17Vqzy8sdhI1KfagPC9Yvsp/v+/i6QxvFyNtB9pRGetO4asktX+NXU81ESabphdTCQiJfwawmMmHO7dyeqkng7qY1Fcg+73HMrVKRsqG4nYZchALRhcGoDAntxpO/1m+WO3FOS5EA31kGTa4l9wxpKvz+UukwvRd8aRZaBfoRbr2iWrYMoQrGRqBTw==
+	ZLoSHwRncrFbOvZRrGHgB5rQj6/UTjQmY5vTeASqVn3qrHu+/j3vxwylIfmEzc7x+3UsV7tXP+hPhLE6ypC/faNLFcY8pCEIDmc0Tqi+jjPE6qO3ULZ9FRx78+3Y8XUmQhtqx4d5hhnaKAujGH7hDDvIwpu4ZmF1Tkrd3WkQ98Hv2hIHHeCXZdlEuFFCZEnuGox4wG1C/zKPD7dWfpGqsKEvBy7+zcK6THsA7mgPGGcvwvu8K0jSHPLfZc/B4PHdsKznY/g4vS8D4+DfSl/s+fBzYG9qJkEph0vGvuNECQOkBul3JmkjplJERQLRdexNgfNWPaD3tRWksiqkOid0kvZDN3aeK1Q5cVmxq/EIVmV0O36ml+CeXJI8kYrAHDQ8FU5OUnsgW0n1ekC82KZw5gfHmHdiEPB12wW68Dm50dzX5dlQMXA+/Nk9bucujYDDuK9wSbTWM3+v/0J9StGbyjglLXb9mYfKzyvgmnQZ0/Xn7bDSbA1+a2NKmXi9Vo+0JW3Zj1tNJujj3JW3c0Zyfddc4KzyZ5IvLX+ZCojQ6UedJumYJgaqMJnM4DRRUeVeOgy8Da3MaNIN1HwzSc0M8PlRa0yKO6I+1tvrm7pH3rfuD6lUOVACfBK+Pwfngn5UXnu40I3Xy4748jobNnJX0Vnd6XZPUKcHxidN4CFtnyR125e5aWgbQj7/rawKh59qF1+HiARIIVzB73cc3aH8cg==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700016)(23010399003)(82310400026)(1800799024)(261009223027099003)(10067099003)(56012099006)(6133799003)(22082099003)(18002099003)(11063799006);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700016)(82310400026)(1800799024)(23010399003)(11063799006)(56012099006)(261009223027099003)(261009221227099003)(10067099003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	1Eb19mIAAuaL9niNneL+9iGgvMTkDMvCzeXDa0ZE7yk2IReZfPV7T7b/lZnEjUJi93kbpyCLkNi74PLEdgIDnmnoYsvsjuY0gAkMJeJA3cCMKWauRCIJyzyf/GHfxEd8m/sCWl5+FMm7+gyb6yYdPS3rQWpJ3Vo3HNgisPSj387Gyu9aQrT+HKkU68lj7+ggVpa92V70MONLlCp/trj+nB9JJDV23bY3iRjDfj65Vo96it8eTSJFyUrzYt2NBl5JKac9MIFWZZXP+8PUIjJDjvN0NP6wyccp8xSySuhLqYGucG7dX+nR2HNwnYgtOxZrNngHbw2yw9gKGcgPD+Yx4lBg/70kQx0BS2y1xZt3qJIkrREmaIna5WuYhdd5WHP8Z8usUHP4UWre0y4CJ694HEuCEanOTTx9QmUH7l1bv9nF96W9zpryd85VxG8ctZyN
+	ykyq54WP1RYRP+rYYcOfuruusBgvRL4VzLVrCWkRgI6oiZ12WuZiVIEYbk2RlRj2lmzfm3qXK3Y1WBltohgqcPpHMWVJyzOVbIg0fg4bQ7rMVjCMfBux1fhJR7bUpTI1cKeCFFmsKFjzb0gKkZXSAY7v5UGvjFGA9SEYYBFHmoIDu/nweffuwrLFkN3yZuvij7pJEqy2Dn+vWNSQsPghJPNK+bL+5O66dBYl7+XWAkLj4Y10nRE9yqiFUnATdHJ6hHlYdEljOWfryWXAwiYFTlacyWz5ecuXGBEo/aA4WUP4GPJyFzKu5hsRkHbphpRM90Sb4f3DvzMDeXF90jEj4ct4e1+eumgUDSjnSvrUdChcTzWYWS12Th2fIpqP8rxQNnCLM9oe1C1rLtgGErcCe7wOqFlXs0KhoNQr2XfA0ats218uulwUeQHLUmhfK+OV
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2026 16:44:56.4408
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2026 16:45:04.0174
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 881e53af-18f1-4857-65ca-08df2e004eb4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9663c110-e2c0-4b19-7482-08df2e005340
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	PH3PEPF00059619.namprd05.prod.outlook.com
+	PH3PEPF0005961C.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV5PR12MB9753
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV5PR12MB9827
 
-Add alias support for NVIDIA Tegra410 PCIE-TGT PMU events and metrics.
+Add alias support for NVIDIA Tegra410 C2C PMU events.
 
 Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 ---
- .../nvidia/t410/sys/uncore-pcie_tgt.json      | 93 +++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-pcie_tgt.json
+ .../arm64/nvidia/t410/sys/uncore-nvclink.json |  75 ++++++++++
+ .../arm64/nvidia/t410/sys/uncore-nvdlink.json |  48 +++++++
+ .../nvidia/t410/sys/uncore-nvlink_c2c.json    | 129 ++++++++++++++++++
+ 3 files changed, 252 insertions(+)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvclink.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvdlink.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvlink_c2c.json
 
-diff --git a/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-pcie_tgt.json b/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-pcie_tgt.json
+diff --git a/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvclink.json b/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvclink.json
 new file mode 100644
-index 000000000000..74786fc3d578
+index 000000000000..fe94ae121a8d
 --- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-pcie_tgt.json
-@@ -0,0 +1,93 @@
++++ b/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvclink.json
+@@ -0,0 +1,75 @@
 +[
 +    {
-+        "EventCode": "0x4",
-+        "EventName": "PCIE_TGT_CYCLES",
-+        "BriefDescription": "Counts cycles at the PCIe interface to the Tegra SoC data fabric.",
-+        "PublicDescription": "Counts cycles at the PCIe interface to the Tegra SoC data fabric.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
-+    },
-+    {
-+        "EventCode": "0x2",
-+        "EventName": "PCIE_TGT_RD_REQ",
-+        "BriefDescription": "Counts read requests from any source to PCIe BAR or CXL HDM ranges under this PCIe root complex.",
-+        "PublicDescription": "Counts read requests from any source to PCIe BAR or CXL HDM ranges under this PCIe root complex, where the target responds with data. Request size can be from 1 to 256 bytes. Filters: dst_rp_mask selects PCIe BAR traffic to root ports (bit n = root port n). dst_addr_en with dst_addr_base and dst_addr_mask selects PCIe BAR or CXL HDM addresses that equal the base in the mask's set bits. If both dst_rp_mask and the address filter are set, a request matching either is counted. With no filter, PCIe BAR traffic to all root ports is counted.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
-+    },
-+    {
-+        "EventCode": "0x3",
-+        "EventName": "PCIE_TGT_WR_REQ",
-+        "BriefDescription": "Counts write requests from any source to PCIe BAR or CXL HDM ranges under this PCIe root complex.",
-+        "PublicDescription": "Counts write requests from any source to PCIe BAR or CXL HDM ranges under this PCIe root complex, where the source sends data. Request size can be from 1 to 256 bytes. Filters: dst_rp_mask selects PCIe BAR traffic to root ports (bit n = root port n). dst_addr_en with dst_addr_base and dst_addr_mask selects PCIe BAR or CXL HDM addresses that equal the base in the mask's set bits. If both dst_rp_mask and the address filter are set, a request matching either is counted. With no filter, PCIe BAR traffic to all root ports is counted.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
-+    },
-+    {
 +        "EventCode": "0x0",
-+        "EventName": "PCIE_TGT_RD_BYTES",
-+        "BriefDescription": "Counts bytes transferred by the read requests counted by PCIE_TGT_RD_REQ.",
-+        "PublicDescription": "Counts bytes transferred by the read requests counted by PCIE_TGT_RD_REQ. Destination filters work as described for PCIE_TGT_RD_REQ.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
++        "EventName": "NVCLINK_CYCLES",
++        "BriefDescription": "Counts NV-CLink interface clock cycles.",
++        "PublicDescription": "Counts NV-CLink interface clock cycles. All NV-CLink instances share this clock, so the count is read from the first instance.",
++        "Compat": "NVDA2022",
++        "Unit": "nvidia_nvclink_pmu_"
 +    },
 +    {
 +        "EventCode": "0x1",
-+        "EventName": "PCIE_TGT_WR_BYTES",
-+        "BriefDescription": "Counts bytes transferred by the write requests counted by PCIE_TGT_WR_REQ.",
-+        "PublicDescription": "Counts bytes transferred by the write requests counted by PCIE_TGT_WR_REQ. Destination filters work as described for PCIE_TGT_WR_REQ.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
++        "EventName": "NVCLINK_IN_RD_CUM_OUTS",
++        "BriefDescription": "Accumulates the outstanding incoming read requests counted by NVCLINK_IN_RD_REQ each NV-CLink interface cycle.",
++        "PublicDescription": "Accumulates the outstanding incoming read requests counted by NVCLINK_IN_RD_REQ each NV-CLink interface cycle. Pair the two for the average read latency.",
++        "Compat": "NVDA2022",
++        "Unit": "nvidia_nvclink_pmu_"
 +    },
 +    {
-+        "MetricName": "pcie_tgt_freq",
-+        "MetricGroup": "PCIE_TGT_Frequency",
++        "EventCode": "0x2",
++        "EventName": "NVCLINK_IN_RD_REQ",
++        "BriefDescription": "Counts incoming read requests from the remote Tegra SoC at the NV-CLink interface.",
++        "PublicDescription": "Counts incoming read requests from the remote Tegra SoC at the NV-CLink interface, where local memory or a local device responds with data. Request size can be from 1 to 256 bytes. The count is summed over all NV-CLink instances.",
++        "Compat": "NVDA2022",
++        "Unit": "nvidia_nvclink_pmu_"
++    },
++    {
++        "EventCode": "0x5",
++        "EventName": "NVCLINK_OUT_RD_CUM_OUTS",
++        "BriefDescription": "Accumulates the outstanding outgoing read requests counted by NVCLINK_OUT_RD_REQ each NV-CLink interface cycle.",
++        "PublicDescription": "Accumulates the outstanding outgoing read requests counted by NVCLINK_OUT_RD_REQ each NV-CLink interface cycle. Pair the two for the average read latency.",
++        "Compat": "NVDA2022",
++        "Unit": "nvidia_nvclink_pmu_"
++    },
++    {
++        "EventCode": "0x6",
++        "EventName": "NVCLINK_OUT_RD_REQ",
++        "BriefDescription": "Counts outgoing read requests from the local Tegra SoC to the remote Tegra SoC at the NV-CLink interface.",
++        "PublicDescription": "Counts outgoing read requests from the local Tegra SoC to the remote Tegra SoC at the NV-CLink interface, where memory on the remote Tegra SoC responds with data. Request size can be from 1 to 256 bytes. The count is summed over all NV-CLink instances.",
++        "Compat": "NVDA2022",
++        "Unit": "nvidia_nvclink_pmu_"
++    },
++    {
++        "MetricName": "nvclink_freq",
++        "MetricGroup": "NVCLINK_Frequency;NVCLINK_Latency;NVCLINK_Read_Latency",
 +        "MetricConstraint": "NO_GROUP_EVENTS",
-+        "MetricExpr": "(PCIE_TGT_CYCLES / aggr_nr(PCIE_TGT_CYCLES)) / 1e9 / duration_time",
++        "MetricExpr": "(NVCLINK_CYCLES / aggr_nr(NVCLINK_CYCLES)) / 1e9 / duration_time",
 +        "ScaleUnit": "1GHz",
-+        "BriefDescription": "Frequency of the cycles at the PCIe interface to the Tegra SoC data fabric.",
-+        "PublicDescription": "Average frequency of the cycles at the PCIe interface to the Tegra SoC data fabric over the measurement interval.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
++        "BriefDescription": "NV-CLink interface clock frequency.",
++        "PublicDescription": "Average NV-CLink interface clock frequency over the measurement interval.",
++        "Compat": "NVDA2022",
++        "Unit": "nvidia_nvclink_pmu_"
 +    },
 +    {
-+        "MetricName": "pcie_tgt_avg_rd_bandwidth_to_all_dst",
-+        "MetricGroup": "PCIE_TGT_Bandwidth;PCIE_TGT_BW_PCIE_BAR_CXL_HDM",
-+        "MetricExpr": "PCIE_TGT_RD_BYTES@dst_addr_en=1,dst_addr_base=0,dst_addr_mask=0@ / 1e6 / duration_time",
-+        "ScaleUnit": "1MB/s",
-+        "BriefDescription": "Average read bandwidth to all PCIe BAR and CXL HDM ranges under this PCIe root complex.",
-+        "PublicDescription": "Average read bandwidth of requests from any source to all PCIe BAR and CXL HDM ranges under this PCIe root complex.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
++        "MetricName": "nvclink_in_avg_rd_latency",
++        "MetricGroup": "NVCLINK_Latency;NVCLINK_Read_Latency;NVCLINK_Incoming",
++        "MetricConstraint": "NO_GROUP_EVENTS",
++        "MetricExpr": "(NVCLINK_IN_RD_CUM_OUTS / NVCLINK_IN_RD_REQ) / nvclink_freq",
++        "ScaleUnit": "1ns/request",
++        "BriefDescription": "Average latency of incoming read requests from the remote Tegra SoC at the NV-CLink interface.",
++        "PublicDescription": "Average latency of the incoming read requests counted by NVCLINK_IN_RD_REQ, measured at the NV-CLink interface.",
++        "Compat": "NVDA2022",
++        "Unit": "nvidia_nvclink_pmu_"
 +    },
 +    {
-+        "MetricName": "pcie_tgt_avg_wr_bandwidth_to_all_dst",
-+        "MetricGroup": "PCIE_TGT_Bandwidth;PCIE_TGT_BW_PCIE_BAR_CXL_HDM",
-+        "MetricExpr": "PCIE_TGT_WR_BYTES@dst_addr_en=1,dst_addr_base=0,dst_addr_mask=0@ / 1e6 / duration_time",
-+        "ScaleUnit": "1MB/s",
-+        "BriefDescription": "Average write bandwidth to all PCIe BAR and CXL HDM ranges under this PCIe root complex.",
-+        "PublicDescription": "Average write bandwidth of requests from any source to all PCIe BAR and CXL HDM ranges under this PCIe root complex.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
++        "MetricName": "nvclink_out_avg_rd_latency",
++        "MetricGroup": "NVCLINK_Latency;NVCLINK_Read_Latency;NVCLINK_Outgoing",
++        "MetricConstraint": "NO_GROUP_EVENTS",
++        "MetricExpr": "(NVCLINK_OUT_RD_CUM_OUTS / NVCLINK_OUT_RD_REQ) / nvclink_freq",
++        "ScaleUnit": "1ns/request",
++        "BriefDescription": "Average latency of outgoing read requests sent by the local Tegra SoC to the remote Tegra SoC at the NV-CLink interface.",
++        "PublicDescription": "Average latency of the outgoing read requests counted by NVCLINK_OUT_RD_REQ, measured at the NV-CLink interface.",
++        "Compat": "NVDA2022",
++        "Unit": "nvidia_nvclink_pmu_"
++    }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvdlink.json b/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvdlink.json
+new file mode 100644
+index 000000000000..c8f5d97a0ffb
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvdlink.json
+@@ -0,0 +1,48 @@
++[
++    {
++        "EventCode": "0x0",
++        "EventName": "NVDLINK_CYCLES",
++        "BriefDescription": "Counts NV-DLink interface clock cycles.",
++        "PublicDescription": "Counts NV-DLink interface clock cycles. All NV-DLink instances share this clock, so the count is read from the first instance.",
++        "Compat": "NVDA2020",
++        "Unit": "nvidia_nvdlink_pmu_"
 +    },
 +    {
-+        "MetricName": "pcie_tgt_avg_rd_bandwidth_to_pcie_bar",
-+        "MetricGroup": "PCIE_TGT_Bandwidth;PCIE_TGT_BW_PCIE_BAR",
-+        "MetricExpr": "PCIE_TGT_RD_BYTES / 1e6 / duration_time",
-+        "ScaleUnit": "1MB/s",
-+        "BriefDescription": "Average read bandwidth of PCIe BAR traffic to all root ports under this PCIe root complex.",
-+        "PublicDescription": "Average read bandwidth of PCIe BAR traffic from any source to all root ports under this PCIe root complex.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
++        "EventCode": "0x1",
++        "EventName": "NVDLINK_IN_RD_CUM_OUTS",
++        "BriefDescription": "Accumulates the outstanding read requests counted by NVDLINK_IN_RD_REQ each NV-DLink interface cycle.",
++        "PublicDescription": "Accumulates the outstanding read requests counted by NVDLINK_IN_RD_REQ each NV-DLink interface cycle. Pair the two for the average read latency.",
++        "Compat": "NVDA2020",
++        "Unit": "nvidia_nvdlink_pmu_"
 +    },
 +    {
-+        "MetricName": "pcie_tgt_avg_wr_bandwidth_to_pcie_bar",
-+        "MetricGroup": "PCIE_TGT_Bandwidth;PCIE_TGT_BW_PCIE_BAR",
-+        "MetricExpr": "PCIE_TGT_WR_BYTES / 1e6 / duration_time",
-+        "ScaleUnit": "1MB/s",
-+        "BriefDescription": "Average write bandwidth of PCIe BAR traffic to all root ports under this PCIe root complex.",
-+        "PublicDescription": "Average write bandwidth of PCIe BAR traffic from any source to all root ports under this PCIe root complex.",
-+        "Compat": "1070036b",
-+        "Unit": "nvidia_pcie_tgt_pmu_,rc_"
++        "EventCode": "0x2",
++        "EventName": "NVDLINK_IN_RD_REQ",
++        "BriefDescription": "Counts read requests to local CXL memory at the NV-DLink interface.",
++        "PublicDescription": "Counts read requests to local CXL memory at the NV-DLink interface, from all requesters, local and remote. Request size can be from 1 to 256 bytes. The count is summed over all NV-DLink instances.",
++        "Compat": "NVDA2020",
++        "Unit": "nvidia_nvdlink_pmu_"
++    },
++    {
++        "MetricName": "nvdlink_freq",
++        "MetricGroup": "NVDLINK_Frequency;NVDLINK_Latency;NVDLINK_Read_Latency",
++        "MetricConstraint": "NO_GROUP_EVENTS",
++        "MetricExpr": "(NVDLINK_CYCLES / aggr_nr(NVDLINK_CYCLES)) / 1e9 / duration_time",
++        "ScaleUnit": "1GHz",
++        "BriefDescription": "NV-DLink interface clock frequency.",
++        "PublicDescription": "Average NV-DLink interface clock frequency over the measurement interval.",
++        "Compat": "NVDA2020",
++        "Unit": "nvidia_nvdlink_pmu_"
++    },
++    {
++        "MetricName": "nvdlink_in_avg_rd_latency",
++        "MetricGroup": "NVDLINK_Latency;NVDLINK_Read_Latency",
++        "MetricConstraint": "NO_GROUP_EVENTS",
++        "MetricExpr": "(NVDLINK_IN_RD_CUM_OUTS / NVDLINK_IN_RD_REQ) / nvdlink_freq",
++        "ScaleUnit": "1ns/request",
++        "BriefDescription": "Average latency of read requests to local CXL memory at the NV-DLink interface.",
++        "PublicDescription": "Average latency of the read requests counted by NVDLINK_IN_RD_REQ, measured at the NV-DLink interface.",
++        "Compat": "NVDA2020",
++        "Unit": "nvidia_nvdlink_pmu_"
++    }
++]
+diff --git a/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvlink_c2c.json b/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvlink_c2c.json
+new file mode 100644
+index 000000000000..dafcf7e600b0
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/arm64/nvidia/t410/sys/uncore-nvlink_c2c.json
+@@ -0,0 +1,129 @@
++[
++    {
++        "EventCode": "0x0",
++        "EventName": "NVLINK_C2C_CYCLES",
++        "BriefDescription": "Counts NVLink-C2C interface clock cycles.",
++        "PublicDescription": "Counts NVLink-C2C interface clock cycles. All NVLink-C2C instances share this clock, so the count is read from the first instance.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "EventCode": "0x1",
++        "EventName": "NVLINK_C2C_IN_RD_CUM_OUTS",
++        "BriefDescription": "Accumulates the outstanding incoming read requests counted by NVLINK_C2C_IN_RD_REQ each NVLink-C2C interface cycle.",
++        "PublicDescription": "Accumulates the outstanding incoming read requests counted by NVLINK_C2C_IN_RD_REQ each NVLink-C2C interface cycle. Pair the two for the average read latency. The gpu_mask filter works as described for NVLINK_C2C_IN_RD_REQ.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "EventCode": "0x2",
++        "EventName": "NVLINK_C2C_IN_RD_REQ",
++        "BriefDescription": "Counts incoming read requests from connected GPUs or a remote Tegra SoC at the NVLink-C2C interface.",
++        "PublicDescription": "Counts incoming read requests sent by connected GPUs or a remote Tegra SoC to the local Tegra SoC at the NVLink-C2C interface, where the local Tegra SoC responds with data. Request size can be from 1 to 256 bytes. The count is summed over all NVLink-C2C instances. Filters: the gpu_mask filter selects GPUs by index, one bit per GPU. This filter is available only when GPUs are connected. An unset gpu_mask counts all GPUs.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "EventCode": "0x3",
++        "EventName": "NVLINK_C2C_IN_WR_CUM_OUTS",
++        "BriefDescription": "Accumulates the outstanding incoming write requests counted by NVLINK_C2C_IN_WR_REQ each NVLink-C2C interface cycle.",
++        "PublicDescription": "Accumulates the outstanding incoming write requests counted by NVLINK_C2C_IN_WR_REQ each NVLink-C2C interface cycle. Available only when GPUs are connected. Pair the two for the average write latency. The gpu_mask filter works as described for NVLINK_C2C_IN_WR_REQ.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "EventCode": "0x4",
++        "EventName": "NVLINK_C2C_IN_WR_REQ",
++        "BriefDescription": "Counts incoming write requests from connected GPUs to the local Tegra SoC at the NVLink-C2C interface.",
++        "PublicDescription": "Counts incoming write requests sent by connected GPUs to the local Tegra SoC at the NVLink-C2C interface, where the GPU sends the data. Request size can be from 1 to 256 bytes. Available only when GPUs are connected. The count is summed over all NVLink-C2C instances. Filters: the gpu_mask filter selects GPUs by index, one bit per GPU. An unset gpu_mask counts all GPUs.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "EventCode": "0x5",
++        "EventName": "NVLINK_C2C_OUT_RD_CUM_OUTS",
++        "BriefDescription": "Accumulates the outstanding outgoing read requests counted by NVLINK_C2C_OUT_RD_REQ each NVLink-C2C interface cycle.",
++        "PublicDescription": "Accumulates the outstanding outgoing read requests counted by NVLINK_C2C_OUT_RD_REQ each NVLink-C2C interface cycle. Pair the two for the average read latency. The gpu_mask filter works as described for NVLINK_C2C_OUT_RD_REQ.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "EventCode": "0x6",
++        "EventName": "NVLINK_C2C_OUT_RD_REQ",
++        "BriefDescription": "Counts outgoing read requests to connected GPUs or a remote Tegra SoC at the NVLink-C2C interface.",
++        "PublicDescription": "Counts outgoing read requests from all requesters to connected GPUs or a remote Tegra SoC at the NVLink-C2C interface, where the GPU or remote Tegra SoC responds with data. Request size can be from 1 to 256 bytes. The count is summed over all NVLink-C2C instances. Filters: the gpu_mask filter selects GPUs by index, one bit per GPU. This filter is available only when GPUs are connected. An unset gpu_mask counts all GPUs.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "EventCode": "0x7",
++        "EventName": "NVLINK_C2C_OUT_WR_CUM_OUTS",
++        "BriefDescription": "Accumulates the outstanding outgoing write requests counted by NVLINK_C2C_OUT_WR_REQ each NVLink-C2C interface cycle.",
++        "PublicDescription": "Accumulates the outstanding outgoing write requests counted by NVLINK_C2C_OUT_WR_REQ each NVLink-C2C interface cycle. Available only when GPUs are connected. Pair the two for the average write latency. The gpu_mask filter works as described for NVLINK_C2C_OUT_WR_REQ.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "EventCode": "0x8",
++        "EventName": "NVLINK_C2C_OUT_WR_REQ",
++        "BriefDescription": "Counts outgoing write requests to connected GPUs at the NVLink-C2C interface.",
++        "PublicDescription": "Counts outgoing write requests from all requesters to connected GPUs at the NVLink-C2C interface, where the requester sends the data. Request size can be from 1 to 256 bytes. Available only when GPUs are connected. The count is summed over all NVLink-C2C instances. Filters: the gpu_mask filter selects GPUs by index, one bit per GPU. An unset gpu_mask counts all GPUs.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "MetricName": "nvlink_c2c_freq",
++        "MetricGroup": "NVLINK_C2C_Frequency;NVLINK_C2C_Latency;NVLINK_C2C_Read_Latency;NVLINK_C2C_Write_Latency",
++        "MetricConstraint": "NO_GROUP_EVENTS",
++        "MetricExpr": "(NVLINK_C2C_CYCLES / aggr_nr(NVLINK_C2C_CYCLES)) / 1e9 / duration_time",
++        "ScaleUnit": "1GHz",
++        "BriefDescription": "NVLink-C2C interface clock frequency.",
++        "PublicDescription": "Average NVLink-C2C interface clock frequency over the measurement interval.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "MetricName": "nvlink_c2c_in_avg_rd_latency",
++        "MetricGroup": "NVLINK_C2C_Latency;NVLINK_C2C_Read_Latency;NVLINK_C2C_Incoming",
++        "MetricConstraint": "NO_GROUP_EVENTS",
++        "MetricExpr": "(NVLINK_C2C_IN_RD_CUM_OUTS / NVLINK_C2C_IN_RD_REQ) / nvlink_c2c_freq",
++        "ScaleUnit": "1ns/request",
++        "BriefDescription": "Average latency of incoming read requests at the NVLink-C2C interface.",
++        "PublicDescription": "Average latency of the incoming read requests counted by NVLINK_C2C_IN_RD_REQ, measured at the NVLink-C2C interface.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "MetricName": "nvlink_c2c_in_avg_wr_latency",
++        "MetricGroup": "NVLINK_C2C_Latency;NVLINK_C2C_Write_Latency;NVLINK_C2C_Incoming",
++        "MetricConstraint": "NO_GROUP_EVENTS",
++        "MetricExpr": "(NVLINK_C2C_IN_WR_CUM_OUTS / NVLINK_C2C_IN_WR_REQ) / nvlink_c2c_freq",
++        "ScaleUnit": "1ns/request",
++        "BriefDescription": "Average latency of incoming write requests from connected GPUs at the NVLink-C2C interface.",
++        "PublicDescription": "Average latency of the incoming write requests counted by NVLINK_C2C_IN_WR_REQ, measured at the NVLink-C2C interface. Available only when GPUs are connected.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "MetricName": "nvlink_c2c_out_avg_rd_latency",
++        "MetricGroup": "NVLINK_C2C_Latency;NVLINK_C2C_Read_Latency;NVLINK_C2C_Outgoing",
++        "MetricConstraint": "NO_GROUP_EVENTS",
++        "MetricExpr": "(NVLINK_C2C_OUT_RD_CUM_OUTS / NVLINK_C2C_OUT_RD_REQ) / nvlink_c2c_freq",
++        "ScaleUnit": "1ns/request",
++        "BriefDescription": "Average latency of outgoing read requests at the NVLink-C2C interface.",
++        "PublicDescription": "Average latency of the outgoing read requests counted by NVLINK_C2C_OUT_RD_REQ, measured at the NVLink-C2C interface.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
++    },
++    {
++        "MetricName": "nvlink_c2c_out_avg_wr_latency",
++        "MetricGroup": "NVLINK_C2C_Latency;NVLINK_C2C_Write_Latency;NVLINK_C2C_Outgoing",
++        "MetricConstraint": "NO_GROUP_EVENTS",
++        "MetricExpr": "(NVLINK_C2C_OUT_WR_CUM_OUTS / NVLINK_C2C_OUT_WR_REQ) / nvlink_c2c_freq",
++        "ScaleUnit": "1ns/request",
++        "BriefDescription": "Average latency of outgoing write requests to connected GPUs at the NVLink-C2C interface.",
++        "PublicDescription": "Average latency of the outgoing write requests counted by NVLINK_C2C_OUT_WR_REQ, measured at the NVLink-C2C interface. Available only when GPUs are connected.",
++        "Compat": "NVDA2023",
++        "Unit": "nvidia_nvlink_c2c_pmu_"
 +    }
 +]
 -- 
