@@ -1,48 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E5E51DAE6;
-	Mon, 19 Oct 2026 13:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6C756F591;
+	Mon, 19 Oct 2026 13:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418275; cv=none; b=K7GGNfWSLJsXrJ7FMgdC6r0t+M2U3BbyqTrjgrD1DcxAxwOCdXdW5HGasVLbqUC1I1O/pzLc2EAX1ny5mn+Bwg/426JC2vy0EPKrY8bkdeWUP+5tRhCmyv4RtoMexMY0lH5hlNPnkOI3nw+OREy01FZAipauyDt0seeBfJEgWw0=
+	t=1792418290; cv=none; b=LlzCq65K7MwQkj9lyhsnCWVQo4KL4GA+PrSrvHKq7YEtzoFiZrLN3QwSc/hUjs80KJOvdSIPVAE35r3ujP40df6+/cvUwHCnTqDlV8pB/DxJXkXjP0fwO+HwSxdRQJbYbfGwdW15pyoZ28qFKeqPmrxeGDZW66/GzHOOn3JzUuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418275; c=relaxed/simple;
-	bh=/2QsdZrQw6MaWt8XpDNT/BUn8JYRSyPukblrlpCyfyM=;
+	s=arc-20240116; t=1792418290; c=relaxed/simple;
+	bh=iBg+oZBMe0ZVl4r9/ARDaUlsxqYdZf1/rQ9ZuV04FJA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u0nJMcb47onwHl4guHSgne6/FrJQni+9AcVRhZb8VfgQkxL+rk0f3ylrev68FdLkE0/GpL/qqDnJ2446dcNIaoICELd3erIeRPsxufgRyHS2B6kE+oTHD3W2l0gN8JmHdJLMsBIoJOI6EVCKIcG5mBzngYM21m1AQU/4jap9H6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kL6LJNmo; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=o0ffyQkXTnG4NxCUPIuDm34f7C7h60UwbNKOFNUPivde4iMrbeC94a3TLiNyATdCLT5mtQRGhI9rgGyw1+pwDi7CVVbTkl/n5rSrugcjGIAr3v1jG5f0G0g7BCwnZoB+R/Zb0l4bkgS7dAB52DIaktJ2Jh607Kggq6QIfnwJMM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0GO22ur; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kL6LJNmo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DECC31F000C4;
-	Mon, 19 Oct 2026 13:57:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0GO22ur"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFE01F000C8;
+	Mon, 19 Oct 2026 13:58:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418274;
-	bh=wip6XPwDneigQDF7SAoedelkf/KRqwI5pF0/L9cxoek=;
+	s=k20260515; t=1792418287;
+	bh=Ff21cRgZ8MvA5CDC/2+VpN0VjGBg1z2VwpeEj2orLlU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kL6LJNmoUo8wuH2Kkb6JcWxlPubpYVnNQBv/MTugyE4Q34HuQ0XzSTACQBWODIEnp
-	 8o9F/qxqdtsGuYO+KyCL5jIpRtGV5gpNMl5lDBzl7PHLSU2YJstmTUCH11FLrl1REn
-	 ngbhKTJEesnYCuUqWckdqJp4nKi8xFeaVO5zQouHBo3JDoghoQtue7cNiGWiH99nWT
-	 fYPVYOxymDfQORfD/cvb+k8dunHfs96V3LkQ9BGDnPz3a4pyyFlnSQqGfrLJFDnBpM
-	 J+TbLZuv4Z3M+sa9fj3s9QiOfkfarxWnBJJu5ZrTC7KmQnBZwZX2NDf1Na104tXmnn
-	 +XRwuO7lg3ChA==
+	b=h0GO22urMcdHOGNafsxfp1ycROIVdVoinJlMg17ucDY07dF+RZBGQ/tEmKrTWCQsu
+	 EpkXE/mq0PGGDEAfXRdUJgOWmtKKuu2Znbx7PCK/k1NUqvvTpgWukgRGkq/xEqM0e7
+	 OihqhirPT3mprGCS2VQSq3vngaUsUiLlj61DkUu9s2hy7LmhU73DNlAZyooDEU1DTk
+	 iiCDXLPs6aLVM9yRzl1zmHOV0eT8nWtw5khI8GarroHXbr+01erpADYIRqZZuiDJgE
+	 kdCrUxDjIS7dgJ8wq76E0xQGr8Gv/+wUSwiDTPhfuarQ5dveVR2pDDJEU+SaHHYw+n
+	 bPNRwHW5be4cw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Hans Verkuil <hverkuil+cisco@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+Cc: Mikko Perttunen <mperttunen@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>,
-	hverkuil@kernel.org,
-	mchehab@kernel.org,
 	thierry.reding@kernel.org,
-	jonathanh@nvidia.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
-	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] media: cec: tegra_cec: don't break off msg on NACK
-Date: Mon, 19 Oct 2026 09:47:02 -0400
-Message-ID: <20261019135441.1420968-131-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] gpu: host1x: Wait for timeout worker completion on channel free
+Date: Mon, 19 Oct 2026 09:47:11 -0400
+Message-ID: <20261019135441.1420968-140-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -58,386 +56,484 @@ X-stable-base: Linux 6.18.57
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-[ Upstream commit be627f257ce283c95fd2988080dc0db3a20d0d2a ]
+[ Upstream commit 7a39b9856acccc8e9b05845ca2bf62494fcd3dfa ]
 
-The Tegra CEC hardware has a bug where, if the first attempt
-to transmit a message is NACKed so the transmit is aborted,
-then the second attempt can contain corrupt data.
+cdma_timeout_destroy() used cancel_delayed_work() to cancel pending
+timeout work when destroying the CDMA. Usually this is fine, but
+there is a narrow race condition where the timeout handler has started
+execution but has not taken cdma->lock; the channel is freed causing
+cdma_stop to take cdma->lock and flush the channel; host1x_cdma_deinit
+then proceeds with deinitializing cdma while the handler is waiting to
+take cdma->lock.
 
-Ensure that the full message is always transmitted to avoid hitting
-this bug.
+Therefore change cdma_timeout_destroy to use cancel_delayed_work_sync
+instead to ensure any pending timeout work completes before proceeding.
 
-I suspect some internal state is not reset in the case of aborting
-a message due to a NACK.
-
-Signed-off-by: Hans Verkuil <hverkuil+cisco@kernel.org>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://patch.msgid.link/20260609-b4-host1x-small-fixes-a-v1-1-7c1131c0b3ad@nvidia.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-This is a hardware-quirk workaround in the Tegra HDMI CEC driver: after
-a NACK abort, the next transmit can be corrupt. The local tree is
-**v7.3-rc4** (`7.3.0-rc4`). The driver and
-`TEGRA_CEC_HWCTRL_TX_NAK_MODE` bit have been here since the original
-2017 driver, so the fix belongs in this tree.
+The local tree is **v7.3-rc4** (`7.3.0-rc4`). The host1x CDMA timeout
+path is present, and this is a one-line `cancel_delayed_work` →
+`cancel_delayed_work_sync` race/UAF fix that is standalone and meets
+stable criteria.
 
 ===============================================================
 PHASE 1: COMMIT MESSAGE FORENSICS
 ===============================================================
 
-Step 1.1: PARSE THE SUBJECT LINE
-Record: [media: cec: tegra_cec] [don't break off] [keep transmitting a
-CEC message after NACK so Tegra HW does not corrupt the retry]
+**Step 1.1: PARSE THE SUBJECT LINE**
+Record: **[gpu/host1x] [Wait / ensure completion] [Wait for timeout
+worker completion on channel free]**
+Subsystem prefix `gpu: host1x:`. The verb is “Wait … on channel free”,
+i.e. synchronize teardown with a running work item. That is a teardown-
+race fix, not a feature.
 
-Step 1.2: PARSE ALL COMMIT MESSAGE TAGS
+**Step 1.2: PARSE ALL COMMIT MESSAGE TAGS**
 Record:
-- Signed-off-by: Hans Verkuil \<hverkuil+cisco@kernel.org\> (author; CEC
-  and Tegra CEC maintainer)
-- Reviewed-by: Mikko Perttunen \<mperttunen@nvidia.com\> (NVIDIA)
-- Signed-off-by: Mauro Carvalho Chehab \<mchehab+huawei@kernel.org\>
-  (media maintainer)
-- No Fixes:, Reported-by:, Tested-by:, Link:, or Cc: stable (absence
-  expected)
-- Ignored: any Sasha Levin SOB / Upstream-commit markers (none present
-  on the real commit)
+- **Fixes:** none (expected for this review path)
+- **Reported-by:** none
+- **Tested-by:** none
+- **Reviewed-by:** none on the commit itself
+- **Acked-by:** none
+- **Link:** `https://patch.msgid.link/20260609-b4-host1x-small-fixes-
+  a-v1-1-7c1131c0b3ad@nvidia.com`
+- **Cc: stable:** none (expected)
+- **Signed-off-by:** Mikko Perttunen `<mperttunen@nvidia.com>` (author);
+  Thierry Reding `<treding@nvidia.com>` (Tegra/host1x maintainer).
+  Ignored any Sasha Levin SOB (none on this commit).
+- Series marker in the msgid: **patch 1/6** of `host1x-small-fixes-a`.
 
-Step 1.3: ANALYZE THE COMMIT BODY TEXT
+**Step 1.3: ANALYZE THE COMMIT BODY TEXT**
 Record:
-- Bug: Tegra CEC silicon bug. If the first transmit is NACKed and
-  aborted, the second attempt can contain corrupt data. Author suspects
-  internal HW state is not reset on NACK abort.
-- Symptom: corrupt HDMI-CEC frames on retry after NACK (wrong bytes on
-  the CEC bus).
-- Version info: none in the message. Driver dates to v4.15-rc1.
-- Root cause (author): abort-on-NACK leaves HW in a bad state;
-  workaround is to always send the full message (`TX_NAK_MODE`).
+- **Bug:** `cdma_timeout_destroy()` used `cancel_delayed_work()`, which
+  does not wait if the timeout work is already running.
+- **Mechanism:** timeout handler has started but has not yet taken
+  `cdma->lock`; channel free runs `cdma_stop` (takes the lock, flushes),
+  then `host1x_cdma_deinit()` tears CDMA down while the handler is still
+  waiting for that lock.
+- **Symptom/failure mode:** use-after-free / use of a destroyed mutex
+  and CDMA state from the timeout worker. That is a kernel crash /
+  memory-safety bug, not a cosmetic issue.
+- **Version info:** none in the message. The call has existed since
+  host1x channel support.
+- **Author’s root cause:** async cancel vs running work vs lock/deinit
+  order.
 
-Step 1.4: DETECT HIDDEN BUG FIXES
-Record: Not disguised. Cover letter calls it “a fix” / HW-bug
-workaround. Not cleanup.
+**Step 1.4: DETECT HIDDEN BUG FIXES**
+Record: Not hidden. It is an explicit race/UAF fix. Cover letter (see
+Phase 4) calls patches 1–4 “logic issues that are unlikely to happen but
+technically possible.” Unlikely trigger does not make a UAF inapplicable
+to stable.
 
 ===============================================================
 PHASE 2: DIFF ANALYSIS - LINE BY LINE
 ===============================================================
 
-Step 2.1: INVENTORY THE CHANGES
+**Step 2.1: INVENTORY THE CHANGES**
 Record:
-- File: `drivers/media/cec/platform/tegra/tegra_cec.c` (+12 / -1)
-- Function: `tegra_cec_adap_enable()`
-- Scope: single-file surgical change; one functional OR of an existing
-  HW bit plus a comment
+- File: `drivers/gpu/host1x/hw/cdma_hw.c` — **1 insertion, 1 deletion**
+- Function: `cdma_timeout_destroy()`
+- Scope: **single-file surgical fix** (one call-site change)
 
-Step 2.2: UNDERSTAND THE CODE FLOW CHANGE
+**Step 2.2: UNDERSTAND THE CODE FLOW CHANGE**
 Record:
-- Before: enable path wrote `TEGRA_CEC_HW_CONTROL =
-  TEGRA_CEC_HWCTRL_TX_RX_MODE` only. Hardware aborted TX on NACK.
-- After: same write also sets `TEGRA_CEC_HWCTRL_TX_NAK_MODE` so the full
-  frame is sent even if bytes are NACKed.
-- Path: adapter enable (normal init), not an error path.
-- `tegra_cec_adap_log_addr()` and `tegra_cec_adap_monitor_all_enable()`
-  RMW `HW_CONTROL`, so they keep the bit. `tegra_cec_error_recovery()`
-  saves/restores `hw_ctrl`, so it keeps the bit too.
+- **Before:** if `cdma->timeout.initialized`,
+  `cancel_delayed_work(&cdma->timeout.wq)` then `initialized = false`.
+  Pending work is cancelled; **running** work is not waited for.
+- **After:** `cancel_delayed_work_sync()` — cancel pending work **and
+  wait** if the handler is executing.
+- **Path:** channel teardown / CDMA destroy, not the submit hot path.
 
-Step 2.3: IDENTIFY THE BUG MECHANISM
-Record: [Hardware workaround] Default abort-on-NACK leaves Tegra CEC TX
-state unrestored; retry can emit corrupt data. Setting `TX_NAK_MODE`
-avoids the abort path. IRQ still reports NACK via
-`TX_FRAME_OR_BLOCK_NAKD` when `TX_FRAME_TRANSMITTED` fires.
+Verified teardown order in this tree:
 
-Step 2.4: ASSESS THE FIX QUALITY
+```102:113:drivers/gpu/host1x/channel.c
+static void release_channel(struct kref *kref)
+{
+        ...
+        host1x_hw_cdma_stop(host, &channel->cdma);
+        host1x_cdma_deinit(&channel->cdma);
+        clear_bit(channel->id, chlist->allocated_channels);
+}
+```
+
+```528:541:drivers/gpu/host1x/cdma.c
+int host1x_cdma_deinit(struct host1x_cdma *cdma)
+{
+        ...
+        host1x_pushbuffer_destroy(pb);
+        host1x_hw_cdma_timeout_destroy(host1x, cdma);
+        return 0;
+}
+```
+
+`cdma_stop()` takes `cdma->lock`, may wait for an empty sync queue, then
+unlocks. `host1x_cdma_deinit()` then runs **without** `cdma->lock`. That
+matches the commit’s race: stop can finish and deinit can proceed while
+`cdma_timeout_handler()` is between start and `mutex_lock(&cdma->lock)`.
+
+The window is larger than “a few instructions.” The handler dumps debug
+state **before** taking the lock:
+
+```291:305:drivers/gpu/host1x/hw/cdma_hw.c
+static void cdma_timeout_handler(struct work_struct *work)
+{
+        ...
+        host1x_debug_dump(cdma_to_host1x(cdma));
+        mutex_lock(&cdma->lock);
+```
+
+`host1x_debug_dump()` walks every channel and dumps FIFOs
+(`show_all(..., true)`). A GPU timeout is also when userspace/driver
+often closes the channel. That is a realistic overlap, not only a one-
+instruction race.
+
+**Step 2.3: IDENTIFY THE BUG MECHANISM**
 Record:
-- Obviously correct: one existing register bit, documented in-tree since
-  2017, unused until now.
-- Minimal: one OR plus comment.
-- Regression risk: low. Bus is occupied a bit longer after NACK (author
-  notes this). NVIDIA reviewed. Software still reports
-  `CEC_TX_STATUS_NACK`. POLL (the usual NACK) is one byte, so extra bus
-  time is negligible.
+- **Category:** race + use-after-free / use of destroyed CDMA (mutex,
+  push buffer, channel).
+- **Mechanism:** non-synchronous delayed-work cancel on destroy. Fix is
+  the standard `cancel_*_sync` teardown pattern.
+- **Not** a leak, NULL check, or new API.
+
+Related code that correctly stays **non-sync** (would deadlock if
+changed, because it runs under `cdma->lock`, which the handler also
+takes):
+
+```293:297:drivers/gpu/host1x/cdma.c
+static void stop_cdma_timer_locked(struct host1x_cdma *cdma)
+{
+        cancel_delayed_work(&cdma->timeout.wq);
+        cdma->timeout.client = NULL;
+}
+```
+
+**Step 2.4: ASSESS THE FIX QUALITY**
+Record:
+- **Quality:** obviously correct for the stated race.
+  `cancel_delayed_work_sync()` is the documented way to wait for delayed
+  work before freeing the object that work touches.
+- **Minimal:** one identifier change.
+- **Regression risk:**
+  - `_sync` can sleep. Callers of `host1x_channel_put()` →
+    `release_channel()` are process-context (DRM ioctls/file close,
+    client `exit`/unbind, debugfs). Sleeping is valid there.
+  - `_sync` is **not** called while holding `cdma->lock` (`cdma_stop`
+    drops it first). No lock-vs-work deadlock on the free path described
+    in the commit.
+  - Residual risk: if the timeout handler’s `host1x_debug_dump()` →
+    `host1x_channel_put()` dropped the **last** channel ref,
+    `release_channel()` would run on the same work and `_sync` could
+    wait on itself. That path was already unsafe with async cancel (UAF
+    after dump returns). No mailing-list NAK of this patch; maintainer
+    applied it.
 
 ===============================================================
 PHASE 3: GIT HISTORY INVESTIGATION
 ===============================================================
 
-Step 3.1: BLAME THE CHANGED LINES
-Record: Buggy write is from `9d2d60687c9a` (“media: tegra-cec: add Tegra
-HDMI CEC driver”, 2017-07-15, contained in v4.15-rc1).
-`TEGRA_CEC_HWCTRL_TX_NAK_MODE` was defined in that same commit (`(1 <<
-24)`), later rewritten as `BIT(24)` in `cce8ccca80d838` (2019). Bug has
-been in this driver for the entire mainline life of the driver.
+**Step 3.1: BLAME THE CHANGED LINES**
+Record:
+- Buggy `cancel_delayed_work()` in `cdma_timeout_destroy()` comes from
+  **`6579324a41cc41`** (“gpu: host1x: Add channel support”, Terje
+  Bergstrom, 2013-03-22).
+- First contained in **`v3.10-rc1`**. This is old, long-lived driver
+  code, not a last-month addition.
 
-Step 3.2: FOLLOW THE FIXES: TAG
-Record: No Fixes: tag. N/A. Introduced by original driver, not a later
-regression.
+**Step 3.2: FOLLOW THE FIXES: TAG**
+Record: No `Fixes:` tag. The introducing commit is identified by blame,
+not by the message. `git merge-base --is-ancestor 6579324a41cc41 HEAD`
+succeeds — the introducing commit is in this checkout.
 
-Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES
-Record: Same-day series 1/2. 2/2 is `bce7236c16c2c` (“keep track of
-number of Rx Low Drives”) — debug counter, not a prerequisite. Later
-`a45a81a790b96` is an unrelated `dev_err` cleanup. Standalone.
+**Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES**
+Record (recent `drivers/gpu/host1x/hw/cdma_hw.c`):
+- `7a39b9856accc` — this fix
+- `60bca008dd789` — Tegra264 support (does not revert the `_sync`
+  change; current file still has `cancel_delayed_work_sync`)
+No prerequisite refactor. Standalone.
 
-Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS
-Record: Hans Verkuil is listed in MAINTAINERS for both CEC FRAMEWORK and
-ARM/TEGRA HDMI CEC. NVIDIA’s Mikko Perttunen reviewed. High confidence.
+**Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS**
+Record: Mikko Perttunen is a regular NVIDIA host1x contributor (UAF,
+refcount, iommu, MLOCK, etc.). Same-series follow-ups are independent
+(double `device_add`, trace offset, debug stack over-read, `pin_job`
+return type, syncpoint wrap annotation). This patch does not depend on
+them.
 
-Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS
-Record: None. Uses `TEGRA_CEC_HWCTRL_TX_NAK_MODE` already in
-`tegra_cec.h` in this tree. Applies standalone.
+**Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS**
+Record: None. It only needs `cdma_timeout_destroy()` +
+`cancel_delayed_work()` / `_sync`, present since 2013. **Can apply
+standalone.**
 
 ===============================================================
 PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 ===============================================================
 
-Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION
+**Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION**
 Record:
-- Lore: https://patch.msgid.link/7e50d6027e1676650d52905cd20eb212c01cd3e
-  5.1783677198.git.hverkuil+cisco@kernel.org
-- Cover: `[PATCH 0/2] media: tegra_cec: a fix and an enhancement` — “the
-  first works around a HW bug where, if a transmit was NACKed, the
-  retransmit would contain corrupt data.”
-- Only v1; committed as submitted.
-- No NAK, no stable nomination, no reviewer risk flags.
-- Included in “[GIT PULL FOR v7.3] media: CEC fixes/improvements”.
+- `b4 dig -c 7a39b9856accc` matched **v1 only** (no v2/v3).
+- Lore: https://patch.msgid.link/20260609-b4-host1x-small-fixes-
+  a-v1-1-7c1131c0b3ad@nvidia.com
+- Cover letter: https://patch.msgid.link/20260609-b4-host1x-small-fixes-
+  a-v1-0-7c1131c0b3ad@nvidia.com — “Miscellaneous fixes”; patches 1–4
+  “unlikely to happen but technically possible.”
+- Thierry Reding, 2026-07-16: **“Applied to drm-misc-next, thanks.”** No
+  NAK, no stable discussion, no request for a different approach.
+- `sashiko-bot` replied with **pre-existing** issues (`update_work` not
+  cancelled in deinit; non-sync cancel in `stop_cdma_timer_locked()`).
+  It did **not** reject this change. Those are separate bugs, not
+  regressions of this one-liner.
 
-Step 4.2: CHECK WHO REVIEWED THE PATCH
-Record: To linux-media; Cc Thierry Reding and linux-tegra. Reviewed-by
-Mikko Perttunen (NVIDIA). Right maintainers.
+**Step 4.2: CHECK WHO REVIEWED THE PATCH**
+Record (`b4 dig -w`): To/Cc included Thierry Reding, David Airlie,
+Simona Vetter, `dri-devel`, `linux-tegra`, `linux-kernel`. Subsystem
+maintainer applied the series. No extra Reviewed-by on the commit.
 
-Step 4.3: SEARCH FOR THE BUG REPORT
-Record: No syzbot/bugzilla. Author-discovered HW bug, confirmed by
-NVIDIA review. No user-count in the thread.
+**Step 4.3: SEARCH FOR THE BUG REPORT**
+Record: No syzbot, bugzilla, or user crash report. Author-found race
+from code inspection. Severity still UAF if it hits.
 
-Step 4.4: CHECK FOR RELATED PATCHES AND SERIES
-Record: 1/2 of 2. 2/2 is an enhancement (Rx low-drive debugfs), not
-required. Do not pull 2/2 as a dependency.
+**Step 4.4: CHECK FOR RELATED PATCHES AND SERIES**
+Record: Series is 6 independent small fixes. This is patch 1/6 and does
+not need 2–6.
 
-Step 4.5: CHECK STABLE MAILING LIST HISTORY
-Record: No stable-list discussion found for this NACK workaround. linux-
-media search for “tegra_cec stable” did not hit this patch.
+**Step 4.5: CHECK STABLE MAILING LIST HISTORY**
+Record: WebFetch to `lore.kernel.org/stable/` returned 403.
+**UNVERIFIED** whether stable@ already discussed this specific commit.
+No `Cc: stable` on the patch.
 
 ===============================================================
 PHASE 5: CODE SEMANTIC ANALYSIS
 ===============================================================
 
-Step 5.1: IDENTIFY KEY FUNCTIONS IN THE DIFF
-Record: `tegra_cec_adap_enable()`
+**Step 5.1: KEY FUNCTIONS**
+Record: `cdma_timeout_destroy` (changed). Related:
+`cdma_timeout_handler`, `cdma_timeout_init`, `host1x_cdma_deinit`,
+`release_channel`, `cdma_stop`.
 
-Step 5.2: TRACE CALLERS
-Record: Wired as `cec_adap_ops.adap_enable`. Called from
-`cec_adap_enable()` in `drivers/media/cec/core/cec-adap.c`
-(open/configure `/dev/cecX`, logical-address setup, enable/disable).
-Userspace-reachable on Tegra HDMI.
+**Step 5.2: TRACE CALLERS**
+Record:
+- `cdma_timeout_destroy` via `host1x_cdma_ops.timeout_destroy` →
+  `host1x_hw_cdma_timeout_destroy()` → **`host1x_cdma_deinit()`** only.
+- `host1x_cdma_deinit()` from **`release_channel()`** (last
+  `host1x_channel_put()`).
+- `host1x_channel_put()` call sites (all process context):
+  - `drivers/gpu/drm/tegra/uapi.c` — channel close / ioctl error
+  - `drm/tegra` gr2d/gr3d/vic/nvdec — client exit / context close
+  - `drivers/crypto/tegra/tegra-se-main.c` — SE driver
+  - `drivers/gpu/host1x/debug.c` — debugfs dump
 
-Step 5.3: TRACE CALLEES
-Record: `cec_write()` → `writel()` of `TEGRA_CEC_HW_CONTROL`. No alloc,
-no new locks.
+**Step 5.3: TRACE CALLEES**
+Record: `cancel_delayed_work_sync()` only. Can sleep; flushes the
+delayed work.
 
-Step 5.4: FOLLOW THE CALL CHAIN
-Record: userspace CEC ioctl/open → CEC core `cec_adap_enable()` →
-`tegra_cec_adap_enable()`. Transmit path `tegra_cec_adap_transmit()`
-fills TX FIFO; NACK is handled in `tegra_cec_irq_handler()`.
-Unprivileged users with `/dev/cecX` can trigger TX, including
-NACK+retry.
+**Step 5.4: FOLLOW THE CALL CHAIN**
+Record: Userspace on Tegra DRM can trigger it: submit a job with a
+timeout → timeout work queued → close channel (`DRM_TEGRA` channel close
+/ process exit) while the handler runs. Unprivileged on devices that
+expose tegra DRM. **Reachable from userspace.**
 
-Step 5.5: SEARCH FOR SIMILAR PATTERNS
-Record: `TX_NAK_MODE` is only used in this driver. No sibling-driver
-copy of this workaround.
+**Step 5.5: SEARCH FOR SIMILAR PATTERNS**
+Record: `stop_cdma_timer_locked()` still uses unsynchronized cancel
+**under the lock** (correct). `cdma->update_work` is still not cancelled
+in deinit (pre-existing, called out by sashiko-bot; **not** this patch).
 
 ===============================================================
 PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
 ===============================================================
 
-Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?
-Record: Yes. Tree is v7.3-rc4. File
-`drivers/media/cec/platform/tegra/tegra_cec.c` and header bit
-`TEGRA_CEC_HWCTRL_TX_NAK_MODE` are present. Pre-fix enable path wrote
-only `TX_RX_MODE` (blame to 2017). Bug introduced in v4.15-era driver,
-long before this branch.
+**Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?**
+Record:
+- `git describe HEAD` = **v7.3-rc4-27-gf0100363d8c37**; `make
+  kernelversion` = **7.3.0-rc4**.
+- Commit **`7a39b9856acccc8e9b05845ca2bf62494fcd3dfa` is already an
+  ancestor of HEAD** (`git merge-base --is-ancestor` succeeded). Current
+  `cdma_timeout_destroy()` already calls `cancel_delayed_work_sync()`.
+- The **bug** existed here until that commit: same function, same
+  `cancel_delayed_work()`, since **v3.10**. This is mainline, so the fix
+  is already applied; the question is whether the same change belongs on
+  this tree’s stable-style policy given the code is the host1x driver
+  this tree ships.
+- Introducing commit **is** in this tree. This is not “bug added after
+  this tree branched.”
 
-Step 6.2: CHECK FOR BACKPORT COMPLICATIONS
-Record: Clean apply. Context in the candidate is the INT_MASK block
-without later `RX_BUS_ERROR_DETECTED` (that line is from 2/2). Against
-this tree the hunk is already the intended enable write. No data-
+**Step 6.2: CHECK FOR BACKPORT COMPLICATIONS**
+Record: **Clean apply.** Surrounding function is still the 2013
+structure plus later whitespace. One-line identifier swap; no data-
 structure or API change.
 
-Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE
-Record: No earlier alternate fix for NACK-abort corruption. This is the
-first use of `TX_NAK_MODE` in C code.
+**Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE**
+Record: This exact fix is already in HEAD (mainline). No alternate fix,
+no revert. No other commit on this file addresses the same cancel-vs-
+running-work race.
 
 ===============================================================
 PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
 ===============================================================
 
-Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY
-Record: [drivers/media/cec/platform/tegra] [PERIPHERAL / platform
-driver, but real Tegra HDMI product path]. CONFIG_CEC_TEGRA, depends on
-ARCH_TEGRA.
+**Step 7.1: SUBSYSTEM AND CRITICALITY**
+Record: **drivers/gpu/host1x** (NVIDIA Tegra host1x DMA/sync engine).
+**IMPORTANT** for Tegra (Android, Jetson, embedded), **PERIPHERAL** for
+generic x86. `CONFIG_TEGRA_HOST1X` depends on `ARCH_TEGRA ||
+COMPILE_TEST`.
 
-Step 7.2: ASSESS SUBSYSTEM ACTIVITY
-Record: Mature. Driver since 2017; low churn. This is an old HW bug, not
-new-code churn.
+**Step 7.2: SUBSYSTEM ACTIVITY**
+Record: Actively maintained (Tegra264, context devices, multiple 2026
+fixes). Author is a core contributor; Thierry Reding applied the series.
 
 ===============================================================
 PHASE 8: IMPACT AND RISK ASSESSMENT
 ===============================================================
 
-Step 8.1: DETERMINE WHO IS AFFECTED
-Record: Tegra HDMI-CEC users (Jetson and other Tegra boards with CEC).
-Config- and platform-specific, not universal.
+**Step 8.1: WHO IS AFFECTED**
+Record: **Driver-specific / platform-specific** — Tegra SoCs using
+host1x (DRM 2D/3D/VIC/NVDEC, Tegra SE crypto). Not universal mm/net.
 
-Step 8.2: DETERMINE THE TRIGGER CONDITIONS
-Record: Transmit a message that is NACKed, then retry. Common for POLL
-during logical-address allocation (1 byte; author says that case is
-cheap). Multi-byte NACK+retry is less common but real (absent follower,
-follower busy). Userspace with CEC device access can trigger it.
-
-Step 8.3: DETERMINE THE FAILURE MODE SEVERITY
-Record: [Corrupt CEC frame on retry] [MEDIUM functionally, HIGH for that
-hardware’s CEC reliability]. Not a kernel oops. Puts garbage on the CEC
-bus, which can break TV/AVR control after a NACK. That is user-visible
-protocol corruption.
-
-Step 8.4: CALCULATE RISK-BENEFIT RATIO
+**Step 8.2: TRIGGER CONDITIONS**
 Record:
-- Benefit: high for Tegra CEC — stops corrupt retries on a long-standing
-  silicon bug.
-- Risk: very low — one register bit, NVIDIA Reviewed-by, CEC maintainer
-  authored it.
-- Ratio: strongly favors applying the workaround.
+- Job timeout work is running (or sitting in `host1x_debug_dump` before
+  the lock).
+- Concurrent last `host1x_channel_put()` (channel close, client unbind,
+  process exit).
+- Timing-dependent. Author: “narrow” / cover letter “unlikely” — but
+  timeout + channel teardown is a real recovery path.
+- Unprivileged userspace on Tegra DRM can close a channel; timeout is a
+  driver-internal delayed work.
+
+**Step 8.3: FAILURE MODE SEVERITY**
+Record: Timeout handler runs against CDMA/channel that
+`host1x_cdma_deinit()` already tore down: destroyed mutex, freed push
+buffer, stale channel. **UAF / kernel oops.** Severity: **HIGH** (crash;
+possible memory-safety issue). Not a log-only bug.
+
+**Step 8.4: RISK-BENEFIT RATIO**
+Record:
+- **Benefit:** High for Tegra users — prevents UAF on channel free vs
+  timeout. Low for everyone else (config-gated).
+- **Risk:** Very low — 1 line, standard API, no lock held, process
+  context.
+- **Ratio:** Benefit outweighs risk for any tree that still has the
+  unsynchronized cancel.
 
 ===============================================================
 PHASE 9: FINAL SYNTHESIS
 ===============================================================
 
-Step 9.1: COMPILE THE EVIDENCE
+**Step 9.1: COMPILE THE EVIDENCE**
 
-FOR:
-- Real Tegra CEC hardware bug: NACK abort → corrupt retransmit
-- Hardware quirk/workaround (stable exception)
-- Tiny: +12/-1, one bit OR
-- Bit defined since original 2017 driver; no new API
-- Authored by CEC/Tegra-CEC maintainer; Reviewed-by NVIDIA
-- Standalone; 2/2 of the series is unrelated debug
-- Applies to this tree: driver and define exist
-- IRQ path still reports NACK correctly
+**FOR backporting:**
+- Real race: running timeout work vs CDMA/channel destroy.
+- Failure mode is UAF / oops, not style.
+- One-line, obviously correct `cancel_delayed_work_sync`.
+- Bug in code since **v3.10**; no missing helpers.
+- Standalone; series mates not required.
+- Maintainer (Thierry Reding) applied v1 with no objections.
+- Teardown is reachable from userspace channel close on Tegra.
+- `debug_dump` before the lock makes the window practical during GPU
+  timeout recovery.
 
-AGAINST:
-- Not a kernel crash, UAF, or security bug
-- Tegra-only
-- Slightly longer bus occupancy after NACK (documented, accepted)
-- No Fixes:/Cc: stable (not a negative here)
-- No public multi-user bugzilla/syzbot report
+**AGAINST:**
+- No `Reported-by` / syzbot / production stack trace.
+- Author called it unlikely.
+- Tegra-only.
+- Cover letter grouped it with “miscellaneous” logic issues.
+- sashiko-bot noted other incomplete teardown (`update_work`); this
+  patch does not fix that (and does not need to).
+- This checkout already contains the commit (it is mainline 7.3-rc4).
+  That is not a reason the **fix** is wrong for trees that still have
+  async cancel.
 
-UNRESOLVED:
-- lore.kernel.org WebFetch returned 403; thread recovered via `b4 dig
-  -m` and gnuweeb/ratatoskr mirrors
-- No stable@ discussion found
-- HW “internal state not reset” is the author’s suspicion; NVIDIA did
-  not contradict it
+**UNRESOLVED:**
+- Stable@ archive search via WebFetch: 403.
+- No empirical reproduction here.
+- Self-flush if last kref is dropped from inside `debug_dump`: analyzed
+  from code, not discussed on list.
 
-Step 9.2: APPLY THE STABLE RULES CHECKLIST
-1. Obviously correct and tested? PASS — one documented HW bit; NVIDIA
-   Reviewed-by
-2. Fixes a real bug that affects users? PASS — corrupt CEC retries after
-   NACK
-3. Important issue? PASS as hardware workaround / protocol corruption on
-   HDMI-CEC, not as a kernel panic
-4. Small and contained? PASS — 13-line hunk, one function
-5. No new features or APIs? PASS — enables an existing unused control
-   bit
-6. Can apply to the local tree? PASS — file, function, and
-   `TEGRA_CEC_HWCTRL_TX_NAK_MODE` are here
+**Step 9.2: STABLE RULES CHECKLIST**
+1. Obviously correct and tested? **PASS** — standard workqueue teardown;
+   maintainer applied; in mainline since 2026-07.
+2. Fixes a real bug that affects users? **PASS** — UAF on channel free
+   vs timeout handler.
+3. Important issue (crash, security, corruption, deadlock)? **PASS** —
+   UAF/oops; **HIGH**.
+4. Small and contained? **PASS** — 1 line, one function.
+5. No new features or APIs? **PASS**.
+6. Can apply to the local tree? **PASS** — host1x CDMA timeout code is
+   here; the change is trivial. (HEAD already has the post-image because
+   this is the originating mainline tree.)
 
-Step 9.3: CHECK FOR EXCEPTION CATEGORIES
-Record: Hardware quirk/workaround. Qualifies even without a panic.
+**Step 9.3: EXCEPTION CATEGORIES**
+Record: None (not a device ID, quirk, DT, build, or docs exception). It
+qualifies as a normal small crash-class fix.
 
-Step 9.4: MAKE YOUR DECISION
-This is a small, reviewed workaround for a real Tegra CEC silicon bug
-that corrupts the next transmit after a NACK abort. The driver and
-register bit exist in this v7.3-rc4 tree and have since v4.15. Risk is a
-single enable-time bit. That meets stable rules via the hardware-quirk
-exception.
+**Step 9.4: DECISION**
+This tree has host1x and the historical bug. The fix is a textbook
+cancel-vs-running-work UAF close, one line, no prerequisites, no new
+API. Stable rules are satisfied. Unlikely trigger does not outweigh an
+oops/UAF on a path userspace can hit after a GPU timeout.
 
-What it solves for users of this tree: Tegra HDMI-CEC retries after NACK
-can put corrupt bytes on the bus; setting `TX_NAK_MODE` avoids the abort
-path that triggers that bug.
+### What the commit solves
+`cdma_timeout_destroy()` cancelled timeout work asynchronously. If
+`cdma_timeout_handler()` was already running (especially in
+`host1x_debug_dump()` before `cdma->lock`), `release_channel()` could
+`cdma_stop` + `host1x_cdma_deinit()` and free CDMA while the handler
+still used it. `cancel_delayed_work_sync()` waits for that worker first.
 
-Risk vs benefit: one-bit enable flag, NVIDIA-reviewed, vs broken CEC
-after NACK. Benefit wins.
+### Stable rules / risk
+Meets all six stable criteria. Risk is a possible extra wait on channel
+free (correct). Benefit is avoiding a kernel UAF on Tegra host1x.
 
-===============================================================
-Verification:
-- [Phase 1] Parsed be627f257ce283c95fd2988080dc0db3a20d0d2a: no
-  Fixes/Reported-by/Cc:stable; SOB Hans Verkuil + Mauro; Reviewed-by
-  Mikko Perttunen
-- [Phase 1] Cover letter (mbox): “works around a HW bug” / corrupt
-  retransmit after NACK
-- [Phase 2] Diff: `tegra_cec_adap_enable()` OR
-  `TEGRA_CEC_HWCTRL_TX_NAK_MODE` into HW_CONTROL (+12/-1)
-- [Phase 2] Confirmed RMW of HW_CONTROL in `tegra_cec_adap_log_addr`,
-  `tegra_cec_adap_monitor_all_enable`, `tegra_cec_error_recovery`
-  preserves the bit
-- [Phase 2] IRQ still sets `CEC_TX_STATUS_NACK` on
-  `TX_FRAME_TRANSMITTED` + `TX_FRAME_OR_BLOCK_NAKD`
-- [Phase 3] git blame parent: HW_CONTROL write from 9d2d60687c9a
-  (v4.15-rc1); TX_NAK_MODE in original header
-- [Phase 3] git merge-base --is-ancestor 9d2d60687c9a HEAD: yes
-- [Phase 3] No Fixes: tag; follow-up bce7236c16c2c is debug-only, not a
-  prereq
-- [Phase 4] b4 dig -c: https://patch.msgid.link/7e50d6027e1676650d52905c
-  d20eb212c01cd3e5.1783677198.git.hverkuil+cisco@kernel.org
-- [Phase 4] b4 dig -a: v1 only
-- [Phase 4] b4 dig -w: linux-media, linux-tegra, Thierry Reding
-- [Phase 4] b4 dig -m: NVIDIA Reviewed-by; no NAK; no Cc:stable in
-  thread
-- [Phase 4] lore.kernel.org WebFetch: 403; used mbox + gnuweeb/ratatoskr
-  instead
-- [Phase 5] Callers: cec-adap.c `cec_adap_enable()` → ops->adap_enable;
-  userspace `/dev/cecX`
-- [Phase 5] grep TX_NAK_MODE: only tegra_cec.c/.h
-- [Phase 6] git describe HEAD: v7.3-rc4-27-gf0100363d8c37; make
-  kernelversion 7.3.0-rc4
-- [Phase 6] Header bit present; enable function present; clean single-
-  hunk change
-- [Phase 7] MAINTAINERS: Hans Verkuil maintains ARM/TEGRA HDMI CEC and
-  CEC FRAMEWORK
-- [Phase 8] Failure mode: corrupt CEC retry after NACK, not oops;
-  severity MEDIUM/HIGH for that hardware
-- UNVERIFIED: no TRM quote confirming “internal state not reset”; author
-  suspicion only, not used as the sole reason
+### Concerns
+No user report; Tegra-only; leftover `update_work` teardown is a
+separate bug. None of those block this one-liner.
+
+### Verification
+- **[Phase 1]** Parsed subject/tags/body from `git log -1` + `git show
+  7a39b9856accc`; no Fixes/Reported-by/Cc-stable; Link msgid present.
+- **[Phase 2]** Diff is one token in `cdma_timeout_destroy`; read
+  handler, `cdma_stop`, `host1x_cdma_deinit`, `release_channel`.
+- **[Phase 2]** Confirmed handler calls `host1x_debug_dump()` before
+  `mutex_lock`; dump uses `show_all(..., true)`.
+- **[Phase 3]** `git blame` on parent: `6579324a41cc41` (2013); `git
+  describe --contains` → `v3.10-rc1`.
+- **[Phase 3]** `git merge-base --is-ancestor 6579324a41cc41 HEAD` and
+  `7a39b9856accc HEAD` both true.
+- **[Phase 3]** `git log --oneline` on `drivers/gpu/host1x/` for author
+  and series; patch is standalone.
+- **[Phase 4]** `b4 dig -c/-a/-w/-m`: v1 only; recipients include
+  Thierry; mbox cover letter + “Applied to drm-misc-next”.
+- **[Phase 4]** WebFetch lore/stable: 403 — listed UNVERIFIED.
+- **[Phase 5]** `git grep host1x_channel_put` — DRM/crypto/debugfs,
+  process context.
+- **[Phase 6]** `git describe HEAD` / `make kernelversion` → v7.3-rc4;
+  current file already has `_sync`.
+- **[Phase 7]** `drivers/gpu/host1x/Kconfig` → `CONFIG_TEGRA_HOST1X`.
+- **[Phase 8]** Failure mode from code: handler vs deinit = UAF; trigger
+  = timeout work + last channel put.
 
 **YES**
 
- drivers/media/cec/platform/tegra/tegra_cec.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/gpu/host1x/hw/cdma_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/cec/platform/tegra/tegra_cec.c b/drivers/media/cec/platform/tegra/tegra_cec.c
-index fe66336e734f8..f8ffaeb78118d 100644
---- a/drivers/media/cec/platform/tegra/tegra_cec.c
-+++ b/drivers/media/cec/platform/tegra/tegra_cec.c
-@@ -243,7 +243,18 @@ static int tegra_cec_adap_enable(struct cec_adapter *adap, bool enable)
- 		  TEGRA_CEC_INT_MASK_RX_REGISTER_FULL |
- 		  TEGRA_CEC_INT_MASK_RX_START_BIT_DETECTED);
+diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
+index 3f3f0018eee0d..ab714d221120c 100644
+--- a/drivers/gpu/host1x/hw/cdma_hw.c
++++ b/drivers/gpu/host1x/hw/cdma_hw.c
+@@ -355,7 +355,7 @@ static int cdma_timeout_init(struct host1x_cdma *cdma)
+ static void cdma_timeout_destroy(struct host1x_cdma *cdma)
+ {
+ 	if (cdma->timeout.initialized)
+-		cancel_delayed_work(&cdma->timeout.wq);
++		cancel_delayed_work_sync(&cdma->timeout.wq);
  
--	cec_write(cec, TEGRA_CEC_HW_CONTROL, TEGRA_CEC_HWCTRL_TX_RX_MODE);
-+	/*
-+	 * TX_NAK_MODE ensures that the whole message is transmitted even
-+	 * if each byte is NACKed. Without this flag the retransmit of the
-+	 * messages after a NACK can be corrupt. This is a bug in the hardware.
-+	 *
-+	 * While less efficient, in practice you rarely transmit messages
-+	 * that can be NACKed, with the exception of POLL messages which
-+	 * are just one byte anyway.
-+	 */
-+	cec_write(cec, TEGRA_CEC_HW_CONTROL,
-+		  TEGRA_CEC_HWCTRL_TX_RX_MODE |
-+		  TEGRA_CEC_HWCTRL_TX_NAK_MODE);
- 	return 0;
+ 	cdma->timeout.initialized = false;
  }
- 
 -- 
 2.53.0
 
