@@ -1,47 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B0E4C4631;
-	Mon, 19 Oct 2026 14:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573675E0E33;
+	Mon, 19 Oct 2026 14:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418473; cv=none; b=MQsqmfxxTH7SO+szx/efPlA3w821Ta7+ET/m9C4oBrttZNowjE36Xi8r2K44l+K7/s5VpR9XGKhc5OdgL5w1b6J7V5KCJ0dLNVvLRRL8bCtGC7mLPcNo43HGrphMAL4wJ7c4b9CROfPtMti/aWPlj52HoCfTT7OdYIaS2QpvVd8=
+	t=1792418560; cv=none; b=ge7lVD7eGtSki/l+TRZ4rBPL/uTXe57a0CO/i+QaB72/dihaBI+tXEEV2WOsge2T+kNjjFrjuHks30l9biH869xMLVfAvFGzhBHTPqJ9OdngjOxoidGjerBfLGCR7MYud6USAWDrVIy/7h9SnvMxth9uWcSQU6+NHqSTpMpeoSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418473; c=relaxed/simple;
-	bh=6XU0lqPH3jdeGC/bl04dSr3cVY9MEoDMm4TloCtq3yc=;
+	s=arc-20240116; t=1792418560; c=relaxed/simple;
+	bh=phjmY77R9vdp2YNlR9ThV9kchmk5itDqPndXdPMMfhA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p/yKkZzkPrq8S27kxYyz/bHCz41iz19/X17tI/syZ3fFeR+KCrqVZ/O5D1q4VFHyB49zQp3HKY3DQb6zMfhAXQXLHsKNEqO+UgHdDBKej99nVBe7j/HcKeYn5eJsW/n19erFC+4pRn3tyjhdqOyy3y7nrWHrrHJ3twKHrvMMskY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Id0Q25yC; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=iwPuaqwqEEWXpcScZoX21t6OUEfhcZoR1wMGcuAmO5KXWXB/TsNSIfG120Z5Uf2BrtAUIGz+bavSHQ33zvoNM4t6N1MkyM/5JutU3RP5oshJbr7vRp2KxLFP/o9E7bthPE7Jmjv55hwmS2SYOk57YZ7BBc3mPCJa92EzhNxuQfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQa5Bjz4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Id0Q25yC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A7D21F000C6;
-	Mon, 19 Oct 2026 14:01:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQa5Bjz4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 988231F000C5;
+	Mon, 19 Oct 2026 14:02:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418470;
-	bh=QJpIoSxqa3XEZcAypJMC+joetbdaLKnznHB4VQAZ2Ls=;
+	s=k20260515; t=1792418558;
+	bh=XgjQpS2/rMqW43pBel9lhFNhDOjVOLpqBUk6j73sCpE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Id0Q25yCsEOee2MwdftUJlBZFSh3DpnWOQr9J6Fss2MpcUgqI++SOSPd6SvNdAvEu
-	 gSaN7e8ZZRobZIArmUBl8zcIBuLuKS4isyNh/nsuOnlGT1C5sTHPN0vI6vX17QdjRh
-	 oWj6WjsspM6zUaz0x40pYNeZTaYpefL6l+bxQgvjvuoHPvQt9+tvVp+S649oZze2w9
-	 wDKTMXstMZi7Z7mriHcbgLx8SWUkpAjUTDf1uuMe+xo/pfgZzmypjUwvsFBpBacGJh
-	 YWkdPp9q5/NXMhU447McLuzXonY0tpiM+orAk17iQxnKi8Eq9zXtF0Goe1YClpONxv
-	 fukkpYrKutX6A==
+	b=aQa5Bjz4YsCTamSzypmFThC4dydqVhe+WF1Rcnntgv0LRNeEvw1wB3sNXpOEX5IyX
+	 DaAhIVH94zE2a7IgjaYAMbUqY6HuFvrXqTs6krLVT/MbpVB2WdNlWOSROXGKqBcWOi
+	 bn33kdTCemqiLv96JZ2oHvN/ssS1Gzm7RbdoCLRjGMs+kb5ShjuJNVAY/EAJUSC2Ix
+	 h1npwxDKuqkUIv1ivHbp9otQVe3Q0XIXY3LmHB6+IEQSQzlN9P9QQBqOjWA7IijhF/
+	 Q0ZxpcIn60CNPXZe05mAUUyVEOc1q7E0bI/XU3QSs3gGo7RwCBlky7ElGqk8nYD/Qa
+	 ebbRWOQdJZ2nw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Hans Verkuil <hverkuil+cisco@kernel.org>,
+Cc: Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Brian Masney <bmasney@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
-	hverkuil@kernel.org,
-	mchehab@kernel.org,
+	pgaikwad@nvidia.com,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
 	thierry.reding@kernel.org,
 	jonathanh@nvidia.com,
+	linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] media: cec: tegra: add missing MODULE_DEVICE_TABLE()
-Date: Mon, 19 Oct 2026 09:49:22 -0400
-Message-ID: <20261019135441.1420968-271-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] clk: tegra: support 48MHz clock for pll_p_out1
+Date: Mon, 19 Oct 2026 09:50:24 -0400
+Message-ID: <20261019135441.1420968-333-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -51,113 +56,125 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.18.57
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 8dcf23edaf4bdf22259f6a47cfddc8bb1467425c ]
+[ Upstream commit 46e31d69a547530fbef499bde888b6bb45a1deac ]
 
-The driver has an OF match table wired to .of_match_table, but does
-not export the table with MODULE_DEVICE_TABLE().
+UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported by kernel
+and causes BUG() early on. Add 48MHz clock support for pll_p_out1.
 
-Add the missing MODULE_DEVICE_TABLE(of, ...) entry so module alias
-information is generated for OF based module autoloading.
-
-This is a source-level fix.  It does not claim dynamic hardware
-reproduction; the evidence is the driver-owned match table, its use by
-the platform driver, and the missing module alias publication.
-
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
-Signed-off-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Jonas Schwöbel <jonasschwoebel@yahoo.de>
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Signed-off-by: Brian Masney <bmasney@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-This is a one-line OF module-alias fix on a driver that has been in the
-tree since v4.15. Local checkout is **v7.3-rc4** (`7.3.0-rc4`,
-`f0100363d8c37`), not a numbered stable branch. The candidate is
-`8dcf23edaf4bd`.
+The local tree is **v7.3-rc4** (mainline). The change is a one-line
+parent-rate case that stops a deterministic early-boot `BUG()` when UEFI
+leaves `pll_p_out1` at 48 MHz. Surrounding `_calc_rate` logic has been
+in-tree since 2013, so this is a self-contained crash fix, not a new
+API.
 
 ===============================================================
 PHASE 1: COMMIT MESSAGE FORENSICS
 ===============================================================
 
 Step 1.1: PARSE THE SUBJECT LINE
-Record: `[media/cec/tegra] [add] missing MODULE_DEVICE_TABLE() so OF
-module aliases are generated`
+Record: **[clk: tegra:] [support] [allow pll_p_out1 parent rate 48 MHz
+in `_calc_rate` so firmware-programmed 48 MHz does not hit `BUG()`]**
 
 Step 1.2: PARSE ALL COMMIT MESSAGE TAGS
 Record:
-- Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn> (author)
-- Signed-off-by: Hans Verkuil <hverkuil+cisco@kernel.org> (CEC/Tegra CEC
-  maintainer; applied the patch)
-- No Fixes:, Reported-by:, Tested-by:, Reviewed-by:, Acked-by:, Link:,
-  or Cc: stable
-- Absence of Fixes:/Cc: stable is expected for this review pipeline and
-  is not a negative signal
+- **Acked-by:** Thierry Reding `<treding@nvidia.com>` (Tegra maintainer)
+- **Signed-off-by:** Dmitry Osipenko (author; long-time Tegra clk
+  contributor)
+- **Signed-off-by:** Jonas Schwöbel
+- **Signed-off-by:** Svyatoslav Ryhel (submitter)
+- **Signed-off-by:** Brian Masney (clk maintainer who applied it)
+- **No Fixes:** tag (expected)
+- **No Cc: stable** (expected)
+- **No Reported-by / Tested-by / Link:**
+- Ignore any Sasha Levin SOB if present in a candidate wrapper; none on
+  the real commit `46e31d69a5475`
 
 Step 1.3: ANALYZE THE COMMIT BODY TEXT
 Record:
-- Bug: OF match table is wired to `.of_match_table` but not exported via
-  `MODULE_DEVICE_TABLE(of, ...)`.
-- Symptom: when `CONFIG_CEC_TEGRA=m`, depmod/modinfo get no `of:`
-  aliases, so udev will not autoload `tegra_cec.ko` for
-  `nvidia,tegra114-cec` / `tegra124-cec` / `tegra210-cec`.
-- Version info: none in the message. Git shows the match table dates to
-  the original driver (v4.15-rc1).
-- Root cause: missing module-alias publication, not a probe/runtime
-  logic error.
-- Author states this is a source-level finding, not a live hardware
-  repro.
+- **Bug:** UEFI on Microsoft Surface 2 programs `pll_p_out1` to 48 MHz.
+  `_calc_rate()` only accepted 9.6 MHz and 28.8 MHz in that switch arm;
+  48 MHz fell into `default:` which prints an error and calls `BUG()`.
+- **Symptom:** kernel `BUG()` during early clock init (boot crash).
+- **Root cause:** missing parent-rate case in the out-of-table PLL
+  calculator used when PLLA’s freq table has no matching input rate.
+- **Version info:** none in the message. Cover letter (v2 0/1) says the
+  case is aligned with NVIDIA downstream 3.4 tegra114 logic.
 
 Step 1.4: DETECT HIDDEN BUG FIXES
-Record: Not a disguised cleanup. It is an explicit autoload/hardware-
-enablement fix. The “source-level” wording is candor, not a claim that
-nothing is wrong.
+Record: **Not a hidden fix.** Subject says “support” but the body is
+explicit: this prevents `BUG()`. It is a firmware/hardware compatibility
+quirk, not a new clock API.
 
 ===============================================================
-PHASE 2: DIFF ANALYSIS
+PHASE 2: DIFF ANALYSIS - LINE BY LINE
 ===============================================================
 
 Step 2.1: INVENTORY THE CHANGES
 Record:
-- File: `drivers/media/cec/platform/tegra/tegra_cec.c` (+1 / -0)
-- Functions: none. Adds `MODULE_DEVICE_TABLE(of, tegra_cec_of_match)`
-  after the existing `tegra_cec_of_match[]` table.
-- Scope: single-file, one-line surgical change.
+- **File:** `drivers/clk/tegra/clk-pll.c` (+1 / −0)
+- **Function:** `_calc_rate()`
+- **Scope:** single-file, one `case 48000000:` added next to existing
+  9.6/28.8 MHz cases
 
 Step 2.2: UNDERSTAND THE CODE FLOW CHANGE
 Record:
-- Before: table exists and is assigned to
-  `platform_driver.driver.of_match_table`, so a **already loaded** or
-  **built-in** driver still matches DT nodes.
-- After: `scripts/mod/file2alias.c` also emits `of:` modaliases into the
-  `.ko`, so userspace can autoload the module from sysfs modalias.
-- Path affected: module build / autoload, not probe/remove/IRQ/CEC
-  transfer.
+- **Before:** `parent_rate == 48000000` → `default` → `pr_err` +
+  `BUG()`.
+- **After:** same arm as 9.6/28.8 MHz: `cfreq = parent_rate /
+  (parent_rate / 1000000)` (1 MHz for 48 MHz), then existing M/N/P
+  calculation and range checks.
+- **Path:** clock-init `clk_set_rate()` on PLLA (and any other PLL using
+  default `_calc_rate`). Error path only in the sense that the old path
+  was a fatal default; this is the out-of-table rate calculator, not a
+  new userspace API.
+
+Verified boot path in this tree:
+- Tegra114 `init_table` sets `TEGRA114_CLK_PLL_A` to 564480000 (`clk-
+  tegra114.c`).
+- `tegra_init_from_table()` calls `clk_set_rate()`.
+- PLLA parent is `"pll_p_out1"` (`tegra114_audio_plls[]`).
+- `pll_a_freq_table[]` only lists 9600000 and 28800000 input rates, so
+  `_get_table_rate()` fails and `_calc_rate()` runs.
+- That is the `BUG()` the commit describes.
 
 Step 2.3: IDENTIFY THE BUG MECHANISM
 Record:
-- Category: hardware enablement / missing device-table export (same
-  family as adding IDs).
-- Mechanism: `MODULE_DEVICE_TABLE()` creates the
-  `__mod_device_table__kmod_*` alias that `file2alias.c` consumes.
-  Without it, the kernel can bind the driver once loaded, but the module
-  will not be loaded automatically.
+- **Category:** (h) hardware/firmware workaround + (g) logic: missing
+  switch case that caused (kernel `BUG()`).
+- **Mechanism:** firmware leaves a valid PLLP divider output of 48 MHz;
+  the calculator treated it as an impossible reference and crashed.
 
 Step 2.4: ASSESS THE FIX QUALITY
 Record:
-- Obviously correct: sibling CEC platform drivers (`stm32-cec`,
-  `meson/ao-cec`, `s5p_cec`, `stih-cec`, `cec-gpio`) already use the
-  same pattern.
-- Minimal: one line, no API/struct/locking change.
-- Regression risk: very low. Builtin builds are unaffected at runtime;
-  modular builds only gain aliases.
+- **Quality:** obviously correct. Same formula already used for the
+  other PLLP_OUT1 rates. Tegra maintainer acked it.
+- **Minimal:** one line, no API/data-structure change.
+- **Regression risk:** very low. Extra parent rate only changes the 48
+  MHz path; other rates unchanged.
+- **Nuance (verified):** tegra114 PLLA uses `pllp_nmp.divm_width = 5`,
+  so `divm_max` is 31. For 48 MHz, `cfg->m = 48`, which can fail the
+  existing `cfg->m > divm_max` check and return `-EINVAL` instead of
+  programming PLLA. That is still far better than `BUG()`:
+  `clk_pll_set_rate()` then `WARN_ON`s and returns. Completeness of PLLA
+  programming is a separate issue; the crash is fixed.
 
 ===============================================================
 PHASE 3: GIT HISTORY INVESTIGATION
@@ -165,40 +182,33 @@ PHASE 3: GIT HISTORY INVESTIGATION
 
 Step 3.1: BLAME THE CHANGED LINES
 Record:
-- Match table introduced in `9d2d60687c9a06` ("media: tegra-cec: add
-  Tegra HDMI CEC driver", Hans Verkuil, 2017-07-15; first contained in
-  **v4.15-rc1**).
-- Original file had the OF table and `.of_match_table =
-  of_match_ptr(...)` and **no** `MODULE_DEVICE_TABLE`.
-- Bug has been present for the entire life of the driver.
+- Switch and `BUG()` introduced in **`8f8f484bf355e5`** (“clk: tegra:
+  add Tegra specific clocks”, Prashant Gaikwad, 2013-01-11; in v3.9
+  era).
+- 9.6/28.8 MHz formula adjusted in **`e52d7c04bb3911`** (2015).
+- 48 MHz case added by **`46e31d69a5475`** (this commit).
+- Buggy missing-rate behavior has been present for ~13 years.
 
 Step 3.2: FOLLOW THE FIXES: TAG
-Record: No Fixes: tag. Not applicable. Introduction commit is
-`9d2d60687c9a06`, present in this tree (`git merge-base --is-ancestor`
-of the candidate vs HEAD succeeds).
+Record: **No Fixes: tag.** Not applicable. Introduced by the original
+2013 Tegra clk driver, not a recent regression.
 
 Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES
-Record (recent on this file):
-- `7bc1f3c8bd673` (2023): drop `of_match_ptr` so the table is always
-  used (build fix for !OF).
-- `8dcf23edaf4bd` (this commit)
-- Later functional CEC fixes (`be627f257ce28`, `bce7236c16c2c`) do not
-  depend on this line.
-- Standalone; not patch X/Y.
+Record: Recent `clk-pll.c` commits are unrelated (GFP helpers,
+`determine_rate`, RPM). This commit is **standalone**, not patch X/Y of
+a clk series. Author/submitter Tegra DT work around the same time
+(TF600T, grouper, tegra114 EMC) does not need to land with this 1-line
+clk case.
 
 Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS
-Record:
-- Pengpeng Hou submitted a large set of “add missing
-  MODULE_DEVICE_TABLE()” patches (rtc, vdpa, watchdog, fbdev, soc, can,
-  clk, power, this CEC driver). Same recipe, LLM-style commit text.
-- Hans Verkuil is listed maintainer of `ARM/TEGRA HDMI CEC` and applied
-  this patch. That is a strong quality signal for the **change**, even
-  if the author is doing a sweep.
+Record: Dmitry Osipenko is a regular Tegra clk contributor (`Don't allow
+zero clock rate`, PLLU config, gate refcounting, etc.). Submitter Ryhel
+resubmitted with maintainer Ack. Applied by Brian Masney.
 
 Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS
-Record: None. The macro has existed for decades
-(`include/linux/module.h`). The table and `.of_match_table` assignment
-are original. Applies standalone.
+Record: **None.** Diff only adds a `case` label. `_calc_rate`, the
+9.6/28.8 arm, and `BUG()` default all exist in this file independently
+of later refactors. Can apply standalone.
 
 ===============================================================
 PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
@@ -206,263 +216,244 @@ PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 
 Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION
 Record:
-- `b4 dig -c 8dcf23edaf4bd` →
-  https://patch.msgid.link/20260704122631.99057-1-pengpeng@iscas.ac.cn
-- Single revision (v1 only). `b4 dig -a` also matched an unrelated 2024
-  Liao Chen v4l2-subdev series by patch-id search noise; this commit is
-  a standalone v1.
-- Direct lore HTTP fetch returned 403; full thread was saved via `b4 dig
-  -m` to `/tmp/tegra_cec_moddev.mbox`.
-- NVIDIA Tegra developer Mikko Perttunen replied 2026-07-15: objected to
-  the “source-level fix / no dynamic hardware reproduction” paragraph as
-  AI boilerplate, and said **“Otherwise looks fine to me.”** No NAK. No
-  request for v2. Hans applied v1 as-is (that paragraph remained).
-- No reviewer asked for Cc: stable.
+- **b4 dig:**
+  https://patch.msgid.link/20260427132447.118272-2-clamor95@gmail.com
+- **v1:** 2026-04-17 `20260417073452.23342-2-clamor95@gmail.com`
+- **v2 / resend:** 2026-04-27 (cover + patch); Thierry Ack 2026-05-28
+- Cover letter: “Fix this by adding 48MHz clock support… aligned with
+  downstream 3.4 kernel for tegra114 logic”
+- **No NAK.** Only reviewer reply was Thierry’s **Acked-by**.
+- **No Cc: stable** in review (absence is not a negative).
 
 Step 4.2: CHECK WHO REVIEWED THE PATCH
-Record (`b4 dig -w`): To/Cc included Hans Verkuil, Mauro Chehab, Thierry
-Reding, Jonathan Hunter, linux-tegra, linux-media, linux-kernel. Right
-lists and maintainers. Informal ack from Mikko Perttunen (NVIDIA);
-applied by Hans Verkuil.
+Record: Recipients included Stephen Boyd, Michael Turquette, Thierry
+Reding, Jonathan Hunter, linux-clk, linux-tegra. **Thierry Reding
+acked.** Right maintainers were on the thread.
 
 Step 4.3: SEARCH FOR THE BUG REPORT
-Record: No Reported-by, bugzilla, or syzbot. Evidence is the missing
-export next to a live OF table. No user report of failed autoload was
-found.
+Record: No bugzilla/syzbot link. Description is a concrete
+firmware+hardware trigger (Surface 2 UEFI), not theoretical. Surface 2
+has **no in-tree DT** (tegra114 boards present: dalmore, roth, tn7,
+asus-tf701t only). Users still hit this with UEFI + out-of-tree/work-in-
+progress DT; the clk driver is in-tree for all Tegra114.
 
 Step 4.4: CHECK FOR RELATED PATCHES AND SERIES
-Record: Same-day author sweep of missing `MODULE_DEVICE_TABLE` across
-subsystems. Not a dependent series; each driver patch is self-contained.
-Sibling CEC OF drivers already had the macro.
+Record: Series is **v2 0/1 + 1/1**. Self-contained. No sibling patch
+required for the `BUG()` fix.
 
 Step 4.5: CHECK STABLE MAILING LIST HISTORY
-Record: No lore.kernel.org/stable thread for this exact Tegra CEC patch
-(search did not return a relevant hit). Same-class patches **have** gone
-into stable before, including:
-- `PCI: tegra: Add missing MODULE_DEVICE_TABLE` on 4.19-stable
-- `can: ctucanfd: add missing MODULE_DEVICE_TABLE()` from the same
-  author, committed to linux-stable by Greg Kroah-Hartman
-  (`d937bdb244a75` upstream)
+Record: **UNVERIFIED** — lore.kernel.org returned 403 (Anubis). Original
+linux-tegra/linux-clk thread was retrieved via `b4 dig -m`; no stable-
+list discussion in that mbox.
 
 ===============================================================
 PHASE 5: CODE SEMANTIC ANALYSIS
 ===============================================================
 
-Step 5.1: IDENTIFY KEY FUNCTIONS IN THE DIFF
-Record: No functions modified. Macro addition adjacent to
-`tegra_cec_of_match[]`. Related structures: `tegra_cec_driver`
-(`module_platform_driver`).
+Step 5.1: IDENTIFY KEY FUNCTIONS
+Record: **`_calc_rate()`** only.
 
 Step 5.2: TRACE CALLERS
-Record: `tegra_cec_probe` is the platform probe (DT device
-instantiation). `MODULE_DEVICE_TABLE` is not called at runtime;
-`scripts/mod/file2alias.c` `do_table()` consumes the alias at module
-build. Impact surface is autoload of `tegra_cec.ko` only.
+Record:
+- Default `pll->params->calc_rate` in `_tegra_clk_register_pll()` for
+  non-PLLM PLLs.
+- Called from **`clk_pll_set_rate()`** and
+  **`clk_pll_determine_rate()`** when `_get_table_rate()` misses.
+- Tegra210 PLLs use `tegra210_pll_fixed_mdiv_cfg` instead; this path is
+  **tegra20/30/114/124**.
+- Context: boot clock init and later audio PLL rate changes. Not a
+  syscall-hot path, but **every boot** on affected firmware.
 
 Step 5.3: TRACE CALLEES
-Record: N/A for the added line. The driver already includes
-`<linux/module.h>` and `<linux/of.h>`.
+Record: Integer divider math only (`cfreq`, `m`/`n`/`p`). No allocation,
+no locks inside `_calc_rate`. `clk_pll_set_rate` takes `pll->lock` after
+calc.
 
 Step 5.4: FOLLOW THE CALL CHAIN
-Record: Reachable for users with `CONFIG_CEC_TEGRA=m` on Tegra
-114/124/210 HDMI CEC DT nodes (e.g. Jetson TK1 / older Tegra boards).
-Unprivileged userspace cannot trigger a crash; the user-visible failure
-is “CEC adapter never appears until `modprobe tegra_cec`”. Builtin
-(`=y`) is already fine.
+Record:
+`tegra114_clock_init` → `tegra_clk_apply_init_table` →
+`tegra_init_from_table` → `clk_set_rate(pll_a, 564480000)` →
+`clk_pll_set_rate` → `_calc_rate`.
+**Reachable from boot on Tegra114 when parent is 48 MHz.** Unprivileged
+userspace is not required; firmware state is enough.
 
 Step 5.5: SEARCH FOR SIMILAR PATTERNS
-Record: Other CEC platform drivers already export OF tables. This file
-was the outlier. Same missing-macro pattern exists across many drivers
-and is treated as a real autoload bug.
+Record: Same `_calc_rate` switch is the single shared calculator. No
+duplicate 48 MHz holes in sibling functions. Freq tables still lack 48
+MHz PLLA rows (out-of-table path is intentional, per comment).
 
 ===============================================================
 PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
 ===============================================================
 
 Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?
-Record: Yes. File `drivers/media/cec/platform/tegra/tegra_cec.c` exists.
-Pre-commit parent still has the OF table and `.of_match_table` without
-the macro. Candidate **is already an ancestor of HEAD** (`git merge-base
---is-ancestor 8dcf23edaf4bd HEAD`). Bug introduced v4.15-rc1; present in
-every long-lived stable series that has this driver.
+Record:
+- Tree: **`git describe HEAD` = `v7.3-rc4-27-gf0100363d8c37`**,
+  `VERSION=7 PATCHLEVEL=3 SUBLEVEL=0 EXTRAVERSION=-rc4`.
+- `git merge-base --is-ancestor 46e31d69a5475 HEAD` → **already in this
+  checkout** (landed in v7.3-rc1).
+- The **vulnerable pattern** (`_calc_rate` switch + `BUG()` on unknown
+  parent rate) is here and dates to 2013. The 48 MHz hole is what this
+  commit fills. This is not post-7.3 code; older stables that still lack
+  the case have the bug.
 
 Step 6.2: CHECK FOR BACKPORT COMPLICATIONS
-Record: Expected apply: **clean**. Context around the table (compatibles
-tegra114/124/210) is original. Later commits only add the macro and then
-unrelated CEC protocol fixes. Line numbers differ slightly on current
-HEAD because of later edits, but the hunk is trivial.
+Record: **Clean apply** on any tree that still has the 9.6/28.8 arm
+without `case 48000000:`. Context in this file is stable. No backport
+rewrite needed.
 
 Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE
-Record: This is the fix; it is already in this 7.3-rc4 tree. No earlier
-substitute autoload fix on this file. `7bc1f3c8bd673` only dropped
-`of_match_ptr`; it did not add aliases.
+Record: This **is** the fix (`46e31d69a5475`). No earlier alternate 48
+MHz handling in `clk-pll.c`.
 
 ===============================================================
 PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
 ===============================================================
 
 Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY
-Record: `drivers/media/cec/platform/tegra/` — HDMI CEC on NVIDIA Tegra.
-Criticality: **PERIPHERAL** (SoC-specific media driver), but real
-product hardware (Jetson TK1 and Tegra X1 designs were the original test
-targets).
+Record: **drivers/clk/tegra** — SoC clock driver. **IMPORTANT** for
+NVIDIA Tegra 20/30/114/124, not core-mm/VFS. Boot-blocking on those
+SoCs.
 
 Step 7.2: ASSESS SUBSYSTEM ACTIVITY
-Record: Low churn. Driver added 2017; occasional correctness fixes.
-Mature. The missing macro is long-standing, not a regression from recent
-refactoring.
+Record: Mature driver (2013), still receiving fixes. This is a long-
+standing hole, not churn from a new subsystem.
 
 ===============================================================
 PHASE 8: IMPACT AND RISK ASSESSMENT
 ===============================================================
 
 Step 8.1: DETERMINE WHO IS AFFECTED
-Record: Driver-specific / config-specific: `CONFIG_CEC_TEGRA=m` on DT
-platforms with `nvidia,tegra114-cec`, `nvidia,tegra124-cec`, or
-`nvidia,tegra210-cec`. Not universal.
+Record: **Platform/firmware-specific:** Tegra boards whose firmware sets
+`pll_p_out1` to 48 MHz. Documented trigger is **Surface 2 UEFI**. Any
+tegra20/30/114/124 PLL using default `_calc_rate` with that parent rate.
 
 Step 8.2: DETERMINE THE TRIGGER CONDITIONS
-Record: Every boot/hotplug of that DT node when the driver is a module
-and nothing else loads it. Common on distros that package CEC as a
-module; irrelevant if the vendor kernel builds it in. Not a race. Not
-triggerable as a crash by unprivileged users.
+Record: **Every boot** with that firmware, during CAR init table
+application. Not a race. Not unprivileged-syscall; **unusable machine**
+if you boot Linux on that hardware.
 
 Step 8.3: DETERMINE THE FAILURE MODE SEVERITY
-Record: HDMI CEC device never binds until manual `modprobe`. No oops,
-leak, or corruption. Severity: **MEDIUM** for those boards
-(feature/hardware dead), **LOW** globally. This is the same user-visible
-class as “device ID missing so the module never loads.”
+Record: **`BUG()` on boot → CRITICAL** for affected devices (oops/panic,
+system does not come up). After the fix, worst case on tegra114 is
+`-EINVAL` + `WARN_ON` if M overflows, not a hard `BUG()`.
 
 Step 8.4: CALCULATE RISK-BENEFIT RATIO
 Record:
-- Benefit: restores intended autoload for modular Tegra CEC; matches
-  every other CEC OF driver.
-- Risk: one compile-time alias line; no runtime path change.
-- Ratio: high benefit for affected users, negligible risk.
+- **Benefit:** high for those devices (boot vs die); moderate overall
+  (narrow hardware).
+- **Risk:** very low (one `case` label, existing formula).
+- **Ratio:** strongly favors taking it. Matches the **hardware quirk**
+  stable exception (USB/PCI quirk analogue: one-line table addition so
+  existing driver survives real firmware).
 
 ===============================================================
 PHASE 9: FINAL SYNTHESIS
 ===============================================================
 
 Step 9.1: COMPILE THE EVIDENCE
+**FOR:**
+- Deterministic early-boot `BUG()`, verified via init_table →
+  `clk_set_rate(pll_a)` → `_calc_rate`.
+- One-line, obviously correct, same math as 9.6/28.8 MHz.
+- Acked by Tegra maintainer Thierry Reding; applied by clk maintainer.
+- Code path present since 2013; no prerequisites.
+- Hardware/firmware quirk, not a new UAPI.
 
-FOR backporting:
-- Real bug: OF match table used by the platform driver is not published
-  to module aliases.
-- `CEC_TEGRA` is **tristate**; modular builds are first-class.
-- One line, obviously correct, no new API.
-- Same pattern as the documented **device-ID / hardware enablement**
-  exception.
-- Maintainer-applied (Hans Verkuil); NVIDIA engineer said the change
-  looks fine.
-- Sibling CEC drivers already have `MODULE_DEVICE_TABLE(of, ...)`.
-- Bug present since v4.15; no prerequisites.
-- Same class of patches has historically been accepted into stable
-  (including this author’s `can: ctucanfd` MODULE_DEVICE_TABLE fix).
+**AGAINST:**
+- Subject looks like a feature (“support 48MHz”).
+- Surface 2 DT is not in mainline; user population is small.
+- PLLA 5-bit M may still reject the computed `m=48` (WARN instead of
+  BUG). Incomplete programming, but the crash is gone.
+- No syzbot/CVE/Fixes tag (expected for this review queue).
 
-AGAINST:
-- Not a crash, UAF, deadlock, or security hole.
-- No end-user report; author did not claim hardware reproduction.
-- Peripheral SoC driver; small user population.
-- Author is doing a mass static-analysis sweep; commit text was called
-  out as AI boilerplate.
-- Builtin kernels are unaffected.
-
-UNRESOLVED:
-- Could not HTTP-fetch lore (403); discussion recovered from `b4 dig -m`
-  instead.
-- Could not find a stable-list thread for **this** SHA.
+**UNRESOLVED:**
+- Stable-list discussion (lore 403).
+- Whether every tegra114 board with 48 MHz pll_p_out1 can actually lock
+  PLLA after this; downstream 3.4 used this same case.
 
 Step 9.2: APPLY THE STABLE RULES CHECKLIST
-1. Obviously correct and tested? **PASS** — one well-known macro;
-   applied by the subsystem maintainer; NVIDIA developer agreed. Build-
-   tested at least (author/reviewer).
-2. Fixes a real bug that affects users? **PASS** — modular autoload for
-   real Tegra CEC DT compatibles.
-3. Important issue? **PASS** under the hardware-enablement exception
-   (device does not come up). Not CRITICAL crash/corruption.
-4. Small and contained? **PASS** — +1 line, one file.
-5. No new features or APIs? **PASS** — publishes an existing table.
-6. Can apply to the local tree? **PASS** — file and table exist; hunk is
-   trivial. (This 7.3-rc4 tree already contains the commit.)
+1. Obviously correct and tested? **PASS** — one case, maintainer Ack, in
+   mainline since v7.3-rc1.
+2. Fixes a real bug that affects users? **PASS** — UEFI Surface 2 (and
+   same firmware pattern) `BUG()` at boot.
+3. Important issue? **PASS** — boot `BUG()`, severity CRITICAL for that
+   hardware.
+4. Small and contained? **PASS** — +1 line, one function.
+5. No new features or APIs? **PASS** — quirk: accept a parent rate the
+   hardware/firmware already programs. No new sysfs/uapi/driver.
+6. Can apply to the local tree? **PASS** — surrounding `_calc_rate`
+   exists; patch is a single case add (already present on this 7.3-rc4
+   HEAD because the candidate came from this lineage).
 
 Step 9.3: CHECK FOR EXCEPTION CATEGORIES
-Record: **Device ID / module alias publication for an existing driver.**
-Closest listed exception is new device IDs; this is the matching half
-(exporting the IDs the driver already matches). Also analogous to
-quirks/DT enablement: it makes already-supported hardware actually
-attach when built as a module.
+Record: **Hardware quirk/workaround** (firmware-programmed clock the
+driver must not `BUG()` on). Analogous to USB/PCI quirk table entries.
 
 Step 9.4: MAKE YOUR DECISION
-The local tree is mainline **7.3.0-rc4**. The driver and buggy omission
-exist here and in any stable series that still has `tegra_cec`. The
-patch is a one-line, maintainer-acked autoload fix with no runtime risk.
-That is stable material.
+This is a surgical boot-crash fix for a real firmware configuration. It
+meets stable rules and the quirk exception. Limited hardware does not
+disqualify it: obscure-device quirks are routinely taken. Incomplete
+PLLA table entries do not restore the `BUG()`, so they are not a reason
+to reject.
 
-What problem it solves for stable users: with `CONFIG_CEC_TEGRA=m`, udev
-never loads the module from the DT compatible, so HDMI CEC stays dead
-until a manual modprobe. Distros that ship this as a module on
-Jetson/Tegra boards hit that.
+What problem it solves: Tegra `_calc_rate()` treated 48 MHz `pll_p_out1`
+as illegal and called `BUG()` while setting PLLA during clock init.
+Surface 2 UEFI programs that rate.
 
-Risk vs benefit: benefit is hardware actually probing; risk is
-essentially zero.
+Risk vs benefit: one `case` vs a boot panic. Benefit dominates.
+
+Concerns: no in-tree Surface 2 DT; possible later `-EINVAL` if M
+overflows. Neither makes the `BUG()` acceptable to leave in stable.
 
 Verification:
-- [Phase 1] Parsed tags: author + Hans Verkuil SOB only; no
-  Fixes/Reported-by/Cc: stable
-- [Phase 1] Body describes missing OF alias publication, not a crash
-- [Phase 2] Diff: +1 line `MODULE_DEVICE_TABLE(of, tegra_cec_of_match)`
-  in `tegra_cec.c`
-- [Phase 2] Confirmed `.of_match_table = tegra_cec_of_match` already
-  present
-- [Phase 3] `git blame`: table from `9d2d60687c9a06` (v4.15-rc1); macro
-  from `8dcf23edaf4bd`
-- [Phase 3] Original driver dump: no MODULE_DEVICE_TABLE
-- [Phase 3] Author sweep of similar one-liners; Hans is MAINTAINERS
-  owner of ARM/TEGRA HDMI CEC
-- [Phase 4] `b4 dig -c 8dcf23edaf4bd`:
-  https://patch.msgid.link/20260704122631.99057-1-pengpeng@iscas.ac.cn
-- [Phase 4] `b4 dig -a`: single v1; no later revision
-- [Phase 4] `b4 dig -w`: linux-media, linux-tegra, Hans, Mauro, Thierry
-  Reding, Jonathan Hunter
-- [Phase 4] mbox: Mikko Perttunen “Otherwise looks fine to me”;
-  complaint was about AI commit-message padding only
-- [Phase 4] lore WebFetch 403; content taken from mbox
-- [Phase 4] No stable@ thread for this SHA; same-class
-  MODULE_DEVICE_TABLE patches have landed in stable
-- [Phase 5] Kconfig `CEC_TEGRA` is tristate; Makefile
-  `obj-$(CONFIG_CEC_TEGRA) += tegra_cec.o`
-- [Phase 5] `MODULE_DEVICE_TABLE` in `include/linux/module.h` creates
-  file2alias symbol; `scripts/mod/file2alias.c` `do_table()` consumes it
-- [Phase 5] Other CEC OF drivers already have the macro
-- [Phase 6] `git describe HEAD`: v7.3-rc4-27-gf0100363d8c37; `make
-  kernelversion`: 7.3.0-rc4
-- [Phase 6] `git merge-base --is-ancestor 8dcf23edaf4bd HEAD`: yes
-  (already in this tree)
-- [Phase 6] Backport difficulty: clean one-liner
-- [Phase 7] Peripheral media driver, maintainer-applied
-- [Phase 8] Failure mode: module not autoloaded → CEC unused; severity
-  MEDIUM for Tegra modular users, not a panic
-- UNVERIFIED: live udev autoload on real Tegra hardware (author did not
-  claim it)
+- [Phase 1] Tags: Acked-by Thierry Reding; SOBs Osipenko, Schwöbel,
+  Ryhel, Masney; no Fixes/Cc-stable/Reported-by
+- [Phase 2] Diff: +1 line `case 48000000:` in `_calc_rate()` in
+  `drivers/clk/tegra/clk-pll.c`
+- [Phase 2] tegra114 `init_table` sets PLLA 564480000; parent
+  `pll_p_out1`; freq table has no 48 MHz input → `_calc_rate` on boot
+- [Phase 2] `divm_width=5` → m=48 may `-EINVAL` after the fix; `BUG()`
+  still avoided
+- [Phase 3] git blame: switch/`BUG()` from `8f8f484bf355e5` (2013); this
+  commit `46e31d69a547530fbef499bde888b6bb45a1deac`
+- [Phase 3] `git merge-base --is-ancestor 46e31d69a5475 HEAD` → already
+  in this 7.3-rc4 tree
+- [Phase 3] No Fixes tag; standalone; no prerequisite commits
+- [Phase 4] `b4 dig -c 46e31d69a5475` → lore patch-id match; v1
+  2026-04-17, v2 2026-04-27
+- [Phase 4] `b4 dig -a`: v1 then v2 (“aligned with downstream 3.4”)
+- [Phase 4] `b4 dig -w`: linux-clk, linux-tegra, Thierry, Boyd, Hunter
+- [Phase 4] mbox: Thierry Acked-by; no NAK
+- [Phase 4] lore WebFetch 403; stable list UNVERIFIED
+- [Phase 5] callers: `clk_pll_set_rate`, `clk_pll_determine_rate`;
+  default calc_rate for non-PLLM
+- [Phase 6] `git describe HEAD` = v7.3-rc4-27-gf0100363d8c37; Makefile
+  7.3.0-rc4; file and BUG() default present
+- [Phase 6] No other 48 MHz pll_p_out1 fix in this file
+- [Phase 7] clk/tegra, important for Tegra SoCs
+- [Phase 8] Failure mode: `BUG()` at boot, CRITICAL for affected
+  firmware
+- UNVERIFIED: stable@ discussion; whether PLLA actually locks at 564.48
+  MHz with 48 MHz parent on Surface 2 hardware
 
 **YES**
 
- drivers/media/cec/platform/tegra/tegra_cec.c | 1 +
+ drivers/clk/tegra/clk-pll.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/cec/platform/tegra/tegra_cec.c b/drivers/media/cec/platform/tegra/tegra_cec.c
-index 3ed50097262f6..fe66336e734f8 100644
---- a/drivers/media/cec/platform/tegra/tegra_cec.c
-+++ b/drivers/media/cec/platform/tegra/tegra_cec.c
-@@ -458,6 +458,7 @@ static const struct of_device_id tegra_cec_of_match[] = {
- 	{ .compatible = "nvidia,tegra210-cec", },
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, tegra_cec_of_match);
- 
- static struct platform_driver tegra_cec_driver = {
- 	.driver = {
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 591b9f0c155a0..e48ca3f4b5f86 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -575,6 +575,7 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 		break;
+ 	case 9600000:
+ 	case 28800000:
++	case 48000000:
+ 		/*
+ 		 * PLL_P_OUT1 rate is not listed in PLLA table
+ 		 */
 -- 
 2.53.0
 
