@@ -1,74 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792428889;
-	b=oFOMvxUNlQjv0f57jbqKrkXzlm9BFjdUYTLn2SR4joBngaye7F7MgitR8vWoo2ypLg9D
-	 nXqSAvX83LLJebpKGKVBQlLuOFTZQgGmo04QfasVXk0kNAkIsGR8cRjBc0xjZ+sweNxbb
-	 bnd9oZeAkuQWKkeatPLUTRfKOORvi1/GqjFlhoerqAoMa4Wcg9FoqWfxn3i9mPLpsKqB1
-	 9l0jSircos1zdVgDFm/LavFfVMkug0srzxLRydId/LIE8AqmMeigJfmtzWKufq93DtxXc
-	 kpP/vrZQazUcKlY9cvBxnzgohHBCsTisyAWDKrayIGy7f/jatiQ5vd+JlNO3DVoGmgw==
+	t=1792428909;
+	b=1cs0FWBDU1XYLpf4fOKpG8lesmig3n3EX14Z9ZMIEoLcTeb734QAgeRmndGCgxzy9UIE
+	 jmZp7duTVP6cI4R6lWYLskZMGNvWTs+W2P+SHHoA/3KBwvJiTbiiu/DjGLocoFnBqN9pQ
+	 /rsGTACOiu/85UZEKxIe9oeKaMTVQmii+V8bKdXrugTU2woYm3Pg8F5Y/pwkhrQG8bTtJ
+	 +Ps2RuDyw6AGRdhjgAQGM/ZgILbFh+Wmp0+bMcKq0euhv6iMSudaldZZcatGTaOMPpMd+
+	 e1H06xnPQRLeieONJZnYdtVSLyJiM7YQxszaLfPqdFBK+TZoUcV5HdkrAr7Bgiy+yYQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792428889;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=eWKprZGp9xOhbzFtnXXnWxmjQyyqaM2s5HKEF0UwXqo=;
-	b=BlZWc/XlkcxTeIZi/nceK33UmIIRIUsOhYfjr4LTHFzfLpgGuM/jN364mkLLabjyKkig
-	 ne3jiNAjBtlvpUNB4tDCh1sSSThRldiG6mcmsS6z8kRLgJP1CNjd6yQH27/7EBL7U1DpE
-	 khUf0qX0p14nlgEOgift3GbnS0HZqfVzK9XI1IF580TlxqBJHblrHj7FxRlridNvmFqCV
-	 ckVIacMGyxOALVRHSs+uzC9xdBzotZhl8iC/nFPOCmnbqbpPw6VmJ1lxROZonJ3Wess6T
-	 FLvbzbjaM4bu382nlxVNIRSPGszjHXMXQidcqHtSt6V3JZG1lUfjHxz5YmoX6C8igtw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792428909;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:From:
+	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=DDvlbAjqIKYcI5YtOv7UdDRsF0j2wGcohxG2sB0GTBM=;
+	b=2OSx6p2RGf5oZuH/EX8v4dtLwxk8cvFqHQmE5rhAX30+VL7D83d7A7+KCOGDs9h8hGci
+	 gSj6ruMaFDAX5PYy/nzGCm6CBoDtkD18V5j99ik69ucbuGnadMevmHy3pX4qFl4+BaT2G
+	 n81n8TZRpvPI0PsnT0s9p6vPLU/tkSMnOCoed9gHR8UeIz24YEf1GlYbgBGNxbMlHqCdO
+	 PwYk/W/KyROKBgn74fsjMn2J9bxVX8covc/Va7qGMVUWnCUKqw0vCqSURKxnpwXlz6U83
+	 g6LdD2ccNbqKK38D9CoFTCP1IOOTRXcfPE6a7Yid1qp1tWVlFVuhFy/e7yQYvVII65A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dISWeMBw;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B2460A2602;
-	Mon, 19 Oct 2026 16:54:49 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=sng5j+Zz;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9821C606A32C;
+	Mon, 19 Oct 2026 16:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9821C606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dISWeMBw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B67A71F000C5;
-	Mon, 19 Oct 2026 16:54:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792428889;
-	bh=eWKprZGp9xOhbzFtnXXnWxmjQyyqaM2s5HKEF0UwXqo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dISWeMBw5d36ciVRzrtUdZNJ/7F0we8/HSvaG3qTV0vYTOS2y888ahJLuj0S+o0eI
-	 B9429i9IQkVdmJVATi5+94yRGgFyTxCZyxyDlZaBFaKkIZ8TxEHbe8B/86jCIYIr0F
-	 coKUx3j4Fuukr5Un6c12r2H04ue2Ya9DDV5+VSXcTKBs1R4itbZa9Yr5JnJzb14EGU
-	 bhEqu9jIRvNoN4dUejSLJvTL4Qi/v7whU2o9UHnSSk0Ol0SdQ0JhT7K1xdw6nF0TvR
-	 btBFTc7ujbfSlzl12fTxHxNWyC6WxTgbD6IiGvIy3yyVTBeHGI+8cqbcjYM/iCW2d+
-	 Svtu9ffEjX/5g==
-From: Sasha Levin <sashal@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Sasha Levin <sashal@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@nabladev.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org,
-	sr@sladewatkins.com,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 6.6 0000/1674] 6.6.160-rc1 review
-Date: Mon, 19 Oct 2026 12:54:30 -0400
-Message-ID: <rc-reply-0002-a26fc6391c09@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <8e765406-3ba3-47d7-bba6-e15a2cb56857@nvidia.com>
-References: <20261017160431.119607952@linuxfoundation.org> <8e765406-3ba3-47d7-bba6-e15a2cb56857@nvidia.com>
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=sng5j+Zz
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C869204C;
+	Mon, 19 Oct 2026 09:55:04 -0700 (PDT)
+Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD3273F673;
+	Mon, 19 Oct 2026 09:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1792428907; bh=g0MCRM90bHOY9xtPWztIDlp+2g+2cg4X+xov3AAv2Po=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sng5j+ZzFPDKIUj2toxn/TcsqEiuqIvvYLh9Yr5Pwf6ZrnfHiO9wuC1inCAEV3TpQ
+	 p7pS065DFJmLupgiAFGyl3YkDf/3uNsTsKqraz3NzjmlCJeBovUBlLUAp/tmllNJd2
+	 sXy+3vjJWuLa0jAC8Y7hKQgSL+h1opd/Ug5uqnsI=
+Message-ID: <5173dbaa-2a49-420d-bf4e-97c9cc340bd9@arm.com>
+Date: Mon, 19 Oct 2026 17:55:02 +0100
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -78,19 +53,111 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/11] ARM: dma-mapping: Bypass the legacy path for
+ core-owned DMA API domains
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Heiko Stuebner <heiko@sntech.de>,
+ Thierry Reding <thierry.reding@kernel.org>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20261016-b4-arm32-iommu-dma-cookie-v2-0-b06842a01938@nvidia.com>
+ <20261016-b4-arm32-iommu-dma-cookie-v2-5-b06842a01938@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20261016-b4-arm32-iommu-dma-cookie-v2-5-b06842a01938@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 19, 2026 at 11:18:07AM +0100, Jon Hunter wrote:
-> The above commit is causing the following build failure for ARM with the
-> multi_v7_defconfig:
->
-> drivers/mmc/host/atmel-mci.c:2661:31: error: ‘struct atmel_mci’ has no member named ‘bh_work’
+On 16/10/2026 7:46 am, Mikko Perttunen wrote:
+> ARM's arch_setup_dma_ops / arm_setup_iommu_dma_ops creates a custom
+> IOMMU domain for DMA API usage, and continues to do so when the IOMMU
+> driver doesn't explicitly request a DMA default domain type.
+> 
+> When, however, that DMA default domain is requested and the core owns
+> the domain, we need to skip our own domain management. Add checks to
+> arm_setup/teardown_iommu_dma_ops for these cases. In such a case IOVAs
+> can be allocated from anywhere in the domain's geometry, so also add a
+> check to ensure the device's dma-ranges cover it. Presently, this is the
+> case for all platforms except some OMAP platforms with a non-zero
+> dma-ranges base.
 
-Dropped c125ee35a49a ("mmc: atmel-mci: Fix use-after-free in atmci_remove
-due to race condition") from the 6.6 and 6.1 queues. Thanks for the
-report.
+It's probably worth adding some cleverness to arm_iommu_detach_device() 
+as well - it might work out benign to attempt to detach from a real 
+core-owned default domain, but we'll now want to set dma_ops and 
+to_dma_iommu_mapping according to the default domain itself (since we'll 
+now have the possibility of switching between an explicit unmanaged 
+dma_iommu_mapping and the implicit default one.)
 
--- 
 Thanks,
-Sasha
+Robin.
+
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>   arch/arm/mm/dma-mapping.c | 25 ++++++++++++++++++++++++-
+>   1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index f2d3e8ec3487..d6315baeddb9 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -1761,13 +1761,33 @@ EXPORT_SYMBOL_GPL(arm_iommu_detach_device);
+>   
+>   static void arm_setup_iommu_dma_ops(struct device *dev)
+>   {
+> -	struct dma_iommu_mapping *mapping;
+> +	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
+>   	u64 dma_base = 0, size = 1ULL << 32;
+>   
+>   	if (dev->dma_range_map) {
+>   		dma_base = dma_range_map_min(dev->dma_range_map);
+>   		size = dma_range_map_max(dev->dma_range_map) - dma_base;
+>   	}
+> +
+> +	/*
+> +	 * An existing cookie means the core owns the domain. Only set the
+> +	 * per-binding DMA ops. IOVAs are allocated from the whole aperture,
+> +	 * so the device's dma-ranges must cover it.
+> +	 */
+> +	if (mapping) {
+> +		const struct iommu_domain_geometry *geo =
+> +			&mapping->domain->geometry;
+> +
+> +		if (dma_base > geo->aperture_start ||
+> +		    dma_base + size < geo->aperture_end) {
+> +			dev_err(dev, "dma-ranges do not cover the IOMMU aperture\n");
+> +			return;
+> +		}
+> +
+> +		set_dma_ops(dev, &iommu_ops);
+> +		return;
+> +	}
+> +
+>   	mapping = arm_iommu_create_mapping(dev, dma_base, size);
+>   	if (IS_ERR(mapping)) {
+>   		pr_warn("Failed to create %llu-byte IOMMU mapping for device %s\n",
+> @@ -1792,6 +1812,9 @@ static void arm_teardown_iommu_dma_ops(struct device *dev)
+>   	if (!mapping)
+>   		return;
+>   
+> +	if (!mapping->owns_domain)
+> +		return;
+> +
+>   	arm_iommu_detach_device(dev);
+>   	arm_iommu_release_mapping(mapping);
+>   }
+> 
+
