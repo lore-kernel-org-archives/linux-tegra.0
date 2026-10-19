@@ -1,46 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6C756F591;
-	Mon, 19 Oct 2026 13:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505EA5B79A1;
+	Mon, 19 Oct 2026 14:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418290; cv=none; b=LlzCq65K7MwQkj9lyhsnCWVQo4KL4GA+PrSrvHKq7YEtzoFiZrLN3QwSc/hUjs80KJOvdSIPVAE35r3ujP40df6+/cvUwHCnTqDlV8pB/DxJXkXjP0fwO+HwSxdRQJbYbfGwdW15pyoZ28qFKeqPmrxeGDZW66/GzHOOn3JzUuU=
+	t=1792418448; cv=none; b=s1Xz+FLKILQJNHL0ccu2cfsFn3NsVN7ngdAsJCW+pqbjRgbI9hl6loV4BTMyiBD2poPbioEsruCpaJds8pY7upWnOq28gnSG51CO+rDBOJTbWGR5pGr2xu0ZcuExk6lw4e1kpuN18oYxP+dXBLcNcg6PEFezMqc8lW5ReoPWvzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418290; c=relaxed/simple;
-	bh=iBg+oZBMe0ZVl4r9/ARDaUlsxqYdZf1/rQ9ZuV04FJA=;
+	s=arc-20240116; t=1792418448; c=relaxed/simple;
+	bh=WxDbETXTCvk7MDK8LMlTz8PpFXUsuAQ8lxlFUWSJNes=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o0ffyQkXTnG4NxCUPIuDm34f7C7h60UwbNKOFNUPivde4iMrbeC94a3TLiNyATdCLT5mtQRGhI9rgGyw1+pwDi7CVVbTkl/n5rSrugcjGIAr3v1jG5f0G0g7BCwnZoB+R/Zb0l4bkgS7dAB52DIaktJ2Jh607Kggq6QIfnwJMM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0GO22ur; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=tyVGU5XsqRHHZdhgCiJpRCMSeVkGcgHDg9QPRW8CLiCqy7Pp2WK5bLKktZiKGcKqlLdb08HYz6VjBPZSIAhNcQy95qcbgjoxz3xqwVYFIOi+9TN+4a1gnS554S/klEItbfQQDK4vOHP1aEua9keGgwZ/OHDgVwnfi83NGxBpBJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkRPM+wV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0GO22ur"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFE01F000C8;
-	Mon, 19 Oct 2026 13:58:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkRPM+wV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFB61F000C4;
+	Mon, 19 Oct 2026 14:00:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418287;
-	bh=Ff21cRgZ8MvA5CDC/2+VpN0VjGBg1z2VwpeEj2orLlU=;
+	s=k20260515; t=1792418445;
+	bh=jEwxnsQF6sHZjugZq/00AG00Xt7EceYd4qsDmz22KOc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=h0GO22urMcdHOGNafsxfp1ycROIVdVoinJlMg17ucDY07dF+RZBGQ/tEmKrTWCQsu
-	 EpkXE/mq0PGGDEAfXRdUJgOWmtKKuu2Znbx7PCK/k1NUqvvTpgWukgRGkq/xEqM0e7
-	 OihqhirPT3mprGCS2VQSq3vngaUsUiLlj61DkUu9s2hy7LmhU73DNlAZyooDEU1DTk
-	 iiCDXLPs6aLVM9yRzl1zmHOV0eT8nWtw5khI8GarroHXbr+01erpADYIRqZZuiDJgE
-	 kdCrUxDjIS7dgJ8wq76E0xQGr8Gv/+wUSwiDTPhfuarQ5dveVR2pDDJEU+SaHHYw+n
-	 bPNRwHW5be4cw==
+	b=SkRPM+wVvki+CaYEessUE0RLQnRVLnA1kvQC0H3vr196yfIJk17Vv217irKKt1uGM
+	 11OhZbKvuDQoMIITOL19iJdi3GXwyuuKZl4AHMO4duBxLsae65iKOWJRTuceIlEQwM
+	 9NjCltvtSfttfxULd/qDxMJG+RJ0FDZ5wi8DN1BUNkbb8R+l1N2pIaoxof05ReGpIm
+	 nzXKEjYKyOs0EjrVjjguwZFaT05PxL4rghAeZINFYHHYVDkdzK8bL4SfUyI+pp6ogd
+	 JTN154p5T7OtPJG1ehiHRuWDS0iDLlj3ursSyMSy+whGuKyEC4Tu0eDG5gYv8LvXcd
+	 P5yuK32kshVug==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>,
+Cc: Nicolin Chen <nicolinc@nvidia.com>,
+	Will Deacon <will@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	thierry.reding@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
+	joro@8bytes.org,
+	jonathanh@nvidia.com,
 	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] gpu: host1x: Wait for timeout worker completion on channel free
-Date: Mon, 19 Oct 2026 09:47:11 -0400
-Message-ID: <20261019135441.1420968-140-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-6.12] iommu/tegra241-cmdqv: Rate-limit the error ISR's log message
+Date: Mon, 19 Oct 2026 09:49:05 -0400
+Message-ID: <20261019135441.1420968-254-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -56,81 +57,72 @@ X-stable-base: Linux 6.18.57
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+From: Nicolin Chen <nicolinc@nvidia.com>
 
-[ Upstream commit 7a39b9856acccc8e9b05845ca2bf62494fcd3dfa ]
+[ Upstream commit a86c36163c9722545d27e92bdad8418fdcaa8b1d ]
 
-cdma_timeout_destroy() used cancel_delayed_work() to cancel pending
-timeout work when destroying the CDMA. Usually this is fine, but
-there is a narrow race condition where the timeout handler has started
-execution but has not taken cdma->lock; the channel is freed causing
-cdma_stop to take cdma->lock and flush the channel; host1x_cdma_deinit
-then proceeds with deinitializing cdma while the handler is waiting to
-take cdma->lock.
+tegra241_cmdqv_isr() logs the error-map registers on every error interrupt.
+A malfunctioning device, or a guest deliberately faulting its own VCMDQs,
+can raise these interrupts rapidly, and the unconditional dev_warn() then
+floods the kernel log.
 
-Therefore change cdma_timeout_destroy to use cancel_delayed_work_sync
-instead to ensure any pending timeout work completes before proceeding.
+Rate-limit the message with dev_warn_ratelimited(), and pass the error-map
+registers straight to it so their four MMIO reads run only when the limiter
+prints, instead of building the string on every interrupt.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://patch.msgid.link/20260609-b4-host1x-small-fixes-a-v1-1-7c1131c0b3ad@nvidia.com
+Assisted-by: Claude:claude-opus-4-8
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-The local tree is **v7.3-rc4** (`7.3.0-rc4`). The host1x CDMA timeout
-path is present, and this is a one-line `cancel_delayed_work` →
-`cancel_delayed_work_sync` race/UAF fix that is standalone and meets
-stable criteria.
+The local checkout is **v7.3-rc4**. The driver and the unconditional ISR
+`dev_warn()` are present here; the change is a small, self-contained
+log-flood / guest-DoS mitigation, so it belongs in this tree.
 
 ===============================================================
 PHASE 1: COMMIT MESSAGE FORENSICS
 ===============================================================
 
 **Step 1.1: PARSE THE SUBJECT LINE**
-Record: **[gpu/host1x] [Wait / ensure completion] [Wait for timeout
-worker completion on channel free]**
-Subsystem prefix `gpu: host1x:`. The verb is “Wait … on channel free”,
-i.e. synchronize teardown with a running work item. That is a teardown-
-race fix, not a feature.
+Record: **[iommu/tegra241-cmdqv] [Rate-limit] [stop the error ISR from
+printing on every interrupt]**
 
 **Step 1.2: PARSE ALL COMMIT MESSAGE TAGS**
 Record:
-- **Fixes:** none (expected for this review path)
+- **Fixes:** none (expected)
 - **Reported-by:** none
 - **Tested-by:** none
-- **Reviewed-by:** none on the commit itself
-- **Acked-by:** none
-- **Link:** `https://patch.msgid.link/20260609-b4-host1x-small-fixes-
-  a-v1-1-7c1131c0b3ad@nvidia.com`
-- **Cc: stable:** none (expected)
-- **Signed-off-by:** Mikko Perttunen `<mperttunen@nvidia.com>` (author);
-  Thierry Reding `<treding@nvidia.com>` (Tegra/host1x maintainer).
-  Ignored any Sasha Levin SOB (none on this commit).
-- Series marker in the msgid: **patch 1/6** of `host1x-small-fixes-a`.
+- **Reviewed-by / Acked-by:** none on the commit itself
+- **Link:** none
+- **Cc: stable:** none on this patch
+- **Assisted-by:** Claude:claude-opus-4-8
+- **Signed-off-by:** Nicolin Chen (NVIDIA; author), Will Deacon (arm-
+  smmu maintainer; applied it)
+- Pipeline markers such as Sasha Levin SOB / “[Upstream commit]” were
+  not on the real commit (`a86c36163c972`)
+
+Notable: no user/syzbot report. The cover letter says the series came
+from **Sashiko** (LLM) review, not a production crash.
 
 **Step 1.3: ANALYZE THE COMMIT BODY TEXT**
 Record:
-- **Bug:** `cdma_timeout_destroy()` used `cancel_delayed_work()`, which
-  does not wait if the timeout work is already running.
-- **Mechanism:** timeout handler has started but has not yet taken
-  `cdma->lock`; channel free runs `cdma_stop` (takes the lock, flushes),
-  then `host1x_cdma_deinit()` tears CDMA down while the handler is still
-  waiting for that lock.
-- **Symptom/failure mode:** use-after-free / use of a destroyed mutex
-  and CDMA state from the timeout worker. That is a kernel crash /
-  memory-safety bug, not a cosmetic issue.
-- **Version info:** none in the message. The call has existed since
-  host1x channel support.
-- **Author’s root cause:** async cancel vs running work vs lock/deinit
-  order.
+- **Bug:** `tegra241_cmdqv_isr()` logs error-map registers with
+  unconditional `dev_warn()` on every error interrupt.
+- **Symptom:** kernel log flood.
+- **Trigger (stated):** malfunctioning device, or a **guest deliberately
+  faulting its own VCMDQs**, raising interrupts rapidly.
+- **Root cause:** every interrupt builds a 256-byte string (including
+  four extra MMIO reads) and prints it.
+- **Fix:** `dev_warn_ratelimited()`, and pass the MMIO reads as printk
+  args so they run only when the limiter actually prints.
+- **Version info:** none in the message.
 
 **Step 1.4: DETECT HIDDEN BUG FIXES**
-Record: Not hidden. It is an explicit race/UAF fix. Cover letter (see
-Phase 4) calls patches 1–4 “logic issues that are unlikely to happen but
-technically possible.” Unlikely trigger does not make a UAF inapplicable
-to stable.
+Record: Not a disguised cleanup. It is an explicit flood/DoS mitigation.
+It does not fix a UAF, leak, or crash by itself.
 
 ===============================================================
 PHASE 2: DIFF ANALYSIS - LINE BY LINE
@@ -138,101 +130,39 @@ PHASE 2: DIFF ANALYSIS - LINE BY LINE
 
 **Step 2.1: INVENTORY THE CHANGES**
 Record:
-- File: `drivers/gpu/host1x/hw/cdma_hw.c` — **1 insertion, 1 deletion**
-- Function: `cdma_timeout_destroy()`
-- Scope: **single-file surgical fix** (one call-site change)
+- File: `drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c` (+7 / −9)
+- Function: `tegra241_cmdqv_isr()`
+- Scope: **single-file surgical** (one logging site)
 
 **Step 2.2: UNDERSTAND THE CODE FLOW CHANGE**
 Record:
-- **Before:** if `cdma->timeout.initialized`,
-  `cancel_delayed_work(&cdma->timeout.wq)` then `initialized = false`.
-  Pending work is cancelled; **running** work is not waited for.
-- **After:** `cancel_delayed_work_sync()` — cancel pending work **and
-  wait** if the handler is executing.
-- **Path:** channel teardown / CDMA destroy, not the submit hot path.
+- **Before:** ISR always `snprintf()`s into `char err_str[256]`, always
+  does four `CMDQ_ERR_MAP` MMIO reads, always `dev_warn()`.
+- **After:** no stack buffer; `dev_warn_ratelimited(...)` with the four
+  `readl_relaxed()` calls as arguments.
+- Path: **error interrupt path** (threaded IRQ). Error *handling* after
+  the log is unchanged.
 
-Verified teardown order in this tree:
-
-```102:113:drivers/gpu/host1x/channel.c
-static void release_channel(struct kref *kref)
-{
-        ...
-        host1x_hw_cdma_stop(host, &channel->cdma);
-        host1x_cdma_deinit(&channel->cdma);
-        clear_bit(channel->id, chlist->allocated_channels);
-}
-```
-
-```528:541:drivers/gpu/host1x/cdma.c
-int host1x_cdma_deinit(struct host1x_cdma *cdma)
-{
-        ...
-        host1x_pushbuffer_destroy(pb);
-        host1x_hw_cdma_timeout_destroy(host1x, cdma);
-        return 0;
-}
-```
-
-`cdma_stop()` takes `cdma->lock`, may wait for an empty sync queue, then
-unlocks. `host1x_cdma_deinit()` then runs **without** `cdma->lock`. That
-matches the commit’s race: stop can finish and deinit can proceed while
-`cdma_timeout_handler()` is between start and `mutex_lock(&cdma->lock)`.
-
-The window is larger than “a few instructions.” The handler dumps debug
-state **before** taking the lock:
-
-```291:305:drivers/gpu/host1x/hw/cdma_hw.c
-static void cdma_timeout_handler(struct work_struct *work)
-{
-        ...
-        host1x_debug_dump(cdma_to_host1x(cdma));
-        mutex_lock(&cdma->lock);
-```
-
-`host1x_debug_dump()` walks every channel and dumps FIFOs
-(`show_all(..., true)`). A GPU timeout is also when userspace/driver
-often closes the channel. That is a realistic overlap, not only a one-
-instruction race.
+Verified `dev_level_ratelimited()` in `include/linux/dev_printk.h`: the
+`__VA_ARGS__` are only substituted inside `if (__ratelimit(&_rs))`, so
+those MMIO reads run only when a line is printed.
 
 **Step 2.3: IDENTIFY THE BUG MECHANISM**
 Record:
-- **Category:** race + use-after-free / use of destroyed CDMA (mutex,
-  push buffer, channel).
-- **Mechanism:** non-synchronous delayed-work cancel on destroy. Fix is
-  the standard `cancel_*_sync` teardown pattern.
-- **Not** a leak, NULL check, or new API.
-
-Related code that correctly stays **non-sync** (would deadlock if
-changed, because it runs under `cdma->lock`, which the handler also
-takes):
-
-```293:297:drivers/gpu/host1x/cdma.c
-static void stop_cdma_timer_locked(struct host1x_cdma *cdma)
-{
-        cancel_delayed_work(&cdma->timeout.wq);
-        cdma->timeout.client = NULL;
-}
-```
+- **Category:** ISR log flood / availability (guest-triggered printk
+  storm), plus extra MMIO on every interrupt.
+- **Not:** UAF, leak, deadlock, OOB, or NULL deref.
+- **Hardware workaround?** No.
 
 **Step 2.4: ASSESS THE FIX QUALITY**
 Record:
-- **Quality:** obviously correct for the stated race.
-  `cancel_delayed_work_sync()` is the documented way to wait for delayed
-  work before freeing the object that work touches.
-- **Minimal:** one identifier change.
-- **Regression risk:**
-  - `_sync` can sleep. Callers of `host1x_channel_put()` →
-    `release_channel()` are process-context (DRM ioctls/file close,
-    client `exit`/unbind, debugfs). Sleeping is valid there.
-  - `_sync` is **not** called while holding `cdma->lock` (`cdma_stop`
-    drops it first). No lock-vs-work deadlock on the free path described
-    in the commit.
-  - Residual risk: if the timeout handler’s `host1x_debug_dump()` →
-    `host1x_channel_put()` dropped the **last** channel ref,
-    `release_channel()` would run on the same work and `_sync` could
-    wait on itself. That path was already unsafe with async cancel (UAF
-    after dump returns). No mailing-list NAK of this patch; maintainer
-    applied it.
+- Obviously correct: standard `*_ratelimited` pattern already used in
+  other IOMMU fault paths (`arm-smmu-v3.c`, `virtio-iommu.c`, AMD/Intel,
+  etc.).
+- Minimal; no unrelated edits.
+- Regression risk: **very low**. Worst case is fewer error-map dumps in
+  dmesg (intended). Error recovery is untouched.
+- Red flags: LLM-assisted; no `Fixes:`/`Reported-by`. Not a new API.
 
 ===============================================================
 PHASE 3: GIT HISTORY INVESTIGATION
@@ -240,35 +170,31 @@ PHASE 3: GIT HISTORY INVESTIGATION
 
 **Step 3.1: BLAME THE CHANGED LINES**
 Record:
-- Buggy `cancel_delayed_work()` in `cdma_timeout_destroy()` comes from
-  **`6579324a41cc41`** (“gpu: host1x: Add channel support”, Terje
-  Bergstrom, 2013-03-22).
-- First contained in **`v3.10-rc1`**. This is old, long-lived driver
-  code, not a last-month addition.
+- Unconditional `dev_warn()` + `snprintf` were in the original driver:
+  `918eb5c856f6` (“Add in-kernel support for NVIDIA Tegra241 (Grace)
+  CMDQV”), **2024-08-30**, first in **v6.12-rc1**.
+- This tree is **v7.3-rc4**, so that code is in this lineage.
 
 **Step 3.2: FOLLOW THE FIXES: TAG**
-Record: No `Fixes:` tag. The introducing commit is identified by blame,
-not by the message. `git merge-base --is-ancestor 6579324a41cc41 HEAD`
-succeeds — the introducing commit is in this checkout.
+Record: No `Fixes:` tag. N/A. The logging has been there since the
+driver was added.
 
 **Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES**
-Record (recent `drivers/gpu/host1x/hw/cdma_hw.c`):
-- `7a39b9856accc` — this fix
-- `60bca008dd789` — Tegra264 support (does not revert the `_sync`
-  change; current file still has `cancel_delayed_work_sync`)
-No prerequisite refactor. Standalone.
+Record: This is **v2 11/11** of “Fix error-interrupt races and VINTF
+lifecycle bugs” (Nicolin Chen, 2026-07-14). Cover letter: ordered
+**most-critical-first**; this is the last, smallest issue (“ISR flooding
+the kernel log under repeated guest errors”).
+Standalone: it only changes the log line and does **not** need the
+earlier UAF/lifecycle patches to be correct.
 
 **Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS**
-Record: Mikko Perttunen is a regular NVIDIA host1x contributor (UAF,
-refcount, iommu, MLOCK, etc.). Same-series follow-ups are independent
-(double `device_add`, trace offset, debug stack over-read, `pin_job`
-return type, syncpoint wrap annotation). This patch does not depend on
-them.
+Record: Nicolin Chen is the NVIDIA CMDQV contributor for this file; Will
+Deacon applied the series. Same-day siblings are real
+lifecycle/UAF/bounds fixes. This one is the leftover logging hardening.
 
 **Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS**
-Record: None. It only needs `cdma_timeout_destroy()` +
-`cancel_delayed_work()` / `_sync`, present since 2013. **Can apply
-standalone.**
+Record: None required. `dev_warn_ratelimited` is old. The hunk applies
+to the original ISR as well as the post-series ISR.
 
 ===============================================================
 PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
@@ -276,72 +202,68 @@ PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 
 **Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION**
 Record:
-- `b4 dig -c 7a39b9856accc` matched **v1 only** (no v2/v3).
-- Lore: https://patch.msgid.link/20260609-b4-host1x-small-fixes-
-  a-v1-1-7c1131c0b3ad@nvidia.com
-- Cover letter: https://patch.msgid.link/20260609-b4-host1x-small-fixes-
-  a-v1-0-7c1131c0b3ad@nvidia.com — “Miscellaneous fixes”; patches 1–4
-  “unlikely to happen but technically possible.”
-- Thierry Reding, 2026-07-16: **“Applied to drm-misc-next, thanks.”** No
-  NAK, no stable discussion, no request for a different approach.
-- `sashiko-bot` replied with **pre-existing** issues (`update_work` not
-  cancelled in deinit; non-sync cancel in `stop_cdma_timer_locked()`).
-  It did **not** reject this change. Those are separate bugs, not
-  regressions of this one-liner.
+- `b4 dig -c a86c36163c972` → https://patch.msgid.link/2e9d088c059037d5f
+  c23532820444720b870d2c7.1784059577.git.nicolinc@nvidia.com
+- **v1** (2026-07-02) and **v2** (2026-07-14); committed version is **v2
+  11/11**.
+- No NAK on this patch. Review noise in the thread was about **patch
+  10/11** (dropped); Will applied 01–09 and 11.
+- No reviewer asked for `Cc: stable` on *this* patch. Patch 07/11 in the
+  same series did have `Cc: stable` (unrelated vSID check).
+- WebFetch to lore returned **403**; thread was read from the b4 mbox
+  instead.
 
 **Step 4.2: CHECK WHO REVIEWED THE PATCH**
-Record (`b4 dig -w`): To/Cc included Thierry Reding, David Airlie,
-Simona Vetter, `dri-devel`, `linux-tegra`, `linux-kernel`. Subsystem
-maintainer applied the series. No extra Reviewed-by on the commit.
+Record (`b4 dig -w`): Nicolin Chen, Will Deacon, Robin Murphy, Joerg
+Roedel, Jason Gunthorpe; lists `iommu@`, `linux-arm-kernel`, `linux-
+tegra`. Maintainer **Will Deacon applied it** (“Applied (apart from
+patch 10)”).
 
 **Step 4.3: SEARCH FOR THE BUG REPORT**
-Record: No syzbot, bugzilla, or user crash report. Author-found race
-from code inspection. Severity still UAF if it hits.
+Record: No syzbot/bugzilla link. Origin is **Sashiko** static review,
+described in the cover letter. Nicolin also noted Sashiko false
+positives (including a wrong “level-triggered / kdump storm” claim);
+CMDQV is **edge-triggered**, so an *unacked* pending error does not re-
+assert. **Each new error still fires the ISR**, which is the remaining
+flood path this patch addresses.
 
 **Step 4.4: CHECK FOR RELATED PATCHES AND SERIES**
-Record: Series is 6 independent small fixes. This is patch 1/6 and does
-not need 2–6.
+Record: 11-patch series; this patch is independent logging. Not blocked
+on the dropped 10/11.
 
 **Step 4.5: CHECK STABLE MAILING LIST HISTORY**
-Record: WebFetch to `lore.kernel.org/stable/` returned 403.
-**UNVERIFIED** whether stable@ already discussed this specific commit.
-No `Cc: stable` on the patch.
+Record: **UNVERIFIED** via lore.kernel.org/stable (HTTP 403). The
+submitted 11/11 message itself has no `Cc: stable`.
 
 ===============================================================
 PHASE 5: CODE SEMANTIC ANALYSIS
 ===============================================================
 
-**Step 5.1: KEY FUNCTIONS**
-Record: `cdma_timeout_destroy` (changed). Related:
-`cdma_timeout_handler`, `cdma_timeout_init`, `host1x_cdma_deinit`,
-`release_channel`, `cdma_stop`.
+semcode MCP: **not available**. Used `git grep` / file reads.
+
+**Step 5.1: IDENTIFY KEY FUNCTIONS**
+Record: `tegra241_cmdqv_isr()` only.
 
 **Step 5.2: TRACE CALLERS**
-Record:
-- `cdma_timeout_destroy` via `host1x_cdma_ops.timeout_destroy` →
-  `host1x_hw_cdma_timeout_destroy()` → **`host1x_cdma_deinit()`** only.
-- `host1x_cdma_deinit()` from **`release_channel()`** (last
-  `host1x_channel_put()`).
-- `host1x_channel_put()` call sites (all process context):
-  - `drivers/gpu/drm/tegra/uapi.c` — channel close / ioctl error
-  - `drm/tegra` gr2d/gr3d/vic/nvdec — client exit / context close
-  - `drivers/crypto/tegra/tegra-se-main.c` — SE driver
-  - `drivers/gpu/host1x/debug.c` — debugfs dump
+Record: Registered in `__tegra241_cmdqv_probe()` via
+`request_threaded_irq(..., tegra241_cmdqv_isr, IRQF_ONESHOT, ...)`. Not
+a hardirq; still a hot error path. Hardware: NVIDIA Tegra241 (Grace)
+CMDQ-V (`CONFIG_TEGRA241_CMDQV`).
 
 **Step 5.3: TRACE CALLEES**
-Record: `cancel_delayed_work_sync()` only. Can sleep; flushes the
-delayed work.
+Record: `readl_relaxed` of VINTF/CMDQ error maps;
+`dev_warn_ratelimited`; then `tegra241_vintf0_handle_error` /
+`tegra241_vintf_user_handle_error`. Those handlers are unchanged.
 
 **Step 5.4: FOLLOW THE CALL CHAIN**
-Record: Userspace on Tegra DRM can trigger it: submit a job with a
-timeout → timeout work queued → close channel (`DRM_TEGRA` channel close
-/ process exit) while the handler runs. Unprivileged on devices that
-expose tegra DRM. **Reachable from userspace.**
+Record: Reachable when CMDQV is enabled (Grace SMMU). A guest with a
+user VINTF/VCMDQ can generate command-queue errors; each new error
+latches and interrupts. That is a userspace/VM-reachable path, not a
+theoretical internal-only site.
 
 **Step 5.5: SEARCH FOR SIMILAR PATTERNS**
-Record: `stop_cdma_timer_locked()` still uses unsynchronized cancel
-**under the lock** (correct). `cdma->update_work` is still not cancelled
-in deinit (pre-existing, called out by sashiko-bot; **not** this patch).
+Record: Rate-limited IOMMU fault logs are the normal pattern elsewhere.
+This driver was the outlier with a raw `dev_warn()` in the ISR.
 
 ===============================================================
 PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
@@ -349,76 +271,70 @@ PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
 
 **Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?**
 Record:
-- `git describe HEAD` = **v7.3-rc4-27-gf0100363d8c37**; `make
-  kernelversion` = **7.3.0-rc4**.
-- Commit **`7a39b9856acccc8e9b05845ca2bf62494fcd3dfa` is already an
-  ancestor of HEAD** (`git merge-base --is-ancestor` succeeded). Current
-  `cdma_timeout_destroy()` already calls `cancel_delayed_work_sync()`.
-- The **bug** existed here until that commit: same function, same
-  `cancel_delayed_work()`, since **v3.10**. This is mainline, so the fix
-  is already applied; the question is whether the same change belongs on
-  this tree’s stable-style policy given the code is the host1x driver
-  this tree ships.
-- Introducing commit **is** in this tree. This is not “bug added after
-  this tree branched.”
+- `git describe HEAD` → **v7.3-rc4-27-gf0100363d8c37**
+- `make kernelversion` → **7.3.0-rc4**
+- Driver file exists; original ISR logging from `918eb5c856f6` (v6.12).
+- `git merge-base --is-ancestor a86c36163c972 HEAD` → **yes** (already
+  merged here). That is not used as “already selected for stable”; it
+  only confirms this lineage has the driver and the fix.
 
 **Step 6.2: CHECK FOR BACKPORT COMPLICATIONS**
-Record: **Clean apply.** Surrounding function is still the 2013
-structure plus later whitespace. One-line identifier swap; no data-
-structure or API change.
+Record: **Clean apply** on this tree (already applied). The hunk does
+not depend on later ISR locking. On a tree that still has the original
+`snprintf`/`dev_warn` ISR, it would apply with at most trivial context.
 
 **Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE**
-Record: This exact fix is already in HEAD (mainline). No alternate fix,
-no revert. No other commit on this file addresses the same cancel-vs-
-running-work race.
+Record: No earlier equivalent rate-limit. `a2ee315db4261` only uses
+`WARN_ON_ONCE` for out-of-bounds map bits; it does not throttle the
+“unexpected error reported” line.
 
 ===============================================================
 PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
 ===============================================================
 
-**Step 7.1: SUBSYSTEM AND CRITICALITY**
-Record: **drivers/gpu/host1x** (NVIDIA Tegra host1x DMA/sync engine).
-**IMPORTANT** for Tegra (Android, Jetson, embedded), **PERIPHERAL** for
-generic x86. `CONFIG_TEGRA_HOST1X` depends on `ARCH_TEGRA ||
-COMPILE_TEST`.
+**Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY**
+Record: **drivers/iommu/arm/arm-smmu-v3** (NVIDIA Grace CMDQ-V).
+**PERIPHERAL/IMPORTANT for that platform**: only `CONFIG_TEGRA241_CMDQV`
+/ Tegra241 (Grace) systems, including virtualization hosts using user
+VINTFs.
 
-**Step 7.2: SUBSYSTEM ACTIVITY**
-Record: Actively maintained (Tegra264, context devices, multiple 2026
-fixes). Author is a core contributor; Thierry Reding applied the series.
+**Step 7.2: ASSESS SUBSYSTEM ACTIVITY**
+Record: Actively developed in 2026 (large Sashiko fix series + iommufd
+work). Logging bug itself is old (v6.12).
 
 ===============================================================
 PHASE 8: IMPACT AND RISK ASSESSMENT
 ===============================================================
 
-**Step 8.1: WHO IS AFFECTED**
-Record: **Driver-specific / platform-specific** — Tegra SoCs using
-host1x (DRM 2D/3D/VIC/NVDEC, Tegra SE crypto). Not universal mm/net.
+**Step 8.1: DETERMINE WHO IS AFFECTED**
+Record: **platform-specific / config-specific** — NVIDIA Grace +
+`CONFIG_TEGRA241_CMDQV`. Hosts that expose guest VCMDQs are the
+interesting population.
 
-**Step 8.2: TRIGGER CONDITIONS**
+**Step 8.2: DETERMINE THE TRIGGER CONDITIONS**
+Record: CMDQV error IRQ. Commonness: rare on healthy HW; can be
+**frequent** if a device malfunctions or a **guest injects VCMDQ
+errors**. Unprivileged guest with VCMDQ access can trigger it. Not every
+boot.
+
+**Step 8.3: DETERMINE THE FAILURE MODE SEVERITY**
 Record:
-- Job timeout work is running (or sitting in `host1x_debug_dump` before
-  the lock).
-- Concurrent last `host1x_channel_put()` (channel close, client unbind,
-  process exit).
-- Timing-dependent. Author: “narrow” / cover letter “unlikely” — but
-  timeout + channel teardown is a real recovery path.
-- Unprivileged userspace on Tegra DRM can close a channel; timeout is a
-  driver-internal delayed work.
+- Direct effect: dmesg/console flood; extra MMIO + `snprintf` on every
+  interrupt.
+- Indirect: printk/console contention, lost messages, possible stalls on
+  a slow console.
+- Not an oops, UAF, or data corruption.
+- **Severity: MEDIUM** (availability / “oh, that’s not good”), with a
+  stated guest DoS path.
 
-**Step 8.3: FAILURE MODE SEVERITY**
-Record: Timeout handler runs against CDMA/channel that
-`host1x_cdma_deinit()` already tore down: destroyed mutex, freed push
-buffer, stale channel. **UAF / kernel oops.** Severity: **HIGH** (crash;
-possible memory-safety issue). Not a log-only bug.
-
-**Step 8.4: RISK-BENEFIT RATIO**
+**Step 8.4: CALCULATE RISK-BENEFIT RATIO**
 Record:
-- **Benefit:** High for Tegra users — prevents UAF on channel free vs
-  timeout. Low for everyone else (config-gated).
-- **Risk:** Very low — 1 line, standard API, no lock held, process
-  context.
-- **Ratio:** Benefit outweighs risk for any tree that still has the
-  unsynchronized cancel.
+- **Benefit:** medium for Grace virtualization hosts; low for everyone
+  else.
+- **Risk:** very low (7 lines, logging only).
+- **Ratio:** favorable. Official stable rules allow “oh, that’s not
+  good” and require an exploit explanation for “could be a problem”
+  issues; the message gives that explanation.
 
 ===============================================================
 PHASE 9: FINAL SYNTHESIS
@@ -426,114 +342,124 @@ PHASE 9: FINAL SYNTHESIS
 
 **Step 9.1: COMPILE THE EVIDENCE**
 
-**FOR backporting:**
-- Real race: running timeout work vs CDMA/channel destroy.
-- Failure mode is UAF / oops, not style.
-- One-line, obviously correct `cancel_delayed_work_sync`.
-- Bug in code since **v3.10**; no missing helpers.
-- Standalone; series mates not required.
-- Maintainer (Thierry Reding) applied v1 with no objections.
-- Teardown is reachable from userspace channel close on Tegra.
-- `debug_dump` before the lock makes the window practical during GPU
-  timeout recovery.
+FOR:
+- Real, described flood: guest or bad device can fire the error IRQ
+  repeatedly; each new error still interrupts (edge-triggered, latched
+  per event).
+- Tiny, obviously correct, matches other IOMMU drivers.
+- Error handling unchanged; MMIO for the log runs only when printing.
+- Driver and buggy logging exist in **this** 7.3-rc4 tree (since v6.12).
+- Applied by the arm-smmu maintainer; no NAK on this patch.
+- Official rules: not a trivia cleanup; exploit path is written down.
 
-**AGAINST:**
-- No `Reported-by` / syzbot / production stack trace.
-- Author called it unlikely.
-- Tegra-only.
-- Cover letter grouped it with “miscellaneous” logic issues.
-- sashiko-bot noted other incomplete teardown (`update_work`); this
-  patch does not fix that (and does not need to).
-- This checkout already contains the commit (it is mainline 7.3-rc4).
-  That is not a reason the **fix** is wrong for trees that still have
-  async cancel.
+AGAINST:
+- No production `Reported-by`; LLM-found.
+- Least-critical patch in its series (11/11).
+- Threaded IRQ (`IRQF_ONESHOT`), so not a hardirq printk.
+- Unacked-guest *storm* was already ruled out as a false positive; this
+  only limits *new*-error spam.
+- Not a crash/corruption/UAF.
 
-**UNRESOLVED:**
-- Stable@ archive search via WebFetch: 403.
-- No empirical reproduction here.
-- Self-flush if last kref is dropped from inside `debug_dump`: analyzed
-  from code, not discussed on list.
+UNRESOLVED:
+- Could not query lore.kernel.org/stable (403).
+- No Tested-by.
 
-**Step 9.2: STABLE RULES CHECKLIST**
-1. Obviously correct and tested? **PASS** — standard workqueue teardown;
-   maintainer applied; in mainline since 2026-07.
-2. Fixes a real bug that affects users? **PASS** — UAF on channel free
-   vs timeout handler.
-3. Important issue (crash, security, corruption, deadlock)? **PASS** —
-   UAF/oops; **HIGH**.
-4. Small and contained? **PASS** — 1 line, one function.
+**Step 9.2: APPLY THE STABLE RULES CHECKLIST**
+1. Obviously correct and tested? **PASS** — standard ratelimit;
+   maintainer applied. No extra tester tag.
+2. Fixes a real bug that affects users? **PASS** — log flood / guest-
+   driven interrupt spam on Grace CMDQV; users of that hardware exist.
+3. Important issue? **PASS** (low end) — not oops/corruption; it is an
+   explained availability issue (“oh, that’s not good” / guest printk
+   DoS), which the documented rules allow.
+4. Small and contained? **PASS** — ~16 lines, one function.
 5. No new features or APIs? **PASS**.
-6. Can apply to the local tree? **PASS** — host1x CDMA timeout code is
-   here; the change is trivial. (HEAD already has the post-image because
-   this is the originating mainline tree.)
+6. Can apply to the local tree? **PASS** — pre-image exists here; apply
+   is clean.
 
-**Step 9.3: EXCEPTION CATEGORIES**
-Record: None (not a device ID, quirk, DT, build, or docs exception). It
-qualifies as a normal small crash-class fix.
+**Step 9.3: CHECK FOR EXCEPTION CATEGORIES**
+Record: None (not a device ID, quirk table, DT, build, or docs fix).
+Qualifies as a normal small bugfix, not via an exception.
 
-**Step 9.4: DECISION**
-This tree has host1x and the historical bug. The fix is a textbook
-cancel-vs-running-work UAF close, one line, no prerequisites, no new
-API. Stable rules are satisfied. Unlikely trigger does not outweigh an
-oops/UAF on a path userspace can hit after a GPU timeout.
+**Step 9.4: MAKE YOUR DECISION**
+This tree contains the Tegra241 CMDQV driver and the original
+unconditional ISR `dev_warn()`. The patch is a 7-line, obviously correct
+rate-limit that closes a guest-reachable log flood without touching
+recovery logic. Benefit is limited to Grace CMDQV, but risk is
+negligible, so it meets the bar for this tree.
 
-### What the commit solves
-`cdma_timeout_destroy()` cancelled timeout work asynchronously. If
-`cdma_timeout_handler()` was already running (especially in
-`host1x_debug_dump()` before `cdma->lock`), `release_channel()` could
-`cdma_stop` + `host1x_cdma_deinit()` and free CDMA while the handler
-still used it. `cancel_delayed_work_sync()` waits for that worker first.
+What it solves for users here: a VM or failing CMDQ can spam the host
+log and extra MMIO on every error IRQ. That is not a panic, but it is a
+real host-side availability nuisance on this platform.
 
-### Stable rules / risk
-Meets all six stable criteria. Risk is a possible extra wait on channel
-free (correct). Benefit is avoiding a kernel UAF on Tegra host1x.
-
-### Concerns
-No user report; Tegra-only; leftover `update_work` teardown is a
-separate bug. None of those block this one-liner.
-
-### Verification
-- **[Phase 1]** Parsed subject/tags/body from `git log -1` + `git show
-  7a39b9856accc`; no Fixes/Reported-by/Cc-stable; Link msgid present.
-- **[Phase 2]** Diff is one token in `cdma_timeout_destroy`; read
-  handler, `cdma_stop`, `host1x_cdma_deinit`, `release_channel`.
-- **[Phase 2]** Confirmed handler calls `host1x_debug_dump()` before
-  `mutex_lock`; dump uses `show_all(..., true)`.
-- **[Phase 3]** `git blame` on parent: `6579324a41cc41` (2013); `git
-  describe --contains` → `v3.10-rc1`.
-- **[Phase 3]** `git merge-base --is-ancestor 6579324a41cc41 HEAD` and
-  `7a39b9856accc HEAD` both true.
-- **[Phase 3]** `git log --oneline` on `drivers/gpu/host1x/` for author
-  and series; patch is standalone.
-- **[Phase 4]** `b4 dig -c/-a/-w/-m`: v1 only; recipients include
-  Thierry; mbox cover letter + “Applied to drm-misc-next”.
-- **[Phase 4]** WebFetch lore/stable: 403 — listed UNVERIFIED.
-- **[Phase 5]** `git grep host1x_channel_put` — DRM/crypto/debugfs,
-  process context.
-- **[Phase 6]** `git describe HEAD` / `make kernelversion` → v7.3-rc4;
-  current file already has `_sync`.
-- **[Phase 7]** `drivers/gpu/host1x/Kconfig` → `CONFIG_TEGRA_HOST1X`.
-- **[Phase 8]** Failure mode from code: handler vs deinit = UAF; trigger
-  = timeout work + last channel put.
+Verification:
+- [Phase 1] Tags: Assisted-by Claude; SOB Nicolin Chen + Will Deacon; no
+  Fixes/Reported-by/Cc: stable on this commit
+- [Phase 2] Diff: `tegra241_cmdqv_isr()` snprintf+dev_warn →
+  dev_warn_ratelimited; +7/−9
+- [Phase 2] Confirmed `dev_level_ratelimited` only evaluates args when
+  `__ratelimit()` allows print
+- [Phase 3] `git blame` / original file: logging from `918eb5c856f6`
+  (v6.12-rc1)
+- [Phase 3] `git describe --contains 918eb5c856f6` →
+  v6.12-rc1~149^2^2~19
+- [Phase 3] Series: v2 11/11; parent is VINTF0 leak fix, not a
+  functional prereq
+- [Phase 4] `b4 dig -c a86c36163c972`: lore/patch.msgid.link match; v1
+  then v2
+- [Phase 4] `b4 dig -a`: v1 2026-07-02, v2 2026-07-14 (applied)
+- [Phase 4] `b4 dig -w`: iommu maintainers on To/Cc; Will applied 11/11,
+  dropped 10/11
+- [Phase 4] mbox: cover letter lists log flood; no comments/NAK on
+  11/11; Cc: stable only on 07/11
+- [Phase 4] WebFetch lore/stable: 403; stable-list search UNVERIFIED
+- [Phase 5] Caller: `request_threaded_irq` in `__tegra241_cmdqv_probe`;
+  CONFIG_TEGRA241_CMDQV
+- [Phase 6] `git describe HEAD` → v7.3-rc4-27-gf0100363d8c37; `make
+  kernelversion` → 7.3.0-rc4
+- [Phase 6] `git merge-base --is-ancestor a86c36163c972 HEAD` → ancestor
+  (code exists here)
+- [Phase 8] Failure mode: printk flood / guest DoS, severity MEDIUM
+- UNVERIFIED: lore.kernel.org/stable discussion (HTTP 403)
 
 **YES**
 
- drivers/gpu/host1x/hw/cdma_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
-index 3f3f0018eee0d..ab714d221120c 100644
---- a/drivers/gpu/host1x/hw/cdma_hw.c
-+++ b/drivers/gpu/host1x/hw/cdma_hw.c
-@@ -355,7 +355,7 @@ static int cdma_timeout_init(struct host1x_cdma *cdma)
- static void cdma_timeout_destroy(struct host1x_cdma *cdma)
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index fdbd487848e64..8c9530873ed98 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -350,21 +350,19 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
  {
- 	if (cdma->timeout.initialized)
--		cancel_delayed_work(&cdma->timeout.wq);
-+		cancel_delayed_work_sync(&cdma->timeout.wq);
+ 	struct tegra241_cmdqv *cmdqv = (struct tegra241_cmdqv *)devid;
+ 	void __iomem *reg_vintf_map = REG_CMDQV(cmdqv, VINTF_ERR_MAP);
+-	char err_str[256];
+ 	u64 vintf_map;
  
- 	cdma->timeout.initialized = false;
- }
+ 	/* Use readl_relaxed() as register addresses are not 64-bit aligned */
+ 	vintf_map = (u64)readl_relaxed(reg_vintf_map + 0x4) << 32 |
+ 		    (u64)readl_relaxed(reg_vintf_map);
+ 
+-	snprintf(err_str, sizeof(err_str),
+-		 "vintf_map: %016llx, vcmdq_map %08x:%08x:%08x:%08x", vintf_map,
+-		 readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(3))),
+-		 readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(2))),
+-		 readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(1))),
+-		 readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(0))));
+-
+-	dev_warn(cmdqv->dev, "unexpected error reported. %s\n", err_str);
++	dev_warn_ratelimited(
++		cmdqv->dev,
++		"unexpected error reported. vintf_map: %016llx, vcmdq_map %08x:%08x:%08x:%08x\n",
++		vintf_map, readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(3))),
++		readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(2))),
++		readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(1))),
++		readl_relaxed(REG_CMDQV(cmdqv, CMDQ_ERR_MAP(0))));
+ 
+ 	/* Handle VINTF0 and its LVCMDQs */
+ 	if (vintf_map & BIT_ULL(0)) {
 -- 
 2.53.0
 
