@@ -1,79 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.180
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792523911;
-	b=cEWHFR6O8X7ufDFOe/Jux7TXA9FFWQJcEXSpfVN88Gg0gieQbHAtBMKbvF2oLEFbwcmV
-	 x6KU6Q5Tg255LfUIXsQ/92w0uFBRKELDUtv6tZKbABfZD51vil9qb+7j0ABCIUEdgFAAU
-	 DkZhD63jUAPh3rULxaZFdi0mT7etYVBTCF0zsEOpzRFAISkVVlz57c4FjFGbxOHFjLBCJ
-	 LkQ/pIh257/0JGgBuP1TsRjZqnPDuJJoQ/ILg+BMQ8BPcrtpY6ay6jxFVGg2w66sA0mBm
-	 u1ebOUyG2kKoiKq0aTd/P/3k2NGdTkhuLkCWtlRMBgezp2iNrcB2K2QOwfiLX7XQuAQ==
+	t=1792528381;
+	b=OWS/CVOfZ93FAhoUC1tA3uD1fGfKfdiHRl3kDG5izFxlKKi0N+wx95xnEYSZ6e+U6Ukw
+	 0T4sanN7pVAMQPzdd+AjlYE8duG+CBEXSSixUV7ssVq+RJzQGXS7FV8ws0X+WzDNTRFk7
+	 C+9+BXSQYf9MjEfbLW4axQYFXm4VfM5jiA6OjEVwXIuEaJKqo5ryxIFgXheh7HGx9Z/hD
+	 t1oHDniOekQTYgKsIbijnu+Vk0YLlVDGdzPyAN5FXxhDkRaRKqoEBQyUPWV8vyQjQsu1n
+	 FHNNx0HSZGleZfI7kjaBcs+MHE5RHY39B5T0W0aeu3bfQhEj83UF1eTUG7G1/8GXsTQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792523911;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=uP+Xmd9fBdjVfeg0RV451Ru7HMLulpVu6IyYqGTomKw=;
-	b=3nDsOPhk7qL5QqL04DDMnCz1DMEgp3g3prEw85h1vvLJV678lkv3nZv6zLLUNXuzaSvn
-	 ACvnmHtw/UbOezC59v1P8kIpsJ3153dpew1H3ZNt9d94SeKNYAsJW8EBYgFS0+AVccnvs
-	 viEQc+F8PcJRaNUo7vyYVI1K8UwxVfDdKsL+PX0LpjK69mMbhbwEwLoxZwvxj6k61aLzS
-	 1lEKtDYpvTuGaCUpA2L4uWabt+PWZEZALcYMzmFps7UWZvYYJZpgX+Bjus2UTkzEi1NVK
-	 BokvhR9Z3W/x3W6mheaJM8UxvKIAhkdASpPiee0jRQ6MZSWCuWMKRqpYgb3r4VOn97g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792528381;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=QMefv3/6k9FkgL+3cbApnvKoEevqgboVZWdJy3KQ1RU=;
+	b=pVMIlNx/fHqtbzE1hkmmzbZxpvyLySCZdIjg5yi67+DjglJ4Fhw8cyV/rEeZIZbtLtxi
+	 bKPMqdDG075TTQg0HCpSVKo2JWXDAqfxuO4YhAp7yQHr6UlniON//WFKVbCnG1+tMy+LH
+	 iWGNUtOQnhSDvappbjye1040DjzfY25M95IDKpOGSz+MB1isZBIUmbMowOCRv/ALrMcd5
+	 5e2Z+Sf4IQzmFQCatHkrVb9ac5aOeb9kaW8QypcXGNjqvzYvx/JGwjya5O1GldRLmPI5W
+	 a403HecDy9HYaQdWzsCSK+ZaL0/0EYmcmeTmMBPBcMPFhodhxc9oNbziviUbp7zJRYQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bL08k4dd;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE25F606A319;
-	Tue, 20 Oct 2026 19:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bL08k4dd
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792523910;
-	b=EgeByC5CddRqJV4LV8r6nqCkcT2ArK2BBtTM4ngFOTdrL30HkO1dngEPJWe9RFIc1l7d
-	 owIe4cZ5afzKWk2NntwBdRachyyT9MtS9eMIBH3QAzyeH3NxmzRKxNGqp7aN7QZj88JwE
-	 TCfoReJLffNggBxXACA6IlleuYoPDUhnOxhJOAZOcQwB/AJ5WqZyFeNUxuXv62/P8/EjC
-	 7KfAAkd63BgZq3/8eTd7+3SnSO5Os7B1Q1rOQTqyVlZnfrfs3sZKVAocm4j2qgdVYWJF1
-	 vGXeAAXu1Fvj3nEOK4R7DvE33fVqDvBGQm8GjvjDPmvh6rt0e7Pc0CweV0uRol8Rpmw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792523910;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=uP+Xmd9fBdjVfeg0RV451Ru7HMLulpVu6IyYqGTomKw=;
-	b=GXLAu4dPvadE/lXh4ljBRAP/fdL1etpfSWjGk/VbwDsjNRlTUOSPGp5xpL3DHE6/jzk8
-	 9vJ0oMOE/RkqAkthvKECjVQPrYvPPHz2c0QfjP9xRURZVGdSX7ESAwSuMyNGUFWt9YXQ2
-	 OCw7o1F1cZDw69nFWZijjFYQe0iWcTW7z/SDWE39kbLuBKOL7BptvV+sucLgynOplvylL
-	 Ah/2GDyD72WTze8huZnwz2nRScGme8XA3PUvpcCOyv2JALeipK4TvZCagLwYBYr19PM8m
-	 Kz7/YZsp7Ys3Szj+sm382IOGbXOocgMtTqnoHzJ+wZfBroU2m0uu/tosdpUZGXR6goQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=INaSu8fI;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.180
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 0AD891F000C9;
-	Tue, 20 Oct 2026 19:18:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792523910;
-	bh=uP+Xmd9fBdjVfeg0RV451Ru7HMLulpVu6IyYqGTomKw=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=bL08k4ddy2AN02eB1oQTTxVwhOIal2GdrS/X6YMhy/hW71jxausI7fEPivSFw9j+X
-	 rO+tKTrzUSHGAi9Vptu+XempFIKfG3v+iYxHfsNczmLpBZ1UiBMD6VTTbIabXwDQbY
-	 ja6xMbm8IeyMcn/9xnokU/EAgZsTYqXjZX4CABCGAV7YlDxz9kH8TNzvqidO7KGMka
-	 p5ze77436xtHE4GT24+lC1yHtgVDVD+Uv4yQpF2tHXNLiPvAodPOFd5VTd93hOHIRM
-	 SwCeAtEQqGc6P1NWtmuz3n3PqAN8gAleJC+lMlt/+BmM2yoobJQwDnIaOn9ziI3Ff4
-	 4sSZqrMGafepQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 90E384322E;
-	Tue, 20 Oct 2026 19:18:29 +0000 (UTC)
-From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
-Date: Tue, 20 Oct 2026 21:18:26 +0200
-Subject: [PATCH] thermal/drivers/tegra/soctherm: Program throttrip with hot
- trip temperature
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768E9606A31E
+	for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 20:33:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 768E9606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=INaSu8fI
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-5337c7b9937so83421cf.0
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 13:33:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792528380; cv=none;
+        d=google.com; s=arc-20260327;
+        b=KvjtVAoT9Yprj9DQpBgNe6YnhGt1ib8Q4orJuVEf7Any3cWJ6K94zLWQioHhS8gIDL
+         LjoqW2CHIoOCDsrpon2TOPBRBD8ClY4l9a/PAfG30OCD7U7LDkUX2vLQa6qXVZher/Gi
+         MkraxxeCNI/tuxtHKIIjx+6GlDgN6Rq4uIvFVLa3EI/CwTDoNlmrfuLE0q/r9WfvTG+A
+         Arg8X5mUiS1BEQnEi6zCv9vgSqbIyVqph9bRGJJor9egijDGbKYaM/G+R/we03jHptvV
+         F0osWWSajtIS9Z+PXgwe1DHCkxAi23ieKt2cKanTgZvi1FYdf+nLWSYzNHV6ZQPhkLvR
+         dsfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=QMefv3/6k9FkgL+3cbApnvKoEevqgboVZWdJy3KQ1RU=;
+        fh=qrtB1Aremw5blDJF//0f86R7L/hVpLSw/TC2V2ZfJD8=;
+        b=azMV2CpB1tNZsGkgY6Fc1JF3NeKw5YCJZzsqjOM8xvwzfT8gNIxpEWnqrHix/nfC/g
+         YhScFyeSEaMjdA9MXUZcir9LCfrZ97I1qWxFS0tgjkCmwoDYYwu3NtJ4FkxAw0vMnbGG
+         eggZkSNlu2ES62j2NS2Pg+EUHRDm/QL/OwT4xAp163EXRdo29Q6g/OZOI2KqRalpZGYb
+         Mi2M6pnNlfAk8xBFZX8Y6aQCMyLtPCLXMe4wQ1WwZjr+A1VlKReYOPnz2oW1XUur1MmD
+         t/jMdQZLsLeDvPkTRM5+Ne1mQQa7GR0VcD4QCl0KDlijXalxjKhNWMtl1GDCxcYH8+Uw
+         Q8eg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1792528380; x=1793133180; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=QMefv3/6k9FkgL+3cbApnvKoEevqgboVZWdJy3KQ1RU=;
+        b=INaSu8fI/7lJBJ0KTHaoc6xXLKw/+UVbNqMVNmC0u3YPecgPvG7my29CGG2Hf86BRl
+         UohI/DvxwBADAiDrGI7Mo7R4ayl47O2Df2mGk2mBN3zupJ3q/D+Lwyqd/66bU8J0N1uy
+         sr5QnQO4M+IwF6/P2lwJO31Xo6RDR+NNZMDcAL2ds0LuSZAj5Y034e/HUIGdO75taV18
+         hcaxzj+JdGcisLATb70lncWRDsJkkjxRhhpWsejh2R5gQgzl6VTY2YKqdlPdMSHPd4Q9
+         zFXbSfbj42NLZ8+s3WdSCUl5szgPNA0/UUKA26SntDhmhjTJwJXF+FicjSHwMHyXNPxN
+         4ryA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792528380; x=1793133180;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=QMefv3/6k9FkgL+3cbApnvKoEevqgboVZWdJy3KQ1RU=;
+        b=RTb+quXkz7ky8pIyW6B0KmR7Dm0/kynnBB7SfXaWd7AYw3Bwwsm5Z4TkKiD7cD3OMc
+         L1zYyrCDUt0EsiMaDbGhIoSl3ea8CYbtXp+Uht/X8DLiGak63BPCr4O7WrbbtbBFSwIe
+         Rz4phuXm+o0yFXf1TgRVWZoghjmn6wb2e0jAIzEPUYl/QfOOVA9uRl+KwgjnzoUecJG5
+         rLd43XA6Qm5WaZanL31IsroLitb35Kq34FvuhYU1A4g7kaQAPeEy7fjb046xylSbY/nz
+         MKjawZ1FYOIObvuyUOgZ9xpQnmYHirJtRfbWFhZpUq5eFHfr2Ekyqer4pJDgCQPVevYP
+         mTgQ==
+X-Forwarded-Encrypted: i=1; AKwUvByVQmpBJ3dEPrX1sAavIhXMnCTVjNeXYB1T9OJUzdVJufWsfvMvl+Jkyjo2EiCYc2wtl9bD52vSL8NwoQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIbRdR+yS7LQE6ioWWiNko4jeH1bMC6CG9exJZ/lnZqkY66txry
+	M9cVbNsGoRfGMsJex0BuE/70u8jwRpEdmswc6h/+f0IwzlpZrflpAMA5qpiFGFu1VUffhZ+OMGA
+	nelrsY7wIT3ZGYst10aavYtQEZQvvx+LwDFeY0tE0
+X-Gm-Gg: AYBFou0uR+GR+uRmbtMl80HjOfFd51+2Vx2QJKNvLIzdzGas9EoMUsT32FaERp+F+3E
+	4aiF4yy4H/DlA2E+PLOfG5I2ZUa5nfJLQO55aQZMeYvSORZvaLxsXON1b0fj2FHViEGqeZCSUSl
+	E9ggt+EyAiL3ZEEah1Sa4Sq1fAaG5OSAJZ79L4a9OT/OKsScNn7VhPx7/7GUtur8SybzKyO5Fte
+	sVEOSgAZBvGVpLzuvgX+miOTYJ0sRTm+9Vld+B1lN/YiKIDioFnLpus8wXHU3/vhWH3NmwRF+HN
+	Br6Kd0xXIOycY0LOfgsn21fyCyDslEUFhpyJU6vX6X1b+VtogyUtFAv2b1HumBSQb3vGkGtEGuA
+	vvoscCLFGgA==
+X-Received: by 2002:a05:622a:1b9f:b0:535:9aa3:5ebb with SMTP id
+ d75a77b69052e-536882804d2mr9529261cf.8.1792528379608; Tue, 20 Oct 2026
+ 13:32:59 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,89 +104,65 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261020-upstream-soctherm-throttrip-v1-1-c67f8a02ec3b@tsv-stahl-riesa.de>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQrCMAwA0F8ZORvoCnbMXxEPXRdthK0lyUQY+
- 3erHt/l7aAkTAqXbgehFyuXtaE/dZByXB+EPDeDdz70zjvcqppQXFBLskyyoGUpZsIV4xzGcB6
- HYQoJ2lCF7vz+7dfb37pNT0r2LeE4PrY5N+l/AAAA
-X-Change-ID: 20261020-upstream-soctherm-throttrip-ad6965977b6c
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
- linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Svyatoslav Ryhel <clamor95@gmail.com>, 
- stable@vger.kernel.org, Patrick Fischer <admin@tsv-stahl-riesa.de>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792523909; l=2148;
- i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
- bh=RYgQxo1Q07jpqk6tE6wjPPC841A4mk8ZdJMQnRXuUBo=;
- b=m+kV5YsJ2VgwipWiC2LRknxKcOCe0vnTOfvlAi1qcANkDyhbRNLWXXlz744RW9VoCNU36PzzD
- ZHRsW+KATFUCWJrcFeXl20/r2ZpMQFT8NFRZNIe0bow92jA3+f4MJNT
-X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
- pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
-X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
- auth_id=1251
-X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
-Reply-To: admin@tsv-stahl-riesa.de
-Content-Transfer-Encoding: 7bit
+References: <20261019164241.403644-1-bwicaksono@nvidia.com>
+ <21f58af0-fa3f-41c5-ab03-216c60fbe2f1@linaro.org> <ate93zQFkfAecIv2@x2>
+In-Reply-To: <ate93zQFkfAecIv2@x2>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 20 Oct 2026 13:32:48 -0700
+X-Gm-Features: AclHuK9CSuFZK-b6UAodiXJykR-dvBn1qDmPctgNXXAV69jhyRNTIACuSsADFoU
+Message-ID: <CAP-5=fXUMVJwtAp+8dA8V=hBD9q4x6J4YiUufwXAOXcAJoAKTg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] perf jevents: Add NVIDIA Tegra410 uncore PMU events
+ and metrics
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: James Clark <james.clark@linaro.org>, Besar Wicaksono <bwicaksono@nvidia.com>, namhyung@kernel.org, 
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	vsethi@nvidia.com, rwiley@nvidia.com, skelley@nvidia.com, mochs@nvidia.com, 
+	rajjoshi@nvidia.com, treding@nvidia.com, jonathanh@nvidia.com, 
+	john.garry@linux.dev, will@kernel.org, mike.leach@arm.com, leo.yan@linux.dev, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	adrian.hunter@intel.com, ctshao@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+On Tue, Oct 20, 2026 at 12:15=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, Oct 19, 2026 at 06:23:16PM +0100, James Clark wrote:
+> > On 19/10/2026 17:42, Besar Wicaksono wrote:
+> > > Add event aliases and derived metrics for the NVIDIA Tegra410 uncore
+> > > PMUs.
+>
+> > Reviewed-by: James Clark <james.clark@linaro.org>
+>
+> Thanks, applied to perf-tools-next, for v7.4.
 
-tegra_soctherm_set_hwtrips() is supposed to program the hardware
-throttle trip (throttrip) with the temperature of the thermal zone's
-hot trip point. Since commit 735a968d2fea ("thermal/drivers/tegra: Use
-generic thermal_zone_get_trip() function"), get_hot_temp() only looks
-up the hot trip and no longer stores its temperature, and the later
-conversion to get_hot_trip() kept that behaviour. throttrip_program()
-is therefore called with the value still left in 'temperature', which
-is the thermtrip or critical temperature that was just used for
-thermtrip_program().
+Hi Arnaldo,
 
-As a result, hardware throttling only starts at the shutdown
-temperature instead of at the hot trip. On the NVIDIA Tegra Note 7
-(P1640, Tegra114), where tegra114.dtsi defines the hot trips at 100 C
-and the critical trips at 102 C, soctherm reports:
+can we not take these in v7.4 as there is unaddressed feedback:
+https://lore.kernel.org/linux-perf-users/CAP-5=3DfWucvdYefDOL3Vn=3DO=3DYUPE=
+XE+tngDDfPLv-T5i3WkCJVA@mail.gmail.com/
 
-  throttrip: will throttle when cpu reaches 102000 mC
+The specific problem is that the NVidia PMUs have adopted a convention
+not supported by the perf tool of 'pmu_name_<socket>_rc_<num>'. rc
+stands for root complex. What ends up happening is that aggregation is
+broken as the json is claiming that pmu_name is the PMU's name while
+the suffix perf_pmus code thinks pmu_name_<socket>_rc is the pmu name.
+They've wrangled support via the json by claiming these are sys
+events.
 
-instead of 100000 mC. Svyatoslav Ryhel observed the same on the ASUS
-Transformer Pad TF701T (Tegra114) and the Xiaomi Mi Pad (Tegra124).
-All boards using soctherm with a hot trip bound to a throttle cooling
-device are affected.
+We can either:
+1) support a new suffix convention of <num>_rc_<num>
+2) push back and ask the driver writers to name their PMU correctly as
+defined in the ABI:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/ABI/testing/sysfs-bus-event_source-devices
 
-Use the temperature of the hot trip for throttrip_program() again.
+If we do (1) then it would be nice if the support for that could be
+contained in this patch series. In any case these events don't belong
+in sys.
 
-Fixes: 735a968d2fea ("thermal/drivers/tegra: Use generic thermal_zone_get_trip() function")
-Cc: stable@vger.kernel.org
-Assisted-by: LLM
-Tested-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
----
- drivers/thermal/tegra/soctherm.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks,
+Ian
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index f74acf13b24d..903215502606 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -765,6 +765,8 @@ static int tegra_soctherm_set_hwtrips(struct device *dev,
- 		return 0;
- 	}
- 
-+	temperature = hot_trip->temperature;
-+
- 	for (i = 0; i < THROTTLE_OC1; i++) {
- 		struct thermal_cooling_device *cdev;
- 
-
----
-base-commit: f47d223627f80cb7a1eb14c585fe6cb35de5e984
-change-id: 20261020-upstream-soctherm-throttrip-ad6965977b6c
-
-Best regards,
---  
-Patrick Fischer <admin@tsv-stahl-riesa.de>
-
-
+> - Arnaldo
