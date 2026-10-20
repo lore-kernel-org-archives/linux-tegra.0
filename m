@@ -1,94 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.43.56
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.176
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792482641;
-	b=uMNyVTx66CH+YnQOO6gvU11NdIO/R8TabCDNGzetjijYqKMKUOUo1AFHKxIqTZ3qlqW4
-	 zyln0syFbvFGSoPRtrutPFYA5LfWAC0KYdF8o/lwiI08nUXhmLDhLhnsFJ2eyuaQryeZX
-	 w8vLbP62Stdi7v3G0WsaMhdEtmzTcNKbUMdxAXlEqIX7nw9k7qm2K3sHLSsTVTHB7sdSg
-	 t359iJdpqrH3J5bjiP5ZV8ksCVoKqbqnD0Ryf1scGUfHueu8MeY10+nPcMbymkGazC8yV
-	 NvmJOq8DfX7+G2mrjhnHKHkt/+G22iiWLgpqE7jGDzcGymorzMZ5F7ZY7kj+YDUiHKg==
+	t=1792483800;
+	b=TzU+spn3eoo0joSjPZjMhFd+QuDRIq6gJsoz1cMfxYpXg6Gfy3i7hPAPt7tznlMCeaWc
+	 rGCOujlfEgv1mcauigds3ev5LtMAZsBblqDj8Lqtzg4hx0ob/6PvmY2LrklHcEv1LLDMP
+	 x+dF4qg2La5TvQyxSRocRXYcS7HjWblxg7PnQ0/KFYT9q1Bby8O4e81l6/TIws6lNMb2h
+	 oUeOxyaOx1+FUbjKQLY0l1gOqbWyThivQOxZ7kMLNXs7QBCZSdAHiEzQHxWF+OKEHVdh8
+	 fml9YTd7GxMi4hZIChoamCmLXojsW/je0yFwyI097QiLw//lsDB+kmkLXea/l0TXMuw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792482641;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
-	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:
-	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=IZZnKyPa7HLJF5KG2VLB64dHnszxJhX9zYvk+lCAo7I=;
-	b=d66YFsvyPxvuvhQSbS9jbI7zYyz/0TPH66iEf6xSV0jEIwUfd2i37D31UQCA90K+88na
-	 eaZvNuCDQObYU4k1xik4eXvTPD6BBe9aYBsV28OIZJ9i35CuUGDXTigDKnvlBElxDbyie
-	 oCTGjY6s2JGH7SdAAhQqaBPKIuV4HipQRy319s1VPyCJKytNWUfvZUJhZh7AfpeUTQqEe
-	 mCNvXSMlZgMHdPydHKcAR1eiiLDDgHGeVu0P27cmfiOsFgC9sALf2MIcMpIYDsbWYHKOM
-	 ocpCyotccHl0vedkXGbLLo/EGeyQBc3+cJRLWlX1/prELyqG4G63iaQq3xuAPK62TAA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792483800;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:MIME-Version:References:
+	 In-Reply-To:From:Date:X-Gm-Features:Message-ID:Subject:To:Cc:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=V6mptVN35vJ98NYii+6LNnGBoOW3foxwKoXliiFVg4k=;
+	b=csudtAa7B4M9J2RMGtb3vNGMRJfKSQ8hWoHxATjuaNAVwvQstuRlsV2mn9juI/yvlvGb
+	 IIWv6i9qDxyR7f5IkfGCE17qzNzBcrJq77h+EvO60iJSWzskUtRSG12l3+RMOOpkomXoH
+	 i07XhRQhUcIACV+BzTEKO6D1iE+qe94CcyDtbWz4TBP4QkLZv+78mRhv+/xHbQweuQHMM
+	 l2sHReTcps3KKljj6gYZ2x9BDQ/Ja90luNyQI2Y1K9WELrffvsHRTRNNJizEPWobM6cGD
+	 83SptkZKoiTaaUWLOV/BIZefeKMopmkQyYb5Wg7Ef2sLbv1TxosS0DtT1R4y2JIFFdA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Ifw6gUM6;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.43.56
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012056.outbound.protection.outlook.com [52.101.43.56])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=evb63eaP;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.176
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6A8606A31C;
-	Tue, 20 Oct 2026 07:50:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2B6A8606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0E7606A31E
+	for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 08:10:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8C0E7606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Ifw6gUM6
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hB3uxZFjhcw1lZKuzp8FzM6o92VASW8DRMi378ZxIYOis7sLtyPCXrRN1IiSAa/bgOLc8DDx5EDFZzk05k77TQdPb1oovVUE6ukRvdGsOquS2NM2g9GPVLkdiS36Jty0QAuDEmxvgy9cLwMQIu9rIZW94S6s/6m6mz4KUZuKcAwWzIcHxEuw76vy8YN4S83n6K/YOXMWhgjdW4TUh5lZxTrfqoA6NBD3gJfDMd/7Y76BFqJg/pS0PicrTVTDYFHUsJj3LFwicJHQc/6lyLAbE7JhWZffrJU+dgj1AGe2CAEIV5wQOM8mG25l8Smj6nx0n6at3TwXlCYOgwRO/FfWFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IZZnKyPa7HLJF5KG2VLB64dHnszxJhX9zYvk+lCAo7I=;
- b=P8D+qnAh7ZoXdm4GksQyHAM1dLMPZaS6azhPhEoz4MrKVJpWiOc5f1cgFrjYgPdVCOD2/i2b733H/qljPUna1SGbRz0JJpdlAOOwfQN3lE8/ap67Egp9lVkfftnj4fBG++NcdAdPz1TEvhwi4udTGcFKoQyijMW/1xNuqne1p2A6Vc6csSyPKVnKJ1rf5HarNX3Vm9gER//nhIH57XFmKCEcjBgV20tROUXV/esu7hmMKsxwaIzGtEj8rg9t1Hs4xvyS/MCRz8WQs4xs0ThXpSgMi+HovHkRQTTzb92awvaz9R5L9XH4BJvt1CdqgU1gGeQTopcfqxUGvXGNjgrP+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IZZnKyPa7HLJF5KG2VLB64dHnszxJhX9zYvk+lCAo7I=;
- b=Ifw6gUM6mdJm/yePvfxauKWmbBaZCHo2TEl7hD/mkfEJHXCz5rDiOQ/NJEsHF0mRPOvqEyPmP5EVo88QXUPgEr+jkwym+bXzSrIqVeDnByqz+QI5bgLumE2kWeZEruYFbAQES/QpBAINhBk8PAlIZNN8muoHhZwQwb8HqR5KGuLwDFpHXOacsZZFRbfPjZOV9zBc8bIE0CAlLOigio2/lk2xabQDRIPiVg1wzO3675tDwiTp+1fNn2MdjCZf4qk3Ek+8OkvXDh0rWZl3rRHbRsxig/p7sQr4HQZWFmksq+WrHynaQNcTcLuwrwZzu4wiTQA9ArHhWuNXvZUE7A+5Ew==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by MW4PR12MB7014.namprd12.prod.outlook.com (2603:10b6:303:218::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.14; Tue, 20 Oct
- 2026 07:50:38 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0546.012; Tue, 20 Oct 2026
- 07:50:38 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
-Cc: linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
-Subject: Re: [PATCH] pwm: tegra: Fix value discarding for duty and period
-Date: Tue, 20 Oct 2026 16:50:34 +0900
-Message-ID: <NYQDQXZBQCm1uL6pMDxwQg@nvidia.com>
-In-Reply-To: <20261015085336.4181137-2-u.kleine-koenig@baylibre.com>
-References: <20261015085336.4181137-2-u.kleine-koenig@baylibre.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: OSTP286CA0007.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:223::15) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=evb63eaP
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3a772ec8389so20846881fa.3
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 01:10:00 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792483799; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Be0++YMzYN3LKX8fXerxbu4uIMb/GNtRHV6UHoifo9W9VNhrdu9ekkEaVOFE7Zlshy
+         KT87Mofhxc58ahL/JwzxUdTJTPbNfFrHCdyRqswRV/6z//B+apspyyBBFyaZLBYl+fw9
+         W5pfdZ//SpryE91Xw7oc45JhyLxsuPin9niGPvNE93fTfQqBtcePEMMeAn8VcVRH1sIY
+         jz6iAvEHoILb32prkBn4h4q/Q2B4BsZDpWhltOUiCDzB1Odd6OKf7p24KKL11fIxN/Hj
+         F1h9y+24Rkly0S73pVVjGV5Us1wxXlNJfNBLA+feKDy/+cfdEztf8kQfNe+m+kIEJm85
+         jMqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=V6mptVN35vJ98NYii+6LNnGBoOW3foxwKoXliiFVg4k=;
+        fh=cHxk/NQd16i5Krn3CIf2Gd/1akFzCiY7TOAySVh3Y1k=;
+        b=p8OIITCOYuZX5988H7xKwP6loMPqObetONBXS0dZ/Y0bLwLCQlLM79xfSIMGZ6d01B
+         4Q0DFuUoUUkwUxA7ZtDQNgt7K8knUH6S9RNGIqqVv1hMzus2NdW77UtiCkK7B02klPA/
+         WCsOD7rAnZuRUWcLEEeISCzuyTmCIpm8oflcEZWwy2TkIrLqDkoHzUWKaD93vp44kLjy
+         tCX3fmpVWN7vd01RrMXufiaHkLzZ51wHmF4J4JfNGWSRDEgJjcj/pPCUXkttCVNlv0AG
+         vC4expWpK2SjNbYK7UGDv1Rm1vA5KWPO/Z7Jhy8r8IY2DowVvROKAwG/ED6yzqSfZnEi
+         qnhQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792483799; x=1793088599; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=V6mptVN35vJ98NYii+6LNnGBoOW3foxwKoXliiFVg4k=;
+        b=evb63eaPhGaFJtlu5jJTkNUzsfxqGmB2jkiQ/CFO6TvwWdV7gZJY/vCF7TWT8KOCep
+         WeZdRm8D6AzKEHgKeADaU1S+HiMaTsKpdA/12gGrFQE9JADR5LhbGP++kBhETxLIBdyF
+         nu48x67TCzaK8LSpOqvGaRQGR+TVvFMjOrRgG6FZ5OuNUeKAR6+Gscelf5u1SgjY4Chk
+         4KgqATQT8iJ9IE5wKQCh3p6zPYIFMRUrI08Cq9wGjepEXE08odUs+YSFA20ChM8KItMn
+         hfn9rvGYdrrsQvz1TuDnWPbUS5iku6m41dp1VuVcZqvAArvWSal6tHeKOGodcWJMfGWR
+         B2vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792483799; x=1793088599;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=V6mptVN35vJ98NYii+6LNnGBoOW3foxwKoXliiFVg4k=;
+        b=bBBY0r8Z9aii/Mx9vFjVraV0k40y9U6Ens7k1BCXmAwGaI6BBkKF/Cv3evQBysaFnF
+         MHV2uHbahOsE5ATnYxl+WdP0+HKWkaPeQAYCvfunpp7AIW59zAiB6bAVoq4xzfifrS7g
+         jdYoBdqUF3vs9u9gDx2yhWAqLH2NGVjV8OGb38pcHaDiimYYMzghxBoyt1OXe+gX5zVO
+         9IX27hwWDyu+HMJ/G7vualNqUEvEsv9cNhShf3++XdJs4MZXLLgfSnUrWIRYnvA21X3e
+         PuyjAFCfL/KKh+XzxX3FgjctmZ7QnsJcQ2DWrYsV3V5pQNZi+8SCRsk5tqQ/giArRsKf
+         QS1w==
+X-Gm-Message-State: AFq9FYJG1gYAPZxs1F78fy1Yj+FwxDbtsAq5V1HxDioYhQrc/RnuINe2
+	3GZFVGultmICJTRP6ECscblC5Ey0zZ5eNmRiPEW6wWh1tpterfMU5uzxgBgKvrxoh7urD12z5B7
+	V5DsukRVg51+5Um6UVSzz6KDtElGp+/c=
+X-Gm-Gg: AYBFou1B0igFF1F0CSIn4WOBj9kgPgU1uj6+BVZ5PGf3b3AzYGaOBBi/3u+zGQp3rcA
+	xJ3ojlQICk70A1mK4gXLhwmo5K01hJ3uD+bpA/zJ7eVhrLn8Q7wJwWkjlE+zmxj+d9FQxcbjw8b
+	x47KR5Wi0CdhtcfX+QM9LfTPdiYoTlz343JqqqTCe3axn8RiV9G0btbMUy/sZRbc9tm13qZRqou
+	wtw+1i4QP+9XO1x36rXz5xI02LpgavqTez17El9qd+pQL26NfaIsL/8OBv6F/94qq+kVOGijRb7
+	D3bWUEaCQkJ5ZHtk2n46FEoLQMJuBpmdB2szoJCd7z51M9okeeEw7WEGTHAQWWLlq+1i67wZjGJ
+	aoYpiG4cEXGiGZuJutFmTrFfWQMhkSfp9kjHoRWS1bLE=
+X-Received: by 2002:a05:651c:43c3:10b0:3a9:decc:71d8 with SMTP id
+ 38308e7fff4ca-3ab292e7330mr15305261fa.20.1792483798450; Tue, 20 Oct 2026
+ 01:09:58 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -98,167 +103,256 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|MW4PR12MB7014:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc12b8ff-6882-470e-f2d4-08df2e7ed4db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|376014|1800799024|23010399003|11063799006|56012099006|261009223027099003|10067099003|18002099003|22082099003|6133799003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	7ATH7cKDWTI0jcHmC+vAM31fXDgQy/DEXlWBLaZjOY/j65BBGtptb6lLFwPGVd4v+brrs8Xk2vhRqrl5gP8frnNy2rmxg8GbrfAA7XiR+E74AowoWMh5qmhY2nhqaSIm7XnvyAcSbR1bMlhGP2xoVI4VNwHnVFjTqwZ9y1sbvj1hv1uIALvGAO2yWEGAmFt6jnvfuickfeI8jF9AWiMP1ynPc/zNVzeHghlEDxw7XDXQxgwBEHC8MQjO1CWHznjHVc+53IP9nqYtPDN0PiwdHVWCoSFR5moYdl5Dtz23TwEQNWhRkvff3a0dEJE/wNhJCOHlpcAMzg++GQZAL771l6jQP9ytC93AQXg+ly4Z3z99q2KRZjNgHD5jBvfQT6TN9/zWi0GpE3YQv5YGVJ5WcIV7e7ApfEVvp/Ss3LW+UOnPn+yzfbpLA72EcOpEbVsigpBd8C8yudglEG1yvvnvYFiy/hW8cTWNIM8sErO3vTCXp+hhU4tjlnk014QfDqI03miX8Ojor833VV64/t/86Yvq0ox097+X3/l0+Na4BDkbGNy/MfuvMIb3yF46XNn7v3Ol1HgNnps+DbvMrifacX6hs5CUZk0BRVFrKLl1hzen8QPH+H1AMEOL41tUnF9YfrFFdY+t7mlIxODx3iP50FpGGMOnVcxnWGnf36yvA4g=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(1800799024)(23010399003)(11063799006)(56012099006)(261009223027099003)(10067099003)(18002099003)(22082099003)(6133799003)(3023799007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eHFQSVpNb3JXY2FoeEhNNlJqZ1RUTUs2R0lnL3lkMnBFTnBlZHN3VUVUbHZG?=
- =?utf-8?B?cUVvVXFWZldEMzdHaWJUTzZVdExvbFlrRmlHZXhJQWFSZXhHZ3J0OGRjOUZ4?=
- =?utf-8?B?VERVWWV1dldEaDVDVUxwOFlNclM2MGk5OUY4YlYwT2RBMUVqK0JFS1NvbktN?=
- =?utf-8?B?Q3FscHRzR21IMGZYNmdEL2hWRFJ5OHZtSDhkUExxWGJwZkJDM2F0Ynl2a1Qy?=
- =?utf-8?B?b2FOZWh5eFhicmZObFNXMUNaN1liR0d2N1R6clVEMElnR3M1N3pxZTM4MDNQ?=
- =?utf-8?B?WHN1eWlvaWtmOERueU5iam92c2tGOUpsTyt1Y3ZDYTdYTlVrbDZrZnovUlVP?=
- =?utf-8?B?TWtIbnVOYnZORGhtT1doeVFKMDNxcjQ5SVdRd0VHdDFmWE1WRTRIcVF1bnZE?=
- =?utf-8?B?ckJ4eTZsMitnU3hPeXJsczd5WmlpQnUvNVR0UXRRUnJ1YzFBZk1hSy9zNjRm?=
- =?utf-8?B?VG94MlJPKzNZUjgyMkRjU1B4dGJsNThMVmNWVG9lMnNmSjJPVFBoTFFjTHEz?=
- =?utf-8?B?VGdqMWFsVGxCVnF0VFdVNkswS2pyUUwzRzRhR3ByRllHZHdabkNYbW92bytm?=
- =?utf-8?B?dW04ZW1xMHN3NTlGTUpGczRvaUtMWE1hMWdzREFDYmMyb1FZOXVVRW9LcDJK?=
- =?utf-8?B?aWZVNk01eUQzem9FTzV1UjVDcVdpTUN2MytDRDNteTRpVHVkZkswR2o4VFdr?=
- =?utf-8?B?dU8xZnZMSmUrWWFFTSt3UlhLRGNXanlsQTdHODl1S252RUR1bktEaEJGUjYv?=
- =?utf-8?B?amt1QjVpaDdaSlcraG56WXptbHVnZ3BkZkVCLzhzd3MwTDFYSkhYMFg0NUNP?=
- =?utf-8?B?Qm9HWWsyRXF3eTJBemw5TlFrandVc29YSDVLMnpIRzNpWFkrUmhrNHlUNDdE?=
- =?utf-8?B?SHI1SVVldFphUXdaOXNhMEdFQXJrUWlXY2hzQVp2SlZVeCtrYVBPSTRmK054?=
- =?utf-8?B?cGQxTndxMFhTQXR4Rjc4eXpEUXl4MDJnRnVFS1dycUpJaTg3a1pWSHR4K0VY?=
- =?utf-8?B?aGJ4OENxZWdpUVJVaU5BempyQ0VDZEFzZ09EejlZRkxFRVZLUkl2b05xZml3?=
- =?utf-8?B?QUcwQWlBeTFwZlRSK3hjQ3VGSk5pYlk0WHBxY1BBQWJRTkh6WU9ZRUlLdmNT?=
- =?utf-8?B?aDJaMmQxU29RYVFrU21BWWxHeGlaTHdKZWJEN21XRjllVXdrL3dleHlEUUN6?=
- =?utf-8?B?VTZIZi9nTnZDdUY5OWhJTGlwNG9WVGRxVXF4SE9UN0lzS2JkTWhBQko1c25a?=
- =?utf-8?B?YmF5dDRaamQ0K2ZXMHZWeTlNbG5HdnNWcWVGNnk0UitZZ0ZBSG1NWnQ3WmZo?=
- =?utf-8?B?SUxjY1g3cHhSZWVvSkdQcmtFbytEeUxKUEZnVmxIaFhSejVJcmVaVDc4Rzhp?=
- =?utf-8?B?cjIydDgrMy93aU1USEFKSTZOMnZSWlUwa05MV1hIdjBZVU9VMVB1NVZlRmxr?=
- =?utf-8?B?c3BCdDdzWTdPTFpMQzZTTENhTTlQRXJBMjQ4ZkRvaVY1dTUrdTE2ZGtIZDV0?=
- =?utf-8?B?cndJQ3Qwdm90ZzlWWTFqMVp6K3dDb1pJV1gzRTVzSjNLU3FRS1ltNG5vOUgw?=
- =?utf-8?B?bFRDdVZqU2FxdkowbWZvcEhEcHFjUWVVQUNReG11RUVHRCtnTkVweVJSRUl3?=
- =?utf-8?B?bXpJRVhCN0R3VXViVitTQnBLZDNtWkgwYzFBNWd2c25VV2h6ZktiNUU3WEdj?=
- =?utf-8?B?TzhMM0RVYTF4MXNZQm14VHpuODdyMVdUZFh2NllPQTRobHNFTkpsbUpZZldG?=
- =?utf-8?B?OFZUVGdmaDlNazM1TlNUS2l4U1dIU1lmMmMrV1NGL25FOG5JZFZ6QTcwMmRP?=
- =?utf-8?B?YjlIc3pZR2wySW9Nd09XTThEcGlVckZ4ZGRZc3RuM3plZU9Cd1lXMnhGVWlH?=
- =?utf-8?B?cThwQTByQnhiQ3JNOERmbHNZWkd5MFlvRmViY3hVMitvMU9oUkp0bjFKR29n?=
- =?utf-8?B?L0cveDV4T3JMU1VJQkNUZWl6RmdGQWdiUnBHQ2JleDNlbCtQZzYzSVhtdFEv?=
- =?utf-8?B?bmFKcWhWbVNRTFMxTDdPWkVLeTA5K1NEUW5OSitmMUlFTEoxZHgyemRGRDdD?=
- =?utf-8?B?eTFJZU0vRTdLcTQ0dlcwT1NYUEdFb1ZoSk4vQXI1QWxrTG1iVkJmNkJLc1FM?=
- =?utf-8?B?WkdvM1BoWmdqNlZQZ3Y5TEhrNVhJNjZ1UEs4R25Iay9zMlFYTGc5TWJWR2c0?=
- =?utf-8?B?SEdjUFZsK2U2M0ZENkRsUmxSN2crTmJRd2ZlS2JXVU92RjlHUnFHMmsxb2M0?=
- =?utf-8?B?LzJoUGJTTmFhT25ydU5mcXdDYlk3cFdHVCtyU0FmY3ZkbWUwTVpXRmVKYVh6?=
- =?utf-8?B?NEZ6NW51Y0UyRVYxcmczanJvRDZqb0R1Q3RJRDVMcGJoaWJmZ1lUNDBFeVZw?=
- =?utf-8?Q?2kLMN/3pjgOu0SbmIpPBYDlATvA8CqZiYogMcRhNsY/FG?=
-X-MS-Exchange-AntiSpam-MessageData-1: 2ATPfkKl7HrL6g==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc12b8ff-6882-470e-f2d4-08df2e7ed4db
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 07:50:38.4107
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6SCySK+xgSXe+VOoEnWoJKEm8YWmPKOUpFq3UBaz6D561INfOvC1PVkE7TfBudMvb1gn4Ci6s7LQQ0S4ioCetA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7014
+References: <20261018-tegra-drm-yvu420-v2-0-512889103ab4@gmail.com>
+ <HmrilxC8QwiAQGw2IQ1Ztw@nvidia.com> <CALHNRZ9pTTLTpsKCi7oETcjpxNbZmQxfnC+pvEx4Wezv1_zchw@mail.gmail.com>
+ <YwDFPLEmR6OpEy_iH5qhQg@nvidia.com>
+In-Reply-To: <YwDFPLEmR6OpEy_iH5qhQg@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 20 Oct 2026 03:09:46 -0500
+X-Gm-Features: AclHuK9G5flqUwHbZoc27IHAExPyam9IuxmD1uS85V1i11rVUagnEOUPWT-m7-o
+Message-ID: <CALHNRZ_Kiqc0VJN+4gDDM0Z+Ns0VO3jCoLUk1xNn1OGjeS2+LQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/tegra: Support swapping chroma planes
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday, October 15, 2026 5:53=E2=80=AFPM Uwe Kleine-K=C3=B6nig wrote:
-> tegra_pwm_config() is called with u64 values passed for duty_ns and
-> period_ns in tegra_pwm_apply(). Make these parameters u64 instead of int
-> to not lose the upper bits for bigger values. If such a discard happens
-> the values that are written to hardware become wrong, or (if the
-> discarded period value becomes 0) a division by zero happens.
->=20
-> Adapt the math functions accordingly to not let the now potentially
-> bigger values result in overflows.
->=20
-> Reported-by: Sashiko <sashiko-bot@kernel.org>
-> Link: https://sashiko.dev/#/bug/linux-5c5b97d6-4da6-4d06-9dc7-957419dcd83=
-2
-> Fixes: fd3ddd4355c0 ("pwm: tegra: Implement .apply() callback")
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> ---
-> Hello,
->=20
-> actually the Fixes: line isn't quite accurate. The problem that the
-> arguments are cropped to int from u64 exists since v4.7-rc1 (commit
-> 5ec803edcb70 ("pwm: Add core infrastructure to allow atomic updates"))
-> in the pwm core, but the blamed commit above is the commit where this
-> problem was moved to the pwm-tegra driver and thus it's fixable there.
-> The problem in the core doesn't exist any more since commit 0829c35dc534
-> ("pwm: Drop support for legacy drivers") in v6.0-rc1.
->=20
-> Note this patch changes the rounding of the duty cycle (from somewhat
-> round closest to somewhat round down). It would not be hard to keep the
-> behaviour by introducing a variant of mul_u64_u64_div_u64() that rounds
-> closest, but the rounding is spoiled anyhow by later rounding of the
-> period. To actually fix that it would be best to convert the driver to
-> the waveform callbacks.
->=20
-> Example calculation: Let's assume an input clock (pc->clk_rate) of
-> 100000 Hz and a request with period_ns =3D 230399744 and
-> duty_ns =3D 128249857. To translate that into register settings the
-> DUTY_SHIFT values will be round down with both approaches and result in
-> an actual duty_cycle of 127658000 ns (=CE=94 =3D -591857 ns) while 128557=
-000 ns
-> (=CE=94 =3D 307143 ns) would also be possible.
->=20
-> Best regards
-> Uwe
->=20
->  drivers/pwm/pwm-tegra.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> index 5cdbe120ba2d..8b5ed7998fdd 100644
-> --- a/drivers/pwm/pwm-tegra.c
-> +++ b/drivers/pwm/pwm-tegra.c
-> @@ -138,22 +138,21 @@ static inline void tegra_pwm_writel(struct pwm_devi=
-ce *pwm, unsigned int offset,
->  }
-> =20
->  static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pw=
-m,
-> -			    int duty_ns, int period_ns)
-> +			    u64 duty_ns, u64 period_ns)
->  {
->  	struct tegra_pwm_chip *pc =3D to_tegra_pwm_chip(chip);
-> -	unsigned long long c =3D duty_ns;
->  	unsigned long rate, required_clk_rate;
->  	u32 val =3D 0;
->  	int err;
-> +	u64 c;
-> =20
->  	/*
->  	 * Convert from duty_ns / period_ns to a fixed number of duty ticks
-> -	 * per TEGRA_PWM_DEPTH cycles and make sure to round to the
-> -	 * nearest integer during division.
-> +	 * per TEGRA_PWM_DEPTH cycles.
->  	 */
-> -	c *=3D TEGRA_PWM_DEPTH;
-> -	c =3D DIV_ROUND_CLOSEST_ULL(c, period_ns);
-> +	c =3D mul_u64_u64_div_u64(duty_ns, TEGRA_PWM_DEPTH, period_ns);
-> =20
-> +	/* The cast here is fine as c <=3D TEGRA_PWM_DEPTH */
->  	val =3D (u32)c << TEGRA_PWM_DUTY_SHIFT;
+On Tue, Oct 20, 2026 at 1:33=E2=80=AFAM Mikko Perttunen <mperttunen@nvidia.=
+com> wrote:
+>
+> On Tuesday, October 20, 2026 2:59=E2=80=AFPM Aaron Kling wrote:
+> > On Tue, Oct 20, 2026 at 12:08=E2=80=AFAM Mikko Perttunen <mperttunen@nv=
+idia.com> wrote:
+> > >
+> > > On Monday, October 19, 2026 7:03=E2=80=AFAM Aaron Kling via B4 Relay =
+wrote:
+> > > > From: Aaron Kling <webgeek1234@gmail.com>
+> > > >
+> > > > The Tegra display controller supports some yuv types, but not their
+> > > > chroma swapped variants. For example, yuv420 is supported but yvu42=
+0 is
+> > > > not. This can be efficiently worked around by just passing the hard=
+ware
+> > > > said chroma planes backwards. Add a flag to the plane state struct =
+and
+> > > > handling to both tegradc and nvdisplay paths.
+> > > >
+> > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > > ---
+> > > >  drivers/gpu/drm/tegra/dc.c    |  6 +++++-
+> > > >  drivers/gpu/drm/tegra/hub.c   | 14 +++++++++-----
+> > > >  drivers/gpu/drm/tegra/plane.c |  5 ++++-
+> > > >  drivers/gpu/drm/tegra/plane.h |  3 ++-
+> > > >  4 files changed, 20 insertions(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.=
+c
+> > > > index b0bfa946e6979..39c2e920d76a6 100644
+> > > > --- a/drivers/gpu/drm/tegra/dc.c
+> > > > +++ b/drivers/gpu/drm/tegra/dc.c
+> > > > @@ -740,7 +740,8 @@ static int tegra_plane_atomic_check(struct drm_=
+plane *plane,
+> > > >
+> > > >       err =3D tegra_plane_format(new_plane_state->fb->format->forma=
+t,
+> > > >                                &plane_state->format,
+> > > > -                              &plane_state->swap);
+> > > > +                              &plane_state->swap,
+> > > > +                              &plane_state->swap_uv);
+> > > >       if (err < 0)
+> > > >               return err;
+> > > >
+> > > > @@ -872,6 +873,9 @@ static void tegra_plane_atomic_update(struct dr=
+m_plane *plane,
+> > > >                       window.stride[i] =3D fb->pitches[i];
+> > > >       }
+> > > >
+> > > > +     if (tegra_plane_state->swap_uv)
+> > > > +             swap(window.base[1], window.base[2]);
+> > > > +
+> > > >       tegra_dc_setup_window(p, &window);
+> > > >  }
+> > > >
+> > > > diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hu=
+b.c
+> > > > index 448f49f3a7d7e..6427155ac4fdf 100644
+> > > > --- a/drivers/gpu/drm/tegra/hub.c
+> > > > +++ b/drivers/gpu/drm/tegra/hub.c
+> > > > @@ -440,7 +440,8 @@ static int tegra_shared_plane_atomic_check(stru=
+ct drm_plane *plane,
+> > > >
+> > > >       err =3D tegra_plane_format(new_plane_state->fb->format->forma=
+t,
+> > > >                                &plane_state->format,
+> > > > -                              &plane_state->swap);
+> > > > +                              &plane_state->swap,
+> > > > +                              &plane_state->swap_uv);
+> > > >       if (err < 0)
+> > > >               return err;
+> > > >
+> > > > @@ -664,24 +665,27 @@ static void tegra_shared_plane_atomic_update(=
+struct drm_plane *plane,
+> > > >       tegra_plane_writel(p, value, DC_WIN_PLANAR_STORAGE);
+> > > >
+> > > >       if (yuv && planes > 1) {
+> > > > -             base =3D tegra_plane_state->iova[1] + fb->offsets[1];
+> > > > +             uint8_t u =3D tegra_plane_state->swap_uv ? 2 : 1;
+> > > > +             uint8_t v =3D tegra_plane_state->swap_uv ? 1 : 2;
+> > > > +
+> > > > +             base =3D tegra_plane_state->iova[u] + fb->offsets[u];
+> > > >               base |=3D addr_flag;
+> > > >
+> > > >               tegra_plane_writel(p, upper_32_bits(base), DC_WINBUF_=
+START_ADDR_HI_U);
+> > > >               tegra_plane_writel(p, lower_32_bits(base), DC_WINBUF_=
+START_ADDR_U);
+> > > >
+> > > >               if (planes > 2) {
+> > > > -                     base =3D tegra_plane_state->iova[2] + fb->off=
+sets[2];
+> > > > +                     base =3D tegra_plane_state->iova[v] + fb->off=
+sets[v];
+> > > >                       base |=3D addr_flag;
+> > > >
+> > > >                       tegra_plane_writel(p, upper_32_bits(base), DC=
+_WINBUF_START_ADDR_HI_V);
+> > > >                       tegra_plane_writel(p, lower_32_bits(base), DC=
+_WINBUF_START_ADDR_V);
+> > > >               }
+> > > >
+> > > > -             value =3D PITCH_U(fb->pitches[1]);
+> > > > +             value =3D PITCH_U(fb->pitches[u]);
+> > > >
+> > > >               if (planes > 2)
+> > > > -                     value |=3D PITCH_V(fb->pitches[2]);
+> > > > +                     value |=3D PITCH_V(fb->pitches[v]);
+> > > >
+> > > >               tegra_plane_writel(p, value, DC_WIN_PLANAR_STORAGE_UV=
+);
+> > > >       } else {
+> > >
+> > > I noticed DC_WIN_PRECOMP_WGRP_PARAMS has a SWAP_UV bit. This is alrea=
+dy
+> > > defined in dc.h. So we can use that for the hub.c implementation inst=
+ead
+> > > of manually swapping.
+> >
+> > Oh. I figured there had to be something like that in one of the
+> > generations, but my grep-fu failed me. Even more embarrassing that I
+> > ended up using the exact same name. I will update and verify this and
+> > send a new revision.
+> >
+> > > Otherwise everything looks good to me. We could also enable the swap_=
+uv
+> > > logic for other UV formats.
+> >
+> > Eh, other than asking for the entire patch to be rewritten over the
+> > last two revisions, it looks good. :P And alright, I'll plumb yvu422
+> > and yvu444 in the new revision as well. However, I don't have test
+> > cases for those.
+>
+> These are minor revisions, pretty much cosmetic! :)
+>
+> If you have access to the libdrm modetest command, you can use it to
+> test -- e.g.
+>
+> sudo modetest -M tegra -s 78:1920x1080 \
+>       -P 44@43:896x504+40+288@YU12 \
+>       -P 48@43:896x504+984+288@YV12
+>
+> (the ID numbers may differ) to set up a 1920x1080 mode with two overlay
+> planes one with each plane ordering.
 
-The change looks good to me, but the required clock rate calculation=20
-further below should also be updated accordingly.
+I'm still mostly focused on android. If there's something where I'm
+concerned there's a difference between android and a Linux rootfs or
+such, I'll test against a simple cli rootfs. But I don't have a full
+graphical Linux setup for testing. At one point I did try to compile
+modetest for aosp, but I don't think I made it work.
 
-Thanks
-Mikko
+Aaron
 
-> =20
->  	/*
->=20
-> base-commit: 00e917df050d79ac26ec700717680ad6421d2808
-> --=20
-> 2.56.0.rc1
->=20
->=20
-
-
-
-
+> BTW, I believe the hardware swap bit also supports packed and semiplanar
+> formats -- you can add those too if you'd like or leave them out and we
+> can add them later if needed.
+>
+> Mikko
+>
+> >
+> > Aaron
+> >
+> > > Cheers
+> > > Mikko
+> > >
+> > > > diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/=
+plane.c
+> > > > index 2148b0c59815c..757bc552809fe 100644
+> > > > --- a/drivers/gpu/drm/tegra/plane.c
+> > > > +++ b/drivers/gpu/drm/tegra/plane.c
+> > > > @@ -59,6 +59,7 @@ tegra_plane_atomic_duplicate_state(struct drm_pla=
+ne *plane)
+> > > >       copy->tiling =3D state->tiling;
+> > > >       copy->format =3D state->format;
+> > > >       copy->swap =3D state->swap;
+> > > > +     copy->swap_uv =3D state->swap_uv;
+> > > >       copy->reflect_x =3D state->reflect_x;
+> > > >       copy->reflect_y =3D state->reflect_y;
+> > > >       copy->opaque =3D state->opaque;
+> > > > @@ -319,11 +320,13 @@ int tegra_plane_state_add(struct tegra_plane =
+*plane,
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > -int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap)
+> > > > +int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap, bool *s=
+wap_uv)
+> > > >  {
+> > > >       /* assume no swapping of fetched data */
+> > > >       if (swap)
+> > > >               *swap =3D BYTE_SWAP_NOSWAP;
+> > > > +     if (swap_uv)
+> > > > +             *swap_uv =3D false;
+> > > >
+> > > >       switch (fourcc) {
+> > > >       case DRM_FORMAT_ARGB4444:
+> > > > diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/=
+plane.h
+> > > > index e33a581e6490e..dba5f1b254e98 100644
+> > > > --- a/drivers/gpu/drm/tegra/plane.h
+> > > > +++ b/drivers/gpu/drm/tegra/plane.h
+> > > > @@ -49,6 +49,7 @@ struct tegra_plane_state {
+> > > >       struct tegra_bo_tiling tiling;
+> > > >       u32 format;
+> > > >       u32 swap;
+> > > > +     bool swap_uv;
+> > > >
+> > > >       bool reflect_x;
+> > > >       bool reflect_y;
+> > > > @@ -88,7 +89,7 @@ void tegra_plane_cleanup_fb(struct drm_plane *pla=
+ne,
+> > > >  int tegra_plane_state_add(struct tegra_plane *plane,
+> > > >                         struct drm_plane_state *state);
+> > > >
+> > > > -int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap);
+> > > > +int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap, bool *s=
+wap_uv);
+> > > >  bool tegra_plane_format_is_indexed(unsigned int format);
+> > > >  bool tegra_plane_format_is_yuv(unsigned int format, unsigned int *=
+planes, unsigned int *bpc);
+> > > >  int tegra_plane_setup_legacy_state(struct tegra_plane *tegra,
+> > > >
+> > > > --
+> > > > 2.54.0
+> > > >
+> > > >
+> > > >
+> > >
+> > >
+> > >
+> > >
+>
+>
+>
+>
