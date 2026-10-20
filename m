@@ -1,49 +1,117 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792495751;
-	b=feocsWVcaq7co6+vWmGbpR/N8riK6+0B3f++g3O3D9NMvLCJP0g573XvckuhDR8/lIRm
-	 hgEDNSTBxe3DoOnXO3Nzua4siyUjKSlyjjl75nNUFfmTNBrk1DqTMm/cjBZY8lncmLa/Y
-	 TkEW+4rLcVPrhmt3AQNX8icdnyQL0hwIkpY4yy2zTFTixxdafd0qId3aih09JC0LnO/JG
-	 c958s2mkL+MsiO6YU2iSWFbAFCbMn5rigiervMYqU8DR4AP5nnmoveLqm3FfR6aSo0Ibk
-	 wKF1/yHlvytPu+EASJvLD53Q+0fFjklDp8koDuXeOFdZvYzur9ATEHA+uzBlPXlzA0w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792495751;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:From:
-	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=lvOImHjk9+PSZt/dZxaP6lDjW+Q8Usn4Xh93yDh43jg=;
-	b=LnWgQPuGNWvs9iZOPUUT+XZ+32CUgDOKNXBb2Px61glDT3NqS5pzZQvj2UPjf2q8Yjp8
-	 2wBaqmuXKr1Ct+2bOntiXDB8VB37mzaYrmPrZFjvXWJm3Bip7+dLr8ImTrflKGx4oef5q
-	 fAQFZoghyQrO8TGPzHs9NrRddvp23YN8IbHYvzI6gLmZgCcveTdBdYvYF5EAYaFPIrCaj
-	 p/GKm3N1uTnmQ61FAKE+0EwUHjC4Gigh/LIn7TRRukxxzrtWBjXRABXAoAHz+gxg7sXOo
-	 3QbiUSqkaXY8BvvHVfwgKbEHuvOZtfaN3hFuDxLHHUwJTAH+ZF/be+cz3tSeIAl0cDw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=ldbNPAVz;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D4D606A31A;
-	Tue, 20 Oct 2026 11:29:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01D4D606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.201.39
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792498760;
+	b=VhOMfwyxpY8mP2htv17iXLBSgg1NIzOB6tfR2lIAubvmij8DKHDZ9zpxT63uBUyVf4ey
+	 VZEBNxXDlrhZWccQBH3Z6zWqJJ9vwoWzBr7IHNax+HLBm+BB4M7YQmMPH7jBfRVW7tpiQ
+	 wPM/BN2Zdbo3sCqcQ8ep5jfTSpbCJUjuRzfbLeRfeVlzSbc0tyzSg4R69CFuRowTDxFDM
+	 +xutfgptszl0LDqAVOKwlUQw45vweEi0D9DoNz5uDzNMxLtWiHjTRBYzuO8U0QGkwby2p
+	 +FFBycaaj96Ch9W4NStxZ4sa0dAHXbwSVZGIzI5CDEHQX2b+HSAz1BdGP3LeA7H3gXw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792498760;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+	 Content-Type:X-NV-OnPremToCloud:X-EOPAttributedMessage:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=Bqui4gSEsLKVOJwH65N6nGKURuZZrTOxGnpUytKUWO0=;
+	b=vyggDSAJ6XTKAZkd8ioGwhVrVV8gkz15bcVGIAzPdcoT3szNz0EapGduoV0htkCoLJ6X
+	 LI14pGhaYqo/SVSY+eS5DoxxWdZaQCPrp9iF0UyiopIPlZGsz9S6xCTNWRGPrVa3q4uKE
+	 7esxikueFsw4iGp2ajbSzp9hna41Zs6x++LFHKVbCjY7z+FPaTJ4CwdB1lcBWMQ5gpwJ5
+	 VY1TtB9fn6BgJccAUjqhYS4/BFD9/j7DoWxk2BdBrzWWWBGJK1oxG+VdCO6IlDFBWjxgw
+	 6phjftQq+B+AgO5/j1WG6KyOeZAJZTkYCnj/fIqCUHoHqmeYlkn5wcPEPGSNGY2zk+w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=g+YgJloq;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.201.39
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010039.outbound.protection.outlook.com [52.101.201.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A908606A31A;
+	Tue, 20 Oct 2026 12:19:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7A908606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=ldbNPAVz
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04FE21596;
-	Tue, 20 Oct 2026 04:29:06 -0700 (PDT)
-Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55BE03F7B4;
-	Tue, 20 Oct 2026 04:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1792495749; bh=lPExewzubDO61zAC5f5szD4RLVzqEIiHTrrWFFbXWiU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ldbNPAVz3IGbNhuOHCkg9AxOAasSipoy6B5lGBDzvn/l+iQ+xrMGjWe9+CJcsFl11
-	 6SP4SsUPLz31dVdUWoNT+EX1DN80XrhHO69Qp0pChRZFwxSOXLiZHUB06wU7fItPn9
-	 6t/Ojv9c6iy2iP/FPyS1UkbN/qZvM71rUcPMepAk=
-Message-ID: <be6cd787-8502-4499-ad62-597c1b9b7702@arm.com>
-Date: Tue, 20 Oct 2026 12:28:54 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=g+YgJloq
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JmX+CD0rGvqrI4Q1pkudWY48dUWFPA+JSV0OPYsydu1waG7/cNCPjUud4+VLIdPOM6DdFn+owphouFJhj2MiMFjJ2zgZT3JE9kFFhiIfY9qF/8EWWUBmaPySbO+W94WSQp3/b3ZflKTKkNspOjOFGhLcr2CFnvgvvUMG5Z7JQbdTc9VFKctRg09q7K24jHKdYMhtIsaZd8VSQMtj86v07Vx7m8kRWGXUyfooCGCx6zZVpLy6JQvbr/Dg51JjkTsxq3CQB8LRRcJHH+9GmXMaG+6w3kItdeiGH7XK9DPOGOyxOchlU2V9ilRv0BhTQbfstVA2fqNXL0COVtlOjznzig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bqui4gSEsLKVOJwH65N6nGKURuZZrTOxGnpUytKUWO0=;
+ b=ALs8xWxHJMdkMNM5Trx0HEurGivFDkTy2YN4WPmEq7v8r+jtTj0C7SG+W+dLr76gGwMM1JIsZxat7Qp5I95hvX+GfXPRFglQniE2r+WVv1A02TCJNrrtMPjdzOgoR87Rgy/CvvjJ7dT/aUj2OXylrRBZr6Au6aFn4aDHI99SCNio6zQ+1luzqzl1eCnKd7135XTNCbz81+aw1MbKdouqRzJE4L4k6GLGumaCR6ipnJy4jcPJSVDOj8OCGbKeAVqupclNrhfn0wNGCfm+W7xgfU5kOSnXNM8SRTA/Hl8BZHMb16gJKHpasfAqiiGVfcCXoVlQm/qjL0kQUz7ZxEMzZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bqui4gSEsLKVOJwH65N6nGKURuZZrTOxGnpUytKUWO0=;
+ b=g+YgJloqBZ7gths84XkkyouAnl5ZF656QgkI+1sQ2mxbAGzpCOVh8Z+hGWxpbRhYBcyNK1N+RecMvteq04tUWySruaWKmfpaGM4Ozzkc7VsHtYbIm5FQQTWEvMBQkNv57dRn51h9R76BjVurvBCoUWxTWZby2eTpKStQWt7/kEuDGftOLg2k3MvX7qjtGZmhhiTzhMrISHwtQ+gmQv+r3A11vRJHM2izu41sED+Ci4ee+Ay3FvwqI4ee8D5uXraCS7vCoScnz9AHv7E3V/j2bLKapMCEy3eq5Pfz1RrSCWHvX81xnnlA40nupa+Vn5MV8FCmj4suiT9hQt7cUwJOOA==
+Received: from BLAPR03CA0065.namprd03.prod.outlook.com (2603:10b6:208:329::10)
+ by SA1PR12MB9546.namprd12.prod.outlook.com (2603:10b6:806:459::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Tue, 20 Oct
+ 2026 12:19:15 +0000
+Received: from MN7PEPF0000014E.namprd04.prod.outlook.com
+ (2603:10b6:208:329:cafe::76) by BLAPR03CA0065.outlook.office365.com
+ (2603:10b6:208:329::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.496.5 via Frontend Transport; Tue, 20
+ Oct 2026 12:19:15 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.161) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN7PEPF0000014E.mail.protection.outlook.com (10.167.254.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.546.15 via Frontend Transport; Tue, 20 Oct 2026 12:19:14 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Tue, 20 Oct
+ 2026 05:18:58 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Tue, 20 Oct
+ 2026 05:18:57 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.49 via Frontend
+ Transport; Tue, 20 Oct 2026 05:18:50 -0700
+From: Sumit Gupta <sumitg@nvidia.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
+	<christian.loehle@arm.com>, <ionela.voinescu@arm.com>,
+	<zhenglifeng1@huawei.com>, <zhanjie9@hisilicon.com>, <lenb@kernel.org>,
+	<ray.huang@amd.com>, <mario.limonciello@amd.com>, <perry.yuan@amd.com>,
+	<kprateek.nayak@amd.com>, <maciej.wieczor-retman@intel.com>,
+	<pawel.chmielewski@intel.com>, <linux-pm@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <acpica-devel@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
+	<sanjayc@nvidia.com>, <mochs@nvidia.com>, <bbasu@nvidia.com>,
+	<sumitg@nvidia.com>
+Subject: [PATCH v6 0/5] cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
+Date: Tue, 20 Oct 2026 17:48:41 +0530
+Message-ID: <20261020121846.691218-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -53,161 +121,117 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/11] iommu: Let 32-bit ARM drivers opt into a DMA API
- default domain
-To: Mikko Perttunen <mperttunen@nvidia.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Heiko Stuebner <heiko@sntech.de>,
- Thierry Reding <thierry.reding@kernel.org>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Yong Wu <yong.wu@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20261016-b4-arm32-iommu-dma-cookie-v2-0-b06842a01938@nvidia.com>
- <20261016-b4-arm32-iommu-dma-cookie-v2-7-b06842a01938@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20261016-b4-arm32-iommu-dma-cookie-v2-7-b06842a01938@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN7PEPF0000014E:EE_|SA1PR12MB9546:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31788edf-7acc-48a4-4b59-08df2ea45b55
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|23010399003|36860700016|82310400026|1800799024|7416014|6133799003|18002099003|13003099007|921020|261009221227099003|11063799006|10067099003|261009223027099003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	0xW0x6kfFikfqXydZcfzQlAH6RDUlVCXYi7SoIDc8vUspPHjBHDWZa2j2NXfWdjcz/tJM6rsxW5/ua9j+3Q2wVwiO7d08dqEFgBVZK/nrhDlgKqZHfc3X0qnig4vFjJo5L8QsdIrSB+QirI931SB+SU/gj/4Maien/hmQSK9T4Uit+6pFpjOgKMaSAT+4KoWB1HYTCUYKpNUfnO5eGMR3PGppIOpDcaSNFtTZQUgQ5fJs4UgMA7xV7WAlOZt0gp2kTQzZP3U990Bslwi4cJ8uyehYHiv+vuyIrhZpU1neSK+zj+7/SoPnCxZo8rtm39c3v/0jqBdHP4QctFyPbaTU3qZs/lz2X6Wd7OQrsmfUO82XceZYTqPWE/jY6q5O/iFURBSFmZ+Got6QoGZKDlUQHEC4fIeLs7pNwd6BbRyrkRbJo0DyRcuVdmSoiKxuEN3ctKgY68Z+hA5JxgmyDPORtjM2GxRAZezMZqsAQAvs1Vg0evrq+8A1ygL4gMGKRDm69fQHjrY6PtWcLukFiNUgE7Ihx7qZRcXVdkAgFIitqr6oQ2qvSpG5UFoHlBeU2sXiTUjCbY37GiCfidFxFlt7v0goT5plM2HjmKpXuqhtkVadG5XqgmzETtF+CAcp0K9s5RwDMRTbyHAZSep8gpLD5KbFXelI5+lE21GPUk4OqAq320d/0M1InTBY1sZVQgR4PrDpXWky01ukADhdc95V2KYwq9sIPJ+1m4sutkiVEstZ34ZdNTA5Y/0RjexsOem
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(23010399003)(36860700016)(82310400026)(1800799024)(7416014)(6133799003)(18002099003)(13003099007)(921020)(261009221227099003)(11063799006)(10067099003)(261009223027099003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	Iiaf1VAIC8QBlX9vmfd1xXsWcOciNCEQq270IHQrLD9Y6dzJF4GwUebBbvgB+L8TPDSTLby38FEPDtVtj0qReDmUutRfDPyYwJ39HO0xEWTU1GKSVT090oWctEqMNeaX9U4fAur3VIpvkjNoCgdLml3JQz44lj5dktSC4ADftp+2Tp0oocM7N/ZPvzMuSboc8wkrQtF2rPo/coKeSiHME4XXSnpn0STaepsxfmzeWzxKwlGoKYptvKslrL0PHYILSBWuPy6ywa+uGDAeiKKTcVWH199Z41NZkXY07DQ7OKMoiQ76hx2rbrQhgNClynjuIdqxDcTtTruuB2nm5pwA74QKJEH41iLeCNQaX4McSejRDZHsZkmUCJpm6HMRnmKpN6EVpQn9IIr6RQhz+4D7RDTPwec/iWMMQJSyQeJ5fV5mYT+ls1pTEw5i8BlaUzFT
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 12:19:14.9925
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31788edf-7acc-48a4-4b59-08df2ea45b55
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN7PEPF0000014E.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9546
 
-On 16/10/2026 7:46 am, Mikko Perttunen wrote:
-> iommu_get_default_domain_type() unconditionally forces IDENTITY on
-> 32-bit ARM as ARM_DMA_USE_IOMMU installs its own UNMANAGED domain on top
-> of whatever the group already had. Now that the ARM DMA API state is an
-> ordinary domain cookie, IOMMU drivers can ask for a real
-> IOMMU_DOMAIN_DMA default domain instead. Drop the override so that
-> ->def_domain_type is honoured, and let a driver-requested DMA domain
-> through the !CONFIG_IOMMU_DMA guard when ARM_DMA_USE_IOMMU can back it.
-> 
-> IOMMU_DOMAIN_DMA stays strictly opt-in on 32-bit ARM and is never the
-> fallback to avoid unexpected changes, as drivers today return 0 from
-> ->def_domain_type while expecting the legacy behaviour.
-> 
-> Behaviour is therefore unchanged for every existing 32-bit ARM IOMMU
-> driver:
-> 
-> - exynos-iommu, omap-iommu, rockchip-iommu, msm_iommu, ipmmu-vmsa,
->    mtk_iommu*, sun50i-iommu and qcom_iommu have no ->def_domain_type,
->    so iommu_get_def_domain_type() returns the unchanged cur_type of 0,
->    which is forced to IDENTITY as before.
-> - arm-smmu returns IDENTITY for legacy bindings and 0 otherwise, which
->    ends up in the same place.
-> - tegra-smmu returns IDENTITY explicitly, and keeps doing so until a
->    later patch.
-> 
-> Also move the static_assert on the two DMA API implementations being
-> mutually exclusive to drivers/iommu/dma-iommu.h, next to the
-> declarations that depend on it.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->   drivers/iommu/dma-iommu.h |  3 +++
->   drivers/iommu/iommu.c     | 20 +++++---------------
->   2 files changed, 8 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/iommu/dma-iommu.h b/drivers/iommu/dma-iommu.h
-> index 71b23cb698c0..24fa4165450f 100644
-> --- a/drivers/iommu/dma-iommu.h
-> +++ b/drivers/iommu/dma-iommu.h
-> @@ -12,6 +12,9 @@
->    * IOMMU_DOMAIN_DMA default domains. Only one provider can be compiled in at a
->    * time.
->    */
-> +static_assert(!(IS_ENABLED(CONFIG_IOMMU_DMA) &&
-> +		IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)));
-> +
+This series preserves the OSPM-set CPPC registers (Energy Performance
+Preference, Autonomous Activity Window, Autonomous Selection - set via
+sysfs) across CPU hotplug and suspend/resume. On driver unload, it puts
+back the values they had before the driver loaded.
 
-Don't the first couple of patches already make this redundant, since 
-such a build would now fail anyway due to multiple definitions of 
-iommu_setup_dma_ops() etc.?
+To do this, it keeps the CPPC cpufreq policy alive across CPU hotplug.
+It also orders the performance-control writes in cppc_set_perf(), so
+that restoring them after a platform reset never sends an invalid
+request.
 
->   #if defined(CONFIG_ARM_DMA_USE_IOMMU)
->   
->   #include <asm/dma-iommu.h>
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 5fbb76d44a1e..0d812c4b9f08 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -1884,18 +1884,6 @@ static int iommu_get_default_domain_type(struct iommu_group *group,
->   
->   	lockdep_assert_held(&group->mutex);
->   
-> -	/*
-> -	 * ARM32 drivers supporting CONFIG_ARM_DMA_USE_IOMMU can declare an
-> -	 * identity_domain and it will automatically become their default
-> -	 * domain. Later on ARM_DMA_USE_IOMMU will install its UNMANAGED domain.
-> -	 * Override the selection to IDENTITY.
-> -	 */
-> -	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
-> -		static_assert(!(IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU) &&
-> -				IS_ENABLED(CONFIG_IOMMU_DMA)));
-> -		driver_type = IOMMU_DOMAIN_IDENTITY;
-> -	}
-> -
->   	for_each_group_device(group, gdev) {
->   		driver_type = iommu_get_def_domain_type(group, gdev->dev,
->   							driver_type);
-> @@ -1913,11 +1901,13 @@ static int iommu_get_default_domain_type(struct iommu_group *group,
->   
->   	/*
->   	 * If the common dma ops are not selected in kconfig then we cannot use
-> -	 * IOMMU_DOMAIN_DMA at all. Force IDENTITY if nothing else has been
-> -	 * selected.
-> +	 * IOMMU_DOMAIN_DMA at all, unless this is ARM32 and the driver asked
-> +	 * for it explicitly, where CONFIG_ARM_DMA_USE_IOMMU provides the
-> +	 * implementation. Force IDENTITY if nothing else has been selected.
->   	 */
->   	if (!IS_ENABLED(CONFIG_IOMMU_DMA)) {
-> -		if (WARN_ON(driver_type == IOMMU_DOMAIN_DMA))
-> +		if (WARN_ON(driver_type == IOMMU_DOMAIN_DMA &&
-> +			    !IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)))
+Without online()/offline() callbacks, the core tears a policy down when
+its last CPU goes offline and rebuilds it on the way back, re-reading the
+CPPC capabilities each time. The values written to these registers can
+be lost:
 
-This ends up looking a bit odd, and not clear that it's still more or 
-less the same special-case workaround seemingly being removed in the 
-hunk above.
+ - Across CPU hotplug or suspend/resume: the platform may reset them
+   while the CPU is offline or suspended.
+ - On driver unload: the driver-written value is left in the register
+   instead of returning to its pre-driver state.
 
-At this point I'd rather push any remaining identity special cases into 
-the relevant drivers, however I'm somewhat more confident that there may 
-not actually need to be any:
+Handle these with:
 
-- exynos-iommu, omap-iommu, rockchip-iommu, msm_iommu: AFAICS these all 
-only ever have a single client device, so the per-group implicit domain 
-should be equivalent to the per-device explicit one, so they should not 
-be impacted by switching (provided the "throw away the ARM domain" idiom 
-in some of their client drivers becomes non-destructive as mentioned)
+ - Patch 1: orders the Desired, MIN and MAX writes in cppc_set_perf(), so
+   that the platform never sees an invalid request. Christian proposed
+   it in [6], and this version adds fixes found in testing.
+ - Patch 2: adds online()/offline() callbacks so the core keeps policy
+   alive across CPU hotplug instead of tearing it down and rebuilding it.
+ - Patch 3: makes the autonomous selection register helpers take a u64.
+ - Patch 4: adds a table-driven mechanism that captures each register's
+   firmware value at init(), restores it from offline(), and reapplies
+   the OSPM-set value from online().
+ - Patch 5: extends the same save/restore to system suspend/resume.
 
-- mtk_iommu, sun50i-iommu, qcom_iommu, arm_smmu: While Kconfig might 
-allow building them, I'm not sure we really support the first 3 on 
-32-bit at all, but again since these all have no special CONFIG_ARM 
-group handling anyway then either they must work out as above or they're 
-already broken, and thus at most the change might un-break them.
+v5[5] -> v6:
+ - Patch 1 (new):
+   - add Christian's patch [6] ordering the performance-control writes.
+   - init() requests the full range when the live MAX is zero, to avoid
+     a probe failure.
+   - clamp Desired to MIN and MAX, as rounding can put it below MIN.
+ - Patch 2:
+   - offline() lowers MIN to lowest_perf with Desired, so that the parked
+     request stays valid. (Pierre)
+   - drop cppc_cpufreq_prepare_perf_restore(), as cppc_set_perf() now
+     orders the writes. (Jie Zhan, Christian, Pierre)
+   - online() caches the restored limits only once the platform takes
+     them, as set_target() and fast_switch() do.
+ - Patch 3:
+   - add Prateek's Reviewed-by and Tested-by.
+ - Patch 4:
+   - replace struct cppc_saved_vals with a u64 array indexed by register
+     and type, which drops cppc_cpufreq_saved_reg_value(). (Pierre)
+ - Patch 5:
+   - fie_init() covers related_cpus, so CPUs onlined after resume() also
+     restart their frequency invariance updates. (Sashiko, Pierre)
+   - drop the fast-path cache reset in resume(), as online() does it.
+ - Prateek's v5 Tested-by is not carried to patches 2, 4 and 5, as they
+   changed. A retest would be welcome.
 
-- mtk_iommu_v1 and ipmmu-vmsa probably wouldn't care given that they end 
-up attaching to their own shared domain anyway - they just can't wait to 
-be able to use a proper singleton group to rip all that out :D
+Christian Loehle (1):
+  ACPI: CPPC: Order performance-control updates
 
-The main reason for forcing identity was to meet the expectations of the 
-existing ARM DMA ops setup, but if we're now touching the ARM code to 
-properly tie that in to the IOMMU flow, then I think we can just do the 
-right thing.
+Sumit Gupta (4):
+  cpufreq: CPPC: Keep the policy across CPU hotplug
+  ACPI: CPPC: Make autonomous selection helpers take a u64
+  cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
+  cpufreq: CPPC: Preserve OSPM-set registers across suspend/resume
 
-Thanks,
-Robin.
+ drivers/acpi/cppc_acpi.c       | 314 ++++++++++++++++------
+ drivers/cpufreq/amd-pstate.c   |   2 +-
+ drivers/cpufreq/cppc_cpufreq.c | 465 +++++++++++++++++++++++++++++++--
+ include/acpi/cppc_acpi.h       |   9 +-
+ 4 files changed, 684 insertions(+), 106 deletions(-)
 
->   			return -1;
->   		if (!driver_type)
->   			driver_type = IOMMU_DOMAIN_IDENTITY;
-> 
+[1] v1: https://lore.kernel.org/lkml/20260623095403.3407436-1-sumitg@nvidia.com/
+[2] v2: https://lore.kernel.org/lkml/20260716153820.2007095-1-sumitg@nvidia.com/
+[3] v3: https://lore.kernel.org/lkml/20260724215937.3368276-1-sumitg@nvidia.com/
+[4] v4: https://lore.kernel.org/lkml/20260806200857.601152-1-sumitg@nvidia.com/
+[5] v5: https://lore.kernel.org/lkml/20260916103820.1760297-1-sumitg@nvidia.com/
+[6] https://lore.kernel.org/lkml/1be30b2b-e1e5-41ed-a0dc-0dd5ad3c47cd@arm.com/
+
+-- 
+2.34.1
 
