@@ -1,100 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.180
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792528381;
-	b=OWS/CVOfZ93FAhoUC1tA3uD1fGfKfdiHRl3kDG5izFxlKKi0N+wx95xnEYSZ6e+U6Ukw
-	 0T4sanN7pVAMQPzdd+AjlYE8duG+CBEXSSixUV7ssVq+RJzQGXS7FV8ws0X+WzDNTRFk7
-	 C+9+BXSQYf9MjEfbLW4axQYFXm4VfM5jiA6OjEVwXIuEaJKqo5ryxIFgXheh7HGx9Z/hD
-	 t1oHDniOekQTYgKsIbijnu+Vk0YLlVDGdzPyAN5FXxhDkRaRKqoEBQyUPWV8vyQjQsu1n
-	 FHNNx0HSZGleZfI7kjaBcs+MHE5RHY39B5T0W0aeu3bfQhEj83UF1eTUG7G1/8GXsTQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792528381;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.50
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792528735;
+	b=F5rFTAPPW3I92Vfbuy5wW01p0BcYY2GjNa/R7EfngNXpBezmriSODRFYuMFlNOMHqC/o
+	 p06f00cxYu6a6GwO+LDKxb/RrKZ9tO4ZSKag1izxI9HTfoEUPW0d98rSnvYDasDhm4GBU
+	 wu/yHd5D2VHqLTnBAk9dExANaoxDyjvuN0L3QZ38MHw8sizaRWU+9eoospwXL5BSkzf0x
+	 ebBph52MVFr4XQTp4Mbl6L92emY9SQkylXM1tll6aiQwOzfuOgAT5o5i/mB7/Ao1ZefoD
+	 j+Y7tx3GlgWFViDWkzIrGg2NLMwUV+ujgHGdYq++LYYnZn1a2nwv4x9OqDvXeVNuL2w==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792528735;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=QMefv3/6k9FkgL+3cbApnvKoEevqgboVZWdJy3KQ1RU=;
-	b=pVMIlNx/fHqtbzE1hkmmzbZxpvyLySCZdIjg5yi67+DjglJ4Fhw8cyV/rEeZIZbtLtxi
-	 bKPMqdDG075TTQg0HCpSVKo2JWXDAqfxuO4YhAp7yQHr6UlniON//WFKVbCnG1+tMy+LH
-	 iWGNUtOQnhSDvappbjye1040DjzfY25M95IDKpOGSz+MB1isZBIUmbMowOCRv/ALrMcd5
-	 5e2Z+Sf4IQzmFQCatHkrVb9ac5aOeb9kaW8QypcXGNjqvzYvx/JGwjya5O1GldRLmPI5W
-	 a403HecDy9HYaQdWzsCSK+ZaL0/0EYmcmeTmMBPBcMPFhodhxc9oNbziviUbp7zJRYQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=INaSu8fI;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.180
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:CC:Subject:User-Agent:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=Jj9W1Fne0Eiht74C80diOWke64Mz4zGkFNYLVP0fVM4=;
+	b=3gjm0rIiFf+xHpnsH4xwhXPJWR2hPeFahbLka/b8GtzcWmWkfCeLvOhza9NIBMVZnvm0
+	 Efw/uvczRzszl8grX1RpjPS4RJkDChlJb6qBQb54ZlB4xvZIwXXoNL3V++wY9GmCyYdLP
+	 bmyR0AngZRIPIpA2q8MygiSKzPncSNlV3V1jecWNXoJu8q2sJdR42zt4MEcfS//QZwacs
+	 K40O/fAbZ7yUpy+LXQ7aFBf8voO/DNLvPAthsRXJXJOfcYW4TrbHRgGosqtBKN5K0E+ev
+	 5eF+A2NH/9trcJxVzVdmrX0ZncQwe9nTvZft/XC5I+9SXUSTkhGMFQO2+8NgXfFcgzg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jTBO8R2R;
+	arc=none smtp.remote-ip=209.85.222.50
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768E9606A31E
-	for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 20:33:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 768E9606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D32606A319
+	for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 20:38:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E8D32606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=INaSu8fI
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-5337c7b9937so83421cf.0
-        for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 13:33:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792528380; cv=none;
-        d=google.com; s=arc-20260327;
-        b=KvjtVAoT9Yprj9DQpBgNe6YnhGt1ib8Q4orJuVEf7Any3cWJ6K94zLWQioHhS8gIDL
-         LjoqW2CHIoOCDsrpon2TOPBRBD8ClY4l9a/PAfG30OCD7U7LDkUX2vLQa6qXVZher/Gi
-         MkraxxeCNI/tuxtHKIIjx+6GlDgN6Rq4uIvFVLa3EI/CwTDoNlmrfuLE0q/r9WfvTG+A
-         Arg8X5mUiS1BEQnEi6zCv9vgSqbIyVqph9bRGJJor9egijDGbKYaM/G+R/we03jHptvV
-         F0osWWSajtIS9Z+PXgwe1DHCkxAi23ieKt2cKanTgZvi1FYdf+nLWSYzNHV6ZQPhkLvR
-         dsfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=QMefv3/6k9FkgL+3cbApnvKoEevqgboVZWdJy3KQ1RU=;
-        fh=qrtB1Aremw5blDJF//0f86R7L/hVpLSw/TC2V2ZfJD8=;
-        b=azMV2CpB1tNZsGkgY6Fc1JF3NeKw5YCJZzsqjOM8xvwzfT8gNIxpEWnqrHix/nfC/g
-         YhScFyeSEaMjdA9MXUZcir9LCfrZ97I1qWxFS0tgjkCmwoDYYwu3NtJ4FkxAw0vMnbGG
-         eggZkSNlu2ES62j2NS2Pg+EUHRDm/QL/OwT4xAp163EXRdo29Q6g/OZOI2KqRalpZGYb
-         Mi2M6pnNlfAk8xBFZX8Y6aQCMyLtPCLXMe4wQ1WwZjr+A1VlKReYOPnz2oW1XUur1MmD
-         t/jMdQZLsLeDvPkTRM5+Ne1mQQa7GR0VcD4QCl0KDlijXalxjKhNWMtl1GDCxcYH8+Uw
-         Q8eg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jTBO8R2R
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-99071945aa7so33437241.3
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 13:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1792528380; x=1793133180; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=QMefv3/6k9FkgL+3cbApnvKoEevqgboVZWdJy3KQ1RU=;
-        b=INaSu8fI/7lJBJ0KTHaoc6xXLKw/+UVbNqMVNmC0u3YPecgPvG7my29CGG2Hf86BRl
-         UohI/DvxwBADAiDrGI7Mo7R4ayl47O2Df2mGk2mBN3zupJ3q/D+Lwyqd/66bU8J0N1uy
-         sr5QnQO4M+IwF6/P2lwJO31Xo6RDR+NNZMDcAL2ds0LuSZAj5Y034e/HUIGdO75taV18
-         hcaxzj+JdGcisLATb70lncWRDsJkkjxRhhpWsejh2R5gQgzl6VTY2YKqdlPdMSHPd4Q9
-         zFXbSfbj42NLZ8+s3WdSCUl5szgPNA0/UUKA26SntDhmhjTJwJXF+FicjSHwMHyXNPxN
-         4ryA==
+        d=gmail.com; s=20251104; t=1792528734; x=1793133534; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id
+         :references:in-reply-to:user-agent:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=Jj9W1Fne0Eiht74C80diOWke64Mz4zGkFNYLVP0fVM4=;
+        b=jTBO8R2RDGFldB5sTmqyvIMD7lIP4ciDhUAXegojI3fPn4+naP/jvyuk1AUOiUxOpc
+         U6RsmckMC+p1qW1pSrLeSvNhQb5tUomZopc2/16tD5QSu0rlwuTS/gGEA0KPb59hywPA
+         EizmoNKwQ1tDYD6zwtYymLyeijMj+EOkGmiGR/UFeX0a9k3HAK9wOJXNzoMlBrZUUQ6V
+         TqePOZxYKOoLdz7OO5bkhibxzmXsNzBSX6j8tGg/HEl2BZv+UHGS51KNmrzRK8jEugEP
+         xS1omLgaia3/NIswYLQBJelu6dBbW2j/4sQKZec8HlZgcVqvqLiK4Ry60X3YDFzSxwsx
+         nTMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792528380; x=1793133180;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1792528734; x=1793133534;
+        h=content-transfer-encoding:content-type:mime-version:message-id
+         :references:in-reply-to:user-agent:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=QMefv3/6k9FkgL+3cbApnvKoEevqgboVZWdJy3KQ1RU=;
-        b=RTb+quXkz7ky8pIyW6B0KmR7Dm0/kynnBB7SfXaWd7AYw3Bwwsm5Z4TkKiD7cD3OMc
-         L1zYyrCDUt0EsiMaDbGhIoSl3ea8CYbtXp+Uht/X8DLiGak63BPCr4O7WrbbtbBFSwIe
-         Rz4phuXm+o0yFXf1TgRVWZoghjmn6wb2e0jAIzEPUYl/QfOOVA9uRl+KwgjnzoUecJG5
-         rLd43XA6Qm5WaZanL31IsroLitb35Kq34FvuhYU1A4g7kaQAPeEy7fjb046xylSbY/nz
-         MKjawZ1FYOIObvuyUOgZ9xpQnmYHirJtRfbWFhZpUq5eFHfr2Ekyqer4pJDgCQPVevYP
-         mTgQ==
-X-Forwarded-Encrypted: i=1; AKwUvByVQmpBJ3dEPrX1sAavIhXMnCTVjNeXYB1T9OJUzdVJufWsfvMvl+Jkyjo2EiCYc2wtl9bD52vSL8NwoQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIbRdR+yS7LQE6ioWWiNko4jeH1bMC6CG9exJZ/lnZqkY66txry
-	M9cVbNsGoRfGMsJex0BuE/70u8jwRpEdmswc6h/+f0IwzlpZrflpAMA5qpiFGFu1VUffhZ+OMGA
-	nelrsY7wIT3ZGYst10aavYtQEZQvvx+LwDFeY0tE0
-X-Gm-Gg: AYBFou0uR+GR+uRmbtMl80HjOfFd51+2Vx2QJKNvLIzdzGas9EoMUsT32FaERp+F+3E
-	4aiF4yy4H/DlA2E+PLOfG5I2ZUa5nfJLQO55aQZMeYvSORZvaLxsXON1b0fj2FHViEGqeZCSUSl
-	E9ggt+EyAiL3ZEEah1Sa4Sq1fAaG5OSAJZ79L4a9OT/OKsScNn7VhPx7/7GUtur8SybzKyO5Fte
-	sVEOSgAZBvGVpLzuvgX+miOTYJ0sRTm+9Vld+B1lN/YiKIDioFnLpus8wXHU3/vhWH3NmwRF+HN
-	Br6Kd0xXIOycY0LOfgsn21fyCyDslEUFhpyJU6vX6X1b+VtogyUtFAv2b1HumBSQb3vGkGtEGuA
-	vvoscCLFGgA==
-X-Received: by 2002:a05:622a:1b9f:b0:535:9aa3:5ebb with SMTP id
- d75a77b69052e-536882804d2mr9529261cf.8.1792528379608; Tue, 20 Oct 2026
- 13:32:59 -0700 (PDT)
+        bh=Jj9W1Fne0Eiht74C80diOWke64Mz4zGkFNYLVP0fVM4=;
+        b=eG3hrLnxnJOq0RZ1vvS0kjTczMtEVoE/xDpv4+Nf0ePLaZCtYWPkYfvqaQtjeAiJp4
+         Tjyr9BPXZML0XRYy/5RZkKzUjG4N+MIwDpX0TT3Q6nexXgNdFtQtLYRP+PefRIFW71c7
+         Rhf3BQfCYL7a8zqzPM6DC9FWbcoixbuojB+NmIOeJVY+X8VZn7ugLnuL7YUSlCzjserD
+         w09RlRoEZEnlIzCtTbEE2HBKWeu2R3CpNiDcgbvXvoL92etYVbTg/29+Tw1d8qNazx3e
+         7qFe+9pOsIev4vgQ9X/IqsS7fN6M/U+SWRRE/I0vTJPfmsKbAlypIh5FRoLYUWh9evsw
+         rYhQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxdC2rG9QwKgPYSd0qOJOMav74uj7cedqj+Ih/Exajcbzg3W1iKmM2mzYhsbKeMvatFUjP8aBAmIh26/Q==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLMo/AZstT2gh3lEhj+2gd4/ogC1Jri+YCLPp+8pYrr3AA0atGH
+	HTUmwTMH2TUgrCgwB6mmiaBtOtaQ456BhiCtP+yNVNrzqKpYXSB1ooY6
+X-Gm-Gg: AYBFou0IdwYAWxOzBTbl1hoy6ayiliK/FW5fKIimKfgBhNcWLBQV3OOPI9qtWwWm+yQ
+	/hYuBNCFQjWLBOblM8AnvUHvok8LsgwPOvq74Bw3nj4sxFZGr3nE7RJrwU5Ya8CtX/C0dEKrYTr
+	zuSJptkBMjM6llQmvzNQ3c3IeSte7SEf8ug1CU9/YXqg2avUrAFnqs3Te02Bm0vxpQCpgebOkbN
+	VOnPEOwwsweP3YBnA+TCmACr/m98e5udt4LHGmIWfZoTze8/56Jtb8hfL6jzhCnxGLa9JqyQ0+U
+	WXMULwDPvGeUMG7jGojV04as88/Q1ZpWR1SgepDjhnZp0LGBoh10fyaZkAbjlNUZDlnLa4fDsZs
+	W/sa9nN5Ok1c54hkKGKCLwoLvnmUBlR0Ft4vc8vpZ0mcNT+sFxlsmNOjJcIv2G++Q04xsDyxMWe
+	crMpxDRVa+7GaTnFE6ScVlKj6anjwRsamwxfR1q2NpuqIql3MzHU8hDDL/G3xeLoHod6ZVQUsjo
+	XZpmr3EOJkLkZQqEmWHLZf61A==
+X-Received: by 2002:a05:6102:2b85:b0:7c0:c6e3:3b88 with SMTP id ada2fe7eead31-7cc926fba03mr132043137.28.1792528733875;
+        Tue, 20 Oct 2026 13:38:53 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([2804:2bf0:60e7:ae00:617a:6625:1f37:5d9f])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7cc92428d7asm405406137.10.2026.10.20.13.38.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Oct 2026 13:38:53 -0700 (PDT)
+Date: Tue, 20 Oct 2026 17:38:48 -0300
+From: Arnaldo Melo <arnaldo.melo@gmail.com>
+To: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>
+CC: James Clark <james.clark@linaro.org>, Besar Wicaksono <bwicaksono@nvidia.com>,
+ namhyung@kernel.org, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, vsethi@nvidia.com, rwiley@nvidia.com,
+ skelley@nvidia.com, mochs@nvidia.com, rajjoshi@nvidia.com,
+ treding@nvidia.com, jonathanh@nvidia.com, john.garry@linux.dev,
+ will@kernel.org, mike.leach@arm.com, leo.yan@linux.dev, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ adrian.hunter@intel.com, ctshao@google.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_0/6=5D_perf_jevents=3A_Add_NVIDI?=
+ =?US-ASCII?Q?A_Tegra410_uncore_PMU_events_and_metrics?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <CAP-5=fXUMVJwtAp+8dA8V=hBD9q4x6J4YiUufwXAOXcAJoAKTg@mail.gmail.com>
+References: <20261019164241.403644-1-bwicaksono@nvidia.com> <21f58af0-fa3f-41c5-ab03-216c60fbe2f1@linaro.org> <ate93zQFkfAecIv2@x2> <CAP-5=fXUMVJwtAp+8dA8V=hBD9q4x6J4YiUufwXAOXcAJoAKTg@mail.gmail.com>
+Message-ID: <F2F3FF02-67B6-4EBF-BD4B-364C7CD28535@gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -104,65 +105,60 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261019164241.403644-1-bwicaksono@nvidia.com>
- <21f58af0-fa3f-41c5-ab03-216c60fbe2f1@linaro.org> <ate93zQFkfAecIv2@x2>
-In-Reply-To: <ate93zQFkfAecIv2@x2>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 20 Oct 2026 13:32:48 -0700
-X-Gm-Features: AclHuK9CSuFZK-b6UAodiXJykR-dvBn1qDmPctgNXXAV69jhyRNTIACuSsADFoU
-Message-ID: <CAP-5=fXUMVJwtAp+8dA8V=hBD9q4x6J4YiUufwXAOXcAJoAKTg@mail.gmail.com>
-Subject: Re: [PATCH 0/6] perf jevents: Add NVIDIA Tegra410 uncore PMU events
- and metrics
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: James Clark <james.clark@linaro.org>, Besar Wicaksono <bwicaksono@nvidia.com>, namhyung@kernel.org, 
-	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	vsethi@nvidia.com, rwiley@nvidia.com, skelley@nvidia.com, mochs@nvidia.com, 
-	rajjoshi@nvidia.com, treding@nvidia.com, jonathanh@nvidia.com, 
-	john.garry@linux.dev, will@kernel.org, mike.leach@arm.com, leo.yan@linux.dev, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	adrian.hunter@intel.com, ctshao@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 20, 2026 at 12:15=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+
+
+On October 20, 2026 5:32:48 PM GMT-03:00, Ian Rogers <irogers@google=2Ecom=
+> wrote:
+>On Tue, Oct 20, 2026 at 12:15=E2=80=AFPM Arnaldo Carvalho de Melo
+><acme@kernel=2Eorg> wrote:
+>>
+>> On Mon, Oct 19, 2026 at 06:23:16PM +0100, James Clark wrote:
+>> > On 19/10/2026 17:42, Besar Wicaksono wrote:
+>> > > Add event aliases and derived metrics for the NVIDIA Tegra410 uncor=
+e
+>> > > PMUs=2E
+>>
+>> > Reviewed-by: James Clark <james=2Eclark@linaro=2Eorg>
+>>
+>> Thanks, applied to perf-tools-next, for v7=2E4=2E
 >
-> On Mon, Oct 19, 2026 at 06:23:16PM +0100, James Clark wrote:
-> > On 19/10/2026 17:42, Besar Wicaksono wrote:
-> > > Add event aliases and derived metrics for the NVIDIA Tegra410 uncore
-> > > PMUs.
+>Hi Arnaldo,
 >
-> > Reviewed-by: James Clark <james.clark@linaro.org>
+>can we not take these in v7=2E4 as there is unaddressed feedback:
+>https://lore=2Ekernel=2Eorg/linux-perf-users/CAP-5=3DfWucvdYefDOL3Vn=3DO=
+=3DYUPEXE+tngDDfPLv-T5i3WkCJVA@mail=2Egmail=2Ecom
+
+Sure, will remove until the discussion comes to a conclusion=2E=20
+
+- Arnaldo=20
+
 >
-> Thanks, applied to perf-tools-next, for v7.4.
+>The specific problem is that the NVidia PMUs have adopted a convention
+>not supported by the perf tool of 'pmu_name_<socket>_rc_<num>'=2E rc
+>stands for root complex=2E What ends up happening is that aggregation is
+>broken as the json is claiming that pmu_name is the PMU's name while
+>the suffix perf_pmus code thinks pmu_name_<socket>_rc is the pmu name=2E
+>They've wrangled support via the json by claiming these are sys
+>events=2E
+>
+>We can either:
+>1) support a new suffix convention of <num>_rc_<num>
+>2) push back and ask the driver writers to name their PMU correctly as
+>defined in the ABI:
+>https://web=2Egit=2Ekernel=2Eorg/pub/scm/linux/kernel/git/torvalds/linux=
+=2Egit/tree/Documentation/ABI/testing/sysfs-bus-event_source-devices
+>
+>If we do (1) then it would be nice if the support for that could be
+>contained in this patch series=2E In any case these events don't belong
+>in sys=2E
+>
+>Thanks,
+>Ian
+>
+>> - Arnaldo
 
-Hi Arnaldo,
-
-can we not take these in v7.4 as there is unaddressed feedback:
-https://lore.kernel.org/linux-perf-users/CAP-5=3DfWucvdYefDOL3Vn=3DO=3DYUPE=
-XE+tngDDfPLv-T5i3WkCJVA@mail.gmail.com/
-
-The specific problem is that the NVidia PMUs have adopted a convention
-not supported by the perf tool of 'pmu_name_<socket>_rc_<num>'. rc
-stands for root complex. What ends up happening is that aggregation is
-broken as the json is claiming that pmu_name is the PMU's name while
-the suffix perf_pmus code thinks pmu_name_<socket>_rc is the pmu name.
-They've wrangled support via the json by claiming these are sys
-events.
-
-We can either:
-1) support a new suffix convention of <num>_rc_<num>
-2) push back and ask the driver writers to name their PMU correctly as
-defined in the ABI:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/ABI/testing/sysfs-bus-event_source-devices
-
-If we do (1) then it would be nice if the support for that could be
-contained in this patch series. In any case these events don't belong
-in sys.
-
-Thanks,
-Ian
-
-> - Arnaldo
+- Arnaldo 
