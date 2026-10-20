@@ -1,78 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792483813;
-	b=k/4O0mH0trUaFxx7x6rp6g6Ht4Qu8GuOFrCifBUW2iJ2lOFfg5tltxOJlpGMfzIBb3Uc
-	 IO1GW/TqkodnIumK1hzfUw4/aYsPzeEbdb2FRavbanzq7L0Ww5wJCOOUefrsiJOkDukMG
-	 v2B9M9LTIEWllUBG9XVh51PL0jwpBea6cS0v/fqf5whUPcV7VTykITjStbeVbPpkkhWFP
-	 1svk6/6Zif1Ci1THP4gcjTBcrNTYH7LcbRkdSiwiBm9mcB/6CL/kTGsNgvpbpiHRgEKVk
-	 rknjMrT1vYzW6LDO7ARMYyZkZ5tFkgXIHscfflFgQOFjFBuYytTr1u1futz9BmbKt6Q==
+	t=1792484299;
+	b=FQAOGl6gIewx9avSwdAaQaxtoBFQcfjpwvcvAnGmp5vbA4Vl7yJcbjqCuDwAveCNP74T
+	 KMb7aJE0sDI6Oe/RrIrXi9RfTUpZQbhfUgaOC8KIW1vuV01HqaAB+vxCsq7bS2wVcHiyM
+	 FSIlFIWY/PR2YY3Llp52LFuI3yltJEP6APlMLHljRWUuVdMkD7Q8nK3ad+LaPH3AcxmO/
+	 ZR+GFnJAznlUum+ilsubq11lwynP2q9norsUIJNb0NJE2VwlUM4pOMSV33baQau3nkQk1
+	 itaOk5RbXUO8sAnK6WxqgEri6CPnIf5eeJwUo4QDh0ROoYyIW88tmbrXJ2hu6G3gAVA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792483813;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792484299;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=T6wuasYP+5ayvHMAL7nKThPJDLo93/+fiRJi56xfeoc=;
-	b=sV4H9INWx0a+IlDhI8kXUPK74FJCshvgjCgG53rrIFfkY959TR4VrVcRtijFINXbkAta
-	 ALk02ZWKh/UiFtKM58FZY+rZnMREqeGI4TBDZ0bnchgwO1Dca6zdZbZac7IsKRAkgPJbe
-	 dgU2bcnP0jlhY3FzJUZUMrkaPwgrzmlvaIt94WlELXLl3Nj48u7i+EvaWcrdMZhyn2816
-	 yz32RbF7F62wV8ONlMyPp14NcnFq8tO4vOPQJeoULQ2+JPMpIVpl4CQhIFqmF4Jyj5hay
-	 bTLGslTHw8WST9SDwz0ggXwYwEylNh97MyWi8sykCf3UJ8+uYPFfVeLr8wdXS0vBIyw==
+	bh=oqyb34NJt+mKr4mCCkLuPOBnP+Hrp3mJFwETCEQdsGg=;
+	b=tIquLF+ECie8CXCfHEBmtje4h7jG2DB21kKHBc+GCbaqlDDaVIXebekz/HltLGv89oXB
+	 1leakwK68zmlLkD1zxZGEU81icg1x50lG1R+z7NIhZA1q9gl0JkoIyckzxLUCj2lT4DVs
+	 GGUSLN0hJE5LOqp2y8QkbSuZP9fDxBvGZV9rfYVUCtCVoNgmHYgTftCSLcG5AMQ4lpMNY
+	 11gH/JIEs1V/Fr9ec17wf6NjsjMWY3qLH1g/Z7RhKK2mPPGHrImURMfxM/qvPhl1InGgE
+	 5W8GTLohVJR6SRBgn6WbM4ppy//J4tLvkN+sTvKgOAvC1DRpM9hlne+Ry40ZweBETFg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ewgb/7Of";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YP6cOuvL;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555D3606A33E;
-	Tue, 20 Oct 2026 08:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ABC606A319;
+	Tue, 20 Oct 2026 08:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ewgb/7Of
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YP6cOuvL
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792483813;
-	b=iXCkFy7bGBZe2MlC1LMszJtLU+ytnNReTgSETk6mMxPKr7aJUOXg5+j7vEitdy20yT47
-	 Q/nyijYB6pUBEZ1MdCEY5nKAf4fOR5HCQgUErl62DjMyf8S1u1dCHu5zBTZ1A6FxtP3IU
-	 /q2bTOOGTBGhKbWJuviJsVL5Guo9PV7gcg75HLCctm/ltbwPzwITnvYIskYiEip7JYu31
-	 Rf6SrM0PrzNU0+SGewlZUcE2marEyNE31FVEPmmULK0j8A509RPUWe91KI8Sm0BSXplWq
-	 0AQWFbi/sdSN+TUNOwlBRSZJhnTyfVeuzduMzFF+Hh7m7N6O9pvoaxKSxbMUgzAtAZg==
+	t=1792484298;
+	b=upoDMnRwnvZvqxkeUrd/bLqS6L4CQ6VTw3vCJwbZjMHI+DA558FB8zenLNloTjyVysBv
+	 XiR0VEEF7O+0MB2LgTj+4AtZV00Tuh0Q0lQQm/iGOj2JpH5/3qBSFd8YSj7E2j3SdvEl8
+	 IYyj+ApAZNTKjCCooRZX1wSAoRB+kBLndWuO0TSEo6+MsXLHiCRnjEX3nVV5aGB74ip/Q
+	 /XsMo5PZF2lNn09VT6+yH3dmiBhsau9XpJqefl3QRYwN6sW/qvdBWERPTgggjAnX/KJui
+	 sCqjdLh432vWP8wGsbFH0swuf2h2c9CuUxGNmM1M69hnaf1yImHePPTU21SHk/LzJNg==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792483813;
+	c=relaxed/relaxed; t=1792484298;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=T6wuasYP+5ayvHMAL7nKThPJDLo93/+fiRJi56xfeoc=;
-	b=nrUSKcOQ4zxNjpwqo36z4TdMTP0TtZZtpyGFEs3Vomo3ZFjmzM8aSN+xoQCk7J5yLojl
-	 vDW34fXNSiUinok7GL/AuIzgIjge8c9N8hL0xVsIvu8sA5r3z80qXdIPsMTreqGrz77zu
-	 y0q5ERZ9f5sLgIRRcF7xlC4iF2MYrp4CNLHCyLaHU82g0l14SsbKH4anmHkukLCtKQa1t
-	 3Dc8UijnjpYCk8KJusKTgvll8sfdVYgXMKavzxlyTy+swOqRq4hBBBN2FmjTj4xfJYACm
-	 piHBV03/62I6ZVhZPFHoFgYLYR0eTq7CH+anfndXbzpEgz6JIOwD6aXfio2LHl38cGg==
+	bh=oqyb34NJt+mKr4mCCkLuPOBnP+Hrp3mJFwETCEQdsGg=;
+	b=PEIW56s6y6Nfp9drp8mUy5Di3DJwXKGNkKSE/W4pond63xKWAl6apF38Z4zRcbfF4Rgc
+	 F7r83sXwyFmzUi32diEBWYniBC2eTHjKcTQ0cGn0AeZ8nAfMkzTZFkhWuhKhDbPZoJhhR
+	 cRy/5vQV+9oGl1igtIvlSDaRCDm0cDTSQ8Va0kHbtApHA/WlFFnYdDA8wHcBNYdJo3kDy
+	 dtNUpRYv2/CrwUL1mO8/yYOCSbUI598laYYlYVUFL8Y0CH9qVILJoxj1q8F0/GF07wNEu
+	 M/Qq3vhxVwpCld2YsT+UHc6S3xH8acbG8+a2S6pcmEqkucNRwjLmFx5hf9yBJMgv3eA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id A30FA1F000D3;
-	Tue, 20 Oct 2026 08:10:12 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id D748A1F000C4;
+	Tue, 20 Oct 2026 08:18:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792483813;
-	bh=T6wuasYP+5ayvHMAL7nKThPJDLo93/+fiRJi56xfeoc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=ewgb/7Ofmvzu0+gGHaqWqeTNIvP80zYaq59JmodAQoxk9DVzs2O6sUDnkJoX5a2Rk
-	 LJL9fiE5K33GQ+oRTuy+WLOsmmIT4maomAUWrNgYJQ5Co7gyaj/ulxOW8FSfQiZ+MY
-	 jEp7etxjjR8outkcSdDVnehEtqrtvokfirt34cwEfwRIkh2XdSHzn3whzUQT9xCwXt
-	 DrRyJ++YudWxh+JVokY/CY8LEAAaKW2YaMA0toA7vMlQmIpaVtbzQC3wfbMcGjo1nE
-	 JVZ1xHXQFcfTnpKvbvW8PoYfiMtpovKExuzFndq5lZ3+Q1zFS7eJhmbipggv8Bj6r7
-	 Tzd/RRyPTSW5A==
+	s=k20260515; t=1792484298;
+	bh=oqyb34NJt+mKr4mCCkLuPOBnP+Hrp3mJFwETCEQdsGg=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=YP6cOuvLXYS5Ml8kJifhM5+Zc30RE9F08hkD71cm6NVgsAyxSCjQxoOEMVNg5LGSv
+	 PUEiNKrR8T4YOlhxKU1TESP0MzOFLHCYVCfPOYpe/8babnoMCFRXFNiUtCnFPSz/kE
+	 W1eWieI59RL1P5JiM5hU9gFnJdxd2LZK3h7FwTE16Gj9Y7vhpnIuc6ry+X7f4fAaeR
+	 MFW199FN+vxcRUfKr8G9eWIahc7RVIOIh0pGNklkxd+96IfFtEQ+lmdcnuG2T0/Ybp
+	 s4OJAMH/xIYPlyiO+T9sNqnylz0XUrsHoUbVT1TBRa0k9W4xydFzxjK6gEmgo21SWk
+	 Bez8X1o9Zw2Rg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id E235E430BB;
-	Tue, 20 Oct 2026 08:10:11 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 3607740612;
+	Tue, 20 Oct 2026 08:18:17 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Tue, 20 Oct 2026 03:10:08 -0500
-Subject: [PATCH v3 2/2] drm/tegra: Support YVU formats
+Date: Tue, 20 Oct 2026 03:18:14 -0500
+Subject: [PATCH v2] ALSA: hda/hdmi: Enable HBR capability
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,20 +83,22 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261020-tegra-drm-yvu420-v3-2-7f19a834ba98@gmail.com>
-References: <20261020-tegra-drm-yvu420-v3-0-7f19a834ba98@gmail.com>
-In-Reply-To: <20261020-tegra-drm-yvu420-v3-0-7f19a834ba98@gmail.com>
-To: Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+Message-Id: <20261020-tegra-hda-hbr-v2-1-6968017f585b@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WMQQ7CIBBFr9LMWgxD04quvIfpopQpTGKLgYZoG
+ u4udu/iL95P3tshUWRKcGt2iJQ5cVgrqFMDkx9XR4JtZVBS9ShRi41cHIW3dSaKtkN5Ua02vbp
+ CdV6RZn4fvcdQ2XPaQvwc+Yy/918po0BhtDE4o9UWu7tbRn6ep7DAUEr5AmwhUV2qAAAA
+X-Change-ID: 20261018-tegra-hda-hbr-35107238b629
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792483811; l=2859;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792484297; l=3023;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=GKwERrdCz3L4Vqnj4OsOVIE3z6vkoOXkX6XTWWhZRfE=;
- b=H/dRF2XpiGrSuf6M/oSZsqBE4Hd0Ig5GpEdOOqJta54JvKAerLEtHG2YEmohmKtIEZG7fCjgG
- FXwyjGuCMYrD3tjModifI+47oCoIQilGdsCzVvOm9+VAPwnNrtQfbUx
+ bh=ABJMYi6wtZe91Rymkn3xsq8E4KBzp1tYt+2VfPsra24=;
+ b=bVoDPBipwOi09/R8hJx5+RRUGyN1s4FqNUs/cHVBhOrpt7uE3YJMMs1kkqY9IGev/7PPJCVqa
+ la2qswWv3J8BEprLp9mFGz/S21e4zprgHMd8qj8YTXuBb6w/5BUWl1A
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -107,107 +109,93 @@ Content-Transfer-Encoding: 7bit
 
 From: Aaron Kling <webgeek1234@gmail.com>
 
-YVU420 is used by AOSP for video playback among other things. YVU422 and
-YVU444 can be trivially supported in the same manner, so add them as
-well.
+Tegra HDA does not set the HBR capability bit, however every SoC since
+Tegra114 does support HBR. Override the hbr setup function for these
+SoCs to unconditionally enable the feature. Since Tegra30 does not
+support HBR, this override will not be applied.
 
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c    |  7 +++++++
- drivers/gpu/drm/tegra/hub.c   |  2 ++
- drivers/gpu/drm/tegra/plane.c | 24 ++++++++++++++++++++++++
- 3 files changed, 33 insertions(+)
+Before this, any attempt to open an hbr stream resulted in a rejection
+on Tegra hardware. Looking at the downstream support, that just bypassed
+the capbility check for all supported Tegra hardware in the common code.
+This replicates that in a driver specific hook.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 39c2e920d76a6..be913f2609077 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1282,6 +1282,8 @@ static const u32 tegra20_overlay_formats[] = {
- 	DRM_FORMAT_YUYV,
- 	DRM_FORMAT_YUV420,
- 	DRM_FORMAT_YUV422,
-+	DRM_FORMAT_YVU420,
-+	DRM_FORMAT_YVU422,
- };
- 
- static const u32 tegra114_overlay_formats[] = {
-@@ -1309,6 +1311,8 @@ static const u32 tegra114_overlay_formats[] = {
- 	DRM_FORMAT_YUYV,
- 	DRM_FORMAT_YUV420,
- 	DRM_FORMAT_YUV422,
-+	DRM_FORMAT_YVU420,
-+	DRM_FORMAT_YVU422,
- 	/* semi-planar formats */
- 	DRM_FORMAT_NV12,
- 	DRM_FORMAT_NV21,
-@@ -1349,6 +1353,9 @@ static const u32 tegra124_overlay_formats[] = {
- 	DRM_FORMAT_YUV420, /* YU12 */
- 	DRM_FORMAT_YUV422, /* YU16 */
- 	DRM_FORMAT_YUV444, /* YU24 */
-+	DRM_FORMAT_YVU420, /* YV12 */
-+	DRM_FORMAT_YVU422, /* YV16 */
-+	DRM_FORMAT_YVU444, /* YV24 */
- 	/* semi-planar formats */
- 	DRM_FORMAT_NV12,
- 	DRM_FORMAT_NV21,
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index 5a86f8260f136..ac4542e54d7dd 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -51,6 +51,8 @@ static const u32 tegra_shared_plane_formats[] = {
- 	DRM_FORMAT_YUYV,
- 	DRM_FORMAT_YUV420,
- 	DRM_FORMAT_YUV422,
-+	DRM_FORMAT_YVU420,
-+	DRM_FORMAT_YVU422,
- };
- 
- static const u64 tegra_shared_plane_modifiers[] = {
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index 757bc552809fe..79ef5fc1b3678 100644
---- a/drivers/gpu/drm/tegra/plane.c
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -433,14 +433,38 @@ int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap, bool *swap_uv)
- 		*format = WIN_COLOR_DEPTH_YCbCr420P;
- 		break;
- 
-+	case DRM_FORMAT_YVU420:
-+		if (!swap_uv)
-+			return -EINVAL;
-+
-+		*format = WIN_COLOR_DEPTH_YCbCr420P;
-+		*swap_uv = true;
-+		break;
-+
- 	case DRM_FORMAT_YUV422:
- 		*format = WIN_COLOR_DEPTH_YCbCr422P;
- 		break;
- 
-+	case DRM_FORMAT_YVU422:
-+		if (!swap_uv)
-+			return -EINVAL;
-+
-+		*format = WIN_COLOR_DEPTH_YCbCr422P;
-+		*swap_uv = true;
-+		break;
-+
- 	case DRM_FORMAT_YUV444:
- 		*format = WIN_COLOR_DEPTH_YCbCr444P;
- 		break;
- 
-+	case DRM_FORMAT_YVU444:
-+		if (!swap_uv)
-+			return -EINVAL;
-+
-+		*format = WIN_COLOR_DEPTH_YCbCr444P;
-+		*swap_uv = true;
-+		break;
-+
- 	case DRM_FORMAT_NV12:
- 		*format = WIN_COLOR_DEPTH_YCbCr420SP;
- 		break;
+This has been tested on a SHIELD TV 2019 Pro trying to bitstream an
+Atmos demo video. It attempts to play, but mostly just underruns the
+entire time, with a few spurts of correct noise. My expectation is that
+issue is userspace, since that is a WIP android audio hal. But even if
+there are more kernel problems, this should be correct as a standalone
+change.
+---
+Changes in v2:
+- As suggested by Takashi, just don't apply the override for unsupported
+  SoCs instead of trying to replicate the unsupported path.
+- Link to v1: https://lore.kernel.org/r/20261018-tegra-hda-hbr-v1-1-b8bb1f1d8d15@gmail.com
+---
+ sound/hda/codecs/hdmi/tegrahdmi.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
+diff --git a/sound/hda/codecs/hdmi/tegrahdmi.c b/sound/hda/codecs/hdmi/tegrahdmi.c
+index ebb6410a48313..171d1ee154d9c 100644
+--- a/sound/hda/codecs/hdmi/tegrahdmi.c
++++ b/sound/hda/codecs/hdmi/tegrahdmi.c
+@@ -227,6 +227,37 @@ static int nvhdmi_chmap_validate(struct hdac_chmap *chmap,
+ 	return 0;
+ }
+ 
++static int tegrahdmi_pin_hbr_setup(struct hda_codec *codec, hda_nid_t pin_nid,
++				   int dev_id, bool hbr)
++{
++	int pinctl, new_pinctl;
++
++	snd_hda_set_dev_select(codec, pin_nid, dev_id);
++	pinctl = snd_hda_codec_read(codec, pin_nid, 0,
++				    AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
++
++	if (pinctl < 0)
++		return hbr ? -EINVAL : 0;
++
++	new_pinctl = pinctl & ~AC_PINCTL_EPT;
++	if (hbr)
++		new_pinctl |= AC_PINCTL_EPT_HBR;
++	else
++		new_pinctl |= AC_PINCTL_EPT_NATIVE;
++
++	codec_dbg(codec, "%s: NID=0x%x, %spinctl=0x%x\n",
++		    __func__, pin_nid,
++		    pinctl == new_pinctl ? "" : "new-",
++		    new_pinctl);
++
++	if (pinctl != new_pinctl)
++		snd_hda_codec_write(codec, pin_nid, 0,
++				    AC_VERB_SET_PIN_WIDGET_CONTROL,
++				    new_pinctl);
++
++	return 0;
++}
++
+ static int tegra_hdmi_init(struct hda_codec *codec)
+ {
+ 	struct hdmi_spec *spec = codec->spec;
+@@ -255,6 +286,10 @@ static int tegra_hdmi_init(struct hda_codec *codec)
+ 	spec->chmap.ops.chmap_validate = nvhdmi_chmap_validate;
+ 	spec->nv_dp_workaround = true;
+ 
++	// Tegra 3 does not support HBR
++	if (codec->core.vendor_id != 0x10de0020)
++		spec->ops.pin_hbr_setup = tegrahdmi_pin_hbr_setup;
++
+ 	return 0;
+ }
+ 
+
+---
+base-commit: 2efb7a11f1aa4d2dc285fe2680cca22cb9f72f64
+change-id: 20261018-tegra-hda-hbr-35107238b629
+
+Best regards,
 -- 
-2.54.0
+Aaron Kling <webgeek1234@gmail.com>
 
 
