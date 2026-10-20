@@ -1,110 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792485698;
-	b=XElhP/XRzb8tSPKfNyqSaM+mfaExEbqrbzHTtkmgAq7fo/nPfkgwg6+Y4MAFRp56LEiL
-	 l1KzWUSzE9ZOUaUWHcrNJ1DmCKJFhJVFAuRBUekQ57/K9mJwK/BxGD5/R0w5s3yhdb1s+
-	 NlpB3/sefNXqpkVTF87N0qNslXYCLd9NfcjKGRyD4vfEWyMn8atMcnOnAwbA7h+iLPOZf
-	 JQEZLawVB9k4aO31cvv396BQPFmdhIGB9qP75z8HlUiUq3tgRQqEyMqFnuY1Oz3iK49s5
-	 K7lLhJb5UJzuQKJFKCghuCBsT3GKc8fS66gvvKZPNs8v0dA3cVGPvk7eoK7t0x3RwtQ==
+	t=1792495751;
+	b=feocsWVcaq7co6+vWmGbpR/N8riK6+0B3f++g3O3D9NMvLCJP0g573XvckuhDR8/lIRm
+	 hgEDNSTBxe3DoOnXO3Nzua4siyUjKSlyjjl75nNUFfmTNBrk1DqTMm/cjBZY8lncmLa/Y
+	 TkEW+4rLcVPrhmt3AQNX8icdnyQL0hwIkpY4yy2zTFTixxdafd0qId3aih09JC0LnO/JG
+	 c958s2mkL+MsiO6YU2iSWFbAFCbMn5rigiervMYqU8DR4AP5nnmoveLqm3FfR6aSo0Ibk
+	 wKF1/yHlvytPu+EASJvLD53Q+0fFjklDp8koDuXeOFdZvYzur9ATEHA+uzBlPXlzA0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792485698;
-	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
-	 DKIM-Signature:Received:Received:Date:Message-ID:From:To:Cc:Subject:
-	 In-Reply-To:References:User-Agent:MIME-Version:Content-Type:
-	 X-Spam-Flag:X-Spam-Score:X-Spam-Level:X-Spamd-Result;
-	bh=6bn4M6YeN2g8PEYJ8AzJWKAPmNUUfpbov7oAzbUB368=;
-	b=AlJYtzHuE4GaUavyyoDn6CQzQUe/cdMR6lM3a5qIqAPjCT74MUpIBI4L+geTRDg1bY3w
-	 Cq3vh1P5QdIl+GGDn21qEGOekavA7BTWTxd8mWCzc3his8dO2FdZm5SK8r0SN3ro2N69Q
-	 yJOvyUfLg9gTRXNdiJ2QlWB5hEp9BHTUpHhtAFPbrYBZ6F64ivH79t7kLokRauPYGDZm5
-	 yqnV/w8O6Qrc8fDQWFi+jhPb+jIz7ceLGd6vdncZ82bAdh2gMNT5GvOTlHXu0/KzR1RVv
-	 ahtb+vEzbqQdw4aXnjmnPxsO7QyRpBfamAMVyAjyJApNdIUNpKeDOUqE0NArE/pXjEw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792495751;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:From:
+	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=lvOImHjk9+PSZt/dZxaP6lDjW+Q8Usn4Xh93yDh43jg=;
+	b=LnWgQPuGNWvs9iZOPUUT+XZ+32CUgDOKNXBb2Px61glDT3NqS5pzZQvj2UPjf2q8Yjp8
+	 2wBaqmuXKr1Ct+2bOntiXDB8VB37mzaYrmPrZFjvXWJm3Bip7+dLr8ImTrflKGx4oef5q
+	 fAQFZoghyQrO8TGPzHs9NrRddvp23YN8IbHYvzI6gLmZgCcveTdBdYvYF5EAYaFPIrCaj
+	 p/GKm3N1uTnmQ61FAKE+0EwUHjC4Gigh/LIn7TRRukxxzrtWBjXRABXAoAHz+gxg7sXOo
+	 3QbiUSqkaXY8BvvHVfwgKbEHuvOZtfaN3hFuDxLHHUwJTAH+ZF/be+cz3tSeIAl0cDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=suse.de;
-	spf=pass smtp.mailfrom=suse.de;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=XEI5579Q;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=gZpLRX64;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=XEI5579Q;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=gZpLRX64;
-	arc=none smtp.remote-ip=195.135.223.130
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84669606A31B
-	for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 08:41:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 84669606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=ldbNPAVz;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D4D606A31A;
+	Tue, 20 Oct 2026 11:29:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01D4D606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=XEI5579Q;
-	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=gZpLRX64;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=XEI5579Q;
-	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=gZpLRX64
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BA47121D81;
-	Tue, 20 Oct 2026 08:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1792485688; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6bn4M6YeN2g8PEYJ8AzJWKAPmNUUfpbov7oAzbUB368=;
-	b=XEI5579QHP6V72aSSg8VC/OwOoN5B6oREWReR7r9zMq2hj5NghkhTloZbeQV4s4Qp1rbN7
-	cs+S3ETy5Q2zqKrnk7aOpcb0PeTalQ23uHsRmeCydsfxGy4iw32lq27E2o30sZDq0dcUVr
-	MMVqBTP3SfYhaV9kXhbM1FFPajdTiNY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1792485688;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6bn4M6YeN2g8PEYJ8AzJWKAPmNUUfpbov7oAzbUB368=;
-	b=gZpLRX64IetHgnxPwbXTkTZ/0n9RMj5co4d58vXXsJhaFmlQ9f8d7gYAIP467m5JsmlKhC
-	8tFMijQUI30qlNCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1792485688; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6bn4M6YeN2g8PEYJ8AzJWKAPmNUUfpbov7oAzbUB368=;
-	b=XEI5579QHP6V72aSSg8VC/OwOoN5B6oREWReR7r9zMq2hj5NghkhTloZbeQV4s4Qp1rbN7
-	cs+S3ETy5Q2zqKrnk7aOpcb0PeTalQ23uHsRmeCydsfxGy4iw32lq27E2o30sZDq0dcUVr
-	MMVqBTP3SfYhaV9kXhbM1FFPajdTiNY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1792485688;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6bn4M6YeN2g8PEYJ8AzJWKAPmNUUfpbov7oAzbUB368=;
-	b=gZpLRX64IetHgnxPwbXTkTZ/0n9RMj5co4d58vXXsJhaFmlQ9f8d7gYAIP467m5JsmlKhC
-	8tFMijQUI30qlNCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 66F78136CC;
-	Tue, 20 Oct 2026 08:41:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id y78lEjgp12prSgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 20 Oct 2026 08:41:28 +0000
-Date: Tue, 20 Oct 2026 10:41:27 +0200
-Message-ID: <87ecdkix1k.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: webgeek1234@gmail.com
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-sound@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ALSA: hda/hdmi: Enable HBR capability
-In-Reply-To: <20261020-tegra-hda-hbr-v2-1-6968017f585b@gmail.com>
-References: <20261020-tegra-hda-hbr-v2-1-6968017f585b@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.2 Mule/6.0
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=ldbNPAVz
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04FE21596;
+	Tue, 20 Oct 2026 04:29:06 -0700 (PDT)
+Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55BE03F7B4;
+	Tue, 20 Oct 2026 04:29:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1792495749; bh=lPExewzubDO61zAC5f5szD4RLVzqEIiHTrrWFFbXWiU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ldbNPAVz3IGbNhuOHCkg9AxOAasSipoy6B5lGBDzvn/l+iQ+xrMGjWe9+CJcsFl11
+	 6SP4SsUPLz31dVdUWoNT+EX1DN80XrhHO69Qp0pChRZFwxSOXLiZHUB06wU7fItPn9
+	 6t/Ojv9c6iy2iP/FPyS1UkbN/qZvM71rUcPMepAk=
+Message-ID: <be6cd787-8502-4499-ad62-597c1b9b7702@arm.com>
+Date: Tue, 20 Oct 2026 12:28:54 +0100
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -113,45 +52,162 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/11] iommu: Let 32-bit ARM drivers opt into a DMA API
+ default domain
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Heiko Stuebner <heiko@sntech.de>,
+ Thierry Reding <thierry.reding@kernel.org>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20261016-b4-arm32-iommu-dma-cookie-v2-0-b06842a01938@nvidia.com>
+ <20261016-b4-arm32-iommu-dma-cookie-v2-7-b06842a01938@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20261016-b4-arm32-iommu-dma-cookie-v2-7-b06842a01938@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 20 Oct 2026 10:18:14 +0200,
-Aaron Kling via B4 Relay wrote:
+On 16/10/2026 7:46 am, Mikko Perttunen wrote:
+> iommu_get_default_domain_type() unconditionally forces IDENTITY on
+> 32-bit ARM as ARM_DMA_USE_IOMMU installs its own UNMANAGED domain on top
+> of whatever the group already had. Now that the ARM DMA API state is an
+> ordinary domain cookie, IOMMU drivers can ask for a real
+> IOMMU_DOMAIN_DMA default domain instead. Drop the override so that
+> ->def_domain_type is honoured, and let a driver-requested DMA domain
+> through the !CONFIG_IOMMU_DMA guard when ARM_DMA_USE_IOMMU can back it.
 > 
-> From: Aaron Kling <webgeek1234@gmail.com>
+> IOMMU_DOMAIN_DMA stays strictly opt-in on 32-bit ARM and is never the
+> fallback to avoid unexpected changes, as drivers today return 0 from
+> ->def_domain_type while expecting the legacy behaviour.
 > 
-> Tegra HDA does not set the HBR capability bit, however every SoC since
-> Tegra114 does support HBR. Override the hbr setup function for these
-> SoCs to unconditionally enable the feature. Since Tegra30 does not
-> support HBR, this override will not be applied.
+> Behaviour is therefore unchanged for every existing 32-bit ARM IOMMU
+> driver:
 > 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> - exynos-iommu, omap-iommu, rockchip-iommu, msm_iommu, ipmmu-vmsa,
+>    mtk_iommu*, sun50i-iommu and qcom_iommu have no ->def_domain_type,
+>    so iommu_get_def_domain_type() returns the unchanged cur_type of 0,
+>    which is forced to IDENTITY as before.
+> - arm-smmu returns IDENTITY for legacy bindings and 0 otherwise, which
+>    ends up in the same place.
+> - tegra-smmu returns IDENTITY explicitly, and keeps doing so until a
+>    later patch.
+> 
+> Also move the static_assert on the two DMA API implementations being
+> mutually exclusive to drivers/iommu/dma-iommu.h, next to the
+> declarations that depend on it.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>   drivers/iommu/dma-iommu.h |  3 +++
+>   drivers/iommu/iommu.c     | 20 +++++---------------
+>   2 files changed, 8 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.h b/drivers/iommu/dma-iommu.h
+> index 71b23cb698c0..24fa4165450f 100644
+> --- a/drivers/iommu/dma-iommu.h
+> +++ b/drivers/iommu/dma-iommu.h
+> @@ -12,6 +12,9 @@
+>    * IOMMU_DOMAIN_DMA default domains. Only one provider can be compiled in at a
+>    * time.
+>    */
+> +static_assert(!(IS_ENABLED(CONFIG_IOMMU_DMA) &&
+> +		IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)));
+> +
 
-Applied now.  Thanks.
+Don't the first couple of patches already make this redundant, since 
+such a build would now fail anyway due to multiple definitions of 
+iommu_setup_dma_ops() etc.?
 
+>   #if defined(CONFIG_ARM_DMA_USE_IOMMU)
+>   
+>   #include <asm/dma-iommu.h>
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 5fbb76d44a1e..0d812c4b9f08 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1884,18 +1884,6 @@ static int iommu_get_default_domain_type(struct iommu_group *group,
+>   
+>   	lockdep_assert_held(&group->mutex);
+>   
+> -	/*
+> -	 * ARM32 drivers supporting CONFIG_ARM_DMA_USE_IOMMU can declare an
+> -	 * identity_domain and it will automatically become their default
+> -	 * domain. Later on ARM_DMA_USE_IOMMU will install its UNMANAGED domain.
+> -	 * Override the selection to IDENTITY.
+> -	 */
+> -	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
+> -		static_assert(!(IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU) &&
+> -				IS_ENABLED(CONFIG_IOMMU_DMA)));
+> -		driver_type = IOMMU_DOMAIN_IDENTITY;
+> -	}
+> -
+>   	for_each_group_device(group, gdev) {
+>   		driver_type = iommu_get_def_domain_type(group, gdev->dev,
+>   							driver_type);
+> @@ -1913,11 +1901,13 @@ static int iommu_get_default_domain_type(struct iommu_group *group,
+>   
+>   	/*
+>   	 * If the common dma ops are not selected in kconfig then we cannot use
+> -	 * IOMMU_DOMAIN_DMA at all. Force IDENTITY if nothing else has been
+> -	 * selected.
+> +	 * IOMMU_DOMAIN_DMA at all, unless this is ARM32 and the driver asked
+> +	 * for it explicitly, where CONFIG_ARM_DMA_USE_IOMMU provides the
+> +	 * implementation. Force IDENTITY if nothing else has been selected.
+>   	 */
+>   	if (!IS_ENABLED(CONFIG_IOMMU_DMA)) {
+> -		if (WARN_ON(driver_type == IOMMU_DOMAIN_DMA))
+> +		if (WARN_ON(driver_type == IOMMU_DOMAIN_DMA &&
+> +			    !IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)))
 
-Takashi
+This ends up looking a bit odd, and not clear that it's still more or 
+less the same special-case workaround seemingly being removed in the 
+hunk above.
+
+At this point I'd rather push any remaining identity special cases into 
+the relevant drivers, however I'm somewhat more confident that there may 
+not actually need to be any:
+
+- exynos-iommu, omap-iommu, rockchip-iommu, msm_iommu: AFAICS these all 
+only ever have a single client device, so the per-group implicit domain 
+should be equivalent to the per-device explicit one, so they should not 
+be impacted by switching (provided the "throw away the ARM domain" idiom 
+in some of their client drivers becomes non-destructive as mentioned)
+
+- mtk_iommu, sun50i-iommu, qcom_iommu, arm_smmu: While Kconfig might 
+allow building them, I'm not sure we really support the first 3 on 
+32-bit at all, but again since these all have no special CONFIG_ARM 
+group handling anyway then either they must work out as above or they're 
+already broken, and thus at most the change might un-break them.
+
+- mtk_iommu_v1 and ipmmu-vmsa probably wouldn't care given that they end 
+up attaching to their own shared domain anyway - they just can't wait to 
+be able to use a proper singleton group to rip all that out :D
+
+The main reason for forcing identity was to meet the expectations of the 
+existing ARM DMA ops setup, but if we're now touching the ARM code to 
+properly tie that in to the IOMMU flow, then I think we can just do the 
+right thing.
+
+Thanks,
+Robin.
+
+>   			return -1;
+>   		if (!driver_type)
+>   			driver_type = IOMMU_DOMAIN_IDENTITY;
+> 
+
