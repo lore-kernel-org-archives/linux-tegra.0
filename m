@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792483814;
-	b=VHfChzKBLE0dywiNQMDuadMxeKXX/6lwYPvAcWfZWVcGQyPbJ5YtAbEs0LbB4ZOyK9eI
-	 q439C4cDGioPt1x6LoFhnC/DgIWsgyLme/Xy67ugOalH/0UYHDdCwmNEDmR4V5wwZQuOn
-	 aWHPPUyS4fGqEcjb5ae1Q4aSKWpRkn87BKcgM1MI8RNydc6hPakp/zPcH2CP3/ADNFS6s
-	 2J8vlm2yvSaY6aBQn5xba0tIAhr1BAVgW5fd0ofZCB6x0mdGsVmXp/TWFBmR1N8O1FXbJ
-	 pcpZ4dlD3RZR3uqUQ7tfLu1GSLF9acs7gn3ZW4gMiQywCYlnwZHLmR/KxB1ZKyrKfCg==
+	t=1792483813;
+	b=k/4O0mH0trUaFxx7x6rp6g6Ht4Qu8GuOFrCifBUW2iJ2lOFfg5tltxOJlpGMfzIBb3Uc
+	 IO1GW/TqkodnIumK1hzfUw4/aYsPzeEbdb2FRavbanzq7L0Ww5wJCOOUefrsiJOkDukMG
+	 v2B9M9LTIEWllUBG9XVh51PL0jwpBea6cS0v/fqf5whUPcV7VTykITjStbeVbPpkkhWFP
+	 1svk6/6Zif1Ci1THP4gcjTBcrNTYH7LcbRkdSiwiBm9mcB/6CL/kTGsNgvpbpiHRgEKVk
+	 rknjMrT1vYzW6LDO7ARMYyZkZ5tFkgXIHscfflFgQOFjFBuYytTr1u1futz9BmbKt6Q==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792483814;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=wdjAbO5fFZ4SU/WJZdQY3BNCfbKUwODdR2e5Miu4Hcc=;
-	b=buJEs7YhEQPCjsbBR3U8dUavKWwzldSG4+Ec/QH7IRD2REU0YEiJk8ae+qnRxmmTwt0z
-	 yOYhOs0e2J4B8KM74vI4dejHBslIzXTBCTXr47snEi4nLhI+0I3rns6o4pJ20/0iOOQJI
-	 EZa+QpRS7fSw+i8fZo5z6Y1wBHGFjvsMdMLa2jIcFYCsCAMub3siwXfoYlgrOV9uQEtRx
-	 M0TTmyQlZKEKeIFrqK4JCXx9McjDYNIY47HM+VSwp69WLUVmF3dAoJsCnLNGZu2yUxKTI
-	 xPDExkB9QQ18C1HdWoaxOnwkFlJUyxAcM7MNdVP8NdksXzO+7rwpn5sYdO6e/tD7R0Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792483813;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=T6wuasYP+5ayvHMAL7nKThPJDLo93/+fiRJi56xfeoc=;
+	b=sV4H9INWx0a+IlDhI8kXUPK74FJCshvgjCgG53rrIFfkY959TR4VrVcRtijFINXbkAta
+	 ALk02ZWKh/UiFtKM58FZY+rZnMREqeGI4TBDZ0bnchgwO1Dca6zdZbZac7IsKRAkgPJbe
+	 dgU2bcnP0jlhY3FzJUZUMrkaPwgrzmlvaIt94WlELXLl3Nj48u7i+EvaWcrdMZhyn2816
+	 yz32RbF7F62wV8ONlMyPp14NcnFq8tO4vOPQJeoULQ2+JPMpIVpl4CQhIFqmF4Jyj5hay
+	 bTLGslTHw8WST9SDwz0ggXwYwEylNh97MyWi8sykCf3UJ8+uYPFfVeLr8wdXS0vBIyw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RAAvE60n;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="ewgb/7Of";
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF0160A260B;
-	Tue, 20 Oct 2026 08:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555D3606A33E;
+	Tue, 20 Oct 2026 08:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RAAvE60n
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ewgb/7Of
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792483814;
-	b=MslniPsiqXmB4qGKdbhGfT87cfA95o/AG8TXEHZsbC2Mhdyw9/W44doHh/3x4892rPPG
-	 f+A7EljKOwoOwjytsKWxzR6o+qb8woKiyuKaCWRmBc0lofmTcdssRaux49vymd8ENra8m
-	 BqdmAbN2Bu8UpADM9fc+mNRlhX1uIMxOuAUt2IaE5Xpo/DKBAWXasCwd/Xr8B0R2gBQap
-	 GXKFxSJGIWVd77Wv0EqnywF190i9mvdBIhGVcXWC4FJioCosupvLYduvmj9yYWC02gg3m
-	 q6uBmPyfTDcyRXWBpSrPjhkdih1FbJMQjJEdHYk2VphQX0Lvp+nSW8HmotrDevduz0g==
+	t=1792483813;
+	b=iXCkFy7bGBZe2MlC1LMszJtLU+ytnNReTgSETk6mMxPKr7aJUOXg5+j7vEitdy20yT47
+	 Q/nyijYB6pUBEZ1MdCEY5nKAf4fOR5HCQgUErl62DjMyf8S1u1dCHu5zBTZ1A6FxtP3IU
+	 /q2bTOOGTBGhKbWJuviJsVL5Guo9PV7gcg75HLCctm/ltbwPzwITnvYIskYiEip7JYu31
+	 Rf6SrM0PrzNU0+SGewlZUcE2marEyNE31FVEPmmULK0j8A509RPUWe91KI8Sm0BSXplWq
+	 0AQWFbi/sdSN+TUNOwlBRSZJhnTyfVeuzduMzFF+Hh7m7N6O9pvoaxKSxbMUgzAtAZg==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792483814;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=wdjAbO5fFZ4SU/WJZdQY3BNCfbKUwODdR2e5Miu4Hcc=;
-	b=RmKRIDOEkLO89HFPkrwWTKjGApi89tJub6LyHfiyiGyS7W25KO1qj0xol3zrrdgIyXFV
-	 CfrkuUk2PkBNajFOBxq35C4skzO7FDtWW/ybJ7JnR2LT5WCjFKfzbrQe5i7t+dN2rCvkN
-	 y9UqQy7KOtM5SqmxcHI+3vLL+avQJieD+x0aIU4PCuki/VCNGz6M+UWjOZsA26cJsiWfg
-	 W3rrUMEgpgZE8t3NUHd605glt6vW0842uhS/jW2ocyZqmU+CYHOhWg6ON2R0qjB+qqcrl
-	 he3jhyendkw38PeIi37ntDpSJcPHmPMEsmaJFM9gAzWyCgXQYgooUCmNLh4ChNdsYTA==
+	c=relaxed/relaxed; t=1792483813;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=T6wuasYP+5ayvHMAL7nKThPJDLo93/+fiRJi56xfeoc=;
+	b=nrUSKcOQ4zxNjpwqo36z4TdMTP0TtZZtpyGFEs3Vomo3ZFjmzM8aSN+xoQCk7J5yLojl
+	 vDW34fXNSiUinok7GL/AuIzgIjge8c9N8hL0xVsIvu8sA5r3z80qXdIPsMTreqGrz77zu
+	 y0q5ERZ9f5sLgIRRcF7xlC4iF2MYrp4CNLHCyLaHU82g0l14SsbKH4anmHkukLCtKQa1t
+	 3Dc8UijnjpYCk8KJusKTgvll8sfdVYgXMKavzxlyTy+swOqRq4hBBBN2FmjTj4xfJYACm
+	 piHBV03/62I6ZVhZPFHoFgYLYR0eTq7CH+anfndXbzpEgz6JIOwD6aXfio2LHl38cGg==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 9B9C91F00ADF;
+	by smtp.kernel.org (Postfix) with ESMTPS id A30FA1F000D3;
 	Tue, 20 Oct 2026 08:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792483814;
-	bh=wdjAbO5fFZ4SU/WJZdQY3BNCfbKUwODdR2e5Miu4Hcc=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=RAAvE60nCornBKyBbQ++wyFJY5i5uCjKRcqoTzStE7zu45Br0XgDi1zPmjus5bc3p
-	 OoywqJLP273SuhqD2Au0IMSCFRNzPkV+p8DpD53lg76zEX1ewaUigBQKSNA0CTR39q
-	 KjB1T2hrQ6bPs5f5FOVF2cJRKoDsvQjSW5S6LJI8oFHBUMEG0IFC4F8TH/PZiUfGmD
-	 vIfAx8RPqO0O23lkFoIO+tgL5u6hBTORRHTZGj40OiML+tjSnTGoNVyRjN4H0MiRfV
-	 aqaW6RrlO2Mq4e/gGa2hBdJGoRZ0bOi33/CN/DL9HJIF5RWKqwXKzaS6MH1gixx3qz
-	 TxfbvhTsCngkA==
+	s=k20260515; t=1792483813;
+	bh=T6wuasYP+5ayvHMAL7nKThPJDLo93/+fiRJi56xfeoc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=ewgb/7Ofmvzu0+gGHaqWqeTNIvP80zYaq59JmodAQoxk9DVzs2O6sUDnkJoX5a2Rk
+	 LJL9fiE5K33GQ+oRTuy+WLOsmmIT4maomAUWrNgYJQ5Co7gyaj/ulxOW8FSfQiZ+MY
+	 jEp7etxjjR8outkcSdDVnehEtqrtvokfirt34cwEfwRIkh2XdSHzn3whzUQT9xCwXt
+	 DrRyJ++YudWxh+JVokY/CY8LEAAaKW2YaMA0toA7vMlQmIpaVtbzQC3wfbMcGjo1nE
+	 JVZ1xHXQFcfTnpKvbvW8PoYfiMtpovKExuzFndq5lZ3+Q1zFS7eJhmbipggv8Bj6r7
+	 Tzd/RRyPTSW5A==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id D125043085;
+	by lkml.kernel.org (Postfix) with ESMTP id E235E430BB;
 	Tue, 20 Oct 2026 08:10:11 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Subject: [PATCH v3 0/2] drm/tegra: Support YVU formats
-Date: Tue, 20 Oct 2026 03:10:06 -0500
-Message-Id: <20261020-tegra-drm-yvu420-v3-0-7f19a834ba98@gmail.com>
+Date: Tue, 20 Oct 2026 03:10:08 -0500
+Subject: [PATCH v3 2/2] drm/tegra: Support YVU formats
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -84,75 +83,131 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/33NQQ6CMBCF4auQrq2ZaYuiK+9hXJR2gCZCTYuNh
- HB3CysWxuX/kvlmZpGCo8iuxcwCJRedH3LIQ8FMp4eWuLO5mQBxQoCKj9QGzW3o+ZTeSgBHW9d
- nVECl0iyfvQI17rOR90fuzsXRh2n7kHBd/2AJOXBr0CglDUAjb22v3fNofM9WLIkdgL8AkYESR
- VVdEKSu1R5YluULwDvQafEAAAA=
-X-Change-ID: 20261008-tegra-drm-yvu420-1dbb7140e54a
+Message-Id: <20261020-tegra-drm-yvu420-v3-2-7f19a834ba98@gmail.com>
+References: <20261020-tegra-drm-yvu420-v3-0-7f19a834ba98@gmail.com>
+In-Reply-To: <20261020-tegra-drm-yvu420-v3-0-7f19a834ba98@gmail.com>
 To: Thierry Reding <thierry.reding@kernel.org>, 
  Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
  Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792483811; l=1918;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792483811; l=2859;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=UNJCnLzNELDA2JhJJEdojVulK80QfqyCajHgxLoaqXY=;
- b=4SHbIyPX/mu4c17CytuieKZ7CuYq1/sk1jNotZQ7DQ5BNbWStdZOimoS87zN+9YGv5tI+VySY
- 1Q1bJLZHcMTD+t8z8dKfUnpoBO/wRcVUE7VGhGtlPFVxEN+q99Jqa/V
+ bh=GKwERrdCz3L4Vqnj4OsOVIE3z6vkoOXkX6XTWWhZRfE=;
+ b=H/dRF2XpiGrSuf6M/oSZsqBE4Hd0Ig5GpEdOOqJta54JvKAerLEtHG2YEmohmKtIEZG7fCjgG
+ FXwyjGuCMYrD3tjModifI+47oCoIQilGdsCzVvOm9+VAPwnNrtQfbUx
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
  auth_id=342
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 7bit
 
-This is not directly supported by the display controller hardware.
-However, this can be handled efficiently on tegradc by just passing the
-chroma planes to the hardware backwards and reporting it as the yuv
-equivalent. Nvdisplay has a hardware flag to handle the swap in
-hardware.
+From: Aaron Kling <webgeek1234@gmail.com>
 
-YVU420 is required by AOSP for software decoded video playback among
-other things. An attempt was made to handle this in gralloc by swapping
-the chroma planes there, but it wasn't working. This kernel
-implementation is working and is more generic anyways. This has been
-verified on a SHIELD TV 2019 Pro for the tegradc path and a Jetson TX2
-NX for the nvdisplay path.
+YVU420 is used by AOSP for video playback among other things. YVU422 and
+YVU444 can be trivially supported in the same manner, so add them as
+well.
 
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
-Changes in v3:
-- In patch 1, use the SWAP_UV window group flag instead of manually
-  swapping for nvdisplay
-- In patch 2, support the chroma swapped variants of the other yuv types
-- Link to v2: https://lore.kernel.org/r/20261018-tegra-drm-yvu420-v2-0-512889103ab4@gmail.com
+ drivers/gpu/drm/tegra/dc.c    |  7 +++++++
+ drivers/gpu/drm/tegra/hub.c   |  2 ++
+ drivers/gpu/drm/tegra/plane.c | 24 ++++++++++++++++++++++++
+ 3 files changed, 33 insertions(+)
 
-Changes in v2:
-- In patch 1, simplify pre-nvdisplay path to a swap of the window base
-  address
-- In patch 1, address sashiko report about failure to copy the new
-  struct entry in duplicate_state
-- In patch 2, address sashiko report that yvu420 was missing from
-  tegra20_overlays when the targets already support yuv420.
-- Link to v1: https://lore.kernel.org/r/20261008-tegra-drm-yvu420-v1-0-dc1c443c00f3@gmail.com
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 39c2e920d76a6..be913f2609077 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -1282,6 +1282,8 @@ static const u32 tegra20_overlay_formats[] = {
+ 	DRM_FORMAT_YUYV,
+ 	DRM_FORMAT_YUV420,
+ 	DRM_FORMAT_YUV422,
++	DRM_FORMAT_YVU420,
++	DRM_FORMAT_YVU422,
+ };
+ 
+ static const u32 tegra114_overlay_formats[] = {
+@@ -1309,6 +1311,8 @@ static const u32 tegra114_overlay_formats[] = {
+ 	DRM_FORMAT_YUYV,
+ 	DRM_FORMAT_YUV420,
+ 	DRM_FORMAT_YUV422,
++	DRM_FORMAT_YVU420,
++	DRM_FORMAT_YVU422,
+ 	/* semi-planar formats */
+ 	DRM_FORMAT_NV12,
+ 	DRM_FORMAT_NV21,
+@@ -1349,6 +1353,9 @@ static const u32 tegra124_overlay_formats[] = {
+ 	DRM_FORMAT_YUV420, /* YU12 */
+ 	DRM_FORMAT_YUV422, /* YU16 */
+ 	DRM_FORMAT_YUV444, /* YU24 */
++	DRM_FORMAT_YVU420, /* YV12 */
++	DRM_FORMAT_YVU422, /* YV16 */
++	DRM_FORMAT_YVU444, /* YV24 */
+ 	/* semi-planar formats */
+ 	DRM_FORMAT_NV12,
+ 	DRM_FORMAT_NV21,
+diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+index 5a86f8260f136..ac4542e54d7dd 100644
+--- a/drivers/gpu/drm/tegra/hub.c
++++ b/drivers/gpu/drm/tegra/hub.c
+@@ -51,6 +51,8 @@ static const u32 tegra_shared_plane_formats[] = {
+ 	DRM_FORMAT_YUYV,
+ 	DRM_FORMAT_YUV420,
+ 	DRM_FORMAT_YUV422,
++	DRM_FORMAT_YVU420,
++	DRM_FORMAT_YVU422,
+ };
+ 
+ static const u64 tegra_shared_plane_modifiers[] = {
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index 757bc552809fe..79ef5fc1b3678 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -433,14 +433,38 @@ int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap, bool *swap_uv)
+ 		*format = WIN_COLOR_DEPTH_YCbCr420P;
+ 		break;
+ 
++	case DRM_FORMAT_YVU420:
++		if (!swap_uv)
++			return -EINVAL;
++
++		*format = WIN_COLOR_DEPTH_YCbCr420P;
++		*swap_uv = true;
++		break;
++
+ 	case DRM_FORMAT_YUV422:
+ 		*format = WIN_COLOR_DEPTH_YCbCr422P;
+ 		break;
+ 
++	case DRM_FORMAT_YVU422:
++		if (!swap_uv)
++			return -EINVAL;
++
++		*format = WIN_COLOR_DEPTH_YCbCr422P;
++		*swap_uv = true;
++		break;
++
+ 	case DRM_FORMAT_YUV444:
+ 		*format = WIN_COLOR_DEPTH_YCbCr444P;
+ 		break;
+ 
++	case DRM_FORMAT_YVU444:
++		if (!swap_uv)
++			return -EINVAL;
++
++		*format = WIN_COLOR_DEPTH_YCbCr444P;
++		*swap_uv = true;
++		break;
++
+ 	case DRM_FORMAT_NV12:
+ 		*format = WIN_COLOR_DEPTH_YCbCr420SP;
+ 		break;
 
----
-Aaron Kling (2):
-      drm/tegra: Support swapping chroma planes
-      drm/tegra: Support YVU formats
-
- drivers/gpu/drm/tegra/dc.c    | 13 ++++++++++++-
- drivers/gpu/drm/tegra/hub.c   |  9 +++++++--
- drivers/gpu/drm/tegra/plane.c | 29 ++++++++++++++++++++++++++++-
- drivers/gpu/drm/tegra/plane.h |  3 ++-
- 4 files changed, 49 insertions(+), 5 deletions(-)
----
-base-commit: 2efb7a11f1aa4d2dc285fe2680cca22cb9f72f64
-change-id: 20261008-tegra-drm-yvu420-1dbb7140e54a
-
-Best regards,
 -- 
-Aaron Kling <webgeek1234@gmail.com>
+2.54.0
 
 
