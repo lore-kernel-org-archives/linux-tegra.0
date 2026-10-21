@@ -1,57 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792592740;
-	b=IIRr4aZ/Uy1GtkscJYY4vSkgXx2KOk50D5FhmD1iHteqWew54z+w/D9h4LFN4Tuyr7og
-	 a2PQhGIIXZI2Z4K62svIj4nP/D013aJMIX9X+GUYqgQDnK/WbNH5+eXm4yRi6+nKvINxp
-	 ynBoF2y2WBWhHFv2jMbvOB6accG8zNR/psE+TBMQnFy6tYJz+QMzKu8d+VH2QADrvkdY5
-	 3JFekNqpxO8zyXNofI6QKVZBULGKUqvzomuhI9GLmnpaHe/OANKNjd/8wLs+sMrERG9fO
-	 08+Z39Tqx+1TMr+CdHH0TawqSMwCzd/siI6KDr9kStJ8ugy8nohG5RFhagxQYd8jRPQ==
+	t=1792594425;
+	b=HFjsfLo/TRT5a86E8xmV0aYaeEyo74LFQkv4sHhbx34jJr1q0+e/gvagiyLnYPcDFanu
+	 0Buny1WP27hgtaeM/aXMQpgS7/wl+48IhyFD8Z+xqghRcORP/kmdDH3kVhwagFxPCrLxy
+	 7xo+U72glEFMeCmT5CTQYq62riaSTIQ8YQMrswa4mBBGb2272u1XQ6rbEJKSKIYF1qLge
+	 vSzQ04rb3rix4pAZkCFAdl/0XhV5Eg7gzZHzZc3pK6ACBNJF35VOgzMUxe1XE6EWGC5qE
+	 3aYZWyppfCorw8HJqWU6jCAtYm9w7ryz17hGweGlf1cITthS7gl0Mro4SzSMg4iRC8w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792592740;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792594425;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=L4qLQp+EeajMXHsH+2rm3DjABec4mArcixLHZHtBpE8=;
-	b=jUsobpCAxo/E8fLbf8JB7W4fDeQrSspbZuEwLU4u74hHGGrRIQgbYxShbj+tFkZ1wWHl
-	 YNtsV0cQBuWmjXjynqNRNadJ+XuZtMp+f6LJeXQBYejPb6vdHwsNrK1EJhIPgK8/Duk7m
-	 CF8ewVOJi/CXNY08GdZvU7SP+Kq4FuwPNzcBrn6YTIYsrZd0BzaEbYx5Len2R322wiWLm
-	 0eKs969D46/o+YamOUxmVODus3DjlUlYCMZ8fqu2CsNSa73niBH9kbz64gVaIQ9I3ecGV
-	 5ZfZO+0EaXEXtZUmyUgbSS8i/Hn0vWheE7xNyFMbRa4102cuLv35B+fKzs6YQ68RS5A==
+	bh=k7ZGLplWFKaB8JY5T+15czx4UcwJP0brOC2Z4Smd6YM=;
+	b=HFBHFCouIL7rqRM1u4WQ4s52SYWzQ3C4DKuQVBlVfgCz7addew8x6k5xlROdE3AdFiR9
+	 04KcqjbmXP9MOJ0QaNjYobTRfjshuYW8Z4cdwVQK5bTK6ZTMBtQih2jefCIyXYtFIuaF/
+	 Flv7tzLJN7OULN4KXLMutGs+489jP2vPPvQV9xS2RX6WeINP1ZSYnRGk6Fr6n9Smhiulo
+	 Q0p9gznryDDlXXKNlRN6CEmDL9itAn4sUZFQbveugyExyjcyNWEZlV5Oe4ygroSoEfzrl
+	 HqxNcnvd1ibIET9IPCwLamNptL/2xAEy8YfKaWl4Bb6XtIrpX5O+6z0TwguC9/UTjRQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n0u24M9G;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gs2WEUGm;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201D5606A31B;
-	Wed, 21 Oct 2026 14:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8482606A31A;
+	Wed, 21 Oct 2026 14:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n0u24M9G
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EF161F000C4;
-	Wed, 21 Oct 2026 14:25:37 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gs2WEUGm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4F71F000C2;
+	Wed, 21 Oct 2026 14:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792592739;
-	bh=L4qLQp+EeajMXHsH+2rm3DjABec4mArcixLHZHtBpE8=;
+	s=k20260515; t=1792594424;
+	bh=k7ZGLplWFKaB8JY5T+15czx4UcwJP0brOC2Z4Smd6YM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=n0u24M9GkemyRmHyNjgMUcIawUT9Uyp5AXNXvcD5yhqmTAk5l2H26YNxXemCx+/uT
-	 swILoYKsWF7xEqZ5NWOjoLsF/jOVYEezlS4j5ar8qkX6mATRC5FWt53GMsm5c7k2t4
-	 NxChBn1umzIk7Emhg1F7ZapMpOR3wnz0WRtr/j3i9Fi8trA0Tnoxqv4v+rByDX2e6A
-	 LUEbsr+WMinThia2BSB3BhbzTuRMbDzARHny2ChFj56/1yzafdM1YByjiE4sR52u5H
-	 daNBlyW/8GJ4IqHTiJ5BvCSWkM0qyMhX6PxcsxqxPn7nfb+KRY6fULIu4mEYyEtcem
-	 CGoNXnnZ+hyFw==
-Date: Wed, 21 Oct 2026 16:25:34 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: mani@kernel.org, kwilczynski@kernel.org, linux-pci@vger.kernel.org,
-	kishon@kernel.org, Frank.Li@kernel.org, bhelgaas@google.com,
-	den@valinux.co.jp, thierry.reding@kernel.org, jonathanh@nvidia.com,
-	vidyas@nvidia.com, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] PCI: endpoint: Skip upper halves of 64-bit BARs
- during search
-Message-ID: <atjLXvkc-XZNF0oi@ryzen>
-References: <20261021080644.1346549-1-mmaddireddy@nvidia.com>
- <atiX5UoJ0qgV0wGN@ryzen>
+	b=Gs2WEUGm62ZAxSMTfnoYtXqKE0RhuPnkUxecvljB5l6U1FTMYeHfmrX+ob6l47l65
+	 Phc793AjwVhxmGPH8d3WaeGwXLv7NxRkYwv1n4PFOSXBWX1Job+eEpY06+4zuCWbRc
+	 0CakWSkKDyg/6CDnORverYc01G6GX1xDlEbCN81b/IJl9I4mpUri9X5nP5rCUHHx1A
+	 ihuwbN4yDcNUcP3Gt4ahNTPeK7otJ/+GxO2edRlMd1i8OTD389VK+ULVp8wa5Qe0aN
+	 3eEnu+XPxSw+wgmrknS/k1sIwutHZpmmPBdZNFDY+ZylESVpu3aGmVdBaObU/TSwrF
+	 CvVA8SIX36g6g==
+Date: Wed, 21 Oct 2026 15:53:41 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: David Cemin <dcemin@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@kernel.org>, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] firmware: arm_ffa: Compare notify_id when looking up
+ notifier callbacks
+Message-ID: <20261021-graceful-refined-lizard-1efaff@sudeepholla>
+References: <20261020220902.611138-1-dcemin@nvidia.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -63,49 +59,48 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <atiX5UoJ0qgV0wGN@ryzen>
+In-Reply-To: <20261020220902.611138-1-dcemin@nvidia.com>
 
-On Wed, Oct 21, 2026 at 12:46:03PM +0200, Niklas Cassel wrote:
-> On Wed, Oct 21, 2026 at 01:36:44PM +0530, Manikanta Maddireddy wrote:
-> > pci_epc_get_next_free_bar() skips the upper half of a 64-bit BAR only
-> > when it is the starting BAR. If the search subsequently passes a
-> > reserved or disabled 64-bit BAR, it can return its upper half as an
-> > independent BAR because that slot has a default programmable descriptor.
-> > 
-> > For example, Tegra exposes a programmable 64-bit BAR0 and reserved
-> > 64-bit BAR2 and BAR4. A search starting at BAR1 skips BAR1 and BAR2,
-> > then incorrectly returns BAR3. The next search can similarly return
-> > BAR5, causing the EPF test driver to allocate and program BARs that
-> > belong to the reserved hardware windows.
+On Tue, Oct 20, 2026 at 03:09:01PM -0700, David Cemin wrote:
+> The notifier callbacks are kept in a hash table keyed by notification ID,
+> but struct notifier_cb_info does not store the ID and none of the lookup
+> helpers compare it. hash_for_each_possible() walks the whole bucket, so
+> any two IDs that hash to the same bucket are treated as the same
+> registration.
+> 
+> With the 64-bucket table, hash_32() maps IDs 2 and 36 to the same
+> bucket. A driver that requests notifications sequentially therefore
+> fails at the 37th request:
+> 
+>   ARM FF-A: Failed to register callback for 36 - -22
 > 
 
-> 12a22fb38cbb ("PCI: tegra194: Expose BAR2 (MSI-X) and BAR4 (DMA) as
-> 64-bit BAR_RESERVED").
+Nice catch. I dropped the exact same change before posting the support
+on the list. For some unknown reason, I assumed there will be no collisions
+for such small sized buckets, my bad.
+
+> because update_notifier_cb() finds the node registered for ID 2 and
+> rejects the new registration as a duplicate. The same lookup is used on
+> the delivery path, so a notification for a colliding ID can also be
+> dispatched to the callback registered for the other ID.
 > 
+> Store the notification ID in the node and compare it in all three
+> lookup helpers.
 > 
-> I'm fine with this patch, but I think you need to rephrase the kdoc
-> to reflect this new reality, because currently the kdoc is confusing/
-> not in line with the 'new' meaning of BAR_RESERVED, which can contain
-> MSI-X table etc.
+> This was found on an arm64 laptop whose embedded controller partition
+> declares 38 notifications: the EC driver failed to probe and every
+> EC event (AC, battery, lid, hotkeys) was lost.
+> 
 
-To clarify, I can see that you updated the definition in:
-27ce1d8ecb9b ("PCI: endpoint: Allow only_64bit on BAR_RESERVED")
+I will queue it soon and send it as fix at -rc1 or later.
+Thanks for finding and fixing the issue.
 
+> Fixes: e0573444edbf ("firmware: arm_ffa: Add interfaces to request notification callbacks")
+> Fixes: c10debfe7f02 ("firmware: arm_ffa: Add support for {un,}registration of framework notifications")
 
-But, IMO it is still not super clear.
+Is this because of rework we have 2 fixes tag. Need to check how backport
+would work, hence asking. I will also check before applying.
 
-Perhaps we should have mentioned explicitly that only_64bit is
-also allowed on a BAR_RESERVED, if that reserved BAR is 64-bit.
-(Since that use case is different from what the kdoc currently
-says.)
-
-
-I also think that this patch needs a Fixes tag with either:
-27ce1d8ecb9b ("PCI: endpoint: Allow only_64bit on BAR_RESERVED")
-or
-12a22fb38cbb ("PCI: tegra194: Expose BAR2 (MSI-X) and BAR4 (DMA) as
-64-bit BAR_RESERVED")
-
-
-Kind regards,
-Niklas
+-- 
+Regards,
+Sudeep
