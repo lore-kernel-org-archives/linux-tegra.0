@@ -1,53 +1,67 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792594425;
-	b=HFjsfLo/TRT5a86E8xmV0aYaeEyo74LFQkv4sHhbx34jJr1q0+e/gvagiyLnYPcDFanu
-	 0Buny1WP27hgtaeM/aXMQpgS7/wl+48IhyFD8Z+xqghRcORP/kmdDH3kVhwagFxPCrLxy
-	 7xo+U72glEFMeCmT5CTQYq62riaSTIQ8YQMrswa4mBBGb2272u1XQ6rbEJKSKIYF1qLge
-	 vSzQ04rb3rix4pAZkCFAdl/0XhV5Eg7gzZHzZc3pK6ACBNJF35VOgzMUxe1XE6EWGC5qE
-	 3aYZWyppfCorw8HJqWU6jCAtYm9w7ryz17hGweGlf1cITthS7gl0Mro4SzSMg4iRC8w==
+	t=1792594826;
+	b=NDhOsnuBkumHDKLFVImBQ8VBcPWkJAAMSZh+5LIQ0kPIZSvCZuOG1Lty8BWZ64HdOV8N
+	 W3VNo46jpP0fR6eI1F6e3ZTt3kxVFtgh2ek552ycyB8QksCb2shOjVOJ6az0EvKDt5zS5
+	 2JgSbHLQMmjmN5NQjKDE/wRj0wg0/vY2QtlEUBBTX6xWO5ev4oZjA1xRK2cX2p8oP04fU
+	 +TXi+BCL+bkK7xR0Q1bf7ZFWb4zJseEozTeGWtcTohq0z/Vw0r6iDLeju1FfGgsePrG94
+	 SZti504Htcb7OaYLVwOBuus3gYqKuCTQLxNqf86JrvupJF117/rg9wfjRDPZiy3Qq5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792594425;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792594826;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=k7ZGLplWFKaB8JY5T+15czx4UcwJP0brOC2Z4Smd6YM=;
-	b=HFBHFCouIL7rqRM1u4WQ4s52SYWzQ3C4DKuQVBlVfgCz7addew8x6k5xlROdE3AdFiR9
-	 04KcqjbmXP9MOJ0QaNjYobTRfjshuYW8Z4cdwVQK5bTK6ZTMBtQih2jefCIyXYtFIuaF/
-	 Flv7tzLJN7OULN4KXLMutGs+489jP2vPPvQV9xS2RX6WeINP1ZSYnRGk6Fr6n9Smhiulo
-	 Q0p9gznryDDlXXKNlRN6CEmDL9itAn4sUZFQbveugyExyjcyNWEZlV5Oe4ygroSoEfzrl
-	 HqxNcnvd1ibIET9IPCwLamNptL/2xAEy8YfKaWl4Bb6XtIrpX5O+6z0TwguC9/UTjRQ==
+	bh=J2oZ2Pffx6RFmL4hZYGK3DF77UUAFY+CBcj5PPYK2gw=;
+	b=UmnYHffYyVzHziL7y06o6AAkac0OIX9B2IwbD1jWHQHORdgdtbuoCEYvEbMXJvKoKHsp
+	 FMhLPoYZ1FdiKsVAxvueCP2wgEIvUDbbgTfGm6Tg9duqH8TeYUcPh0vFBc7BcOw+uE0i3
+	 jRE2YwfNl7tQbVOswWBRwkW9Ca4BgByxS5lLJ85McA2sRofj09YmBEeVHvUoNhqGxL9ji
+	 BtmFv6MOPW0V6BNcv1yhwdiVNKiGuAGi6tTuAgfUJDzaQGF0JMLKL7ZTpDmJ0XccQwxbR
+	 ynMbGIWz8RW2sGOrzVztXL0hFLVeOmslAUqKQgQXGsdF7K3WC/npI/uAntJXHRDmmSQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gs2WEUGm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WjJXaQcb;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8482606A31A;
-	Wed, 21 Oct 2026 14:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F85F606A31B;
+	Wed, 21 Oct 2026 15:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Gs2WEUGm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4F71F000C2;
-	Wed, 21 Oct 2026 14:53:43 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WjJXaQcb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E137A1F000C2;
+	Wed, 21 Oct 2026 15:00:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792594424;
-	bh=k7ZGLplWFKaB8JY5T+15czx4UcwJP0brOC2Z4Smd6YM=;
+	s=k20260515; t=1792594826;
+	bh=J2oZ2Pffx6RFmL4hZYGK3DF77UUAFY+CBcj5PPYK2gw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Gs2WEUGm62ZAxSMTfnoYtXqKE0RhuPnkUxecvljB5l6U1FTMYeHfmrX+ob6l47l65
-	 Phc793AjwVhxmGPH8d3WaeGwXLv7NxRkYwv1n4PFOSXBWX1Job+eEpY06+4zuCWbRc
-	 0CakWSkKDyg/6CDnORverYc01G6GX1xDlEbCN81b/IJl9I4mpUri9X5nP5rCUHHx1A
-	 ihuwbN4yDcNUcP3Gt4ahNTPeK7otJ/+GxO2edRlMd1i8OTD389VK+ULVp8wa5Qe0aN
-	 3eEnu+XPxSw+wgmrknS/k1sIwutHZpmmPBdZNFDY+ZylESVpu3aGmVdBaObU/TSwrF
-	 CvVA8SIX36g6g==
-Date: Wed, 21 Oct 2026 15:53:41 +0100
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: David Cemin <dcemin@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@kernel.org>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] firmware: arm_ffa: Compare notify_id when looking up
- notifier callbacks
-Message-ID: <20261021-graceful-refined-lizard-1efaff@sudeepholla>
-References: <20261020220902.611138-1-dcemin@nvidia.com>
+	b=WjJXaQcbrfAY9BxH6maCYdJfdDk0EmgTU4q7mbf09sUaFYw6kDhu2XUpCL3HjA+e+
+	 /DoHHdy5zKsCXWoDfvl5lK4SBdOHROKmUwXtuXCA795C8w1jSEvivIzACxyKNozs7j
+	 GgK4f7f7vBavwniHn4d4YV4l1tG96hX569TYT018lc7WgSrrm+JcorZTfq+oVttLJE
+	 TDLF0jpRcaB8lJKDInnlgf1B/SFNNr4KzvydubeTWwSFjGHzipsUNlfUvky90n3nAf
+	 tQHdLZGsTviUE50YB2BmFxg9Vr1Ah6gmHCOgDplbSL7fy9ujozutpyr2R+lQI6G8E7
+	 /lFOpZ2oJGQYA==
+Date: Wed, 21 Oct 2026 10:00:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
+	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Aaron Kling <webgeek1234@gmail.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: gpu: nvidia,gk20a: Allow a fuse clock
+ after the reference clock
+Message-ID: <20261021150025.GA254364-robh@kernel.org>
+References: <20261013145210.103565-1-sashal@kernel.org>
+ <as5N73fHztX8hVWh@orome>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,48 +73,70 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261020220902.611138-1-dcemin@nvidia.com>
+In-Reply-To: <as5N73fHztX8hVWh@orome>
 
-On Tue, Oct 20, 2026 at 03:09:01PM -0700, David Cemin wrote:
-> The notifier callbacks are kept in a hash table keyed by notification ID,
-> but struct notifier_cb_info does not store the ID and none of the lookup
-> helpers compare it. hash_for_each_possible() walks the whole bucket, so
-> any two IDs that hash to the same bucket are treated as the same
-> registration.
+On Tue, Oct 13, 2026 at 05:36:09PM +0200, Thierry Reding wrote:
+> On Tue, Oct 13, 2026 at 10:52:08AM -0400, Sasha Levin wrote:
+> > GM20B needs both its reference clock and the fuse clock while it is
+> > powered, so allow "fuse" as a fourth clock after "ref".
+> > 
+> > Assisted-by: LLM
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > ---
+> >  Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml
+> > index 4d856a8b674c..ecbc20e6adec 100644
+> > --- a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml
+> > +++ b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml
+> > @@ -44,6 +44,7 @@ properties:
+> >        - description: GPU clock
+> >        - description: Power clock
+> >        - description: Reference or fuse clock
+> > +      - description: Fuse clock
+> >  
+> >    clock-names:
+> >      minItems: 2
+> > @@ -51,6 +52,7 @@ properties:
+> >        - const: gpu
+> >        - const: pwr
+> >        - enum: [ ref, fuse ]
+> > +      - const: fuse
 > 
-> With the 64-bucket table, hash_32() maps IDs 2 and 36 to the same
-> bucket. A driver that requests notifications sequentially therefore
-> fails at the 37th request:
+> Technically this now allows:
 > 
->   ARM FF-A: Failed to register callback for 36 - -22
+>     clock-names = "gpu", "pwr", "fuse", "fuse";
+
+No, it doesn't. There's a 'uniqueItems: true' in the common schema (via 
+a $ref).
+
 > 
-
-Nice catch. I dropped the exact same change before posting the support
-on the list. For some unknown reason, I assumed there will be no collisions
-for such small sized buckets, my bad.
-
-> because update_notifier_cb() finds the node registered for ID 2 and
-> rejects the new registration as a duplicate. The same lookup is used on
-> the delivery path, so a notification for a colliding ID can also be
-> dispatched to the callback registered for the other ID.
+> I think we may need a very explicit version to cover this now, something
+> like:
 > 
-> Store the notification ID in the node and compare it in all three
-> lookup helpers.
+>     clock-names:
+>       oneOf:
+>         # for GK20A, GP10B, and GV11B
+>         - minItems: 2
+>           items:
+>             - const: gpu
+>             - const: pwr
+>             - const: fuse
 > 
-> This was found on an arm64 laptop whose embedded controller partition
-> declares 38 notifications: the EC driver failed to probe and every
-> EC event (AC, battery, lid, hotkeys) was lost.
+>         # for GM20B
+>         - minItems: 3
+>           items:
+>             - const: gpu
+>             - const: pwr
+>             - const: ref
+>             - const: fuse
 > 
+> We may also want to leave out the minItems property because it turns out
+> the FUSE clock is indeed required, so we'll need to add it to all device
+> trees anyway to fix this hang.
 
-I will queue it soon and send it as fix at -rc1 or later.
-Thanks for finding and fixing the issue.
+Please make this kind of change as 1 applied series so we don't get 
+transient warnings.
 
-> Fixes: e0573444edbf ("firmware: arm_ffa: Add interfaces to request notification callbacks")
-> Fixes: c10debfe7f02 ("firmware: arm_ffa: Add support for {un,}registration of framework notifications")
-
-Is this because of rework we have 2 fixes tag. Need to check how backport
-would work, hence asking. I will also check before applying.
-
--- 
-Regards,
-Sudeep
+Rob
