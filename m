@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.40
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.7
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792548299;
-	b=fRQtq6+eG8TizMcyAXbB9FzIlxzgUgVcIBkotXuAg0lf6VJf9vvdHl4jlpew1bXSA5p3
-	 bGafB4JbTYVjXrRntPm02OTC1e1bAv3NtazEIPWGUlr00y8U5Bz4uxKd74jQ7A95KV/1n
-	 YW+2lBn5DDiv1ZdSYzNtJZAmex59MRASf9pcWLIiGMzsnCEtZURxDT4SuuWnn1xowjK/W
-	 o5Ua13hlDsCSMUQqgwWkRkYHv2/cNMxr+QMhVFwq3gH1GJgG/3isQRanS/5Y3wZK1YFxm
-	 ToNsOA2LIIh5y/0f0hgzn32VwjQ0A9b0Jissekq2CNnAEAYEV481/Qq7zoXtadegW6A==
+	t=1792552387;
+	b=gVk/whcHsVCLO4NISY6zs5qCZH7hZC2Mc+7l05+R1v+yyPAwJgKTXqkMYdgZBxKmp6lF
+	 JUEjIFvBi+SC92kcFm/ZjPTNPTe4ctjiIJvzA2V4Ya631OkpxHSUyiCswS3vzeK4lCXyo
+	 mHxyz/zJE8Gh6tik0Bq3qRkcut08zWmRI4wbmhYrhutYNTDL4DP3+QNLq6yGFE6VrVU3u
+	 Fzt67SNCcJI+hYugeBYj/NEocc2ectWDFpDp0K8IdZ7GyymtPdMdP6f1BvmQ3bkdXK941
+	 8bZgw/rXbYPy8usto/rI+3xcpcOZyLFQ2XEe+AEQ+wghTM/Z2ucXceqZ6MFFuC5f71g==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792548299;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792552387;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
 	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
@@ -25,77 +25,87 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
 	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=lB+jvg6oIqL9bfq+1Ij+kEFBGzuhIR5vwUL/6kM2glo=;
-	b=pvgRmH/TdLP+tc8LZn4DuUXFjAaV0LTWXFG12yWgJLILxou18/8CAmZCu3x8J6Sw/v4G
-	 e8NV9tdkgjMeIM2WuIVdLvxuCNlXe/JhY7gl7BqVn8LQ33819IuUzZLxtXsCB8yqKznvz
-	 8o0E9DiffY8nayxxjCAzj3h3aS5RrFEehdtxsw+AK1T/TzNs1EGzffNVVwYAKYV5rdS5D
-	 wyQ0s80yBuxD8ttZHMtSFpU8yvA5U/J4EmSPuu/SOQBtquq1K+dZf9gmczqH/CLQmN0XX
-	 Hg5wxWvPmSExItVii57wgTD+JY/2uE57fYSskUTqiIGypFwm4D7M/dtdL3DowHGnVZQ==
+	bh=0031MfSyWJ86sGKHs0Uq6ld3LLkY7XXgkGqA2txCHwE=;
+	b=LMh8t5hbtg41YyQ6xDfdWYdBbzJHciEXDIzUf3VqRkL1fobH3wnsdvGVCNwfTWxKLviB
+	 UsjFOrmTLJXXh87gBbvd14RRSAkO3oFjv+dcPosnuzYneeBzITchsnu2z5CuMAz2w1GiC
+	 +XvPiPo6cqoz+7CsmpI8S9DutgYT38kaeg326ZJ3GIxnlvksns8os4tywzSE/Zv2TsyRf
+	 ftDlzi05dP4KEcSqD5vDtUc2vKX9792pZTLWVmhaQTJ4oshbhMeQ0d2I0MUvwfip8W/cV
+	 0GTMXsplkcPw881dwmayJX071e9fs3J6uaR9O8TSxKDqpiIL5EupRIAw/2u8c1gp+yw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=nvidia.com;
 	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=dDo1YRCU;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.40
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011040.outbound.protection.outlook.com [40.107.208.40])
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=UxHJGdSK;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.7
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012007.outbound.protection.outlook.com [40.107.209.7])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043C2606A31B;
-	Wed, 21 Oct 2026 02:04:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 043C2606A31B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3C7606A319;
+	Wed, 21 Oct 2026 03:13:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AE3C7606A319
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=dDo1YRCU
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=UxHJGdSK
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T0yTr5FpvhYvb5k4YF5xqkgRnNK+fauunADGat3HV3uXHmzBFl+3ZcVAp8ptYhIKQblA7UONJdYycAxszUIN+Gz2hhGdYd14PB6l1ssM6SpQeAjKwdHOiX00k/xfj86CfEMgCvDZEzn+WH/JCJpD+f3Vk0AVfeSNrFMDEF8rwj02KUVl3aLWdQQr/DFKEWX7Mr/9X9v9AYKkkN1veBnUa+oed7bZ1Rnv+Teygmo4E/27jmiCCInoQePjGJwK6dwh3y6x2hyFcRfZPs2Cj22vlEYXzfNXYvd87CgwO/Lk6wI4W8dNLqAzpbP7KhDTj62jpbk94YwTg+SyKfaF9yCPOw==
+ b=I+QAHZA2nlPAifjUPdPrJZUS5Vrq0dU5e7w2vncNK1bjKJnhlojo3kAsqO2iMf7xMaJQ4Y0KypLRdBcvz8tKJL1XLAnUjmjPDvf+Rgdf/ZyVamH8MJOXEB7uWCpQVSsEq4i/LlECpY3cff4PILwvoIPg3wZ1NdTlW80D53j0mCNBTuwra90corf4SgnpkUSmN3ZN7MfinWWhDb/5QIn7vrF5ujhLVMZUW4ZvHKA3wL6rap17NMvBG5lqf/mNDyJHjpnOlzVbtxOPDmRkcP+dkQaOu/E/zKnlZ6ujQ/s58GyGfb+qwx2kWSY1VdUsnbaJ6IxsVg0Y4yayYN0vTPqjww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lB+jvg6oIqL9bfq+1Ij+kEFBGzuhIR5vwUL/6kM2glo=;
- b=ur/6lkiwh9f0LiAn8rac28Jktlt80LRdxX5vZZlw7E7hvff6dZu10IzN+q5VdEfgt9+ICqe8ii7gRtehucOv9h7/d2Up+Ls9GJGDuYg5EupL6S8CvC8XhnLcJwTIf++SvnnGFFXtHGyJvdeHABMJAI5fTCYC2jrK6GganweKrgbaz41fvnHqreWg85R9vwV9wgA6b87ipVEdl/oexxRIxzZRiCQshSAhP8N6c66kafr6i1EMNZAxXdU0urBIg979FZzfC4PrLjc0KC44OG9BeftY7r0WbEBnfPyAAKlPZKavtbvHxlDMFKRV2zPeYG7kwcXOxlN4ToL2C2joQ1tALQ==
+ bh=0031MfSyWJ86sGKHs0Uq6ld3LLkY7XXgkGqA2txCHwE=;
+ b=CXJx9W7kXiH5VVEZWizRf60hJlARCzBaIFthpnDsJa/2bZt4KOFA7T9X0f34+3wu61xVDx0MsuiIJlZaU9gTVLNs6OUcTcvCvYdhZ/Ousc8MtaoNA1GcWsaXKWllIGcAejilr7fc6/zEPA6V1rhx2C4JOak1RLIzLuTkOQRzsLJKHyZbuar6i2Q81TU2KwG126/3yUVLSu0xovznygss/cNGwe9rwVut3OzVuTjkGPbrD95N7FGyrPlA1iZXGzRRfTR2Nt5M0oK/qSZDj21hBmaF461so+oc0+STTIce2n0marPBqVlUIGgGDuHfSRDqbmd4VfRjai6Fg+HoZlsGBQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lB+jvg6oIqL9bfq+1Ij+kEFBGzuhIR5vwUL/6kM2glo=;
- b=dDo1YRCUzUkJVzAaHioud81642Yt+aUbHf/Db1oRRJ12p/zuiT/wBAAS4Q72qZsB0aYZYk4U+DVlwf5tDLBnoVYRT6dJYFGdZbabuOWS1qOAxDAlnDLbkeK8OjPbUmcOwaGaSva6HDvjTrf1CmhFTShYSOqwKx10sNi9dA+MiIft+1AInl2xrc2YXY//ME1lvZcfZDGVF9fT2h/fDwF01ra+Kaflq8CSF3Kg7knkExIX0GTAQKVJjmw0aaW6Wj0rs3zHTyw+7et0rsQnLLFcurWPLnY5+Hqd9bJdcX7FdADl9GHTtReFjVRbHLt5LVzv9dfLhTfb/t8P3zGfgkBuJg==
+ bh=0031MfSyWJ86sGKHs0Uq6ld3LLkY7XXgkGqA2txCHwE=;
+ b=UxHJGdSK5NwIJyjsUVelRoR9pPVfCcxwXRrKsMatn66xuXqVe4h5slUwYiYkf42FZdVtvM1ghidVjX/f3sqXbZhRjvzb9nVwHb9+LYY0EWDcm/Vrvi5ueR7Dc7+bTT0iCkgZVmYg5yzqsVz6zXKzsZr1NNADOMhto0awXXzZuaLirAFukPFl5IsFy0Vo8VtDEvPmVum5i98U5iK4pK32Q3IHj650vSL7lV2Trx0IBnXPfoxlrGwTJDy/L83vDVZj78huRCWzPPsfREfTyW3stm+DeUO7LAKHbVpH/V+h/y1V45nvuPFAL55ivpNnnVR9eU6EV+H8aOKblRIi6S3v8g==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by DS0PR12MB8561.namprd12.prod.outlook.com (2603:10b6:8:166::8) with
+ by PH7PR12MB7794.namprd12.prod.outlook.com (2603:10b6:510:276::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Wed, 21 Oct
- 2026 02:04:54 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Wed, 21 Oct
+ 2026 03:13:02 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0546.012; Wed, 21 Oct 2026
- 02:04:54 +0000
+ 03:13:02 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, stable@vger.kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Svyatoslav Ryhel <clamor95@gmail.com>,
- stable@vger.kernel.org, Patrick Fischer <admin@tsv-stahl-riesa.de>,
- admin@tsv-stahl-riesa.de
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Heiko Stuebner <heiko@sntech.de>,
+ Thierry Reding <thierry.reding@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Krishna Reddy <vdumpa@nvidia.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, linux-tegra@vger.kernel.org
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ Robin Murphy <robin.murphy@arm.com>
 Subject:
- Re: [PATCH] thermal/drivers/tegra/soctherm: Program throttrip with hot trip
- temperature
-Date: Wed, 21 Oct 2026 11:04:50 +0900
-Message-ID: <5z1T3MJbRUWQUClLWuCCnw@nvidia.com>
-In-Reply-To:
- <20261020-upstream-soctherm-throttrip-v1-1-c67f8a02ec3b@tsv-stahl-riesa.de>
+ Re: [PATCH v2 07/11] iommu: Let 32-bit ARM drivers opt into a DMA API default
+ domain
+Date: Wed, 21 Oct 2026 12:12:58 +0900
+Message-ID: <E_MBcemRRcCDkgXfDjIcWg@nvidia.com>
+In-Reply-To: <be6cd787-8502-4499-ad62-597c1b9b7702@arm.com>
 References:
- <20261020-upstream-soctherm-throttrip-v1-1-c67f8a02ec3b@tsv-stahl-riesa.de>
+ <20261016-b4-arm32-iommu-dma-cookie-v2-0-b06842a01938@nvidia.com>
+ <20261016-b4-arm32-iommu-dma-cookie-v2-7-b06842a01938@nvidia.com>
+ <be6cd787-8502-4499-ad62-597c1b9b7702@arm.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0343.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:38e::11) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: TYCP301CA0006.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:386::15) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -107,137 +117,224 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS0PR12MB8561:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a805ed6-71e9-4ba7-3597-08df2f17b299
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|PH7PR12MB7794:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2a1bff62-f7cd-4fc5-682c-08df2f21376a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|10070799003|23010399003|7416014|1800799024|56012099006|11063799006|261009223027099003|10067099003|18002099003|22082099003|6133799003;
+	BCL:0;ARA:13230040|10070799003|1800799024|366016|23010399003|376014|7416014|56012099006|4143699003|921020|11063799006|5023799004|261009223027099003|10067099003|18002099003|22082099003|3023799007;
 X-Microsoft-Antispam-Message-Info:
-	XzyKF+zl5RVwMiQu7WJHEx64zlA3hmqECqDNdbaqp3MGAPGcc4pZuJiArbm6+xykDx4W2bnh3F7Qds1KZlupWbb2+0hfUcQat87azwMmfCLDUEuGQKRyyw0FYoC1KUUMlOCsJlRRkUacPId3AdUi12DlnTSDw2v7iy9o1B9LJO2YwUzBhL163d/zW/s8d8D+ZHJuynCQwGp/fPIlAxvmAxvZJ+QJSLYt+lvKEdkyVE7reJ8Ky3OmZEqwhPsvMjuxIDGMWEvncrwgtStOeg8oCoxQrBGCS3jDdXxDQw2t9084BWJT8ga/FAnxyBSGgvik01L6MmzlG7ymMIwq8Fca3cX4K5ZrD68f2AkoMqoIkEODqNUmZB0mRopPwyRE6XU3EdIdVDULvuU90q5M83+52uhafgphScwuXDW5yBqrpP/ZNHznippofasBKQ1vnH+crpme/9oRwUbDeAQAs8YSWg4ZaTdP3xWLYXeSA6h7kFXNnSTEN9OFTbpA7YKl6jKqMlzMrF0BdkYKO3DTrK8zHkA/5ygU7Aef1ZS8EO+qrbCSumB8EQDtAkifTZ3mjOs7ZQMl5gsxS6ucKvlmozafk5KPTidCJN17QfcvuyWTrsETLPJKPY2QpCdCGkzdmYRs15U+bDmUNgsp633BKS+fkM7eHU13bkPLCalr7XKiicQ=
+	DEOUpIQQU+X6sFVmI72CCKyv1Hm3eBPAb+2lWlSWttUsyzsb2eNs5vbuWD/724Lwlrfr/N8k7zFQ9p4L9SzKqgw+gby6UfO3wMEMAl4fy3J+KDxeEtG3mhqpnckuTodOEwS5xrrZ1dkIW0TN38dU3rm1oXXXm3XZ5W70WqHB0KrQQY2Efh/1P49UdI9QawsGBTJaLnbC1i9O8BE9jQVku/aXWdgEkmwU4OY+4TIrj8A7PtAgDNdHc4hzyWyFurCTZ3yTDk5AwdOSc0G1ha2CPhQLBULY/Aot0TxpHbfdLFRnm3rIwvmFy1gL1OYl6ipDi1MBeIRi7lOtGPkVXKdOYe+an/9OyHgwz/ccU5s89IOXpwnAtW9zOJ6PptGuwkIJAZkyqQpsi72yR3bCH9jiYRQuP18TQGE2QZ69NGZ7L8/+YCV/pqY8BpXTfwonBVyo6FEk0uQi2cXB+wONqo/svA05Y0WE+Lwh/ca5gmYPZwqg0g7M223YizJ4KJcmnToQBq5ioTkszkrgNKbUwPZaUePVBLP+JgOYms5FvXJufcwr/ymuRFjxbpWokLLnFEL2gGzAeBNh7nZp60XTwZfSxTNo3ulZJon6DwFx6vG5ItXXgvSsCEEjSl0/zKQqP8uvfBSL9ypFouKKUjhNapMXEPxiSAsmbNljRFQt2nep9L1m5Nwx4EwwIuF/04dyLRIr0BV7ybCOKm7uHuuIivrk1w==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(23010399003)(7416014)(1800799024)(56012099006)(11063799006)(261009223027099003)(10067099003)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(23010399003)(376014)(7416014)(56012099006)(4143699003)(921020)(11063799006)(5023799004)(261009223027099003)(10067099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SDdIdHJ4b25LVFRXWVV2ZW5zSVJsWFg3QXphTnI2b2YzYVptME1sRlJ5c3Rz?=
- =?utf-8?B?blRBWVdCL3g1eGlsOVR5YmNHbHFtV1V2UUtYbE1iTUJzSWNWazlQSjlyTjRB?=
- =?utf-8?B?Qm1iQ3NsWWVSQjB6Z1A0WDBkbThPSHVxWFlLVHNRWFUrK3MvelR0ZjNCQ1dK?=
- =?utf-8?B?bUhCYldFRkgwS0xtN0gya0FNODJaUG1HVmZ0TEM4UE5aZXRucXpGbzBDQVZM?=
- =?utf-8?B?bEUyZDg2MHR6eG5DTG5HZGo2SnQybDBNYjF6WmthQ08vMmxockRHN3hhMjlU?=
- =?utf-8?B?VjY4RVVyTUNKdnpFY2J0SS84Qk5QaTFIblZkY2hmTFI1MllIcDR6bjBGMG1s?=
- =?utf-8?B?ZitydWc3UUpMTnY0b041Z2tZWXlnU1ZKTFhnSkc5QzdnNGZJbStITmxFTDBx?=
- =?utf-8?B?eGpTcU9lRTBaaGhXWFI1KzNFVGpYR2ZHQjNSNHh6TEoxV2lPZ2l1d2VZMGdl?=
- =?utf-8?B?cjFqRVRaNjQvajg2VTJqNFZEZ2xKL1pKNnB0LzFkNVNvYWlYbU5pRHBUaXNl?=
- =?utf-8?B?Q1d6WndGUVVuckFrL01YZ3pKTXhmVDQ2dGlIRGI3aTdPNFV0RW84b2hTUVgy?=
- =?utf-8?B?V0dGQWhPNzBBM05ZU2szQ3VINGkrUFNkVEhQdDEzWGxWaFNuekJFdjgySWp5?=
- =?utf-8?B?NUhCcTRlangrc3lqQTlqWStxZHV6U0NOR0dCV01KRCtDVGJoN01NbjFpZ2Ex?=
- =?utf-8?B?UDRrcmIxM2ZibnVBOXR5Q3FtKzlsVTBoTWY3c2ZrV2dkaTR4L1RuUld5SFRT?=
- =?utf-8?B?a0c3cVZxamw2ZS9nbjRjU252WFlLc0cvZFhDdTRWZjFxSFFjNlZtZmJRTFoz?=
- =?utf-8?B?b2hoWklMSU9XZlA5MnE4bnNhaUNlZ3JucVJBMXNpRHNRcE5mRkp5V3NMandR?=
- =?utf-8?B?M0EwRkJMdFl2WXE1eDJMcmQ1OGtyRWxRQ3RtQytESmFWVEU3Nm9ySm02am9J?=
- =?utf-8?B?VW41NEVUZDU5SlBHSWpnT1E3MG9Ra1R2SmVxK0lDckhQRWhlcGRDREpFZG8z?=
- =?utf-8?B?dGFXRnZXZUo5bGxBVFRqZWMyZlNLaUhXeDRFTTFvblVMRHpUZHVRb0pKRm5v?=
- =?utf-8?B?MEI3MUdmN0FGeFJmNkloTExsVUNONlEvMS9ZSHMrTjBIUEpGaEpCV3lKRTIx?=
- =?utf-8?B?K1lZdzJ4cVY3MTBPNTdacG9mdDVaWDFLQVdOWHViMTduK3l3K3dMaVJQL3JG?=
- =?utf-8?B?RjN5b1YwZnNoekpQYjZWdkE0c0VjR1V0dnQ3ZG95dHFobWpmeHBIVWRxVFhD?=
- =?utf-8?B?R25RM3VjTmZmc2RrOVprQnRlTHpkZU5kOW92TncyR2dUeTF5dXcwb0wvd1VP?=
- =?utf-8?B?ZzhFOVhwT0ZieXpLUEJEWnhiS3hxMG9KdmtyUEQ5OTlDNUZkbTA5YlhSVUpi?=
- =?utf-8?B?K0hYaFRjRjBMU0lBU0VSS0tBbG1INUZnV3NaKzU4K1d3SXorZnZXY1AvTk96?=
- =?utf-8?B?dy9XZStYQnNpS1BjZk9IUkJIK2FOVThpRzN3RUJyNWFHdEYvYjZ6dUFSWkZu?=
- =?utf-8?B?Uy9ZckdXd2tOcEFOelJucmNGeFpDRkx1QVhHVVFtaUFyWEJkWkJjRkxJM3hB?=
- =?utf-8?B?OWl0dSt5MWxWVVVHWUh6UGZWcE5YKzdrNk5mK0p4TUI3WWxqRlgrdmFPenM4?=
- =?utf-8?B?OHdsbzhGSU9NRVppVWd5dGFvVVFlUDlFNXM3RFMxOXF6REpCRzlOVHA2bStt?=
- =?utf-8?B?bXJCTlJDU1BJVTlJL2ZoaFRLdFNJZGEvVUpaYVAzZGE2ekhFejY1RWdvbEFK?=
- =?utf-8?B?dVdGWE5oUHNxcUx5ell5UmgrTWpSZkVsMWduZTVPbXJJYWRXZS9Gc29CelpC?=
- =?utf-8?B?cjBxd2cvZVdNZG5UaHBDdmh2d2RhSWFFZTg0TTdYVWN3ZWdIaWIrRmxWR2k3?=
- =?utf-8?B?QWZKM1J3SmRwb1JlMTFHN0xkUlBOUkxPck5oL0U5QVpOMWlOZk5keXR1M1Y3?=
- =?utf-8?B?UUp3S2s5MWszWWJCMk92d3BDMVZ5Z0htMUgrWUlnQzF1Y2lEd0NJWjlSaVpJ?=
- =?utf-8?B?RWJCOUhjblpGUkNHaWZFYkd5R2gzWDVhelI5ZzM1NkI1WHJnY1FBaEZkVm15?=
- =?utf-8?B?MURXVEJEK3orZkVEMUJnK1F2NmhRTDU3dVd0TGhqQ3JURHptSmlwSW9mc0Mz?=
- =?utf-8?B?Vm5qK2t1eC9qa1JvR1MzTkpjYVZUTkswelVzdHBVZ2M5enN0WjEySVdNN2hU?=
- =?utf-8?B?U3BIQ1llZlRhRW9Kc2dsZG1Ua1hOWkczSXNYZlJlTnluMmFybzlUQkQ0TEtS?=
- =?utf-8?B?K0lKeFFZTCtrbkRiR1lUczh6YjdhdXcwWWljZnRaR09xamgwUjV2TDdyR2lY?=
- =?utf-8?B?dWc2OFFHbllnKzQxcERtM3c0Wi92cm5ROVVmZjU5RHdRZTRwNUVzZ3ppbk8w?=
- =?utf-8?Q?oPNTLqAtTIk5EuE2WPycAvxBoQydpHBfmmWc4b5VKGHvB?=
-X-MS-Exchange-AntiSpam-MessageData-1: +oBsnsSn7lIKbQ==
+	=?utf-8?B?ZWM4clIxcTdUSlNsVi9SVExhL3AxS3Q1aFY0a0U0cDByRTA3QlJiVXVsT3RG?=
+ =?utf-8?B?ME52a1lEZlVsQjRiTHdmNFdFWkFSWGNGU2pFQm1EMFlkL1gyWjdIaTdJL3hh?=
+ =?utf-8?B?a0ZVQkp6K2QzT015VVBiUS9raUF2RFFzTGFUcE9mRm5CYmtHMFo1a2hXSytF?=
+ =?utf-8?B?ZEh2SERsbzZWUkNEM1JOb0ZubUNJMzFHeDdPTHdZeExUUUczaFdXY2M2aTVq?=
+ =?utf-8?B?Ny9UNG5JVkE1VnNkdXl5SWEyOFFGY0cxOUxtaDV4S2dEbmdpOUlvazZXODFm?=
+ =?utf-8?B?eEU4cmlBUjFtaE9FTzVySG5EbUh1RWdYV3haTFIrLzRTaURsZytqNEN3eXdh?=
+ =?utf-8?B?SXdYSWRpTGpmcTQrQld2MmxHeGplYkcrdTVwZTZ4N0NBVjRiQVBsS0x3YUdJ?=
+ =?utf-8?B?ank0dWp1eDFwSmsvQVJUcVZGbEdubjBwazRLbkh4bDB3OTc4ajZVeGFGVDV6?=
+ =?utf-8?B?Z0FhcTJDc0g4S25nR1Y3SVdFeWlCQWJXZmRKMEVobENxY3JQbVFJV3p0eGhO?=
+ =?utf-8?B?dTZRZWc5aDg3WlJNQWdDMy9hZ2dRdmRpV1pKS0sxOWU5VmQ0TFBldkVKUGZn?=
+ =?utf-8?B?YzVkM3NuTSsrQVFXNnhabFBWakh6MGRpL2NFYzdjM2hwcXR3cGZFblJDUkpi?=
+ =?utf-8?B?RzlUTHNyMWpzdUhKaFVrTzYzbkwxR0RTaG5LT3NrSFl5YmtveGlHUW5kYkdW?=
+ =?utf-8?B?L01tbWJyYWR0Q05MSG1lclluNnhRNzcrYlVKa2VmMTBOdGttcW92aTBveTcr?=
+ =?utf-8?B?RVE1MDdGS2k0ME50WHhyT1VmOHpLZ2Z2YXRvR0lkRmFNODFHY0RiK3lBeGls?=
+ =?utf-8?B?ckhVT0NYWGdHdEpmaVpSL0YzbkM2MUNLbzZzN2ZDUHZ1UVphT2lyUEhPUy81?=
+ =?utf-8?B?NHYvejhCdmxpbG4vRG5NUFVOd1grcjBUSGx1ZkVqVTk2NldOWjU4V2R2cFd1?=
+ =?utf-8?B?Y21VQnVzKzVlOTNxcE9XSEVvNlRpVE9rYmUvZnZQbnA0OTN3dnNJVnF3WHdL?=
+ =?utf-8?B?dnVjNDdKMHl3bGxLR243UmVlTTJLbkowd2hHeFE3ejRONXRKLy9UQ09laC9y?=
+ =?utf-8?B?ZlhsMWJscm1jMS91Wm15bVdWWEFQRkxoSlVHYjh6RE40bVI4MVRhSG0xaUJZ?=
+ =?utf-8?B?NHRqK0tPSTMzQkpOU0dlVjUxdGFzN015Z3A5b05YQUYrSWpBdFRxSVNiVitI?=
+ =?utf-8?B?MjBMVGQvUWhZelE4RDJtdUJRekFGWFQwZGlKNWRaM2N1MzA1aW15d1cybGFV?=
+ =?utf-8?B?MHdIeFVzamxLOWxMNWk4eHZRS1FXYjdqY2hzUmx4R05oVHZZNGRpZmpEK285?=
+ =?utf-8?B?MDRwNE5yZU5lZTcwTW03aTJCQ0NIdDhKQWs1YU9uTFZyU2dRdllVQXBZdkY1?=
+ =?utf-8?B?dkJGVUlrT3JwNlhySm9IOFdEUVBabGhFZjMyZk10V0lCdW5SdFBBWVpYRFl5?=
+ =?utf-8?B?UzkvcGRWc0FxL2NOdFhNdHVJMXNINERmelhJYXRrUlNBcjF0Qy9kV2pSdklj?=
+ =?utf-8?B?YXh6REtCNGNRQkZkU3pCMjBDbXhYTkNabkhnUXRjL3FZUHplUGhmN3VDSTBa?=
+ =?utf-8?B?UnJvSEx6a0FuUHdXUVdsVlRnN0FYNVNrelIvaGZNTTY5OWF3dU9XM2xieGdv?=
+ =?utf-8?B?WDFuQUZvRTQ5RHUwb2ZkdnBZZlhvZUcvUEZaRTc5RE1nbWJ5c2x5Zk52eVM2?=
+ =?utf-8?B?a1paY2ROVk1PUk5HRjN2VmF2MjFtZytEeWtxQlQxRXEweUZYUDdWMmhKMGFr?=
+ =?utf-8?B?Z09jTWFzYk10NGI0dU0yN3FlS0t1YjNRNk5TWFpBZUZ4OG9zOFYyRlZob2VU?=
+ =?utf-8?B?RTlwOWJ5VU85Mkl0QnlpSEhkSGpZeUZCL1VvVkRvS25raGJsb2ZuSW9zSnFy?=
+ =?utf-8?B?dklnL3ArM09BcEYxanJxOHRPSVhsMW9MVVRCUjkvYnA1cFdNeUYyOTc2TFdn?=
+ =?utf-8?B?ZW5ESStDRmJBZ1p5ZWFLRUxWdDFoaFBSMStNaGpiams0TUpuOS9aY3p3L0to?=
+ =?utf-8?B?Q3pDT1AxZUNBTmdMV0NnZjBQQjdWMmFMN0dDQUdIMi9BNjlZTjZabCtrVktp?=
+ =?utf-8?B?R2w0bTNsQ1gzWnhDZGMyZmtGNFJkT1ZONitNWS9sZDJyTUtuZmxNWWc2cUlw?=
+ =?utf-8?B?aHpoU1RoNHN1TEdsU0NtTVR4RUVHeDZOYXFvUHdZV3o5ZFova3J6RlFEYm50?=
+ =?utf-8?B?bGlXekpaOUU3MmVsWGUybkZKZjgzTkZ0NWp6YVNvM3A2cjdJN3FFc0JCQ21L?=
+ =?utf-8?B?TkpHUjdURExuRjIxZkx4b1VSM2pRcFFvWFZBT20yZTlJMVJBbmhFMm5sc0RZ?=
+ =?utf-8?B?dWcyQzFnVEFQZnY0WGd1U3hIL0NYVTRhTE1GZy81clhnYUpLelpVLzNXN3RJ?=
+ =?utf-8?Q?aGNDayAuO0sRFXY40kuYZZkqEO5DhR7LLFgDJog+K1xmO?=
+X-MS-Exchange-AntiSpam-MessageData-1: OCxhtc/+vwRS9Q==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a805ed6-71e9-4ba7-3597-08df2f17b299
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a1bff62-f7cd-4fc5-682c-08df2f21376a
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 02:04:53.9582
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 03:13:02.2281
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zD2xs5iTuR25LOT3pOC9Q1b2ozoNQJj/f34SurBokaC1wmHzuVvmCRjWu0vcVYtlA+KHHXhFW9t7MNm0XoWbZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8561
+X-MS-Exchange-CrossTenant-UserPrincipalName: NmQHowU7VPV1QwyczpVs2YrecxzVTSZfKZYimDVsjv7Xw2i2jAA5nFLUllPOG/5H7LRMB3Vbtz/RBW6Jw/5I6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7794
 
-On Wednesday, October 21, 2026 4:18=E2=80=AFAM Patrick Fischer via B4 Relay=
- wrote:
-> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+On Tuesday, October 20, 2026 8:28=E2=80=AFPM Robin Murphy wrote:
+> On 16/10/2026 7:46 am, Mikko Perttunen wrote:
+> > iommu_get_default_domain_type() unconditionally forces IDENTITY on
+> > 32-bit ARM as ARM_DMA_USE_IOMMU installs its own UNMANAGED domain on to=
+p
+> > of whatever the group already had. Now that the ARM DMA API state is an
+> > ordinary domain cookie, IOMMU drivers can ask for a real
+> > IOMMU_DOMAIN_DMA default domain instead. Drop the override so that
+> > ->def_domain_type is honoured, and let a driver-requested DMA domain
+> > through the !CONFIG_IOMMU_DMA guard when ARM_DMA_USE_IOMMU can back it.
+> >=20
+> > IOMMU_DOMAIN_DMA stays strictly opt-in on 32-bit ARM and is never the
+> > fallback to avoid unexpected changes, as drivers today return 0 from
+> > ->def_domain_type while expecting the legacy behaviour.
+> >=20
+> > Behaviour is therefore unchanged for every existing 32-bit ARM IOMMU
+> > driver:
+> >=20
+> > - exynos-iommu, omap-iommu, rockchip-iommu, msm_iommu, ipmmu-vmsa,
+> >    mtk_iommu*, sun50i-iommu and qcom_iommu have no ->def_domain_type,
+> >    so iommu_get_def_domain_type() returns the unchanged cur_type of 0,
+> >    which is forced to IDENTITY as before.
+> > - arm-smmu returns IDENTITY for legacy bindings and 0 otherwise, which
+> >    ends up in the same place.
+> > - tegra-smmu returns IDENTITY explicitly, and keeps doing so until a
+> >    later patch.
+> >=20
+> > Also move the static_assert on the two DMA API implementations being
+> > mutually exclusive to drivers/iommu/dma-iommu.h, next to the
+> > declarations that depend on it.
+> >=20
+> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > ---
+> >   drivers/iommu/dma-iommu.h |  3 +++
+> >   drivers/iommu/iommu.c     | 20 +++++---------------
+> >   2 files changed, 8 insertions(+), 15 deletions(-)
+> >=20
+> > diff --git a/drivers/iommu/dma-iommu.h b/drivers/iommu/dma-iommu.h
+> > index 71b23cb698c0..24fa4165450f 100644
+> > --- a/drivers/iommu/dma-iommu.h
+> > +++ b/drivers/iommu/dma-iommu.h
+> > @@ -12,6 +12,9 @@
+> >    * IOMMU_DOMAIN_DMA default domains. Only one provider can be compile=
+d in at a
+> >    * time.
+> >    */
+> > +static_assert(!(IS_ENABLED(CONFIG_IOMMU_DMA) &&
+> > +		IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)));
+> > +
 >=20
-> tegra_soctherm_set_hwtrips() is supposed to program the hardware
-> throttle trip (throttrip) with the temperature of the thermal zone's
-> hot trip point. Since commit 735a968d2fea ("thermal/drivers/tegra: Use
-> generic thermal_zone_get_trip() function"), get_hot_temp() only looks
-> up the hot trip and no longer stores its temperature, and the later
-> conversion to get_hot_trip() kept that behaviour. throttrip_program()
-> is therefore called with the value still left in 'temperature', which
-> is the thermtrip or critical temperature that was just used for
-> thermtrip_program().
+> Don't the first couple of patches already make this redundant, since=20
+> such a build would now fail anyway due to multiple definitions of=20
+> iommu_setup_dma_ops() etc.?
+
+That is true. I'll get rid of this.
+
 >=20
-> As a result, hardware throttling only starts at the shutdown
-> temperature instead of at the hot trip. On the NVIDIA Tegra Note 7
-> (P1640, Tegra114), where tegra114.dtsi defines the hot trips at 100 C
-> and the critical trips at 102 C, soctherm reports:
+> >   #if defined(CONFIG_ARM_DMA_USE_IOMMU)
+> >  =20
+> >   #include <asm/dma-iommu.h>
+> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> > index 5fbb76d44a1e..0d812c4b9f08 100644
+> > --- a/drivers/iommu/iommu.c
+> > +++ b/drivers/iommu/iommu.c
+> > @@ -1884,18 +1884,6 @@ static int iommu_get_default_domain_type(struct =
+iommu_group *group,
+> >  =20
+> >   	lockdep_assert_held(&group->mutex);
+> >  =20
+> > -	/*
+> > -	 * ARM32 drivers supporting CONFIG_ARM_DMA_USE_IOMMU can declare an
+> > -	 * identity_domain and it will automatically become their default
+> > -	 * domain. Later on ARM_DMA_USE_IOMMU will install its UNMANAGED doma=
+in.
+> > -	 * Override the selection to IDENTITY.
+> > -	 */
+> > -	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
+> > -		static_assert(!(IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU) &&
+> > -				IS_ENABLED(CONFIG_IOMMU_DMA)));
+> > -		driver_type =3D IOMMU_DOMAIN_IDENTITY;
+> > -	}
+> > -
+> >   	for_each_group_device(group, gdev) {
+> >   		driver_type =3D iommu_get_def_domain_type(group, gdev->dev,
+> >   							driver_type);
+> > @@ -1913,11 +1901,13 @@ static int iommu_get_default_domain_type(struct=
+ iommu_group *group,
+> >  =20
+> >   	/*
+> >   	 * If the common dma ops are not selected in kconfig then we cannot =
+use
+> > -	 * IOMMU_DOMAIN_DMA at all. Force IDENTITY if nothing else has been
+> > -	 * selected.
+> > +	 * IOMMU_DOMAIN_DMA at all, unless this is ARM32 and the driver asked
+> > +	 * for it explicitly, where CONFIG_ARM_DMA_USE_IOMMU provides the
+> > +	 * implementation. Force IDENTITY if nothing else has been selected.
+> >   	 */
+> >   	if (!IS_ENABLED(CONFIG_IOMMU_DMA)) {
+> > -		if (WARN_ON(driver_type =3D=3D IOMMU_DOMAIN_DMA))
+> > +		if (WARN_ON(driver_type =3D=3D IOMMU_DOMAIN_DMA &&
+> > +			    !IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)))
 >=20
->   throttrip: will throttle when cpu reaches 102000 mC
+> This ends up looking a bit odd, and not clear that it's still more or=20
+> less the same special-case workaround seemingly being removed in the=20
+> hunk above.
 >=20
-> instead of 100000 mC. Svyatoslav Ryhel observed the same on the ASUS
-> Transformer Pad TF701T (Tegra114) and the Xiaomi Mi Pad (Tegra124).
-> All boards using soctherm with a hot trip bound to a throttle cooling
-> device are affected.
+> At this point I'd rather push any remaining identity special cases into=20
+> the relevant drivers, however I'm somewhat more confident that there may=
+=20
+> not actually need to be any:
 >=20
-> Use the temperature of the hot trip for throttrip_program() again.
+> - exynos-iommu, omap-iommu, rockchip-iommu, msm_iommu: AFAICS these all=20
+> only ever have a single client device, so the per-group implicit domain=20
+> should be equivalent to the per-device explicit one, so they should not=20
+> be impacted by switching (provided the "throw away the ARM domain" idiom=
+=20
+> in some of their client drivers becomes non-destructive as mentioned)
 >=20
-> Fixes: 735a968d2fea ("thermal/drivers/tegra: Use generic thermal_zone_get=
-_trip() function")
-> Cc: stable@vger.kernel.org
-> Assisted-by: LLM
-> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
-> ---
->  drivers/thermal/tegra/soctherm.c | 2 ++
->  1 file changed, 2 insertions(+)
+> - mtk_iommu, sun50i-iommu, qcom_iommu, arm_smmu: While Kconfig might=20
+> allow building them, I'm not sure we really support the first 3 on=20
+> 32-bit at all, but again since these all have no special CONFIG_ARM=20
+> group handling anyway then either they must work out as above or they're=
+=20
+> already broken, and thus at most the change might un-break them.
 >=20
-> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soc=
-therm.c
-> index f74acf13b24d..903215502606 100644
-> --- a/drivers/thermal/tegra/soctherm.c
-> +++ b/drivers/thermal/tegra/soctherm.c
-> @@ -765,6 +765,8 @@ static int tegra_soctherm_set_hwtrips(struct device *=
-dev,
->  		return 0;
->  	}
-> =20
-> +	temperature =3D hot_trip->temperature;
-> +
->  	for (i =3D 0; i < THROTTLE_OC1; i++) {
->  		struct thermal_cooling_device *cdev;
-> =20
+> - mtk_iommu_v1 and ipmmu-vmsa probably wouldn't care given that they end=
+=20
+> up attaching to their own shared domain anyway - they just can't wait to=
+=20
+> be able to use a proper singleton group to rip all that out :D
 >=20
-> ---
-> base-commit: f47d223627f80cb7a1eb14c585fe6cb35de5e984
-> change-id: 20261020-upstream-soctherm-throttrip-ad6965977b6c
+> The main reason for forcing identity was to meet the expectations of the=
+=20
+> existing ARM DMA ops setup, but if we're now touching the ARM code to=20
+> properly tie that in to the IOMMU flow, then I think we can just do the=20
+> right thing.
 >=20
-> Best regards,
-> -- =20
-> Patrick Fischer <admin@tsv-stahl-riesa.de>
+> Thanks,
+> Robin.
+
+Very well, I'll give it a shot! You're right that it /should/ work :)
+
+Thanks
+Mikko
+
 >=20
+> >   			return -1;
+> >   		if (!driver_type)
+> >   			driver_type =3D IOMMU_DOMAIN_IDENTITY;
+> >=20
 >=20
 >=20
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
 
 
