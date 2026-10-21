@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.62
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.130.19
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792596306;
-	b=Z2YmPO0hwcY24SBdOokevzVFMOidHRoLjQuHjlPtdL+kBkJ4Ef3H4Vqd4W4D5//x9mot
-	 LdUoB0VKADrP/DrQuDfp1ph69pICiDh1js49YqW3lYEAuRKfY+blgw4xhtOoeZVnsrOlC
-	 xhaU7e9Tw14MdGmerhlAvvUAEyJ3Wa9DKF1x1EYxstROP4ZesRoAn0XyOPY1OOC0tXNLC
-	 lBilPgLeDBAu/gghC18zmXu3BbOSC1oCLWVNTlqwP+DrnLuOiGy4uSOc7oydv7E7S8yvl
-	 AcHTiHEtPcE84xGk6iG1/JnCno/TED7rJ4aNBudD+K67jAhAUn5Q/jkkEXFlFqlQlyg==
+	t=1792596531;
+	b=DGn97bYDgNxCKvhHUbfFsWtDuik6m7aV8l/izxStF2CO42QWrJUlOVDruF7wEI/VUM9/
+	 Bsh8KhxQFERbvqW0mUvv03bNiJE9UH3B3OjVT/1biigHJBURTBsAlWESvO0Lrj547nqde
+	 4EpJARCKC/JnwoQQHfHD0xreO8gUvS6IEoDt8R3akHn6D/AjsJSbJuS49uaXRNTeXHXpO
+	 kmkMAeYQ4fBcu13zNOI8i7zCA9BfRqLm/v5BoGO52+ySMN3uiXd/aOFwbFzvjQPxRf3he
+	 qODtlnilH1uXL70g1lUAm1edUpexqCEysUl7rNzaV/55M/wW/BOSLCiS7lf4ToMc4mg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792596306;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792596531;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:Content-Type:Content-Disposition:
 	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
@@ -24,55 +24,55 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
 	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=3YQW2wPoNrUElvQVBxdRB5ZJamVm6YVC6pzY12xi64c=;
-	b=rCnbbjJnqOALq+vbRuefGn/hliu/OsIQkHjSO9RPNwB0vZfCJG/6RSfGTuTKH/s9IPTg
-	 n32HDgEycAmsfgLFNEn/JCdkrCgyfqcFx4UIBD4xFcoSni+A37nOwLKWrD7auhC6WdZl5
-	 LhRUPQf//y40BEf+3ieW6PYDKxb4UInxqyHt1Hgbp2E0Il4IcktPPVaUbcmlJinMagFIK
-	 pDR6QXhrGUAFYKGoSB2pguulsnuo6rFldaOmH8D2Sm9mrw9Q7bf6XTQ9ACh20WnR8mpMJ
-	 cNabeC+S3wfHLrADi1jOgl2GlUpNr5TAdgmRyuJ1qhrh7uC4EVheXM97wHIPQPE04zg==
+	bh=V0g6LvwyjKaJEnlWTGPOt+g0tKGbnoVSqToI+MLB8oc=;
+	b=HtRQh3QAaF4jHB3POWqCtOiip8MYvb/B8dAb8JTahM9Z1kQZjCAfEEEr1dbUCth7W+qI
+	 VWuncLE9s0pHNd5A10XcSXekNJuZcVjl8+TP1K9JdnOG3bNosEJkBaLGIUhC8YYZwfRA3
+	 E/+ciCAYHCrapLi24Rkx64EBaXf+rO3625dTrnJ/CGb0xt3V9Gt82qK4+v13xNWVTTjEp
+	 AnKEpyVT/8sLqpYmJbLxf7IYEWtFIq1o0CJ6v9bGNnVGQNIj+ta87xbID3BPgOL+rRtGl
+	 YuPlCoz3+84xYOaEfzS45tGh7cba1oUwZbBqmCkUQzvNYNOZ0+SUlmBZLxyI2PelFuw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.nxp.com;
 	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=w8nNdRXM;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.62
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012062.outbound.protection.outlook.com [52.101.66.62])
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=rqZXuYX3;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.130.19
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011019.outbound.protection.outlook.com [40.107.130.19])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61771606A31A;
-	Wed, 21 Oct 2026 15:25:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 61771606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DEE606A31D;
+	Wed, 21 Oct 2026 15:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A7DEE606A31D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=w8nNdRXM
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=rqZXuYX3
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Etp/MeupraReb8HekDV65ptt1U+iLmpI4QTUBjxGEKzKdaUKMe7evnHXEzqu7TZqdvHE14J0iHju3FMYdmNwROiu7HPPHJiBM2gy02+q0TP+Mfrb9bdmuzmPLPtSBaTO7jnWyN2DbXfiWhFM4agbCmU/TYns2X2DvmNoBs1AM4bycco58D2GJrCUH0WuYmobmayzuou16jCPFLuo1LgKDvyDhsAstwg8pe0NjeUY1pn0P7lVbkc2GUdUDMtQJBqBFrc9SatW6JhpaoUsEs0l6Ae9gSh2+GTwXht9NwEeMM4qTJKb3zQufF0i+SK6PKGPKpXAvFbyzSqbeKdjQov4GA==
+ b=k8SJ9udvPCSOfIxzroSyvTzTI12sk6C4zrsK068EmSaDWoGrK2kbQ+ByjNSk9f7OOuIUpXLS8UpSVqa3VRitEhewRCjffJPwyVtIHEZSbrg+jVjTQPSr0tN3Zn9pD1ST25+ZZB5dgYlYxISjiFhJctEdLUpco2m6EIF0Gfy1MFO2/RJP+5LqbDexT8qAF8gyo2LHp1HXGqxUSCPXCPYBAbfLiNNarvOB7Rd4Rq08lHT1sOjPLm1fwSADIcWc3ooLZSAC0FjKy1qxIf3yJIIfLnzPTdIGpGdUVSCZ6Ti6/1wBTCPEBs0SI/vusjFqY/Ed65evPWEUYKTspOZO/0Bc0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3YQW2wPoNrUElvQVBxdRB5ZJamVm6YVC6pzY12xi64c=;
- b=qHBai9rxUZC1JkWepfoDJy91r1CYc5TsyjWgfQVJH3DxSgKPfXozN3BR89rbe4aGDSoT3St/zlq1FZJyPCnS+5Jx0I90akuTdfyU72B3p4qfHqy3BpshmJUgR8X06oB86cpZJa+l9d/XHWWsFUHF0HngZtWMjDCsy0QMzVwCDT4xxGUcrCNNDEhlt2gcwJMuU6O62Tj5wZ8GFA/zIcLhmouoCWjC0R1ulBChsDyqT2Tzcb3i86yZUMpVTcHP7tcKrKHsTFq1VWnDtBydfWnll+HdMwFrLpplEQvbaKX/2OUEeunZBqvGNrnq3LBOhMauGkfx87ozcltE7yjMSfR6gg==
+ bh=V0g6LvwyjKaJEnlWTGPOt+g0tKGbnoVSqToI+MLB8oc=;
+ b=OczRHO5Ntu58bR1VM2Vfrj2Fde3fMnqm1znvYkYH+f+Dw+lmZ2RWPxLWBYBkoJSigdYhbuFuFmM7f/W1NfRpeqp9OnBFFRxlUDr41ZNUs9qd8uVdnChxE7Na2q2c3SO/9+OoazyljmFMG3so+YM1HnCBZG8O9hh9wJMDFEyzQIf7dX5mqXnmfX87ZB7pwBAagQRU9BrcyxDHaX5gdmBfHWbJr5fVGxkuU/gHDi0T1cdELRC0obLt76luVkRB71HZqDWGsXqumzXqFwMTb9kA/CnR/Qv+BYHfj6jm4aSd2kmGFSiDTXD8p+2vCUZqTH31Vji81rdXZhTf/EuC83Z/kw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3YQW2wPoNrUElvQVBxdRB5ZJamVm6YVC6pzY12xi64c=;
- b=w8nNdRXM/7MzCLD18DZSUUIVbRdfUpP8bqsv7pbPR4NqQVjE38bHXqiQI5phcRNZkvo9uC2T48YnUeGzYmah27cskzWTniNDZT3UTD6eNsGo7nSI+ycvEETEZszJdEqKr2w/oYx9AEoRzQkua4g+fOp5l3iOGV+MqJisHNjjRvLBNhmkzyLwMwxneBAIhtdsL3je0Sqg2ZQ8aLfN4x4is61+RWErC6u6T3dgIlQB0oopSzPevYR1Ux2nveyINjmkEPM3u4S5UcOnBIa0Ukj8IqQ5zKedFg8u9eyNBZKwZGuooCeehgQEas/AE8MqAgT20XgaIfBOXRef//R3m7WJlw==
+ bh=V0g6LvwyjKaJEnlWTGPOt+g0tKGbnoVSqToI+MLB8oc=;
+ b=rqZXuYX3EpDxBnQrJgvZ4WGOO28fwftzfDPpIHsVYdYxMxWb4YJG7SOiRGwvMB4vJtZF0y5dQpcIOUZc6hvlv9Zlu8m279F7dJfG9P+6jzL/H6qsDIwRukcrkCRqnBrAxg29hWMK/wbJEvOvUCL8LSXskmkRRYKI7aiiSlXasJIcCtde+J7gpPc+sU/m6SlIaaofETBkYJX59ow5LE8eYTV7DBGonR3vhDCVEMR+F/okkFI394Wn66YJZ8/pJoGERt1xk/P95A9CUV2E0LpeZZbgLcBMVXY1vqsacRxLH4h0yKh07mCNwOH4a8uHEuRBdkbT9S6m9VSJkVjdNHdCmA==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
- by VI3PR04MB018611.eurprd04.prod.outlook.com (2603:10a6:800:375::5) with
+ by DU4PR04MB10861.eurprd04.prod.outlook.com (2603:10a6:10:592::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Wed, 21 Oct
- 2026 15:25:01 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Wed, 21 Oct
+ 2026 15:28:46 +0000
 Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
  ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
  ([fe80::c715:c32:8bb1:b70b%6]) with mapi id 15.21.0546.012; Wed, 21 Oct 2026
- 15:25:01 +0000
-Date: Wed, 21 Oct 2026 10:24:51 -0500
+ 15:28:46 +0000
+Date: Wed, 21 Oct 2026 10:28:35 -0500
 From: Frank Li <Frank.li@oss.nxp.com>
 To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
 Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
@@ -82,16 +82,16 @@ Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
 	den@valinux.co.jp, marco.crivellari@suse.com,
 	andriy.shevchenko@linux.intel.com, linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] PCI: tegra194: Check for 16 GT/s capability
- before programming
-Message-ID: <atjZQ7IufvjYdXcs@SMW015318>
+Subject: Re: [PATCH v2 06/10] PCI: tegra194: Check for L1SS capability before
+ programming
+Message-ID: <atjaI9HAoB_KBUaZ@SMW015318>
 References: <20261021061349.1265704-1-mmaddireddy@nvidia.com>
- <20261021061349.1265704-6-mmaddireddy@nvidia.com>
+ <20261021061349.1265704-7-mmaddireddy@nvidia.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261021061349.1265704-6-mmaddireddy@nvidia.com>
-X-ClientProxiedBy: PH7PR13CA0005.namprd13.prod.outlook.com
- (2603:10b6:510:174::8) To MI3PR04MB12438.eurprd04.prod.outlook.com
+In-Reply-To: <20261021061349.1265704-7-mmaddireddy@nvidia.com>
+X-ClientProxiedBy: PH1PEPF0001330D.namprd07.prod.outlook.com
+ (2603:10b6:518:1::1c) To MI3PR04MB12438.eurprd04.prod.outlook.com
  (2603:10a6:290:76::14)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -103,68 +103,70 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|VI3PR04MB018611:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5fb4e9a2-6a74-457a-680b-08df2f877992
+X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|DU4PR04MB10861:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb5de7c2-1500-4ea6-5959-08df2f87ff4f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|19092799006|366016|23010399003|7416014|376014|56012099006|11063799006|4143699003|261009223027099003|10067099003|22082099003|6133799003|18002099003;
+	BCL:0;ARA:13230040|7416014|19092799006|23010399003|366016|376014|1800799024|10067099003|261009223027099003|11063799006|56012099006|4143699003|22082099003|18002099003|6133799003;
 X-Microsoft-Antispam-Message-Info:
-	tDTCGKZlK+zCttkaUCJ0hwhokWJbufTMiM1xLMa1YtRdQu2pKk+3LwHrouT320VRt3xXVLzohfyRce9OBq3RdngC5FkWnn6HXkwtT8ZXc6LN7IWeOONJOe+iDH0gUD0OEmiY6DoCmrWZ2w7UdiK2lqHLcTmwVDcPw9y+1cHDvMrPVfmV7OG+CYbdReBNE5Zg6CD5xZ3gslr0MREAwlrE/W9xYVukdQf0P/Aa+dphh+dyQIot6Y0bqTsDbLQ2tA/VPGjAJXIWpR0XyGIc9zhATMcEHBQ0aVry/CelU4ChlANV4OoLJAaZ9AdNwrCBEEi03InvCffNu/Qk9AtNZVDy60Dprmzuqpz/Bg4tXkd9JHuYkumQo7y65Bdj+KNX1RLgNg5z83DGkBueISzcWAHe9xVUgWfnTD/Je7O+MYbyKC+KLm94+6F5uZsK2XEieJFIgaQExxVQPRjCndV6XgfvvNHD5uu08ex7VVYjr5+o/rqgtVPYe+eyq9cL96jJmS8//baZkP7pXV3CWwXkzX56BIc2I6lYJMapprXvd6En/ZYBnkhL34152nAM2dhciXjU7MGiy1wKZGgwtPBcfXwhi0mulurxJyLQfy1bf1al2J+P1PUwXzR4z1G9y0knVQn+wNjHe8ft0qlpzfnU0mCIO28tPRXhIP7OS/aR3BaD++0=
+	r8xz7suoLr0DlSdGKy7DbT9cAy6tKFLZovzg1ORC80XdQ9iNsJXiQJCV1bxuwHvf91p3LCULj6xCwfdu7Wbi+cwZ8aEgcLura5n7iExQv+melfa5EMw7YskGwMf9PEiSO4ZKK7WI3gxjV+1aaOKhqoG0k3w7v7ilksBlWdL89DpBIQenPN+uvPdaSeI64kvhNde4VDNalV83VclW0r/C2prA6fq3+ZKmAAQYoDT7Us8yU2tnB3JM1524vg20mCCtQLBMJoFDyy9ckM8qfDcTT+4pzEitjsErsZwwaGkjNlCfl7uLcqRvTUtRmArXanTfoX+yWJfIYZgcTdpChJy9wMdvTHasAzG7vETvpFLVsPx4F6a0JRIbbKtc5o7npmoVB7NEyUjEoxFA1noCm3eKm5e/JBVHsLRfQgZod0T7rrzI3YrRUtG/IC1hXmWGGxswWzQl63o54zsT9u6LDnHF+8EJ+y5M7KBdp3seyjjj6u1ln4wEfm/3B1ivvcelWaw4q2YfR8c3UBMnjZTbIdl6NS4WrHxd/IXK2J7fg8jr540ZCDX+/NPE/W6TnH/x6pztf+H6DgIbqJIX4EQjDf0I0iVW3GqCGsjmGrCijTVqXtv/3G27q81vdAAZa0DRq/ji97sI67t0qSrQo1QKeqWbpb2OnRN+nmhpang9FBjZcD4=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(366016)(23010399003)(7416014)(376014)(56012099006)(11063799006)(4143699003)(261009223027099003)(10067099003)(22082099003)(6133799003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(19092799006)(23010399003)(366016)(376014)(1800799024)(10067099003)(261009223027099003)(11063799006)(56012099006)(4143699003)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9Tpu7GSVZCEe2GSM6VOy0nCe0Yfqo9pQdXLSn5py7sWAhqyQuE9TsQu2VVgL?=
- =?us-ascii?Q?MvoLM6b+u7CUFvqDwPG+aevoraOzasoWAuCkPRheA439y5bKN69DYqhqnOHC?=
- =?us-ascii?Q?z1sLSfLCZGQQm6VXNBhiPn5NwOUyg4uT9kQRRGd7SwWIFhqzSV/0cDBgFSLe?=
- =?us-ascii?Q?ognhjZw1TwCupdBlJcco9lE4PPpBDO/8IXbXUJXVx1ouBWQKbWROJ6ZByiV3?=
- =?us-ascii?Q?t/1jQtvUXrmQ/BbXqSwJLkww13KkL3T7Kycr6fCqUYkuA2qa+xtbYVcQ1O1P?=
- =?us-ascii?Q?gL8QPqV36GHaqP8nXHjUHohiWTMzsXioTIoUKJnkj9GG6iTMmT4OoQQAZLEP?=
- =?us-ascii?Q?MQgNRAnT2BqvPzofK6FVf4XRo0kZg6yZBlV/Ew7zmUj2Oh03dZbCKwpW8h3q?=
- =?us-ascii?Q?xQIwc2V/XgT7sIlu+Hhd7VMBd+iQfqrQv4a/wbc4EzioL3Zt3ZfF1xUXz+US?=
- =?us-ascii?Q?kqRh/8RVYmZONLkR/uqBhIhb0Hu4LsQFlvVsjsydmtxRERP7nbktjdXyWdkx?=
- =?us-ascii?Q?Tyc1TdDyLxz32mwks0r0cr0Mq3BS/LMVHBapRSrH08JCR9+3HjVDutofoP7i?=
- =?us-ascii?Q?OmcbP57W//2p/feWPQQ7qNyAhqoPeGc+kWQpTt+hAzIFY9bqUOc5DEDlxF+1?=
- =?us-ascii?Q?zc3ZlSC7HhNhN6QxrMn2wEelkgGxozewWkoMGv8HiKuciYaSFX14gWYF5Mxv?=
- =?us-ascii?Q?irrUhwZrQgZNAmNDfT2qWY7hy+X2cofP0Dab5CNHg6v9T41ce+aKxrJLoa8q?=
- =?us-ascii?Q?jwtaxryonnBasHO1A4mKAfiIA7poOUYUPe6+TUB/t2gZaEOUq5LYTUwPr0TS?=
- =?us-ascii?Q?FMJQUW/Mp+jXHQiRyrniuEzXa/Pujh+nESViTr8ga5Avj9dEcbxSws2AwLHm?=
- =?us-ascii?Q?WmlWFruFZSetP8aWF+UMYbpe3309h0kNAePBQuyf16MGPXQl86L4lRSa31bJ?=
- =?us-ascii?Q?0QsrpOiPAXEzACbnhK/RYQR+AewjFZKkYR68/WmL4ALHbY3E03AgJSqJWXuo?=
- =?us-ascii?Q?422g2TgzTgmFQiQGPc/wXH3LjAiV8ZVvM5J33FhEp/NTh07ojl5/7SCoqqGV?=
- =?us-ascii?Q?KhmELCXNWKusqM5IcaBKICQatFG4h3jJUD+HCTJR7vPcD0jOHdaDpG0g8nB1?=
- =?us-ascii?Q?5c9JcVwS9EcZ/wddV3nPYIzSzz6ZCY+eyYuLXF/2JrWPlqhAZu86Zc0PNT/Q?=
- =?us-ascii?Q?pSLFAYz/Lg/UCFQBrZsCkWtQWcUvEx9RYS76U0OI51HkDcsg4V5gUpMIagxJ?=
- =?us-ascii?Q?E/rG0hAs/ODQDeaV9dfVJsiwKZVNmBnzWzS6j5IOATt90ih9Apop3OSpG2B0?=
- =?us-ascii?Q?Yy0szGZ9PTT1tAo1ywuNmceK+5sh3LDMuZh9bB6eSKznuwpsNuSXDERg5s1v?=
- =?us-ascii?Q?DKHZCZHTs58gnu2UrQhik7PT3CI9/xldNvqVDZgGbq+mV5tN3DbORY9REqiY?=
- =?us-ascii?Q?Vns1i7cp7i56nPxqK/yOUaJm0CKIVdolAnpocYIe5wEnxWsVbnonCiK7INA5?=
- =?us-ascii?Q?r/ezcFA7Jf46Ak5oxaHGaQVPYI2oadFwlCJwVU9Od5KLIBI2CRkSYg7CfTCe?=
- =?us-ascii?Q?7qV2G4aWu8TbkDBV8swOgx7YtBZLBtzQCou55KIWgCnwNL/BYSzU6k8yw7Xi?=
- =?us-ascii?Q?6R8D/fKx8ODeDyY3G1lDKdA7rhs2ah0i02GkUW81qYbOXPujNdA7d4E7IVpz?=
- =?us-ascii?Q?UbLy7lseqXqaDqr5ioNlzYlfqeTYOQDPWcdal9MmKQbEkgwwfIEg52QY7zxd?=
- =?us-ascii?Q?rXzPuHSoMjH4lrzWNrXOwYbrZwdzjjIkr0FojpjSA/ALmHEpI918?=
+	=?us-ascii?Q?Yt+DeCxR0sYWHrHD6l0Sm/tYj3heAGsFApwA807jIweQsPJaNhTq0juKvU4C?=
+ =?us-ascii?Q?1UHB0TAa58GwdoheUDrTxGjSD5r9D1kroLIR7l6vhqVRXjEmcg3/HF3Om7q3?=
+ =?us-ascii?Q?pW9kxx9VewWqG/J6AAch5aspOddeBhIklYVZ3QnDK4g8bJbBKvjuvqL3LIPk?=
+ =?us-ascii?Q?2mHLsvXbaZ/eQeGrPYky6UH8MekZ1hjnVxL2MAtmnblnQC+6JfEcjUtnQ7o2?=
+ =?us-ascii?Q?FIXi660WSmtGNxtB1PpM1RzKFDlugKcaSBCWDiKK5adFBuoM4yEMXQGvTMT8?=
+ =?us-ascii?Q?NU5s5SXRqsXk09lfIjHzAXXn2IG4e1QXucXYfhxWBSysQVDxldxr5+ns64W8?=
+ =?us-ascii?Q?F7bHIwcq/EOlh4c0Jy4VKV/llheYQMtaC/BhS/Q/9lYSrHIinFkRRGoTd173?=
+ =?us-ascii?Q?oenW2rgZJqnelGj8Fn2QMofsyQJjy7p16BRVMJneqTcTFqafwbvy4rBAQox5?=
+ =?us-ascii?Q?G82BKkbaY1JOP4QIJAisYocLqyD3C3XMzPU4F4GUjoK6UuEfiHbTeeGHjTYe?=
+ =?us-ascii?Q?NztAnclR68FZRjzKX/lxeu6pB+ZVabGrIKM4q1yISU62Yy9z8Mq+MWZKEN/u?=
+ =?us-ascii?Q?44fxY1jHrf5P+Usu7bwfI+2Ms+Ss/IsTeEoak8zcuKOO2iLfIoME1yJ9TIWO?=
+ =?us-ascii?Q?PF6hxrIz4CLojVMYH7MCbVLO/M43+otFfeXXLRdXJoLqZU+MlVzJy443NC8A?=
+ =?us-ascii?Q?IwnYSunPzYCWQYL+3O16q3KqyLa5yjXS3tD1g3J7yQ1kyH07ZLKub/dVSxi3?=
+ =?us-ascii?Q?J8jY3scatj7tcNkI+OQx395Pr6f1Y+booXrHk8F+bwZRm6tsgD1nS87Liwd7?=
+ =?us-ascii?Q?WA/+VOwyqIkvgSrMgp+c21QSftG+oq87cxxxLbkVHiWBPoydQrUmebLbpQwD?=
+ =?us-ascii?Q?G9OFO5Q4Dak8+qROPE9U6vC7ATE6GS/MFroUiTgpUOVFuddfBpSjC2dcBe55?=
+ =?us-ascii?Q?Xwn6bQhUisZlGKZECasURY/lzaUeYZ/pXfJRiLItZIw3jNfMDPxBFDtPWNjU?=
+ =?us-ascii?Q?ITx4FONqAqNvSBKDS4YnUG9yet8Oboai6eR262j/D5Ge8nJV3eA/RqYaw4JI?=
+ =?us-ascii?Q?0VgpHJWLO2hk6wymNBoaJvoeOgInHXC0mFIcfkEzcpQswVM3VWwKjxFddmPc?=
+ =?us-ascii?Q?24IW2uOExaAFDEWT7wZjWMU/RTsCIcCCY+BLJf4xXZyNDb129tLTZtES2f9i?=
+ =?us-ascii?Q?BoGrp6e1kHukMZHud1nwYHJrW2Oq6pp5Lv9zqFTvsRgzeknekwO9uOopNklD?=
+ =?us-ascii?Q?ibHznPuLuMeVblgUdVFoksAOIPMr8WV+uVX/cevEqxIaGSCD0+KA9cc3U70n?=
+ =?us-ascii?Q?55tLcVdR15diHMy/w5YIZktHXUcW64c3B3piGvu8lReM78Gvf3PNXKa5QBQN?=
+ =?us-ascii?Q?p0c8aTpvJhjzXlII5T1VaJz1H7lMQwuEqO8Aab8kzPkAY4iJWbPN+gdCnOd6?=
+ =?us-ascii?Q?2pEz4V45DdatuHFKbMfyHcm/BpnMwvbCdx6b2ive8/C5UT7iRQFM8NxUXn6Q?=
+ =?us-ascii?Q?pZQWaSSpCEbWAHR/q4CHJ3tpPDZJFoUqAiweHDxB5GvCZoW0qN85BZJ8fRqT?=
+ =?us-ascii?Q?R4tIStK6OHbr80gnCaQfxhMX95WSvJ+f6IXQgYX9TbRgD22tdJasDwE+cyUT?=
+ =?us-ascii?Q?2wnpNSHccd/DDP8dzDNKSAs5vY/yb7uKXzxTqbA8YGkRyHEbtH53kw4hNPTI?=
+ =?us-ascii?Q?b0TxSWgMN2kZT9U8zoP09V/4tqrpZEAUm4gGs7rH4Wuh0x9lVjIQU8CbzUBa?=
+ =?us-ascii?Q?NipvutZN7hOqIDbKsoZQnWEMpoiQ1YFZoWi6VW9zN0n8PYgcIL7C?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fb4e9a2-6a74-457a-680b-08df2f877992
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb5de7c2-1500-4ea6-5959-08df2f87ff4f
 X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 15:25:01.7782
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 15:28:46.1132
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qN8IciFM9ibsZRhtgR78+7Id4fYYs+DQjzRmUwd76qLgZWy3M6SifDUggoCAB7vCzdzZ5f5DD8beNcb1s7jXq1SPtKssitY90qXkeTsI8eDUwEZoB6LF0TFh075XDOvE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI3PR04MB018611
+X-MS-Exchange-CrossTenant-UserPrincipalName: SEgZKnl238HmPCaoRO1VfQWbffwjDbHRxfb17MEZMv6YS+MeJcwTLDE0Uf7mN38JaJZzbWxks6aSz8y9hs9UhgJ7KlWP1zlezIVUjU739WRja7xHXZKYFM+4OUUOeiem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10861
 
-On Wed, Oct 21, 2026 at 11:43:44AM +0530, Manikanta Maddireddy wrote:
-> config_gen3_gen4_eq_presets() added PCI_PL_16GT_LE_CTRL to the result of
-> dw_pcie_find_ext_capability() without checking whether the 16 GT/s
-> capability exists. If the capability is absent, the code writes lane
-> presets at an unrelated configuration offset.
+On Wed, Oct 21, 2026 at 11:43:45AM +0530, Manikanta Maddireddy wrote:
+> init_host_aspm() programs the L1 PM Substates capability without checking
+> whether the controller advertises it. If the capability is absent, the
+> code writes offsets from zero instead of L1SS registers.
 >
-> Look up the capability once before the lane loop and skip the 16 GT/s lane
-> equivalent control programming when it is absent.
+> Check for the L1SS capability before programming L1SS-specific fields.
+> Keep RAS-DES discovery, ASPM counter enablement and AFR latency
+> programming outside that guard because they do not depend on L1SS.
+> Only create the ASPM counter debugfs file when the RAS-DES capability is
+> present.
 >
 > Fixes: 56e15a238d92 ("PCI: tegra: Add Tegra194 PCIe support")
 > Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
@@ -172,49 +174,105 @@ On Wed, Oct 21, 2026 at 11:43:44AM +0530, Manikanta Maddireddy wrote:
 
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-> Changes V1 -> V2: None
+> Changes V1 -> V2:
+> - Use RAS_DES_EVENT_COUNTER_CONTROL to match the preceding DWC register
+>   renames. No functional changes.
 >
->  drivers/pci/controller/dwc/pcie-tegra194.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 72 ++++++++++++----------
+>  1 file changed, 41 insertions(+), 31 deletions(-)
 >
 > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index fb8084cef38b..14031cfaee8b 100644
+> index 14031cfaee8b..7c349478556d 100644
 > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
 > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -840,7 +840,11 @@ static void tegra_pcie_enable_interrupts(struct dw_pcie_rp *pp)
->  static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
->  {
->  	struct dw_pcie *pci = &pcie->pci;
-> -	u32 val, offset, i;
-> +	u32 pl16g, val, i;
-> +
-> +	pl16g = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_PL_16GT);
-> +	if (pl16g)
-> +		pl16g += PCI_PL_16GT_LE_CTRL;
+> @@ -673,37 +673,46 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
 >
->  	/* Program init preset */
->  	for (i = 0; i < pcie->num_lanes; i++) {
-> @@ -851,15 +855,15 @@ static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
->  			     GEN3_GEN4_EQ_PRESET_INIT);
->  		dw_pcie_writew_dbi(pci, CAP_SPCIE_CAP_OFF + (i * 2), val);
->
-> -		offset = dw_pcie_find_ext_capability(pci,
-> -						     PCI_EXT_CAP_ID_PL_16GT) +
-> -				PCI_PL_16GT_LE_CTRL;
-> -		val = dw_pcie_readb_dbi(pci, offset + i);
-> +		if (!pl16g)
-> +			continue;
+>  	pcie->ras_des_cap = dw_pcie_find_ext_capability(&pcie->pci,
+>  							PCI_EXT_CAP_ID_VNDR);
+> -
+> -	/* Enable ASPM counters */
+> -	val = FIELD_PREP(EVENT_COUNTER_ENABLE_MASK, EVENT_COUNTER_ENABLE_ALL);
+> -	val |= FIELD_PREP(EVENT_COUNTER_GROUP_SEL_MASK, EVENT_COUNTER_GROUP_5);
+> -	dw_pcie_writel_dbi(pci, pcie->ras_des_cap +
+> -			   RAS_DES_EVENT_COUNTER_CONTROL, val);
+> -
+> -	/* Program T_cmrt and T_pwr_on values */
+> -	val = dw_pcie_readl_dbi(pci, l1ss + PCI_L1SS_CAP);
+> -	FIELD_MODIFY(PCI_L1SS_CAP_CM_RESTORE_TIME, &val, pcie->aspm_cmrt);
+> -	FIELD_MODIFY(PCI_L1SS_CAP_P_PWR_ON_VALUE, &val, pcie->aspm_pwr_on_t);
+> -	dw_pcie_writel_dbi(pci, l1ss + PCI_L1SS_CAP, val);
+> -
+> -	if (pcie->supports_clkreq)
+> -		pci->l1ss_support = true;
+> -
+> -	/*
+> -	 * Disable L1.2 capability advertisement for Tegra234 Endpoint mode.
+> -	 * Tegra234 has a hardware bug where during L1.2 exit, the UPHY PLL is
+> -	 * powered up immediately without waiting for REFCLK to stabilize. This
+> -	 * causes the PLL to fail to lock to the correct frequency, resulting in
+> -	 * PCIe link loss. Since there is no hardware fix available, we prevent
+> -	 * the Endpoint from advertising L1.2 support by clearing the L1.2 bits
+> -	 * in the L1 PM Substates Capabilities register. This ensures the host
+> -	 * will not attempt to enter L1.2 state with this Endpoint.
+> -	 */
+> -	if (pcie->of_data->disable_l1_2 &&
+> -	    pcie->of_data->mode == DW_PCIE_EP_TYPE) {
+> +	if (pcie->ras_des_cap) {
+> +		/* Enable ASPM counters */
+> +		val = FIELD_PREP(EVENT_COUNTER_ENABLE_MASK,
+> +				 EVENT_COUNTER_ENABLE_ALL);
+> +		val |= FIELD_PREP(EVENT_COUNTER_GROUP_SEL_MASK,
+> +				  EVENT_COUNTER_GROUP_5);
+> +		dw_pcie_writel_dbi(pci, pcie->ras_des_cap +
+> +				   RAS_DES_EVENT_COUNTER_CONTROL, val);
+> +	}
 > +
-> +		val = dw_pcie_readb_dbi(pci, pl16g + i);
->  		FIELD_MODIFY(PCI_PL_16GT_LE_CTRL_DSP_TX_PRESET_MASK, &val,
->  			     GEN3_GEN4_EQ_PRESET_INIT);
->  		FIELD_MODIFY(PCI_PL_16GT_LE_CTRL_USP_TX_PRESET_MASK, &val,
->  			     GEN3_GEN4_EQ_PRESET_INIT);
-> -		dw_pcie_writeb_dbi(pci, offset + i, val);
-> +		dw_pcie_writeb_dbi(pci, pl16g + i, val);
+> +	if (l1ss) {
+> +		/* Program T_cmrt and T_pwr_on values */
+>  		val = dw_pcie_readl_dbi(pci, l1ss + PCI_L1SS_CAP);
+> -		val &= ~(PCI_L1SS_CAP_PCIPM_L1_2 | PCI_L1SS_CAP_ASPM_L1_2);
+> +		FIELD_MODIFY(PCI_L1SS_CAP_CM_RESTORE_TIME, &val,
+> +			     pcie->aspm_cmrt);
+> +		FIELD_MODIFY(PCI_L1SS_CAP_P_PWR_ON_VALUE, &val,
+> +			     pcie->aspm_pwr_on_t);
+>  		dw_pcie_writel_dbi(pci, l1ss + PCI_L1SS_CAP, val);
+> +
+> +		if (pcie->supports_clkreq)
+> +			pci->l1ss_support = true;
+> +
+> +		/*
+> +		 * Disable L1.2 capability advertisement for Tegra234 Endpoint
+> +		 * mode. Tegra234 has a hardware bug where during L1.2 exit,
+> +		 * the UPHY PLL is powered up immediately without waiting for
+> +		 * REFCLK to stabilize. This causes the PLL to fail to lock to
+> +		 * the correct frequency, resulting in PCIe link loss. Since
+> +		 * there is no hardware fix available, prevent the Endpoint
+> +		 * from advertising L1.2 support by clearing the L1.2 bits in
+> +		 * the L1 PM Substates Capabilities register. This ensures the
+> +		 * host will not attempt to enter L1.2 with this Endpoint.
+> +		 */
+> +		if (pcie->of_data->disable_l1_2 &&
+> +		    pcie->of_data->mode == DW_PCIE_EP_TYPE) {
+> +			val = dw_pcie_readl_dbi(pci, l1ss + PCI_L1SS_CAP);
+> +			val &= ~(PCI_L1SS_CAP_PCIPM_L1_2 |
+> +				 PCI_L1SS_CAP_ASPM_L1_2);
+> +			dw_pcie_writel_dbi(pci, l1ss + PCI_L1SS_CAP, val);
+> +		}
 >  	}
 >
->  	val = dw_pcie_readl_dbi(pci, GEN3_CTRL);
+>  	/* Program L0s and L1 entrance latencies */
+> @@ -727,8 +736,9 @@ static void init_debugfs(struct tegra_pcie_dw *pcie)
+>
+>  	pcie->debugfs = debugfs_create_dir(name, NULL);
+>
+> -	debugfs_create_devm_seqfile(dev, "aspm_state_cnt", pcie->debugfs,
+> -				    aspm_state_cnt);
+> +	if (pcie->ras_des_cap)
+> +		debugfs_create_devm_seqfile(dev, "aspm_state_cnt", pcie->debugfs,
+> +					    aspm_state_cnt);
+>  }
+>  #else
+>  static inline void init_host_aspm(struct tegra_pcie_dw *pcie) { return; }
 > --
 > 2.34.1
 >
