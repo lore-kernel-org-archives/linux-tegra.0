@@ -1,100 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.40
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792546244;
-	b=Jq2X49/8fsueXwtWMJ5VuTSHUABp4CBRWPNDPkC6W/0n2sk4yEWRmnP7ZiHJD4sh1rB5
-	 ZaQnoqHBXqKv2jKEZHAzwaG14MbVwEk4/BlO+9xsCcfeaNb++7CZd2yOdUL7cw8Y29wAe
-	 WSLmAmXyI3nWNidCk9xch93aqYt83WBBl7qLy+HJ6eUB3i3CeMr+L6Y09NvrzbhP3bsUt
-	 AZxq+2yI6dGvzbspXCcwryhP5QmW1XkwYd+0HyBtpWxAegV7xw29mEYL0znoG7yhstul8
-	 of31EYounMdRhHFjF+TZ2zDr14Hy2xcLaO9OzRDIIe1EwQy/3ub8wiDpk/ReYHbDwcg==
+	t=1792548299;
+	b=fRQtq6+eG8TizMcyAXbB9FzIlxzgUgVcIBkotXuAg0lf6VJf9vvdHl4jlpew1bXSA5p3
+	 bGafB4JbTYVjXrRntPm02OTC1e1bAv3NtazEIPWGUlr00y8U5Bz4uxKd74jQ7A95KV/1n
+	 YW+2lBn5DDiv1ZdSYzNtJZAmex59MRASf9pcWLIiGMzsnCEtZURxDT4SuuWnn1xowjK/W
+	 o5Ua13hlDsCSMUQqgwWkRkYHv2/cNMxr+QMhVFwq3gH1GJgG/3isQRanS/5Y3wZK1YFxm
+	 ToNsOA2LIIh5y/0f0hgzn32VwjQ0A9b0Jissekq2CNnAEAYEV481/Qq7zoXtadegW6A==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792546244;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=PAUNdUhGhVk5P10frznxuicWSRes7WCpJcGSrDhd0Lk=;
-	b=043kfUmtt2gPDXFnhpaWx8KH6s/i6M0Gq8djiZ/knUv1Iqbe40s8g1sbGJevm5PK5X8w
-	 Doi0nyfCSO6vpyvQ85h+FYM7Xby4faPWJ8BMj0+hrk/Ax62HKTlie5nUY/Fwgn6CYWyBP
-	 bxMr3kiKhulH/Mr8G3mry3AC0TIqCxBidj2iCz14d/KgbyzSvgFMkEZMezP5+nOX3+eXE
-	 XUVTwLijLAcozJPDFhUBPZP9HhEB8j3OfIqXuoxvIHeEw4pIt687k+7uAL+JTQUEIeQPg
-	 zGWjjMJWRRI1fLGkkY/8WpcJzgU77UDRTPRVF1HVv2Rpz+pqKUTwYGLKMEGfrTk9Ovg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792548299;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
+	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:
+	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=lB+jvg6oIqL9bfq+1Ij+kEFBGzuhIR5vwUL/6kM2glo=;
+	b=pvgRmH/TdLP+tc8LZn4DuUXFjAaV0LTWXFG12yWgJLILxou18/8CAmZCu3x8J6Sw/v4G
+	 e8NV9tdkgjMeIM2WuIVdLvxuCNlXe/JhY7gl7BqVn8LQ33819IuUzZLxtXsCB8yqKznvz
+	 8o0E9DiffY8nayxxjCAzj3h3aS5RrFEehdtxsw+AK1T/TzNs1EGzffNVVwYAKYV5rdS5D
+	 wyQ0s80yBuxD8ttZHMtSFpU8yvA5U/J4EmSPuu/SOQBtquq1K+dZf9gmczqH/CLQmN0XX
+	 Hg5wxWvPmSExItVii57wgTD+JY/2uE57fYSskUTqiIGypFwm4D7M/dtdL3DowHGnVZQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=hbm1n5Km;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.170
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=dDo1YRCU;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.40
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011040.outbound.protection.outlook.com [40.107.208.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC85606A31B
-	for <linux-tegra@vger.kernel.org>; Wed, 21 Oct 2026 01:30:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AFC85606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043C2606A31B;
+	Wed, 21 Oct 2026 02:04:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 043C2606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20251104 header.b=hbm1n5Km
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-5337c7b9937so149361cf.0
-        for <linux-tegra@vger.kernel.org>; Tue, 20 Oct 2026 18:30:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792546243; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ga/jaQP/odCvKOs1ZjPOs/dPoFyKvD93UuPbISCfNFZJWyynn/L2XelPqWLpt7cbme
-         eSypXTcff4p56Kf89rOHBpN/9LcNsDDok0tQJeQQOAsNDZaXm+xQfKqtdhj07qcGRaoG
-         ICDpnxqy15kF8McrJ0PsmtPQgDOOnTgmirGqGgdpweJhvvbLRCMJn1TurYriMsNA82tt
-         H0EjQFNSL/hbAPsQ/OEVK1HTJ4uV6MsgSO8jt165ZnrMSurUM6ppA+4AY4ENzDcNDoyl
-         9XmVJiaUGR/NHFjamWxMW3ew8eSF96SRlFLbEIzOdGRxM9vEeHiaza4+8VCj3n5rsQjM
-         6slw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=PAUNdUhGhVk5P10frznxuicWSRes7WCpJcGSrDhd0Lk=;
-        fh=qfVRyMIlXDhFiTwSeoIaNsbgadxgJfBasGLI5o15BGw=;
-        b=Vk+wvCOayfQdCTAnGxNZ+mYetwwgUMiK87bCxUCoFZaLbs12zw/FsOihWdezthIldp
-         VtmImgXbYstiakEG0L5v1t3mHcm8Dno/6PGkSsS9pJHjY69gvhSNvD64E3By3DeNVRND
-         hLvlURKxTZPZGKYShg2CLV2LwjS3sjJ8+9HaqlECh8BRH69MavtpCincArZu2KFE0KAD
-         QqmHVFcyXSUXrQFF6tudB95eiFaBCE8ZKJe5i2IGqEqA/M87IB+anNIK/Jnd8hxKfnBJ
-         OpojmL544DQmR3nJVJ+EVbAC9rAtrOHahcy8y8bsBsipvmLWUW44gI6/884FQrwbI1if
-         kqNA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1792546243; x=1793151043; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=PAUNdUhGhVk5P10frznxuicWSRes7WCpJcGSrDhd0Lk=;
-        b=hbm1n5KmqZ3I2eKENapPbC/2vdQHWHNUsuKkpm/gEN9PA/LdLIfkSMFh4zTJYHkpXH
-         OydBIU5v4tfZjPCnPx5eSSHfq9odcpSvYupQFgj5PPQZ/XOqvl13TRksTKDRPNRZrjxg
-         NeLMwpettJdn6Gu4iTgrth1NsFA3R4MGb/04YZnhKBLbjZP7AM1/e7jo27+mH67Fv3gw
-         cYTWygFp4fWQNfOPGyrw8IDUtmZ9PGlUaXaK7uVHrptvwifpR0Js6aG+rkYoU3dsfWW2
-         CuZdULSM2dx06x3F5G3hn8JyjDWJCQVrXmGClOcvIZ+wA2Vbu1Pjprt8DjXtlWhhcSPd
-         lnbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792546243; x=1793151043;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=PAUNdUhGhVk5P10frznxuicWSRes7WCpJcGSrDhd0Lk=;
-        b=JsvVHYZbCkHRzm8pEeuzpuOuiel2MHtIEoLHc5fqMqB03EFXlGSd4O6fnHbollhS1j
-         Cxa3/0EdWIpbN0QUU9t7WHpZ9t+lNc0aYyKK9gN4WoyovIedFfunaLzeH+wedf6dUILL
-         r/OWrrdhfPi5o53Eq8ARolcxgKvnwGwDzvLZLlj+7Tgp7TtqHYhH8IHdAfYrIZerg5yf
-         YxYG+otLS11d7/YbRCgr6kYlo/Y3iyPCQl20EeLlixuV1paR1Fr1Q4Y3+jm5b8c6hWRk
-         kWt3j5kxf/TDl3vXxQoUng6x6DcH8LBMpYMp4lbgKpd1xargiyDOf/YFj9aEAw+SuYq9
-         xpUA==
-X-Forwarded-Encrypted: i=1; AKwUvBy4jv33P7YjagXQhoYuot/znQ3swyxflkmaaouBfSlpR3uBxRvI+NBAvJ3IhQ5+arC5F+hTBryq5JpUVg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLARsr9u9UIQVStz+bKleuaw1PoqLdZPA4ChSg6mwVNay8Bdonf
-	QMV0SK0/GCnQxcUmnZNkhoVYQz35aPq4K5B9DvK18+mIoJHWIp6QA6zTo52fe3kqkqKW+MydUzf
-	xHkM5BFwZ4zPpaN56JMHicC+auNkXZqCqAfKIMinr
-X-Gm-Gg: AYBFou0N6VNQk43PIstJnC5cdz0HyP1VECgtzJl3y2zgAXpecrOvynRJRtKJS+MPmAO
-	AKfHjFWncytchJB+n8XHzwDa2X3rtjK+5Uh4m2kjZY/LMCDEJ7G1Q8y/wSgStvWn0gH5B8w/x56
-	YXcYMdSvNpGwP1Bof6ll5M3qx+EyHta0sCF75T2mVUkI4pVtwbVpYTlXavNZhcXBMjyQa/PbEuq
-	H9NWSko2MVl0JDEsFs5PNc0ShO8+EWbcd3jaktxbwE0MrJ0i/h5wSsm8wjk+rm3MdajvRdIJqoz
-	G207gyd+uhvXGLXyuIHL7w2317WYRW5KaXS0UaOYi0K5nRjnrDGHpyQwXDnTDy6GynFvvtIqGsb
-	RXUo0rkea8iCQhGjKHjG2WOk1UHlVWp4KjN4rtA==
-X-Received: by 2002:a05:622a:a889:b0:52f:8389:29e0 with SMTP id
- d75a77b69052e-53684a855d1mr35309201cf.0.1792546242034; Tue, 20 Oct 2026
- 18:30:42 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=dDo1YRCU
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T0yTr5FpvhYvb5k4YF5xqkgRnNK+fauunADGat3HV3uXHmzBFl+3ZcVAp8ptYhIKQblA7UONJdYycAxszUIN+Gz2hhGdYd14PB6l1ssM6SpQeAjKwdHOiX00k/xfj86CfEMgCvDZEzn+WH/JCJpD+f3Vk0AVfeSNrFMDEF8rwj02KUVl3aLWdQQr/DFKEWX7Mr/9X9v9AYKkkN1veBnUa+oed7bZ1Rnv+Teygmo4E/27jmiCCInoQePjGJwK6dwh3y6x2hyFcRfZPs2Cj22vlEYXzfNXYvd87CgwO/Lk6wI4W8dNLqAzpbP7KhDTj62jpbk94YwTg+SyKfaF9yCPOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lB+jvg6oIqL9bfq+1Ij+kEFBGzuhIR5vwUL/6kM2glo=;
+ b=ur/6lkiwh9f0LiAn8rac28Jktlt80LRdxX5vZZlw7E7hvff6dZu10IzN+q5VdEfgt9+ICqe8ii7gRtehucOv9h7/d2Up+Ls9GJGDuYg5EupL6S8CvC8XhnLcJwTIf++SvnnGFFXtHGyJvdeHABMJAI5fTCYC2jrK6GganweKrgbaz41fvnHqreWg85R9vwV9wgA6b87ipVEdl/oexxRIxzZRiCQshSAhP8N6c66kafr6i1EMNZAxXdU0urBIg979FZzfC4PrLjc0KC44OG9BeftY7r0WbEBnfPyAAKlPZKavtbvHxlDMFKRV2zPeYG7kwcXOxlN4ToL2C2joQ1tALQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lB+jvg6oIqL9bfq+1Ij+kEFBGzuhIR5vwUL/6kM2glo=;
+ b=dDo1YRCUzUkJVzAaHioud81642Yt+aUbHf/Db1oRRJ12p/zuiT/wBAAS4Q72qZsB0aYZYk4U+DVlwf5tDLBnoVYRT6dJYFGdZbabuOWS1qOAxDAlnDLbkeK8OjPbUmcOwaGaSva6HDvjTrf1CmhFTShYSOqwKx10sNi9dA+MiIft+1AInl2xrc2YXY//ME1lvZcfZDGVF9fT2h/fDwF01ra+Kaflq8CSF3Kg7knkExIX0GTAQKVJjmw0aaW6Wj0rs3zHTyw+7et0rsQnLLFcurWPLnY5+Hqd9bJdcX7FdADl9GHTtReFjVRbHLt5LVzv9dfLhTfb/t8P3zGfgkBuJg==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by DS0PR12MB8561.namprd12.prod.outlook.com (2603:10b6:8:166::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Wed, 21 Oct
+ 2026 02:04:54 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0546.012; Wed, 21 Oct 2026
+ 02:04:54 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, stable@vger.kernel.org
+Cc: Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+ linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Svyatoslav Ryhel <clamor95@gmail.com>,
+ stable@vger.kernel.org, Patrick Fischer <admin@tsv-stahl-riesa.de>,
+ admin@tsv-stahl-riesa.de
+Subject:
+ Re: [PATCH] thermal/drivers/tegra/soctherm: Program throttrip with hot trip
+ temperature
+Date: Wed, 21 Oct 2026 11:04:50 +0900
+Message-ID: <5z1T3MJbRUWQUClLWuCCnw@nvidia.com>
+In-Reply-To:
+ <20261020-upstream-soctherm-throttrip-v1-1-c67f8a02ec3b@tsv-stahl-riesa.de>
+References:
+ <20261020-upstream-soctherm-throttrip-v1-1-c67f8a02ec3b@tsv-stahl-riesa.de>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0343.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38e::11) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -104,156 +106,138 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261019164241.403644-1-bwicaksono@nvidia.com>
- <21f58af0-fa3f-41c5-ab03-216c60fbe2f1@linaro.org> <ate93zQFkfAecIv2@x2>
- <CAP-5=fXUMVJwtAp+8dA8V=hBD9q4x6J4YiUufwXAOXcAJoAKTg@mail.gmail.com> <SA1PR12MB6773C6D7355C7229EF1341F0A0672@SA1PR12MB6773.namprd12.prod.outlook.com>
-In-Reply-To: <SA1PR12MB6773C6D7355C7229EF1341F0A0672@SA1PR12MB6773.namprd12.prod.outlook.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 20 Oct 2026 18:30:30 -0700
-X-Gm-Features: AclHuK_s5I62ce-14bqNjkF3ExUlJi8orsBz0fc6wg1Ud9yaq6K2V9y2A5lKOFg
-Message-ID: <CAP-5=fVXO+2y=0S+hRYgAoO7Vsj7xs4dbgrJ+YzMHmnkHHgx8g@mail.gmail.com>
-Subject: Re: [PATCH 0/6] perf jevents: Add NVIDIA Tegra410 uncore PMU events
- and metrics
-To: Besar Wicaksono <bwicaksono@nvidia.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, James Clark <james.clark@linaro.org>, 
-	"namhyung@kernel.org" <namhyung@kernel.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vikram Sethi <vsethi@nvidia.com>, 
-	Rich Wiley <rwiley@nvidia.com>, Sean Kelley <skelley@nvidia.com>, Matt Ochs <mochs@nvidia.com>, 
-	Raj Joshi <rajjoshi@nvidia.com>, Thierry Reding <treding@nvidia.com>, 
-	Jon Hunter <jonathanh@nvidia.com>, "john.garry@linux.dev" <john.garry@linux.dev>, 
-	"will@kernel.org" <will@kernel.org>, "mike.leach@arm.com" <mike.leach@arm.com>, 
-	"leo.yan@linux.dev" <leo.yan@linux.dev>, "mark.rutland@arm.com" <mark.rutland@arm.com>, 
-	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, "jolsa@kernel.org" <jolsa@kernel.org>, 
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>, "ctshao@google.com" <ctshao@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS0PR12MB8561:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a805ed6-71e9-4ba7-3597-08df2f17b299
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|10070799003|23010399003|7416014|1800799024|56012099006|11063799006|261009223027099003|10067099003|18002099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	XzyKF+zl5RVwMiQu7WJHEx64zlA3hmqECqDNdbaqp3MGAPGcc4pZuJiArbm6+xykDx4W2bnh3F7Qds1KZlupWbb2+0hfUcQat87azwMmfCLDUEuGQKRyyw0FYoC1KUUMlOCsJlRRkUacPId3AdUi12DlnTSDw2v7iy9o1B9LJO2YwUzBhL163d/zW/s8d8D+ZHJuynCQwGp/fPIlAxvmAxvZJ+QJSLYt+lvKEdkyVE7reJ8Ky3OmZEqwhPsvMjuxIDGMWEvncrwgtStOeg8oCoxQrBGCS3jDdXxDQw2t9084BWJT8ga/FAnxyBSGgvik01L6MmzlG7ymMIwq8Fca3cX4K5ZrD68f2AkoMqoIkEODqNUmZB0mRopPwyRE6XU3EdIdVDULvuU90q5M83+52uhafgphScwuXDW5yBqrpP/ZNHznippofasBKQ1vnH+crpme/9oRwUbDeAQAs8YSWg4ZaTdP3xWLYXeSA6h7kFXNnSTEN9OFTbpA7YKl6jKqMlzMrF0BdkYKO3DTrK8zHkA/5ygU7Aef1ZS8EO+qrbCSumB8EQDtAkifTZ3mjOs7ZQMl5gsxS6ucKvlmozafk5KPTidCJN17QfcvuyWTrsETLPJKPY2QpCdCGkzdmYRs15U+bDmUNgsp633BKS+fkM7eHU13bkPLCalr7XKiicQ=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(23010399003)(7416014)(1800799024)(56012099006)(11063799006)(261009223027099003)(10067099003)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SDdIdHJ4b25LVFRXWVV2ZW5zSVJsWFg3QXphTnI2b2YzYVptME1sRlJ5c3Rz?=
+ =?utf-8?B?blRBWVdCL3g1eGlsOVR5YmNHbHFtV1V2UUtYbE1iTUJzSWNWazlQSjlyTjRB?=
+ =?utf-8?B?Qm1iQ3NsWWVSQjB6Z1A0WDBkbThPSHVxWFlLVHNRWFUrK3MvelR0ZjNCQ1dK?=
+ =?utf-8?B?bUhCYldFRkgwS0xtN0gya0FNODJaUG1HVmZ0TEM4UE5aZXRucXpGbzBDQVZM?=
+ =?utf-8?B?bEUyZDg2MHR6eG5DTG5HZGo2SnQybDBNYjF6WmthQ08vMmxockRHN3hhMjlU?=
+ =?utf-8?B?VjY4RVVyTUNKdnpFY2J0SS84Qk5QaTFIblZkY2hmTFI1MllIcDR6bjBGMG1s?=
+ =?utf-8?B?ZitydWc3UUpMTnY0b041Z2tZWXlnU1ZKTFhnSkc5QzdnNGZJbStITmxFTDBx?=
+ =?utf-8?B?eGpTcU9lRTBaaGhXWFI1KzNFVGpYR2ZHQjNSNHh6TEoxV2lPZ2l1d2VZMGdl?=
+ =?utf-8?B?cjFqRVRaNjQvajg2VTJqNFZEZ2xKL1pKNnB0LzFkNVNvYWlYbU5pRHBUaXNl?=
+ =?utf-8?B?Q1d6WndGUVVuckFrL01YZ3pKTXhmVDQ2dGlIRGI3aTdPNFV0RW84b2hTUVgy?=
+ =?utf-8?B?V0dGQWhPNzBBM05ZU2szQ3VINGkrUFNkVEhQdDEzWGxWaFNuekJFdjgySWp5?=
+ =?utf-8?B?NUhCcTRlangrc3lqQTlqWStxZHV6U0NOR0dCV01KRCtDVGJoN01NbjFpZ2Ex?=
+ =?utf-8?B?UDRrcmIxM2ZibnVBOXR5Q3FtKzlsVTBoTWY3c2ZrV2dkaTR4L1RuUld5SFRT?=
+ =?utf-8?B?a0c3cVZxamw2ZS9nbjRjU252WFlLc0cvZFhDdTRWZjFxSFFjNlZtZmJRTFoz?=
+ =?utf-8?B?b2hoWklMSU9XZlA5MnE4bnNhaUNlZ3JucVJBMXNpRHNRcE5mRkp5V3NMandR?=
+ =?utf-8?B?M0EwRkJMdFl2WXE1eDJMcmQ1OGtyRWxRQ3RtQytESmFWVEU3Nm9ySm02am9J?=
+ =?utf-8?B?VW41NEVUZDU5SlBHSWpnT1E3MG9Ra1R2SmVxK0lDckhQRWhlcGRDREpFZG8z?=
+ =?utf-8?B?dGFXRnZXZUo5bGxBVFRqZWMyZlNLaUhXeDRFTTFvblVMRHpUZHVRb0pKRm5v?=
+ =?utf-8?B?MEI3MUdmN0FGeFJmNkloTExsVUNONlEvMS9ZSHMrTjBIUEpGaEpCV3lKRTIx?=
+ =?utf-8?B?K1lZdzJ4cVY3MTBPNTdacG9mdDVaWDFLQVdOWHViMTduK3l3K3dMaVJQL3JG?=
+ =?utf-8?B?RjN5b1YwZnNoekpQYjZWdkE0c0VjR1V0dnQ3ZG95dHFobWpmeHBIVWRxVFhD?=
+ =?utf-8?B?R25RM3VjTmZmc2RrOVprQnRlTHpkZU5kOW92TncyR2dUeTF5dXcwb0wvd1VP?=
+ =?utf-8?B?ZzhFOVhwT0ZieXpLUEJEWnhiS3hxMG9KdmtyUEQ5OTlDNUZkbTA5YlhSVUpi?=
+ =?utf-8?B?K0hYaFRjRjBMU0lBU0VSS0tBbG1INUZnV3NaKzU4K1d3SXorZnZXY1AvTk96?=
+ =?utf-8?B?dy9XZStYQnNpS1BjZk9IUkJIK2FOVThpRzN3RUJyNWFHdEYvYjZ6dUFSWkZu?=
+ =?utf-8?B?Uy9ZckdXd2tOcEFOelJucmNGeFpDRkx1QVhHVVFtaUFyWEJkWkJjRkxJM3hB?=
+ =?utf-8?B?OWl0dSt5MWxWVVVHWUh6UGZWcE5YKzdrNk5mK0p4TUI3WWxqRlgrdmFPenM4?=
+ =?utf-8?B?OHdsbzhGSU9NRVppVWd5dGFvVVFlUDlFNXM3RFMxOXF6REpCRzlOVHA2bStt?=
+ =?utf-8?B?bXJCTlJDU1BJVTlJL2ZoaFRLdFNJZGEvVUpaYVAzZGE2ekhFejY1RWdvbEFK?=
+ =?utf-8?B?dVdGWE5oUHNxcUx5ell5UmgrTWpSZkVsMWduZTVPbXJJYWRXZS9Gc29CelpC?=
+ =?utf-8?B?cjBxd2cvZVdNZG5UaHBDdmh2d2RhSWFFZTg0TTdYVWN3ZWdIaWIrRmxWR2k3?=
+ =?utf-8?B?QWZKM1J3SmRwb1JlMTFHN0xkUlBOUkxPck5oL0U5QVpOMWlOZk5keXR1M1Y3?=
+ =?utf-8?B?UUp3S2s5MWszWWJCMk92d3BDMVZ5Z0htMUgrWUlnQzF1Y2lEd0NJWjlSaVpJ?=
+ =?utf-8?B?RWJCOUhjblpGUkNHaWZFYkd5R2gzWDVhelI5ZzM1NkI1WHJnY1FBaEZkVm15?=
+ =?utf-8?B?MURXVEJEK3orZkVEMUJnK1F2NmhRTDU3dVd0TGhqQ3JURHptSmlwSW9mc0Mz?=
+ =?utf-8?B?Vm5qK2t1eC9qa1JvR1MzTkpjYVZUTkswelVzdHBVZ2M5enN0WjEySVdNN2hU?=
+ =?utf-8?B?U3BIQ1llZlRhRW9Kc2dsZG1Ua1hOWkczSXNYZlJlTnluMmFybzlUQkQ0TEtS?=
+ =?utf-8?B?K0lKeFFZTCtrbkRiR1lUczh6YjdhdXcwWWljZnRaR09xamgwUjV2TDdyR2lY?=
+ =?utf-8?B?dWc2OFFHbllnKzQxcERtM3c0Wi92cm5ROVVmZjU5RHdRZTRwNUVzZ3ppbk8w?=
+ =?utf-8?Q?oPNTLqAtTIk5EuE2WPycAvxBoQydpHBfmmWc4b5VKGHvB?=
+X-MS-Exchange-AntiSpam-MessageData-1: +oBsnsSn7lIKbQ==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a805ed6-71e9-4ba7-3597-08df2f17b299
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2026 02:04:53.9582
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zD2xs5iTuR25LOT3pOC9Q1b2ozoNQJj/f34SurBokaC1wmHzuVvmCRjWu0vcVYtlA+KHHXhFW9t7MNm0XoWbZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8561
 
-On Tue, Oct 20, 2026 at 3:15=E2=80=AFPM Besar Wicaksono <bwicaksono@nvidia.=
-com> wrote:
->
-> > -----Original Message-----
-> > From: Ian Rogers <irogers@google.com>
-> > Sent: Tuesday, October 20, 2026 8:33 PM
-> > To: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > Cc: James Clark <james.clark@linaro.org>; Besar Wicaksono
-> > <bwicaksono@nvidia.com>; namhyung@kernel.org; linux-
-> > tegra@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-perf=
--
-> > users@vger.kernel.org; linux-kernel@vger.kernel.org; Vikram Sethi
-> > <vsethi@nvidia.com>; Rich Wiley <rwiley@nvidia.com>; Sean Kelley
-> > <skelley@nvidia.com>; Matt Ochs <mochs@nvidia.com>; Raj Joshi
-> > <rajjoshi@nvidia.com>; Thierry Reding <treding@nvidia.com>; Jon Hunter
-> > <jonathanh@nvidia.com>; john.garry@linux.dev; will@kernel.org;
-> > mike.leach@arm.com; leo.yan@linux.dev; mark.rutland@arm.com;
-> > alexander.shishkin@linux.intel.com; jolsa@kernel.org;
-> > adrian.hunter@intel.com; ctshao@google.com
-> > Subject: Re: [PATCH 0/6] perf jevents: Add NVIDIA Tegra410 uncore PMU
-> > events and metrics
-> >
-> > External email: Use caution opening links or attachments
-> >
-> >
-> > On Tue, Oct 20, 2026 at 12:15=E2=80=AFPM Arnaldo Carvalho de Melo
-> > <acme@kernel.org> wrote:
-> > >
-> > > On Mon, Oct 19, 2026 at 06:23:16PM +0100, James Clark wrote:
-> > > > On 19/10/2026 17:42, Besar Wicaksono wrote:
-> > > > > Add event aliases and derived metrics for the NVIDIA Tegra410 unc=
-ore
-> > > > > PMUs.
-> > >
-> > > > Reviewed-by: James Clark <james.clark@linaro.org>
-> > >
-> > > Thanks, applied to perf-tools-next, for v7.4.
-> >
-> > Hi Arnaldo,
-> >
-> > can we not take these in v7.4 as there is unaddressed feedback:
-> > https://lore.kernel.org/linux-perf-users/CAP-
-> > 5=3DfWucvdYefDOL3Vn=3DO=3DYUPEXE+tngDDfPLv-
-> > T5i3WkCJVA@mail.gmail.com/
-> >
-> > The specific problem is that the NVidia PMUs have adopted a convention
-> > not supported by the perf tool of 'pmu_name_<socket>_rc_<num>'. rc
-> > stands for root complex. What ends up happening is that aggregation is
-> > broken as the json is claiming that pmu_name is the PMU's name while
-> > the suffix perf_pmus code thinks pmu_name_<socket>_rc is the pmu name.
-> > They've wrangled support via the json by claiming these are sys
-> > events.
-> >
-> > We can either:
-> > 1) support a new suffix convention of <num>_rc_<num>
-> > 2) push back and ask the driver writers to name their PMU correctly as
-> > defined in the ABI:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-tree
-> > /Documentation/ABI/testing/sysfs-bus-event_source-devices
-> >
-> > If we do (1) then it would be nice if the support for that could be
-> > contained in this patch series. In any case these events don't belong
-> > in sys.
->
-> Hi Ian,
->
-> Could you elaborate more on why these uncore events don't belong in sys
-> directory? Is it because T410 already has an entry in mapfile.csv?
+On Wednesday, October 21, 2026 4:18=E2=80=AFAM Patrick Fischer via B4 Relay=
+ wrote:
+> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+>=20
+> tegra_soctherm_set_hwtrips() is supposed to program the hardware
+> throttle trip (throttrip) with the temperature of the thermal zone's
+> hot trip point. Since commit 735a968d2fea ("thermal/drivers/tegra: Use
+> generic thermal_zone_get_trip() function"), get_hot_temp() only looks
+> up the hot trip and no longer stores its temperature, and the later
+> conversion to get_hot_trip() kept that behaviour. throttrip_program()
+> is therefore called with the value still left in 'temperature', which
+> is the thermtrip or critical temperature that was just used for
+> thermtrip_program().
+>=20
+> As a result, hardware throttling only starts at the shutdown
+> temperature instead of at the hot trip. On the NVIDIA Tegra Note 7
+> (P1640, Tegra114), where tegra114.dtsi defines the hot trips at 100 C
+> and the critical trips at 102 C, soctherm reports:
+>=20
+>   throttrip: will throttle when cpu reaches 102000 mC
+>=20
+> instead of 100000 mC. Svyatoslav Ryhel observed the same on the ASUS
+> Transformer Pad TF701T (Tegra114) and the Xiaomi Mi Pad (Tegra124).
+> All boards using soctherm with a hot trip bound to a throttle cooling
+> device are affected.
+>=20
+> Use the temperature of the hot trip for throttrip_program() again.
+>=20
+> Fixes: 735a968d2fea ("thermal/drivers/tegra: Use generic thermal_zone_get=
+_trip() function")
+> Cc: stable@vger.kernel.org
+> Assisted-by: LLM
+> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+> ---
+>  drivers/thermal/tegra/soctherm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soc=
+therm.c
+> index f74acf13b24d..903215502606 100644
+> --- a/drivers/thermal/tegra/soctherm.c
+> +++ b/drivers/thermal/tegra/soctherm.c
+> @@ -765,6 +765,8 @@ static int tegra_soctherm_set_hwtrips(struct device *=
+dev,
+>  		return 0;
+>  	}
+> =20
+> +	temperature =3D hot_trip->temperature;
+> +
+>  	for (i =3D 0; i < THROTTLE_OC1; i++) {
+>  		struct thermal_cooling_device *cdev;
+> =20
+>=20
+> ---
+> base-commit: f47d223627f80cb7a1eb14c585fe6cb35de5e984
+> change-id: 20261020-upstream-soctherm-throttrip-ad6965977b6c
+>=20
+> Best regards,
+> -- =20
+> Patrick Fischer <admin@tsv-stahl-riesa.de>
+>=20
+>=20
+>=20
 
-I think the meaning of sys and system events has always been unclear.
-The original patch series is:
-https://lore.kernel.org/lkml/1607080216-36968-1-git-send-email-john.garry@h=
-uawei.com/
-However, since it isn't tied to a CPUID it should refer to things like
-accelerator or network cards, not regular uncore PMUs.
-The whole notion of sys events/metrics needs TLC as it doesn't make
-sense for them to be in vendor directories if they aren't tied to
-CPUIDs.
-
-> I put them in sys so perf matches them to the PMU by its identifier ("Com=
-pat")
-> rather than by the CPU, similar to hisilicon/hip09/sys and thead/yitian71=
-0/sys.
-
-So it would be better to follow x86 as a model.
-
-> For the aggregation concern, I replied on PATCH 4/6 and will look into
-> it further.
-
-So CT replied. The ABI document was created because the hex suffix
-broke aggregation, which we fixed. As your reply details, cross-PMU
-aggregation has been broken by your new suffix convention. With the
-conventions we have, PMU names like i915 will match a name of just "i"
-and ARM CPU names tend to be valid hex suffixes in things like
-armv8_pmu_a53 - so we ignore suffixes on core PMUs. The distinction
-between core and uncore PMUs in sysfs is also strange. Anyway, it
-isn't perfect, but we documented it so that future PMUs wouldn't break
-aggregation again - or if they did they can detail in the ABI and perf
-code what the new additional convention is.
-
-Ideally we wouldn't include anything fancy like physical addresses and
-socket numbers in PMU names. Such information is already present in
-/proc/iomem or the topology code, and the naming irregularities only
-serve to break aggregation. To add detail to the PMU, use the caps
-files. I don't think the perf tool should add new ways for every
-vendor to aggregate, determine sockets, etc. It is bad enough we have
-to carry fixes for ARM PMUs not honoring hot plugging and for the
-cpumasks not being set up properly on Intel PMUs for sub-NUMA
-clustering. Ideally, the perf tool could work in a user space
-emulator=E2=80=94say, an x86 perf tool running under QEMU user emulation on=
- an
-ARM64 CPU. Special-casing CPU type and PMU logic defeats this goal.
-
-Thanks,
-Ian
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
 
-> Thanks,
-> Besar
->
-> >
-> > Thanks,
-> > Ian
-> >
-> > > - Arnaldo
+
