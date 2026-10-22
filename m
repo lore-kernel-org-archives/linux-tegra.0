@@ -1,104 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.5
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792663822;
-	b=n6vFdV8Y8b09sKxNbY2orJVGWA1IPS5T3ToNog1OzYGKlmZSSUsC8umWOglJ74DIUR7h
-	 x8DyneTjY/meERNY5JiQDQDseFCivrydckJpyFSf2mRGFD8J1DUhC99hjrmV6OrsdOWwh
-	 mkaS4vuBzxCPSWTdFDe8/8+kyiLWGC4LufIttsIx0DeQag4MoSd82phwSkjsOuEPHbwlL
-	 RKKt4cuYqzP/qmRbkPV2JEjkOVM2/AIZlHi3C1cs/+QbRdO+NFxseA9KhACwjnjLftG5P
-	 6Mi7VOY6QyRq8uTJ5bdqbIcmpys9UxRhYfF+uNspVHFyZWl+N2kX/+TUwFOdVm4vxfA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792663822;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=5eTaeLrTJd60CfarPCv+CYMfGu8OOJ2oO1Agp6UwY/Q=;
-	b=tR5ghkTNo/Wlt5dfMPbylcSPSR7qSZbeTb3vURBKLEgwLjVlFxCbQCpcM2ufUz77yOo8
-	 kX4sCNcZm3NP75pI05g6jRsL5TyIoGc6Gbnqd1Hin0tuke/aT2bF0ekX1eclAjzUwLY+h
-	 Bllu/S6I2ajlTPU3LB2p5+/MVKYrwouPtbDEqHLtEGJ1Qr8ERJdqWX1fBpH4WqfQ2adBE
-	 Hdy7rB6YIYjbKIuuOAaUIikvJ7RtbX2BO3xMZ2vPTFh6hH8h0/MmsdAdiSBc82Qd4PpK0
-	 POMo3X4Ar3FhNP4x+axidykrzvLwnh7RsIioZbaBvAhviXu9UXIVjoxLKK4ql4BSUHw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=YLMKvWdw;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.5
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012005.outbound.protection.outlook.com [40.107.209.5])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792672428;
+	b=Q5uemXG2dOGDW2Q7jKOzFSWlsp78SYDU+X5MC3VT4v5K6c1+WEU5kPk0qVt4FSdoGmyj
+	 OnxzOhIqPeWoOGzfag704FRHDKxZaBlPnCEWOFZnh2nk2BOwSwV9dd3FtpmO11PcbkLcz
+	 VKG0ueUmlPDXoMBG2j1GCGfAjV0XSVJsF2s7vGUTNny3we/xSCnSsv5m/FjOyS+tOoyIW
+	 38sHgvvuUkEZxtZG8OiHnVCzOjNIxqoPNCtk4mysRuXOBQjLxSFZVJZqF+maqcL/6YmCi
+	 WhL/V4Bvz8ptFZOlzHKxZrlg4YBE5+8NOTEY1B7D94sR/y2zuWq6zRyTOiaB/bgAeFw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792672428;
+	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=es0EBw+s01NCevX6p6GYQJTMMjVuoGTr4HClcof2aRA=;
+	b=VPvSQz03FZG9RNYiXdDMAHAQSO7en/Tu59WVOTpwVS40KcSLcw9U5JNRQUMPCNvTf5fa
+	 IBkRoR8fZnuTS2PvNu62FJ/l4H2Jo7bJno0dQw/DGGEHdJIsZ6zr0yZgay+XqP33PlK8R
+	 C2j5DRUiNXrng+JrY70nhDCnMzf6/hZ0vPoHwbaZ7RUSRIpFrV5e+zr9u28jUtg4ZoPN6
+	 5OPreoOr5mZX2DSgYLZ5iSTRlMWNhcA6NQIjh9hl+/JAUEzl59X36iYUVdzfJ5p+ufyqN
+	 V8qJEq8D/re8W9Ywi8uaY6cqSIhETms30xhSb9oBe82etIk/JBgJ+bMDddixf4tdWgA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S3UvU8sc;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20360606A319;
-	Thu, 22 Oct 2026 10:10:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 20360606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D52606A31E;
+	Thu, 22 Oct 2026 12:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=YLMKvWdw
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=goS/NMASLNNtOeEzXch5rH55rbwK5OJbb6Tbt1mhLyqQkR+OaSjeIO9O4lHWA62J1QJyVe2iMOqelhsQ99mD9tC5EwxeD84jFT/FZb5jPGwutqTYSQvZ89hbusKf2+kQM+pJB8ygE0x0MuVVoBJV5a4E89uOQLAIrdGqb3z0adthIstwWEvNgBjtHhkieFzCTJS07utjovTfSHaiILwYvC/Mq8O192lKTbKXOljPhUWXz201GUKEjugbO6t8+ZgaV2PWrhZcMWjt+QvpXUf501Ih1AEoBXf+G20MHHda0y99AJTjm4ysj1sPZn6JlnPr7RYk8nMVntKUExEdG56k3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5eTaeLrTJd60CfarPCv+CYMfGu8OOJ2oO1Agp6UwY/Q=;
- b=ZpmO5Jj1JT7bhSzul27MUGNRP5OoCh2gslvx+MptGbUERCnbFolS2iqhYczD/hb0vXstplTEdLBDhCbL4zYdJcOqcOP6Dx+pbSL9TNfTrHGXzs0rH75vPuXbemQS2aEMijdezLnYgt9ThVRzmZkKVO+VN1dnv2b3StnbGghuoYdCzoGO9czm3pKyeVVbPeZNbe0EA0H8yTAQCNZZbXC/NJizQJu5hQkJzeBYcHkn9MpWSg/AacLduURnwUuoIjORXuwPno1/GzL0ZRNuXQx2bwsTAedz+IkYsa6/HJc/Nv5RfJEgUSd/Mftpz7jp4nzn1APZY1Qn9z9C+BqgNIPp8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5eTaeLrTJd60CfarPCv+CYMfGu8OOJ2oO1Agp6UwY/Q=;
- b=YLMKvWdw63dEoKsp0hAMqwG4r03JnxM+Bt6uf1WiiUdQbJ2DDVa2niUDF/EAZioIfGjhYNC31dDBPxL/O4wToX5sOeSQLGhAeXF4MlkmZMhKFRoxT8Xgd3nbCJqcWdggvFx76JQ+BlEEkLKOT4aPqo3WhKJwsSMQEJVc4fCXPvqd9xfbnwUwbmM3UL6WcUY0X+n1U20t6ZILY90rA9CasYAvMhFcSnjrU2Tgc2PXipxQQSggCL3wl+FACDWeYDA9b0MXZ5vOGGzS2L5d4pZlEJGYot8Xyqsk50KFt2RFZZPvYYYpFZTcXnfYqARwC7yqPvmbZsHWnOd1EYq1yHYSsw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH4PR12MB720178.namprd12.prod.outlook.com
- (2603:10b6:610:50e::10) by DS0PR12MB8200.namprd12.prod.outlook.com
- (2603:10b6:8:f5::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.15; Thu, 22 Oct
- 2026 10:10:16 +0000
-Received: from CH4PR12MB720178.namprd12.prod.outlook.com
- ([fe80::2a60:de1e:e60d:7052]) by CH4PR12MB720178.namprd12.prod.outlook.com
- ([fe80::2a60:de1e:e60d:7052%4]) with mapi id 15.21.0546.016; Thu, 22 Oct 2026
- 10:10:15 +0000
-Message-ID: <51747329-abe1-406a-aeae-94ebb7a35bf4@nvidia.com>
-Date: Thu, 22 Oct 2026 15:40:01 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] cpufreq: CPPC: Preserve OSPM-set registers across
- hotplug and unload
-To: Christian Loehle <christian.loehle@arm.com>, rafael@kernel.org,
- viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
- zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, lenb@kernel.org,
- ray.huang@amd.com, mario.limonciello@amd.com, perry.yuan@amd.com,
- kprateek.nayak@amd.com, maciej.wieczor-retman@intel.com,
- pawel.chmielewski@intel.com, linux-pm@vger.kernel.org,
- linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
- vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
- mochs@nvidia.com, bbasu@nvidia.com
-References: <20261020121846.691218-1-sumitg@nvidia.com>
- <20261020121846.691218-5-sumitg@nvidia.com>
- <cf4e3153-ff80-4d0d-94f7-572a26f369c1@arm.com>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <cf4e3153-ff80-4d0d-94f7-572a26f369c1@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4PR01CA0040.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:277::10) To CH4PR12MB720178.namprd12.prod.outlook.com
- (2603:10b6:610:50e::10)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S3UvU8sc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C249B1F000C1;
+	Thu, 22 Oct 2026 12:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792672427;
+	bh=es0EBw+s01NCevX6p6GYQJTMMjVuoGTr4HClcof2aRA=;
+	h=From:Subject:Date:To:Cc;
+	b=S3UvU8sc13/k33yf8QZiv/7uF2MDwHf3xjNmGLC6O7vJJqa2EsTAvFV6VERueVqaX
+	 KbJPhoKrsFGl0ozfSDGXqa/gvOSS47YMM8XFNCrI44pNEZqvSNDfaJWIyqXRfn1iyP
+	 tOXWqsMQVlaIgETZvAZJmOinxNRJlL4GE+oet56i8vHfhlkUHk0bd2SyDS2jBSh6vQ
+	 h1EerhG6CTWwTrFq7c9M0Pcy70XfUkLqNu7c6RB5n6ex1Z+WhXV46ZeNTqwY6EKQ25
+	 ZQoQGxFmpJQxsd+P2bJHSXfMBR7cW/PYZfU71VG4HWp9/17BpXUCK4vttjJEgpKJrv
+	 5+yeyF/+Gh3Dg==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v2 00/59] drm/connector: Convert all drivers to
+ atomic_create_state and remove reset
+Date: Thu, 22 Oct 2026 14:30:59 +0200
+Message-Id: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -108,371 +54,262 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH4PR12MB720178:EE_|DS0PR12MB8200:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02d89d63-e0dc-480a-4782-08df3024aa8a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|376014|7416014|366016|6133799003|22082099003|18002099003|921020|4143699003|5023799004|11063799006|261009223027099003|261021121427099003|261021123027099003|10067099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	xoUPW6hRmp2Ey+FtzO1cooRNHFBoYJhyoGd7KuFMioMnIhnF7Np2KTRfvPfnSTpBEXSrA3fVm4eMkPDmufoCtGiSF/9aKhv2H514XhyrAC+NmARUBaeZ44kYHU7Mu0V+wonK6vjTZGNH+usb71fo+47XdWBkvGStBFFoW5II3wHHkm/Kfkjht1aNnjMjaY+yZsDTbuVEf5MCAbr40IuquUSdKcAHSyhTD8yAU4xMbuEmJUNwcPB0MVNcjUjUekQL9m6jGvz2YKNAqzM72p0d1lDFllkiv7V8W+O87Gv6x5Etnk2Sl18Eak967eyqgEVF1KnLahPBGISY0geicDVOYnwhMV4DwiiAdS5p8VCpDtTEfOsyxYDAqolz8tuJY/91Q1tMr9sV1DOoMFhoMaUhOAgXwfZYrdQFvub6PkwwLPj3BnRF9uUCX/czIceXCfRC/EcNvPxsOsNkwfBAhROIXu0BxzpIEO1p3qViAfvy+/Mx/3PyoYWG1cBjkjiwomy7RFZFv68KXhBe5upkFiCwkRY1LcoAafUBEP7DyLm8NcNq3CMHXfaGdAn0OZWp0y6RQpf38UeeMykyZbpFuwrI6ReFT2iZDKaVGjFhg00igv3WxSDuzVWMfb8PZIvH34+PzM7F/QpVSsMkbp2yJFqwykFMg4lPmKfq2MbXlAiyYWUjvHPPZhjzrCJX43ipde/BUSSmDxFBgWmJEa9qHZob7A==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH4PR12MB720178.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(7416014)(366016)(6133799003)(22082099003)(18002099003)(921020)(4143699003)(5023799004)(11063799006)(261009223027099003)(261021121427099003)(261021123027099003)(10067099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OXpIZjRKNE5wSStzYzRZY1FqdmVlVnBnTTlWRFBGY3pnTTlTcHQ1MXErbysy?=
- =?utf-8?B?MXlKOEpCMHlhQ2tXSXBMc01pMGVjR2JxVC9ldmNUQlg3ZUlsZGh2TVRoUTNQ?=
- =?utf-8?B?aWhsOGdRZk5MVXhRbit3dS9vR1pNaXR6TkFORDlBQ201R2poV2NCcTN4N2RG?=
- =?utf-8?B?c05BVnFEbDhsTk9LdnlHZVZnTHlVUVlFYWN5SnlCbVV1bmtRRkpEbDh6R0M1?=
- =?utf-8?B?NnR0NkdXZ1ZqeEpSb0pNUW43TUo4dHB2STNBMDc1ZUJVNW4wR3VxYS9DRm1E?=
- =?utf-8?B?WmFXVEtHdDdjYXYwVW1maW9jKzh4U0hvK2ZTZ2toTzc3TmlROTlhS2ZOY3cz?=
- =?utf-8?B?bXZPQ25PcnJseGwwcnhoNm43WG9OMndKYjhhMUpGaVNYUVRyQWx0aUdKUnZo?=
- =?utf-8?B?dVh0Q2FSOStZVlhaZGZ1b3pUN2dpVzlsdHNKSE9mdllGV3pTZFNzNTBMWjM1?=
- =?utf-8?B?YXN4WEFldlBpenAvSnl5SmgrOHpqZGpKTzN2dHlvNU1kc01oMHJiUWpPc1ha?=
- =?utf-8?B?MjZMS2w3S3ZOc09zNGZUSWJSL1kwZXJYZmhwdGp2VWpWZGZDZnRMWTdpaURY?=
- =?utf-8?B?ZzNEWVpMU1pxejNkajBrUnZVd3hnaDRSc3dMdFRmTjhaYnNjc0dNM1ljY0dt?=
- =?utf-8?B?RzRZbzlWUHNZaE1lOGhBWnRLR2xwRUE1T3AvK3ZQVzRaS1ArRVZPNzkwd2ZF?=
- =?utf-8?B?bUZac1BjVHNTN040aTBrM1dpUEJvcXRmWHZyMzloOHJWenVmckgzazB5MWFp?=
- =?utf-8?B?ZEFZUU9ob2pSTHFiek5qS3JoVGxsZXptVEhuU1ROamNTbkZkdkZ4NzRweU5Z?=
- =?utf-8?B?OXp2bHpQMlNLTVNtZk1XU2hkYkhWeExaOEVPQ3F4WEFuSVNOV0h6b0Iyc2JB?=
- =?utf-8?B?VkVlOWZnVFZpNTR2d3h1a1ppWnpzb0RDQzBSVnJRcHFucmtOMVpSMkdqV3g3?=
- =?utf-8?B?cUNOK1pOeFlMYm95VlZEb2xGQkNFYmthY3ZuWUh3SE9MSzV2cXF2MnZaMWhT?=
- =?utf-8?B?K1ZPcWpjaFg1a2ZjQ0N3clZHZWFYK1QwZjNsYTA0RVY4N2NEcXo2RFFxakJk?=
- =?utf-8?B?Q0FaY21qN3cvYzBvWHcrV25ENVp4ZHUzVWFRTDlxcksrb0lZcjFrVkdXNXdB?=
- =?utf-8?B?KzhiajdQU0dmYVM2OTl1K0piaDFwdmJIL3ZOME5oN0NlTjArRkNJMjdpYko2?=
- =?utf-8?B?aHJnd0hMS21ZNHNIS2pTRUlhV2JhMzc0ZEplQUZYSVBmcEp2ZW50SXdIdGhE?=
- =?utf-8?B?S05oRk41SUlQLzZMelFUa2kvcFYzOExQUHlNbUsrMlI4T1Z5Wk94UjlxeUd6?=
- =?utf-8?B?ZUptRFpZQ3ZrN2xBTU9nVnE4aC9PVWVjWTh1VVJFOWRxUGZORVFSUHc1OHl0?=
- =?utf-8?B?bmg2L0JWOHZkRGNTZnJraXpLRDBwL3hKd0IrSmtzSUdGQWRxL2EyT2U3ajcx?=
- =?utf-8?B?aERnRGFiRENiVnErbGlXRWNITTF5QVdGb1BBNHNJdCtxUGcxOXJEN1Z6VjZO?=
- =?utf-8?B?Q0FNc2t5SmtodkhpeFdhWkJJQUtFSFJmNnArMXFzRFc4NnRxNW0ydlZCTlRS?=
- =?utf-8?B?MkU4M293bUc5VExvTzNNeXdVK1lFaTh0SUNBK1JVMGxGMndBVUJwRVhOOEpU?=
- =?utf-8?B?QUM3MWFMMXB4aEw0M2JCNmkyenFNdStieXc5Z1h3RUhPamhVQnhnNnlwQU1j?=
- =?utf-8?B?aVVpekhISXZaSUxFSjBySk11bGUxanBhWHZPZTN6QlU4RDhWWkJXd1RydGtn?=
- =?utf-8?B?OGo5UUphWGNJbHYwTjI4dy9MMlhIK2JuWnJvbURBRUdlbDdlSHh5MFo4RWNE?=
- =?utf-8?B?Ty9wdk5RZEJuelk0UTBrNVhzakNQTFMwSzZqSTNSaUJERnJ2TEovN3lWeW9J?=
- =?utf-8?B?OTJOVlBZcUtQaFpSZ0NnajdURldScFQwRlJqb2lLU1A4UGV1dldNRFpza3Zx?=
- =?utf-8?B?d1RyVVYxVHMxVXQ1T29OMnNUenBkL0c0dlYxQk45Y0NwUVdNNXlSZEtQSms1?=
- =?utf-8?B?OWdLbjV6TU56Mi85V2VsZm5UTm9GTVNzYzRpWkNNdkFKNXR4dDBablVBeXp2?=
- =?utf-8?B?NnNkWkZMMjFRLzZUTmxENjdxQkkxRkNTSlc4d2Z0TEkxMTRoTlJuZE0yRWkx?=
- =?utf-8?B?TytvTW5tRndYUFN6RlhkRnNpb2NOVFFLMlB6MFdtMVJIc1lHckY5WmZRQUlL?=
- =?utf-8?B?L1FEV2hOd29nbmpjYXM0d0lCc3dUL0U3TkxJcEJRaG9VNld0ZU92RHczNm9D?=
- =?utf-8?B?R1hGbTc1eGdRakY0V1dpSmJ0aXRWTkxnUmhNdkV6aEtCbmIwMHdSemxGNXVm?=
- =?utf-8?Q?BAqdISXrwyboT+REn6?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02d89d63-e0dc-480a-4782-08df3024aa8a
-X-MS-Exchange-CrossTenant-AuthSource: CH4PR12MB720178.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2026 10:10:15.1102
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ahlZO6LpoJI7LoXzwlYE2d167eDuAShBtd5Uu0KJPVQA3VSwm/tLo3yjZcr/o2oN8KPrj4qBvLV1Adocfu0wRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8200
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32Oyw6CMBBFf4XM2jFt5VVX/odxAWWURml1WomG8
+ O8W2Lu8k3vPnAkCsaUAx2wCptEG610KapeB6Rt3I7RdyqCEKkUlNHY8oPM4eCY03jky0TMyBYq
+ YF0Qy7ypTKgOJ8GS62s9KP1+2zPR6pydxO0LbhAUzDDYeMy2vhSKta5W3sPR7GxL8u8qNch0sH
+ lLI/K/HKFFgUZdGm1Sv1eF0J3b02Hu+wWWe5x/N8Hdo9wAAAA==
+X-Change-ID: 20260709-drm-no-more-connector-reset-45ee14d7c62c
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Ruben Wauters <rubenru09@aol.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>, 
+ Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>, 
+ Russell King <linux@armlinux.org.uk>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ Alison Wang <alison.wang@nxp.com>, Stefan Agner <stefan@agner.ch>, 
+ Tian Tao <tiantao6@hisilicon.com>, 
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
+ Yongbang Shi <shiyongbang@huawei.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Huacai Chen <chenhuacai@kernel.org>, 
+ Icenowy Zheng <zhengxingda@iscas.ac.cn>, Jianmin Lv <lvjianmin@loongson.cn>, 
+ Mingcong Bai <jeffbai@aosc.io>, Qianhai Wu <wuqianhai@loongson.cn>, 
+ Xi Ruoyao <xry111@xry111.site>, Gerd Hoffmann <kraxel@redhat.com>, 
+ spice-devel@lists.freedesktop.org, virtualization@lists.linux.dev, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ linux-renesas-soc@vger.kernel.org, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>, 
+ Iker Pedrosa <ikerpedrosam@gmail.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
+ Alexey Brodkin <abrodkin@synopsys.com>, Hans de Goede <hansg@kernel.org>, 
+ LiangCheng Wang <zaq14760@gmail.com>, Alex Lanzano <lanzano.alex@gmail.com>, 
+ Sean Paul <sean@poorly.run>, Chia-I Wu <olvaffe@gmail.com>, 
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
+ Gurchetan Singh <gurchetansingh@chromium.org>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ linux-amlogic@lists.infradead.org, Harry Wentland <harry.wentland@amd.com>, 
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Tvrtko Ursulin <tursulin@ursulin.net>, intel-gfx@lists.freedesktop.org, 
+ intel-xe@lists.freedesktop.org, Danilo Krummrich <dakr@kernel.org>, 
+ Lyude Paul <lyude@redhat.com>, nouveau@lists.freedesktop.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11112; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=l8HHxUF3ppkOWkHs/T+vPFIyXJxDYh41p1hKBDhkwOM=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFm3mHrFm95UZ4hNsDky/UeeVf6r7FOOW/TK/tl9b71/x
+ a/25817HVNZGIQ5GWTFFFmeyISdXt6+uMrBfuUPmDmsTCBDGLg4BWAiMy4xNjz+MKfvS8IPz4Pv
+ 7sXOO3X6TJiz2vrd3oaau3kPeJ+JrzO3E06I6HV5cZGNhTNZfAb7fsb6rHTnrCXTJzyey3v359X
+ WDMVpC+71/xRwmp6k4HY30jBg55GC3SpL7Bqkd32e7+CR4h8DAA==
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-Hi Christian,
+This is a follow-up to the plane and CRTC reset removal series, and
+part of a larger effort to remove the reset hook from all KMS objects.
 
+The connector reset hook is overloaded: it is called both at probe
+time to create the initial software state and during suspend/resume to
+reset hardware and software state. These two roles have different
+requirements, and the reset hook is not fallible, making error
+handling difficult for the initial state allocation path.
 
-On 20/10/26 21:41, Christian Loehle wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 10/20/26 13:18, Sumit Gupta wrote:
->> Values written to OSPM-set CPPC registers via sysfs can be lost in two
->> ways:
->>
->>    - Across CPU hotplug: the platform may reset a CPU's registers while it
->>      is offline.
->>    - On driver unload: the value the driver wrote is left in the register
->>      instead of returning to its pre-driver state.
->>
->> Add a small table-driven mechanism that handles both:
->>
->>    - On init(), capture each register's firmware value before the
->>      driver programs anything.
->>    - On offline(), read back each register's current value (whatever was
->>      last set via sysfs) so it can be reapplied, then restore the firmware
->>      value.
-> 
-> Sorry for the late suggestion, but all the ospm-set registers I think we can
-> save ourselves some headache by just saving these at sysfs_store (and not deal
-> with potential read-errors during offline/suspend (which actually may happen!).
-> 
+While reset has the semantics to reset both the software and hardware
+state, the vast majority of implementations and all the helpers only
+reset the software state, making them equivalent to
+atomic_create_state in practice. The atomic_create_state hook makes
+this explicit: it only allocates and initializes a pristine state
+without any side effect, and returns the state pointer or an ERR_PTR
+on failure.
 
-v1 [1] saved the values at store time. In v2 I switched to reading
-them in offline(), following the flow discussed in [2]. One read there
-covers every store handler and the pending boot parameter series.
+This series converts all connector drivers tree-wide from the reset hook
+to atomic_create_state, then removes the reset hook from struct
+drm_connector_funcs entirely. The conversions were done using a
+combination of Coccinelle semantic patches, mechanical one-line
+replacements and manual adjustments.
 
-But a read error in offline() or suspend() drops the request. A failed
-reapply in online() can also leave the register at its firmware or reset
-value, which the next offline() or suspend() then saves over the
-request. Saving at store time keeps the request in both cases.
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v2:
+- Change the parameter order of __drm_atomic_helper_connector_hdmi_state_init
+- Fixed state argument casing for drm_atomic_helper_connector_tv_margins_state_init
+  and drm_atomic_helper_connector_tv_state_init
+- Put atomic_create_state before atomic_duplicate_state
+- Fix state allocation for MST and WB connectors
+- Link to v1:
+  https://lore.kernel.org/r/20261014-drm-no-more-connector-reset-v1-0-586c9c026823@kernel.org
 
-We could combine the two. Keep the policy across hotplug and the
-firmware restore in offline() from v2, and save the requested values
-at store time as in v1:
-  - init() saves the firmware values and uses them as the initial
-    requested values.
-  - Each sysfs store updates the requested value after it succeeds.
-    The boot parameter series will do the same.
-  - offline() and suspend() restore the firmware values without
-    reading the registers.
-  - online() and resume() reapply the requested values. If that fails,
-    the request is kept for a later online().
+---
+Maxime Ripard (59):
+      drm/hdmi: Change __drm_atomic_helper_connector_hdmi_state_init parameter order
+      drm/atomic-state-helper: Rename connector_tv_margins_reset to state_init
+      drm/atomic-state-helper: Rename connector_tv_reset to state_init
+      drm/panel: Add atomic_create_state support
+      drm/amdgpu: vkms: Switch to drm_atomic_helper_connector_create_state
+      drm/aspeed: Switch to drm_atomic_helper_connector_create_state
+      drm/ast: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: analogix-anx6345: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: analogix-anx78xx: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: chrontel-ch7033: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: nxp-ptn3460: Switch to drm_atomic_helper_connector_create_state
+      drm/panel: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: synopsys: dw-hdmi: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: tc358767: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: tda998x: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: ti-tfp410: Switch to drm_atomic_helper_connector_create_state
+      drm/exynos: Switch to drm_atomic_helper_connector_create_state
+      drm/fsl-dcu: Switch to drm_atomic_helper_connector_create_state
+      drm/hisilicon: hibmc: Switch to drm_atomic_helper_connector_create_state
+      drm/logicvc: Switch to drm_atomic_helper_connector_create_state
+      drm/loongson: Switch to drm_atomic_helper_connector_create_state
+      drm/mgag200: Switch to drm_atomic_helper_connector_create_state
+      drm/mipi-dbi: Switch to drm_atomic_helper_connector_create_state
+      drm/qxl: Switch to drm_atomic_helper_connector_create_state
+      drm/renesas: shmobile: Switch to drm_atomic_helper_connector_create_state
+      drm/sitronix: st7571: Switch to drm_atomic_helper_connector_create_state
+      drm/sitronix: st7920: Switch to drm_atomic_helper_connector_create_state
+      drm/sti: Switch to drm_atomic_helper_connector_create_state
+      drm/sun4i: Switch to drm_atomic_helper_connector_create_state
+      drm/tegra: Switch to drm_atomic_helper_connector_create_state
+      drm/tests: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: arcpgu: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: bochs: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: cirrus: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: gm12u320: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: pixpaper: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: repaper: Switch to drm_atomic_helper_connector_create_state
+      drm/tiny: sharp: Switch to drm_atomic_helper_connector_create_state
+      drm/udl: Switch to drm_atomic_helper_connector_create_state
+      drm/vboxvideo: Switch to drm_atomic_helper_connector_create_state
+      drm/virtio: Switch to drm_atomic_helper_connector_create_state
+      drm/vkms: Switch to drm_atomic_helper_connector_create_state
+      drm/xen: Switch to drm_atomic_helper_connector_create_state
+      drm/bridge: synopsys: dw-hdmi: Convert to atomic_create_state
+      drm/meson: Convert to atomic_create_state
+      drm/gud: Convert to atomic_create_state
+      drm/sun4i: hdmi: Convert to atomic_create_state
+      drm/sun4i: tv: Convert to atomic_create_state
+      drm/tests: hdmi: Convert to atomic_create_state
+      drm/vc4: hdmi: Convert to atomic_create_state
+      drm/vc4: vec: Convert to atomic_create_state
+      drm/connector: Remove drm_atomic_helper_connector_reset()
+      drm/amdgpu: dm: Convert to atomic_create_state
+      drm/ast: Convert to atomic_create_state
+      drm/i915: Convert to atomic_create_state
+      drm/nouveau: Convert to atomic_create_state
+      drm/tegra: Convert to atomic_create_state
+      drm/connector: Remove __drm_atomic_helper_connector_reset()
+      drm/connector: Remove reset
 
-Does this sound fine and keep the intent of the earlier discussion?
-I will respin accordingly.
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c           |  2 +-
+ .../amd/display/amdgpu_dm/amdgpu_dm_connector.c    | 32 ++++----
+ .../amd/display/amdgpu_dm/amdgpu_dm_connector.h    |  3 +-
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 11 ++-
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c   | 17 +++-
+ .../amdgpu_dm/tests/amdgpu_dm_connector_test.c     | 90 ++++++++++++++--------
+ drivers/gpu/drm/aspeed/aspeed_gfx_out.c            |  2 +-
+ drivers/gpu/drm/ast/ast_dp.c                       | 18 ++---
+ drivers/gpu/drm/ast/ast_dp501.c                    |  2 +-
+ drivers/gpu/drm/ast/ast_sil164.c                   |  2 +-
+ drivers/gpu/drm/ast/ast_vga.c                      |  2 +-
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |  2 +-
+ drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c |  2 +-
+ drivers/gpu/drm/bridge/chrontel-ch7033.c           |  2 +-
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               |  2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          | 12 ++-
+ drivers/gpu/drm/bridge/tc358767.c                  |  2 +-
+ drivers/gpu/drm/bridge/tda998x_drv.c               |  2 +-
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  2 +-
+ drivers/gpu/drm/display/drm_bridge_connector.c     |  4 +-
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c    |  9 +--
+ drivers/gpu/drm/drm_atomic_state_helper.c          | 67 ++++------------
+ drivers/gpu/drm/drm_connector.c                    |  8 --
+ drivers/gpu/drm/drm_mode_config.c                  |  4 +-
+ drivers/gpu/drm/drm_panel.c                        | 16 +++-
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c            |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c           |  2 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  2 +-
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |  2 +-
+ drivers/gpu/drm/gud/gud_connector.c                | 20 +++--
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c     |  2 +-
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c   |  2 +-
+ drivers/gpu/drm/i915/display/intel_connector.c     |  6 +-
+ drivers/gpu/drm/i915/display/intel_sdvo.c          |  6 +-
+ drivers/gpu/drm/logicvc/logicvc_interface.c        |  2 +-
+ drivers/gpu/drm/loongson/lsdc_output_7a1000.c      |  2 +-
+ drivers/gpu/drm/loongson/lsdc_output_7a2000.c      |  4 +-
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c         | 12 ++-
+ drivers/gpu/drm/mgag200/mgag200_vga.c              |  2 +-
+ drivers/gpu/drm/mgag200/mgag200_vga_bmc.c          |  2 +-
+ drivers/gpu/drm/nouveau/dispnv50/disp.c            | 11 ++-
+ drivers/gpu/drm/nouveau/nouveau_connector.c        | 27 ++++---
+ drivers/gpu/drm/nouveau/nouveau_connector.h        |  3 +-
+ drivers/gpu/drm/qxl/qxl_display.c                  |  2 +-
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c  |  2 +-
+ drivers/gpu/drm/sitronix/st7571.c                  |  2 +-
+ drivers/gpu/drm/sitronix/st7920.c                  |  2 +-
+ drivers/gpu/drm/sti/sti_dvo.c                      |  2 +-
+ drivers/gpu/drm/sti/sti_hda.c                      |  2 +-
+ drivers/gpu/drm/sti/sti_hdmi.c                     |  2 +-
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c             | 17 +++-
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 |  2 +-
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  |  2 +-
+ drivers/gpu/drm/sun4i/sun4i_tv.c                   | 16 +++-
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c             |  2 +-
+ drivers/gpu/drm/tegra/dsi.c                        | 17 ++--
+ drivers/gpu/drm/tegra/hdmi.c                       |  2 +-
+ drivers/gpu/drm/tegra/sor.c                        | 13 ++--
+ drivers/gpu/drm/tests/drm_atomic_commit_test.c     |  2 +-
+ drivers/gpu/drm/tests/drm_atomic_test.c            |  2 +-
+ drivers/gpu/drm/tests/drm_connector_test.c         |  4 +-
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 17 +++-
+ drivers/gpu/drm/tests/drm_probe_helper_test.c      |  2 +-
+ drivers/gpu/drm/tiny/arcpgu.c                      |  2 +-
+ drivers/gpu/drm/tiny/bochs.c                       |  2 +-
+ drivers/gpu/drm/tiny/cirrus-qemu.c                 |  2 +-
+ drivers/gpu/drm/tiny/gm12u320.c                    |  2 +-
+ drivers/gpu/drm/tiny/pixpaper.c                    |  2 +-
+ drivers/gpu/drm/tiny/repaper.c                     |  2 +-
+ drivers/gpu/drm/tiny/sharp-memory.c                |  2 +-
+ drivers/gpu/drm/udl/udl_modeset.c                  |  2 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c              |  2 +-
+ drivers/gpu/drm/vc4/vc4_hdmi.c                     | 31 ++++++--
+ drivers/gpu/drm/vc4/vc4_vec.c                      | 16 +++-
+ drivers/gpu/drm/virtio/virtgpu_display.c           |  2 +-
+ drivers/gpu/drm/vkms/vkms_connector.c              |  2 +-
+ drivers/gpu/drm/vkms/vkms_writeback.c              |  2 +-
+ drivers/gpu/drm/xen/xen_drm_front_conn.c           |  2 +-
+ include/drm/display/drm_hdmi_state_helper.h        |  4 +-
+ include/drm/drm_atomic_state_helper.h              |  9 +--
+ include/drm/drm_connector.h                        | 12 ---
+ include/drm/drm_mipi_dbi.h                         |  2 +-
+ 82 files changed, 360 insertions(+), 276 deletions(-)
+---
+base-commit: 91f52e99824b0beebb48cad51bbda81437af8664
+change-id: 20260709-drm-no-more-connector-reset-45ee14d7c62c
 
-Thanks,
-Sumit
-
-[1] https://lore.kernel.org/lkml/20260623095403.3407436-1-sumitg@nvidia.com/
-[2] 
-https://lore.kernel.org/lkml/15def9ce-abbd-4ef5-bb8f-0c55b42a0181@arm.com/
-
-Thanks,
-Sumit
-
-
->>    - On online(), reapply the value captured at offline() after
->>      reprogramming the performance controls. A failed write to the controls
->>      does not skip the reapply, as no other path restores these registers.
->>    - On exit(), nothing is needed, as the core calls offline() first, which
->>      already restored the firmware values.
->>
->> Cover the Autonomous Selection (auto_sel), Energy Performance Preference
->> (EPP) and Autonomous Activity Window (auto_act_window) registers. Writes
->> to EPP and auto_act_window only have meaning while auto_sel is enabled,
->> so write auto_sel before them when enabling it and after them when
->> disabling it. While autonomous selection stays disabled, the platform may
->> ignore those writes.
->>
->> Suggested-by: Pierre Gondois <pierre.gondois@arm.com>
->> Link: https://lore.kernel.org/all/86780f97-29ee-4a72-b311-38c89434b707@arm.com/
->> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->> ---
->>   drivers/cpufreq/cppc_cpufreq.c | 176 ++++++++++++++++++++++++++++++++-
->>   1 file changed, 173 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
->> index 9e1214e1cb0d..1b733f15d641 100644
->> --- a/drivers/cpufreq/cppc_cpufreq.c
->> +++ b/drivers/cpufreq/cppc_cpufreq.c
->> @@ -29,6 +29,166 @@
->>
->>   static struct cpufreq_driver cppc_cpufreq_driver;
->>
->> +/*
->> + * OSPM-set CPPC registers tracked for save/restore. A value the OS wrote is
->> + * reapplied from online() across CPU hotplug, and the firmware value is
->> + * restored from offline().
->> + *
->> + * Autonomous Selection (auto_sel) is kept first, as the registers after it
->> + * only have meaning while it is enabled.
->> + */
->> +enum cppc_saved_reg_id {
->> +     CPPC_SAVED_AUTO_SEL,
->> +     CPPC_SAVED_EPP,
->> +     CPPC_SAVED_AUTO_ACT_WINDOW,
->> +     CPPC_NR_SAVED_REGS,
->> +};
->> +
->> +struct cppc_saved_reg {
->> +     const char *name;
->> +     int (*get)(int cpu, u64 *val);
->> +     int (*set)(int cpu, u64 val);
->> +};
->> +
->> +static const struct cppc_saved_reg cppc_saved_regs[CPPC_NR_SAVED_REGS] = {
->> +     [CPPC_SAVED_AUTO_SEL] = {
->> +             .name = "auto_sel",
->> +             .get = cppc_get_auto_sel,
->> +             .set = cppc_set_auto_sel,
->> +     },
->> +     [CPPC_SAVED_EPP] = {
->> +             .name = "epp",
->> +             .get = cppc_get_epp_perf,
->> +             .set = cppc_set_epp,
->> +     },
->> +     [CPPC_SAVED_AUTO_ACT_WINDOW] = {
->> +             .name = "auto_act_window",
->> +             .get = cppc_get_auto_act_window,
->> +             .set = cppc_set_auto_act_window,
->> +     },
->> +};
->> +
->> +enum cppc_saved_type {
->> +     CPPC_SAVED_FIRMWARE,
->> +     CPPC_SAVED_REQUESTED,
->> +     CPPC_NR_SAVED_TYPES,
->> +};
->> +
->> +/*
->> + * Per-policy values saved for each register in cppc_saved_regs[], U64_MAX
->> + * if there is none:
->> + *   CPPC_SAVED_FIRMWARE  - value before the driver touched it, captured at
->> + *                          init() and written back when the policy goes
->> + *                          offline
->> + *   CPPC_SAVED_REQUESTED - value in effect when the policy last went offline,
->> + *                          reapplied at online()
->> + */
->> +struct cppc_policy_state {
->> +     u64 regs[CPPC_NR_SAVED_REGS][CPPC_NR_SAVED_TYPES];
->> +};
->> +
->> +static DEFINE_PER_CPU(struct cppc_policy_state, cppc_policy_state);
->> +
->> +/*
->> + * Per-policy state is kept in the per-CPU variable of the first CPU the policy
->> + * manages. related_cpus (the policy's full set of CPUs) never changes while the
->> + * policy exists, so this CPU (unlike policy->cpu) stays the same across CPU
->> + * hotplug, and every callback reaches the same copy.
->> + */
->> +static struct cppc_policy_state *
->> +cppc_cpufreq_policy_state(struct cpufreq_policy *policy)
->> +{
->> +     const struct cpumask *policy_cpus = policy->related_cpus;
->> +
->> +     /*
->> +      * related_cpus is empty until the core fills it in after init(), so
->> +      * fall back to policy->cpus, which has the same first CPU.
->> +      */
->> +     if (cpumask_empty(policy_cpus))
->> +             policy_cpus = policy->cpus;
->> +
->> +     return &per_cpu(cppc_policy_state, cpumask_first(policy_cpus));
->> +}
->> +
->> +/*
->> + * Save each register's current value, either as the firmware value, captured
->> + * before the driver programs anything, or as the requested value, to reapply
->> + * at online().
->> + */
->> +static void cppc_cpufreq_save_regs(struct cpufreq_policy *policy,
->> +                                enum cppc_saved_type saved_type)
->> +{
->> +     struct cppc_policy_state *st = cppc_cpufreq_policy_state(policy);
->> +     unsigned int cpu = policy->cpu;
->> +     u64 val;
->> +     int i;
->> +
->> +     for (i = 0; i < CPPC_NR_SAVED_REGS; i++) {
->> +             if (cppc_saved_regs[i].get(cpu, &val))
->> +                     val = U64_MAX;
->> +
->> +             st->regs[i][saved_type] = val;
->> +             if (saved_type == CPPC_SAVED_FIRMWARE)
->> +                     st->regs[i][CPPC_SAVED_REQUESTED] = U64_MAX;
->> +     }
->> +}
->> +
->> +/*
->> + * Write one tracked register, skipping it when there is no saved value.
->> + * A register the platform does not allow writing is not an error.
->> + */
->> +static void cppc_cpufreq_write_saved_reg(unsigned int cpu,
->> +                                      enum cppc_saved_reg_id reg, u64 val,
->> +                                      enum cppc_saved_type saved_type)
->> +{
->> +     const char *op = (saved_type == CPPC_SAVED_FIRMWARE) ?
->> +                      "restore firmware" : "reapply saved";
->> +     int ret;
->> +
->> +     if (val == U64_MAX)
->> +             return;
->> +
->> +     ret = cppc_saved_regs[reg].set(cpu, val);
->> +     if (ret == -EOPNOTSUPP)
->> +             return;
->> +     if (ret)
->> +             pr_debug("Failed to %s %s=%llu on CPU%u (%d)\n", op,
->> +                      cppc_saved_regs[reg].name, val, cpu, ret);
->> +}
->> +
->> +/*
->> + * Apply the saved firmware or requested value to each tracked register.
->> + *
->> + * Write auto_sel first when the value being applied enables autonomous
->> + * selection and last when it disables it, so the writes to the dependent
->> + * registers can still take effect. While autonomous selection stays disabled,
->> + * the platform may ignore those writes. Do not enable it temporarily to force
->> + * them through.
->> + */
->> +static void cppc_cpufreq_apply_saved_regs(struct cpufreq_policy *policy,
->> +                                       enum cppc_saved_type saved_type)
->> +{
->> +     const struct cppc_policy_state *st = cppc_cpufreq_policy_state(policy);
->> +     unsigned int cpu = policy->cpu;
->> +     u64 auto_sel, val;
->> +     int i;
->> +
->> +     auto_sel = st->regs[CPPC_SAVED_AUTO_SEL][saved_type];
->> +
->> +     if (auto_sel)
->> +             cppc_cpufreq_write_saved_reg(cpu, CPPC_SAVED_AUTO_SEL, auto_sel,
->> +                                          saved_type);
->> +
->> +     for (i = CPPC_SAVED_AUTO_SEL + 1; i < CPPC_NR_SAVED_REGS; i++) {
->> +             val = st->regs[i][saved_type];
->> +             cppc_cpufreq_write_saved_reg(cpu, i, val, saved_type);
->> +     }
->> +
->> +     if (!auto_sel)
->> +             cppc_cpufreq_write_saved_reg(cpu, CPPC_SAVED_AUTO_SEL, auto_sel,
->> +                                          saved_type);
->> +}
->> +
->>   #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
->>   static enum {
->>        FIE_UNSET = -1,
->> @@ -800,6 +960,8 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->>        policy->cur = cppc_perf_to_khz(caps, desired_perf);
->>        cpu_data->perf_ctrls.desired_perf = desired_perf;
->>
->> +     cppc_cpufreq_save_regs(policy, CPPC_SAVED_FIRMWARE);
->> +
->>        ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
->>        if (ret) {
->>                pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
->> @@ -843,12 +1005,14 @@ static void cppc_cpufreq_cpu_exit(struct cpufreq_policy *policy)
->>    *
->>    * The platform may have disabled CPPC and reset the performance controls
->>    * (desired, min and max performance) while the CPU was offline, so re-enable
->> - * CPPC and reprogram them.
->> + * CPPC and reprogram them. Also reapply the OSPM-set registers that offline()
->> + * reset to firmware values.
->>    *
->>    * Report failures without returning them, or the core would free the policy and
->>    * leave the CPU without cpufreq. A failed write to the performance controls is
->> - * not fatal, as the governor's next request programs them again. A failed CPPC
->> - * enable stops the restore, as the writes that follow may not reach the
->> + * not fatal, as the governor's next request programs them again. The OSPM-set
->> + * registers are reapplied even then, as no other path restores them. A failed
->> + * CPPC enable skips both restores, as the writes that follow may not reach the
->>    * platform.
->>    */
->>   static int cppc_cpufreq_cpu_online(struct cpufreq_policy *policy)
->> @@ -896,6 +1060,8 @@ static int cppc_cpufreq_cpu_online(struct cpufreq_policy *policy)
->>                WRITE_ONCE(cpu_data->perf_limits_valid, true);
->>        }
->>
->> +     cppc_cpufreq_apply_saved_regs(policy, CPPC_SAVED_REQUESTED);
->> +
->>   out_fie:
->>        /* Restart what offline() stopped, with a new counter snapshot. */
->>        cppc_cpufreq_cpu_fie_init(policy);
->> @@ -915,6 +1081,10 @@ static int cppc_cpufreq_cpu_offline(struct cpufreq_policy *policy)
->>        unsigned int cpu = policy->cpu;
->>        int ret;
->>
->> +     /* Save what the OS set, and leave the platform in its pre-driver state. */
->> +     cppc_cpufreq_save_regs(policy, CPPC_SAVED_REQUESTED);
->> +     cppc_cpufreq_apply_saved_regs(policy, CPPC_SAVED_FIRMWARE);
->> +
->>        /*
->>         * Stop the frequency invariance updates and cancel the pending work, so
->>         * that no sample spans the offline window. online() restarts them with
-> 
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
 
