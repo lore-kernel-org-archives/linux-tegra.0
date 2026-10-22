@@ -1,49 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792674990;
-	b=CKaY/eW7bGOCmvKtgVpotvu8gZ0tk0/vgoMQKvgnR+VfKCvaqAHS0i/C/eQ7+A9UpST2
-	 OwGus8TizKiyyNaErMPEoRk8D3DjpBV9dO19V+BAS2gJ5mxoAAGPw7TpZ1UPCub2bTWbX
-	 m81d8lhf0BLtfmZTjO6ZzDouTFg+ttaPyss1ApCdyoxzsbJpopoxFsYZZMB+pq/O9TXBQ
-	 NeRpAbrJ6qgV28SGBdbQVPSxkSN7H4qOTZ2Ftl88ePc6RNrHkOP/tK9gXp9HoNdY4mLWb
-	 PXFj0RpR5mmzLgb6bMt3Z6PqFy2uMzgR7Kw/vW19yU3VamT4KXz4KaDgLS62ikhDP7g==
+	t=1792675401;
+	b=LmIWG8vv0aLgRkFJjoXq6ANoAD3wP4XAm6RtXoNZ3gloBmkqcHOONP9aQQEago4zZCqc
+	 rETTeguwgo3W34ctTMLlC6fm05OuirgM77TJKlZJRCGRsAaSkVbSsSA8M0E3lzcs3hTqH
+	 hr/NMFHtzk+owMBWHzbo7AHVPmrLNt6e4VcMM/QYtTn8fXKDeCK/HQnYuyIeRJd8Staif
+	 /efHAvcOiD01Fhj5YcX7WbkTb0Ljtw4e77T5+N3TCj1I/Mbh7dLXhSdcN5DKeDESDNyqx
+	 3aJ+qtKSipWcyGG5HCbYdhMCjyi/yajWZgfIM+jSmfTyXeFFRkq7TJ4gfvKRV9pFX9Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792674990;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:From:
-	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=95gIZ/rOhUqAkfRUZlhwY8It1fpNlrmqRnyk+6vFBTo=;
-	b=K9Hnz2BoFu0g2vSR1rtVvi8ZQqKVqsWsXTd649FtqjFDLxx81WE1y9gTOMqSObMX4eco
-	 woVc0QrSxZvSDAofviHSchFNUhe1Jyy8YsJZrxCE3vx2M4l/ePURgp+YRMT/JLtUwM2Hi
-	 IaKB2X3EpTocfRhz79lDslutW5JzCcCXRzaHVaXY/3+alhubOFP0JVNCl7YMrUgn2p8U6
-	 4TaaYWQMqJe9K0Jn1XL7oGJUQl8ETEomG8oMiHASkbzbROEud4Umm6dz/618qKdFILIiW
-	 T4jRvRmJDqQjonxI68/zMXoJhcUK/zvbNTwyBcJ5GU/3HcMjbnfIFwR9Obl29IMKymw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792675401;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=5ZnaBjVx8QabD0XIo1C2JwLGY8gbe6s95hFqcHQRQqE=;
+	b=nViHg6180e8u8BP6qbE/tkRHXGsb8XvsxI2Q7PDwlX7Wotw4eUvWntA80JGLFcjwV3vT
+	 PKP4PFDOjjCiRw4n8hVRFzd2nm+u97Xe6+lqTpY/RrIZ7wVDBBlOFJHNYkiCzZqYd2BLG
+	 7oTN6JSFPWJgZA4+V+jkcvGtH21naHcfZz+4rTp2g2aPmnynj+KO0PqfRXcLJtkj1RlHd
+	 L4uFG5Y4JFt4cYEUYBGrxLLN4l9KK+mupnMnbLaiLlNNp5wAhFOg0rzdvuErSXjmDfs7t
+	 HyB2ho4BjuOrQqnXB6HKr1ewD/aTGY9vvt8uqKXaVOvjxWae3JNUFkOnK1LNoRYSbTg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Po2Gv+pN;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6715D606A324;
-	Thu, 22 Oct 2026 13:16:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6715D606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=M8MI6MLW;
+	arc=none smtp.remote-ip=209.85.208.47
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDB5606A31B
+	for <linux-tegra@vger.kernel.org>; Thu, 22 Oct 2026 13:23:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BCDB5606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Po2Gv+pN
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B2C01476;
-	Thu, 22 Oct 2026 06:16:25 -0700 (PDT)
-Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9A693F673;
-	Thu, 22 Oct 2026 06:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1792674988; bh=VtjlyhfnDPej66ib6QAEpVj/N8t0KLq/+awBY3pvJWI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Po2Gv+pN5qUlVoTfmfm6+EiT9jkBnsjCdYxUB1uttjzopZ2ujfpPncmF8NG5AUHA/
-	 ntV3DmM0O4FOtoaFsSCaE9vCLLGuGeVUWR3sgYLD5Vfg3x3t/YZ8m3si9+Ow2OnH08
-	 xitDAI80+tuIJ7Q2ABl3pIfc3FZeSehoHXU+QxHE=
-Message-ID: <6406c7b1-5e37-4c22-83c2-089c35ef54bf@arm.com>
-Date: Thu, 22 Oct 2026 14:16:05 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=M8MI6MLW
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6afafc89b48so2718524a12.2
+        for <linux-tegra@vger.kernel.org>; Thu, 22 Oct 2026 06:23:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792675399; x=1793280199; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=5ZnaBjVx8QabD0XIo1C2JwLGY8gbe6s95hFqcHQRQqE=;
+        b=M8MI6MLW/oqIYL7bAbSl5TvQribAzSirRqMJR1M+Mch23Vc0bcfaRA3Capnqy/K0MV
+         oKeCoZR596AEAu8eVuWT0D6chDRJE53qezuNk+XD595jMmO9FAVQHGt/gveJno5J3NZe
+         YwnfLv2VL75uDvzSA6GJwvmZ54DM3zhHj+0sMInHkrKTDAjv45qE95lEPhJkWXqVQTR9
+         AN1tg1Ni6uB+yipZ66cqVWmSv5UOKWFr4tDOY0xy53WW+qDtM4svaONQgdmlZ5ec4gsk
+         Tbg5SSdwoFGx50OYCvmv3NKQarwzCJ6ccdQvAi8iOaGMwmvEp2M2XmNMeYipn63Fg6Su
+         nhQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792675399; x=1793280199;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=5ZnaBjVx8QabD0XIo1C2JwLGY8gbe6s95hFqcHQRQqE=;
+        b=LIIHbJRDxMNbguKaHBAJS2KU2sopxGmuapT3IdOp/oFiDr4oL9gwrSnnLfoJbsER4g
+         d3ep1rUA+Ud+vFiSnNiNmmyCJEFN4OvWg4vzVa78oqx9V1+5SXPooK1On0RE0l+UI2Ta
+         pXRIyAF7SHpPV1aCLJYC2qqU6FRSbBmKrSoyhN6yCd6r9coSKWp1VWAfMY9Y/0fsaX7R
+         8Kgg5LUxyS1yPR5u6pD8S29/ZyGK+xq5lqtc9vPjwK9+7j/3RWlalkrkWe1uKoGCw1Mn
+         PsCJe2+qoHJWT8Vxkot9rPkXThN4MrYurldrxtd43mZ6gYMkXAw/zoQK8F1aSfzn2DOf
+         PUAA==
+X-Forwarded-Encrypted: i=1; AKwUvBzSfv7RJ8JPIN87UethGuIvl6A7291hLR6IMh95bD4GLRt63I19gB/7kSwKH+6e5+7ZBHenHYBvof5M/A==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLx3ikCCqKmH/pyYpEEcE3LLg6IgkOJRNw7Z8/duM1k3fCW2pG7
+	F7zVenrK/T6HajwCQSRi67m2lEA4Er1ROKfrd2EvgezT+wlwxOZtUFLS
+X-Gm-Gg: AYBFou29gtthDBWsqwe2OcAfYlyXwTq5Z+iWxkLSi5lTMKyhsbKkFhrOGtwu39SiLtZ
+	TZP+snL6DjG8HTc8PItWNOTF1jTO/xKL3gQ4qhKIgg+Ea6seZ24dIyhwaJs0Y6upYs4AhcoS+5Y
+	aG7vDcDeQau64ieqYERBpo4fa2aXJ8aoRGWyerb9aT/WW5s5sacKIbB3nSGUZlWzyx11qke5g+K
+	iJMsCcQzpndKULpF6vIQYD18f9NFDOLCJ72kyurpICi/8q4N4heVp5aOO0FXkbscCdQ+N7aFHx8
+	HizlrBOsK3Es6btm/z4euxBM9hAVAC7A6EvZKvx+zWCXRUsJV9awJLd5XsW3vcF1a+7Uy5z+Vrf
+	M08S8InnjvoicFQidBInPXpculqnxvByYHjAQgG6rON/emgC8l0v3veIFdC1qITFUs02EUDm7hE
+	n6GGD1lQRzD8S2JnKiBlKFgO91n23/5yxZEiFYeSRQITr+wG885FV6te6zR5F9UbvpPiouJf0Vo
+	zjA+wEYNxs363Bz32jZo42bF3Gwe8YWCzhwuVN+496QaGzBTZweBB6d6doL7XVpUn+jAcWZ0dia
+X-Received: by 2002:a05:6402:64f:b0:6b4:2aa6:2c07 with SMTP id 4fb4d7f45d1cf-6b42aa631d2mr825748a12.14.1792675398767;
+        Thu, 22 Oct 2026 06:23:18 -0700 (PDT)
+Received: from xeon ([188.163.112.62])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b40313074esm1818061a12.27.2026.10.22.06.23.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2026 06:23:17 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v4 0/7] drm/tegra: Add support for Tegra20/Tegra30 8-bit CPU interface
+Date: Thu, 22 Oct 2026 16:22:52 +0300
+Message-ID: <20261022132259.240717-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -53,372 +108,87 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/11] ARM: dma-mapping: Implement and expose DMA setup
- functions
-To: Mikko Perttunen <mperttunen@nvidia.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Heiko Stuebner <heiko@sntech.de>,
- Thierry Reding <thierry.reding@kernel.org>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Yong Wu <yong.wu@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20261016-b4-arm32-iommu-dma-cookie-v2-0-b06842a01938@nvidia.com>
- <20261016-b4-arm32-iommu-dma-cookie-v2-4-b06842a01938@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20261016-b4-arm32-iommu-dma-cookie-v2-4-b06842a01938@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16/10/2026 7:46 am, Mikko Perttunen wrote:
-> ARM DMA domains are currently allocated by the ARM DMA code, with struct
-> dma_iommu_mapping owning the domain and the IOVA bookkeeping. To allow
-> the IOMMU core to own DMA domains as is the case with other
-> architectures, we have to allow that code to allocate the domain and get
-> the cookie from the ARM DMA code.
-> 
-> Implement ARM versions of iommu_get/put_dma_cookie that create a struct
-> dma_iommu_mapping that doesn't have its own domain, as well as
-> iommu_setup/teardown_dma_ops that set the device's archdata.mapping,
-> allowing ARM DMA ops to seamlessly work on these devices.
-> 
-> The code is protected by CONFIG_ARM_DMA_USE_IOMMU and mutually exclusive
-> with the same-named functions in the dma-iommu code; and not reachable
-> yet.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->   arch/arm/include/asm/dma-iommu.h |  17 ++++++
->   arch/arm/mm/dma-mapping.c        | 118 ++++++++++++++++++++++++++++++++++-----
->   drivers/iommu/dma-iommu.h        |  50 +++++++++++------
->   3 files changed, 154 insertions(+), 31 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/dma-iommu.h b/arch/arm/include/asm/dma-iommu.h
-> index 2ce4c5683e6d..85cf9b05faab 100644
-> --- a/arch/arm/include/asm/dma-iommu.h
-> +++ b/arch/arm/include/asm/dma-iommu.h
-> @@ -19,6 +19,14 @@ struct dma_iommu_mapping {
->   	size_t			bits;		/* per bitmap */
->   	dma_addr_t		base;
->   
-> +	/*
-> +	 * Set for mappings created by arm_iommu_create_mapping(), where
-> +	 * @domain is owned by the mapping.
-> +	 * Clear for mappings that are a cookie of a domain owned by the IOMMU
-> +	 * core.
-> +	 */
-> +	bool			owns_domain;
+The display controller in Tegra20/30 SoCs features an 8-bit SPI interface
+that closely resembles the MIPI DBI Type B protocol and is referred to as
+'8-bit CPU'.
 
-Do we strictly need this, or could we in fact already tell the 
-difference via iommu_is_dma_domain()? (Since ARM-API-owned domains via 
-iommu_paging_domain_alloc() will be IOMMU_DOMAIN_UNMANAGED)
+Add DC parametrization options needed for fine tuning by bridges.
+Add 8-bit CPU interface in form of a bridge linking to RGB port.
+Add 2 DBI Type B panels used in LG Optimus 2X which work with
+the 8-bit CPU interface.
 
-> +
->   	spinlock_t		lock;
->   	struct kref		kref;
->   };
-> @@ -32,5 +40,14 @@ int arm_iommu_attach_device(struct device *dev,
->   					struct dma_iommu_mapping *mapping);
->   void arm_iommu_detach_device(struct device *dev);
->   
-> +#ifdef CONFIG_ARM_DMA_USE_IOMMU
-> +struct iommu_domain;
-> +
-> +void iommu_setup_dma_ops(struct device *dev, struct iommu_domain *domain);
-> +void iommu_teardown_dma_ops(struct device *dev);
-> +int iommu_get_dma_cookie(struct iommu_domain *domain);
-> +void iommu_put_dma_cookie(struct iommu_domain *domain);
-> +#endif
-> +
->   #endif /* __KERNEL__ */
->   #endif
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index 4284950a9246..f2d3e8ec3487 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -1531,6 +1531,79 @@ static void __arm_iommu_free_mapping(struct dma_iommu_mapping *mapping)
->   	kfree(mapping);
->   }
->   
-> +static int __arm_iommu_init_cookie(struct iommu_domain *domain,
-> +				   dma_addr_t base, u64 size)
-> +{
-> +	struct dma_iommu_mapping *mapping;
-> +
-> +	if (domain->cookie_type != IOMMU_COOKIE_NONE)
-> +		return -EEXIST;
-> +
-> +	mapping = __arm_iommu_alloc_mapping(base, size);
-> +	if (IS_ERR(mapping))
-> +		return PTR_ERR(mapping);
-> +
-> +	mapping->domain = domain;
-> +	domain->cookie_type = IOMMU_COOKIE_ARM_DMA;
-> +	domain->arm_cookie = mapping;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * iommu_get_dma_cookie - Set up a domain cookie for ARM IOMMU-based DMA API
-> + * @domain: IOMMU_DOMAIN_DMA domain being configured
-> + *
-> + * Allocates IOVA bookkeeping for the domain based on the domain's specified
-> + * geometry. The aperture can currently be at most 4GB in size, otherwise
-> + * fails with -ERANGE.
+---
+Changes in v2:
+- convert enums in the dc header into definitions list
+- add check in RGB if bridge_state is not NULL, if yes, use default flags
+- inverted FLAG_PIXDATA_SAMPLE flag setup logic since default value is set to
+  be on NEGEDGE while v1 set default to be on POSEDGE
+- 8bit-cpu schema renamed to dbi, removed compaible and set as DC child
+- expanded list of required properties
+- 8bit-cpu bridge remodelled into dbi interface as DC child
+- improve gpio handling
+- rework attach to get drvdata from parent
+- add panel supplies description
+- split panel driver into per-panel drivers
+- get DBI interface from the patent directly
 
-Bit of a corner case, but I think that might technically break on 
-stage-2-only arm-smmu implementations like MMU-400 where the default 
-aperture will be 40 bits. It's probably better to explicitly cap our 
-request to 4GB here to preserve the current behaviour.
+I have deliberately left GPIO parsing from device tree since it seems to
+be the most convenient and mainstream method of working with GPIOs.
 
-> + */
-> +int iommu_get_dma_cookie(struct iommu_domain *domain)
-> +{
-> +	dma_addr_t base = domain->geometry.aperture_start;
-> +	u64 size;
-> +
-> +	if (base > domain->geometry.aperture_end)
-> +		return -EINVAL;
-> +
-> +	size = (u64)domain->geometry.aperture_end - base + 1;
-> +
-> +	return __arm_iommu_init_cookie(domain, base, size);
-> +}
-> +
-> +/**
-> + * iommu_put_dma_cookie - Free domain cookie for ARM IOMMU-based DMA API
-> + * @domain: the domain being freed
-> + */
-> +void iommu_put_dma_cookie(struct iommu_domain *domain)
-> +{
-> +	__arm_iommu_free_mapping(domain->arm_cookie);
-> +}
-> +
-> +/**
-> + * iommu_setup_dma_ops - Record a device's DMA API domain cookie
-> + * @dev: the device
-> + * @domain: the group's new default domain
-> + *
-> + * Records the cookie of @domain on @dev, or clears it if @domain is not a DMA
-> + * API domain. The DMA ops themselves are per driver binding and are installed
-> + * by arch_setup_dma_ops().
-> + */
-> +void iommu_setup_dma_ops(struct device *dev, struct iommu_domain *domain)
-> +{
-> +	to_dma_iommu_mapping(dev) = iommu_is_dma_domain(domain) ?
-> +				    domain->arm_cookie : NULL;
 
-It feels like we should actually set the dma_ops here for a real default 
-domain. Sure it might make things a little more complex in the interim, 
-but it'll be more logical when we come to remove the other path.
+Changes in v3:
+- rgb: fix default bus_flags to match original behavior
+- dbi-schema: remove compatible from required props
+  remove dc@54200000 wrapper from example
+  restrict dbi nodes for tegra20/tegra30 only
+- dbi: remove unused idx from tegra_dbi_priv
+  wrap dbi registration in dc with devm_add_action_or_reset()
+  separate dbi into separate object
+  export tegra_dc_commit() and trace_dc_readl()/dc_readl()
 
-> +}
-> +
-> +/**
-> + * iommu_teardown_dma_ops - Clear a device's DMA API domain cookie
-> + * @dev: the device
-> + */
-> +void iommu_teardown_dma_ops(struct device *dev)
-> +{
-> +	to_dma_iommu_mapping(dev) = NULL;
-> +}
-> +
->   /**
->    * arm_iommu_create_mapping
->    * @dev: pointer to the client device (for IOMMU calls)
-> @@ -1541,28 +1614,32 @@ static void __arm_iommu_free_mapping(struct dma_iommu_mapping *mapping)
->    * IO address ranges, which is required to perform memory allocation and
->    * mapping with IOMMU aware functions.
->    *
-> + * Unlike a default domain set up by the IOMMU core, the returned mapping owns
-> + * the domain it describes and releases it along with the last reference.
-> + *
->    * The client device need to be attached to the mapping with
->    * arm_iommu_attach_device function.
->    */
->   struct dma_iommu_mapping *
->   arm_iommu_create_mapping(struct device *dev, dma_addr_t base, u64 size)
->   {
-> -	struct dma_iommu_mapping *mapping;
-> -
-> -	mapping = __arm_iommu_alloc_mapping(base, size);
-> -	if (IS_ERR(mapping))
-> -		return mapping;
-> +	struct iommu_domain *domain;
-> +	int err;
->   
-> -	mapping->domain = iommu_paging_domain_alloc(dev);
-> -	if (IS_ERR(mapping->domain)) {
-> -		int err = PTR_ERR(mapping->domain);
-> +	domain = iommu_paging_domain_alloc(dev);
-> +	if (IS_ERR(domain))
-> +		return ERR_CAST(domain);
->   
-> -		__arm_iommu_free_mapping(mapping);
-> +	err = __arm_iommu_init_cookie(domain, base, size);
-> +	if (err) {
-> +		iommu_domain_free(domain);
->   		return ERR_PTR(err);
->   	}
->   
-> -	kref_init(&mapping->kref);
-> -	return mapping;
-> +	domain->arm_cookie->owns_domain = true;
-> +	kref_init(&domain->arm_cookie->kref);
-> +
-> +	return domain->arm_cookie;
->   }
->   EXPORT_SYMBOL_GPL(arm_iommu_create_mapping);
->   
-> @@ -1571,8 +1648,8 @@ static void release_iommu_mapping(struct kref *kref)
->   	struct dma_iommu_mapping *mapping =
->   		container_of(kref, struct dma_iommu_mapping, kref);
->   
-> +	/* Frees mapping too, via iommu_put_dma_cookie(). */
->   	iommu_domain_free(mapping->domain);
-> -	__arm_iommu_free_mapping(mapping);
->   }
->   
->   static int extend_iommu_mapping(struct dma_iommu_mapping *mapping)
-> @@ -1595,8 +1672,13 @@ static int extend_iommu_mapping(struct dma_iommu_mapping *mapping)
->   
->   void arm_iommu_release_mapping(struct dma_iommu_mapping *mapping)
->   {
-> -	if (mapping)
-> -		kref_put(&mapping->kref, release_iommu_mapping);
-> +	if (!mapping)
-> +		return;
-> +
-> +	if (WARN_ON(!mapping->owns_domain))
-> +		return;
-> +
-> +	kref_put(&mapping->kref, release_iommu_mapping);
->   }
->   EXPORT_SYMBOL_GPL(arm_iommu_release_mapping);
->   
-> @@ -1660,6 +1742,14 @@ void arm_iommu_detach_device(struct device *dev)
->   		return;
->   	}
->   
-> +	/*
-> +	 * This pairs with arm_iommu_attach_device() on a driver-owned mapping.
-> +	 * A mapping which is merely the cookie of a core-owned default domain
-> +	 * must not be torn down from here.
-> +	 */
-> +	if (WARN_ON(!mapping->owns_domain))
+Changes in v4:
+- reorder patches to avoid errors on checking dbi schema
+- dbi schema renamed to nvidia,tegra20-dbi for consistency
+- fix DC_DISP_V_PULSE0_POSITION_* > DC_DISP_V_PULSE1_POSITION_*
+- add MODULE_ALIAS
+- swap width and height in panels
+- dropped use of init-sequence and gpios
+- dbi driver reworked to use only DC to operate pins
+---
 
-As mentioned, if we can't reasonably hide the proper default domains 
-from external users of to_dma_iommu_mapping(), then I don't think we 
-should warn here, just treat it as a quiet no-op - the reason for the 
-"kick out the ARM domain" idiom is that it's in the way of attaching to 
-a driver-owned domain (whether that be a bare iommu_domain or another 
-ARM dma_iommu_mapping), but a real default domain is inherently out of 
-the way already. That way we can freely convert the rest of the drivers 
-to use default domains without impacting their users, then clean up the 
-detach pattern from the client drivers separately afterwards.
+Svyatoslav Ryhel (7):
+  dt-bindings: display: panel: Document Hitachi TX10D07VM0BAA and LG
+    LH400WV3 panels
+  drm/panel: Add Hitachi TX10D07VM0BAA MIPI DBI Type B panel driver
+  drm/panel: Add LG LH400WV3-SD04 MIPI DBI Type B panel driver
+  drm/tegra: dc: Expand available registers layouts
+  drm/tegra: rgb: Parameterize configuration based on bus flags
+  dt-bindings: display: tegra: Document 8-bit CPU parallel interface
+  drm/tegra: Add support for 8-bit CPU interface
 
-Thanks,
-Robin.
+ .../display/panel/hit,tx10d07vm0baa.yaml      |  58 ++
+ .../display/tegra/nvidia,tegra20-dbi.yaml     | 108 ++++
+ .../display/tegra/nvidia,tegra20-dc.yaml      |  15 +
+ drivers/gpu/drm/panel/Kconfig                 |  27 +
+ drivers/gpu/drm/panel/Makefile                |   2 +
+ .../drm/panel/panel-hitachi-tx10d07vm0baa.c   | 297 ++++++++++
+ drivers/gpu/drm/panel/panel-lg-lh400wv3.c     | 236 ++++++++
+ drivers/gpu/drm/tegra/Kconfig                 |   7 +
+ drivers/gpu/drm/tegra/Makefile                |   3 +
+ drivers/gpu/drm/tegra/dbi.c                   | 536 ++++++++++++++++++
+ drivers/gpu/drm/tegra/dc.c                    |  32 +-
+ drivers/gpu/drm/tegra/dc.h                    |  50 +-
+ drivers/gpu/drm/tegra/rgb.c                   |  41 +-
+ drivers/gpu/drm/tegra/trace.c                 |   3 +
+ 14 files changed, 1403 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/hit,tx10d07vm0baa.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dbi.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
+ create mode 100644 drivers/gpu/drm/panel/panel-lg-lh400wv3.c
+ create mode 100644 drivers/gpu/drm/tegra/dbi.c
 
-> +		return;
-> +
->   	iommu_detach_device(mapping->domain, dev);
->   	kref_put(&mapping->kref, release_iommu_mapping);
->   	to_dma_iommu_mapping(dev) = NULL;
-> diff --git a/drivers/iommu/dma-iommu.h b/drivers/iommu/dma-iommu.h
-> index 349d6a57e5a0..71b23cb698c0 100644
-> --- a/drivers/iommu/dma-iommu.h
-> +++ b/drivers/iommu/dma-iommu.h
-> @@ -7,25 +7,24 @@
->   
->   #include <linux/iommu.h>
->   
-> -#ifdef CONFIG_IOMMU_DMA
-> +/*
-> + * Both dma-iommu.c and arch/arm/mm/dma-mapping.c implement functions to set up
-> + * IOMMU_DOMAIN_DMA default domains. Only one provider can be compiled in at a
-> + * time.
-> + */
-> +#if defined(CONFIG_ARM_DMA_USE_IOMMU)
-> +
-> +#include <asm/dma-iommu.h>
-> +
-> +#elif defined(CONFIG_IOMMU_DMA)
->   
->   void iommu_setup_dma_ops(struct device *dev, struct iommu_domain *domain);
->   void iommu_teardown_dma_ops(struct device *dev);
->   
->   int iommu_get_dma_cookie(struct iommu_domain *domain);
->   void iommu_put_dma_cookie(struct iommu_domain *domain);
-> -void iommu_put_msi_cookie(struct iommu_domain *domain);
->   
-> -int iommu_dma_init_fq(struct iommu_domain *domain);
-> -
-> -void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list);
-> -
-> -int iommu_dma_sw_msi(struct iommu_domain *domain, struct msi_desc *desc,
-> -		     phys_addr_t msi_addr);
-> -
-> -extern bool iommu_dma_forcedac;
-> -
-> -#else /* CONFIG_IOMMU_DMA */
-> +#else
->   
->   static inline void iommu_setup_dma_ops(struct device *dev,
->   				       struct iommu_domain *domain)
-> @@ -36,11 +35,6 @@ static inline void iommu_teardown_dma_ops(struct device *dev)
->   {
->   }
->   
-> -static inline int iommu_dma_init_fq(struct iommu_domain *domain)
-> -{
-> -	return -EINVAL;
-> -}
-> -
->   static inline int iommu_get_dma_cookie(struct iommu_domain *domain)
->   {
->   	return -ENODEV;
-> @@ -50,6 +44,28 @@ static inline void iommu_put_dma_cookie(struct iommu_domain *domain)
->   {
->   }
->   
-> +#endif
-> +
-> +#ifdef CONFIG_IOMMU_DMA
-> +
-> +void iommu_put_msi_cookie(struct iommu_domain *domain);
-> +
-> +int iommu_dma_init_fq(struct iommu_domain *domain);
-> +
-> +void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list);
-> +
-> +int iommu_dma_sw_msi(struct iommu_domain *domain, struct msi_desc *desc,
-> +		     phys_addr_t msi_addr);
-> +
-> +extern bool iommu_dma_forcedac;
-> +
-> +#else /* CONFIG_IOMMU_DMA */
-> +
-> +static inline int iommu_dma_init_fq(struct iommu_domain *domain)
-> +{
-> +	return -EINVAL;
-> +}
-> +
->   static inline void iommu_put_msi_cookie(struct iommu_domain *domain)
->   {
->   }
-> 
+-- 
+2.53.0
 
