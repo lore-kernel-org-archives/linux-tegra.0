@@ -1,48 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792672632;
-	b=HntE0Ckp3LUJaMQgdjrxIz4G3zZhHA2m7rduwuXf0isUtKNAmHxAm8r/aW4QEVOfwBBG
-	 sgS3oVB0jIMDUnxcQjM6AKkEVZtQsRHGU4gp4pFRyn1KuucLBkmeLh7RUOuIxFRE4PwlK
-	 pp3ecCc/u7IRNK1jpPrcsYlI7GHXm4mlQsSJxsAjfIi6ZSA647vPvn9bh2nNDAr/ZgdkD
-	 bHlrKUJNP0yD+Oasb+GJsB+EYUu9aGCHk5/3OHwVpYt2+lj0r5R6/vnmhZMNOoQm3+/QC
-	 sV8MC0J8+WfHcPlA0SwYrOI+JxU7s11LfP9EYpxnG3EYq8AbgnVuWS3mD82jcqkrRiQ==
+	t=1792674990;
+	b=CKaY/eW7bGOCmvKtgVpotvu8gZ0tk0/vgoMQKvgnR+VfKCvaqAHS0i/C/eQ7+A9UpST2
+	 OwGus8TizKiyyNaErMPEoRk8D3DjpBV9dO19V+BAS2gJ5mxoAAGPw7TpZ1UPCub2bTWbX
+	 m81d8lhf0BLtfmZTjO6ZzDouTFg+ttaPyss1ApCdyoxzsbJpopoxFsYZZMB+pq/O9TXBQ
+	 NeRpAbrJ6qgV28SGBdbQVPSxkSN7H4qOTZ2Ftl88ePc6RNrHkOP/tK9gXp9HoNdY4mLWb
+	 PXFj0RpR5mmzLgb6bMt3Z6PqFy2uMzgR7Kw/vW19yU3VamT4KXz4KaDgLS62ikhDP7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792672632;
-	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=L8OAWcKNF3AlQQ6VhZ0NwcVhCU6ETs6bj+k/x85IRJM=;
-	b=Sb2bn3ONs5RNFkVvwM6t/QFpYHZejhVZ/BiZUF38uet51lFNfGXQOA8BDS5Scsx+wkpm
-	 b+6S+R/N0NiHvxGj+irGONZPkK457NV9FTpgec5+o+udo/5DB4EPJWSTSVWfMvNwy0MPb
-	 BGl7TczAxSqtqOcAVye6bTMgp4IEK/5/e+nXMTj7OJ9pQ9BrnTBAnLNR6YtZULC8KNpY+
-	 ZAliZBeQo5kFOEwUe+eQEOlvEHv2z+AUOiyoh51j0SuN9T327qKbgOGUMeQj4rHMg7TBh
-	 ici601RCV6mWqmF7JZH4TDafJmeemuoisQnIG72qf/gsFrgNsxblLY0uY69KTP2sihw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792674990;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:From:
+	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=95gIZ/rOhUqAkfRUZlhwY8It1fpNlrmqRnyk+6vFBTo=;
+	b=K9Hnz2BoFu0g2vSR1rtVvi8ZQqKVqsWsXTd649FtqjFDLxx81WE1y9gTOMqSObMX4eco
+	 woVc0QrSxZvSDAofviHSchFNUhe1Jyy8YsJZrxCE3vx2M4l/ePURgp+YRMT/JLtUwM2Hi
+	 IaKB2X3EpTocfRhz79lDslutW5JzCcCXRzaHVaXY/3+alhubOFP0JVNCl7YMrUgn2p8U6
+	 4TaaYWQMqJe9K0Jn1XL7oGJUQl8ETEomG8oMiHASkbzbROEud4Umm6dz/618qKdFILIiW
+	 T4jRvRmJDqQjonxI68/zMXoJhcUK/zvbNTwyBcJ5GU/3HcMjbnfIFwR9Obl29IMKymw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Cf3cmR10;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4574606A31A
-	for <linux-tegra@vger.kernel.org>; Thu, 22 Oct 2026 12:37:11 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Po2Gv+pN;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6715D606A324;
+	Thu, 22 Oct 2026 13:16:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6715D606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Cf3cmR10
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D72E21F000C1;
-	Thu, 22 Oct 2026 12:37:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792672631;
-	bh=L8OAWcKNF3AlQQ6VhZ0NwcVhCU6ETs6bj+k/x85IRJM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=Cf3cmR10R67vcwj9R3USRcjdavtLtKnlwSYOYA8FvVi4kMOOOuc+Zrnef3VH/BIK1
-	 6t98ZZTDpHwQLgeH2Q0DlAxRZEj2/PKivOHqFdsBZHsHrCrYwdaWPbPBp9O3HQHwZy
-	 XFuRGuBqtjvYeiKerdibRmzbTunMz+yCTkNSvPJWtrncWiVaSf6FRsqddgjLkc09cP
-	 kyw082QapM+GFJCJNFkZm+IRxcCHkWXKliCMDAiI5QXk34hVh8txr6udvozRZXOfkB
-	 QQAT7GM9Q+hNIzeMrBvEVwMznpxX+TauJEcGghghxpJ2sTaNQ9MWny6df98JWLoK5u
-	 XkwrzmB3DJO5A==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Thu, 22 Oct 2026 14:31:56 +0200
-Subject: [PATCH v2 57/59] drm/tegra: Convert to atomic_create_state
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Po2Gv+pN
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B2C01476;
+	Thu, 22 Oct 2026 06:16:25 -0700 (PDT)
+Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9A693F673;
+	Thu, 22 Oct 2026 06:16:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1792674988; bh=VtjlyhfnDPej66ib6QAEpVj/N8t0KLq/+awBY3pvJWI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Po2Gv+pN5qUlVoTfmfm6+EiT9jkBnsjCdYxUB1uttjzopZ2ujfpPncmF8NG5AUHA/
+	 ntV3DmM0O4FOtoaFsSCaE9vCLLGuGeVUWR3sgYLD5Vfg3x3t/YZ8m3si9+Ow2OnH08
+	 xitDAI80+tuIJ7Q2ABl3pIfc3FZeSehoHXU+QxHE=
+Message-ID: <6406c7b1-5e37-4c22-83c2-089c35ef54bf@arm.com>
+Date: Thu, 22 Oct 2026 14:16:05 +0100
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -52,121 +53,372 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/11] ARM: dma-mapping: Implement and expose DMA setup
+ functions
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Heiko Stuebner <heiko@sntech.de>,
+ Thierry Reding <thierry.reding@kernel.org>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+References: <20261016-b4-arm32-iommu-dma-cookie-v2-0-b06842a01938@nvidia.com>
+ <20261016-b4-arm32-iommu-dma-cookie-v2-4-b06842a01938@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20261016-b4-arm32-iommu-dma-cookie-v2-4-b06842a01938@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261022-drm-no-more-connector-reset-v2-57-0b7e4e85b1e8@kernel.org>
-References: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
-In-Reply-To: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3645; i=mripard@kernel.org;
- h=from:subject:message-id; bh=7xtX5ZbOPIxKyno9pvoAB6n6Jf6NLnvGww7Fiv6yapg=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFm3mJZdufdu1g+Npyd3no1iWXtWLvBv2BR+3UjOfd/ef
- P7oX/uppWMqC4MwJ4OsmCLLE5mw08vbF1c52K/8ATOHlQlkCAMXpwBMRDeWsWEG02+/Qj5d/zOd
- 1pUCu7Ky7EJ23FxfuHKDov4XZv3ltutStxpy9ja+mVjp7ZpyP8W7k7HhwWmB7/bl7Rqqn5fnsn3
- 6OUW+19cxRaWXk2O7XKrDc57ZhyYGRHDNiF0b9W6Dn8W3Ik8A
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-The tegra DSI and SOR connector reset implementations create custom
-state subclasses, but only initialize a pristine state without resetting
-any hardware. This is equivalent to what atomic_create_state expects.
-Convert to it.
+On 16/10/2026 7:46 am, Mikko Perttunen wrote:
+> ARM DMA domains are currently allocated by the ARM DMA code, with struct
+> dma_iommu_mapping owning the domain and the IOVA bookkeeping. To allow
+> the IOMMU core to own DMA domains as is the case with other
+> architectures, we have to allow that code to allocate the domain and get
+> the cookie from the ARM DMA code.
+> 
+> Implement ARM versions of iommu_get/put_dma_cookie that create a struct
+> dma_iommu_mapping that doesn't have its own domain, as well as
+> iommu_setup/teardown_dma_ops that set the device's archdata.mapping,
+> allowing ARM DMA ops to seamlessly work on these devices.
+> 
+> The code is protected by CONFIG_ARM_DMA_USE_IOMMU and mutually exclusive
+> with the same-named functions in the dma-iommu code; and not reachable
+> yet.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>   arch/arm/include/asm/dma-iommu.h |  17 ++++++
+>   arch/arm/mm/dma-mapping.c        | 118 ++++++++++++++++++++++++++++++++++-----
+>   drivers/iommu/dma-iommu.h        |  50 +++++++++++------
+>   3 files changed, 154 insertions(+), 31 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/dma-iommu.h b/arch/arm/include/asm/dma-iommu.h
+> index 2ce4c5683e6d..85cf9b05faab 100644
+> --- a/arch/arm/include/asm/dma-iommu.h
+> +++ b/arch/arm/include/asm/dma-iommu.h
+> @@ -19,6 +19,14 @@ struct dma_iommu_mapping {
+>   	size_t			bits;		/* per bitmap */
+>   	dma_addr_t		base;
+>   
+> +	/*
+> +	 * Set for mappings created by arm_iommu_create_mapping(), where
+> +	 * @domain is owned by the mapping.
+> +	 * Clear for mappings that are a cookie of a domain owned by the IOMMU
+> +	 * core.
+> +	 */
+> +	bool			owns_domain;
 
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>
-Cc: linux-tegra@vger.kernel.org
----
- drivers/gpu/drm/tegra/dsi.c | 17 ++++++++---------
- drivers/gpu/drm/tegra/sor.c | 13 +++++--------
- 2 files changed, 13 insertions(+), 17 deletions(-)
+Do we strictly need this, or could we in fact already tell the 
+difference via iommu_is_dma_domain()? (Since ARM-API-owned domains via 
+iommu_paging_domain_alloc() will be IOMMU_DOMAIN_UNMANAGED)
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index 7b595310e737..206405770071 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -786,17 +786,16 @@ static void tegra_dsi_soft_reset(struct tegra_dsi *dsi)
- }
- 
--static void tegra_dsi_connector_reset(struct drm_connector *connector)
-+static struct drm_connector_state *
-+tegra_dsi_connector_create_state(struct drm_connector *connector)
- {
--	struct tegra_dsi_state *state = kzalloc_obj(*state);
-+	struct tegra_dsi_state *state;
- 
-+	state = kzalloc_obj(*state);
- 	if (!state)
--		return;
-+		return ERR_PTR(-ENOMEM);
- 
--	if (connector->state) {
--		__drm_atomic_helper_connector_destroy_state(connector->state);
--		kfree(connector->state);
--	}
-+	__drm_atomic_helper_connector_state_init(&state->base, connector);
- 
--	__drm_atomic_helper_connector_reset(connector, &state->base);
-+	return &state->base;
- }
- 
-@@ -818,8 +817,8 @@ tegra_dsi_connector_duplicate_state(struct drm_connector *connector)
- 
- static const struct drm_connector_funcs tegra_dsi_connector_funcs = {
--	.reset = tegra_dsi_connector_reset,
- 	.detect = tegra_output_connector_detect,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.destroy = tegra_output_connector_destroy,
-+	.atomic_create_state = tegra_dsi_connector_create_state,
- 	.atomic_duplicate_state = tegra_dsi_connector_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index e384cbd0cbf7..16a5ecefbe4f 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -1721,5 +1721,5 @@ static void tegra_sor_early_unregister(struct drm_connector *connector)
- }
- 
--static void tegra_sor_connector_reset(struct drm_connector *connector)
-+static struct drm_connector_state *tegra_sor_connector_create_state(struct drm_connector *connector)
- {
- 	struct tegra_sor_state *state;
-@@ -1727,12 +1727,9 @@ static void tegra_sor_connector_reset(struct drm_connector *connector)
- 	state = kzalloc_obj(*state);
- 	if (!state)
--		return;
-+		return ERR_PTR(-ENOMEM);
- 
--	if (connector->state) {
--		__drm_atomic_helper_connector_destroy_state(connector->state);
--		kfree(connector->state);
--	}
-+	__drm_atomic_helper_connector_state_init(&state->base, connector);
- 
--	__drm_atomic_helper_connector_reset(connector, &state->base);
-+	return &state->base;
- }
- 
-@@ -1765,8 +1762,8 @@ tegra_sor_connector_duplicate_state(struct drm_connector *connector)
- 
- static const struct drm_connector_funcs tegra_sor_connector_funcs = {
--	.reset = tegra_sor_connector_reset,
- 	.detect = tegra_sor_connector_detect,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.destroy = tegra_output_connector_destroy,
-+	.atomic_create_state = tegra_sor_connector_create_state,
- 	.atomic_duplicate_state = tegra_sor_connector_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> +
+>   	spinlock_t		lock;
+>   	struct kref		kref;
+>   };
+> @@ -32,5 +40,14 @@ int arm_iommu_attach_device(struct device *dev,
+>   					struct dma_iommu_mapping *mapping);
+>   void arm_iommu_detach_device(struct device *dev);
+>   
+> +#ifdef CONFIG_ARM_DMA_USE_IOMMU
+> +struct iommu_domain;
+> +
+> +void iommu_setup_dma_ops(struct device *dev, struct iommu_domain *domain);
+> +void iommu_teardown_dma_ops(struct device *dev);
+> +int iommu_get_dma_cookie(struct iommu_domain *domain);
+> +void iommu_put_dma_cookie(struct iommu_domain *domain);
+> +#endif
+> +
+>   #endif /* __KERNEL__ */
+>   #endif
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 4284950a9246..f2d3e8ec3487 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -1531,6 +1531,79 @@ static void __arm_iommu_free_mapping(struct dma_iommu_mapping *mapping)
+>   	kfree(mapping);
+>   }
+>   
+> +static int __arm_iommu_init_cookie(struct iommu_domain *domain,
+> +				   dma_addr_t base, u64 size)
+> +{
+> +	struct dma_iommu_mapping *mapping;
+> +
+> +	if (domain->cookie_type != IOMMU_COOKIE_NONE)
+> +		return -EEXIST;
+> +
+> +	mapping = __arm_iommu_alloc_mapping(base, size);
+> +	if (IS_ERR(mapping))
+> +		return PTR_ERR(mapping);
+> +
+> +	mapping->domain = domain;
+> +	domain->cookie_type = IOMMU_COOKIE_ARM_DMA;
+> +	domain->arm_cookie = mapping;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * iommu_get_dma_cookie - Set up a domain cookie for ARM IOMMU-based DMA API
+> + * @domain: IOMMU_DOMAIN_DMA domain being configured
+> + *
+> + * Allocates IOVA bookkeeping for the domain based on the domain's specified
+> + * geometry. The aperture can currently be at most 4GB in size, otherwise
+> + * fails with -ERANGE.
 
--- 
-2.55.0
+Bit of a corner case, but I think that might technically break on 
+stage-2-only arm-smmu implementations like MMU-400 where the default 
+aperture will be 40 bits. It's probably better to explicitly cap our 
+request to 4GB here to preserve the current behaviour.
+
+> + */
+> +int iommu_get_dma_cookie(struct iommu_domain *domain)
+> +{
+> +	dma_addr_t base = domain->geometry.aperture_start;
+> +	u64 size;
+> +
+> +	if (base > domain->geometry.aperture_end)
+> +		return -EINVAL;
+> +
+> +	size = (u64)domain->geometry.aperture_end - base + 1;
+> +
+> +	return __arm_iommu_init_cookie(domain, base, size);
+> +}
+> +
+> +/**
+> + * iommu_put_dma_cookie - Free domain cookie for ARM IOMMU-based DMA API
+> + * @domain: the domain being freed
+> + */
+> +void iommu_put_dma_cookie(struct iommu_domain *domain)
+> +{
+> +	__arm_iommu_free_mapping(domain->arm_cookie);
+> +}
+> +
+> +/**
+> + * iommu_setup_dma_ops - Record a device's DMA API domain cookie
+> + * @dev: the device
+> + * @domain: the group's new default domain
+> + *
+> + * Records the cookie of @domain on @dev, or clears it if @domain is not a DMA
+> + * API domain. The DMA ops themselves are per driver binding and are installed
+> + * by arch_setup_dma_ops().
+> + */
+> +void iommu_setup_dma_ops(struct device *dev, struct iommu_domain *domain)
+> +{
+> +	to_dma_iommu_mapping(dev) = iommu_is_dma_domain(domain) ?
+> +				    domain->arm_cookie : NULL;
+
+It feels like we should actually set the dma_ops here for a real default 
+domain. Sure it might make things a little more complex in the interim, 
+but it'll be more logical when we come to remove the other path.
+
+> +}
+> +
+> +/**
+> + * iommu_teardown_dma_ops - Clear a device's DMA API domain cookie
+> + * @dev: the device
+> + */
+> +void iommu_teardown_dma_ops(struct device *dev)
+> +{
+> +	to_dma_iommu_mapping(dev) = NULL;
+> +}
+> +
+>   /**
+>    * arm_iommu_create_mapping
+>    * @dev: pointer to the client device (for IOMMU calls)
+> @@ -1541,28 +1614,32 @@ static void __arm_iommu_free_mapping(struct dma_iommu_mapping *mapping)
+>    * IO address ranges, which is required to perform memory allocation and
+>    * mapping with IOMMU aware functions.
+>    *
+> + * Unlike a default domain set up by the IOMMU core, the returned mapping owns
+> + * the domain it describes and releases it along with the last reference.
+> + *
+>    * The client device need to be attached to the mapping with
+>    * arm_iommu_attach_device function.
+>    */
+>   struct dma_iommu_mapping *
+>   arm_iommu_create_mapping(struct device *dev, dma_addr_t base, u64 size)
+>   {
+> -	struct dma_iommu_mapping *mapping;
+> -
+> -	mapping = __arm_iommu_alloc_mapping(base, size);
+> -	if (IS_ERR(mapping))
+> -		return mapping;
+> +	struct iommu_domain *domain;
+> +	int err;
+>   
+> -	mapping->domain = iommu_paging_domain_alloc(dev);
+> -	if (IS_ERR(mapping->domain)) {
+> -		int err = PTR_ERR(mapping->domain);
+> +	domain = iommu_paging_domain_alloc(dev);
+> +	if (IS_ERR(domain))
+> +		return ERR_CAST(domain);
+>   
+> -		__arm_iommu_free_mapping(mapping);
+> +	err = __arm_iommu_init_cookie(domain, base, size);
+> +	if (err) {
+> +		iommu_domain_free(domain);
+>   		return ERR_PTR(err);
+>   	}
+>   
+> -	kref_init(&mapping->kref);
+> -	return mapping;
+> +	domain->arm_cookie->owns_domain = true;
+> +	kref_init(&domain->arm_cookie->kref);
+> +
+> +	return domain->arm_cookie;
+>   }
+>   EXPORT_SYMBOL_GPL(arm_iommu_create_mapping);
+>   
+> @@ -1571,8 +1648,8 @@ static void release_iommu_mapping(struct kref *kref)
+>   	struct dma_iommu_mapping *mapping =
+>   		container_of(kref, struct dma_iommu_mapping, kref);
+>   
+> +	/* Frees mapping too, via iommu_put_dma_cookie(). */
+>   	iommu_domain_free(mapping->domain);
+> -	__arm_iommu_free_mapping(mapping);
+>   }
+>   
+>   static int extend_iommu_mapping(struct dma_iommu_mapping *mapping)
+> @@ -1595,8 +1672,13 @@ static int extend_iommu_mapping(struct dma_iommu_mapping *mapping)
+>   
+>   void arm_iommu_release_mapping(struct dma_iommu_mapping *mapping)
+>   {
+> -	if (mapping)
+> -		kref_put(&mapping->kref, release_iommu_mapping);
+> +	if (!mapping)
+> +		return;
+> +
+> +	if (WARN_ON(!mapping->owns_domain))
+> +		return;
+> +
+> +	kref_put(&mapping->kref, release_iommu_mapping);
+>   }
+>   EXPORT_SYMBOL_GPL(arm_iommu_release_mapping);
+>   
+> @@ -1660,6 +1742,14 @@ void arm_iommu_detach_device(struct device *dev)
+>   		return;
+>   	}
+>   
+> +	/*
+> +	 * This pairs with arm_iommu_attach_device() on a driver-owned mapping.
+> +	 * A mapping which is merely the cookie of a core-owned default domain
+> +	 * must not be torn down from here.
+> +	 */
+> +	if (WARN_ON(!mapping->owns_domain))
+
+As mentioned, if we can't reasonably hide the proper default domains 
+from external users of to_dma_iommu_mapping(), then I don't think we 
+should warn here, just treat it as a quiet no-op - the reason for the 
+"kick out the ARM domain" idiom is that it's in the way of attaching to 
+a driver-owned domain (whether that be a bare iommu_domain or another 
+ARM dma_iommu_mapping), but a real default domain is inherently out of 
+the way already. That way we can freely convert the rest of the drivers 
+to use default domains without impacting their users, then clean up the 
+detach pattern from the client drivers separately afterwards.
+
+Thanks,
+Robin.
+
+> +		return;
+> +
+>   	iommu_detach_device(mapping->domain, dev);
+>   	kref_put(&mapping->kref, release_iommu_mapping);
+>   	to_dma_iommu_mapping(dev) = NULL;
+> diff --git a/drivers/iommu/dma-iommu.h b/drivers/iommu/dma-iommu.h
+> index 349d6a57e5a0..71b23cb698c0 100644
+> --- a/drivers/iommu/dma-iommu.h
+> +++ b/drivers/iommu/dma-iommu.h
+> @@ -7,25 +7,24 @@
+>   
+>   #include <linux/iommu.h>
+>   
+> -#ifdef CONFIG_IOMMU_DMA
+> +/*
+> + * Both dma-iommu.c and arch/arm/mm/dma-mapping.c implement functions to set up
+> + * IOMMU_DOMAIN_DMA default domains. Only one provider can be compiled in at a
+> + * time.
+> + */
+> +#if defined(CONFIG_ARM_DMA_USE_IOMMU)
+> +
+> +#include <asm/dma-iommu.h>
+> +
+> +#elif defined(CONFIG_IOMMU_DMA)
+>   
+>   void iommu_setup_dma_ops(struct device *dev, struct iommu_domain *domain);
+>   void iommu_teardown_dma_ops(struct device *dev);
+>   
+>   int iommu_get_dma_cookie(struct iommu_domain *domain);
+>   void iommu_put_dma_cookie(struct iommu_domain *domain);
+> -void iommu_put_msi_cookie(struct iommu_domain *domain);
+>   
+> -int iommu_dma_init_fq(struct iommu_domain *domain);
+> -
+> -void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list);
+> -
+> -int iommu_dma_sw_msi(struct iommu_domain *domain, struct msi_desc *desc,
+> -		     phys_addr_t msi_addr);
+> -
+> -extern bool iommu_dma_forcedac;
+> -
+> -#else /* CONFIG_IOMMU_DMA */
+> +#else
+>   
+>   static inline void iommu_setup_dma_ops(struct device *dev,
+>   				       struct iommu_domain *domain)
+> @@ -36,11 +35,6 @@ static inline void iommu_teardown_dma_ops(struct device *dev)
+>   {
+>   }
+>   
+> -static inline int iommu_dma_init_fq(struct iommu_domain *domain)
+> -{
+> -	return -EINVAL;
+> -}
+> -
+>   static inline int iommu_get_dma_cookie(struct iommu_domain *domain)
+>   {
+>   	return -ENODEV;
+> @@ -50,6 +44,28 @@ static inline void iommu_put_dma_cookie(struct iommu_domain *domain)
+>   {
+>   }
+>   
+> +#endif
+> +
+> +#ifdef CONFIG_IOMMU_DMA
+> +
+> +void iommu_put_msi_cookie(struct iommu_domain *domain);
+> +
+> +int iommu_dma_init_fq(struct iommu_domain *domain);
+> +
+> +void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list);
+> +
+> +int iommu_dma_sw_msi(struct iommu_domain *domain, struct msi_desc *desc,
+> +		     phys_addr_t msi_addr);
+> +
+> +extern bool iommu_dma_forcedac;
+> +
+> +#else /* CONFIG_IOMMU_DMA */
+> +
+> +static inline int iommu_dma_init_fq(struct iommu_domain *domain)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+>   static inline void iommu_put_msi_cookie(struct iommu_domain *domain)
+>   {
+>   }
+> 
 
