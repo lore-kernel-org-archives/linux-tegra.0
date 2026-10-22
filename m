@@ -1,100 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.176
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792691585;
-	b=mGJpAVe8Z0xR0ij7hWEPtiWJ4yRVF0BGU+62qqEQSTx541dSJ2l+8+sHGOpJsQpiJkqi
-	 hc0Cge3E5WN2EgOeobHgTz5mNH3tmvhYBfZSqFa7hxgQJbwYBHIq5XtvRgziteX9fA9nd
-	 wGFJFsxMe2ysWC2NvjB/60mjV7AU38I+BXWuYFFapBpR4GfVnvHU1Npd4kRAeORYiHo+O
-	 dip2YlerQo0uC/F8yecUgdzV6JpI1eqybY0uOrxVN+IbmaI7EInPko+zz5BDoiH/n51Pk
-	 MOa/lgbNdsWbJ30dGsd6RaTWhciZuZaWnm+YzimtUjE2g5OCMaLFhN7fDQa1uWwaH2g==
+	t=1792703435;
+	b=W+iHr033l5daU/Rh5KIpC5Z/L0haVsmbp7UNHwAZBDi4LOJHoT9eKCr2XExOi9yTR9hz
+	 OJ3CVJ5mPMNLQcUifkDmo8MazllOwK4ezzqgSAlOR4NS8QUzLC+VFNo7SLtqXyXXsxbyX
+	 H0CLzvRtUnp54BSyvirLZiT/wh/r8y6GFZ4p9iFuHr+kMx0WXgqVIP9osv4IhVvqXylkQ
+	 BSfwrnBXDNecu/fnJeIUicr8mPcMKKV9r9H6sv6W5CYFI7YaO4s8MPq+kZ9biM72wZsky
+	 5dGNDJ22IMdP7a6k54/bIOlF2JcPWsVMQBukkkpQKSfjZrBojFBCu4G5iJYgFpJ+FYg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792691585;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=3caCbj25DMKEJr+iPP66wR6DUJgaEfAKCjBL8Q8RuKs=;
-	b=o/My4Xmmo9mKXRjVs1zETgmNv7e6DdLZQQoQeC17gcAcAz3llyEeq+cuvuPKnbn5BGS8
-	 Ww5a0yxPZvqOpygq0TX7ffY3SypwXJ9Ac8jcpHsity46B2/sgvHY4U4D+X7R6aJcjzY7W
-	 2BrLRwgSHXwBqb8Ziuk/BNSPNecp0rU5ej4bLrtKZ64V0u/epWurVboe66KXTauPlD97z
-	 AHMovbrwYbIgMCfvwohRxBt9GJD97Ojtn0eslbVT1xh0OuLggHLuT84wdU49Ktng/i/0R
-	 qXr8OcfW0Pd2MNFfZ6KXDaVJpSb7om2PxGL6Ip6ptXtO1XGTJ09DJ7OIrNDbIwVuAjg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792703435;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=W7kN+lw5/GydYpTGjBruZgxToE+lStyqPTyM15Domeo=;
+	b=X3X6WYWaOEINvM0n3Iwde93NWUjN/NYz1OdbG4rfT72N0ON2lUPOPUBOaYrCBiYlPSkl
+	 Qq4yEg4IyM+jiDC6E5szLFCtB7+vW4YPiVRO5YesFnTm4LvOzwG6tqax+b4epBIRMYq7T
+	 8PhCRNlpiA5/4wmCGt5zL+xslssS5YoArzmexJ9SefFgCPYlSbDYkkPhJOq9K8dL7ykDg
+	 IlltAz1DNwZ056O/i/Qy/o512njhrY4qvP+kvIh8zkgRyPsY2hCYz2UZZ6zTWlYwkFfv2
+	 2prQZl4Orpb+DRg8fWCoQidK7HYAqP5LkhGUO1OEp4qngpp7pncJv9JnnxICeOpH0FQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=CdWRFVVR;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.176
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HgTIkEwL;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71DA606A319;
+	Thu, 22 Oct 2026 21:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HgTIkEwL
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1792703434;
+	b=1f39+LY6JihrCRvO1kmx6nQZrVGSNyZzsH7uM/S3K5TKQT+dfVIht4gY/fMlnieWHFEE
+	 ymTdDbq8eN0Qle+2o88xaaVWr83rgq3NgE08H/Nsmf6d/wnUy/XZO5FiQJCLr8FlT95hD
+	 S8SBOIpdDZcJDdlbYT1urNXAd0p9dxXNRMbDe8LM2fg7QctRzb+vpxKnR0MQ5yUNfdZId
+	 C9ajVFQASGPqwlTzy771zkcjxJl3dsi8FFdzOIbJYuWyQQ+TYabEziSGOWK9+HH8L1rk+
+	 1Kthc4jF+uQbTBpXA9WJjJsotpw1S9UBpeYPbaKdzlVhkzmutLLgcb7xI0W1lBIQ2Ow==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1792703434;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=W7kN+lw5/GydYpTGjBruZgxToE+lStyqPTyM15Domeo=;
+	b=gkNshO9Ftj52p932H8OhOOtn586ozlfPv5BvxFZJzmQvb4eepifJasyhD+BbvyL9bACf
+	 Oh0rQ9zfRovQf79/M+tvO7EKMNrtxQA30utzlVppn1aWyEBTHVFTxZ3vI4HWA4kM2/2fj
+	 /ykR7DllPm5hSgRyuAM3A+zWjcPJtxwVGRNfxrEX7GQoQP/doalxSItIEm4FUiq2R8bWo
+	 vTxzNEPVF3/TtY4PMmh6C5TjXrlnkYunh4SgHO3N1FMetfepqdDixf7+uLYrrY6wFcwKX
+	 oVHjGSljUZTwQsQwtKRVjjYs/xoqPH9RwtQa3k/tOHE7NUAi5W98j+sICccbHxXxPXA==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745FC606A31E
-	for <linux-tegra@vger.kernel.org>; Thu, 22 Oct 2026 17:53:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 745FC606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=CdWRFVVR
-Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-35d0be18c71so1307164eec.1
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Oct 2026 10:53:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792691584; cv=none;
-        d=google.com; s=arc-20260327;
-        b=BZKSYLux074j186Ix3Tdmq77tzjuBlKLamjVsUa1DR76CzYcNY8N8O76LrV04daG+E
-         Ii+P+2ckBYx0Wvufu8teNrdltvXOC5pbxXaE+horlUIp+dZVCs+SjsRLjF5ZPRY09H9z
-         LdbkTC9PoOUnDrhYeI6J5W8RV+9ALg3tHtS5NQmLWPaBu79ixjbZ1JHVz9QjrWTZEedu
-         Fo5ZrGB6V0cnrDU/wl6It1Wk2406BNUiu2IhcQ0+Ko2RFPXeNkqCL9O2VsJReCQd6gAM
-         slB9AtvGJVpn5W55PfB4lQHAaBiYWo44whAbOQUCdMCveSa8Bk458SkT79SIGi8AQhUC
-         c+qw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=3caCbj25DMKEJr+iPP66wR6DUJgaEfAKCjBL8Q8RuKs=;
-        fh=pKgTD3AGHD9azUr9qiSK+ueNhx4wHSw1gnhxIqGwchw=;
-        b=PzAFXCjXPtDtvxABymX3C/UTx3dCJnZUP1/41SiPro+4czJzIjTEu6IK6FX52GNKgL
-         mZRKRy+z7qz3XPRk5bX8sSl49RVCsATnBOtyPXkgQwu4qrXqHFcB5ILZl+XJTly7gBDM
-         FCQdSximhqLqSC0K/9aZbV7YpvXaRnuZwYccn3Fk9rO2DHFPawjzZm6xxKu34Mdbt2tq
-         ixP92gujJ2rCEyqbB5iR5Kq02HAlOfZAhmXr4CKDZH7JQBGiXsLH9OiPgeiGB3LfmEht
-         VU3s5Glgjx9PvR/IewLcPed3o/vKlbFMrXf5rJsYdR6+ChH2S+m9iPH5isf0vqE24EUM
-         0kjw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792691584; x=1793296384; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=3caCbj25DMKEJr+iPP66wR6DUJgaEfAKCjBL8Q8RuKs=;
-        b=CdWRFVVRQFA7nUIEbW9/tuJ4GmATopKWcFmos2aLIz3VeptOn8kVZBD1BAB0fOT5ti
-         iH2TdABNtqgWFySel6gPxtwrMOUDidEbyaIWboNu3OWXv2xFwD2l65i1ZRPbb81GTRNk
-         7cwzieID3NXpEioeJiX2lh15lDBWOycH3jFXVZuBdOZB3BWFLdfINCnxJgob/hpFPx+v
-         N8AJMVFlDMH6aMCcHJXW2au0INS95a1s8MAiYvFXIAqnwbNiNQpFd+gzIEONWen23FBv
-         NEbhhdP68Wz/JBqcjICoTozj1zQKg8BF3eyJym3D99zB3Wwg6gK7lK2ZZpZsCIDkYJYG
-         wliQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792691584; x=1793296384;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=3caCbj25DMKEJr+iPP66wR6DUJgaEfAKCjBL8Q8RuKs=;
-        b=pET2PFEPNx2H8olmJbeKbh01QZ9D0Gt3wwzTw3npjPEEFuzF6+4Q5gStXMdY/i+2Ei
-         mS/VL/gW9Zg5Tk1IqFwVPp9/x7PpPkl93hEBKnE0pZhgvq0VB3KSnYSsxE3NfXjKWVHz
-         jU4tP/gFyxVxdDfDMa64S1NjBj/2tC4DpjqNTAs0HKi2hFCE9SLykbBdgfjjpxse8rzz
-         j9LHimOc+wpyExMcOPGybm8POa4lMZu7G+fE8XuwmVwWTDfDbmrBg4jZxtZpUQBTUcnj
-         i7yYDS6Gz5lnctzVQd09pdNxBUsj/iFJRSm/G34OKQx4/uKvlYhNiblGQgsFuN7JxS+X
-         xGNw==
-X-Forwarded-Encrypted: i=1; AKwUvBwoFhk+IbgXApqECyyebK24XDweUsH19B6YQGMM2nK4rjHHxM9wWLyKwK31ILViv8Aq76Q+G7nHhgBAYw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJl4KV5rcpzDSsp1tbhYtyV8YlFWgEdfL1m3wIBz5abnTacPIjC
-	h9AML0R9EeRtEFSCiNo8GBkm8B+hFna5GYtptptfN+46hy5A/Mw05nufmkgU03QZH5LdHOgetO7
-	j9lEech+PdqgPGbkcAQibKhBIexP4D5c=
-X-Gm-Gg: AYBFou1OE/LOEveV+t5NSLa45dAwiSIi79g1Gxs0kulOuUX9yZx4wE+ZiZgtXfxOOip
-	PFje5JbsoNQtSUvEtpjTMZ0mXYPca6tzCNd8M+cGD4+LfLvyH7N7ZhVFBb7usoqJRDAWEnwPbbq
-	7CVTHoBNydHgYqlR++/1/pSQUXisr52Y3qC+ozKOA0g1nAJorVdsyBTw+gcLf44/T9N8hznhaO4
-	RGV3196lKkFLXQ5v8Kbfv4TsFwcwWDJxcj8kbzt4va+BROZe74S+zmDh/wnd5a8MGRLNFQpwFUi
-	lsHBcffd/xg4q/2RXq2fIjrlxFsfNHdpFCfqOYH4R9vIfmUc1/YBdC3+QM9frOH8+lcT8SJhQLL
-	hNrTNzF6fjc3ynn7V6rSg3VSeOarpZo8Rh+VWoU62y2xgM58bcCjcuNoB3J01NNw6OcJ2EkU=
-X-Received: by 2002:a05:7023:d08:b0:190:716:4822 with SMTP id
- a92af1059eb24-19599bd3be6mr253220c88.8.1792691584483; Thu, 22 Oct 2026
- 10:53:04 -0700 (PDT)
+	by smtp.kernel.org (Postfix) with ESMTPS id BCCCC1F01825;
+	Thu, 22 Oct 2026 21:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792703434;
+	bh=W7kN+lw5/GydYpTGjBruZgxToE+lStyqPTyM15Domeo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=HgTIkEwL4Cy0IXdtb1yKXPVqNfwep6nBtfFOAhVeo7JuCbxxBom30rBu/f+onSLVN
+	 F4s5VEnWF1J9QVvsSmpL4bwDcCjUDm0fAAC/RetlONkDO4a9oPpST6zePvZwcv36fe
+	 ByNdlJBe41fkpRWTh07kD8PDuJstnKxXTNo5Pi41xvCzaWG96asjiMWa7CJL0oHg3M
+	 dL5JGCjegjr8nEN6w2086UN3l9sJmJQH57s73TaPU50aeOFrMw88oOImQeJJaTxrdB
+	 e72ptkwVO6iUm2et6mWvZwJhxh0dTmOyfzefDkiNIb/usRydZnql9sFQ0FUFQq4iGg
+	 HPvu1krC2rHTw==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 23DBB41EA6;
+	Thu, 22 Oct 2026 21:10:33 +0000 (UTC)
+From: Austin Schlegel via B4 Relay <devnull+schlegelas.outlook.com@kernel.org>
+Date: Thu, 22 Oct 2026 17:10:24 -0400
+Subject: [PATCH v3 1/3] serial: tegra: fix RX DMA descriptor use-after-free
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -104,47 +82,130 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261015130628.184279-1-clamor95@gmail.com> <d3648f08-17b2-4a90-8c23-3036cf71f1e1@sirena.org.uk>
-In-Reply-To: <d3648f08-17b2-4a90-8c23-3036cf71f1e1@sirena.org.uk>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 22 Oct 2026 20:52:52 +0300
-X-Gm-Features: AclHuK804zMlj-QH-mnS-Z0lN9YQ0e8iLQ84s-klji9qX-wEVgx75tAGWTn5j64
-Message-ID: <CAPVz0n3goYTds2oVExJUwNcOr4kHAHUntCt0yHMueOnJ3GxCGQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/1] ASoC: dt-bindings: nvidia,tegra-audio: Consolidate
- all codec support into a single schema
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261022-serial-tegra-dma-uaf-v3-1-129f6d67f673@outlook.com>
+References: <20261022-serial-tegra-dma-uaf-v3-0-129f6d67f673@outlook.com>
+In-Reply-To: <20261022-serial-tegra-dma-uaf-v3-0-129f6d67f673@outlook.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Alan Cox <alan@linux.intel.com>, 
+ Stephen Warren <swarren@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, Austin Schlegel <austin.schlegel@arthrex.com>, 
+ Austin Schlegel <schlegelas@outlook.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792703432; l=3938;
+ i=schlegelas@outlook.com; s=20261001; h=from:subject:message-id;
+ bh=5wOCuxOgp6v26DKJn2OPJjTvShSapaztXA47bgOTIT8=;
+ b=4ZEObEQk/DyyWv1OwV43gipnlI350GB60rZIGas2DjgPtWh16jDXxmj2lme+//ZGd+zpxNXb8
+ OXnW/KfEFGcCJbEyTaVUHjtVkf44AR/MDHAMhft+WlL2uBSQuxe7vUF
+X-Developer-Key: i=schlegelas@outlook.com; a=ed25519;
+ pk=ddgmH7VQaSWderjJFy4hDyq+P7hdHupPxQvwnGRBzCs=
+X-Endpoint-Received: by B4 Relay for schlegelas@outlook.com/20261001 with
+ auth_id=1098
+X-Original-From: Austin Schlegel <schlegelas@outlook.com>
+Reply-To: schlegelas@outlook.com
+Content-Transfer-Encoding: 7bit
 
-=D1=87=D1=82, 15 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 16:0=
-9 Mark Brown <broonie@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thu, Oct 15, 2026 at 04:06:27PM +0300, Svyatoslav Ryhel wrote:
-> > The number of codecs supported by the NVIDIA Tegra audio complex is
-> > increasing, which leads to an increasing number of bindings with minima=
-l
-> > changes. The main differences between codecs are the compatible strings
-> > and possible pin configurations. With the introduction of auxiliary
-> > devices, a definitive description of possible pin configurations become=
-s
-> > nearly impossible.
->
-> Please don't send cover letters for single patches, if there is anything
-> that needs saying put it in the changelog of the patch or after the ---
-> if it's administrative stuff.  This reduces mail volume and ensures that
-> any important information is recorded in the changelog rather than being
-> lost.
+From: Austin Schlegel <schlegelas@outlook.com>
 
-Hello Mark!
+tegra_uart_terminate_rx_dma() calls dmaengine_terminate_all() and then
+tegra_uart_rx_buffer_push(), which calls async_tx_ack(tup->rx_dma_desc)
+on the just-terminated descriptor. With the GPC DMA driver,
+dmaengine_terminate_all() frees the active descriptor immediately, so
+the subsequent async_tx_ack() touches freed memory. dmaengine clients
+are not allowed to touch a descriptor once it has been terminated.
 
-Just FYI, this commit should be applicable to the current next since
-it was made on top of the recently merged Tegra ASoC schema for
-wm8994.
+Move the ack into the two call sites that still own a live descriptor:
+tegra_uart_rx_dma_complete() (before the completion callback hands the
+descriptor back) and tegra_uart_terminate_rx_dma() (before terminating),
+and drop it from tegra_uart_rx_buffer_push() itself, since that function
+no longer has a descriptor it's safe to ack.
 
-Best regards,
-Svyatoslav R.
+The ack was originally added in commit b31245b94207 ("serial: tegra:
+ack the rx dma desc after transfer terminated") to avoid a descriptor
+leak with the Tegra20 APB DMA driver. Keep that fix intact: the ack
+still happens for every terminated RX transfer, just before the
+descriptor is freed instead of after.
+
+KFENCE reports the use-after-free on a Jetson AGX Orin (Tegra234) under
+UART loopback traffic:
+
+BUG: KFENCE: use-after-free read in tegra_uart_rx_buffer_push+0x38/0x168
+ tegra_uart_rx_buffer_push+0x38/0x168
+ tegra_uart_terminate_rx_dma+0x88/0xf8
+ tegra_uart_isr+0x380/0x470
+
+allocated by task 0 on cpu 0 (~9 ms earlier):
+ tegra_dma_prep_slave_sg+0x134/0x3c0
+ tegra_uart_start_rx_dma.isra.0+0xc4/0x138
+ tegra_uart_isr+0x340/0x470
+
+freed by task 0 on cpu 0:
+ tegra_dma_desc_free+0x1c/0x30
+ vchan_dma_desc_free_list+0x10c/0x160
+ tegra_dma_terminate_all+0x21c/0x290
+ tegra_uart_terminate_rx_dma+0x7c/0xf8
+
+Soak tested on Tegra234 (Jetson AGX Orin) for 24+ hours with
+kfence.sample_interval=1 and continuous UART loopback traffic: zero
+KFENCE reports, tx/rx byte counts in /proc/tty/driver/tegra_hsuart
+remained equal throughout with no framing or break errors.
+
+Fixes: b31245b94207 ("serial: tegra: ack the rx dma desc after transfer terminated")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Signed-off-by: Austin Schlegel <schlegelas@outlook.com>
+---
+v3:
+ - No code changes.
+ - Re-tested the series: in the same 10-minute UART loopback test with
+   KFENCE sampling every 1 ms, the unfixed kernel gave 1635 KFENCE
+   use-after-free error reports, and none with the series applied.
+
+v2:
+ - Reworded commit: Removed inaccurate statement claiming the freed-descriptor
+   is accessed in tegra_uart_rx_dma_complete().
+ - Reworded commit: Soak test ran for 24+ hours, so updated from 13 to 24.
+ - Switched to personal email (v1 sent from austin.schlegel@arthrex.com)
+
+v1: https://lore.kernel.org/all/20261001-tty-linus-v1-1-ecb8576c802d@arthrex.com/
+---
+ drivers/tty/serial/serial-tegra.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index b0fc4ae3686f..a23a92cebe0d 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -730,7 +730,6 @@ static void tegra_uart_rx_buffer_push(struct tegra_uart_port *tup,
+ 	struct tty_port *port = &tup->uport.state->port;
+ 	unsigned int count;
+ 
+-	async_tx_ack(tup->rx_dma_desc);
+ 	count = tup->rx_bytes_requested - residue;
+ 
+ 	/* If we are here, DMA is stopped */
+@@ -761,6 +760,7 @@ static void tegra_uart_rx_dma_complete(void *args)
+ 		set_rts(tup, false);
+ 
+ 	tup->rx_dma_active = false;
++	async_tx_ack(tup->rx_dma_desc);
+ 	tegra_uart_rx_buffer_push(tup, 0);
+ 	tegra_uart_start_rx_dma(tup);
+ 
+@@ -783,6 +783,7 @@ static void tegra_uart_terminate_rx_dma(struct tegra_uart_port *tup)
+ 
+ 	dmaengine_pause(tup->rx_dma_chan);
+ 	dmaengine_tx_status(tup->rx_dma_chan, tup->rx_cookie, &state);
++	async_tx_ack(tup->rx_dma_desc);
+ 	dmaengine_terminate_all(tup->rx_dma_chan);
+ 
+ 	tegra_uart_rx_buffer_push(tup, state.residue);
+
+-- 
+2.53.0
+
+
