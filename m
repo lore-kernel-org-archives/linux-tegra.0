@@ -1,100 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.170
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.201.37
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792742831;
-	b=jf3N7W2NLWo3gTNUCJDvolx3aiMI5iZZvUs0wgsZhk5xp0MBo4LPmYsuklhrHUlkSDvh
-	 OrHKeK3NOFov/OLbNQXJPCgeLuwJKWZSC7O/GAqSOCXpe4WRBQTutMq4/nZkqydewvkAF
-	 xekdzMTtzExbeDTxs4axcH3vtB6v1TjmgSjnAVdhCTG0JUW1ca5e7unK+PWi48FeFM/YL
-	 wVi2dEPzOsFRzFkcktrsRTpos3475UORXCxF9XqVgHOcNj0dcVui3TUR3qxhGW0bfiVS7
-	 wlO112NnsAW2luk/8twK6r3Avm3H7Bo9M8Bj18QghHQoLKgEfv5LmMOeOZs+/0NquGw==
+	t=1792743394;
+	b=cNP0S4rPcXW+szjKuwxHt/SqTHXefNvnqldQos6F0G4LDxJ2TfgIdWBeQhEw8fFUNGJO
+	 rwf6HdqzcgZzaQ8Eq+oupyUl9dxT2qlQPiEG5Imo+F+QLVpS6ILv5l1gYzINPfavlaCt3
+	 UCFiJintvRlFKPbyDtJ8UXe2mUDVLeeoTHBeIZgzz4wiDu/QZpyxgqH4e7gB1yT2pf/Ej
+	 Ox9b0miABcr+kTTSX84pJ5cC31WOW3ypZ5zW9X4qfXUpXFHE9f5dtdXIqotu5DKk3HEmY
+	 F0cbbaO4gdVWfuxUmK/rkzON4YWPsJQiMPwEKK6DPg40eAZuY4ZFY043wukmp5XKAUQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792742831;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=NnvImXqrDQ/+gM4kxWTSIgQWWDlFGoCxyR2kWQPVQtg=;
-	b=zu4EE+3Qb++l6j3edGt1/5qPFoAgeffiUiArbZpovFiv+aSaP44zV1ctgUo2W5gIsUzZ
-	 R3gM+L7/PeXiG7j5+n8omwX1syaiTGWGiks1LNTa/tOZGa6ixvf0jb/XKoqBiL/qlSsxW
-	 E3O/yExQxbqtwLk2hq3kFEPlP1Xog40tsU/LO83/YXFIxyYdI2ZeOtJW9p6g7nbbuNMp/
-	 y64f6JsNcejEnLwMTkMjMyljr48QCXo76PoxBXtSLiW4Y0cSe7NbdSJxheVOhvp48eVvy
-	 FervcKJVkNdDHMzHOx2mSzAagUxXSmXPUP2KfQwBo7vQlqmqMMw9t1J7njNR9WffnIg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792743394;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
+	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:
+	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=t8vrT/2ViYqcLLQGDswO3ORC3FlgaKzRpz/DEUkyisg=;
+	b=sdQUtAUXasib8/nPaOXdTIAtw6MXPHZ16HkOPym+vSlLyoT5JtkWK+7IWI0+OpUn3TEW
+	 R+WuDsbchp4jBW7JtSPqBCGhlUCYUXixUQJCxy61HHicVsUnqnPtx5wEONcoOXNMUvCWT
+	 A/2T3O2NWgUBDN0C99loJd34F6yBDFYpa9cCsMcedyfd4kZ3416B8NTPz76GNQEyxcE07
+	 BFdezJ4KzUXHbrGxvX9gv408TbTonBtkQzIXTvaWv/GiRqauiwhbrqEG1kcGf2w+0N77H
+	 sQrOrpxAf8ZiK349XZnrzyHJGXqq9tvLi+a2hBuSOZL4Q5EfwcJc0wy2lGwt5ChlHWA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jgBrPVzq;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.170
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=TH8QPFpo;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.201.37
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013037.outbound.protection.outlook.com [40.93.201.37])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC3B606A31D
-	for <linux-tegra@vger.kernel.org>; Fri, 23 Oct 2026 08:07:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CBC3B606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1052606A31B;
+	Fri, 23 Oct 2026 08:16:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B1052606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=jgBrPVzq
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-35829219da8so1946863eec.0
-        for <linux-tegra@vger.kernel.org>; Fri, 23 Oct 2026 01:07:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792742830; cv=none;
-        d=google.com; s=arc-20260327;
-        b=L9yHpf73JZldfBjnJoazvXrLkzWKsKyMjDXiTfUzGmT3isnmRcxi7SYrCdAjm91Kh1
-         s80BIT2EPsdvcikZ3A+NWxuRZ7SW99LOlXPOO+Kq9oQgY1gbpS/wQz8YM9bagwmXP/vQ
-         xKPUFQq+wHm7DW82xcPFhEdQTEfclBqqI2CL/qdL1jCHcAhx1geL5N3uRMk8X7mLb7jI
-         GBm8oBwhtBRmxzRyhM7G4SSuvblcdWZ2PG6HDsDw8VNYVurdxMLq3WnUbEsyMBuBBPiD
-         clwyUX8QugkKCIYK+dplSYGeHZoXjKDFpdMTxcsw3Q+WDzfl/B5jUZBPRQz/vrkg0uQ5
-         NQQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=NnvImXqrDQ/+gM4kxWTSIgQWWDlFGoCxyR2kWQPVQtg=;
-        fh=dFqO5hiZvn2Q52iKcbQq3MmNbNCb/0F9c6hJtR1ko7U=;
-        b=SDK9/1RGfj987JQAaoFXPvGC5MYIbm+5Tlu8IfbvvxBO+yXqVhom/TKh41mGlIoyAH
-         HlUOGdfF1B/eXKpZgFE7v0OE1bhiZ99ggtGA8Ad07mPxnHWcKSYNDHDKgfcPJUGPjLmE
-         T0hfHZpaevVa5fgwob6IjqKHtglP2zDbvMvgNjrvbW3F1Dxt5dtTxbIx1q7m/+Z2tT5h
-         NGOk5h8H2dlkJZH6jOO7PG9vvj9NaSXq1SWNUaTxooSu7Gzk1FRWVMGBQf1d+EHf4QHe
-         zKRU0w4vJ88Ic8fkduNJLCwtmR7g2r1OWeFyJNItfU+ZMNQP5Sg49TC+1VXQLKF2LWzl
-         IQVA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792742830; x=1793347630; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=NnvImXqrDQ/+gM4kxWTSIgQWWDlFGoCxyR2kWQPVQtg=;
-        b=jgBrPVzqsjDVKizM/9Djt4MRH0wUPhoMdeMCRHaXlJuEMyNSRwMOuh9WWoQ0zFtlzH
-         xvX/5FPQSGvX3f8bn3U/WW4/hIAuSS7KjxdgNEfKcPv+eK/YI17hYcAKLIgci7NWND3S
-         nf5xoAPu9FgRcpRGzNdehU8yzALLhiIaTk/YNaNCtgZSjt3WmNHDQRYToUHsYAZDzuht
-         juvhQUB2q+yaennRu/MeDT2QBZVbE74ms80e7b/Kd33M7Hr3YyyR6Gs4GORlWuokLYHr
-         vm8H6E28N+/Z4AP2oUtepgaJ+Ajt8HpJ9/3V+6wvChW8DSLrwM31BR4XMwCk38sHTeKO
-         b3qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792742830; x=1793347630;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=NnvImXqrDQ/+gM4kxWTSIgQWWDlFGoCxyR2kWQPVQtg=;
-        b=XRdAmCbPshkX4AjGjLg6Tm9m4pCQNO+uEN5pbO4TGkqJAQQ3MVmouo2njkzwyEXYEP
-         kRJs07mAqWGFZublGdG2kXC+DfyZppoEGsXrhtqRSjLW33FEevvoiUAJYJ9pxgnmXaEe
-         lHfHF3wGVCCzpUbZ8001twtiizhy6N3JLfOHJDEs+dsnYpqf2HUaV2xe6N8G3ppcc+cv
-         dx7pz1qiPrb6/0kZW3YJj7wDmNY4E/D3vIYUJYyd8/F9zWggVk8QrGBVv5t3rncIfV6w
-         jS/og9cG4k9kvgLTVJ5AaE5fq8qZnRB+KYWGtCQI5Qk00YrnP0OFe4yH6FVt4nvMJ/ZS
-         OeUQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxQQzUVBtrf74BI9ZHqnt16KgHGpYAnJHxNzMnnqB8+vZLFYj6BXLHiDitHeQTUGBoGc50vMPyVU6wPeA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKBj4EH7MmswjXgpZUbzuF3YD38CMtne39w9UywRL4u7Al6V4p0
-	xSUsgxPp0knFhri3PxMYBWUycj+W+mNSq69jjdXChKM1SjliB3mSjZL9GXSxu2MyWZrWYACGr5x
-	wfJLY/uOlR6y2FzlZ7MHxnbgIHgWir5U=
-X-Gm-Gg: AYBFou0akQy4Zll16z269O8DRuDPU1eN9ZhBHqOIO5Vi3ib8cdha3ZF14YZyWfHlh3g
-	bzzUo+6ktbdxmaEAw/VW39fPTBwUwP0xbqvp0J1EUAwEySdXNEyFEpmn6K/AhH3VwOqOtHs8mNA
-	dds68WMq7SQd9pZcuhsnF7Lj6AtI3fUvLBZs2pYFTugXZFGMLWjXsoSVCazSJUYjiRHWu+r5UPU
-	jRvZzDeK5ZvlHkUmc9L1oU7p3rN71ng4HNUuDY1gOEuWTKntvlxDx0ewhaffpFbX4LbUawgsb0u
-	p+cKq2PbtsQUiXadBy/L07LEyNHDy6Fhb5y6YcSKBC6HtSG4FlLy52ZgzlhgZ0OM0BO6UiDA9GV
-	336bgVjXPTgC1aXNGNgKh3EkqN+KmYFzphN3MIACG2mqnxbk2DQm612n+iiQMKbNsikKwYw==
-X-Received: by 2002:a05:7300:ff43:b0:358:c5c9:2661 with SMTP id
- 5a478bee46e88-369d9825511mr1710525eec.10.1792742829641; Fri, 23 Oct 2026
- 01:07:09 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=TH8QPFpo
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hwX8MHKOfpdoyN/F9HVhGY9H14eM2qLggqzMRWxHMlmJigKJuddiDcQgkF8IUxydTsOSLEBoy07w5wAQ0GnAtgJbNBcQvQpL1lNXqlBM7DhPKerQ9k6Tf1UoC5nleqiu9VoarGuQ0KcD66xQHX4kcxbHoh6zWkW+iA9CWbpu91/CHAfJchvbrwe69xySAGEvpcb99mv6L3RUp+rAJOuuT0mN/pAo44BOjobMjvkwKuNwrMZauT0Ri7SK1a829WfuP2WhhA365jHJsXfaxiYZbNhwBjkm+T7QPaJDR4ILxP5KGiIXBk1+TgwId/Mtd4lMX/SSpTWFgsvPwplUZUyhnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t8vrT/2ViYqcLLQGDswO3ORC3FlgaKzRpz/DEUkyisg=;
+ b=TzzMAQNmv0poGa8MJslHFPwRL7JzZswLIVI5342BB9UO2q7GCGk0six2EqPw/MzgfT34WiQv7AAjys/HVYIiIzitzPXwMQhfX8offuekgvthXJ52nkYEBIiuYhUE/zpsjPtIJ/gD4OTh6D5lwckdsZfJN38Lb9Bq4VoetO9B4ujDNZ5t25J2jHWHIcVCimQMN/N9jD3yNKOIkEzCqlhIRHL2BIcFb9L7GoZZtXjzoHXtdoPKRNL29UhpKPQHhLJhfZDQy/R+iEvhPkMyjW/ccgFMW4kjfYnxzBL0Kj0OeKSueKszxYIoKN/PXu5n8RttvnMRWPHTAhr+vznRC6n0pg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t8vrT/2ViYqcLLQGDswO3ORC3FlgaKzRpz/DEUkyisg=;
+ b=TH8QPFpobMC3491vg2lB8mDMl6uPxrGfDAvhA/fRnjEl4ccjGze4U09PLQdjSO626mZdn87BTLG4Vsqv9PbfOEKTzJtngMoTYyLHCPLA4UCmpIkZPK/spLMfg+kvdNydrOXICEy5s2cvy2YLb1rWzWpuEGvuZAUQ6ZympM2ItjFTiBU3A1CfhKgtZcyMOsb+mHwZrt6pg3VknujxISMBSntFBDctZBFASJKVBmiGHbxJIgRt1WDotT40r+AX8srG+XgR6ND+mH5Y5zUqlLpbBGqKIl8vruxBGD/FOZydihnvG6yFEtUlXE5FOrHbPvKU1hTGYd1Op2ulXfk5RWTx5g==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by LV2PR12MB5725.namprd12.prod.outlook.com (2603:10b6:408:14c::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.16; Fri, 23 Oct
+ 2026 08:16:29 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0546.012; Fri, 23 Oct 2026
+ 08:16:29 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: thierry.reding@kernel.org, jonathanh@nvidia.com,
+ Austin Schuh <austin.linux@gmail.com>
+Cc: anrao@nvidia.com, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Austin Schuh <austin.linux@gmail.com>
+Subject: Re: [PATCH] firmware: tegra: bpmp: populate debugfs in the background
+Date: Fri, 23 Oct 2026 17:16:26 +0900
+Message-ID: <n59f1S6wQICe5ZxgcNxb3w@nvidia.com>
+In-Reply-To: <20261017065012.3063980-1-austin.linux@gmail.com>
+References: <20261017065012.3063980-1-austin.linux@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: PS2PR03CA0020.apcprd03.prod.outlook.com
+ (2603:1096:300:5b::32) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -104,161 +97,204 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261022132259.240717-1-clamor95@gmail.com> <20261022132259.240717-5-clamor95@gmail.com>
- <Rqw6Z6zYRbyIFoTAHJtpuw@nvidia.com>
-In-Reply-To: <Rqw6Z6zYRbyIFoTAHJtpuw@nvidia.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 23 Oct 2026 11:06:55 +0300
-X-Gm-Features: AclHuK_5rggW1YEyeeWCARrgxFz7VynuFiVi0IUrlR8AYmBGFbwzWkAjfApMGS0
-Message-ID: <CAPVz0n1dRyoMXNJe4ewY_3YQcaKFXQ08ROvNJr4=HRz4UDBeHw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] drm/tegra: dc: Expand available registers layouts
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|LV2PR12MB5725:EE_
+X-MS-Office365-Filtering-Correlation-Id: 48124f93-31f8-47cc-925b-08df30ddf0ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|366016|23010399003|376014|261022105027099003|261022075727099003|56012099006|261009223027099003|5023799004|11063799006|261021123027099003|261021121427099003|10067099003|18002099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	jnF4jKESAGXZ5oKGuPZu74MIopPYa+RI/W/od1WseKych7vl/Uax5w2Jz9SgovCD2jSa+UvR98H+zLpJdhUakaQTKndX4iUtmv+ypuixAb+XHjuVaFFniMAeJaWfPfF8JbRUgGC9hijDK0IcVcFxo+IwHzXeWWT+zc9Ci+tIpNzxNK/JlBLgzs53Sjbl98OM5LsIH/Ly+3sOdkT5UZNBwibbQBdngPeJ750Ae9+xfEczeZa+UusrwREjJ0Y2lLFCTwkib1cSoI7zREWBvY8HvT0PovDKUMj88RSOt5BH47m0531vppoKSMJ4AFki7INutQ5crR7LaLD17jzNMdgwMM4mgLIGvaYxZoP5Gxt39+AmtSjODgz7rPmSZCI/mZPJ/w4unWTVYPzWVbE7qa6EO/04BlIhIGTuf0k8zt53nkAr8YrLCY+gBfEVk9ShW4r4H9tFV9QF0IWd5aHQMxjU+018inmLk2jflR3nvpDSOhFyHDPD6Y3mfdNoAfGFRqZi8ReSIfXwmjpMfVC2dzIvbT5/PnnHZYxmVuHaKpPMu92uBzYVl/kshRHXjF7FKXJYen08xxj+T3KbfwIgzPhn5ZMDRTHyh8IwsQjH7SN7ahhy3cLqvWmwOj47069o5QleJWo6dZIBAkwfom4+J2viHiZZs6+TDmimG91qmeaJXfU=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(23010399003)(376014)(261022105027099003)(261022075727099003)(56012099006)(261009223027099003)(5023799004)(11063799006)(261021123027099003)(261021121427099003)(10067099003)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aG5uOGQ4bmNrbmpCZnBwQmJaT0xYVFIxaE5IY24ydzlnVmJiRnhYR1I5aHFw?=
+ =?utf-8?B?N1ZjckV3aGxiVTdYS3pnelovMlVseGxWbjVleXpBbkJOV0NUL1FPb2JtLzlX?=
+ =?utf-8?B?azIzMHNGQ3J4VDNXRUlEVE9JZDZJbFU0bTZSRGhQTnlaWmFpUEhFQm5IZElL?=
+ =?utf-8?B?MytGRjZ6dFlRK1pCS3B6d3pzUFBVNmNmRVNQRXJMQlJKZHprNmozd09HWmJw?=
+ =?utf-8?B?VkJCcFR6bHhRQ2YvdzMwdmd3bUNSQXplOE94UUIzcVRJWW8zS1gxaWdGODhE?=
+ =?utf-8?B?bzNqVWhYdVlNdUxJUDhFNkFyQzh3TUZMeXVteHBJMTZDU2tJVExlMGNHOTk4?=
+ =?utf-8?B?eTdvUjNpUFNrWHRXdkRKQndpODZIcHdHUGlWQjZXRHJMbVNBTDMzQ1VUQVJo?=
+ =?utf-8?B?d0tjZzUycFVxcmNYWXJJbVB1SmNuN2VKNTJnVkVaZlNCTTBMeGY2LzgrQmVv?=
+ =?utf-8?B?bXN6UUlvZjlOcHFNbzVVMVpZNVBRUmQzOHJ4QzZHQnZwS3ZFZE95KzNTT3Ur?=
+ =?utf-8?B?dnczdHdDdnhBdExwaEh4Zi9sUXU1Mm1WWThLUHFuS1hRdXlKdEFKN0hqYnBZ?=
+ =?utf-8?B?NVA4d05TKzYrTVlFM0cxQjJrWmNIeXhYT3kwN1ZQbzRteUZCRG4yVmNMSkFu?=
+ =?utf-8?B?K09HT0p4ZjRKYWh2TjFkOTBzUmdJdXF2R2JGeC85anlsU0V1VzZwdk9aVFcr?=
+ =?utf-8?B?RTY5bTczaG5pNCs2SEdBSjdCd1pyY0FvS3hjSkNCTVJjV0JBRXp2bldHckVm?=
+ =?utf-8?B?WVRBV2FHYzRwMXRpREF3TWx2NGxtN3FTMjFwMTBub1dhRXZlQnF3Y3BBUHIx?=
+ =?utf-8?B?UDRSdEVFRlJQWnNWeVlRSGdibW1va3VFMHgxWm1udXpDNjQ5UWFSTzZ3RkpQ?=
+ =?utf-8?B?ZkxuUjFhYXdWZXhlUjY5YTdCVTdtQlg0VFdtQVhPZll5dkpBUkVVK05kQkRG?=
+ =?utf-8?B?enljL0RhdjRwQW1uOWJPc0pzNTQ3c2pjNlIxQ1Nvd2lGZE1yVEJEVkJTZDdw?=
+ =?utf-8?B?QTdlUXVHa3BRbWNUd2dOOVpJd0o3RnBuSXJzY25TTFNYUk9TODJPZW1KeVBZ?=
+ =?utf-8?B?ZThGVXZYZEV6czNYdWpWaWpTK2ZyR1lHVnVVKzJDS3FQbUVRQ1JGdVYxaE5h?=
+ =?utf-8?B?YTI4N1hBUkliS3FFRXNicmlRdVlGVWRFdEJjU1lhS1RVempub1FBbGRxSWVl?=
+ =?utf-8?B?ZG9SMkcrSkdHWUNueE4yWE83YndqMEVEZXpncStBa0NZY2xodzVKM0FOUzFO?=
+ =?utf-8?B?Y0VFZEowdmFHMy9Hekc2OGhxRXk2STRmS205SnB2OVVIa0w5Q3JyNlpQaEts?=
+ =?utf-8?B?QlhTanlKZGtVNVU1Z0tuS3hPQ3hhNC8wNWFXSjByM2N6QVBWZnBlOTgwTHk3?=
+ =?utf-8?B?dVNZbFZ6TmNpRVlvSS9oZVRta0NlUDMxdzNPYlArVzU0Y1BSbEVLWEdoZ0cx?=
+ =?utf-8?B?UUxyb2EyQkovVmE0WVBsYUFQYit5cTdiQnlWU3R3RmdDeXBMU25BTW0xeXh1?=
+ =?utf-8?B?K0JwbVR5dkVuNGg3TkZmVFF6OXZvd1I4N3BSd2oyZm9nWWovNUt2MTJNTC9X?=
+ =?utf-8?B?M2lVQjVXM0VpZ3NoaEdueFZPd2VKaVc4MEpBL3hsOG94Vm9jVXhnMHJmT2Fn?=
+ =?utf-8?B?TFZlNml4QVR4Z3RDRFQ5MGdOOWFRSXk5U3VVRFEwQU1iS01kVWh0STh2S2xI?=
+ =?utf-8?B?Y0R5K1dna3RzRFE5MTR1MlZDNm9NOUp3VDMvZWNXY2g4WUZjWEJyMzlNdTJk?=
+ =?utf-8?B?Tlg1aGlZTU5aeXhzUWcvbWtEc0FnVGNvdFUrUitnaWlPU2s5Wlg1SUhOaTJ6?=
+ =?utf-8?B?ZVJIeWFjSVl0djczNmY2Z255Z0VSWW9CU3hFRExjOHpFclhnamdIdnBjaHpW?=
+ =?utf-8?B?ZXpJWHIrYzRFMVhGajdrelFqRDFHZFJ0cENLVk5PNEtNVmZqZ0lLdUYyVThu?=
+ =?utf-8?B?Vmw1K1huNkVnb0IyNlZ2TC9kT1N1ZDdoV1lsMXZiclgvNXFnZkVQTzNaZXVn?=
+ =?utf-8?B?M1F5RWlRQUpZTG5HMUtGSjMxUS9xYkNlbkt6cE13MjFQK0twbGFicjRhQ2c4?=
+ =?utf-8?B?Yi9wMlpTM3pPZGY2anNJc3dSN1haQ3AreUtvSG5rMjRac1oxM0FJNEhjaDYv?=
+ =?utf-8?B?cm5MeU1vdEdvTlZUSzZMRWZxK3Vzbm5JU2s3a2lFL0JWTzlqbTQzczIwVUNZ?=
+ =?utf-8?B?c1RpVUtsdFV0SlMxaFgxYVhGemJ5ZjQvVm1VaTRQL3l1VUdVV0ZYTkRSVVk1?=
+ =?utf-8?B?N2N4T1ppNXBkS2twaGpqNEZJSjdtMW9JUHR1dzdHRHNud3RFT1k4TVMrTk52?=
+ =?utf-8?B?V3lSL2xpZlkySUNtM3NybDNkNUswTUkxNklkMWNOLzZXUlZobmt6UTZvcEpX?=
+ =?utf-8?Q?IzArL39lnpD6daYi2VbkDXEXYgC8POSHrZMm0wKASufY9?=
+X-MS-Exchange-AntiSpam-MessageData-1: 2xVWBTax9R4IRQ==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48124f93-31f8-47cc-925b-08df30ddf0ce
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 08:16:29.8027
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LMQpcFPIobugIuxvXNjEue4t5eBzufLiWKAUfD5jShQcC4iBgja4p7xfa7ivYu/Y49eI+4+e32mu8tT/579N8A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5725
 
-=D0=BF=D1=82, 23 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 10:1=
-4 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thursday, October 22, 2026 10:22=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > Expand existing DC register definitions with additional fields in
-> > preparation for adding the 8-bit CPU interface.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/gpu/drm/tegra/dc.c |  3 ++-
-> >  drivers/gpu/drm/tegra/dc.h | 49 +++++++++++++++++++++++++++++++++-----
-> >  2 files changed, 45 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> > index b0bfa946e6979..5c67928bcabfa 100644
-> > --- a/drivers/gpu/drm/tegra/dc.c
-> > +++ b/drivers/gpu/drm/tegra/dc.c
-> > @@ -2384,7 +2384,8 @@ static void tegra_crtc_atomic_enable(struct drm_c=
-rtc *crtc,
-> >
-> >       if (dc->rgb) {
-> >               /* XXX: parameterize? */
-> > -             value =3D SC0_H_QUALIFIER_NONE | SC1_H_QUALIFIER_NONE;
-> > +             value =3D SC0_H_QUALIFIER(SC_H_QUALIFIER_NONE) |
-> > +                     SC1_H_QUALIFIER(SC_H_QUALIFIER_NONE);
-> >               tegra_dc_writel(dc, value, DC_DISP_SHIFT_CLOCK_OPTIONS);
-> >       }
-> >
-> > diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-> > index 0cb0515968b35..7005df32f485f 100644
-> > --- a/drivers/gpu/drm/tegra/dc.h
-> > +++ b/drivers/gpu/drm/tegra/dc.h
-> > @@ -274,8 +274,11 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
-> >  #define DC_COM_CRC_CHECKSUM                  0x301
-> >  #define DC_COM_PIN_OUTPUT_ENABLE(x) (0x302 + (x))
-> >  #define DC_COM_PIN_OUTPUT_POLARITY(x) (0x306 + (x))
-> > +#define LSC0_OUTPUT_POLARITY_LOW BIT(24)
-> >  #define LVS_OUTPUT_POLARITY_LOW (1 << 28)
-> >  #define LHS_OUTPUT_POLARITY_LOW (1 << 30)
-> > +#define LSPI_OUTPUT_POLARITY_LOW BIT(8)
->
-> Please update the existing defines to use BIT(n) as well, and align the
-> define values (incl. the lines around here that are already there) like
-> elsewhere in the file. Also, currently it's hard to tell which register
-> each bit define corresponds to, so I'd like some comments like ..
->
-> /* DC_COM_PIN_OUTPUT_POLARITY(0): */
-> #define ...
-> #define ...
->
-> > +#define LDC_OUTPUT_SELECT_V_PULSE1 BIT(14)
->
-> Please move this below the DC_COM_PIN_OUTPUT_SELECT(x) define.
->
+On Saturday, October 17, 2026 3:50=E2=80=AFPM Austin Schuh wrote:
+> Populating the BPMP debugfs mirror takes a series of synchronous BPMP
+> requests, several per directory.  On an Orin Nano (Tegra234) the tree has
+> about 10,800 entries, and the BPMP probe doesn't return for over five
+> seconds.  Every device that gets its clocks, resets or power domains from
+> the BPMP waits for it, which on Tegra234 is nearly all of them, so PCIe,
+> NVMe and the root filesystem all come up five seconds late.
+>=20
+> Commit c7fc690da6f1 ("firmware: tegra: bpmp: Allow BPMP debugfs populatio=
+n
+> to be skipped") lets a system that doesn't need the mirror turn it off wi=
+th
+> tegra_bpmp.debugfs=3D0.  A system that does use it, for instance to set
+> clocks from userspace at boot, still pays the full cost.
+>=20
+> Nothing in the kernel uses the mirror, and the probe already only logs an
+> error from it, so populate it from a workqueue instead.  It isn't an
+> async_schedule() job, since kernel_init() waits for all of those before i=
+t
+> starts init.  Userspace that reads the mirror right after boot may find i=
+t
+> still being filled in.
+>=20
+> Measured with initcall_debug on an Orin Nano running 6.18.39 with
+> NVIDIA's patches: the BPMP probe returns after 1.2 seconds instead of
+> 6.36 seconds.
+>=20
+> Assisted-by: LLM
+> Signed-off-by: Austin Schuh <austin.linux@gmail.com>
+> ---
 
-Sure, I will refactor this header in a more readable manner.
+Sashiko reports some hard to trigger but worth checking concurrency=20
+issues.
 
-> >  #define DC_COM_PIN_OUTPUT_DATA(x) (0x30a + (x))
-> >  #define DC_COM_PIN_INPUT_ENABLE(x) (0x30e + (x))
-> >  #define DC_COM_PIN_INPUT_DATA(x) (0x312 + (x))
-> > @@ -303,9 +306,15 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
-> >  #define  UNDERFLOW_REPORT_ENABLE (1 << 0)
-> >
-> >  #define DC_DISP_DISP_SIGNAL_OPTIONS0         0x400
-> > -#define H_PULSE0_ENABLE (1 <<  8)
-> > -#define H_PULSE1_ENABLE (1 << 10)
-> > -#define H_PULSE2_ENABLE (1 << 12)
-> > +#define H_PULSE0_ENABLE                              BIT(8)
-> > +#define H_PULSE1_ENABLE                              BIT(10)
-> > +#define H_PULSE2_ENABLE                              BIT(12)
-> > +#define V_PULSE0_ENABLE                              BIT(16)
-> > +#define V_PULSE1_ENABLE                              BIT(18)
-> > +#define V_PULSE2_ENABLE                              BIT(19)
-> > +#define V_PULSE3_ENABLE                              BIT(20)
-> > +#define M0_ENABLE                            BIT(24)
-> > +#define M1_ENABLE                            BIT(26)
-> >
-> >  #define DC_DISP_DISP_SIGNAL_OPTIONS1         0x401
-> >
-> > @@ -451,12 +460,26 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
-> >  #define BASE_COLOR_SIZE_888    (  8 << 0)
-> >  #define BASE_COLOR_SIZE_101010 ( 10 << 0)
-> >  #define BASE_COLOR_SIZE_121212 ( 12 << 0)
-> > +#define DISP_COLOR_SWAP_BGR  BIT(16)
-> >  #define CMU_ENABLE_ENABLE      (1 << 20)
-> >
-> >  #define DC_DISP_SHIFT_CLOCK_OPTIONS          0x431
-> > -#define  SC1_H_QUALIFIER_NONE        (1 << 16)
-> > -#define  SC0_H_QUALIFIER_NONE        (1 <<  0)
-> > -
-> > +#define SC0_H_QUALIFIER(x)                   (((x) & 0x7) <<  0)
-> > +#define SC1_H_QUALIFIER(x)                   (((x) & 0x7) << 16)
-> > +#define SC_H_QUALIFIER_DISABLE                       0
-> > +#define SC_H_QUALIFIER_NONE                  1
-> > +#define SC_H_QUALIFIER_HACTIVE                       2
-> > +#define SC_H_QUALIFIER_EXT_HACTIVE           3
-> > +#define SC_H_QUALIFIER_HPULSE                        4
-> > +#define SC_H_QUALIFIER_EXT_HPULSE            5
-> > +#define SC0_V_QUALIFIER(x)                   (((x) & 0x7) <<  3)
-> > +#define SC1_V_QUALIFIER(x)                   (((x) & 0x7) <<  19)
-> > +#define SC_V_QUALIFIER_NONE                  0
-> > +#define SC_V_QUALIFIER_RSVD                  1
-> > +#define SC_V_QUALIFIER_VACTIVE                       2
-> > +#define SC_V_QUALIFIER_EXT_VACTIVE           3
-> > +#define SC_V_QUALIFIER_VPULSE                        4
-> > +#define SC_V_QUALIFIER_EXT_VPULSE            5
-> >  #define DC_DISP_DATA_ENABLE_OPTIONS          0x432
-> >  #define DE_SELECT_ACTIVE_BLANK  (0 << 0)
-> >  #define DE_SELECT_ACTIVE        (1 << 0)
-> > @@ -493,6 +516,20 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
-> >  #define DC_DISP_CURSOR_POSITION_NS           0x441
-> >
-> >  #define DC_DISP_INIT_SEQ_CONTROL             0x442
-> > +#define SEND_INIT_SEQUENCE                   BIT(0)
-> > +#define INIT_SEQUENCE_MODE_SPI                       BIT(1)
-> > +#define INIT_SEQUENCE_MODE_PLCD                      0x0
-> > +#define INIT_SEQ_DC_SIGNAL_SHIFT             4
-> > +#define INIT_SEQ_DC_SIGNAL_MASK                      (0x7 << INIT_SEQ_=
-DC_SIGNAL_SHIFT)
-> > +#define NO_DC_SIGNAL                         0
-> > +#define DC_SIGNAL_VSYNC                              1
-> > +#define DC_SIGNAL_VPULSE0                    2
-> > +#define DC_SIGNAL_VPULSE1                    3
-> > +#define DC_SIGNAL_VPULSE2                    4
-> > +#define DC_SIGNAL_VPULSE3                    5
-> > +#define INIT_SEQ_DC_CONTROL_SHIFT            7
-> > +#define FRAME_INIT_SEQ_CYCLES_SHIFT          8
-> > +
-> >  #define DC_DISP_SPI_INIT_SEQ_DATA_A          0x443
-> >  #define DC_DISP_SPI_INIT_SEQ_DATA_B          0x444
-> >  #define DC_DISP_SPI_INIT_SEQ_DATA_C          0x445
-> > --
-> > 2.53.0
-> >
-> >
->
->
->
->
+This does seem a good idea, but I am a bit concerned about the change to=20
+what userspace sees. Ideally we'd be able to have userspace stall if the=20
+debugfs population was still in progress. If that's not possible, at the=20
+very least userspace should have a way to voluntarily wait for the full=20
+debugfs to be available.
+
+>=20
+> Notes:
+>     Based on tegra/for-7.4/firmware (1bbcf4a19f14).  Built for arm64, W=
+=3D1,
+>     no new warnings.  The timing is from the same change on 6.18.39 with
+>     NVIDIA's patches (where the probe also has the VDK check), which is w=
+hat
+>     our board runs; I haven't booted this branch on it.
+>=20
+>  drivers/firmware/tegra/bpmp.c | 35 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 32 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.=
+c
+> index d3508e98e338..535ebbd55a6f 100644
+> --- a/drivers/firmware/tegra/bpmp.c
+> +++ b/drivers/firmware/tegra/bpmp.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/semaphore.h>
+>  #include <linux/sched/clock.h>
+>  #include <linux/slab.h>
+> +#include <linux/workqueue.h>
+> =20
+>  #include <soc/tegra/bpmp.h>
+>  #include <soc/tegra/bpmp-abi.h>
+> @@ -1052,8 +1053,26 @@ int tegra_bpmp_init_dt_providers(struct tegra_bpmp=
+ *bpmp)
+>  	return 0;
+>  }
+> =20
+> +struct tegra_bpmp_debugfs_work {
+> +	struct work_struct work;
+> +	struct tegra_bpmp *bpmp;
+> +};
+
+Just inline the work_struct inside tegra_bpmp. In any case the work=20
+should be synchronously cancelled if the bpmp driver instance is going=20
+to go away (not that that will happen, but good practice).
+
+Thanks
+Mikko
+
+> +
+> +static void tegra_bpmp_debugfs_work_fn(struct work_struct *work)
+> +{
+> +	struct tegra_bpmp_debugfs_work *dw =3D
+> +		container_of(work, struct tegra_bpmp_debugfs_work, work);
+> +	int err;
+> +
+> +	err =3D tegra_bpmp_init_debugfs(dw->bpmp);
+> +	if (err < 0)
+> +		dev_err(dw->bpmp->dev, "debugfs initialization failed: %d\n",
+> +			err);
+> +}
+> +
+>  static int tegra_bpmp_probe(struct platform_device *pdev)
+>  {
+> +	struct tegra_bpmp_debugfs_work *debugfs_work;
+>  	struct tegra_bpmp *bpmp;
+>  	char tag[TAG_SZ];
+>  	int err;
+> @@ -1089,9 +1108,19 @@ static int tegra_bpmp_probe(struct platform_device=
+ *pdev)
+>  	if (err < 0)
+>  		dev_err(&pdev->dev, "failed to initialize sysfs: %d\n", err);
+> =20
+> -	err =3D tegra_bpmp_init_debugfs(bpmp);
+> -	if (err < 0)
+> -		dev_err(&pdev->dev, "debugfs initialization failed: %d\n", err);
+> +	/*
+> +	 * Mirroring the BPMP's debugfs tree takes several requests per
+> +	 * directory, which on Tegra234 adds up to seconds.  Nothing else
+> +	 * waits for it, so do it in the background rather than hold up every
+> +	 * device that depends on the BPMP.
+> +	 */
+> +	debugfs_work =3D devm_kzalloc(&pdev->dev, sizeof(*debugfs_work),
+> +				    GFP_KERNEL);
+> +	if (debugfs_work) {
+> +		debugfs_work->bpmp =3D bpmp;
+> +		INIT_WORK(&debugfs_work->work, tegra_bpmp_debugfs_work_fn);
+> +		queue_work(system_dfl_long_wq, &debugfs_work->work);
+> +	}
+> =20
+>  	return 0;
+> =20
+>=20
+> base-commit: 1bbcf4a19f1495f769b69e9569d8c1e81df074f5
+> --=20
+> 2.47.3
+>=20
+>=20
+
+
+
+
