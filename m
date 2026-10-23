@@ -1,79 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792703435;
-	b=iZQehDYBdbQ589GgLmQbzO3dcT95gslyQJq9KxjrKXZQ4prLIZqxUVJFuu5tstD3rxQd
-	 DEDuJglZvoCDYh6DCFcFIgJgTSW8h+ZyYq72KEqAv25FqZ6MMDTL0mVBsMWtMigpjnr97
-	 0JuHRnPJyIJ25AfWueNWYWSwiQfU0MD05l7X3f10NQdAwVa+ZFegEvsoB4IgPgP/icRbR
-	 xmrjfTRvwLRza9zZ9ilrbcOCCDsPxalDt+SKQVEBDThYetxibCAyaFrN/P+OXJNKNy6ew
-	 uFMNg6x+rOQyE0o+mJWHdd9HGJno7UErpf6QrgyLVPlpFhMs2r0rxc2UUnRYAXsY7GQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792703435;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=ZaN1tc6d7nTMvvC2G9HGd0rGxtVw7AJhg3WsuDy0dRY=;
-	b=0kpYUp7hgoca6Sa2uIl6E90zDx4DxQZIuPbBFgolM3FO75UCtAUoiS0wHD4PjVAncJlb
-	 RBcqdziDVhtKQTH2uBXRnw7UYQe7p8RiZRzFtrT4/sCTBFumyPuVDoKBzJK6eyZUzaS+1
-	 6xgN/U+mwuOxWabcfJPLRWEA9CRNlyH9vW2y1KRibEK8p9qoZQpyhwvleMxSE1ZVdZ+P1
-	 j1i7Kxn6609H0Ae9EZ/HIM2eto3vRVOlF97sg1017Ev2fbLR0yyLR6AMeyPxzKxasKlR4
-	 +xE/yBiXK4dw2t7+iZyWn4TiBjeNB9W9itCoMMnyfO0NK3j0VF/GK9IuL7Wmfc9TrOQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IY5pDrE4;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.19
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792719580;
+	b=pORreFYrELH32zhMmkKpqpbZrjcQTPFoRsSGadpup6imeZ82ZU3k/4D24A/2NGSqIAay
+	 RnwAkfQFexHOeQ0PeB2Lo/nnOax1AR4XRxgGlJgaTnU6yKh5uLHXp6Ko8+4IqXOnaP9/y
+	 zlrN+QUG2MCMZgP5q3840EhuIwZb9vlJPI86p75IJmUC+cJYMwvSbs1/PQPDCn2mppNPt
+	 96HE3/Qs7OScKUG7KtkvTXGRWPm1C8T+aIDOTc8DraDKUwU6cDW7q/G94XoGtLRJZupBz
+	 poP6HTf1EAeDd6KgyjUg1ziTHAAADwncP+3OsZ18DK3/UlmYDLTYA2yO4iNKPnD2z0g==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792719580;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=zlUgj7MhOA7NiXRah7QpaWYmnmT0MHWnM7+9ThgmOB0=;
+	b=n1nvNVc6cKYTGNoY0z8LanRDGs1eBjzBpTpexlkO6pF+m8RQWmvZcEKOtQnqzBVShgcZ
+	 dM8Tv10lsAuvhygJOQsxekEX3jbCqLgw8FgpTV4qDcMSzHMRKZe89EPSJO66xbvBaT7km
+	 ZHk/aouhYjrQIIimD15Pv6w5PSnjX1jq9GMsycTdP9H3pzgmX3RBDlkDhoK60o9CI/vLf
+	 c0/RQLmdxrmkMR1FEmOzaLyIeTnrjja+OjIJZANr7hGsiOqb00JSPAQXm/PbEMNZq3tji
+	 5hO0V3Jl6v4DwzgaGlrWdiaQtuYCZJT5y8hZJA51wV7zWOcW/3tQbmMUSRn2ugJDlFw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ds+QoCs4;
+	arc=none smtp.remote-ip=192.198.163.19
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6BE606A31A;
-	Thu, 22 Oct 2026 21:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE6D606A319;
+	Fri, 23 Oct 2026 01:39:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DBE6D606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IY5pDrE4
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792703435;
-	b=pI0gkLOH2yonnCNaTD7c+3VCb7/3DG+ctsfdY+aTku9cTCP05+vg+Pxa+CyDDtF3QdzX
-	 oyHo8mpGnRuUMYyZ08O4ZTH5sGpVSm6F/w2TcCTL9vKvFnaaaE+uTfrTC3+ggki7ehCJQ
-	 EvdDf4DeqyY2TONBiTA6VidAOBWpwFFOLLB49LXXEwVt7rYkhWMXPEpn4/yh+dfykNqIp
-	 fCyghqpRCR1QD5coQSXza9dPyFQlufyl+MHJl3rnwLYTn2puRUR6KhKsBq+HTkstHjXhh
-	 MPP+kpDzAKEB4/d3uxd4k6kENXThiV0C3dBYDsJxnSPJgZvxD1Z7aMi8oZXCUNlwTTg==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792703435;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=ZaN1tc6d7nTMvvC2G9HGd0rGxtVw7AJhg3WsuDy0dRY=;
-	b=BRSK3tDLU1Jov/kYP4O6gbfOryDpPg7vItP+wk9UvKR2n6xoQFh2u7YKDhV4KrDSDiLy
-	 gdhktXmnXD3WfENDlc9yarqZt1LOBJj45x2JMz0iYGhy/jPB9mfvsrnn7omNtcq99atuA
-	 AqReDPW9GBbfxaPLLA4+Q4JGQjtEGbGqN7/eRI4aoFSlTF8G0KNELCG5i6B6NiDcRM89R
-	 tv9g4Rmz64enAhV9KswK0q8rnExR9Ro/zdwo/H3kVkAAkKI0a+87Q16qsZQVcYq1154iP
-	 Ac9hrgQEzyIC/mN7U15mSiK+ffnZFlXhTo6s59yxTw/mhpKo6ukGSR6xp01jidMQQHQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id BD0941F031E0;
-	Thu, 22 Oct 2026 21:10:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792703434;
-	bh=ZaN1tc6d7nTMvvC2G9HGd0rGxtVw7AJhg3WsuDy0dRY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=IY5pDrE4lrOUECpAGs42zwlFDuYLv1nkxLmrk1NpcNvjofszD079s6jigt4L31gAB
-	 VT0TYpfGGt42iGZMv7IUdPlNTMfIrlC0lhLcF5zfShIhPnHXQyEtNr3BW6mGHgN1Ga
-	 cGWxy1I7QfAeQ5JNt3VmY41g91szi9s4WZbrefsON0dmleTV5F6+/IMxBmT04otbky
-	 soHk/ZTBF522gps+I8gUONpasTf3R06vgWngwIHEpsVrFdfNyVZq9PhvCxrM0w0qZa
-	 hf9zZa0qoFAJhWrneLSk8rCBsfA/wIL0cSBr59/CvM920eLwEa1YVAPttK6eyMhB7G
-	 gzZevVWxN3D0Q==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 35EE141F55;
-	Thu, 22 Oct 2026 21:10:33 +0000 (UTC)
-From: Austin Schlegel via B4 Relay <devnull+schlegelas.outlook.com@kernel.org>
-Date: Thu, 22 Oct 2026 17:10:26 -0400
-Subject: [PATCH v3 3/3] serial: tegra: ignore stale DMA completion
- callbacks
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ds+QoCs4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792719579; x=1824255579;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ItD34oWASUxo5/QR3v4k5gW4vxzz9C22A8XfHQIstRk=;
+  b=ds+QoCs4vUg78tcPovimgi75kvA8DRJi2HYLyfyrpOvHNW9dwkh6RxQ7
+   Da5vSGVw1HZxS7Hlj4mRR0rB1KO2H6vwuTrGAmeDv2mTkW3z8wBqCVKJA
+   AeFPh/oIUKXcV7wjogDwIhPl8wt1aPkBwtDLZmhjNA5vNf0cbMfPZr7AW
+   3Ewl9MgjMIW63pkypoh1CA6cJOdrzJmSmIWTOLdC/ZFVSNShcSJHkpEcb
+   N4LhJphNMcK3aC+NdpSEMedTk86zTuwC/w0YerN8a7l2+kbWzR+Yo/Tvp
+   N+mFhjZuOsSUEDYy6G2xEvIYEj43hWbOHiOXZIhfyhL45UcCktNQ+vIFB
+   g==;
+X-CSE-ConnectionGUID: GbQcsfCzSvCpEzxkLu43Aw==
+X-CSE-MsgGUID: PY/Xw37PQfK58VoCLpFpOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1585826"
+X-IronPort-AV: E=Sophos;i="6.27,173,1787036400"; 
+   d="scan'208";a="1585826"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 18:39:38 -0700
+X-CSE-ConnectionGUID: GY1h/MB/S96sbOwHJkbeEg==
+X-CSE-MsgGUID: yXZ5EHVDTu+otsnBCugiVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,173,1787036400"; 
+   d="scan'208";a="3413194"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 22 Oct 2026 18:39:36 -0700
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xK4Fo-00000000RyQ-3hQ1;
+	Fri, 23 Oct 2026 01:39:32 +0000
+Date: Fri, 23 Oct 2026 09:38:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>, jingoohan1@gmail.com,
+	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, robh@kernel.org,
+	thierry.reding@kernel.org, jonathanh@nvidia.com, vidyas@nvidia.com,
+	cassel@kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, mmaddireddy@nvidia.com
+Subject: Re: [PATCH v2 3/3] PCI: tegra194: Notify Endpoint functions on
+ PERST# assert
+Message-ID: <202610230923.2lf3BsLs-lkp@intel.com>
+References: <20261021061903.1269605-4-mmaddireddy@nvidia.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,159 +87,100 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261022-serial-tegra-dma-uaf-v3-3-129f6d67f673@outlook.com>
-References: <20261022-serial-tegra-dma-uaf-v3-0-129f6d67f673@outlook.com>
-In-Reply-To: <20261022-serial-tegra-dma-uaf-v3-0-129f6d67f673@outlook.com>
-To: Laxman Dewangan <ldewangan@nvidia.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Alan Cox <alan@linux.intel.com>, 
- Stephen Warren <swarren@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-tegra@vger.kernel.org, Austin Schlegel <austin.schlegel@arthrex.com>, 
- Austin Schlegel <schlegelas@outlook.com>, stable@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792703432; l=5372;
- i=schlegelas@outlook.com; s=20261001; h=from:subject:message-id;
- bh=XIQgFR0YA9L/OYKz/mlqsFGtu4QcgWxRk6Z+7ffAujs=;
- b=wKx2KDmxE0HiCL165F6nbqu2ktPKd7UvBfshgOHxHmqBochQ3q8DFDXuQ0mPS5MV4U6AsBFtr
- RwaxyTKm4e4DSFlA+XBy6RM0rYILdQJ+BONGlPmJC9k9qvuWfT0HS2z
-X-Developer-Key: i=schlegelas@outlook.com; a=ed25519;
- pk=ddgmH7VQaSWderjJFy4hDyq+P7hdHupPxQvwnGRBzCs=
-X-Endpoint-Received: by B4 Relay for schlegelas@outlook.com/20261001 with
- auth_id=1098
-X-Original-From: Austin Schlegel <schlegelas@outlook.com>
-Reply-To: schlegelas@outlook.com
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261021061903.1269605-4-mmaddireddy@nvidia.com>
 
-From: Austin Schlegel <schlegelas@outlook.com>
+Hi Manikanta,
 
-The TX and RX DMA completion callbacks run from the DMA engine's
-tasklet. tegra_uart_stop_tx(), tegra_uart_flush_buffer() and
-tegra_uart_terminate_rx_dma() can stop the same transfer under the port
-lock, and dmaengine_terminate_all() does not wait for a callback that
-is already running. A callback can therefore be waiting on the port
-lock for a transfer that the driver has already stopped and accounted
-for.
+kernel test robot noticed the following build errors:
 
-tegra_uart_tx_dma_complete() reads the DMA status and acks the
-descriptor before it takes the port lock, then advances the xmit FIFO
-by the whole transfer and starts the next one unconditionally. If
-tegra_uart_stop_tx() got there first, the bytes it already accounted
-for are advanced a second time, skipping data that was never sent.
-After tegra_uart_flush_buffer() the FIFO is empty and the advance runs
-past it. If a new transfer was started in between, the stale callback
-reads the new transfer's cookie, acks its descriptor and clears
-tx_in_progress while that transfer is still running.
+[auto build test ERROR on pci/next]
+[also build test ERROR on pci/for-linus linus/master v7.3 next-20261022]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-tegra_uart_rx_dma_complete() has the same problem: after
-tegra_uart_terminate_rx_dma() has pushed the received data and cleared
-rx_dma_active, the callback pushes the whole buffer again and restarts
-RX DMA, even if RX has been stopped.
+url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Maddireddy/PCI-dwc-Reuse-Endpoint-resources-after-fundamental-reset/20261021-114901
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20261021061903.1269605-4-mmaddireddy%40nvidia.com
+patch subject: [PATCH v2 3/3] PCI: tegra194: Notify Endpoint functions on PERST# assert
+config: xtensa-randconfig-1001-20261022 (https://download.01.org/0day-ci/archive/20261023/202610230923.2lf3BsLs-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 15.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261023/202610230923.2lf3BsLs-lkp@intel.com/reproduce)
 
-Take the port lock before looking at the transfer in the TX callback,
-and in both callbacks return early unless the transfer is still the
-driver's current one: tx_in_progress is still TEGRA_UART_TX_DMA and the
-cookie is complete for TX, rx_dma_active is still set for RX. The stop
-paths clear these flags under the port lock, and a transfer started
-after them is normally still in progress, so the existing
-DMA_IN_PROGRESS check in the RX callback and the new DMA_COMPLETE check
-in the TX callback skip it. If it has already completed, the stale
-callback handles it, and its own callback then finds it is no longer
-current.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202610230923.2lf3BsLs-lkp@intel.com/
 
-Found by Sashiko automated review (see Link below). Not reproduced on
-hardware. Tested together with the rest of the series on Tegra234
-(Jetson AGX Orin) with a UART loopback test that also stops and flushes
-TX while DMA is running: no KFENCE reports and no data mismatches in a
-10-minute run with kfence.sample_interval=1.
+All errors (new ones prefixed by >>):
 
-Fixes: e9ea096dd225 ("serial: tegra: add serial driver")
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/sashiko-outbox-172211@kernel.org/
-Assisted-by: LLM
-Signed-off-by: Austin Schlegel <schlegelas@outlook.com>
----
-v3:
- - New patch, addressing the Sashiko review of v2:
-   https://sashiko.dev/#/patchset/20261014-serial-tegra-dma-uaf-v2-0-b142b31b67e3@outlook.com?part=1
----
- drivers/tty/serial/serial-tegra.c | 43 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 41 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index c179a09b8fe2..6e1a67d83e0e 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -532,16 +532,39 @@ static void tegra_uart_tx_dma_complete(void *args)
- 	struct dma_tx_state state;
- 	unsigned long flags;
- 	unsigned int count;
-+	enum dma_status status;
-+
-+	uart_port_lock_irqsave(&tup->uport, &flags);
-+
-+	/*
-+	 * dmaengine_terminate_all() does not wait for a callback that is
-+	 * already running. If tegra_uart_stop_tx() or
-+	 * tegra_uart_flush_buffer() stopped this transfer while we were
-+	 * waiting for the port lock, they have already handled it and
-+	 * cleared tx_in_progress, so there is nothing left to do.
-+	 */
-+	if (tup->tx_in_progress != TEGRA_UART_TX_DMA)
-+		goto out;
-+
-+	/*
-+	 * A new transfer may have been started after this one was stopped.
-+	 * Its cookie is normally still in progress, so leave it to its own
-+	 * callback. If it has already completed, handling it here is fine:
-+	 * its own callback will then find it is no longer current.
-+	 */
-+	status = dmaengine_tx_status(tup->tx_dma_chan, tup->tx_cookie, &state);
-+	if (status != DMA_COMPLETE)
-+		goto out;
- 
--	dmaengine_tx_status(tup->tx_dma_chan, tup->tx_cookie, &state);
- 	count = tup->tx_bytes_requested - state.residue;
- 	async_tx_ack(tup->tx_dma_desc);
--	uart_port_lock_irqsave(&tup->uport, &flags);
- 	uart_xmit_advance(&tup->uport, count);
- 	tup->tx_in_progress = 0;
- 	if (kfifo_len(&tport->xmit_fifo) < WAKEUP_CHARS)
- 		uart_write_wakeup(&tup->uport);
- 	tegra_uart_start_next_tx(tup);
-+
-+out:
- 	uart_port_unlock_irqrestore(&tup->uport, flags);
- }
- 
-@@ -748,6 +771,22 @@ static void tegra_uart_rx_dma_complete(void *args)
- 
- 	uart_port_lock_irqsave(u, &flags);
- 
-+	/*
-+	 * dmaengine_terminate_all() does not wait for a callback that is
-+	 * already running. If tegra_uart_terminate_rx_dma() stopped this
-+	 * transfer while we were waiting for the port lock, it has already
-+	 * pushed the received data and cleared rx_dma_active, so there is
-+	 * nothing left to do.
-+	 */
-+	if (!tup->rx_dma_active)
-+		goto done;
-+
-+	/*
-+	 * A new transfer may have been started after this one was stopped.
-+	 * Its cookie is normally still in progress, so leave it to its own
-+	 * callback. If it has already completed, handling it here is fine:
-+	 * its own callback will then find it is no longer current.
-+	 */
- 	status = dmaengine_tx_status(tup->rx_dma_chan, tup->rx_cookie, &state);
- 
- 	if (status == DMA_IN_PROGRESS) {
-
--- 
-2.53.0
+   drivers/pci/controller/dwc/pcie-tegra194.c: In function 'pex_ep_event_pex_rst_assert':
+>> drivers/pci/controller/dwc/pcie-tegra194.c:1708:9: error: implicit declaration of function 'pci_epc_linkdown'; did you mean 'dw_pcie_ep_linkdown'? [-Wimplicit-function-declaration]
+    1708 |         pci_epc_linkdown(pcie->pci.ep.epc);
+         |         ^~~~~~~~~~~~~~~~
+         |         dw_pcie_ep_linkdown
 
 
+vim +1708 drivers/pci/controller/dwc/pcie-tegra194.c
+
+  1688	
+  1689	static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
+  1690	{
+  1691		u32 val;
+  1692		int ret;
+  1693	
+  1694		if (pcie->ep_state == EP_STATE_DISABLED)
+  1695			return;
+  1696	
+  1697		ret = readl_poll_timeout(pcie->appl_base + APPL_DEBUG, val,
+  1698			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_QUIET) ||
+  1699			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_ACT) ||
+  1700			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_PRE_DETECT_QUIET) ||
+  1701			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_WAIT) ||
+  1702			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_L2_IDLE),
+  1703			LTSSM_DELAY_US, LTSSM_TIMEOUT_US);
+  1704		if (ret)
+  1705			dev_info(pcie->dev, "LTSSM state: 0x%x detect timeout: %d\n", val, ret);
+  1706	
+  1707		/* Avoid the DBI register reinitialization in dw_pcie_ep_linkdown(). */
+> 1708		pci_epc_linkdown(pcie->pci.ep.epc);
+  1709	
+  1710		/*
+  1711		 * Deassert LTSSM state to stop the state toggling between
+  1712		 * Polling and Detect.
+  1713		 */
+  1714		val = appl_readl(pcie, APPL_CTRL);
+  1715		val &= ~APPL_CTRL_LTSSM_EN;
+  1716		appl_writel(pcie, val, APPL_CTRL);
+  1717	
+  1718		reset_control_assert(pcie->core_rst);
+  1719	
+  1720		tegra_pcie_disable_phy(pcie);
+  1721	
+  1722		reset_control_assert(pcie->core_apb_rst);
+  1723	
+  1724		clk_disable_unprepare(pcie->core_clk);
+  1725	
+  1726		pm_runtime_put_sync(pcie->dev);
+  1727	
+  1728		if (pcie->enable_ext_refclk) {
+  1729			ret = tegra_pcie_bpmp_set_pll_state(pcie, false);
+  1730			if (ret)
+  1731				dev_err(pcie->dev, "Failed to turn off UPHY: %d\n",
+  1732					ret);
+  1733		}
+  1734	
+  1735		ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
+  1736		if (ret)
+  1737			dev_err(pcie->dev, "Failed to disable controller: %d\n", ret);
+  1738	
+  1739		pcie->ep_state = EP_STATE_DISABLED;
+  1740		dev_dbg(pcie->dev, "Uninitialization of endpoint is completed\n");
+  1741	}
+  1742	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
