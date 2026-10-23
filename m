@@ -1,83 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.19
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792719580;
-	b=pORreFYrELH32zhMmkKpqpbZrjcQTPFoRsSGadpup6imeZ82ZU3k/4D24A/2NGSqIAay
-	 RnwAkfQFexHOeQ0PeB2Lo/nnOax1AR4XRxgGlJgaTnU6yKh5uLHXp6Ko8+4IqXOnaP9/y
-	 zlrN+QUG2MCMZgP5q3840EhuIwZb9vlJPI86p75IJmUC+cJYMwvSbs1/PQPDCn2mppNPt
-	 96HE3/Qs7OScKUG7KtkvTXGRWPm1C8T+aIDOTc8DraDKUwU6cDW7q/G94XoGtLRJZupBz
-	 poP6HTf1EAeDd6KgyjUg1ziTHAAADwncP+3OsZ18DK3/UlmYDLTYA2yO4iNKPnD2z0g==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792719580;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=zlUgj7MhOA7NiXRah7QpaWYmnmT0MHWnM7+9ThgmOB0=;
-	b=n1nvNVc6cKYTGNoY0z8LanRDGs1eBjzBpTpexlkO6pF+m8RQWmvZcEKOtQnqzBVShgcZ
-	 dM8Tv10lsAuvhygJOQsxekEX3jbCqLgw8FgpTV4qDcMSzHMRKZe89EPSJO66xbvBaT7km
-	 ZHk/aouhYjrQIIimD15Pv6w5PSnjX1jq9GMsycTdP9H3pzgmX3RBDlkDhoK60o9CI/vLf
-	 c0/RQLmdxrmkMR1FEmOzaLyIeTnrjja+OjIJZANr7hGsiOqb00JSPAQXm/PbEMNZq3tji
-	 5hO0V3Jl6v4DwzgaGlrWdiaQtuYCZJT5y8hZJA51wV7zWOcW/3tQbmMUSRn2ugJDlFw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ds+QoCs4;
-	arc=none smtp.remote-ip=192.198.163.19
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.8
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792732352;
+	b=xWKqXI4jyIxlTOtX2Ik7aVnidaSQ7X8ysHe78qnWyuhQKUo5PysSojxYLLJvR6rcO8wl
+	 f4Cbc6wvhH0C0EJMF/XVGH6lVlKssXWg/m6cP7kRzzZNPsVa859n0xPP2+krgtLXAqYTn
+	 iZyPz2tQbqN5LeWohAPuMQ3nREZL01ZaFPzEXD9bQet7yRits/FASRFbxzI3fjKw2Fzl9
+	 03Ln3FWyXbUo2HeNe8uwnOkpjcIa4V8+1BGFI6aBOj097wyzFkvF3E5VyvpRMY6TpYJiI
+	 wXRfXHhGl/ulW5Sfu4TwQlQfUGCkkS6nm2SSxgIs9TfILYZH0Vo2H2JTWHDOKSPTAAg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792732352;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
+	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:
+	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=URhNGCg0zC/uJhj6FBkBTsiXFzacY9MXoToqWVrzfw8=;
+	b=pwz4GQe0V5zgqwwOgZMq+cg5yUrodVUAY72SMeNVl/iJ72VDPIkkkOSEDgW10aR9TeKx
+	 /l5aXqxlJHnn1bicn39zWNsMrH+TpaCAvFaIO3xwuOOgE9IL2KxpzHbTyWpZsEfOGjiOR
+	 5JpyoLJIhChbIAuPFYz+BQ814x+NdZJMmm712cMBvW24FUHXBSj1zdajriCqpbqU/370o
+	 /+Mn6u+ZqIpk4kGv8kj+mYmDY2gHe1SU6LBs9apX8MYGGPUVpZ6ga9W6aLhWahptqXHIl
+	 J/rQsOMoKySPCZtLezqn+qxKh4MSlvbSdOffE/TOMzdotD6+dTmpk+HRVReCmxBSIVA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=cfAD4mi9;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.8
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012008.outbound.protection.outlook.com [40.107.209.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE6D606A319;
-	Fri, 23 Oct 2026 01:39:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DBE6D606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AE7606A319;
+	Fri, 23 Oct 2026 05:12:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E7AE7606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ds+QoCs4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792719579; x=1824255579;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ItD34oWASUxo5/QR3v4k5gW4vxzz9C22A8XfHQIstRk=;
-  b=ds+QoCs4vUg78tcPovimgi75kvA8DRJi2HYLyfyrpOvHNW9dwkh6RxQ7
-   Da5vSGVw1HZxS7Hlj4mRR0rB1KO2H6vwuTrGAmeDv2mTkW3z8wBqCVKJA
-   AeFPh/oIUKXcV7wjogDwIhPl8wt1aPkBwtDLZmhjNA5vNf0cbMfPZr7AW
-   3Ewl9MgjMIW63pkypoh1CA6cJOdrzJmSmIWTOLdC/ZFVSNShcSJHkpEcb
-   N4LhJphNMcK3aC+NdpSEMedTk86zTuwC/w0YerN8a7l2+kbWzR+Yo/Tvp
-   N+mFhjZuOsSUEDYy6G2xEvIYEj43hWbOHiOXZIhfyhL45UcCktNQ+vIFB
-   g==;
-X-CSE-ConnectionGUID: GbQcsfCzSvCpEzxkLu43Aw==
-X-CSE-MsgGUID: PY/Xw37PQfK58VoCLpFpOQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11943"; a="1585826"
-X-IronPort-AV: E=Sophos;i="6.27,173,1787036400"; 
-   d="scan'208";a="1585826"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 18:39:38 -0700
-X-CSE-ConnectionGUID: GY1h/MB/S96sbOwHJkbeEg==
-X-CSE-MsgGUID: yXZ5EHVDTu+otsnBCugiVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,173,1787036400"; 
-   d="scan'208";a="3413194"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 22 Oct 2026 18:39:36 -0700
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xK4Fo-00000000RyQ-3hQ1;
-	Fri, 23 Oct 2026 01:39:32 +0000
-Date: Fri, 23 Oct 2026 09:38:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>, jingoohan1@gmail.com,
-	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, robh@kernel.org,
-	thierry.reding@kernel.org, jonathanh@nvidia.com, vidyas@nvidia.com,
-	cassel@kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, mmaddireddy@nvidia.com
-Subject: Re: [PATCH v2 3/3] PCI: tegra194: Notify Endpoint functions on
- PERST# assert
-Message-ID: <202610230923.2lf3BsLs-lkp@intel.com>
-References: <20261021061903.1269605-4-mmaddireddy@nvidia.com>
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=cfAD4mi9
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mmn2cjbP0iTq4FsAVDwozaKmmdSOMCM+aUu4zHrp2Vy7Rh14pIDYUNx2HfpZIhxDOtcbN6kPyw5s/u8LcE+2YlCdBDGvMZRwaDIAV15WnXWOfWNslmBZQoaciUTvGeT1KSUeKyKpeiSBB72jl4zZWEfRRO/HUxVV4H2Vtqqw0MJrQG2vetbrY9tz/maMiArjiN6BGo+dWrBdxWDRdmbLXK/XxkVohxzxkWe7H7lIucb1T5BxU2TjE4ujCrDgBKVyj9VN1VZ2D1Q0hvgrOpledcsZBBbTJA0F3NcXO7gSERmHTrhoCoG1rvAFGn5TEksAFM+6bovZtVFSoan3SszIDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=URhNGCg0zC/uJhj6FBkBTsiXFzacY9MXoToqWVrzfw8=;
+ b=FsWcpRWRi9hJ9wh7hEUezlSLcBKDs2zzNTmaAj8G+4n8lhwkGntGHO+DcGw3ZrKG1u3dcp+4O29mUCPnwpLXZAiepM35u1rUEwz7kZXsK91efnfZUBdUQe5UQZe0rl8OkyHXfeueE7l6B37/Vd/QR9Rqj2cLv7jA2JBSZpLbtHiNwQ83UxDI2kH4C+BYxTMU0ik4rcEMKajjwYv01nnltzvdrtDm4h2jKssOzlORQzcWtr6G6cMAHuZEmsPpc3F4qgu1xqnD1q1B6J98pBTPgBh91EuDPHLPkRXVI6Hb17GUh9lYXyS+Ha1/CKR95dcPo8vFt+o1PyIQEDna6FNLLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=URhNGCg0zC/uJhj6FBkBTsiXFzacY9MXoToqWVrzfw8=;
+ b=cfAD4mi9Wm1Oqzph4Ii4dKtzgZXEyadi2D4d7P0m9MBCl8W03i/BVxmujY9ULG+GoSKwMFR7FnRwVXVOqD1krMjsJ1NuBlX38KTIrRcq/75TqQXAcbTy4FJ79tZy+f1znF1hu+kyMQl9pfkJI61IX2zJFi5N20e/5gEilzxNL79Qsn6qnmj+yPVHabPSKWqI4UTzviPevJdpZ+0Ewqzqn3kqd7KK+QYE0fb8Ou2FgHSlB/kc3wj4oFAys0mZ+6+R5qdTSYffHPGTJmZecJx8mUFfYANOS3QA7VNl4FsTRXJjEBnlnsZeGWAjOuQR99c/Zj9SnZcJQvFbsGvSRwpmfg==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by DM4PR12MB6493.namprd12.prod.outlook.com (2603:10b6:8:b6::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.19; Fri, 23 Oct
+ 2026 05:12:25 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0546.012; Fri, 23 Oct 2026
+ 05:12:25 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Heiko Stuebner <heiko@sntech.de>,
+ Thierry Reding <thierry.reding@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Krishna Reddy <vdumpa@nvidia.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, linux-tegra@vger.kernel.org
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ Robin Murphy <robin.murphy@arm.com>
+Subject:
+ Re: [PATCH v2 04/11] ARM: dma-mapping: Implement and expose DMA setup
+ functions
+Date: Fri, 23 Oct 2026 14:12:17 +0900
+Message-ID: <EBsd2UhYS9u2iI-UFj7t_g@nvidia.com>
+In-Reply-To: <6406c7b1-5e37-4c22-83c2-089c35ef54bf@arm.com>
+References:
+ <20261016-b4-arm32-iommu-dma-cookie-v2-0-b06842a01938@nvidia.com>
+ <20261016-b4-arm32-iommu-dma-cookie-v2-4-b06842a01938@nvidia.com>
+ <6406c7b1-5e37-4c22-83c2-089c35ef54bf@arm.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCPR01CA0163.jpnprd01.prod.outlook.com
+ (2603:1096:400:2b1::8) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -87,100 +116,471 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261021061903.1269605-4-mmaddireddy@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DM4PR12MB6493:EE_
+X-MS-Office365-Filtering-Correlation-Id: da283f0b-6153-4d59-2831-08df30c439d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|376014|7416014|10070799003|1800799024|366016|18002099003|6133799003|22082099003|10067099003|921020|11063799006|56012099006|4143699003|261009223027099003|261021135927099003|261022105027099003|261021123027099003|261021121427099003;
+X-Microsoft-Antispam-Message-Info:
+	CTgWzNOOPCla+iQLaiK99AVg9vSGtuktWv6/koFrPWKUAj0ZxfF+6hAK1Sz6qd5ww0MoVUjGn0KvOLPu6bbviVXUP9DVDhweUBJta/HBZ3MmWN0G+DPNH3/YI0JJTcMmLUfpaWA6Uo+086lTFpvxHtm7llHlmU6gTMs5gD/JE8P32trDfe9AIBrsUth0J+qDGICsOz8O2njXYnix8E/LhiglKUCS+uFPuqqqvfxfm3iM5iGm0sDhM64sdvIzJ0mHBnVzEUF462cSpyCnq35cDoLzwiJWDWIzA4Tswnb6Uhu84MBBvXeGnYeTCirzsSPPRvfK7pC/stDWGBYfTcM27w7h7LNYpe0ZiT6GVhfrJFfNeLFZWEuk8mKHO839/Qm268P2O0Hov+iVy2AFvlUA/7K4zwbrbik2e4nAN7sQSitgeQG1DL9yh8P4gHUxM1QIb+djgg1s9QNYXPkA6BtV6lSkLBaPd7xAIbS4mekkeMSbK+yVPiRfhKSTmCqLtztRKVzKzlJrI2Z7K6X3SfcDsojV4aEKhDKC1/S1ZFYx1Dxwf4HEZrE8dK+SHmdpAp8aQPu/U2N1tpuLZFqtv7KOusoJ88LGKruc3vVSJZSKCMBRTpzeU3Reu23nch6IlEHgaftwcY66SyRDPLNObxINnq0RNRgFgFA70BSzJSvvbQ6QDFfVLvBEwAAlXCeTzXMgJ/TXkVFiP5qkbn+SwB+mMQ==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(7416014)(10070799003)(1800799024)(366016)(18002099003)(6133799003)(22082099003)(10067099003)(921020)(11063799006)(56012099006)(4143699003)(261009223027099003)(261021135927099003)(261022105027099003)(261021123027099003)(261021121427099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cWZjTjY0d1l1ZzFCYnZEcVpJVk1yRlFvS3l3WUl2bXNxRTJ6Q1lyZkgvSCty?=
+ =?utf-8?B?TGhHWVg4MXg0Y1FaVjU1ZDdYamo5MnNJSTBIZEhWNXRZUGNEV0dBYTlxRU1I?=
+ =?utf-8?B?M09obVFLT2poc2FZOFhUT1hWSzYzdHNKeDYzTVE1c0ZqTjRldkJZZWNGSkQw?=
+ =?utf-8?B?SmtuUXdRWHlzeVRsTFpDRzRWSWJycVY1dGtXb01sVU9Xb3RkS0dFdHBxc0Jj?=
+ =?utf-8?B?QTNYR1VsYmR0cHhXaXNVZXJGcFZpd1NYeDFIS1pHeGdEUTFFUVlHWTE1eThV?=
+ =?utf-8?B?QnNsalJJNHR1Y0l4NTFMR2szbnNzQVdVVS9yaUNlb0xaeDBja2EweTZTaDAz?=
+ =?utf-8?B?VllERU9wODRVeEdrK3UraWVqUkRwL2xVTHFVbjBKMC9KSWMvWU90Wk9aVXE0?=
+ =?utf-8?B?bEVQMnN0TVRHNmZiWXdQL20yVWtmalBoVldwRlFEN01JRlV4OUlMVzZNT3J0?=
+ =?utf-8?B?SlRJYjgrWDBMK2pnbU9QU211RE1udlZvOXRjNE1aeU9tcG4wR1ZXbXdVdk1z?=
+ =?utf-8?B?cGtCR1JWS3JsaE1Sd29KWngyTDdDSDAxNEFBdm1FMXVXV01YbHQxb0Y0bUdh?=
+ =?utf-8?B?QWxvVmxPSzR2VHZpRlRRQkdyUFBBZlU3cmFxOXZTUXhNWkw3dzR1c0k5aFpy?=
+ =?utf-8?B?L29PN2ltTGpjL3JDOVp3b1lERjljU1lBUzR2MnExdm14SkZyNVdQZVB0Z25K?=
+ =?utf-8?B?WkFTRWpKTW1DbDhhOGdYVXJkQ2V1aGpnaG54TFR0YXBScDk2MytrSzM1ejBQ?=
+ =?utf-8?B?eW1Fa1N1WHgvVFd4MU1uRUx0cVAzeVFGY0hpNnVWMnIxb2V2RmlRYWUxcXUr?=
+ =?utf-8?B?VnF6b29RdkJpY2lQeHJVdmRjZHdJcGN5MzQ1OFQ5V29TRlAzZ2hFUGw5UWNk?=
+ =?utf-8?B?Z01iRTliOUlzcFFnSkladUpQcE1lM1dYcVgyM2ZLUmI3L01YUDNXc3JsOGNw?=
+ =?utf-8?B?cGhTNUFERFBxWEIvNlUwNDJJcm1aK2grR3ZwUFpNY3o2TlpWWFp2dUN6SnIr?=
+ =?utf-8?B?aXRGVUtPS0JIbGRVbXZpVTRNYXl0RmxCYkMxRktuVlVEbVlvNUF3Rno3a0h2?=
+ =?utf-8?B?Nm1sZDNNK1l5amFTRXdDU0JoVWxSa2NVK2RnUlZuYzdyNzU3OHN6Tm5ESG1o?=
+ =?utf-8?B?SEJGT25sNnV6STFlRU5weTI2VWM0SW9KQTM1dzJtRC85L3dXbWlQZnQ2R3RV?=
+ =?utf-8?B?ZngrNVF5VmJkTUp1TldxV0lwZytpNVVXOEFKSGw3Q2JWZVZRNElQYjJUZnV5?=
+ =?utf-8?B?Wi9xNDVCd2hMaHBtRmxSQmI4bWd6c2Y3MnIyejB6RXdCdGpicEpwOC8yQWNr?=
+ =?utf-8?B?Q0hlSW1HK2RYYmZJb3FOWDRaTEJSMzBKTjdOS2hxbHY5aW95RkRvNmdmaFU0?=
+ =?utf-8?B?MUQvK0JSWWx5R3NlUVdPbzMwSC9CQnpsZzA1V05wTnNEd1NHS2xGZW1EQmh0?=
+ =?utf-8?B?ZVRDTndBRGdHY2lJZGdrSlNGK3ZBNnZkTlRWWDQxd2lRenBCNHpweVpkeWt4?=
+ =?utf-8?B?V3hmSVlhK0dJeW80RjdlVzdwNzd2bXEzTTJieEY5Rk5GeXV1cVlLR1Q2RTNh?=
+ =?utf-8?B?cTZNV25ZZTZ3c0lGOE5xK0VXZUgzWVc0YkJ3RGpZN2tqV0VjTmQ2TGx0bXhj?=
+ =?utf-8?B?K3VmV1BqS3VycmhaS3VUdDVQemZtRHZBTlN0TFFuNnhnejZVUkNNTnJVd3V6?=
+ =?utf-8?B?aVlaWjdJUkZSdXFvUzg0V08vVDNYSnRkZmFRLytydXYxdFJaUVhCL05YUE9q?=
+ =?utf-8?B?QTdBeXRpTXp2WDJYdUdqT054Z3QxVXYveFplbXJXcGVYSWtva0ZSUi9yK29N?=
+ =?utf-8?B?N21DU0hoM1VHK1VkVndTWjRmSFEzMlZBODE4STlEMlk0YXM2MHhKajlXMXFT?=
+ =?utf-8?B?THJ3aWZmN2JNOEVvVEE5SWE4TlBmMXpjSmlza2hGU3o5bktXZnU1YXQrNUh4?=
+ =?utf-8?B?aEhiT3pNUGZKVUdrbWxtOE5Rd1B4NHN6SW1CT0oxSWN2UG1PbUgvREZqK1Ft?=
+ =?utf-8?B?QWVnSC9obVJ3cjBjSENhWmRsaStQNmYxbTVHWU9zd0RhL3FhUlorMmRTcXkr?=
+ =?utf-8?B?UUlPeG9vaFJHejZXeEpWRHZOSEZlZEVOdU9Tb1ZCWHpOWVUyUlJMSkEybDk5?=
+ =?utf-8?B?cXRMbS8vdXdwb0IweUVjWEh2ZGdTMkw1emtYL1JNTGxVMTZIZ0FhZ3R4cmha?=
+ =?utf-8?B?TFBMeW5ubGV0bDRiRnRoQTRWZUVLSXNEejRyK1dsY0QyRW9ybWdmT3h1N2Vt?=
+ =?utf-8?B?MHM3cVNoRkhXWklIOFZLNVlnd1JxVGdSSU9HbEtVeG5qQUQ4aHZWckU2NklW?=
+ =?utf-8?B?RlZMcU92Vyt2UHM3Y0J3VUZUbVZFNjMwbFRJRHVwZEtWZkplL0VGNktjNS9a?=
+ =?utf-8?Q?uqGAlOWbBUJHtsfG/SfnvXvVpLOWIBkLM1FO5h/9Hssau?=
+X-MS-Exchange-AntiSpam-MessageData-1: qMS6hVCKGj7sVg==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da283f0b-6153-4d59-2831-08df30c439d5
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2026 05:12:25.3117
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 59AHLx06/KjK6BDCMey88ARWKo+GIwDxzOejrFUKFI/MMVPfSQwsx4vtO4m3WnY14hG8mizM+5Mnf//mreTVRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6493
 
-Hi Manikanta,
+On Thursday, October 22, 2026 10:16=E2=80=AFPM Robin Murphy wrote:
+> On 16/10/2026 7:46 am, Mikko Perttunen wrote:
+> > ARM DMA domains are currently allocated by the ARM DMA code, with struc=
+t
+> > dma_iommu_mapping owning the domain and the IOVA bookkeeping. To allow
+> > the IOMMU core to own DMA domains as is the case with other
+> > architectures, we have to allow that code to allocate the domain and ge=
+t
+> > the cookie from the ARM DMA code.
+> >=20
+> > Implement ARM versions of iommu_get/put_dma_cookie that create a struct
+> > dma_iommu_mapping that doesn't have its own domain, as well as
+> > iommu_setup/teardown_dma_ops that set the device's archdata.mapping,
+> > allowing ARM DMA ops to seamlessly work on these devices.
+> >=20
+> > The code is protected by CONFIG_ARM_DMA_USE_IOMMU and mutually exclusiv=
+e
+> > with the same-named functions in the dma-iommu code; and not reachable
+> > yet.
+> >=20
+> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > ---
+> >   arch/arm/include/asm/dma-iommu.h |  17 ++++++
+> >   arch/arm/mm/dma-mapping.c        | 118 ++++++++++++++++++++++++++++++=
+++++-----
+> >   drivers/iommu/dma-iommu.h        |  50 +++++++++++------
+> >   3 files changed, 154 insertions(+), 31 deletions(-)
+> >=20
+> > diff --git a/arch/arm/include/asm/dma-iommu.h b/arch/arm/include/asm/dm=
+a-iommu.h
+> > index 2ce4c5683e6d..85cf9b05faab 100644
+> > --- a/arch/arm/include/asm/dma-iommu.h
+> > +++ b/arch/arm/include/asm/dma-iommu.h
+> > @@ -19,6 +19,14 @@ struct dma_iommu_mapping {
+> >   	size_t			bits;		/* per bitmap */
+> >   	dma_addr_t		base;
+> >  =20
+> > +	/*
+> > +	 * Set for mappings created by arm_iommu_create_mapping(), where
+> > +	 * @domain is owned by the mapping.
+> > +	 * Clear for mappings that are a cookie of a domain owned by the IOMM=
+U
+> > +	 * core.
+> > +	 */
+> > +	bool			owns_domain;
+>=20
+> Do we strictly need this, or could we in fact already tell the=20
+> difference via iommu_is_dma_domain()? (Since ARM-API-owned domains via=20
+> iommu_paging_domain_alloc() will be IOMMU_DOMAIN_UNMANAGED)
 
-kernel test robot noticed the following build errors:
+We don't, I've removed it.
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus linus/master v7.3 next-20261022]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>=20
+> > +
+> >   	spinlock_t		lock;
+> >   	struct kref		kref;
+> >   };
+> > @@ -32,5 +40,14 @@ int arm_iommu_attach_device(struct device *dev,
+> >   					struct dma_iommu_mapping *mapping);
+> >   void arm_iommu_detach_device(struct device *dev);
+> >  =20
+> > +#ifdef CONFIG_ARM_DMA_USE_IOMMU
+> > +struct iommu_domain;
+> > +
+> > +void iommu_setup_dma_ops(struct device *dev, struct iommu_domain *doma=
+in);
+> > +void iommu_teardown_dma_ops(struct device *dev);
+> > +int iommu_get_dma_cookie(struct iommu_domain *domain);
+> > +void iommu_put_dma_cookie(struct iommu_domain *domain);
+> > +#endif
+> > +
+> >   #endif /* __KERNEL__ */
+> >   #endif
+> > diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> > index 4284950a9246..f2d3e8ec3487 100644
+> > --- a/arch/arm/mm/dma-mapping.c
+> > +++ b/arch/arm/mm/dma-mapping.c
+> > @@ -1531,6 +1531,79 @@ static void __arm_iommu_free_mapping(struct dma_=
+iommu_mapping *mapping)
+> >   	kfree(mapping);
+> >   }
+> >  =20
+> > +static int __arm_iommu_init_cookie(struct iommu_domain *domain,
+> > +				   dma_addr_t base, u64 size)
+> > +{
+> > +	struct dma_iommu_mapping *mapping;
+> > +
+> > +	if (domain->cookie_type !=3D IOMMU_COOKIE_NONE)
+> > +		return -EEXIST;
+> > +
+> > +	mapping =3D __arm_iommu_alloc_mapping(base, size);
+> > +	if (IS_ERR(mapping))
+> > +		return PTR_ERR(mapping);
+> > +
+> > +	mapping->domain =3D domain;
+> > +	domain->cookie_type =3D IOMMU_COOKIE_ARM_DMA;
+> > +	domain->arm_cookie =3D mapping;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * iommu_get_dma_cookie - Set up a domain cookie for ARM IOMMU-based D=
+MA API
+> > + * @domain: IOMMU_DOMAIN_DMA domain being configured
+> > + *
+> > + * Allocates IOVA bookkeeping for the domain based on the domain's spe=
+cified
+> > + * geometry. The aperture can currently be at most 4GB in size, otherw=
+ise
+> > + * fails with -ERANGE.
+>=20
+> Bit of a corner case, but I think that might technically break on=20
+> stage-2-only arm-smmu implementations like MMU-400 where the default=20
+> aperture will be 40 bits. It's probably better to explicitly cap our=20
+> request to 4GB here to preserve the current behaviour.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Maddireddy/PCI-dwc-Reuse-Endpoint-resources-after-fundamental-reset/20261021-114901
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20261021061903.1269605-4-mmaddireddy%40nvidia.com
-patch subject: [PATCH v2 3/3] PCI: tegra194: Notify Endpoint functions on PERST# assert
-config: xtensa-randconfig-1001-20261022 (https://download.01.org/0day-ci/archive/20261023/202610230923.2lf3BsLs-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 15.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261023/202610230923.2lf3BsLs-lkp@intel.com/reproduce)
+Yes, fixed.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202610230923.2lf3BsLs-lkp@intel.com/
+>=20
+> > + */
+> > +int iommu_get_dma_cookie(struct iommu_domain *domain)
+> > +{
+> > +	dma_addr_t base =3D domain->geometry.aperture_start;
+> > +	u64 size;
+> > +
+> > +	if (base > domain->geometry.aperture_end)
+> > +		return -EINVAL;
+> > +
+> > +	size =3D (u64)domain->geometry.aperture_end - base + 1;
+> > +
+> > +	return __arm_iommu_init_cookie(domain, base, size);
+> > +}
+> > +
+> > +/**
+> > + * iommu_put_dma_cookie - Free domain cookie for ARM IOMMU-based DMA A=
+PI
+> > + * @domain: the domain being freed
+> > + */
+> > +void iommu_put_dma_cookie(struct iommu_domain *domain)
+> > +{
+> > +	__arm_iommu_free_mapping(domain->arm_cookie);
+> > +}
+> > +
+> > +/**
+> > + * iommu_setup_dma_ops - Record a device's DMA API domain cookie
+> > + * @dev: the device
+> > + * @domain: the group's new default domain
+> > + *
+> > + * Records the cookie of @domain on @dev, or clears it if @domain is n=
+ot a DMA
+> > + * API domain. The DMA ops themselves are per driver binding and are i=
+nstalled
+> > + * by arch_setup_dma_ops().
+> > + */
+> > +void iommu_setup_dma_ops(struct device *dev, struct iommu_domain *doma=
+in)
+> > +{
+> > +	to_dma_iommu_mapping(dev) =3D iommu_is_dma_domain(domain) ?
+> > +				    domain->arm_cookie : NULL;
+>=20
+> It feels like we should actually set the dma_ops here for a real default=
+=20
+> domain. Sure it might make things a little more complex in the interim,=20
+> but it'll be more logical when we come to remove the other path.
 
-All errors (new ones prefixed by >>):
+I've done a bunch of re-arranging: iommu_get_dma_cookie still allocates=20
+the mapping, but the bitmaps are only initialized here in=20
+iommu_setup_dma_ops because the domain geometry may not be available=20
+earlier. And I moved set_dma_ops here as well. Those of course only=20
+apply to the default domain case. I've also added upper bound limiting=20
+to alloc_iova to not have the range checks in arm_setup_iommu_dma_ops,=20
+and because the range information may not be available in=20
+iommu_setup_dma_ops.
 
-   drivers/pci/controller/dwc/pcie-tegra194.c: In function 'pex_ep_event_pex_rst_assert':
->> drivers/pci/controller/dwc/pcie-tegra194.c:1708:9: error: implicit declaration of function 'pci_epc_linkdown'; did you mean 'dw_pcie_ep_linkdown'? [-Wimplicit-function-declaration]
-    1708 |         pci_epc_linkdown(pcie->pci.ep.epc);
-         |         ^~~~~~~~~~~~~~~~
-         |         dw_pcie_ep_linkdown
+>=20
+> > +}
+> > +
+> > +/**
+> > + * iommu_teardown_dma_ops - Clear a device's DMA API domain cookie
+> > + * @dev: the device
+> > + */
+> > +void iommu_teardown_dma_ops(struct device *dev)
+> > +{
+> > +	to_dma_iommu_mapping(dev) =3D NULL;
+> > +}
+> > +
+> >   /**
+> >    * arm_iommu_create_mapping
+> >    * @dev: pointer to the client device (for IOMMU calls)
+> > @@ -1541,28 +1614,32 @@ static void __arm_iommu_free_mapping(struct dma=
+_iommu_mapping *mapping)
+> >    * IO address ranges, which is required to perform memory allocation =
+and
+> >    * mapping with IOMMU aware functions.
+> >    *
+> > + * Unlike a default domain set up by the IOMMU core, the returned mapp=
+ing owns
+> > + * the domain it describes and releases it along with the last referen=
+ce.
+> > + *
+> >    * The client device need to be attached to the mapping with
+> >    * arm_iommu_attach_device function.
+> >    */
+> >   struct dma_iommu_mapping *
+> >   arm_iommu_create_mapping(struct device *dev, dma_addr_t base, u64 siz=
+e)
+> >   {
+> > -	struct dma_iommu_mapping *mapping;
+> > -
+> > -	mapping =3D __arm_iommu_alloc_mapping(base, size);
+> > -	if (IS_ERR(mapping))
+> > -		return mapping;
+> > +	struct iommu_domain *domain;
+> > +	int err;
+> >  =20
+> > -	mapping->domain =3D iommu_paging_domain_alloc(dev);
+> > -	if (IS_ERR(mapping->domain)) {
+> > -		int err =3D PTR_ERR(mapping->domain);
+> > +	domain =3D iommu_paging_domain_alloc(dev);
+> > +	if (IS_ERR(domain))
+> > +		return ERR_CAST(domain);
+> >  =20
+> > -		__arm_iommu_free_mapping(mapping);
+> > +	err =3D __arm_iommu_init_cookie(domain, base, size);
+> > +	if (err) {
+> > +		iommu_domain_free(domain);
+> >   		return ERR_PTR(err);
+> >   	}
+> >  =20
+> > -	kref_init(&mapping->kref);
+> > -	return mapping;
+> > +	domain->arm_cookie->owns_domain =3D true;
+> > +	kref_init(&domain->arm_cookie->kref);
+> > +
+> > +	return domain->arm_cookie;
+> >   }
+> >   EXPORT_SYMBOL_GPL(arm_iommu_create_mapping);
+> >  =20
+> > @@ -1571,8 +1648,8 @@ static void release_iommu_mapping(struct kref *kr=
+ef)
+> >   	struct dma_iommu_mapping *mapping =3D
+> >   		container_of(kref, struct dma_iommu_mapping, kref);
+> >  =20
+> > +	/* Frees mapping too, via iommu_put_dma_cookie(). */
+> >   	iommu_domain_free(mapping->domain);
+> > -	__arm_iommu_free_mapping(mapping);
+> >   }
+> >  =20
+> >   static int extend_iommu_mapping(struct dma_iommu_mapping *mapping)
+> > @@ -1595,8 +1672,13 @@ static int extend_iommu_mapping(struct dma_iommu=
+_mapping *mapping)
+> >  =20
+> >   void arm_iommu_release_mapping(struct dma_iommu_mapping *mapping)
+> >   {
+> > -	if (mapping)
+> > -		kref_put(&mapping->kref, release_iommu_mapping);
+> > +	if (!mapping)
+> > +		return;
+> > +
+> > +	if (WARN_ON(!mapping->owns_domain))
+> > +		return;
+> > +
+> > +	kref_put(&mapping->kref, release_iommu_mapping);
+> >   }
+> >   EXPORT_SYMBOL_GPL(arm_iommu_release_mapping);
+> >  =20
+> > @@ -1660,6 +1742,14 @@ void arm_iommu_detach_device(struct device *dev)
+> >   		return;
+> >   	}
+> >  =20
+> > +	/*
+> > +	 * This pairs with arm_iommu_attach_device() on a driver-owned mappin=
+g.
+> > +	 * A mapping which is merely the cookie of a core-owned default domai=
+n
+> > +	 * must not be torn down from here.
+> > +	 */
+> > +	if (WARN_ON(!mapping->owns_domain))
+>=20
+> As mentioned, if we can't reasonably hide the proper default domains=20
+> from external users of to_dma_iommu_mapping(), then I don't think we=20
+> should warn here, just treat it as a quiet no-op - the reason for the=20
+> "kick out the ARM domain" idiom is that it's in the way of attaching to=20
+> a driver-owned domain (whether that be a bare iommu_domain or another=20
+> ARM dma_iommu_mapping), but a real default domain is inherently out of=20
+> the way already. That way we can freely convert the rest of the drivers=20
+> to use default domains without impacting their users, then clean up the=20
+> detach pattern from the client drivers separately afterwards.
+
+Yep, true. This ends up cleaning up the series nicely as well.
+
+Thank you!
+Mikko
+
+>=20
+> Thanks,
+> Robin.
+>=20
+> > +		return;
+> > +
+> >   	iommu_detach_device(mapping->domain, dev);
+> >   	kref_put(&mapping->kref, release_iommu_mapping);
+> >   	to_dma_iommu_mapping(dev) =3D NULL;
+> > diff --git a/drivers/iommu/dma-iommu.h b/drivers/iommu/dma-iommu.h
+> > index 349d6a57e5a0..71b23cb698c0 100644
+> > --- a/drivers/iommu/dma-iommu.h
+> > +++ b/drivers/iommu/dma-iommu.h
+> > @@ -7,25 +7,24 @@
+> >  =20
+> >   #include <linux/iommu.h>
+> >  =20
+> > -#ifdef CONFIG_IOMMU_DMA
+> > +/*
+> > + * Both dma-iommu.c and arch/arm/mm/dma-mapping.c implement functions =
+to set up
+> > + * IOMMU_DOMAIN_DMA default domains. Only one provider can be compiled=
+ in at a
+> > + * time.
+> > + */
+> > +#if defined(CONFIG_ARM_DMA_USE_IOMMU)
+> > +
+> > +#include <asm/dma-iommu.h>
+> > +
+> > +#elif defined(CONFIG_IOMMU_DMA)
+> >  =20
+> >   void iommu_setup_dma_ops(struct device *dev, struct iommu_domain *dom=
+ain);
+> >   void iommu_teardown_dma_ops(struct device *dev);
+> >  =20
+> >   int iommu_get_dma_cookie(struct iommu_domain *domain);
+> >   void iommu_put_dma_cookie(struct iommu_domain *domain);
+> > -void iommu_put_msi_cookie(struct iommu_domain *domain);
+> >  =20
+> > -int iommu_dma_init_fq(struct iommu_domain *domain);
+> > -
+> > -void iommu_dma_get_resv_regions(struct device *dev, struct list_head *=
+list);
+> > -
+> > -int iommu_dma_sw_msi(struct iommu_domain *domain, struct msi_desc *des=
+c,
+> > -		     phys_addr_t msi_addr);
+> > -
+> > -extern bool iommu_dma_forcedac;
+> > -
+> > -#else /* CONFIG_IOMMU_DMA */
+> > +#else
+> >  =20
+> >   static inline void iommu_setup_dma_ops(struct device *dev,
+> >   				       struct iommu_domain *domain)
+> > @@ -36,11 +35,6 @@ static inline void iommu_teardown_dma_ops(struct dev=
+ice *dev)
+> >   {
+> >   }
+> >  =20
+> > -static inline int iommu_dma_init_fq(struct iommu_domain *domain)
+> > -{
+> > -	return -EINVAL;
+> > -}
+> > -
+> >   static inline int iommu_get_dma_cookie(struct iommu_domain *domain)
+> >   {
+> >   	return -ENODEV;
+> > @@ -50,6 +44,28 @@ static inline void iommu_put_dma_cookie(struct iommu=
+_domain *domain)
+> >   {
+> >   }
+> >  =20
+> > +#endif
+> > +
+> > +#ifdef CONFIG_IOMMU_DMA
+> > +
+> > +void iommu_put_msi_cookie(struct iommu_domain *domain);
+> > +
+> > +int iommu_dma_init_fq(struct iommu_domain *domain);
+> > +
+> > +void iommu_dma_get_resv_regions(struct device *dev, struct list_head *=
+list);
+> > +
+> > +int iommu_dma_sw_msi(struct iommu_domain *domain, struct msi_desc *des=
+c,
+> > +		     phys_addr_t msi_addr);
+> > +
+> > +extern bool iommu_dma_forcedac;
+> > +
+> > +#else /* CONFIG_IOMMU_DMA */
+> > +
+> > +static inline int iommu_dma_init_fq(struct iommu_domain *domain)
+> > +{
+> > +	return -EINVAL;
+> > +}
+> > +
+> >   static inline void iommu_put_msi_cookie(struct iommu_domain *domain)
+> >   {
+> >   }
+> >=20
+>=20
+>=20
 
 
-vim +1708 drivers/pci/controller/dwc/pcie-tegra194.c
 
-  1688	
-  1689	static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
-  1690	{
-  1691		u32 val;
-  1692		int ret;
-  1693	
-  1694		if (pcie->ep_state == EP_STATE_DISABLED)
-  1695			return;
-  1696	
-  1697		ret = readl_poll_timeout(pcie->appl_base + APPL_DEBUG, val,
-  1698			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_QUIET) ||
-  1699			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_ACT) ||
-  1700			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_PRE_DETECT_QUIET) ||
-  1701			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_WAIT) ||
-  1702			((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_L2_IDLE),
-  1703			LTSSM_DELAY_US, LTSSM_TIMEOUT_US);
-  1704		if (ret)
-  1705			dev_info(pcie->dev, "LTSSM state: 0x%x detect timeout: %d\n", val, ret);
-  1706	
-  1707		/* Avoid the DBI register reinitialization in dw_pcie_ep_linkdown(). */
-> 1708		pci_epc_linkdown(pcie->pci.ep.epc);
-  1709	
-  1710		/*
-  1711		 * Deassert LTSSM state to stop the state toggling between
-  1712		 * Polling and Detect.
-  1713		 */
-  1714		val = appl_readl(pcie, APPL_CTRL);
-  1715		val &= ~APPL_CTRL_LTSSM_EN;
-  1716		appl_writel(pcie, val, APPL_CTRL);
-  1717	
-  1718		reset_control_assert(pcie->core_rst);
-  1719	
-  1720		tegra_pcie_disable_phy(pcie);
-  1721	
-  1722		reset_control_assert(pcie->core_apb_rst);
-  1723	
-  1724		clk_disable_unprepare(pcie->core_clk);
-  1725	
-  1726		pm_runtime_put_sync(pcie->dev);
-  1727	
-  1728		if (pcie->enable_ext_refclk) {
-  1729			ret = tegra_pcie_bpmp_set_pll_state(pcie, false);
-  1730			if (ret)
-  1731				dev_err(pcie->dev, "Failed to turn off UPHY: %d\n",
-  1732					ret);
-  1733		}
-  1734	
-  1735		ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
-  1736		if (ret)
-  1737			dev_err(pcie->dev, "Failed to disable controller: %d\n", ret);
-  1738	
-  1739		pcie->ep_state = EP_STATE_DISABLED;
-  1740		dev_dbg(pcie->dev, "Uninitialization of endpoint is completed\n");
-  1741	}
-  1742	
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
