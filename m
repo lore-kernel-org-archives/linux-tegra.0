@@ -1,76 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.250.56.165
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792761590;
-	b=fXcmOJBglbX9P5ZPqND5x6eJ/oX/462YIJZfaBUf9vLe+/h7UPomJ0S9bYCZawpd+tdV
-	 CXE5e6AZZBm54V9DEjbg7jqaVQcRbvMR7I/q7uHI9IZOOVpCUKlspb8wUYoRCsANqUGTX
-	 GmWVfhMEHCzyD2CQRkXJNCvZTZOfkaHTl+sfWLFMwqs0/FqVJ6Vtm2H25vpFEav06ojk2
-	 UyJKhBMxOHxSefCf8GthvkXAB4Z0d3qe3SMEA0yHJkiTy5lMDcp/GLJH0LyQmRDHWeC+3
-	 +RoI2TDbHYeCtKkxZflYRLTW3wdhcHacMfEOQiCRMgKmBiXPVCmwOZ3j6aAn5EH8OSA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792761590;
-	h=DMARC-Filter:Received:Received:DKIM-Filter:DKIM-Signature:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=HHzMsJF9k+4VDbAqBeFrm1tYK+OTd3TiwEcV01FAU2Q=;
-	b=1hgHOgO/gJO73a+jPSByrT5GajC/NLVUs5VIoM4WQ158IKhVhytlmzXanp8CQwu33H+E
-	 bPn5OiPEf0CC/8vEWZ69S0rpI36nYsvcCtQSCX03zjyyNphPZ1wSD4khKbmGcyeknVu5K
-	 /rIGNeb5LpnFrGFk5XUuLDPGTchFXGjub3VtY2b9RjjC+KzI81FycUxgPns15sRcE0Nv9
-	 MFyuEeCdU28N1jD+WhmjsGGWTBzj7ak973N2Ptwzz4XFpB7eMvYik148N3SRtEIXJQ0Vn
-	 e6JSAswJHSt8PgrN5KiW7A2jEPFzsAbMFkcV1WDdzOh2Rtw7PtqgauMnnSgdnzhmcLw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ideco.ru;
-	spf=pass smtp.mailfrom=ideco.ru;
-	dkim=pass header.d=ideco.ru header.i=@ideco.ru header.a=rsa-sha256 header.s=ics header.b=hzbNQsxN;
-	arc=none smtp.remote-ip=51.250.56.165
-Received: from smtp.ideco.ru (smtp.ideco.ru [51.250.56.165])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.182
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792764910;
+	b=bo2vN1IrTx6VfXKiYPtTabeKYM8ixdcIoytmxGKOBVUl6rsWistatQaMjqOt9stBHkL/
+	 LCQBQi8fGk2bA9N4nrr+ULYjlagi2JZKTtWjle+E6tph27PFyWYD2TsC2/S8mrazqPsyB
+	 vM6vjG+uC3bh5635OTOzSV0rvZqWhQBdkOhf76RPVEn0ZPDKFtqczMxflCPvfJMqKT1zd
+	 oUA8tCCVbFelLrJ309K4wrP2ERn9YzSaGYKz/1OFkT294WLkqxoaF5SvDEFfXGgEqdX+z
+	 VQ6yjKmuN6Pa7ZqvijmPFcHjtdpT1n4Bi26Kzl/nWqJsaRDPA1lBxnU2r5JHZ1KZB9Q==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792764910;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=ssHEzjzfcY3y99EaZ6IT5t5Uq+N8qOcZuAF48Ej6bak=;
+	b=oJ8LX9i7z8c949ox4aGramS5SIdHmV5VwlPL56ETl9nF4a96G3wgPca/67iGSeZATVF8
+	 VJX5zBTLkpWdDGCgCcauKg4G3Umou+Xe5C2ptubVDnovJlLRphS2USlkDJAF30Hy+fU/x
+	 2Kx1srW93w6VamSxrFFj0a50fcZpDgoCghku7g4N6w1ufmUnfg12XivtTelfEqtqoKQov
+	 BGMDw0bjcYQcySaXWBjroB93TbGnPa02JmykdZrePgWLr4FrGyGiqU7JmLxyWz2Bsaumk
+	 HKWErwsjURtOuXJkwXXsMGTIY5/eKUlCumDZnk+7y1GNzkMplfjDvQrU6LdTdyObhlw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=AhdXrNWn;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.182
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56769606A31B;
-	Fri, 23 Oct 2026 13:19:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 56769606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideco.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideco.ru
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F95606A329
+	for <linux-tegra@vger.kernel.org>; Fri, 23 Oct 2026 14:15:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E1F95606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ideco.ru header.i=@ideco.ru header.a=rsa-sha256 header.s=ics header.b=hzbNQsxN
-Received: from [169.254.254.254] (localhost [127.0.0.1])
-	by smtp.ideco.ru (Postfix) with ESMTP id 22849197A3;
-	Fri, 23 Oct 2026 18:19:47 +0500 (+05)
-Received: from fedora (5cfcac1b.dynamic.mv.ru [92.252.172.27])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.ideco.ru (Postfix) with ESMTPSA id 1716E18C5E;
-	Fri, 23 Oct 2026 18:19:19 +0500 (+05)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.ideco.ru 1716E18C5E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ideco.ru; s=ics;
-	t=1792761586; bh=HHzMsJF9k+4VDbAqBeFrm1tYK+OTd3TiwEcV01FAU2Q=;
-	h=From:To:Cc:Subject:Date;
-	b=hzbNQsxNPWeKZVw1AVxN7X4/T6UWnbisKdc5tGgmorz8wyqNvIOjw8kTAAvJjCueZ
-	 DTNictk5sERsOzco/0fltSVrwZLOgXjm2rZKV6xLuw0t+0z9wdDwbcK+oA0NTWRWm7
-	 AWyV75kxt6kslS2d04xrLxx3XaW55isZe4RrUPDkXD4QLDCJ9cHLih/cM41hoBBVD2
-	 Ms++EvppuZDhWf8qJjUoGJCvE5Yj/CN8nh1xkg8WKnTTrn+d7mlvCM1BjFxbcVUhML
-	 5w1o36LdNzacxTLTrIsd+x7R6jBZZ/olI1ksqE000k3R6TCJ2DzolbZPn0pO39eo3E
-	 V5qEtsIATESXA==
-From: Alex Kazinsky <a.kazinsky@ideco.ru>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Alex Kazinsky <a.kazinsky@ideco.ru>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] media: tegra-video: Check CSI subdev before error recovery
-Date: Fri, 23 Oct 2026 17:18:50 +0400
-Message-ID: <20261023131859.95819-1-a.kazinsky@ideco.ru>
-X-Mailer: git-send-email 2.56.0
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=AhdXrNWn
+Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-35ef6b49813so1327970eec.0
+        for <linux-tegra@vger.kernel.org>; Fri, 23 Oct 2026 07:15:09 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792764909; cv=none;
+        d=google.com; s=arc-20260327;
+        b=q9HqnHtEH5eMI8Ny04zY2FTCJyJVtRbvyN/t05iVxgmniDaktcopItxyO6aBtoWtRY
+         Pk1UQseVqfn1NqchXo/y118L628kqdi9rbFSjgACdVj8Z67G8ojRyXDsDW4N+QXH9dB5
+         yRER1QB4t1o8qG3OProZ2vrovl+/rZtl9Py1JIT2R2U2DqKUfOm78IuBLLOl0Ey7AITm
+         YVJPJtWVhnnEQGF+tIqHhmLz67rl1yatrl47GnTeG28pwkdXJ2QoYS823WNmidYsy1gh
+         fqqkWYRcYup+c+3dCfPsrQuAvlSRMmCfN+7BMB0LUULw7VMqfrZgHQzHGqfJ5iK+jgVK
+         niTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ssHEzjzfcY3y99EaZ6IT5t5Uq+N8qOcZuAF48Ej6bak=;
+        fh=6SwdHQ8lFRP+kV7gXMXLdgQ/ES5W34o9IIO/qfrfDeQ=;
+        b=eYNo543K0JnTPqkP1+ykZfIRpvAtEdBEyaRF7lmL343YbcVJxC/eAme9ah2ZISZO7g
+         K4eX89uWoHXiEGT5dFxczq+PDBHShPDfEMnAkE17RyKWJOP4WbWzty81IPqQ7PDVwWp9
+         B5y4EU5WUoGfdeWeMTquP4HU60Fj/g2gpyqikkcp8AxA+CVRBxw/rAd7SRaoaaKINieu
+         5LNlTdpvIOCh79KSYO3Gj+J/QUMwdpPlJ60Oy9ipvOPp+JFGfWg//udyGLbepoGU4UW9
+         YvsZO57Peh37bLoxv+RrVWF0h9tVRqaOJWky91mQc8MAWRS1YZ0StV2O4z2m6qC3EfaB
+         JT+g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792764909; x=1793369709; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=ssHEzjzfcY3y99EaZ6IT5t5Uq+N8qOcZuAF48Ej6bak=;
+        b=AhdXrNWnrU3mrt1MMRe/e6VxIevvuFIEP5rhfHlfuMzUxqtoIouvMJRuzKDBd2weYm
+         l/dBG+LuBgyps93XvGFRFcHWMTOIAMzKJFCtjzFXTPBWFcKlqAMJXJP3Vetqp+pbR13Q
+         dv6FtJluW3yMZ8spVdkU5AKtqKrAJ7klobwSKhZcEIaRzeTZloIeRxrOUwuEtWgujkNO
+         XTW6xQ7AaHjrQkvEH4eSpLrmE+89zS0D1ddzkdo9GreFLLhSb6ilCUqWX/YP5hIHLtiF
+         iAS8MM0fRa351wkUsBzTAIlLET80YjYHUlJx5JF9dgDGgSMoKrw3khS1TnI/ztRJ192k
+         lOFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792764909; x=1793369709;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ssHEzjzfcY3y99EaZ6IT5t5Uq+N8qOcZuAF48Ej6bak=;
+        b=LQ+ZPUO+Vwbcvb1DkY1TWgDHTUyosUFNwUhJdYdgeSFmKQDatFBoaaO/VPp9+KYZ9K
+         lkcy0zvvG0K0uuUTSNKwtliK/n/F5lSwOTYMy4T1+vPSPJGtaw7234Qr6AVD6O/mUPlz
+         23UyM6vdHqztPdIPS9VANPvU8UAI0xbrk7UeLJigS8lRudHc2lVgsxNBnUr0iZRInvyN
+         gZ5RT88OXkM1lfC0/dWqrRbNHvLafpj9r+kV6LoEIrih3s5a7DYsS3TMBuPmgjyFASsO
+         GjsWOZFY49pfoeAirl+3JWQbQFDjnQOliXGREk2jW8Poqdlw5bg3Nh6odXZkrJroP6Gt
+         fwUg==
+X-Forwarded-Encrypted: i=1; AKwUvBzoMXivqnrHVlWTzPd2Ibw0eiyuKcWvk0SFWPifWifZOHJ0VPm/nIORIsvI0rh+uJhLlw6Hb4DRhQsWGw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKdxddQHk1pFHGPYVKVv1n+sAh6Cs21kWr7YmuWpxQ3WY5LGD9y
+	NsUI404mURn3bm0TmrMLKNjhISEk8gP43OlSL3gQmW7RXIrv2k8hLvsrCcRYAsocuHDjB+Q6w1E
+	QNLTh0YxB/a4hMs26SPXtLRgtdTrTV7E=
+X-Gm-Gg: AYBFou2ZxWErk1KOssu6szx3a81ZiFq9EKJ2sUDv4eBeYY0KQQBpCenltxdQeCkBebu
+	eOodYp+GYIzHmL5tZYkcZH+7LesoSebrtFQHtgsdvedP/xX6JH5AjY68QHK6x1SnjJ9dbg0QSD2
+	KoDl1QeAPgSrhMKG5HpSY8cNeMBTN2pc3qGWuun+zmw65I+26hBS4Iz4+4dEcP0pgN5NMm3plOH
+	ADrvvhJRcJelY/rRqi7dDUi+WhGGm3BN+5pDHVWzAJ5hwTGq2zrUgg/6Yi1dG4rLZjUz4uaVqkH
+	It9fDoPEDiF8rc/H7wQpDRUvtkdw14yI6EFt2G6VQbgEaLKZHG0QAbQq1BkgeUzW8xrZSummK8o
+	3XAhWzCjyeT619bC83Ppty/aZpTyK2JX21orBXCApHCp3UfSqJNuVZkKhPltBkKV7eMK7pQ==
+X-Received: by 2002:a05:7301:6507:b0:358:8f02:e0ca with SMTP id
+ 5a478bee46e88-369d96e0ad5mr4018525eec.9.1792764908756; Fri, 23 Oct 2026
+ 07:15:08 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -80,46 +104,54 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261022132259.240717-1-clamor95@gmail.com> <20261022132259.240717-8-clamor95@gmail.com>
+ <Ot5qxntOTJ2QgFh6uZ0riA@nvidia.com> <CAPVz0n3Vrzb96iR5ZW8zvmruZ4aK0hKGKpJ2T9Ys+bSPCtLWHw@mail.gmail.com>
+In-Reply-To: <CAPVz0n3Vrzb96iR5ZW8zvmruZ4aK0hKGKpJ2T9Ys+bSPCtLWHw@mail.gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 23 Oct 2026 17:14:57 +0300
+X-Gm-Features: AclHuK8iWdYJNcYZY57a5wy5nSa1L6Um7fXs3cPnETk89r87jtgd5ZLBghEmEmU
+Message-ID: <CAPVz0n3gzV+gAu_gzp3oTG9VOu-YiNSiQA0SdCFApKsi0dGjKQ@mail.gmail.com>
+Subject: Re: [PATCH v4 7/7] drm/tegra: Add support for 8-bit CPU interface
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tegra_channel_get_remote_csi_subdev() can return NULL when no remote
-pad is found or the remote subdevice is not a Tegra CSI subdevice.
-Passing NULL to tegra_csi_error_recover() would cause an invalid
-memory access through to_csi_chan().
+=D0=BF=D1=82, 23 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 11:2=
+6 Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> =D0=BF=D1=82, 23 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 10=
+:53 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+...
+> > > +MODULE_ALIAS("platform:tegra-dbi");
+> > > +MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
+> > > +MODULE_DESCRIPTION("Nvidia Tegra20/30 MIPI-DBI Type B driver");
+> > > +MODULE_LICENSE("GPL");
+> >
+> > No separate platform driver or device. If a separate struct device is
+> > needed for some technical purpose, we need to create a minimal separate
+> > virtual device, but unless there is a strong reason to have that we
+> > should be fine with just the dc device.
+> >
+> > Thank you
+> > Mikko
+> >
+>
+> ATM, I use bridge framework to describe interface and I am attaching
+> it to RGB since it basically uses RGB to transfer video data. It works
+> pretty nice so far.
+>
+> You propose to replicate how RGB works just for DBI?
+>
 
-Check the lookup result before attempting CSI recovery. This keeps
-the recovery path consistent with the helper's nullable return value
-and allows VI recovery to complete without accessing an absent CSI
-subdevice.
-
-This defensive check addresses a potential invalid memory access
-identified by source code analysis. No runtime failure has been
-reproduced.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 1ebaeb09830f ("media: tegra-video: Add support for external sensor capture")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alex Kazinsky <a.kazinsky@ideco.ru>
----
- drivers/staging/media/tegra-video/tegra210.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/media/tegra-video/tegra210.c b/drivers/staging/media/tegra-video/tegra210.c
-index a6606768fa03..82d054c9c34c 100644
---- a/drivers/staging/media/tegra-video/tegra210.c
-+++ b/drivers/staging/media/tegra-video/tegra210.c
-@@ -346,7 +346,8 @@ static void tegra_channel_capture_error_recover(struct tegra_vi_channel *chan,
- 
- 	/* recover CSI block */
- 	subdev = tegra_channel_get_remote_csi_subdev(chan);
--	tegra_csi_error_recover(subdev);
-+	if (subdev)
-+		tegra_csi_error_recover(subdev);
- }
- 
- static struct tegra_channel_buffer *
--- 
-2.56.0
-
-
+One of the reasons I used separate pdev was to be able get mipi_dbi
+from it using dev_get_drvdata() from patent (dbi bridge in this case).
+DBI framework seems to not have a way to pass it in any other way,
+unless you know smth I don't.
