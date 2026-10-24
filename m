@@ -1,102 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=209.85.219.42
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
-	t=1792830533;
-	b=QfOoWOk370f5WZyPsowauUbEmDQwAuaI87qud3DwvuRnCNZ1Tc97X45e+lP+dRhttk3u
-	 CeuBQwf2n9LYgHt0Tn5O31HPdTSNFCLixzyACySyl1jpdGWlaQe6ezqva9OAnHVARao2m
-	 bgRxjP51AY4/mvjf88wwYElXKFaAddsnFVZSHOKznrV7pouONO0zDj0wVydi52vYYch4i
-	 6V3CeQRwbGzTsokHsdebYHR1ao+yFo0MNc43qGPGYcQlpp1qvW8zKZ44Opk9QK1foKT59
-	 evlwJsLDg0UP6Wg0BapGjohYFm5gj50WjhwEEm/14Fo38vWIdD++IFufpGXw6fIb1xw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792830533;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792839690;
+	b=HMOekZkE3OEyGdoor9sOUEmcryaHxLCxMXqN8ejG+XAHTudllrwHeK13cfPG40m+aGS5
+	 /IVJUUNQWbJpwjDr9dx3tH4aU8HmKNF+MTiiyUobwho+Fc+OEOIs1KgjuWPC86zN05jyN
+	 6mn9ewMl66Y323LdZ0f20F8KhfDTOgrBKwBJQ76orqDUnOO/QrDjAFwEgozpQiGlDNc75
+	 U//jopLpKLZUkNKLZT+nt+yVMzOve0uVcIGjOuLxQ8Shtd3qAZLCmCak7bhZrr/bt8dNF
+	 yiv27L5tg56ysl83w49TihljF5rJn0/XlF2A/tczUnuP0aBb/2eFBwvBNDULi6ZNQdA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792839690;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=TV8aougv0HFFxEZHCD307mI1j0UTUQCx1/QXIS2xyiY=;
-	b=TS1ENwIdK09vnBtXkkJjCU/Tet0jbEcS91PEE2Yp/EUpmkNL+rDOJuVGHsuXkjbc3Tv0
-	 mAInpTukKV7PSZuAO9cYrDBsN1p7QaS71Z3Jz9ipATx6HNpf1Z7njqtNXQcK2awmQoBCf
-	 MWUM/m6OlnizB3qU5Rox68iZGyAxPSx6O36SBqX9YEEAFhxSTd4P6SuBbT1CjKb3MGcqX
-	 W8p8pAqaGC+DP84nqeBwnHsmZiKK0+QVP3pyo+1NKLFeIRoCzCsHV9640l59fOa7M9NYx
-	 jsQJSbEkdzAgl95ELbIr1HGB0u+FXD20O1oEPWRvmNPdpN2ZT06tfsHssl20k4V/6MA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=Z/AIP7tnKK/4+bwJtDzlzu0jwt67zrCvDiXb/N418ik=;
+	b=gOWKpr9olOWf+zCQdrQDc2NQFGabnCFxJoYbTKpdxvSdUJgFQRfpZWtbJhdH+vwaMWpr
+	 LF4b7HwLWZkv1txeNFIfYeC9H6pUoW7d1Jlwq5QAuhuOLZJxts58hvUPBgxPkJgdkB5zF
+	 YdnaveNjiCWZga740dGACKKL+YkcdoMrxCrkRjk9ujoe1Zh8OItE2UIoqWARJDOnsSc7E
+	 LQ3DraEOqnM7q2W0K/hGL2aDYHkwPmoijB47vkeFK1hSaKBi8LXuQpgH19mIx/BEFNLqL
+	 81Pip3iVjEY3MIoZtcmCP4e4MRnbW0IcqF3PCYAzzd1IbFx5w7WtuU1gyb7xkgPHTRg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=pRpSXZU1;
-	arc=fail smtp.remote-ip=209.85.219.42
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=NhIpUUiz;
+	arc=none smtp.remote-ip=209.85.128.46
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB9A606A31B
-	for <linux-tegra@vger.kernel.org>; Sat, 24 Oct 2026 08:28:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6DB9A606A31B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE895606A31D
+	for <linux-tegra@vger.kernel.org>; Sat, 24 Oct 2026 11:01:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EE895606A31D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=pRpSXZU1
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-917997ab0d9so18199596d6.3
-        for <linux-tegra@vger.kernel.org>; Sat, 24 Oct 2026 01:28:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792830527; cv=none;
-        d=google.com; s=arc-20260327;
-        b=AT7vn5bF5o6J4d3Ts3CKKy0lBVpaDIdRM8C/5Pn8hG/Dsq1odOpG3rwACGqM7DeHZc
-         nHgCbhLE6B+ZjlP5+bP/QmTk+E+DuWBNrm3eYMbJg+epSOYyyrFL3Pr8MDK/ttVAcFk8
-         gV4v5h/0xlW2gNwXbPnRq5+9a9KqzstGhnyedUy4ItNdBhZJAlCQewyHA7IdK9lYuTPc
-         eJw/hXNZqN/+zLFdTp7yf1WHThbDMe+fyjde4MoYbekMupBao6H4DEBWS/IeAFHUqiIt
-         xVkv6d3FyqrWGQXBH2cSJtRn93LYYimAEXNJuwG8WJzEGun13GovKgIsP3sYwdNSivzD
-         x+ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=TV8aougv0HFFxEZHCD307mI1j0UTUQCx1/QXIS2xyiY=;
-        fh=L4CWUmCxMvQ3r/pJKzVEx3hLspSDUnABtit3tBSbX4o=;
-        b=VaZ/pKEBmItWZaBYmBzsz77EJBhAVnxCFWISHA2Exnfqax64sn/hVMVRhDt26bS1Y/
-         Y5xvJyJqHyuQMNFBbm6T2FRZBbQUpWMZs9TruJ/1K8lLzzkv2Ch0EUOYdDbPt7baxOKo
-         cMrPKYaIs8tb9Q8xbTsCXI58TyFI26jhC6wX3Z7s8pOE/l3W8z1YphOgPO3zDYEt59ek
-         nwCEbeFTrQHPGrrrGSYjGgGPTI2fIq9SnUB7+B25eyWeujBDKeeu13tM9AYvJLrT627T
-         TBAI/fkwiug0GMiKl5mxBAYVIVh4GQsx2pZzmF6ZtlW6mYcVFAeDT1zVCMV42yHcSU9z
-         QO5g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=NhIpUUiz
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-49d0da752ffso14246095e9.3
+        for <linux-tegra@vger.kernel.org>; Sat, 24 Oct 2026 04:01:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792830527; x=1793435327; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=TV8aougv0HFFxEZHCD307mI1j0UTUQCx1/QXIS2xyiY=;
-        b=pRpSXZU1yQT1y44daKHD3tUj3rHLXFVwuW/CQz8RSUdaCT6N4yQKBiyjJydRsWD0pW
-         g28B1qLz2bwONEtegXVtN3jQk8kTIBJnXEvdb61iXJ6GOmdcdJzzfWoGPXJ8Zc3AAkIs
-         WFhFWHFXD3GvhhjyB6SZ+UEZsDPVeUQXyFq7orv9RYQ4Ddy4yyleAD4+BKuksm118uF/
-         0FReZdmVzFujp+6kBucxhZu4Ep8MI33EAFpewip65G9SfZGmv5piy6+j36vFaM/mAdIu
-         19DXBjsISyvcXO6q06teRbNMfwFkw+dnbAyHZsBMvLQnln/PFxgnGeCCEnOQ1fHE+nej
-         2bPw==
+        d=gmail.com; s=20251104; t=1792839688; x=1793444488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Z/AIP7tnKK/4+bwJtDzlzu0jwt67zrCvDiXb/N418ik=;
+        b=NhIpUUizuCr4oq7rqnXBsUKCxO4JcZRB+dC3MpSSLVHuj8O8idnQNu/f16J8a+jjwo
+         UzXon4kUVJP66AJolXBJCUjoyRuf6Rj6pqqctvBk560ulmj526cukzLJyuPMcV831B4d
+         Y827ZiUQRLfzyTFqQJaUduRU35uW/wxOoKRtGqzMbiXBM8+0wxnM7nYsR0udyDgldFXe
+         W209v1tT1cYWlnOj3UG1jS/p2WsL96rpoM40St0JnW9raVJmN4KVpySpajJWD8RiywMq
+         Td2nrXHt/tll8fa1C/eudNNv73S1d7KHeEBA1ydE/QaLqw9C1qAqA509qkRxCBrR9jZN
+         sfOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792830527; x=1793435327;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=TV8aougv0HFFxEZHCD307mI1j0UTUQCx1/QXIS2xyiY=;
-        b=S0jaD9R87mp72vP9ToO/aoYyRm7RLN74yP3e9ylikPjBo7EYuT0jJdfRD5bYOwHMRg
-         DxlAjp3bQW+0Jv0hfFOvRw1C1L/EQWfgMzuFwgx+3f1/4y7FuktyPKHyqNIWT3f/TTUy
-         Cx2U6QyEOjvX9yOybP4v1Ul1lKiFcpkE2fLaep80qWSh1GQ4Nm+xEwN8V9IjNoqhZk3U
-         eklfmexTvsI1fWRVlYcG22P+Cu1LGebct//4qUsaKPEdvhDDoeJnGFy1pSoNkF4TnfBH
-         MMcw0EVpekJGyOkOrWE82PmSlh8UKDmKWLMTct3DDJONYw4NrOY1nskI7ejRO+aOTSjN
-         LWbw==
-X-Forwarded-Encrypted: i=1; AKwUvBw0nXMFYklT5f7FkmwgE/qvwqx0W7e60UcU3c5muLGGP7CgIPfDa7Xx1KW6+7DkpscnCxw+m4Ioqb3PAg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIfMtg0YKA5Nbn9LpNwbt6XMWvsxW9fNTw0FzC9+0NpZIP1OTEA
-	nqmTDh39+o9j5TaZexEENPYAdiZC4w32cHEbi5PFoYHqTx/lExxJI06McfRf0ZLVE0fcJkhSomz
-	+z0kCxU76/wZRfuu7LyIAB5SNzfc00lA=
-X-Gm-Gg: AYBFou3XV3mXqHkQ5xCJfJvvLuTHZpk3Zf8h/fbliWZJfo+wceW9m0qDdR8o2fm33y2
-	mEvtN/BpWjLhB1p91l/vCIi3CRqhzeDCI1OUW8baNKfqYcC4KnsO6YASeVyTc2Kf7JV/woH3rND
-	kyCyyqgQD0P9fchOfzvjeXNoyKkdbcJcLSV4r4oYAFwTjThET+6JZqC+LtPXUB62TXyefJDbs8A
-	Ou3ePwOmRrBgQkmG8wYH3wEmO/5kolMS9TvFYs7fnxubnkYcD2AcCgW+pYybNVCCc8W/KVczozO
-	0snsghVMGNE3sD+ZM8i8We6QBL8l+YL5n7aC9foX+dKHRmEZ3fRABI4roAbuFC1/+BDY80sXoAd
-	32SH6xMoHsUED/s78RxH6RP0Jb/Lwu03sKgKrZqr9jY+i/VHKUQj9+JzSzN9Y1WVs//ijD1WWaB
-	aafVEqvkgSOgHTHxD35KEjJ03CEoGSO2yhoyF24q8Wke4gIypYvOYV15jeEpyGUsZR2yVMTNWPm
-	/zXTRfBNfnI1xfYUq0=
-X-Received: by 2002:a05:620a:2a03:b0:93e:c12c:9dc6 with SMTP id
- af79cd13be357-940ef9c39f3mr186553985a.70.1792830527402; Sat, 24 Oct 2026
- 01:28:47 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1792839688; x=1793444488;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Z/AIP7tnKK/4+bwJtDzlzu0jwt67zrCvDiXb/N418ik=;
+        b=2mvpyWGAd58aQ02OF+qks9XRlY7W2smKUjResv1cAlBnuG1WTWkUJ+WpBGK+bRV0lm
+         VaBxW8pIMSJ9AXT9GG5ts0QriH7HTb7DXZz5o3ntPNnjMmnUINR2DB9KU3EDrQo5GSpe
+         1Kl4iNTGT0BFLTf632wPfMK4bH/IZVbR5DUPLPL5R48n8BNsGMLPlMvTHJYNgWQRaFit
+         rQdfO6pR7t5vSUMxtUjf0vHN8xfxWqm9XbjzqO2JlMccj5ZNuZK0kQNosB10r52J3+c9
+         qXam79t5lop/ZjtyojxlQvoV3FC7DNFdL57/J+lFNTyeyjN+TDPKXL3+DBLHTfZhJl9q
+         4WYQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxgsxgYmho9pLe3PYvXRuvUgsdOSfivF4iN0pfvmhNCTiwybJ2bGuqb0r9XSVJnWgQWDJTAX9DPqTy7eQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLkGdUkPQaCbCp3nWAI4n73LlWP3BiLVZ/AHZ4LYB5bTqFKcr11
+	h+G7SgLP6+45ZXjMK5Xcyd6Xzzn/JDjeklCuKvs1KZA0UsobjzTkP6H4
+X-Gm-Gg: AYBFou0aY++8LJe15l5ElTL1gZoIA0pHybp8LVnE38F8lcyExNSaO8dbPwZNOfA9TnL
+	optQDZx/nRfwMUAksp0tL9xx94njyiJGkPKTAyz99NJpl3WugZDYJkaEx4ekyUqNpIDJGns1HPs
+	cMtcAXHMF4GhQ/n99NjWouejqjkQUtZiMe4g1beL8MpM626o7Boo8u6Qj0JtrpfmzLg7f+5jwjb
+	gn1m+MWQ+Cz3INHwjCdMjR2W7kH2u8/rdptatKeJe/269/6WWN0utKW0eh90SEMmAG0BM7KpfNS
+	cMd47cbNeadEjmH5Byb91joXocWw7DQpS8dPQkM940QG3Tq0NM2cQIQY8aQWKbMz5642hUsvRp5
+	PO71bzAFdd6MKQ1POtZ9LVPwFf6f1idzRREZo32kYyl+MGLeGRLQ82dWqNkAiDZWPGTolfp06Pu
+	25lIraZUmIKkkUIrgLQr6koh+PNszV/FNLL/Sl1UhKlIpaLuOb6BviOP9PxsQI3ixmWIimOwPUF
+	GUpNdOsghSSP8zVh7F/ABt5ZKD19C2h+nzcgi7Sf5Ex0Ah6sWyph+dpg8ih21J5iKdV+O/lihr5
+	EaOxfILQECu1CAIU4IveCeZPCpXwtVssqQDLFmii+LKHQyfVeyh7VQv9KgHsE3gVgDXptgkmlP5
+	F08WZbwEJlVg5dY8YB2qXS6ffEQ6TQ9lKZ8DK6l6QdYlSthViTnORGQ/INPE=
+X-Received: by 2002:a05:600c:5307:b0:4a1:d456:ddc8 with SMTP id 5b1f17b1804b1-4a35ac8bb56mr24174315e9.7.1792839688051;
+        Sat, 24 Oct 2026 04:01:28 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a02-3100-9da9-5f01-d5f0-7ecf-afa4-4bc6.310.pool.telefonica.de. [2a02:3100:9da9:5f01:d5f0:7ecf:afa4:4bc6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a359ff2189sm56863845e9.1.2026.10.24.04.01.23
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 24 Oct 2026 04:01:26 -0700 (PDT)
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Karl Mehltretter <kmehltretter@gmail.com>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: tegra: Fix Tegra210 IQC2 clock lookup
+Date: Sat, 24 Oct 2026 13:01:13 +0200
+Message-Id: <20261024110113.63341-1-kmehltretter@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -106,63 +102,43 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261017065012.3063980-1-austin.linux@gmail.com> <n59f1S6wQICe5ZxgcNxb3w@nvidia.com>
-In-Reply-To: <n59f1S6wQICe5ZxgcNxb3w@nvidia.com>
-From: Austin Schuh <austin.linux@gmail.com>
-Date: Sat, 24 Oct 2026 01:28:36 -0700
-X-Gm-Features: AclHuK_tinEg57N73i4__wGq3AIgvdQZH-j58Q4vGTYODbuD3w6t9rMnKMeodvE
-Message-ID: <CABsbf=Gvd8NGG=yafF5La-pW77QOMAXYkoyWU9y4-B8S2_0Ong@mail.gmail.com>
-Subject: Re: [PATCH] firmware: tegra: bpmp: populate debugfs in the background
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: thierry.reding@kernel.org, jonathanh@nvidia.com, anrao@nvidia.com, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 23, 2026 at 1:16=E2=80=AFAM Mikko Perttunen <mperttunen@nvidia.=
-com> wrote:
-> Sashiko reports some hard to trigger but worth checking concurrency
-> issues.
+gate_clks[] uses tegra_clk_iqc1 for both iqc1 and iqc2. On Tegra210,
+gate_clk_init() overwrites the TEGRA210_CLK_IQC1 provider entry with
+iqc2 and leaves TEGRA210_CLK_IQC2 unpopulated, so looking up
+TEGRA210_CLK_IQC2 fails with -EINVAL.
 
-I couldn't find Sashiko's report, so I went looking myself and found
-two, both fixed in v2:
+Use tegra_clk_iqc2 for the iqc2 gate.
 
- - The work could run across a system suspend.  Once suspend_noirq sets
-   bpmp->suspended, its requests fail with -EAGAIN, and the error path
-   removes the whole mirror.  v2 queues it on system_freezable_wq, so
-   suspend waits for it.
+Fixes: 88da44c5edb9 ("clk: tegra: Add missing Tegra210 clocks")
+Assisted-by: LLM
+Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+---
+Tested on a Jetson Nano 4GB (Tegra210) with a small probe module that
+calls of_clk_get_from_provider() on the Tegra210 CAR node. Unpatched,
+TEGRA210_CLK_IQC2 (220) returns -EINVAL and TEGRA210_CLK_IQC1 (221)
+resolves to iqc2. With this patch on 5b0764a53235, ID 220 resolves to
+iqc2 and ID 221 resolves to iqc1.
 
- - With more than one BPMP, the populations used to run one after the
-   other in their probes, and now run at once.  One failing could remove
-   the shared root while the other was creating its directory in it.  v2
-   holds bpmp_debugfs_root_lock across the whole population.
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you've got a link to Sashiko's report, that would be wonderful.
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 4dcf7f7..47bb657 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -813,7 +813,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+ 	GATE("apb2ape", "clk_m", 107, 0, tegra_clk_apb2ape, 0),
+ 	GATE("cec", "pclk", 136, 0, tegra_clk_cec, 0),
+ 	GATE("iqc1", "clk_m", 221, 0, tegra_clk_iqc1, 0),
+-	GATE("iqc2", "clk_m", 220, 0, tegra_clk_iqc1, 0),
++	GATE("iqc2", "clk_m", 220, 0, tegra_clk_iqc2, 0),
+ 	GATE("pll_a_out_adsp", "pll_a", 188, 0, tegra_clk_pll_a_out_adsp, 0),
+ 	GATE("pll_a_out0_out_adsp", "pll_a", 188, 0, tegra_clk_pll_a_out0_out_adsp, 0),
+ 	GATE("adsp", "aclk", 199, 0, tegra_clk_adsp, 0),
 
-> This does seem a good idea, but I am a bit concerned about the change to
-> what userspace sees. Ideally we'd be able to have userspace stall if the
-> debugfs population was still in progress. If that's not possible, at the
-> very least userspace should have a way to voluntarily wait for the full
-> debugfs to be available.
+base-commit: 5b0764a53235d3c77e1ed674e836e1b3fe1a4b1f
+-- 
+2.39.5 (Apple Git-154)
 
-debugfs has no way to stall a lookup, so v2 fills the mirror in as
-.debug-populating and renames it to debug once it is complete.
-Userspace either finds no debug directory or a complete one, and can
-wait for it by waiting for debug to appear: polling, or inotify on the
-parent, since the rename sends IN_MOVED_TO.  On the Orin Nano the rename
-lands about 1.3 seconds after the initramfs starts, and before systemd
-starts on the root filesystem.
-
-If you'd rather have something explicit as well, I can add a file in
-bpmp/ whose read blocks until population is done and returns its result.
-
-> Just inline the work_struct inside tegra_bpmp. In any case the work
-> should be synchronously cancelled if the bpmp driver instance is going
-> to go away (not that that will happen, but good practice).
-
-Done in v2: the work_struct is in struct tegra_bpmp, and a devm action
-calls cancel_work_sync().
-
-Thanks for the review!
-
-Austin
