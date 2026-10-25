@@ -1,78 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792967674;
-	b=XJyf4eVvUL3MnX+MJlC9NbugLhiouw1AtkWU4LxPn6lQ6lQApBfc0qkdTYhMIO3jDrqP
-	 zMHBDKSm0dCbElwStY/jcgqVvSAkWD91R+G9MgP+x1933IqyNnoWGGUqmrWh/BiI4pV24
-	 812bBpnLyN5RhiWz7OHHcpXzPEEnOzw/09LI/iipo4Brv3Ydkv/QpEHq24gAq/Pha0j5n
-	 N3hsZQK15PtaPAUDa1oojnSOztoG5rm+dQs4KrSgGjOjQu2o0dgvF5OqJxIPJIoech0aN
-	 R9s/5J8dVqGvms48j0kBaMPENUxX5Uk8S4a5KpxajaOYadBtRhCof0P4Lj9duG8r4ug==
+	t=1792968616;
+	b=tjf7dQimqPWTQN9R3rO0NBvYlGMJUkLXSCLxmyz1N+EcWvtoE7zZffH8udWQF/IyEdmP
+	 /+2Xy9cCHQEDZpZGoykX3zsi/rirDc1pAOgjLq8/lihGSKU5u6dl6r8hs7gUk5Ajnggwr
+	 +usdc9P5ysSzwF+gqFb1ZrncmkKhHCDpFMlp+QveZ148LCEd0t6aeGKop1k659FYUxPC+
+	 4NaiXASqYDZbFXfdDEyAXKJ1JKceS0IK+N0BJOMPW24Ung2fClah+H30lPWSqVgoQ1rpn
+	 PGUTIQ2wgPJwI7wXGb4JJZHkvu1xIJByxTbcd4uRkZYXJ0RcOEKV/LWlVLvjx1xEDSw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792967674;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792968616;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Xysa4JFUTG4sf6jSkL/MXVYUlFYyD1i1qlBc96Lmcas=;
-	b=WfioEO8fGoCcl1684mDtwdPvDw187GiYUrHFj4CrX2h08IiiNFYK7u3EDCroujtxXFDz
-	 sGxxQ8tRtYFm6eLveP1xQlZ9J/LJcdRchl7/KtTnl2Z05uY2dIbMZ8KpSny3YRrfuapBb
-	 0O01QjwChR6TKquFkn4VFk82GKixFLffAkLoEinCDhUMXYTwpuVH4/BXjG1wEEwPdI3UZ
-	 Hph1dTzWNt0syyiJGHnjoDolBC0XTf4jtYMJih6nzXczSyKKjmLg+XHf2fCcI7n3B9fjr
-	 5wT7pIEGjQhj06n+YVLS9Kz605B5EXhAEKAhlQFsqx5xu4TC2M9MnjJmyL7ypERjhzQ==
+	bh=S2b4fzgPseJ0YYTVek2k+9cCGWE8NVj6xa+49CmOEyI=;
+	b=DI7HtC49CgrgRsuSyfyaL1Gmq47674Sr4XoL28JmpDR2QYmYmCUwUanSgxlo9Venwlxt
+	 oOAy0/S/+sOivJmGp8AsWFPkDY1ly5cFGKCwzUvQm9qmtToJ/3GbXgvx+HW8iQErje5uz
+	 3Icv+Q1cqXmBJBO/N9p4pKbyOAKGJx5JUTCAD/gkIRaY7L/NaP0NPMjgwWj4M9BL7kA9T
+	 Mv4Cu7he5O2jMMryEMK0uApFt7YmS307i/UjJomKWdwUH/sk1SRtKuZJVMSnZM5n0bwuQ
+	 cXIS51uNqZDkbZqn7LtZRu23lrLIgv42tGmFOduObT4VaKs1TBoipVuzxfguP9/ubLQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d1V2CZzE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K4MSH6XV;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFCF606A31B;
-	Sun, 25 Oct 2026 22:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D988606A320;
+	Sun, 25 Oct 2026 22:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d1V2CZzE
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K4MSH6XV
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792967674;
-	b=osFAGR0KgRol8uH827rnM53iVtCA2MB5qUOyeqpJtkQvfxT6vr0PMFV7rI1Ew8H0l2NG
-	 ae9bMjHj2hTpaetB42FZKXfNnWngMvTQLl2SeJek1Hm+9rZdkqQBYT/2yHvRB1CB6WarV
-	 2HKVZ/6f7BOTvPcoI1StgcBqG3aiWTO+ttZTl13TBL6vfYEnLe5bdSMkiON0A4Prx68Zg
-	 eY3pp4z003zc6r8RzXqwIsl7ePAXqixLY7lcJM/BT/4M5LyI3lmnL8SvW87/cEEHLo8Ao
-	 21922BHD+tEc+m7eQzESVzdN1E7nNGz0LQbjJFMCA/9PyaaLzHddUVZ2DCAwrtaS0RA==
+	t=1792968616;
+	b=0aJXbAJxNW1+FUufKrTwTp2T+GJWjqQ42C4CasrmTRiCmVozTs3wSOh98urC5NeYjbwo
+	 waEL9fDs3MSMT6Cv86nddemxxtSRSz9vTCGi9TWZW2tY1xcNTFCnBlrTPp5G0rhUvozgH
+	 HL6HnKGseFfbLaYmV/6lnyFiYQjl5SbtpdXfrXyKsur64ID6yaH1ZEyIF/8gDKwQrxOlm
+	 sEtQt7r0pn9296bzCozrlrlDgULfMMdNKMWasehq8qJq1F667ienLtt3Nf86UZE80nTfn
+	 zSubgUHLsY6iachCtCURvD3Po6iiXom2tGfk0I0s89nIBtZSPW8T0U+v/hZW+dmKHcA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792967674;
+	c=relaxed/relaxed; t=1792968616;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Xysa4JFUTG4sf6jSkL/MXVYUlFYyD1i1qlBc96Lmcas=;
-	b=P5jMp4AYCiWtGdJ0aUwO/Wrd3UxOMgi8l1V8zMML28H4z6sPaTIFPY7lJyZHG60t3uUI
-	 wMSbACJmIbJAonCQQMXZyUpGYs1crfd4dTMZGi2lY6KTTrihALqav+xW/l/6RBoy+Sfpo
-	 ak349YcabaTl8yVLNxZPKixO8YZ+8z2Wuy1bHCVdS+7swHst095suOPxlQFyEHgKBZ+qR
-	 1BLoNnJ+IJjPnRMWSLFQgb5333ccO8s5I5jTD6UvZia2YPW1Jqa38p3vcGgJIlz1JkyOd
-	 BYyxj9Wppqnz6jE4luB8MWylmsKtDLUQr30yP29XoBXPsIlK/xXM50iB4wDnwpSAQcA==
+	bh=S2b4fzgPseJ0YYTVek2k+9cCGWE8NVj6xa+49CmOEyI=;
+	b=EiK4vYEvwL6ozfGFF0rPuAR1Y2g3rtSkBGmEofoxelioWIJTxq/LQ9h6FkpzQWbhZhLO
+	 5azCr+Ixz+fUt+2rtVJ6+R2bQQCH4zKwSN5tdljH0JyYzuw5auugQ0hTnmWr3kUVFqY9K
+	 CYsT6qc/12unq22NBBwZHv8m7vUS8pmsIe8wyzsso0mzLYaiO18EtFSXpCQXzF3vu8xf7
+	 M8pvk5M2JGmFwUvDIFC/zeUjNe/XbC+2wA8U+ZGSWQTPTTw1WhU1NmNyHyL3Md1oEHbjv
+	 bkaj42dtNmIdgp3KX7NXR92Gl5nZZJqnN8OmjzExYiDlHDX9yuUAnsY+Pam1W0iapwQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 1C3AB1F01828;
-	Sun, 25 Oct 2026 22:34:33 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 4D4671F01829;
+	Sun, 25 Oct 2026 22:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792967674;
-	bh=Xysa4JFUTG4sf6jSkL/MXVYUlFYyD1i1qlBc96Lmcas=;
+	s=k20260515; t=1792968616;
+	bh=S2b4fzgPseJ0YYTVek2k+9cCGWE8NVj6xa+49CmOEyI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=d1V2CZzExNnN01TmeUqzFdpMpiOC0KtIODSyecZML1zfheGvV11mhYLyubfHq6+qr
-	 n6qmTPvUpfEsumrxFVjzYDEjwGbTBwdSeJ8UpqSX/hZUJyI8Pfm7v+N6fzmEv6+lra
-	 QVgrWgHCJVNPejphkjtYvc+lK6aQQLdRcTFYIhIASLFF8SYgkuDcv00/wteALww820
-	 CPvKm3PL11P1pbb9BxNG+JoRDbuNqAik/TwOzzf63tccvPOgNkQlYgIFrAHPic+cSL
-	 xXoRSnZgdLAINy62lylF+gcFj+cHQwgQ9FSG1vKdMxJIfHELCEHxN6QOvlIMLWmDu/
-	 CvAuQgM+Q3oTA==
+	b=K4MSH6XVymmsxGRHevKOAMSqJQlJ48OAZghelWS1ltidkkcmFvRgWR4WJz1jiPnfe
+	 OwAeim7ZBiQd1AW+NhZkcqaQTq03mkwTHuawJWNQFWrJiuMyG4T+JUYJr4Ca7H+gj1
+	 iSkzXbtS6Ynue7zPAej+ggUoYbNkyfhjh92281cgV+rj085PC4GjP1y/HmuBrYCh4+
+	 8WM9F2FY4L+oeu4iYTJwV4WKiVW/mlt/ZdEfAjjLRDRkZoxvrBoJhNiQcEpXOlcP1x
+	 zSeteb/AuX5J/lVR4fS3m904Kaap17RPh5r8K0e5k9rAxHNITWPF/kuap1neAGA6q8
+	 h3tHgPhGP9sdA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 81F9F44AFE;
-	Sun, 25 Oct 2026 22:34:32 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sun, 25 Oct 2026 17:34:29 -0500
-Subject: [PATCH v4 1/2] drm/tegra: Support swapping chroma planes
+	by lkml.kernel.org (Postfix) with ESMTP id D2AD744B15;
+	Sun, 25 Oct 2026 22:50:14 +0000 (UTC)
+From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
+Date: Sun, 25 Oct 2026 23:50:05 +0100
+Subject: [PATCH 2/2] serial: tegra: Fix overflow in
+ tegra_check_rate_in_range()
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,142 +84,77 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261025-tegra-drm-yvu420-v4-1-30b3bb0d0752@gmail.com>
-References: <20261025-tegra-drm-yvu420-v4-0-30b3bb0d0752@gmail.com>
-In-Reply-To: <20261025-tegra-drm-yvu420-v4-0-30b3bb0d0752@gmail.com>
-To: Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792967672; l=4205;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=PdvoZewR40xSFlePmLhL+p67dSFlU6dV1EmcDXmQs38=;
- b=HCE2JmGbduwYBzxpAndUHKTKTXVSAsmyRTNB+cVwcB8jTXWN4zU3F6HUTWtIHlKc/KU7P1NQa
- tkG25DS5YsbB/d8UhwY/w14zdA6OUiiwmaTKPDU46yKbXr4v7jUVBDv
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Message-Id: <20261025-upstream-serial-tegra-overflow-v1-2-267b5b7a79ee@tsv-stahl-riesa.de>
+References: <20261025-upstream-serial-tegra-overflow-v1-0-267b5b7a79ee@tsv-stahl-riesa.de>
+In-Reply-To: <20261025-upstream-serial-tegra-overflow-v1-0-267b5b7a79ee@tsv-stahl-riesa.de>
+To: Laxman Dewangan <ldewangan@nvidia.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Shardar Shariff Md <smohammed@nvidia.com>, 
+ Krishna Yarlagadda <kyarlagadda@nvidia.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ stable@vger.kernel.org, Patrick Fischer <admin@tsv-stahl-riesa.de>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792968614; l=1845;
+ i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
+ bh=itgIcGWGOLTyUm1KE2QunM+q/33HpForOO0+9QOkieo=;
+ b=ifzVpAwj3ytlam2cPbnwHEpgbVut600nZsB8xfp8yN+PiAPG/fl0ebaGnWo93f+fn/JFOt1PD
+ DyJny1Zu3E3BqCKSZejwKM+IswXF+xrNvbegyTICip8X/rspzZoLoSW
+X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
+ pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
+X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
+ auth_id=1251
+X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+Reply-To: admin@tsv-stahl-riesa.de
 Content-Transfer-Encoding: 7bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 
-The Tegra display controller supports some yuv types, but not their
-chroma swapped variants. For example, yuv420 is supported but yvu420 is
-not. For tegradc, this can be efficiently worked around by just passing
-the hardware said chroma planes backwards. For nvdisplay, there is a
-window group flag to do the swap in hardware. Add a flag to the plane
-state struct and handling to both tegradc and nvdisplay paths.
+tegra_check_rate_in_range() calculates the deviation of the configured
+from the required clock rate as (configured_rate - required_rate) *
+10000 in a long, which is only 32 bits wide on 32-bit ARM. This
+overflows as soon as the two rates differ by more than about 214.7 kHz,
+so the check lets through exactly the large deviations it is meant to
+catch.
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+On the Tegra Note 7 (Tegra114) the Bluetooth UART ran at 45.33 MHz
+instead of 48 MHz at 3 Mbaud (-5.6 %, see the previous patch). The
+check calculated -0.18 % and let it pass, although the limit is 4 %.
+
+Do the multiplication in 64 bits.
+
+Tested on the Tegra Note 7 with a tolerance of -500 for 1 to 4 Mbaud,
+which gives 45.33 MHz at 3 Mbaud: the driver now logs
+"configured baud rate is out of range by -555" and does not apply the
+rate. With the tolerance of 136 (48.00 MHz) it logs nothing.
+
+64-bit platforms are not affected.
+
+Fixes: d781ec21bae6 ("serial: tegra: report clk rate errors")
+Cc: stable@vger.kernel.org
+Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
 ---
- drivers/gpu/drm/tegra/dc.c    | 6 +++++-
- drivers/gpu/drm/tegra/hub.c   | 7 +++++--
- drivers/gpu/drm/tegra/plane.c | 5 ++++-
- drivers/gpu/drm/tegra/plane.h | 3 ++-
- 4 files changed, 16 insertions(+), 5 deletions(-)
+ drivers/tty/serial/serial-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index b0bfa946e6979..39c2e920d76a6 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -740,7 +740,8 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
- 
- 	err = tegra_plane_format(new_plane_state->fb->format->format,
- 				 &plane_state->format,
--				 &plane_state->swap);
-+				 &plane_state->swap,
-+				 &plane_state->swap_uv);
- 	if (err < 0)
- 		return err;
- 
-@@ -872,6 +873,9 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
- 			window.stride[i] = fb->pitches[i];
- 	}
- 
-+	if (tegra_plane_state->swap_uv)
-+		swap(window.base[1], window.base[2]);
-+
- 	tegra_dc_setup_window(p, &window);
- }
- 
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index 448f49f3a7d7e..5a86f8260f136 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -440,7 +440,8 @@ static int tegra_shared_plane_atomic_check(struct drm_plane *plane,
- 
- 	err = tegra_plane_format(new_plane_state->fb->format->format,
- 				 &plane_state->format,
--				 &plane_state->swap);
-+				 &plane_state->swap,
-+				 &plane_state->swap_uv);
- 	if (err < 0)
- 		return err;
- 
-@@ -642,7 +643,9 @@ static void tegra_shared_plane_atomic_update(struct drm_plane *plane,
- 	base |= addr_flag;
- 
- 	tegra_plane_writel(p, tegra_plane_state->format, DC_WIN_COLOR_DEPTH);
--	tegra_plane_writel(p, 0, DC_WIN_PRECOMP_WGRP_PARAMS);
-+
-+	value = tegra_plane_state->swap_uv ? SWAP_UV : 0;
-+	tegra_plane_writel(p, value, DC_WIN_PRECOMP_WGRP_PARAMS);
- 
- 	value = V_POSITION(new_state->crtc_y) |
- 		H_POSITION(new_state->crtc_x);
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index 2148b0c59815c..757bc552809fe 100644
---- a/drivers/gpu/drm/tegra/plane.c
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -59,6 +59,7 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
- 	copy->tiling = state->tiling;
- 	copy->format = state->format;
- 	copy->swap = state->swap;
-+	copy->swap_uv = state->swap_uv;
- 	copy->reflect_x = state->reflect_x;
- 	copy->reflect_y = state->reflect_y;
- 	copy->opaque = state->opaque;
-@@ -319,11 +320,13 @@ int tegra_plane_state_add(struct tegra_plane *plane,
- 	return 0;
- }
- 
--int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap)
-+int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap, bool *swap_uv)
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index cc09fbc3aad8..cb5ef8aac198 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -380,8 +380,8 @@ static int tegra_check_rate_in_range(struct tegra_uart_port *tup)
  {
- 	/* assume no swapping of fetched data */
- 	if (swap)
- 		*swap = BYTE_SWAP_NOSWAP;
-+	if (swap_uv)
-+		*swap_uv = false;
+ 	long diff;
  
- 	switch (fourcc) {
- 	case DRM_FORMAT_ARGB4444:
-diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
-index e33a581e6490e..dba5f1b254e98 100644
---- a/drivers/gpu/drm/tegra/plane.h
-+++ b/drivers/gpu/drm/tegra/plane.h
-@@ -49,6 +49,7 @@ struct tegra_plane_state {
- 	struct tegra_bo_tiling tiling;
- 	u32 format;
- 	u32 swap;
-+	bool swap_uv;
- 
- 	bool reflect_x;
- 	bool reflect_y;
-@@ -88,7 +89,7 @@ void tegra_plane_cleanup_fb(struct drm_plane *plane,
- int tegra_plane_state_add(struct tegra_plane *plane,
- 			  struct drm_plane_state *state);
- 
--int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap);
-+int tegra_plane_format(u32 fourcc, u32 *format, u32 *swap, bool *swap_uv);
- bool tegra_plane_format_is_indexed(unsigned int format);
- bool tegra_plane_format_is_yuv(unsigned int format, unsigned int *planes, unsigned int *bpc);
- int tegra_plane_setup_legacy_state(struct tegra_plane *tegra,
+-	diff = ((long)(tup->configured_rate - tup->required_rate) * 10000)
+-		/ tup->required_rate;
++	diff = div_s64((s64)(tup->configured_rate - tup->required_rate) * 10000,
++		       tup->required_rate);
+ 	if (diff < (tup->cdata->error_tolerance_low_range * 100) ||
+ 	    diff > (tup->cdata->error_tolerance_high_range * 100)) {
+ 		dev_err(tup->uport.dev,
 
 -- 
 2.56.0
