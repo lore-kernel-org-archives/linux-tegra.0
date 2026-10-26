@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=85.128.243.59
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793045972;
-	b=EWDoDXkJ3DIcTlQIU+CI8bQbMo0ibrXnibpEUqAd0dnXO4aCnvBD4/hA/DzJoMxE6i++
-	 AfJ0wf4rCti524AkrdL9YZIOZ6D5PIt1EFHosBFIWxFfaFXF9N2Dfa+KiBFkhvKpsU4gS
-	 xzKUUz/fhsYwJiPZyNQ/UwLxHTJdVNk4Psync1wM9/m+IZkzD+t1yRUcjtR6Lql/UCsJl
-	 gRc8p005SWeDh3fBfyqHtezWDAbGF7slEN3+SN1wQ4B5UeeSSDmNMTNAeeRc65AkWOYC/
-	 t4BFeMRsibC/ATNW8rwvOiudC/2vjsFa7Rh9C7XO/r23OiH3pJYnLK7fCiwILydQbgw==
+	t=1793045980;
+	b=EOihUBayxbNAAal6gyVnwiLyO9oaNiQYeyZ2a9RJcPnCq6nGzwg5YGkhxSwSTIzVL4ks
+	 FzlayFZ5mOCMFr9UYT10mKCo4Wn4SgUaAFqBPizKfsheCAl3LbQ+O04KHRwCfTFM1hkEO
+	 i/JNuqgZXfdjxZ84GoB7x2h1mWQebP5h2VGvandUDGM5boUlQjxSrXw93JbIWlav73K+9
+	 SY5tJu0koQyUHfp0FnqONA8U9/Ak+dX1O106m8wB2Q60hOySG5fS9Lfo+fu5QDmjsaJZ6
+	 uDrdvbjjdBK2hlZQZNBBodJHMzUPfYNyOnJ02/HzOUcXlsZHaegjRZSi+WNohs4JCMw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793045972;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793045980;
 	h=DMARC-Filter:X-Virus-Scanned:X-Spam-Flag:X-Spam-Score:X-Spam-Level:
 	 X-Spam-Status:DKIM-Signature:Received:From:To:Cc:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=PIDy0lUPypJcsVGwwSX0/t4dFazyyI1jm04tJ/ots9U=;
-	b=sY+/RgBUGCWnqlcp/e/GYM3rVocv32n3hf3OPR9jEaby/idn15viHpfL8aJRzA7kfnTM
-	 sGdIfZWpoZXMx3TKnQW51B3C+a9zL8pTxdSsV0+pCYvQ160khe/Nf5HVuPX/Bi8AyPA5L
-	 ID0anKSzuXtUuz1StWpRxKAFrrkecFoCTq0ZIpfnqLvdR0ZfGHmQ7DMhAdq3pqQzGvpib
-	 I3Gvw5L4gNe0b0HLYUaGrjyMhCIAJft4fSoSDrqUPz7Zk53j8KwpqLcwItdD9LpnB+4pg
-	 /d4CShGS50fsOJvtCcB5YX2MOyymvz95kUtoCYtc/fdcHb6d7eFsG2KBnwwStY5blxw==
+	bh=3YBgOvuoc5BP18qovwMrtCo/ufvTD09IPG+GVuNdkxs=;
+	b=oplngwOSDEDhSOOtcTZfdkeM35gY5uCGtJRX1RYS3iRlDD9yctHa85/QqGBnDC+QhPDq
+	 TYPjLFc7sxQTpsqyEz05oF2OU4cv0ODs8fY+HPeQMwavPHeQmLxQy66TNmlo1FyTq2a5y
+	 CaH9AkrT6IRvCTrLROd5bb503jofJ66BHkHnTHDHsyJyDVRsNTQN1V6xA/BVJ196uIuRB
+	 lYi23tMf2c8qAU61qn8viUfnRAekTdtudZxslDufUMQ+v4NmMJ7PXSrm/rBIjcLH8XHDq
+	 1QwzFcChFpmBourY796wvhbdr5JRoXvCIfJIeolGUoLk+DDV6zjNbUtW7+sc/h/38MA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=asmblr.net;
 	spf=pass smtp.mailfrom=asmblr.net;
-	dkim=pass header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=xqt7ftly;
+	dkim=pass header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=Zbr3PtKT;
 	arc=none smtp.remote-ip=85.128.243.59
 Received: from shared-aoh59.rev.nazwa.pl (shared-aoh59.rev.nazwa.pl [85.128.243.59])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3A0606A31D;
-	Mon, 26 Oct 2026 20:19:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BC3A0606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFA2606A336;
+	Mon, 26 Oct 2026 20:19:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BEFA2606A336
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asmblr.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asmblr.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=xqt7ftly
+	dkim=pass (2048-bit key, unprotected) header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=Zbr3PtKT
 X-Virus-Scanned: by amavisd-new using ClamAV (18)
 X-Spam-Flag: NO
 X-Spam-Score: -0.625
 X-Spam-Level: 
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=asmblr.net;
-	s=1706450368.internal; t=1793045964;
-	bh=PIDy0lUPypJcsVGwwSX0/t4dFazyyI1jm04tJ/ots9U=;
+	s=1706450368.internal; t=1793045968;
+	bh=3YBgOvuoc5BP18qovwMrtCo/ufvTD09IPG+GVuNdkxs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=xqt7ftlyK0jJcxtKWUGYadXWTvE9HrVBieYRhIOULu+iPrtNmRAHfP4CClt9A12jK
-	 g+dJ5VDpfoi49otImfTccELYfJHW0d42dwtVFtn0uCZw2UZSo43WIG/GuutTIU/WW/
-	 Gxr8JCjvc6OD/acvdPCCty7inijMT7c0TctiFHKz1zDO84yX71h1PqJQbOHBFcn64d
-	 9pTQ+f67wohSJ4LxmgCfSn8t2Jh8CDoFVfIDd31VapufdUcWBRT1eevzX+QG6wgq8Q
-	 eQEFu7SiwJeNYQK1wGx4Ym3h37aeJmD1bWnFmlwT3jn6IdJk7gHN5kP+FGx2b1pQ0s
-	 g9NThffkuw46g==
+	b=Zbr3PtKTox2X7tk3ME8hABQG1cup6LULE+eyYhdPq7rn+eqj/wvJN7vuO8mkp0g2A
+	 Uc4h2RR7lRejAYZ77IZsp/pyaBnv4k5n8VpxZ9WjJHgIwr3Wb9mazDdla0GKAzN1QB
+	 zHorXKHZsiayCsiFMH+98qR6e+Xcqe9cY6mj6sWH2ViIvQyjPNrcdLaD42jEk26mrz
+	 lSQ38mj/Q3ONx09ctv4BsArU5S91JP6W4DCaQIysc8gSBtw17whmMHH/MON8NlACiA
+	 hM+zovxjYyw4k/eIW392SUfyKACjWV6JW0W9zcCcfqTN8QUObVvxN6W+XW9UdoaWF6
+	 aFBp/bWaFdR4A==
 Received: from milkyway (91-150-221-36.dynamic.play.pl [91.150.221.36])
-	by server753313.nazwa.pl (Postfix) with ESMTP id 1DE831BE018;
-	Mon, 26 Oct 2026 21:19:24 +0100 (CET)
+	by server753313.nazwa.pl (Postfix) with ESMTP id E5D761BE094;
+	Mon, 26 Oct 2026 21:19:27 +0100 (CET)
 From: =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amade@asmblr.net>
 To: linux-sound@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
 	=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amade@asmblr.net>
-Subject: [PATCH 02/12] ASoC: codecs: wm8962: Implement set_jack callback
-Date: Mon, 26 Oct 2026 21:19:05 +0100
-Message-ID: <20261026201915.57184-3-amade@asmblr.net>
+Subject: [PATCH 10/12] ASoC: codecs: wm8903: Make wm8903_mic_detect() static
+Date: Mon, 26 Oct 2026 21:19:13 +0100
+Message-ID: <20261026201915.57184-11-amade@asmblr.net>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261026201915.57184-1-amade@asmblr.net>
 References: <20261026201915.57184-1-amade@asmblr.net>
@@ -82,36 +82,55 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add set_jack callback to the component driver so machine drivers
-can use the standard snd_soc_component_set_jack() API instead of
-the driver-specific wm8962_mic_detect() helper.
+Now that all callers have been switched to snd_soc_component_set_jack(),
+make wm8903_mic_detect() static and unexport it.
 
 Signed-off-by: Amadeusz Sławiński <amade@asmblr.net>
 ---
- sound/soc/codecs/wm8962.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/soc/codecs/wm8903.c | 6 +++---
+ sound/soc/codecs/wm8903.h | 5 -----
+ 2 files changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
-index db8b86d522ff..b36e73fabbdd 100644
---- a/sound/soc/codecs/wm8962.c
-+++ b/sound/soc/codecs/wm8962.c
-@@ -3601,9 +3601,16 @@ static void wm8962_remove(struct snd_soc_component *component)
- 	wm8962_free_beep(component);
- }
+diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
+index 25a488f589a7..9dbc295b0889 100644
+--- a/sound/soc/codecs/wm8903.c
++++ b/sound/soc/codecs/wm8903.c
+@@ -1598,8 +1598,9 @@ static int wm8903_hw_params(struct snd_pcm_substream *substream,
+  * micdet_cfg in the platform data.  Using this function will force on
+  * the microphone bias for the device.
+  */
+-int wm8903_mic_detect(struct snd_soc_component *component, struct snd_soc_jack *jack,
+-		      int det, int shrt)
++static int wm8903_mic_detect(struct snd_soc_component *component,
++			     struct snd_soc_jack *jack,
++			     int det, int shrt)
+ {
+ 	struct wm8903_priv *wm8903 = snd_soc_component_get_drvdata(component);
+ 	int irq_mask = WM8903_MICDET_EINT | WM8903_MICSHRT_EINT;
+@@ -1636,7 +1637,6 @@ int wm8903_mic_detect(struct snd_soc_component *component, struct snd_soc_jack *
  
-+static int wm8962_set_jack(struct snd_soc_component *component,
-+			   struct snd_soc_jack *jack, void *data)
-+{
-+	return wm8962_mic_detect(component, jack);
-+}
-+
- static const struct snd_soc_component_driver soc_component_dev_wm8962 = {
- 	.probe			= wm8962_probe,
- 	.remove			= wm8962_remove,
-+	.set_jack		= wm8962_set_jack,
- 	.set_bias_level		= wm8962_set_bias_level,
- 	.set_pll		= wm8962_set_fll,
- 	.use_pmdown_time	= 1,
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(wm8903_mic_detect);
+ 
+ static int wm8903_set_jack(struct snd_soc_component *component,
+ 			   struct snd_soc_jack *jack, void *data)
+diff --git a/sound/soc/codecs/wm8903.h b/sound/soc/codecs/wm8903.h
+index 4b036f4b755e..2526d0c69029 100644
+--- a/sound/soc/codecs/wm8903.h
++++ b/sound/soc/codecs/wm8903.h
+@@ -11,11 +11,6 @@
+ 
+ #include <linux/i2c.h>
+ 
+-extern int wm8903_mic_detect(struct snd_soc_component *component,
+-			     struct snd_soc_jack *jack,
+-			     int det, int shrt);
+-
+-
+ /*
+  * Register values.
+  */
 -- 
 2.56.0
 
