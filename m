@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.179
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793004245;
-	b=iy4Ip+PIXEyx3lx93YenLEP7Z/EOUESfaEKHW7rTung44ROacNS98bpccRGl9w+cbH+w
-	 Ao9A5LhFIEscBjYDNRVAOzvYcZxfWvZUXHCoDuHJ9kbl4tnG+b1T7fniQTbmlivEjoXNq
-	 A9Dt7aMSYlta61kA9+wewurihi2QSRAIjUzu8DX9lIxlFrtFnk8UTTZUPeZic57Pw0z1R
-	 Ev9gHyZ3hMfgCblD7MM+z8YGP5lERL0VoyhJeoF+MWebbUaxjVFgjaGKAC6wPjFEmIdel
-	 xUTQEwDbZLVfSxQdTnFqMAqUYAUjMB+rA+Clv8My8TCQ1jddGxhMcD43Ru25Sj4aQcw==
+	t=1793004634;
+	b=KMll3ta9KJ9wxKv36+mRZHN78pqx6WfQ974IqenfLlL5NaW4mTgBip878Ad3n7tdMG45
+	 GLr+VykB1I/X9cM/S64oOfW13/NxKMc/U/9C0DE04X3J5U5x+tniR/rQ4+v2Pv7z9x/0Z
+	 bsrDVf5+Lql6WCUNu/T0t0EeB3LFneoPbBJpjsvwMA9hkjlbOk0zY4ZluCqF5L9AoIub/
+	 FZ799ELv8587+9f/QXoGPhGJvQG9vVP11tjsoJeIdQASfdgdQN+3wjB6JUq7P6haCRVDT
+	 QqfmtZpGbVNFRTKTXZxBMf/1I/yVDSja+NewPzurRPqE9exHNVRNF/lOSVe7FfmnKPA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793004245;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793004634;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
-	b=sl7xYIsQs0cQYuNHjsG4Ip9DTHXLhQMErVBxNKs72SDXfjy85fSVa+D16bKKsBPfFo2J
-	 mq3R8PXc3MLMZR4uHsqjVk9IAxCkHiFaXOYYHYCrjiJ4Mtl8jXydJ9gxhBtO1naGGqlgO
-	 VOLjqFc9hhCbzDFyybFv4YZzi/gs+Ny9v9fOs5RriPgIxlG49INYWmDbMMyROdGZjZ8No
-	 jzdBse38+FhJBQIDHl5w4GSz+m/96Mr0kbH8+0y3m6R+CAdy14NsHypi2JFEecD9gN16w
-	 sNnIV3EZxNGvkp/05+rpC1nzLKMFy5mB8JuZeCRheyE5d3rXhcufpjwOZM0e9mfY7Sg==
+	bh=0xS2sklpUUUsLj11Ls/tuw9BnZ0uRdCDBYmfpAjGG9c=;
+	b=lT9q1nLDNhVuWsI6TErmwSBpb43T4xHaxr+sdQY7f4JHGALSDcl+pMWIrHhmZn1vCOeO
+	 mXkMtJfR8r3V4/gHOwIvU6NfIF7UDU13QDkvbG1ZthLIfwUsiAkTBvj/rmbCl0fDqXg30
+	 rYuK1GPI5cxnVhwiC9f673eVeDGnj8qwEVhxAYruobpNBF+Nuq5JOEIyk+QgsUvoV2Dy7
+	 e1eKpF/CcEfBP61R5o1PC4uPooCoEolYGDw5p1xof6SJaUxx0s8vlwbFizWb/3Q33LXVA
+	 apdeeKpo8vv9cPv6MwO6VfWRlcRq6a9mEjCCgMrAuT5MqecjMyNjbDIC/kkPV6IHEfg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=DdEl3zIQ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.171
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=nn0nVMTW;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.179
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A01C606A31B
-	for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 08:44:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0A01C606A31B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EF3606A32A
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 08:50:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 24EF3606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=DdEl3zIQ
-Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso8148184eec.0
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 01:44:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793004244; cv=none;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=nn0nVMTW
+Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-36661f953e4so5240798eec.1
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 01:50:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793004633; cv=none;
         d=google.com; s=arc-20260327;
-        b=bDq22No1Ib0ySXTNgblkC6RqYRWrvxmhIdrbaLlloq3BCmoIkTJ4VllizmQWqJtuyz
-         c95Nv5NIPUgHyn2ORvycVzHEBF69/ZLz69kV/zjpz00Z55DTk6n8R8EeQCrppldBXX1L
-         iIAHq43ay3gr4269Kaq9U1kl0jSbIXZ8D6Jv7J9kWc8uZ02QlUnjQQvJVHUJCiE3INNK
-         tzcao7Fe6q8lH2V+RosZ5y2raIQzTF83e6tLryRBaq8KMXhnOQVMk+pZrWYHhwWeZqP0
-         4NLpUZmlU0YjUw0YJPnZkcftnsaQqtjbLOT0OK5AOlzKUjQ+bAzvF1RVB4Lpr7LgBLO9
-         eZhA==
+        b=ITxJvtGBNBzIoJc+Bnb3eLI77Cdz25oBz86KNj7DmxLuiSZMqtQ+4MJGYWrkXKknln
+         V7zJtgdU7UL5dtubxDrPDFSbgq2JBK4LSdX3Z4X+T6U654rdhQ8GsMmiZzNn36NlrD60
+         mjYSlkEc5Uf+yOfdIOHmS5L/1+Rpg1Ju278En0jBTPgS4hOTOd/nV1rBlendPDq7Eb37
+         CEs+3f3fsRB5hh2AqX89U7y6SOq2ObfJcqCtFvXdl2ak05rQdq8QKMy46YJTj/NJ78Ra
+         RW8XJVUolPRDUS8OvckW4MhspJkaPCpCNINb3glO0KqT36jH+ueaKod62nQxrWL+QNOZ
+         4wIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
-        fh=euFXRajvZjJ6coJsktIJRPAaKEWY1chtyMNlGJ/vkgU=;
-        b=ccD7ouj4hm5+VWqnO7+O9EZFVlQoDtDN15hvyP5Xdgm7gvHaml/5HZGBhMYPEqYe0i
-         izbS4yM9UN7UC7KDmsmO5xfYSqnyofxP/Vhp3Gm888YTYJDgp3ND8DGySoOj6EfTQY+I
-         pVENBV6P0gsYp2SwTigxlnPtCLxnuJUzGG139aLAcWuL9jyO1LEq4xPDoxI4qq3USWuY
-         NA0oN2sd7m3SokSzoe+9qdaGLznqfRdxh+jxRES354Ud3yIzpOKm4+Jq6FJ6fnLrp+RB
-         SAviU51awwL+vZRamfVl01Di8zE6+n9aLlR07eXk0rkcJiymHBP4cvprnHtGtwDJgN9c
-         DqQQ==;
+        bh=0xS2sklpUUUsLj11Ls/tuw9BnZ0uRdCDBYmfpAjGG9c=;
+        fh=br7Qb+m+z6OOaadM8E1WemON/xUCR4lliti77di3dS0=;
+        b=KWpHSQOQTeYntIiLK1GPXIyfj4eWfojhdQDOCKBaePwR5hq4dMJOYosHZuIx22CgOP
+         and0T6bXEABfp4PRU2MzeLGxac/LVcZP00lhYiEs9qjeEbqBAsRBH9HNWSNB0o3hJmr7
+         pzeLVv7MM4IqxH3hNpTH8zwEOJvoJOkd4gDem/wF+Is0dmWhx1KxrUqaEjijdWci1vQP
+         YwgxRdnPE7rDx2qppmF7YXRWmIa0Mu+8T1YOgbn7VE1292dQj6GgiO9uJLKAtOsk+f7A
+         JdP8cxF85kJyqyXf1TToIOs1Qb6gJ3iilvTv0lASnTZ4j+qtKWVRA8IQ3alP5q2JZB4m
+         fYaA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1793004244; x=1793609044; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1793004633; x=1793609433; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
-        b=DdEl3zIQt0j6Wl24x/rH/CtH549T/6yz3arfh7UpUrcj6VkIpoMyYOJF0NDjpQo/t8
-         KnIkRGw3mQKSuSLcmgmm1QRxFD7nafFegrsx97gfdpMPw9bSIdSMJkgN5ULAzH6PPtJR
-         +1211R5Q3Zhp+ThE+b19e6KHxhmdDbYmR0W8ghuKMj2H4lP20As3vXQ213+vhFNpMZcs
-         fzuE65p6rZWd3qQGy9q9CvG9GkFrGbtlh5Caj3W9g200O15HUM0hg1BMgN74DerPrTbJ
-         oOhZzxb0gPAZQ9lk1EkvIZown3WXZ+qA2Xj8kSrVd1RwXvQviFh0pvX8/AIpiShu5UJ1
-         rDOQ==
+        bh=0xS2sklpUUUsLj11Ls/tuw9BnZ0uRdCDBYmfpAjGG9c=;
+        b=nn0nVMTWa/ugZXPz401T/3tm2krdJPTQqU9DomZfF4YDxk/9Q9Uh6xz5nhH6qQ8P1E
+         AeYL5P0ze3rc/tKbby7ir9sx5t0zkHCxvV2s/Z1mk1NnH9mt47jESv9zkkwMSVZbO7kN
+         a6q3ybnwzDOLcS5B4C0qvq41i/h1wkclm4EbNTzFxQY95U9tpUabB500RG/Nx53/SglF
+         Yaj/7W8im9IIiHbhzpwoGIqJWCpWQ/mk3MJ0BJocjD1/BYp+QawbLJpfI0kBLJxo/Azx
+         baDB3XQzzCf9lfyV+uio/X8ICKiL89jsF8lex617pD3TS3z6DwNwC6bvmQXehcSeWAo7
+         3J/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793004244; x=1793609044;
+        d=1e100.net; s=20260707; t=1793004633; x=1793609433;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
-        b=eHOAnSAp07bUHmONlrvwbrZ/OxAorbMB0uyepyaijhx0QkgMQ4/21x9OQKMY1GR9Ug
-         N99FuwR9i7SJUW0l2F6k+TyzdM4C1SPB1auQOP41pAlMVrFiQFSis87BM9YN2qHT87TP
-         ZsINGYEc9+biQccpdQEWNW/0yIlDbsIpq48Bm70Mz5pm7+4sFoyY51hDIBLRLoyeDY3X
-         Qt2PKF92x39XnZBlR0R1LYs7HDIgDWWszSeVO6JFUOAhkZZxP3SHPckR+e1+jKQ+eMss
-         4052+YaTH3MHbbtC6jFcqXuoKR2G/j5o48U9d1bqys1fvqyZ1zZzC/5fB2TNrWWhUSSI
-         RlgQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzaqtnw6nyYP7AD80Q1L9BfXCfs08WkuALQhvrHg6nv4R5quUqzsTyonPmpfAbRSE9oNbNc79iwAOj6FQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYK6yBPveNSrFJVOLUK5E4EfBNJltFa9lUUaMxxXMOnxfxSO2mf8
-	SVEt+mrFSbyHvgd1Q+/wtK3UcJxjtgbZQWbxei28rcaNmEi0WdjQi8auyQliFhnTKOEm1ymCLdi
-	pkvkaXbaG/O3xMgph4sA5yo7H4fcepPg=
-X-Gm-Gg: AYBFou3RgbHoy36Pr1go43SeyEC9wn1ws2r5sQ48leaLhMfVXE8L0h+xy2+oW7l9Lw8
-	zgKB06lPhBGmlgHocRoWzagOuY0aORNzkIYf3OUWZUdh+Bzsr0E3UBHKvgdeXz7YA9CQWUITvYE
-	YvwbxY7mSVsxmWKG2WEL4RwRtaSnJ7eWou3ReH/U9bfg3XI5wioMYlcyZnH9NA05X0W3MbeqdsV
-	f0oQ0caV4YxlTvnWjJ7yoULcWpO8Ei6O9fE3XgB94MD9o5unlFBfH9EmqlXPwMy2/qebHbRrtHv
-	xaPZ7Ut5+3Nx/9maKa07+OE2Nkrs6+0Cejl7RMLGDUJbyIUmEPfM9uEAKEs/8ZAgMHltpSZob5u
-	sRg4dqdil5v8na9SwIlYjDe1MyLzeGYISZso/dpU6JVyZSGdldIdZG4hTAhLkSRekM+8vKA==
-X-Received: by 2002:a05:693c:250d:b0:366:8efb:bab9 with SMTP id
- 5a478bee46e88-369e848362amr9301864eec.11.1793004244117; Mon, 26 Oct 2026
- 01:44:04 -0700 (PDT)
+        bh=0xS2sklpUUUsLj11Ls/tuw9BnZ0uRdCDBYmfpAjGG9c=;
+        b=G9fJ7M0IzmgB/ynFMoQ8KyTLAPXZ0J81sRHuPb6GZldoy04wyRl3YIbJ8AQjig3f4N
+         z9fzObts3eFiTQMDrImptyltnmjxnek3smv/UK92bPgAEOuHNfZ3mZN+kUOxMSddTIUO
+         yd/4t+xk7JfsPBrw7Ve+qWyBZnw2om/a0D+WYX0nSel8SlB0rot2u9cUBcLBQ1JeopHN
+         2IuSTmTJ7j7NyeXahLWCgPX3cxcJIibMpeTnPJtoVNEUzj+BD11W1NpLmckGTSOOzicQ
+         RFbIAAQpbJ/EKfUXZuQTCL01pHApQ/RXIKOEMoopuYjcoZ8F8DYd6u4uW7kqao9FJX74
+         LlQQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwzzF8nDehfuAVUZviDpJwN8WfNZsrPijjg482+8YBG/KTM2eP4YFlmt8T+/jUCwM/xndrWRFZI1lp9qA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJd6ucErElWPblA0aPLoFQJtj6SKRAbbL/9TqjzAbyH2gYX1uU8
+	fJRUb0cKrmNpUYeE0Fq5BO/Q7FCeMFZYK1k92RG3aF68F/dEvb/01As41trlz2Hj6/zZIgnefwx
+	KvcmB0AROWvAaPqYDbO9IlZ+z9fdzfgo=
+X-Gm-Gg: AYBFou2spMnu1G1Nw2sH48FJ9/G0l2F/tiTifRgQXAiyUj0CHfe8La5P1aLXqb90/3A
+	icpN6NT/hbOJuulL6kTrtmzEbAaW3+v72IOBwuM36q23hjKNigSSZZrdH8T1PvGnjqOVN8CSv1V
+	8It/o1IgEPF81XXIOj1+Y6jXCHSI5SH1P015p5mc+QXvgtBopLZbDlc0XIdjMfT2dP/dbPR+xlY
+	Imfq0H6nBN8BK1Bn68ZfIuKJ7d/G7wMxcKtZoQGeu5Lpc3MVulM+g5U5bDyvDF/ZPJx9kEw/M4D
+	sXmFXsrD4951wqNYH1nP0yFF1Zmf0AYaYoS7HS2QbByaHw8assGT6j9jkTpIjKtwc10PrA8uonb
+	aMhBgYAlX7cVRRwVFqCyyLLqhmYcHB3ODGwx18+aYGA02VEzCUPnmzpZ4YrVLjlhNQCLJNQ==
+X-Received: by 2002:a05:693c:87d7:10b0:366:83dd:46f7 with SMTP id
+ 5a478bee46e88-369e84bc5bemr9492113eec.17.1793004632970; Mon, 26 Oct 2026
+ 01:50:32 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -104,39 +104,62 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261025-b4-dalmore-fixes-mipical-clk-v2-1-0a2d1118f930@nvidia.com>
- <510d6922-5aad-4b54-8085-9a769a1a934b@tsv-stahl-riesa.de>
-In-Reply-To: <510d6922-5aad-4b54-8085-9a769a1a934b@tsv-stahl-riesa.de>
+References: <20261025-upstream-serial-tegra-overflow-v1-0-267b5b7a79ee@tsv-stahl-riesa.de>
+ <20261025-upstream-serial-tegra-overflow-v1-1-267b5b7a79ee@tsv-stahl-riesa.de>
+In-Reply-To: <20261025-upstream-serial-tegra-overflow-v1-1-267b5b7a79ee@tsv-stahl-riesa.de>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 26 Oct 2026 10:43:50 +0200
-X-Gm-Features: AclHuK9FgW54R73JYrxQZ7QKLMuuRD6TDEnSd96dbrON3jVaOynr209LUb-EVxw
-Message-ID: <CAPVz0n32UN5QtoHCCJtHtdcF29BYcP=2pPnhYo3yYy+2pBioDw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: tegra: Fix Tegra114 MIPI calibration clock parent
-To: Patrick Fischer <admin@tsv-stahl-riesa.de>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Mon, 26 Oct 2026 10:50:21 +0200
+X-Gm-Features: AclHuK9eFB2IINUeequ9JiBD2-5Y_QxsonBBC6Q_QH-dQtxOvUA1C2K4ZB60Feg
+Message-ID: <CAPVz0n1X3K_vtCNUg5k6oStVCfwZEpXJSSGJdk1OK24au1R-UQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] serial: tegra: Fix overflow in tegra_get_tolerance_rate()
+To: admin@tsv-stahl-riesa.de
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Shardar Shariff Md <smohammed@nvidia.com>, 
+	Krishna Yarlagadda <kyarlagadda@nvidia.com>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D0=BD, 26 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 00:1=
-6 Patrick Fischer <admin@tsv-stahl-riesa.de> =D0=BF=D0=B8=D1=88=D0=B5:
+=D0=BF=D0=BD, 26 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 00:5=
+0 Patrick Fischer via B4 Relay
+<devnull+admin.tsv-stahl-riesa.de@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> On Sun, Oct 25, 2026 at 10:45:41AM +0900, Mikko Perttunen wrote:
-> > Fixes: 07314fc108e1 ("clk: tegra: Special-case mipi-cal parent on
-> Tegra114")
-> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 >
-> Sorry, I replied to v1 earlier by mistake. Carrying the tag over to v2,
-> the code is unchanged:
+> tegra_get_tolerance_rate() raises or lowers the UART clock rate by the
+> tolerance from "nvidia,adjust-baud-rates", given in units of 0.01 %. It
+> calculates rate * tolerance in a long, which is only 32 bits wide on
+> 32-bit ARM. With a tolerance of 136 this overflows from a clock rate of
+> about 15.8 MHz, i.e. from about 1 Mbaud, and the rate ends up adjusted
+> in the wrong direction.
 >
-> Tested-by: Patrick Fischer <admin@tsv-stahl-riesa.de> # Tegra Note 7 (P16=
-40)
+> The Tegra Note 7 (Tegra114) uses a tolerance of 136 for 1 to 4 Mbaud on
+> its Bluetooth UART, as in the downstream device tree. For 3 Mbaud the
+> driver asks for 47.79 MHz instead of 48.65 MHz, the clock rounds that
+> down to 408 MHz / 9 =3D 45.33 MHz (-5.6 %), and the WL1801 controller
+> stops answering after the switch to 3 Mbaud (HCI commands time out
+> with -110). The same overflow gives 23.31 MHz instead of 24 MHz at
+> 1.5 Mbaud; both rates were confirmed on the device.
 >
-> Thanks,
-> Patrick
+> Do the multiplication in 64 bits. With that the driver asks for
+> 48.65 MHz at 3 Mbaud and gets 48.00 MHz.
+>
+> Tested on the Tegra Note 7 with the tolerance of 136: Bluetooth comes
+> up at 3 Mbaud, scans and connects to a paired device, and the HCI
+> counters show no errors.
+>
+> 64-bit platforms are not affected.
+>
+> Fixes: f04a3cc8d455 ("serial: tegra: add support to adjust baud rate")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+> ---
+>  drivers/tty/serial/serial-tegra.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
 
-Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab (P1988)
-and ASUS TF701T
+Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab (P1988) and LG =
+P895
+Reviewed-by: Svyatoslav Ryhel <clamor95@gmail.com>
