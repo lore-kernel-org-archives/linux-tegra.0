@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=85.128.243.59
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793045974;
-	b=MfJenTMv4axGYRHomsjr6Ns1smmdDm8+1hS53u1IFmW39fbNqHmbSxRQCjM7Tz5Tg0if
-	 GSahkkAhTLHF4zyGYqzGy3M2tyu6Y968psRC6gLRdoe1K99h8vdU6ESuieAougWb4AEvN
-	 m8L07MF+deuonArPTFVvsQwgt+YM/iYeCy0pWCz7qAs7tkhLlEV0kRQg1x7JecVCgG0x/
-	 U5kn6LIHliPgpheHdn/A025zaEn7uaJzOVApJg1IQTF8Jc3DCmD56DrX1LYSN7r/2+QcC
-	 y1LdJnPkLGgLDwbDkELXa8RLIt/wH7fGKvE4HDSuqHU5XYJLWn90gEHQujHUcez95Tg==
+	b=nafGc9UipOZT+H2VRzhSVrPzysUQg0ElBqYdOhgrs0SKEGNFSkJRENLabBBp5fU1Fkdl
+	 5wYTevEtn/XcE8SFfTQfy1nrHXwTGn/V5WVTTU/0S92k9xXJn0TCCeoqikL6U8XGe7rBd
+	 s5uRI5f7x818A2fPBeUXqvTbtHg7YwAMK6eM0DygAonU320LxKZkpLyjDa3CVNUraFxT4
+	 ll1vA6RaOunvkFK+IJ27uu29yWYF4jpK//EAQhFrQ2Ea4Pl+mzBYXYxSnJ8Ner/ilR+9g
+	 30x5yFIYGJQnKJ5xjzRepmGyRTZxeXKw94IaVdX0wzPU4bT5yo/2AHos4k1fQrP/u/A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793045974;
 	h=DMARC-Filter:X-Virus-Scanned:X-Spam-Flag:X-Spam-Score:X-Spam-Level:
 	 X-Spam-Status:DKIM-Signature:Received:From:To:Cc:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=+ebMdbbb0DTIZyZCU6uHESV06HEd0fPstWZv5PQxNIs=;
-	b=mBwQ47KtFMBcyrLDQRFrwDnYYCmhrc4xKLcSRDLdl+RSmAIWb7JW/1p5RC4OYWQlqGZD
-	 9z0AWPbZKglh0Eu3K6g3hGi9K+F56lIcAFmHpULPnnTcs8Rubp8/LolpX1QRDpmB4SCfU
-	 iL8QbM1GF/t5T6Vl+Ix4nRBFrKGGpJNUWNuP50DvhXHwAHZhf5X4GuDZVuP42h3Zv7JWa
-	 +EOlmsTVZcTx9u2IzEgqOI93g+gfxMBPMnEcCnwTZvrSzT6jllFqCecpTj7aJZ/flwiEp
-	 Gwtaj4N3HEjnJpiK6er/TllNfXio51505fOW4+BsTd4GEd9eYq2x54ZQfXwQL56LYHg==
+	bh=iPX2qthI0O9mfJYcVBu9OtySl3TNAfSkBh1dT8qb/uU=;
+	b=oofyMJI/V3/sW7h0rwaLI0h5en9rZe5RCc5PyHigpXLOvjnehtKcwM6DLCCdEcMNl1Tc
+	 UhRzzmG8Q8I/chBNFqn6e7GLvXsq9s6xPU1HewkYFcwFKza+/k024z0EvE6boVZxl4LZF
+	 eQubZeeMTV+w5IUIEwnkYhegS+r3/lXbe1vwubo7vNBJv98bVgKZdev+F6ILgHiQbEGLd
+	 +T1J+pWPOiD+81giObOUtk/BN+vRSdDa2BTqJ3oifqoFWAIyCNtEp5++EpGEp6+/cWPzy
+	 yQmkLSEgceAeUkGS88Zc7h0ejhvb8jtoODzclxVQb5hfYpLEcnZiWQqxCUrVA29Y9ug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=asmblr.net;
 	spf=pass smtp.mailfrom=asmblr.net;
-	dkim=pass header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b="JgmtLN/j";
+	dkim=pass header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=mGQj6Nbg;
 	arc=none smtp.remote-ip=85.128.243.59
 Received: from shared-aoh59.rev.nazwa.pl (shared-aoh59.rev.nazwa.pl [85.128.243.59])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582B7606A334;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6926B606A31E;
 	Mon, 26 Oct 2026 20:19:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 582B7606A334
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6926B606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asmblr.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asmblr.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=JgmtLN/j
+	dkim=pass (2048-bit key, unprotected) header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=mGQj6Nbg
 X-Virus-Scanned: by amavisd-new using ClamAV (18)
 X-Spam-Flag: NO
 X-Spam-Score: -0.625
 X-Spam-Level: 
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=asmblr.net;
-	s=1706450368.internal; t=1793045965;
-	bh=+ebMdbbb0DTIZyZCU6uHESV06HEd0fPstWZv5PQxNIs=;
+	s=1706450368.internal; t=1793045966;
+	bh=iPX2qthI0O9mfJYcVBu9OtySl3TNAfSkBh1dT8qb/uU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=JgmtLN/j6qfUfYG5GcnlHzD3A7hYvuy32vR46J4uWxHUgNxqI2Iy3YDX6h09rJ+c2
-	 9efqmOdRdu5xcw3u37yisfygnM157RaAf0AxWy2k7Vgg59zrfU2veMWfUALilk7PZr
-	 TwmtHddkgqZXGnAUnh5vhxoTZ6aVdvBKP3Mb9xorWGuzC9h30V9sqOKfgcsU2BeewG
-	 epQVDPAkx1U+vf/Wjz7N/90N/3YK0P2vBiit6uUPA4/OOodqHch5Ulw7LmpNRJPlYz
-	 Q1Pwh7SIzjK0VjJcl32TBvfq0bIuIM+EekoTA99UjRSjQ0XCJh10Hrw4Imuyd7W6PS
-	 HbEyXGjUzXRhg==
+	b=mGQj6NbgK3+b+hyPiD5u5xqIMClA78diPSflPWaF5qgAmXNsbe/UbDx3MxaUxvA50
+	 m7U/uVak8rqwns/bYWPO7pXm0mFN2OsNlwCS7EVIbSrZRv4T5KAszHxntPZafwTgOr
+	 JUFSlcB0w76bnq4DheNNt0cC+Z8AhDaxBhuH0/TzQQZh7eNNTta+F+0xoCzfyeHiVx
+	 H5jSiL9j3xWfyrTbDGBdu5m+04YK4W0W+TfqNDm6jPFt7cnJFuCBs3wjwosXPGjlE7
+	 FQ7lnkGFJtmBNCEazKbreCqeeZTL68xd/VdnU0T66zKbyN4sh0PFN0tleb+2RvQ8L2
+	 kRUIjTgKsmKpg==
 Received: from milkyway (91-150-221-36.dynamic.play.pl [91.150.221.36])
-	by server753313.nazwa.pl (Postfix) with ESMTP id 891D51BE07B;
-	Mon, 26 Oct 2026 21:19:25 +0100 (CET)
+	by server753313.nazwa.pl (Postfix) with ESMTP id 80AA11BE09B;
+	Mon, 26 Oct 2026 21:19:26 +0100 (CET)
 From: =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amade@asmblr.net>
 To: linux-sound@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
 	=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amade@asmblr.net>
-Subject: [PATCH 05/12] ASoC: tegra: tegra_wm8962: Use standard callback to set jack
-Date: Mon, 26 Oct 2026 21:19:08 +0100
-Message-ID: <20261026201915.57184-6-amade@asmblr.net>
+Subject: [PATCH 07/12] ASoC: samsung: littlemill: Use standard callback to set jack
+Date: Mon, 26 Oct 2026 21:19:10 +0100
+Message-ID: <20261026201915.57184-8-amade@asmblr.net>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261026201915.57184-1-amade@asmblr.net>
 References: <20261026201915.57184-1-amade@asmblr.net>
@@ -82,33 +82,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Use snd_soc_component_set_jack() instead of the driver-specific
-wm8962_mic_detect() callback.
+Use snd_soc_component_set_jack() instead of driver-specific
+wm8958_mic_detect() and wm8994_mic_detect() callbacks.
 
 Signed-off-by: Amadeusz Sławiński <amade@asmblr.net>
 ---
- sound/soc/tegra/tegra_wm8962.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/samsung/littlemill.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra_wm8962.c b/sound/soc/tegra/tegra_wm8962.c
-index 31f9d9181595..1ace9261a0f3 100644
---- a/sound/soc/tegra/tegra_wm8962.c
-+++ b/sound/soc/tegra/tegra_wm8962.c
-@@ -89,7 +89,7 @@ static int tegra_wm8962_init(struct snd_soc_pcm_runtime *rtd)
- 			return err;
- 		}
+diff --git a/sound/soc/samsung/littlemill.c b/sound/soc/samsung/littlemill.c
+index d0d1b1ee326e..fca2e18877f2 100644
+--- a/sound/soc/samsung/littlemill.c
++++ b/sound/soc/samsung/littlemill.c
+@@ -302,11 +302,7 @@ static int littlemill_late_probe(struct snd_soc_card *card)
+ 	if (ret)
+ 		return ret;
  
--		wm8962_mic_detect(component, machine->mic_jack);
-+		snd_soc_component_set_jack(component, machine->mic_jack, NULL);
- 	}
- 
- 	snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
-@@ -104,7 +104,7 @@ static int tegra_wm8962_remove(struct snd_soc_card *card)
- 	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
- 	struct snd_soc_component *component = codec_dai->component;
- 
--	wm8962_mic_detect(component, NULL);
-+	snd_soc_component_set_jack(component, NULL, NULL);
+-	/* This will check device compatibility itself */
+-	wm8958_mic_detect(component, &littlemill_headset, NULL, NULL, NULL, NULL);
+-
+-	/* As will this */
+-	wm8994_mic_detect(component, &littlemill_headset, 1);
++	snd_soc_component_set_jack(component, &littlemill_headset, NULL);
  
  	return 0;
  }
