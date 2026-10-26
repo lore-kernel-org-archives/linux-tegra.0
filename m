@@ -1,102 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.54
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792994338;
-	b=nD2onWEJ43mridT8P3F0RnF9GjJRVB2DlI7wml9MG8ijUbheQiRtjKVep0PAIDLh87aY
-	 AstFzOGDgHNrbMn6iaQoS+ANBDKrf7VVXtzBbdPMeeCQ26AJToN7SPwQ/3I5nCEcNTGmL
-	 r4ghDMj4RDD4W9mG9d9QCn5sL8mYKwbNSkKLLh9gVlpWNQkMqTChwxJXDYl2Voayjo8am
-	 PF9siuD5WUVkz4d6j79VGF7rONzMUUyOZwjq+EUKsN9d0WMJ8enIacNvfbXK3GPjRx/vI
-	 NnUNnbTM/1fWy1MG0979z9zagMIpEHlznA2ubcfakystitTbFQADIfhIr0Xt2xESxAg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792994338;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=3gJomeBmHPSa1nSKsQOjrx0jFw6wNV5cIGdR0fKlHFY=;
-	b=HwUxaVofyfoADHBDUufwwTqAuX3V5I38LA3pgprLXfBaBJIfewR3FqQf9H9pn2yM7bcT
-	 a6TJxG/mx+9NEE8INgnWnF0pxhr2AytD7m2x11xSpifrqd1CIhCCb7cRkCHDLtTvf7Suh
-	 LdJxOTOkga3egQ3nEMxeOPZ2a0wgSMIMdDTb/0XlaiMDzLWH69z/jfU04RSUcujotgh/L
-	 TPSnhkszjW+mZpORIIboQz0GosPilrC/Fwy4tTPeQD9xu15B0e5Iu1NClrRwW6l+QPsTt
-	 U9LNv+Y4QFR5EqlsVF1NOsVwt1pv52Ri4ClpAqwR8q4+lppc8pNhPBc22Bi7ANyHecw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b="I/iLmABM";
-	arc=none smtp.remote-ip=209.85.221.54
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792995912;
+	b=RawRJkBG2CERXIvMAMKJRdJQAbhhXhcUb0PRBSvNntip1A2oyRKTAtVEqnx28oqlUf5I
+	 cfru4AVqqZDUS96VqTesXzFKxFhC3TJq1PPQiVKrHgkWbgw4N5O2BIj5O9vwVXrE/axAO
+	 dZyivdAcgdtfiZkJxqoSI3MgWuBwXILGBnbKuQMlU5fuqLFixQDRcj0rM4ycU6Iu5X333
+	 2pemg4daWgeFgXxk5SqkhegCKyl4mW/aSHHgyzrwAJSod+fTM1wN5rwe7wtBKgVGts4q1
+	 wDqoG6wf4Skrdxpw465Z/T/zYNpFQYXsf1R2SZFMQ3v7D7h4/Oz4Fzb7lmax5RpGVww==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792995912;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=RlF5DYnJRPEij6dz8uy7Tal0KbDHMRwaaUB7QYyMeOs=;
+	b=sfZweMjJSSSXObBQGsCyGWJ6YlaAmkjhC8iM9WtpMx04srh8bqXSDxWjmpbiLCw3caTL
+	 1zQ0pRCy4zQ0Rmkb2Q/g1u+3hc7uoQ6ukaklJC9idEvSsIAWT4dtPdQZ4VH1kzy25LC+i
+	 H+CNoAqagbxElm/YaRDam11iJFekyBMvKxnCAyqNorsbNS+VAySYh0lEK7C63VpxqJyzx
+	 bldmZX3Ae4MBkKknQt0EK/loTRPmX0DYcDsWHucIZrw6Vo3X/ygIgglms2fhLFyD5GiUd
+	 w+q9YwwPHoeV9GXIATXD2LVjwHKwvjVYTR86ZQaMz94nL0Wm2NDpZB7ljuSiKsRvJcQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jd0pm07x;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C97606A320;
+	Mon, 26 Oct 2026 06:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jd0pm07x
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1792995911;
+	b=C4gk7+1ug5OiKnv5ld46GnP+fB2K6nyWUSG6yez8IiMTQxlW254dOj8CIHsjCkEyMoOD
+	 uRRd55OrDk20j28JGJ3JC6AJe0aJh64sJNupR8niRvI554XXVjwKHm3yocAM2FtaGeKDe
+	 aZnvLi31RuTcd2XM8nKyef/bOIjTKK9e3oiu721ZH2CI8ccPJDfswmoIyKhIjefPrmTcH
+	 rxjzEI+8xuAjXFkrfgWVtlulYBmSjXkpsXe6+TSwecd7j4eQ81rd+UBxfSYACJnSbrEXC
+	 wcRlENtcCtabn+uipSU18V71M6ze/u9Y07mqGTxc+fhODM18aZsyOKzxls6mFo7dr3A==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1792995911;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=RlF5DYnJRPEij6dz8uy7Tal0KbDHMRwaaUB7QYyMeOs=;
+	b=Iqc9YLtvLS2jhYR0srMVokdjfQYZfHuSES9Ye01ref96efTef2ODs3OC/3D3fxsv+IZ6
+	 k+5AUJAmI4VRyhNTVknLJYnkfHQQehLl9PyPc6s3dyqIC62g9ZzrxPcCo3ZmEO7ZEOEQt
+	 p5hujbDxJqlQ/n1vBPvuLkKeZOm7Z+TZCHeTTUvl8ZL9zjK3oD+A1d70VOS6eaINDsl6n
+	 LEqDgWFvhDVdBuWrbrWpDXCsnNo+WaT7n8P3SN/AuLMkEk6lqdy4RFzL1shuK8A+ZuI07
+	 Q/jdQy1ZxZw13G5FLoCejQR9HCR3x+HPlnNkfcLo0eNK4+Sy542NgqG0Yt92QmH2q2g==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF79606A31B
-	for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 05:58:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BFF79606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=I/iLmABM
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-48c4be28b82so2234122f8f.2
-        for <linux-tegra@vger.kernel.org>; Sun, 25 Oct 2026 22:58:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792994336; x=1793599136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=3gJomeBmHPSa1nSKsQOjrx0jFw6wNV5cIGdR0fKlHFY=;
-        b=I/iLmABMgLUn9YNum9Hg49oTL3h7Cgb6pHXIH8fdZZisy50s+0le+XnLFZRaztOoq8
-         kiVk55sAcoIyKG5AMrHzYIOtdmPbyyItM+5VXPxZot99yRKlEnf2HK+u6EJ37PPaKh1T
-         A9IGPd689WTuVRYUVu6G9K/HLRcoZXoOTWXLA49rxpkzSzjHsJl/11roSeOpko9CgKIJ
-         MmYghK+ZOoM3x/iJnxDmc0DEmaFlD1Uxz3u+ZvhK5cMcGckfnIl5UExSIFZHAExIBD8B
-         5VJkAlSjhO8SR+Nav4rDBYxypUA0Rr3JTsjvfwNWTeb6PA5iw+1SU1J/JT2w0Y0P9kmZ
-         SWEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792994336; x=1793599136;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=3gJomeBmHPSa1nSKsQOjrx0jFw6wNV5cIGdR0fKlHFY=;
-        b=wuMPdvHhx+aTgMNQb0w5Z9+kXk8yGaW4B8+ZhxJYOrkzArBLJoLnPWdNzMJCjRv/6p
-         ebjDVaAclSU+eRNOHG1J0J7aDwcR08o0eyrPrKYOpusAYRcX4ztMIFBPOMdGbwTcXoZF
-         P5rFzKiFhDvtKaPeEJ95CEn+a2w6jvwq6AO/msT1mlrg4/nE1nm5Qbdg7lnKfptkRqKb
-         CboiBQ+48VkiXFigz5Zl2M9YEGlKVd5zCyAXak+rvjVL4G2w0cFLagDUXZ4oY6sv+sY6
-         MFPutcGFagtqVimsADhpXcQB4wVeUnDx/ReqH5uXHQTWVzdjfzGfqG8MVcBMkI27anMx
-         oJfA==
-X-Forwarded-Encrypted: i=1; AKwUvBzRkh9Ix9WT14NuF2nbj9I91zFn3YIlRzEzIvQ8H+j5d21Ald4BMLU79ORDB9MSxhkytSWX3ldwskjCig==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIEBhzOC1h1ydzMR4LVfQndSEFdvuAeRj8khZiS8rFLZV/Ybc/H
-	Cgc+ezfM2NQTTwR6qXzSVt3ngtzFtpvF8GCQ1GeauLI+klZiavFavQ1d
-X-Gm-Gg: AYBFou1QZk1X0wl/tBk/QYvZt95zTL0t1z/1P/+gZ8s+2H6j7tmdKXJ+eprGo8JSy69
-	ah51l7+SXMFBTUi2qshu9cZWf+X5g4dz/tetHOTw3a+cnxM66h9HsY/nf35gmLDPWu3ROVHANuR
-	HE1zumYeDBo+2I3rms0BvhSIgLT9VumZHhkb+2i4RJ5LKbKw86V4o4LqrgShkwsAA4BMflLpIOc
-	Cj9FvAGh5MXZbKPUaxXigfpmQxfg1oU+M//TbLpEsqvDdSoEalFC6qVi0MxZLKRWRzRuoJHituy
-	1e7Bh9zOpXKZPpKrqVPjzuDdX/MmdJMiuMziVibyORU3qna6CTnCfBOdU37mFQ5rwxEtW03D4EJ
-	uA4QjdGjktYbtuc/r/AHw5YugIzqtj5fByG238d4hCGQcZXrmxVuQtq6PE+mXG1REKisa1YVHRP
-	wV1opFVUbOlXSsco/S9/0m2qSKd+L86wsySU56ps+jwsBvHOTrHByEwAOoW+mc9vLHWREncmOHQ
-	i6xqn8JQeo28VadpNn8YbhpjIC5SNh9QI8n4A+XWaDEZAZ3UpSuTXQbg/OkwqOJgU6lGQG0MN19
-	EJ23H/QYfoZLADzYaEmqNEWFPyDNFhtHDNrNvOKcuPZYD77bZdZv437clGRs80O1mncm/5gpyv9
-	xI9K2d1yAqaeCAQR/5LSW6HcyLgNIkuxvPZPmg4oyQ/thug0nctUW2os07+o5nELN
-X-Received: by 2002:a05:6000:4386:b0:48d:ba3b:af36 with SMTP id ffacd0b85a97d-48e3eba7fdemr8948523f8f.37.1792994335994;
-        Sun, 25 Oct 2026 22:58:55 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a02-3100-b1a4-1201-5c78-89f4-99d8-70d7.310.pool.telefonica.de. [2a02:3100:b1a4:1201:5c78:89f4:99d8:70d7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3eb8f25fsm13901379f8f.2.2026.10.25.22.58.54
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 25 Oct 2026 22:58:55 -0700 (PDT)
-From: Karl Mehltretter <kmehltretter@gmail.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Karl Mehltretter <kmehltretter@gmail.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/tegra: Fix dma-buf reference on import errors
-Date: Mon, 26 Oct 2026 06:58:42 +0100
-Message-Id: <20261026055842.96484-1-kmehltretter@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	by smtp.kernel.org (Postfix) with ESMTPS id 991401F0139D;
+	Mon, 26 Oct 2026 06:25:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792995911;
+	bh=RlF5DYnJRPEij6dz8uy7Tal0KbDHMRwaaUB7QYyMeOs=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=Jd0pm07x7lR/8NofARUDwUgM1hNur1ZcIuk3NiJJr/rS+4pt9we/yG4VBaB0YGr2g
+	 CvLTCjOfxmuGW013U7J9BPgtjJrUTG+2poy/iZjsUhMHtNT6fivExL5JZi3ddcIw2k
+	 Qs8ZNZhrkTR17avonQ0sF4eJguBNfNuXcUV+modcgEFgXHbqXDYYLueZCdkcuOi0Md
+	 utGEED4HkNG7nilg7FCqRXfV/oMlmSwBqmTeZAMCGnUmoLQXPE91ocIn/6pbp2ztXz
+	 6AuG7Q8JaRQHn0A0S3F1ZWigVQxm0Ns/tALSRvgOFCKw3xkppKV+mHLnXGHr/WqPNv
+	 CUn/mMbGDH7rA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 10C8F44C25;
+	Mon, 26 Oct 2026 06:25:08 +0000 (UTC)
+From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
+Date: Mon, 26 Oct 2026 07:25:05 +0100
+Subject: [PATCH] power: supply: bq24190: Fix NTC status decoding for
+ BQ24193
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -106,67 +83,132 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261026-upstream-bq24190-ntc-v1-1-fdc12d795a99@tsv-stahl-riesa.de>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQrCMAyA4VcZORtok06YryIetpppBOtsuiGMv
+ bvVHb/D/69gklUMTs0KWRY1faUKf2gg3vt0E9RrNZCjo3fEOE9WsvRPHN4UfOcwlYgjtxKZiUP
+ ooKZTllE//+35stvm4SGx/F6wbV/toK4teAAAAA==
+X-Change-ID: 20261023-upstream-bq24190-ntc-f35ec3323449
+To: Sebastian Reichel <sre@kernel.org>, Aaron Kling <webgeek1234@gmail.com>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>, linux-pm@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Patrick Fischer <admin@tsv-stahl-riesa.de>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792995907; l=3658;
+ i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
+ bh=BUokX18EXdA2wvDNW7+3GVSpgzTFB0r3Izc5EIZbi7Q=;
+ b=hzAhsAG/gqezLRrjScN6/AElzUocarO12tX3xX1U/ZKpX3OVKuK2zrVTLUlJN44sehJCsNbIa
+ m9e658IV1dLAjA0xNvtuLq6e6ULTNjTHlzfY13AaOc5Xh+9tidgGgBa
+X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
+ pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
+X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
+ auth_id=1251
+X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+Reply-To: admin@tsv-stahl-riesa.de
+Content-Transfer-Encoding: 7bit
 
-tegra_bo_import() acquires the reference retained by a successfully
-imported object only after all attachment and mapping operations have
-completed. Its detach error path nevertheless calls dma_buf_put().
+From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 
-drm_gem_prime_fd_to_handle() holds a temporary reference while invoking
-the import callback and drops it after the callback returns. Consequently,
-when mapping fails after a successful attachment, tegra_bo_import() drops
-that borrowed reference and the caller drops it again.
+The BQ24193 has a single thermistor input and applies the JEITA
+temperature profile. Its NTC_FAULT field in REG09 is encoded
+differently from the BQ24190, which has two TS inputs:
 
-With only the installed file descriptor and the temporary import
-reference present, these two puts reduce the file reference count to zero.
-This queues the dma-buf file for release while its descriptor remains
-installed, leaving the descriptor without a live reference for later use
-or close. On a Jetson Nano, forcing the mapping to fail after attachment
-produced:
+  NTC_FAULT  BQ24190    BQ24193
+  000        Normal     Normal
+  010        TS1 Hot    Warm
+  011        TS2 Cold   Cool
+  101        Both Cold  Cold
+  110        Both Hot   Hot
 
-  VFS: Close: file count is 0 (f_op=dma_buf_fops)
-  imbalanced put on file reference count
+(BQ24190/2/2I datasheet SLUSAW5B, table 17; BQ24193 datasheet
+SLUSBG7A, table 16.)
 
-Remove the unmatched dma_buf_put(). Successful imports continue to take
-their own reference before storing bo->dma_buf, and tegra_bo_free_object()
-drops that reference when the imported object is destroyed.
+Warm (45-60 C at the TS pin) and Cool (0-10 C) are not faults. The
+charger keeps charging at a reduced charge voltage or charge current.
+The BQ24193 uses bq24190_charger_get_ntc_status() though, so a warm
+battery is reported as POWER_SUPPLY_HEALTH_OVERHEAT and a cool one as
+POWER_SUPPLY_HEALTH_COLD.
 
-Fixes: f5b8794e17e4 ("drm/tegra: gem: Don't attach dma-bufs when not needed")
-Cc: stable@vger.kernel.org
-Assisted-by: LLM
-Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+Add a BQ24193 decoder that reports POWER_SUPPLY_HEALTH_WARM and
+POWER_SUPPLY_HEALTH_COOL for these states. Cold and Hot are unchanged.
+
+On an NVIDIA Tegra Note 7 (P1640) REG09 reads 0x02 after a few minutes
+on USB power. The battery keeps charging, but the charger reports
+health "Overheat". With this patch it reports "Warm" in that state and
+"Good" while REG09 reads 0x00.
+
+Fixes: afe5301bfbaa ("power: bq24190: Add BQ24193 support")
+Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
 ---
-Found while auditing Tegra PRIME-import error handling for
-CONFIG_DMABUF_DEBUG testing.
+I kept this a pure decoding fix. Two things stay as they are and could
+be follow-ups if you want them:
 
-Tested on a Jetson Nano (p3450-0000) with CONFIG_DMABUF_DEBUG=y and a
-separate change that rejects zero-byte IOMMU mappings to exercise the
-post-attachment error path. Without this patch, the forced failure
-produced the diagnostics quoted above. With this patch, 100 consecutive
-failures returned -EINVAL, preserved the original dma-buf FD and left zero
-dma-buf objects. No file-reference warnings or DMA-API errors occurred.
+- The interrupt handler still logs a change to Warm or Cool as
+  "Fault: ... ntc 1", as it does for every change of REG09.
+- bq24190_charger_get_health() checks the NTC bits first, so while the
+  battery is warm or cool the charger health hides a charge fault or
+  battery over-voltage.
 
-Additional regression coverage passed 33 dma-buf heap selftests, with
-three vgem-only tests skipped, and all seven udmabuf selftests using a
-volatile 2 GiB HugeTLB pool.
+Tool use (see Documentation/process/generated-content.rst): this patch,
+its changelog and this note were prepared with an LLM coding assistant
+(Claude Code). It compared the driver with both datasheets and wrote the
+code change and the texts from my register dumps and instructions. I
+reviewed the change and ran the test on the device.
+---
+ drivers/power/supply/bq24190_charger.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
- drivers/gpu/drm/tegra/gem.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index f76af73..ed35a34 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -502,7 +502,6 @@ detach:
- 		dma_buf_unmap_attachment_unlocked(attach, bo->sgt, DMA_TO_DEVICE);
+diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/bq24190_charger.c
+index 4bea6fd83c36..350cf79a0744 100644
+--- a/drivers/power/supply/bq24190_charger.c
++++ b/drivers/power/supply/bq24190_charger.c
+@@ -999,6 +999,30 @@ static int bq24190_charger_get_ntc_status(u8 value)
+ 	return health;
+ }
  
- 	dma_buf_detach(buf, attach);
--	dma_buf_put(buf);
- free:
- 	drm_gem_object_release(&bo->gem);
- 	kfree(bo);
++static int bq24193_charger_get_ntc_status(u8 value)
++{
++	int health;
++
++	switch (value >> BQ24190_REG_F_NTC_FAULT_SHIFT & 0x7) {
++	case 0x2: /* Warm */
++		health = POWER_SUPPLY_HEALTH_WARM;
++		break;
++	case 0x3: /* Cool */
++		health = POWER_SUPPLY_HEALTH_COOL;
++		break;
++	case 0x5: /* Cold */
++		health = POWER_SUPPLY_HEALTH_COLD;
++		break;
++	case 0x6: /* Hot */
++		health = POWER_SUPPLY_HEALTH_OVERHEAT;
++		break;
++	default:
++		health = POWER_SUPPLY_HEALTH_UNKNOWN;
++	}
++
++	return health;
++}
++
+ static int bq24296_charger_get_ntc_status(u8 value)
+ {
+ 	int health;
+@@ -2013,7 +2037,7 @@ static const struct bq24190_chip_info bq24190_chip_info_tbl[] = {
+ 		.check_chip = bq24190_check_chip,
+ 		.set_chg_config = bq24190_battery_set_chg_config,
+ 		.ntc_fault_mask = BQ24190_REG_F_NTC_FAULT_MASK,
+-		.get_ntc_status = bq24190_charger_get_ntc_status,
++		.get_ntc_status = bq24193_charger_get_ntc_status,
+ 		.set_otg_vbus = bq24190_set_otg_vbus,
+ 	},
+ 	[BQ24196] = {
 
-base-commit: 21a7f44fd0765fcc5194130b28767786eba1d1e7
--- 
-2.39.5 (Apple Git-154)
+---
+base-commit: 734bef548a96e8774d6eef5dfa2026c6edc4e80b
+change-id: 20261023-upstream-bq24190-ntc-f35ec3323449
+
+Best regards,
+--  
+Patrick Fischer <admin@tsv-stahl-riesa.de>
+
 
