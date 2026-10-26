@@ -1,79 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.171
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792995912;
-	b=RawRJkBG2CERXIvMAMKJRdJQAbhhXhcUb0PRBSvNntip1A2oyRKTAtVEqnx28oqlUf5I
-	 cfru4AVqqZDUS96VqTesXzFKxFhC3TJq1PPQiVKrHgkWbgw4N5O2BIj5O9vwVXrE/axAO
-	 dZyivdAcgdtfiZkJxqoSI3MgWuBwXILGBnbKuQMlU5fuqLFixQDRcj0rM4ycU6Iu5X333
-	 2pemg4daWgeFgXxk5SqkhegCKyl4mW/aSHHgyzrwAJSod+fTM1wN5rwe7wtBKgVGts4q1
-	 wDqoG6wf4Skrdxpw465Z/T/zYNpFQYXsf1R2SZFMQ3v7D7h4/Oz4Fzb7lmax5RpGVww==
+	t=1793004245;
+	b=iy4Ip+PIXEyx3lx93YenLEP7Z/EOUESfaEKHW7rTung44ROacNS98bpccRGl9w+cbH+w
+	 Ao9A5LhFIEscBjYDNRVAOzvYcZxfWvZUXHCoDuHJ9kbl4tnG+b1T7fniQTbmlivEjoXNq
+	 A9Dt7aMSYlta61kA9+wewurihi2QSRAIjUzu8DX9lIxlFrtFnk8UTTZUPeZic57Pw0z1R
+	 Ev9gHyZ3hMfgCblD7MM+z8YGP5lERL0VoyhJeoF+MWebbUaxjVFgjaGKAC6wPjFEmIdel
+	 xUTQEwDbZLVfSxQdTnFqMAqUYAUjMB+rA+Clv8My8TCQ1jddGxhMcD43Ru25Sj4aQcw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792995912;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=RlF5DYnJRPEij6dz8uy7Tal0KbDHMRwaaUB7QYyMeOs=;
-	b=sfZweMjJSSSXObBQGsCyGWJ6YlaAmkjhC8iM9WtpMx04srh8bqXSDxWjmpbiLCw3caTL
-	 1zQ0pRCy4zQ0Rmkb2Q/g1u+3hc7uoQ6ukaklJC9idEvSsIAWT4dtPdQZ4VH1kzy25LC+i
-	 H+CNoAqagbxElm/YaRDam11iJFekyBMvKxnCAyqNorsbNS+VAySYh0lEK7C63VpxqJyzx
-	 bldmZX3Ae4MBkKknQt0EK/loTRPmX0DYcDsWHucIZrw6Vo3X/ygIgglms2fhLFyD5GiUd
-	 w+q9YwwPHoeV9GXIATXD2LVjwHKwvjVYTR86ZQaMz94nL0Wm2NDpZB7ljuSiKsRvJcQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793004245;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
+	b=sl7xYIsQs0cQYuNHjsG4Ip9DTHXLhQMErVBxNKs72SDXfjy85fSVa+D16bKKsBPfFo2J
+	 mq3R8PXc3MLMZR4uHsqjVk9IAxCkHiFaXOYYHYCrjiJ4Mtl8jXydJ9gxhBtO1naGGqlgO
+	 VOLjqFc9hhCbzDFyybFv4YZzi/gs+Ny9v9fOs5RriPgIxlG49INYWmDbMMyROdGZjZ8No
+	 jzdBse38+FhJBQIDHl5w4GSz+m/96Mr0kbH8+0y3m6R+CAdy14NsHypi2JFEecD9gN16w
+	 sNnIV3EZxNGvkp/05+rpC1nzLKMFy5mB8JuZeCRheyE5d3rXhcufpjwOZM0e9mfY7Sg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jd0pm07x;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C97606A320;
-	Mon, 26 Oct 2026 06:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jd0pm07x
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792995911;
-	b=C4gk7+1ug5OiKnv5ld46GnP+fB2K6nyWUSG6yez8IiMTQxlW254dOj8CIHsjCkEyMoOD
-	 uRRd55OrDk20j28JGJ3JC6AJe0aJh64sJNupR8niRvI554XXVjwKHm3yocAM2FtaGeKDe
-	 aZnvLi31RuTcd2XM8nKyef/bOIjTKK9e3oiu721ZH2CI8ccPJDfswmoIyKhIjefPrmTcH
-	 rxjzEI+8xuAjXFkrfgWVtlulYBmSjXkpsXe6+TSwecd7j4eQ81rd+UBxfSYACJnSbrEXC
-	 wcRlENtcCtabn+uipSU18V71M6ze/u9Y07mqGTxc+fhODM18aZsyOKzxls6mFo7dr3A==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792995911;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=RlF5DYnJRPEij6dz8uy7Tal0KbDHMRwaaUB7QYyMeOs=;
-	b=Iqc9YLtvLS2jhYR0srMVokdjfQYZfHuSES9Ye01ref96efTef2ODs3OC/3D3fxsv+IZ6
-	 k+5AUJAmI4VRyhNTVknLJYnkfHQQehLl9PyPc6s3dyqIC62g9ZzrxPcCo3ZmEO7ZEOEQt
-	 p5hujbDxJqlQ/n1vBPvuLkKeZOm7Z+TZCHeTTUvl8ZL9zjK3oD+A1d70VOS6eaINDsl6n
-	 LEqDgWFvhDVdBuWrbrWpDXCsnNo+WaT7n8P3SN/AuLMkEk6lqdy4RFzL1shuK8A+ZuI07
-	 Q/jdQy1ZxZw13G5FLoCejQR9HCR3x+HPlnNkfcLo0eNK4+Sy542NgqG0Yt92QmH2q2g==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=DdEl3zIQ;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.171
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 991401F0139D;
-	Mon, 26 Oct 2026 06:25:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792995911;
-	bh=RlF5DYnJRPEij6dz8uy7Tal0KbDHMRwaaUB7QYyMeOs=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=Jd0pm07x7lR/8NofARUDwUgM1hNur1ZcIuk3NiJJr/rS+4pt9we/yG4VBaB0YGr2g
-	 CvLTCjOfxmuGW013U7J9BPgtjJrUTG+2poy/iZjsUhMHtNT6fivExL5JZi3ddcIw2k
-	 Qs8ZNZhrkTR17avonQ0sF4eJguBNfNuXcUV+modcgEFgXHbqXDYYLueZCdkcuOi0Md
-	 utGEED4HkNG7nilg7FCqRXfV/oMlmSwBqmTeZAMCGnUmoLQXPE91ocIn/6pbp2ztXz
-	 6AuG7Q8JaRQHn0A0S3F1ZWigVQxm0Ns/tALSRvgOFCKw3xkppKV+mHLnXGHr/WqPNv
-	 CUn/mMbGDH7rA==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 10C8F44C25;
-	Mon, 26 Oct 2026 06:25:08 +0000 (UTC)
-From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
-Date: Mon, 26 Oct 2026 07:25:05 +0100
-Subject: [PATCH] power: supply: bq24190: Fix NTC status decoding for
- BQ24193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A01C606A31B
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 08:44:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0A01C606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=DdEl3zIQ
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso8148184eec.0
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 01:44:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793004244; cv=none;
+        d=google.com; s=arc-20260327;
+        b=bDq22No1Ib0ySXTNgblkC6RqYRWrvxmhIdrbaLlloq3BCmoIkTJ4VllizmQWqJtuyz
+         c95Nv5NIPUgHyn2ORvycVzHEBF69/ZLz69kV/zjpz00Z55DTk6n8R8EeQCrppldBXX1L
+         iIAHq43ay3gr4269Kaq9U1kl0jSbIXZ8D6Jv7J9kWc8uZ02QlUnjQQvJVHUJCiE3INNK
+         tzcao7Fe6q8lH2V+RosZ5y2raIQzTF83e6tLryRBaq8KMXhnOQVMk+pZrWYHhwWeZqP0
+         4NLpUZmlU0YjUw0YJPnZkcftnsaQqtjbLOT0OK5AOlzKUjQ+bAzvF1RVB4Lpr7LgBLO9
+         eZhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
+        fh=euFXRajvZjJ6coJsktIJRPAaKEWY1chtyMNlGJ/vkgU=;
+        b=ccD7ouj4hm5+VWqnO7+O9EZFVlQoDtDN15hvyP5Xdgm7gvHaml/5HZGBhMYPEqYe0i
+         izbS4yM9UN7UC7KDmsmO5xfYSqnyofxP/Vhp3Gm888YTYJDgp3ND8DGySoOj6EfTQY+I
+         pVENBV6P0gsYp2SwTigxlnPtCLxnuJUzGG139aLAcWuL9jyO1LEq4xPDoxI4qq3USWuY
+         NA0oN2sd7m3SokSzoe+9qdaGLznqfRdxh+jxRES354Ud3yIzpOKm4+Jq6FJ6fnLrp+RB
+         SAviU51awwL+vZRamfVl01Di8zE6+n9aLlR07eXk0rkcJiymHBP4cvprnHtGtwDJgN9c
+         DqQQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1793004244; x=1793609044; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
+        b=DdEl3zIQt0j6Wl24x/rH/CtH549T/6yz3arfh7UpUrcj6VkIpoMyYOJF0NDjpQo/t8
+         KnIkRGw3mQKSuSLcmgmm1QRxFD7nafFegrsx97gfdpMPw9bSIdSMJkgN5ULAzH6PPtJR
+         +1211R5Q3Zhp+ThE+b19e6KHxhmdDbYmR0W8ghuKMj2H4lP20As3vXQ213+vhFNpMZcs
+         fzuE65p6rZWd3qQGy9q9CvG9GkFrGbtlh5Caj3W9g200O15HUM0hg1BMgN74DerPrTbJ
+         oOhZzxb0gPAZQ9lk1EkvIZown3WXZ+qA2Xj8kSrVd1RwXvQviFh0pvX8/AIpiShu5UJ1
+         rDOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793004244; x=1793609044;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vuokd8eYBXkkOY3FeEgoxbWH+3rJnsQeEdkSp7QA0lo=;
+        b=eHOAnSAp07bUHmONlrvwbrZ/OxAorbMB0uyepyaijhx0QkgMQ4/21x9OQKMY1GR9Ug
+         N99FuwR9i7SJUW0l2F6k+TyzdM4C1SPB1auQOP41pAlMVrFiQFSis87BM9YN2qHT87TP
+         ZsINGYEc9+biQccpdQEWNW/0yIlDbsIpq48Bm70Mz5pm7+4sFoyY51hDIBLRLoyeDY3X
+         Qt2PKF92x39XnZBlR0R1LYs7HDIgDWWszSeVO6JFUOAhkZZxP3SHPckR+e1+jKQ+eMss
+         4052+YaTH3MHbbtC6jFcqXuoKR2G/j5o48U9d1bqys1fvqyZ1zZzC/5fB2TNrWWhUSSI
+         RlgQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzaqtnw6nyYP7AD80Q1L9BfXCfs08WkuALQhvrHg6nv4R5quUqzsTyonPmpfAbRSE9oNbNc79iwAOj6FQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYK6yBPveNSrFJVOLUK5E4EfBNJltFa9lUUaMxxXMOnxfxSO2mf8
+	SVEt+mrFSbyHvgd1Q+/wtK3UcJxjtgbZQWbxei28rcaNmEi0WdjQi8auyQliFhnTKOEm1ymCLdi
+	pkvkaXbaG/O3xMgph4sA5yo7H4fcepPg=
+X-Gm-Gg: AYBFou3RgbHoy36Pr1go43SeyEC9wn1ws2r5sQ48leaLhMfVXE8L0h+xy2+oW7l9Lw8
+	zgKB06lPhBGmlgHocRoWzagOuY0aORNzkIYf3OUWZUdh+Bzsr0E3UBHKvgdeXz7YA9CQWUITvYE
+	YvwbxY7mSVsxmWKG2WEL4RwRtaSnJ7eWou3ReH/U9bfg3XI5wioMYlcyZnH9NA05X0W3MbeqdsV
+	f0oQ0caV4YxlTvnWjJ7yoULcWpO8Ei6O9fE3XgB94MD9o5unlFBfH9EmqlXPwMy2/qebHbRrtHv
+	xaPZ7Ut5+3Nx/9maKa07+OE2Nkrs6+0Cejl7RMLGDUJbyIUmEPfM9uEAKEs/8ZAgMHltpSZob5u
+	sRg4dqdil5v8na9SwIlYjDe1MyLzeGYISZso/dpU6JVyZSGdldIdZG4hTAhLkSRekM+8vKA==
+X-Received: by 2002:a05:693c:250d:b0:366:8efb:bab9 with SMTP id
+ 5a478bee46e88-369e848362amr9301864eec.11.1793004244117; Mon, 26 Oct 2026
+ 01:44:04 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,132 +104,39 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261026-upstream-bq24190-ntc-v1-1-fdc12d795a99@tsv-stahl-riesa.de>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQrCMAyA4VcZORtok06YryIetpppBOtsuiGMv
- bvVHb/D/69gklUMTs0KWRY1faUKf2gg3vt0E9RrNZCjo3fEOE9WsvRPHN4UfOcwlYgjtxKZiUP
- ooKZTllE//+35stvm4SGx/F6wbV/toK4teAAAAA==
-X-Change-ID: 20261023-upstream-bq24190-ntc-f35ec3323449
-To: Sebastian Reichel <sre@kernel.org>, Aaron Kling <webgeek1234@gmail.com>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, linux-pm@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Patrick Fischer <admin@tsv-stahl-riesa.de>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792995907; l=3658;
- i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
- bh=BUokX18EXdA2wvDNW7+3GVSpgzTFB0r3Izc5EIZbi7Q=;
- b=hzAhsAG/gqezLRrjScN6/AElzUocarO12tX3xX1U/ZKpX3OVKuK2zrVTLUlJN44sehJCsNbIa
- m9e658IV1dLAjA0xNvtuLq6e6ULTNjTHlzfY13AaOc5Xh+9tidgGgBa
-X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
- pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
-X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
- auth_id=1251
-X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
-Reply-To: admin@tsv-stahl-riesa.de
-Content-Transfer-Encoding: 7bit
+References: <20261025-b4-dalmore-fixes-mipical-clk-v2-1-0a2d1118f930@nvidia.com>
+ <510d6922-5aad-4b54-8085-9a769a1a934b@tsv-stahl-riesa.de>
+In-Reply-To: <510d6922-5aad-4b54-8085-9a769a1a934b@tsv-stahl-riesa.de>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 26 Oct 2026 10:43:50 +0200
+X-Gm-Features: AclHuK9FgW54R73JYrxQZ7QKLMuuRD6TDEnSd96dbrON3jVaOynr209LUb-EVxw
+Message-ID: <CAPVz0n32UN5QtoHCCJtHtdcF29BYcP=2pPnhYo3yYy+2pBioDw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: tegra: Fix Tegra114 MIPI calibration clock parent
+To: Patrick Fischer <admin@tsv-stahl-riesa.de>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+=D0=BF=D0=BD, 26 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 00:1=
+6 Patrick Fischer <admin@tsv-stahl-riesa.de> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Sun, Oct 25, 2026 at 10:45:41AM +0900, Mikko Perttunen wrote:
+> > Fixes: 07314fc108e1 ("clk: tegra: Special-case mipi-cal parent on
+> Tegra114")
+> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>
+> Sorry, I replied to v1 earlier by mistake. Carrying the tag over to v2,
+> the code is unchanged:
+>
+> Tested-by: Patrick Fischer <admin@tsv-stahl-riesa.de> # Tegra Note 7 (P16=
+40)
+>
+> Thanks,
+> Patrick
 
-The BQ24193 has a single thermistor input and applies the JEITA
-temperature profile. Its NTC_FAULT field in REG09 is encoded
-differently from the BQ24190, which has two TS inputs:
-
-  NTC_FAULT  BQ24190    BQ24193
-  000        Normal     Normal
-  010        TS1 Hot    Warm
-  011        TS2 Cold   Cool
-  101        Both Cold  Cold
-  110        Both Hot   Hot
-
-(BQ24190/2/2I datasheet SLUSAW5B, table 17; BQ24193 datasheet
-SLUSBG7A, table 16.)
-
-Warm (45-60 C at the TS pin) and Cool (0-10 C) are not faults. The
-charger keeps charging at a reduced charge voltage or charge current.
-The BQ24193 uses bq24190_charger_get_ntc_status() though, so a warm
-battery is reported as POWER_SUPPLY_HEALTH_OVERHEAT and a cool one as
-POWER_SUPPLY_HEALTH_COLD.
-
-Add a BQ24193 decoder that reports POWER_SUPPLY_HEALTH_WARM and
-POWER_SUPPLY_HEALTH_COOL for these states. Cold and Hot are unchanged.
-
-On an NVIDIA Tegra Note 7 (P1640) REG09 reads 0x02 after a few minutes
-on USB power. The battery keeps charging, but the charger reports
-health "Overheat". With this patch it reports "Warm" in that state and
-"Good" while REG09 reads 0x00.
-
-Fixes: afe5301bfbaa ("power: bq24190: Add BQ24193 support")
-Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
----
-I kept this a pure decoding fix. Two things stay as they are and could
-be follow-ups if you want them:
-
-- The interrupt handler still logs a change to Warm or Cool as
-  "Fault: ... ntc 1", as it does for every change of REG09.
-- bq24190_charger_get_health() checks the NTC bits first, so while the
-  battery is warm or cool the charger health hides a charge fault or
-  battery over-voltage.
-
-Tool use (see Documentation/process/generated-content.rst): this patch,
-its changelog and this note were prepared with an LLM coding assistant
-(Claude Code). It compared the driver with both datasheets and wrote the
-code change and the texts from my register dumps and instructions. I
-reviewed the change and ran the test on the device.
----
- drivers/power/supply/bq24190_charger.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/bq24190_charger.c
-index 4bea6fd83c36..350cf79a0744 100644
---- a/drivers/power/supply/bq24190_charger.c
-+++ b/drivers/power/supply/bq24190_charger.c
-@@ -999,6 +999,30 @@ static int bq24190_charger_get_ntc_status(u8 value)
- 	return health;
- }
- 
-+static int bq24193_charger_get_ntc_status(u8 value)
-+{
-+	int health;
-+
-+	switch (value >> BQ24190_REG_F_NTC_FAULT_SHIFT & 0x7) {
-+	case 0x2: /* Warm */
-+		health = POWER_SUPPLY_HEALTH_WARM;
-+		break;
-+	case 0x3: /* Cool */
-+		health = POWER_SUPPLY_HEALTH_COOL;
-+		break;
-+	case 0x5: /* Cold */
-+		health = POWER_SUPPLY_HEALTH_COLD;
-+		break;
-+	case 0x6: /* Hot */
-+		health = POWER_SUPPLY_HEALTH_OVERHEAT;
-+		break;
-+	default:
-+		health = POWER_SUPPLY_HEALTH_UNKNOWN;
-+	}
-+
-+	return health;
-+}
-+
- static int bq24296_charger_get_ntc_status(u8 value)
- {
- 	int health;
-@@ -2013,7 +2037,7 @@ static const struct bq24190_chip_info bq24190_chip_info_tbl[] = {
- 		.check_chip = bq24190_check_chip,
- 		.set_chg_config = bq24190_battery_set_chg_config,
- 		.ntc_fault_mask = BQ24190_REG_F_NTC_FAULT_MASK,
--		.get_ntc_status = bq24190_charger_get_ntc_status,
-+		.get_ntc_status = bq24193_charger_get_ntc_status,
- 		.set_otg_vbus = bq24190_set_otg_vbus,
- 	},
- 	[BQ24196] = {
-
----
-base-commit: 734bef548a96e8774d6eef5dfa2026c6edc4e80b
-change-id: 20261023-upstream-bq24190-ntc-f35ec3323449
-
-Best regards,
---  
-Patrick Fischer <admin@tsv-stahl-riesa.de>
-
-
+Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab (P1988)
+and ASUS TF701T
