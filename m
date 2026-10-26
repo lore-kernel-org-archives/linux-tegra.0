@@ -1,103 +1,115 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793032199;
-	b=IWaCKioORNy0DqDS0ZvaDLhbZE+84kYg/OTi+r5V53BoeWAt1vRLiy5w9vCT6QGKarZN
-	 AU9a4Xof/3Xdl/6B4Bb3oL9tOFYPVXaJWzeS9ZPaUO9epK4McQ2uMVRqxZUJZCUmy4qUX
-	 ZFMAZhEKBFyHMWO9T40mVKtUQUsiUkkn9epEkvpOYLz0ie6NGa74Y0inyFzIjKpARzwpg
-	 ESC6hnSHuKABjC4/rGGvbXh1mpjxQ95Wjo1uXdCF794AxvTh2jIWQACqJmUsYhKo/Sw/l
-	 xtHl6lMhEhO7QZ4iwekJdbHAqDYTXoYF2JQ+vuYdZm6wKM4OnTqQ4l0Ok3ItYQNA8qg==
+	t=1793032202;
+	b=jznyCdjirXB9b2ecYcRlcxNB2MOe++RzbaXCXbn7P02vsXK95cwinV2+6oklBCYeJ8hk
+	 6n3ppkjNLG2QalFO4FLRMRzVd3WDcigCdRs3zv+/PpdTQICViXU8UZc1la2tG3Hflp74J
+	 S34u6Ncrtphd4fIcX1DQJmRiBfG/C1InCXTS3ks/llXvk2aSVWzCWiUGYCSRZoYJXAW2+
+	 MUm7jvPOFeJz6bv9zEN5gCyXITSFyaOgSkccLJC143ABeH/knaE+ik7R8ZU0e/0Y1ZLMj
+	 +tPKXPyUdCJHQS3BFhkKoXLSW1lkD887WCX4YenUxY8XWrlnjaq5VX/UFm5QADr1P4w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793032199;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793032202;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Type:X-Developer-Signature:X-Developer-Key:
 	 Content-Transfer-Encoding;
-	bh=6CzQSR2Mr9KQQooh036x28O9hJJYMD9oyrD3pTQshjY=;
-	b=32qQF2RO5xK+PdulnFpxmVCEGhdi3qs+vRHTtTHwLWAS8RxZG1lnIp1QuF7+vm9jp4QV
-	 fIUtf/h0voHZK9sNXhgbdDte5h4AQJHmTaGOOI7q4SSSDvwLFSU09OLuPn6mSq8V4IxQ+
-	 EnQRZhd1DGhmpXxWKVU5VTVTjxacttcePdry6uPjXyPaEkrfvGHfVx8mB8oXE6QbR8Lw2
-	 S1AC3TiIAs8yPfcVKs8pUOVHOQNFYyhvVxXo122xaTIDb2SvOTl0LNV1cmqd0K3qzu/1K
-	 IaoBCxNm+4TFTrnXsbFwQFoXETJWcC/7lckCQbvMrldxUX7siU8a5wjESVXY+ayZfLA==
+	bh=jWILgexA7XWv2SxTlD3qvn6SKAgv5vWCgflv/xy06MU=;
+	b=KE3nNGyjRn2XFSgH2jeDQkO89nps898dgi9hvkgX5fCTDeSHWr9i9kV2SkjlQ2MRQIrf
+	 OrRds9gby9s5nsA0voo9QS90pQZBJvfLaH6dfhfxkefkdrUdwZBV5R+uEBIs7pc9qg0cf
+	 RBRDQseNGcdC/W3ZACZuoukzaJJ/UrAt9lkEhIeiHfgFk2WJENk0vZjNYghTfCVe0BR0s
+	 jbdpBxRg3oG3JN/C/8cmnRz7ZBXGcmP1M+3VZ44V3D4rz23hhQ7olqIL+bSvNwFxybW9c
+	 lK/ITBYUGNCbBtNf4Bwfd2ITejEcVAdAe+nMhG9Wr1gS12Eo0CgL0T6Lod8uXSeagGw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Tf8jqa21;
-	arc=none smtp.remote-ip=209.85.221.48
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=JZuISPSW;
+	arc=none smtp.remote-ip=209.85.128.45
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E02E60A5BD4
-	for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 16:29:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5E02E60A5BD4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C24606A324
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 16:30:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A2C24606A324
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Tf8jqa21
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-48e46e449e8so1102738f8f.3
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 09:29:58 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=JZuISPSW
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a4d7ae1ae9so15533605e9.1
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 09:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793032197; x=1793636997; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793032199; x=1793636999; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=6CzQSR2Mr9KQQooh036x28O9hJJYMD9oyrD3pTQshjY=;
-        b=Tf8jqa21Nb+ekgxKako1TDbCbjNzgjEtGoUsMU0fOwnC0A+ILtOr9nfO9efwRhwT10
-         4i8TQRXvwKgDXUHs/KarjRrxtjbDW1fmxwFbXsaDhkObgoMR0DeXKdLHfBCG271ZXmCL
-         Bxmu/vn43pm9IuB4ltKf8eOHPvz/iOTJId9zcW6p9RIeMMvpoRDFJzMsgshfMOG23Yy+
-         1p7CFvWxkWLuZIppDPzhxb05OyUcOCzyadUryWjg4dAajsjeG5vElLXtTqS70nGd19g0
-         27y+yQsRskDqM/uqUxe66XIIDKDRHnocOvcanwdCvOwXoJiXOl3SPPHXO156DTPIKHHT
-         pIFA==
+        bh=jWILgexA7XWv2SxTlD3qvn6SKAgv5vWCgflv/xy06MU=;
+        b=JZuISPSW+7lAzjYpZTcULExF5DXtETOxKDslZGUEY58hjMkqqBU/cEIskCBVPyyzhj
+         dbz/TEgjlsJ6dWi2OBuXQbCaqSvkSPQpC2Qk0x9lgs8FLGDFDbTyslKKvAnnYHWUf5+i
+         Fzl/VQkFBq8EhSuMP6rMbhh4UAuYWi96QOaUkEufOA+5e2xt/10osCdd1sDs1oZkhi16
+         eTTyQPAvGqI751VTOD/tOciqb7iPqfMC2NZ469+PaiZUcDBzUF55MayarLEXNQoTawBi
+         jUa7N9rhjZLUUSuld07aGtzO7d95/4GwcHlfRuQPpFrxM06fNK/2Be26ErJ/Wf/NjnNo
+         O6xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793032197; x=1793636997;
+        d=1e100.net; s=20260707; t=1793032199; x=1793636999;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=6CzQSR2Mr9KQQooh036x28O9hJJYMD9oyrD3pTQshjY=;
-        b=rxCV7ELT9pOworOnM3pef/6ayXZ2gtSEyTESrHm1inbMG7z3IQOMB/87xce25ijtbh
-         Q3rYMKG2ZV2I7QHHXem2lB479qIUXj+UUsBpuHOTJ9pkSUCOaQwHNzf1J1IrVMNevHNP
-         h0c21b/LyoA5zKe0ciGE4rv2p75MkDtijZTFkDM/d6UofMCwtYuNqCN5Te84FnZb+Ee4
-         IdQ+uLRIINDpdxoEJ+Fdayk1Cz8/NIZ+lUfn7lDzpQiOJ+Kmlq8ICtv8IUvvdkVteciV
-         fUEYpmVtaNgz+ucjm18+xx15B6D/ISiaQlGwwvd74f1OcmmBig5IDoyNpRSLDSMX8fiq
-         +3tA==
-X-Forwarded-Encrypted: i=1; AKwUvBzU+UfWDnOUmTraxyX4HBALPiGEteLaLPekBsKY5vP2IDaMJeqWYJ2/ej/zAMZTLLHh7UsiADdEC/EOFw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLilOTskbNlTgBHJTbs4PAxYtqnBDcOwzhhGuKbbmUNX1Ap7u+b
-	BdzUQrsTpxMFReCWe8Fp6JSADxMxeGUgdxfV6GMfRDzrUZQR/1gQRFQV8JeDdjJy8bE3DGUoH2O
-	Q9FuErFw=
-X-Gm-Gg: AYBFou2QnuDXAzVV1NNx2Ed+Xzdpc1Ncr8DjECvDrCZAlYBUgvzmSiKyWRKOjnGwL8+
-	WJxSAzB4myELoNnsG3anO4gQmNNuGEg3984J3WltQcI5vGzUtu1YF8GxvqyJyEe8scVOp8JBQiT
-	AisBzKAsqPGz67KWegIZ82tki2Dyj6ArBV0iBXqLZH6wcnjvqx1IX7A+kuuhqUZo+Vo6aoyU+Lx
-	psra9R/AF/dNM/NGUyPbZDHsgqU9wTaK5ZEv9jgu+EwMfxfQ90M2uYIAUdpgpAo5QAVnRUrUwtq
-	CFWYlFZPVbV4yGTpzg9/esBMp4LfZn+oKolg7E3o9Bp96V8PAsuLGojEU8B9Tp+JgLk0cqOLo/T
-	71edV2Zwv2VXiRPMSLZoKRuXqPD1Y2Vs8cDLrOWW3yR1SHvZvSBWSkL/YJ//5tn2VaSQkTMMmPL
-	X0Z+WrQ71n9rvPxcdx+XXqwN1wohiKzMYk/r3+pPvChS/PE77qg/rUZqaQ1OMRypEqaLd+ODhl0
-	QjBWLv9fwVuR/GA0o8PRjJFYFbfeWujBIFLsMAngBml9cTm9p5o0iAUifpWj9Kx4QfLQmLSZlpD
-	KORQ8h0PLPKaVUX8DRgI/d3maDzJeQJfm4tcsN2zyFc=
-X-Received: by 2002:a05:6000:2990:20b0:48e:2bf4:e7f1 with SMTP id ffacd0b85a97d-48e3eb924c5mr9627380f8f.39.1793032196704;
-        Mon, 26 Oct 2026 09:29:56 -0700 (PDT)
+        bh=jWILgexA7XWv2SxTlD3qvn6SKAgv5vWCgflv/xy06MU=;
+        b=DNVacTRTLHgVKWNI55JCDymRLHS77AMPJnxWnToMz5Eu7slhyZ6Vz/+93HjL1VX6Mi
+         HMEsex0fj+ehipjZVWYQos0yvOn5VVYyDz50tccdeHhsNbVP9N3LY4sdWCExM67lOWQp
+         tXkmf4CtwUlwocgn8cZGRMAJLBb4GXn3i4mHC/4tb/e+Wv8RVeGqqnQ/RzXfUP533CKR
+         LAbggF9s9ePvs3j6fLpZOnRlQh/h3U0wZivQ3Pt82hbqQnq9xMh9xoR3vPPfBmYdrEyp
+         jZRbw0eTrZ6rnv3Dn/v2c6rZfdRpbMhzo1N85+uN+LzpHv43wudsnoLxsC7kpxucdhiJ
+         wk1w==
+X-Forwarded-Encrypted: i=1; AKwUvBzC4XpfBjYSa0ahY/BGpagG4GgNE6vhb24kmFB7T9IxMA+GiEuY349UzDD4yhNBLn0Ww0xUYyvmgIgvSA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKn99oY6k7ZLFvBuRkQmbBYj2UbApIaWquGozqEghUaokxU5VNI
+	XtFQkQond6oqTMvSZevUZFzUrYjn94+3M6jQpkyxxo2HubeXXcEPLXfd3Cfi5FZC4Og=
+X-Gm-Gg: AYBFou1gFwnXtUnaqbNXN6EZ+S9uLQh8FytqV16f3F8pVT7QprZeuPVxMDGjEfyfgoC
+	rO8jIQz5nwqyKiBaOcZGNg36l2GuZgkD5ROmDXIafVDSM70rcThrahzY43EJIgfjelzd9E4ufbI
+	cdNnpyGvIkz9C2N12NwMFR3omVi1KsqdnnrtfP+oVobUkJdZtSX8Pg4CEF08xX2TiksWF6UjWB+
+	ixa4EHSTal6aBU2oL7AAgUEU1tqqymLFhZQyrTukHzieOTM3Jm7pO5chYHBD7R4vUTmc26qMf7A
+	Y0mK+IUUHd+MzRqmASrSakHIZXtiPB9g+gbkjt/6aCkCQON2v18/0N6QFD4lEWWx18Z2Fq443FL
+	4YB9pB/ZFPMl5kb97/OqB2Qbnz73trWGvSOuobPrv3RgcSyrpCGr2n+Cb/zVfbJItJcSK4gWVfi
+	7sNgFho4VCrV4vDJ0tQbKfkztR2o6uEa+lSHT+ENV9V3v+xlefc0BwWsD4SnSSTlZWMg7prb84Q
+	jQBw2WzCERGhCLGqm2n51xZcSfmiARvxkPs5K/EnIbwZW3Zq0JVKxYAho3pD/JwBOGuuCg/zEtJ
+	hxVPWkgve1P1eAzhwzDluiAcSvmT
+X-Received: by 2002:a05:600c:c107:b0:4a5:e6fd:65e5 with SMTP id 5b1f17b1804b1-4a5e70ca839mr57289365e9.31.1793032198756;
+        Mon, 26 Oct 2026 09:29:58 -0700 (PDT)
 Received: from localhost (p200300f65f19a904cbccaa7a4d73ac15.dip0.t-ipconnect.de. [2003:f6:5f19:a904:cbcc:aa7a:4d73:ac15])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48e412cc164sm16225635f8f.7.2026.10.26.09.29.55
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a359ff2189sm242039135e9.1.2026.10.26.09.29.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 09:29:56 -0700 (PDT)
+        Mon, 26 Oct 2026 09:29:57 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
-Cc: Hoan Tran <hoan@os.amperecomputing.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Yang Shen <shenyang39@huawei.com>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	asahi@lists.linux.dev,
+	linux-mediatek@lists.infradead.org,
+	imx@lists.linux.dev,
+	openbmc@lists.ozlabs.org,
+	linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-unisoc@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 17/22] gpio: Unify style of acpi_device_id arrays
-Date: Mon, 26 Oct 2026 17:28:28 +0100
-Message-ID:  <df5cc7d6cb7deff715a4c7df967e8cf8c3ce7e2d.1793030820.git.u.kleine-koenig@baylibre.com>
+Subject: [PATCH v3 18/22] gpio: Unify style of of_device_id arrays
+Date: Mon, 26 Oct 2026 17:28:29 +0100
+Message-ID:  <600e39b6a1b7d76b9247c2651bc2d060a55fe633.1793030820.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.56.0.rc1
 In-Reply-To: <cover.1793030820.git.u.kleine-koenig@baylibre.com>
 References: <cover.1793030820.git.u.kleine-koenig@baylibre.com>
@@ -111,11 +123,11 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7445; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=xecV7P6Tu5XHFl5UH4gpYV2pLRSEwcVsWkWhxPVL700=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq33/GywwqYfW/7Ukt9tps3DUViG6wTxDhsZfje RqWXMmjVReJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCat9/xgAKCRCPgPtYfRL+ TpvXCACryaryyzj1A6+A47NutuZqn3awXGBn/A6CWceak/6RVzwoJfCskIFX6Dz02vTGltw14s6 vaDX7nQeisNp/oEOnsZM8CYsQVsQzsDu7nroynZgUBErqVGmhbzVCOS3dXwhrBeiWXJlRNAP36i 6O/i3ywWn8+Ujrjm86kwhPUM0m6uOlmh8FwYwV4TaJf/EoyGbYEc9m32kx9+pKlL7h/yl185OsZ seDcjBfde6Ni6e9P3rNm7q1NK9abIUa6bp1EqsV3fO+ApgJraxl2qsn/0toVlt4NnpanaDBjmJ/ j1uSQI0VOqvL6AAQJmo7xGGuTyUCOhSm9xG8v5JJfCMUuCQd
+X-Developer-Signature: v=1; a=openpgp-sha256; l=47074; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=AmQSNCZc3pUgbYHN5dv/7/QPZrp67GO5zJHpDpXN1pY=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq33/Mk4u6FCdotHVT8H7zeleNcebDgZy7fp6gL MSdzrdsXPKJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCat9/zAAKCRCPgPtYfRL+ TpcrCACan9/MDe1K+GmOea4WxLhjubbFDg9T0DJ+i86k+1h6wTx/UScuhNuQn4lqZywwug/iqc1 fG/9Hf0Wee/ZKGL1TX9PwcxCFpx9vR8f86/aU/u1/pai0D0LOy2cn5cRbTwAxSGm672Co31CIvw gHvbKplTVr9tUzRz9dQ4Wm0JmM9SdYjFF+NzNCK9UQiIIMkBo6AP3Vg+3npzi/lKogYdXxU6XQK eIItkoC1ALaK+yXeqm7R5htKyzNwEJsj6cJfOLDEtcbx7cBb3X6ojPFz20ggiGpMY3owbKkem7J Hk8t5Y0EcofP8CNkEwB+IdSiD/z6leaSE4sKw4rVKhnIHrHp
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Update the various acpi_device_id arrays to conform to the most used and
+Update the various of_device_id arrays to conform to the most used and
 generally recommended coding style. That is:
 
  - no comma after the list terminator;
@@ -125,198 +137,1273 @@ generally recommended coding style. That is:
  - a space after an opening { and before a closing }, a single space in
    the list terminator;
 
-Adapt the few offenders accordingly. Additionally sort the entries by
-.id.
+Adapt the few offenders accordingly.
 
 Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
 ---
- drivers/gpio/gpio-amdpt.c           | 2 +-
- drivers/gpio/gpio-dwapb.c           | 2 +-
- drivers/gpio/gpio-graniterapids.c   | 2 +-
- drivers/gpio/gpio-hisi.c            | 2 +-
- drivers/gpio/gpio-loongson-64bit.c  | 2 +-
- drivers/gpio/gpio-mlxbf.c           | 2 +-
- drivers/gpio/gpio-mlxbf2.c          | 2 +-
- drivers/gpio/gpio-mlxbf3.c          | 2 +-
- drivers/gpio/gpio-novalake-events.c | 2 +-
- drivers/gpio/gpio-tegra186.c        | 2 +-
- drivers/gpio/gpio-xgene-sb.c        | 2 +-
- drivers/gpio/gpio-xgene.c           | 2 +-
- drivers/gpio/gpio-xlp.c             | 2 +-
- 13 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/gpio/gpio-74x164.c         |  2 +-
+ drivers/gpio/gpio-adnp.c           |  4 ++--
+ drivers/gpio/gpio-aggregator.c     |  2 +-
+ drivers/gpio/gpio-altera-a10sr.c   |  2 +-
+ drivers/gpio/gpio-altera.c         |  4 ++--
+ drivers/gpio/gpio-aspeed-sgpio.c   | 10 +++++-----
+ drivers/gpio/gpio-aspeed.c         | 10 +++++-----
+ drivers/gpio/gpio-ath79.c          |  2 +-
+ drivers/gpio/gpio-blzp1600.c       |  4 ++--
+ drivers/gpio/gpio-brcmstb.c        |  2 +-
+ drivers/gpio/gpio-cadence.c        |  6 +++---
+ drivers/gpio/gpio-creg-snps.c      |  4 ++--
+ drivers/gpio/gpio-davinci.c        |  8 ++++----
+ drivers/gpio/gpio-dwapb.c          |  4 ++--
+ drivers/gpio/gpio-em.c             |  4 ++--
+ drivers/gpio/gpio-ftgpio010.c      |  2 +-
+ drivers/gpio/gpio-grgpio.c         |  2 +-
+ drivers/gpio/gpio-gw-pld.c         |  4 ++--
+ drivers/gpio/gpio-hisi.c           |  2 +-
+ drivers/gpio/gpio-hlwd.c           |  4 ++--
+ drivers/gpio/gpio-ixp4xx.c         |  2 +-
+ drivers/gpio/gpio-loongson-64bit.c |  2 +-
+ drivers/gpio/gpio-lp3943.c         |  2 +-
+ drivers/gpio/gpio-lpc32xx.c        |  4 ++--
+ drivers/gpio/gpio-macsmc.c         |  4 ++--
+ drivers/gpio/gpio-max7360.c        |  8 ++++----
+ drivers/gpio/gpio-max77759.c       |  2 +-
+ drivers/gpio/gpio-mm-lantiq.c      |  2 +-
+ drivers/gpio/gpio-mockup.c         |  4 ++--
+ drivers/gpio/gpio-moxtet.c         |  4 ++--
+ drivers/gpio/gpio-mpc5200.c        |  8 ++++----
+ drivers/gpio/gpio-mpc8xxx.c        | 22 +++++++++++-----------
+ drivers/gpio/gpio-mt7621.c         |  2 +-
+ drivers/gpio/gpio-mvebu.c          | 12 ++++++------
+ drivers/gpio/gpio-mxc.c            |  2 +-
+ drivers/gpio/gpio-mxs.c            |  4 ++--
+ drivers/gpio/gpio-nomadik.c        |  6 +++---
+ drivers/gpio/gpio-npcm-sgpio.c     |  6 +++---
+ drivers/gpio/gpio-octeon.c         |  2 +-
+ drivers/gpio/gpio-omap.c           |  2 +-
+ drivers/gpio/gpio-palmas.c         | 10 +++++-----
+ drivers/gpio/gpio-pca9570.c        |  2 +-
+ drivers/gpio/gpio-pisosr.c         |  2 +-
+ drivers/gpio/gpio-pmic-eic-sprd.c  |  2 +-
+ drivers/gpio/gpio-pxa.c            | 18 +++++++++---------
+ drivers/gpio/gpio-qixis-fpga.c     |  3 +--
+ drivers/gpio/gpio-rcar.c           |  2 +-
+ drivers/gpio/gpio-rda.c            |  2 +-
+ drivers/gpio/gpio-realtek-otto.c   |  2 +-
+ drivers/gpio/gpio-rockchip.c       |  4 ++--
+ drivers/gpio/gpio-sama5d2-piobu.c  |  2 +-
+ drivers/gpio/gpio-sifive.c         |  2 +-
+ drivers/gpio/gpio-sl28cpld.c       |  2 +-
+ drivers/gpio/gpio-spear-spics.c    |  2 +-
+ drivers/gpio/gpio-sprd.c           |  2 +-
+ drivers/gpio/gpio-stmpe.c          |  2 +-
+ drivers/gpio/gpio-stp-xway.c       |  2 +-
+ drivers/gpio/gpio-tegra.c          |  6 +++---
+ drivers/gpio/gpio-tegra186.c       | 30 +++++++++++++++---------------
+ drivers/gpio/gpio-tps65218.c       |  2 +-
+ drivers/gpio/gpio-ts4800.c         |  4 ++--
+ drivers/gpio/gpio-ts4900.c         |  2 +-
+ drivers/gpio/gpio-twl4030.c        |  4 ++--
+ drivers/gpio/gpio-vf610.c          |  4 ++--
+ drivers/gpio/gpio-visconti.c       |  2 +-
+ drivers/gpio/gpio-waveshare-dsi.c  |  2 +-
+ drivers/gpio/gpio-xgene-sb.c       |  2 +-
+ drivers/gpio/gpio-xgene.c          |  4 ++--
+ drivers/gpio/gpio-xgs-iproc.c      |  2 +-
+ drivers/gpio/gpio-xilinx.c         |  4 ++--
+ drivers/gpio/gpio-xra1403.c        |  2 +-
+ drivers/gpio/gpio-zevio.c          |  4 ++--
+ drivers/gpio/gpio-zynqmp-modepin.c |  2 +-
+ 73 files changed, 159 insertions(+), 160 deletions(-)
 
-diff --git a/drivers/gpio/gpio-amdpt.c b/drivers/gpio/gpio-amdpt.c
-index 32c4d0ee8101..74b40e2c3485 100644
---- a/drivers/gpio/gpio-amdpt.c
-+++ b/drivers/gpio/gpio-amdpt.c
-@@ -128,7 +128,7 @@ static const struct acpi_device_id pt_gpio_acpi_match[] = {
- 	{ .id = "AMDF030", .driver_data = PT_TOTAL_GPIO },
- 	{ .id = "AMDIF030", .driver_data = PT_TOTAL_GPIO },
- 	{ .id = "AMDIF031", .driver_data = PT_TOTAL_GPIO_EX },
+diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
+index 5ca61cf5206a..eeed612e7c80 100644
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -189,7 +189,7 @@ MODULE_DEVICE_TABLE(spi, gen_74x164_spi_ids);
+ static const struct of_device_id gen_74x164_dt_ids[] = {
+ 	{ .compatible = "fairchild,74hc595" },
+ 	{ .compatible = "nxp,74lvc594" },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, gen_74x164_dt_ids);
+ 
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index 0410e3adbf54..4b5825a49a08 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -506,8 +506,8 @@ static const struct i2c_device_id adnp_i2c_id[] = {
+ MODULE_DEVICE_TABLE(i2c, adnp_i2c_id);
+ 
+ static const struct of_device_id adnp_of_match[] = {
+-	{ .compatible = "ad,gpio-adnp", },
+-	{ },
++	{ .compatible = "ad,gpio-adnp" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, adnp_of_match);
+ 
+diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
+index b0b65416d74d..e79ba562a8ce 100644
+--- a/drivers/gpio/gpio-aggregator.c
++++ b/drivers/gpio/gpio-aggregator.c
+@@ -1651,7 +1651,7 @@ static const struct of_device_id gpio_aggregator_dt_ids[] = {
+ 	 * Add GPIO-operated devices controlled from userspace below,
+ 	 * or use "driver_override" in sysfs.
+ 	 */
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, gpio_aggregator_dt_ids);
+ 
+diff --git a/drivers/gpio/gpio-altera-a10sr.c b/drivers/gpio/gpio-altera-a10sr.c
+index a41e5575ee37..2b06315abe74 100644
+--- a/drivers/gpio/gpio-altera-a10sr.c
++++ b/drivers/gpio/gpio-altera-a10sr.c
+@@ -96,7 +96,7 @@ static int altr_a10sr_gpio_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id altr_a10sr_gpio_of_match[] = {
+ 	{ .compatible = "altr,a10sr-gpio" },
 -	{ },
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, pt_gpio_acpi_match);
+ MODULE_DEVICE_TABLE(of, altr_a10sr_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index a6ac9356229c..ec3dea89d1bb 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -260,8 +260,8 @@ static int altera_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id altera_gpio_of_match[] = {
+-	{ .compatible = "altr,pio-1.0", },
+-	{},
++	{ .compatible = "altr,pio-1.0" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, altera_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
+index 4225261f61c8..fbde74be8a80 100644
+--- a/drivers/gpio/gpio-aspeed-sgpio.c
++++ b/drivers/gpio/gpio-aspeed-sgpio.c
+@@ -594,11 +594,11 @@ static const struct aspeed_sgpio_pdata ast2700_sgpiom_pdata = {
+ };
+ 
+ static const struct of_device_id aspeed_sgpio_of_table[] = {
+-	{ .compatible = "aspeed,ast2400-sgpio", .data = &ast2400_sgpio_pdata, },
+-	{ .compatible = "aspeed,ast2500-sgpio", .data = &ast2400_sgpio_pdata, },
+-	{ .compatible = "aspeed,ast2600-sgpiom", .data = &ast2600_sgpiom_pdata, },
+-	{ .compatible = "aspeed,ast2700-sgpiom", .data = &ast2700_sgpiom_pdata, },
+-	{}
++	{ .compatible = "aspeed,ast2400-sgpio", .data = &ast2400_sgpio_pdata },
++	{ .compatible = "aspeed,ast2500-sgpio", .data = &ast2400_sgpio_pdata },
++	{ .compatible = "aspeed,ast2600-sgpiom", .data = &ast2600_sgpiom_pdata },
++	{ .compatible = "aspeed,ast2700-sgpiom", .data = &ast2700_sgpiom_pdata },
++	{ }
+ };
+ 
+ MODULE_DEVICE_TABLE(of, aspeed_sgpio_of_table);
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index dc53b2decb66..1a7fc65d6279 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -1292,11 +1292,11 @@ static const struct aspeed_gpio_config ast2700_config =
+ 	};
+ 
+ static const struct of_device_id aspeed_gpio_of_table[] = {
+-	{ .compatible = "aspeed,ast2400-gpio", .data = &ast2400_config, },
+-	{ .compatible = "aspeed,ast2500-gpio", .data = &ast2500_config, },
+-	{ .compatible = "aspeed,ast2600-gpio", .data = &ast2600_config, },
+-	{ .compatible = "aspeed,ast2700-gpio", .data = &ast2700_config, },
+-	{}
++	{ .compatible = "aspeed,ast2400-gpio", .data = &ast2400_config },
++	{ .compatible = "aspeed,ast2500-gpio", .data = &ast2500_config },
++	{ .compatible = "aspeed,ast2600-gpio", .data = &ast2600_config },
++	{ .compatible = "aspeed,ast2700-gpio", .data = &ast2700_config },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, aspeed_gpio_of_table);
+ 
+diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+index aa37579c9608..5270f9121749 100644
+--- a/drivers/gpio/gpio-ath79.c
++++ b/drivers/gpio/gpio-ath79.c
+@@ -210,7 +210,7 @@ static void ath79_gpio_irq_handler(struct irq_desc *desc)
+ static const struct of_device_id ath79_gpio_of_match[] = {
+ 	{ .compatible = "qca,ar7100-gpio" },
+ 	{ .compatible = "qca,ar9340-gpio" },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ath79_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-blzp1600.c b/drivers/gpio/gpio-blzp1600.c
+index 0f8c826ba876..b8d07a9b4a68 100644
+--- a/drivers/gpio/gpio-blzp1600.c
++++ b/drivers/gpio/gpio-blzp1600.c
+@@ -270,8 +270,8 @@ static int blzp1600_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id blzp1600_gpio_of_match[] = {
+-	{ .compatible = "blaize,blzp1600-gpio", },
+-	{ /* Sentinel */ },
++	{ .compatible = "blaize,blzp1600-gpio" },
++	{ /* Sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, blzp1600_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index 44ca798cf832..60dec669ca67 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -787,7 +787,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id brcmstb_gpio_of_match[] = {
+ 	{ .compatible = "brcm,brcmstb-gpio" },
+-	{},
++	{ }
+ };
+ 
+ MODULE_DEVICE_TABLE(of, brcmstb_gpio_of_match);
+diff --git a/drivers/gpio/gpio-cadence.c b/drivers/gpio/gpio-cadence.c
+index d7790fc35c22..a71747cef51c 100644
+--- a/drivers/gpio/gpio-cadence.c
++++ b/drivers/gpio/gpio-cadence.c
+@@ -170,13 +170,13 @@ static const struct irq_chip cdns_gpio_irqchip = {
+ static const struct of_device_id cdns_of_ids[] = {
+ 	{
+ 		.compatible = "axiado,ax3000-gpio",
+-		.data = &ax3000_gpio_quirks
++		.data = &ax3000_gpio_quirks,
+ 	},
+ 	{
+ 		.compatible = "cdns,gpio-r1p02",
+-		.data = &cdns_default_quirks
++		.data = &cdns_default_quirks,
+ 	},
+-	{ /* sentinel */ },
++	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, cdns_of_ids);
+ 
+diff --git a/drivers/gpio/gpio-creg-snps.c b/drivers/gpio/gpio-creg-snps.c
+index 2e159ea41791..6834191d9294 100644
+--- a/drivers/gpio/gpio-creg-snps.c
++++ b/drivers/gpio/gpio-creg-snps.c
+@@ -125,10 +125,10 @@ static const struct creg_layout axs10x_flsh_cs_ctl = {
+ static const struct of_device_id creg_gpio_ids[] = {
+ 	{
+ 		.compatible = "snps,creg-gpio-axs10x",
+-		.data = &axs10x_flsh_cs_ctl
++		.data = &axs10x_flsh_cs_ctl,
+ 	}, {
+ 		.compatible = "snps,creg-gpio-hsdk",
+-		.data = &hsdk_cs_ctl
++		.data = &hsdk_cs_ctl,
+ 	}, { /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, creg_gpio_ids);
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index fc2b9bef7efc..f7c3b644e0e3 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -668,10 +668,10 @@ static DEFINE_SIMPLE_DEV_PM_OPS(davinci_gpio_dev_pm_ops, davinci_gpio_suspend,
+ 			 davinci_gpio_resume);
+ 
+ static const struct of_device_id davinci_gpio_ids[] = {
+-	{ .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
+-	{ .compatible = "ti,am654-gpio", keystone_gpio_get_irq_chip},
+-	{ .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
+-	{ /* sentinel */ },
++	{ .compatible = "ti,keystone-gpio", .data = keystone_gpio_get_irq_chip },
++	{ .compatible = "ti,am654-gpio", .data = keystone_gpio_get_irq_chip },
++	{ .compatible = "ti,dm6441-gpio", .data = davinci_gpio_get_irq_chip },
++	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, davinci_gpio_ids);
  
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index e159c3f98f1c..3b24daabcf0f 100644
+index 3b24daabcf0f..8a5791a4a77e 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -720,10 +720,10 @@ static const struct of_device_id dwapb_of_match[] = {
- MODULE_DEVICE_TABLE(of, dwapb_of_match);
+@@ -713,8 +713,8 @@ static int dwapb_get_clks(struct dwapb_gpio *gpio)
+ }
  
- static const struct acpi_device_id dwapb_acpi_match[] = {
--	{ .id = "HISI0181", .driver_data = GPIO_REG_OFFSET_V1 },
- 	{ .id = "APMC0D07", .driver_data = GPIO_REG_OFFSET_V1 },
- 	{ .id = "APMC0D81", .driver_data = GPIO_REG_OFFSET_V2 },
- 	{ .id = "FUJI200A", .driver_data = GPIO_REG_OFFSET_V1 },
-+	{ .id = "HISI0181", .driver_data = GPIO_REG_OFFSET_V1 },
- 	{ .id = "LECA0001", .driver_data = GPIO_REG_OFFSET_V1 },
- 	{ }
+ static const struct of_device_id dwapb_of_match[] = {
+-	{ .compatible = "snps,dw-apb-gpio", .data = (void *)GPIO_REG_OFFSET_V1},
+-	{ .compatible = "apm,xgene-gpio-v2", .data = (void *)GPIO_REG_OFFSET_V2},
++	{ .compatible = "snps,dw-apb-gpio", .data = (void *)GPIO_REG_OFFSET_V1 },
++	{ .compatible = "apm,xgene-gpio-v2", .data = (void *)GPIO_REG_OFFSET_V2 },
+ 	{ /* Sentinel */ }
  };
-diff --git a/drivers/gpio/gpio-graniterapids.c b/drivers/gpio/gpio-graniterapids.c
-index 6a77a5864d09..72be289c65fa 100644
---- a/drivers/gpio/gpio-graniterapids.c
-+++ b/drivers/gpio/gpio-graniterapids.c
-@@ -395,7 +395,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(gnr_gpio_pm_ops, gnr_gpio_suspend, gnr_gpio_resu
+ MODULE_DEVICE_TABLE(of, dwapb_of_match);
+diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
+index a214b0672726..b660a0c7cfc8 100644
+--- a/drivers/gpio/gpio-em.c
++++ b/drivers/gpio/gpio-em.c
+@@ -357,8 +357,8 @@ static int em_gio_probe(struct platform_device *pdev)
+ }
  
- static const struct acpi_device_id gnr_gpio_acpi_match[] = {
- 	{ .id = "INTC1109" },
--	{}
+ static const struct of_device_id em_gio_dt_ids[] = {
+-	{ .compatible = "renesas,em-gio", },
+-	{},
++	{ .compatible = "renesas,em-gio" },
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, gnr_gpio_acpi_match);
+ MODULE_DEVICE_TABLE(of, em_gio_dt_ids);
+ 
+diff --git a/drivers/gpio/gpio-ftgpio010.c b/drivers/gpio/gpio-ftgpio010.c
+index e29df8d5e571..da30e3d927b9 100644
+--- a/drivers/gpio/gpio-ftgpio010.c
++++ b/drivers/gpio/gpio-ftgpio010.c
+@@ -321,7 +321,7 @@ static const struct of_device_id ftgpio_gpio_of_match[] = {
+ 	{
+ 		.compatible = "faraday,ftgpio010",
+ 	},
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ftgpio_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
+index e4fa84e22726..fbbe201cce4c 100644
+--- a/drivers/gpio/gpio-grgpio.c
++++ b/drivers/gpio/gpio-grgpio.c
+@@ -444,7 +444,7 @@ static int grgpio_probe(struct platform_device *ofdev)
+ static const struct of_device_id grgpio_match[] = {
+ 	{.name = "GAISLER_GPIO"},
+ 	{.name = "01_01a"},
+-	{},
++	{ }
+ };
+ 
+ MODULE_DEVICE_TABLE(of, grgpio_match);
+diff --git a/drivers/gpio/gpio-gw-pld.c b/drivers/gpio/gpio-gw-pld.c
+index bf1f91c3c4a8..96a7e11ff667 100644
+--- a/drivers/gpio/gpio-gw-pld.c
++++ b/drivers/gpio/gpio-gw-pld.c
+@@ -115,8 +115,8 @@ static const struct i2c_device_id gw_pld_id[] = {
+ MODULE_DEVICE_TABLE(i2c, gw_pld_id);
+ 
+ static const struct of_device_id gw_pld_dt_ids[] = {
+-	{ .compatible = "gateworks,pld-gpio", },
+-	{ },
++	{ .compatible = "gateworks,pld-gpio" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, gw_pld_dt_ids);
  
 diff --git a/drivers/gpio/gpio-hisi.c b/drivers/gpio/gpio-hisi.c
-index 1a89695ce515..f03df71e3296 100644
+index f03df71e3296..b75b52607711 100644
 --- a/drivers/gpio/gpio-hisi.c
 +++ b/drivers/gpio/gpio-hisi.c
-@@ -223,7 +223,7 @@ static void hisi_gpio_init_irq(struct hisi_gpio *hisi_gpio)
- 
- static const struct acpi_device_id hisi_gpio_acpi_match[] = {
- 	{ .id = "HISI0184" },
--	{}
-+	{ }
- };
+@@ -228,7 +228,7 @@ static const struct acpi_device_id hisi_gpio_acpi_match[] = {
  MODULE_DEVICE_TABLE(acpi, hisi_gpio_acpi_match);
  
+ static const struct of_device_id hisi_gpio_dts_match[] = {
+-	{ .compatible = "hisilicon,ascend910-gpio", },
++	{ .compatible = "hisilicon,ascend910-gpio" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, hisi_gpio_dts_match);
+diff --git a/drivers/gpio/gpio-hlwd.c b/drivers/gpio/gpio-hlwd.c
+index 043ce5ef3b07..663a8d05719a 100644
+--- a/drivers/gpio/gpio-hlwd.c
++++ b/drivers/gpio/gpio-hlwd.c
+@@ -303,8 +303,8 @@ static int hlwd_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id hlwd_gpio_match[] = {
+-	{ .compatible = "nintendo,hollywood-gpio", },
+-	{},
++	{ .compatible = "nintendo,hollywood-gpio" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, hlwd_gpio_match);
+ 
+diff --git a/drivers/gpio/gpio-ixp4xx.c b/drivers/gpio/gpio-ixp4xx.c
+index 88d48cfc9017..e791ba19928a 100644
+--- a/drivers/gpio/gpio-ixp4xx.c
++++ b/drivers/gpio/gpio-ixp4xx.c
+@@ -339,7 +339,7 @@ static const struct of_device_id ixp4xx_gpio_of_match[] = {
+ 	{
+ 		.compatible = "intel,ixp4xx-gpio",
+ 	},
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ixp4xx_gpio_of_match);
+ 
 diff --git a/drivers/gpio/gpio-loongson-64bit.c b/drivers/gpio/gpio-loongson-64bit.c
-index 0fdf15faa344..d76c3cf177d1 100644
+index d76c3cf177d1..edcff2fa8adc 100644
 --- a/drivers/gpio/gpio-loongson-64bit.c
 +++ b/drivers/gpio/gpio-loongson-64bit.c
-@@ -556,7 +556,7 @@ static const struct acpi_device_id loongson_gpio_acpi_match[] = {
- 		.id = "LOON000F",
- 		.driver_data = (kernel_ulong_t)&loongson_gpio_ls3a6000_data,
+@@ -519,7 +519,7 @@ static const struct of_device_id loongson_gpio_of_match[] = {
+ 		.compatible = "loongson,ls3a6000-gpio",
+ 		.data = &loongson_gpio_ls3a6000_data,
  	},
 -	{}
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, loongson_gpio_acpi_match);
+ MODULE_DEVICE_TABLE(of, loongson_gpio_of_match);
  
-diff --git a/drivers/gpio/gpio-mlxbf.c b/drivers/gpio/gpio-mlxbf.c
-index b6a460363d01..f07dca415b70 100644
---- a/drivers/gpio/gpio-mlxbf.c
-+++ b/drivers/gpio/gpio-mlxbf.c
-@@ -134,7 +134,7 @@ static int mlxbf_gpio_resume(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-lp3943.c b/drivers/gpio/gpio-lp3943.c
+index e8e00daff7df..ab84f83aec86 100644
+--- a/drivers/gpio/gpio-lp3943.c
++++ b/drivers/gpio/gpio-lp3943.c
+@@ -209,7 +209,7 @@ static int lp3943_gpio_probe(struct platform_device *pdev)
+ }
  
- static const struct acpi_device_id mlxbf_gpio_acpi_match[] = {
- 	{ .id = "MLNXBF02" },
--	{}
+ static const struct of_device_id lp3943_gpio_of_match[] = {
+-	{ .compatible = "ti,lp3943-gpio", },
++	{ .compatible = "ti,lp3943-gpio" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, lp3943_gpio_of_match);
+diff --git a/drivers/gpio/gpio-lpc32xx.c b/drivers/gpio/gpio-lpc32xx.c
+index 7fb46262e18c..dfa18058abf4 100644
+--- a/drivers/gpio/gpio-lpc32xx.c
++++ b/drivers/gpio/gpio-lpc32xx.c
+@@ -535,8 +535,8 @@ static int lpc32xx_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id lpc32xx_gpio_of_match[] = {
+-	{ .compatible = "nxp,lpc3220-gpio", },
+-	{ },
++	{ .compatible = "nxp,lpc3220-gpio" },
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, mlxbf_gpio_acpi_match);
+ MODULE_DEVICE_TABLE(of, lpc32xx_gpio_of_match);
  
-diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
-index 62d9ffb7b41e..3a0010fa6760 100644
---- a/drivers/gpio/gpio-mlxbf2.c
-+++ b/drivers/gpio/gpio-mlxbf2.c
-@@ -452,7 +452,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(mlxbf2_pm_ops, mlxbf2_gpio_suspend, mlxbf2_gpio_
+diff --git a/drivers/gpio/gpio-macsmc.c b/drivers/gpio/gpio-macsmc.c
+index b0952d066a9d..4afc73da2bee 100644
+--- a/drivers/gpio/gpio-macsmc.c
++++ b/drivers/gpio/gpio-macsmc.c
+@@ -274,8 +274,8 @@ static int macsmc_gpio_probe(struct platform_device *pdev)
+ }
  
- static const struct acpi_device_id mlxbf2_gpio_acpi_match[] = {
- 	{ .id = "MLNXBF22" },
+ static const struct of_device_id macsmc_gpio_of_table[] = {
+-	{ .compatible = "apple,smc-gpio", },
+-	{}
++	{ .compatible = "apple,smc-gpio" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, macsmc_gpio_of_table);
+ 
+diff --git a/drivers/gpio/gpio-max7360.c b/drivers/gpio/gpio-max7360.c
+index 6755d58c4534..d3bc5f29e099 100644
+--- a/drivers/gpio/gpio-max7360.c
++++ b/drivers/gpio/gpio-max7360.c
+@@ -234,12 +234,12 @@ static int max7360_gpio_probe(struct platform_device *pdev)
+ static const struct of_device_id max7360_gpio_of_match[] = {
+ 	{
+ 		.compatible = "maxim,max7360-gpo",
+-		.data = &max7360_gpio_col_plat
++		.data = &max7360_gpio_col_plat,
+ 	}, {
+ 		.compatible = "maxim,max7360-gpio",
+-		.data = &max7360_gpio_port_plat
+-	}, {
+-	}
++		.data = &max7360_gpio_port_plat,
++	},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, max7360_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-max77759.c b/drivers/gpio/gpio-max77759.c
+index da3c77dd574e..b2259d875751 100644
+--- a/drivers/gpio/gpio-max77759.c
++++ b/drivers/gpio/gpio-max77759.c
+@@ -495,7 +495,7 @@ static int max77759_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id max77759_gpio_of_id[] = {
+-	{ .compatible = "maxim,max77759-gpio", },
++	{ .compatible = "maxim,max77759-gpio" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, max77759_gpio_of_id);
+diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
+index 1bd98c50a459..f48dc24151b1 100644
+--- a/drivers/gpio/gpio-mm-lantiq.c
++++ b/drivers/gpio/gpio-mm-lantiq.c
+@@ -134,7 +134,7 @@ static int ltq_mm_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id ltq_mm_match[] = {
+ 	{ .compatible = "lantiq,gpio-mm" },
 -	{},
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, mlxbf2_gpio_acpi_match);
+ MODULE_DEVICE_TABLE(of, ltq_mm_match);
  
-diff --git a/drivers/gpio/gpio-mlxbf3.c b/drivers/gpio/gpio-mlxbf3.c
-index 96c40f745320..33efa819061b 100644
---- a/drivers/gpio/gpio-mlxbf3.c
-+++ b/drivers/gpio/gpio-mlxbf3.c
-@@ -274,7 +274,7 @@ static void mlxbf3_gpio_shutdown(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 1c6a2f3414f1..c26a97f8deac 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -487,8 +487,8 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ }
  
- static const struct acpi_device_id mlxbf3_gpio_acpi_match[] = {
- 	{ .id = "MLNXBF33" },
--	{}
+ static const struct of_device_id gpio_mockup_of_match[] = {
+-	{ .compatible = "gpio-mockup", },
+-	{},
++	{ .compatible = "gpio-mockup" },
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, mlxbf3_gpio_acpi_match);
+ MODULE_DEVICE_TABLE(of, gpio_mockup_of_match);
  
-diff --git a/drivers/gpio/gpio-novalake-events.c b/drivers/gpio/gpio-novalake-events.c
-index d5a3bd48bed3..113a4069120a 100644
---- a/drivers/gpio/gpio-novalake-events.c
-+++ b/drivers/gpio/gpio-novalake-events.c
-@@ -305,7 +305,7 @@ static int nvl_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-moxtet.c b/drivers/gpio/gpio-moxtet.c
+index 4eb9f1a2779b..d87e9f4bd037 100644
+--- a/drivers/gpio/gpio-moxtet.c
++++ b/drivers/gpio/gpio-moxtet.c
+@@ -152,8 +152,8 @@ static int moxtet_gpio_probe(struct device *dev)
+ }
  
- static const struct acpi_device_id nvl_gpio_acpi_match[] = {
- 	{ .id = "INTC1114" },
--	{}
+ static const struct of_device_id moxtet_gpio_dt_ids[] = {
+-	{ .compatible = "cznic,moxtet-gpio", },
+-	{},
++	{ .compatible = "cznic,moxtet-gpio" },
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, nvl_gpio_acpi_match);
+ MODULE_DEVICE_TABLE(of, moxtet_gpio_dt_ids);
  
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 34e084c95d7a..50de4bf20a5a 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -1617,7 +1617,7 @@ static const struct acpi_device_id  tegra186_gpio_acpi_match[] = {
- 	{ .id = "NVDA0608", .driver_data = (kernel_ulong_t)&tegra241_aon_soc },
- 	{ .id = "NVDA0708", .driver_data = (kernel_ulong_t)&tegra410_compute_soc },
- 	{ .id = "NVDA0808", .driver_data = (kernel_ulong_t)&tegra410_system_soc },
+diff --git a/drivers/gpio/gpio-mpc5200.c b/drivers/gpio/gpio-mpc5200.c
+index 2c828bc922ae..aa5d210882b0 100644
+--- a/drivers/gpio/gpio-mpc5200.c
++++ b/drivers/gpio/gpio-mpc5200.c
+@@ -177,8 +177,8 @@ static int mpc52xx_wkup_gpiochip_probe(struct platform_device *ofdev)
+ }
+ 
+ static const struct of_device_id mpc52xx_wkup_gpiochip_match[] = {
+-	{ .compatible = "fsl,mpc5200-gpio-wkup", },
 -	{}
++	{ .compatible = "fsl,mpc5200-gpio-wkup" },
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, tegra186_gpio_acpi_match);
+ MODULE_DEVICE_TABLE(of, mpc52xx_wkup_gpiochip_match);
  
-diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
-index 6f2907468507..30b6e9f3f8ba 100644
---- a/drivers/gpio/gpio-xgene-sb.c
-+++ b/drivers/gpio/gpio-xgene-sb.c
-@@ -340,7 +340,7 @@ MODULE_DEVICE_TABLE(of, xgene_gpio_sb_of_match);
+@@ -340,8 +340,8 @@ static int mpc52xx_simple_gpiochip_probe(struct platform_device *ofdev)
+ }
  
- static const struct acpi_device_id xgene_gpio_sb_acpi_match[] = {
- 	{ .id = "APMC0D15" },
+ static const struct of_device_id mpc52xx_simple_gpiochip_match[] = {
+-	{ .compatible = "fsl,mpc5200-gpio", },
 -	{}
++	{ .compatible = "fsl,mpc5200-gpio" },
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, xgene_gpio_sb_acpi_match);
  
-diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
-index 84c1cc165024..f4adf2962557 100644
---- a/drivers/gpio/gpio-xgene.c
-+++ b/drivers/gpio/gpio-xgene.c
-@@ -196,7 +196,7 @@ MODULE_DEVICE_TABLE(of, xgene_gpio_of_match);
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id xgene_gpio_acpi_match[] = {
- 	{ .id = "APMC0D14" },
+ static struct platform_driver mpc52xx_simple_gpiochip_driver = {
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index e79312a7d5a4..fb280d87c578 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -306,17 +306,17 @@ static const struct mpc8xxx_gpio_devtype mpc8xxx_gpio_devtype_default = {
+ };
+ 
+ static const struct of_device_id mpc8xxx_gpio_ids[] = {
+-	{ .compatible = "fsl,mpc8314-gpio", },
+-	{ .compatible = "fsl,mpc8349-gpio", },
+-	{ .compatible = "fsl,mpc8572-gpio", .data = &mpc8572_gpio_devtype, },
+-	{ .compatible = "fsl,mpc8610-gpio", },
+-	{ .compatible = "fsl,mpc5121-gpio", .data = &mpc512x_gpio_devtype, },
+-	{ .compatible = "fsl,mpc5125-gpio", .data = &mpc5125_gpio_devtype, },
+-	{ .compatible = "fsl,pq3-gpio",     },
+-	{ .compatible = "fsl,ls1028a-gpio", },
+-	{ .compatible = "fsl,ls1088a-gpio", },
+-	{ .compatible = "fsl,qoriq-gpio",   },
+-	{}
++	{ .compatible = "fsl,mpc8314-gpio" },
++	{ .compatible = "fsl,mpc8349-gpio" },
++	{ .compatible = "fsl,mpc8572-gpio", .data = &mpc8572_gpio_devtype },
++	{ .compatible = "fsl,mpc8610-gpio" },
++	{ .compatible = "fsl,mpc5121-gpio", .data = &mpc512x_gpio_devtype },
++	{ .compatible = "fsl,mpc5125-gpio", .data = &mpc5125_gpio_devtype },
++	{ .compatible = "fsl,pq3-gpio" },
++	{ .compatible = "fsl,ls1028a-gpio" },
++	{ .compatible = "fsl,ls1088a-gpio" },
++	{ .compatible = "fsl,qoriq-gpio" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, mpc8xxx_gpio_ids);
+ 
+diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+index a86f6b1060fc..f0c85a5a38b4 100644
+--- a/drivers/gpio/gpio-mt7621.c
++++ b/drivers/gpio/gpio-mt7621.c
+@@ -487,7 +487,7 @@ mt7621_gpio_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id mt7621_gpio_match[] = {
+ 	{ .compatible = "mediatek,mt7621-gpio" },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, mt7621_gpio_match);
+ 
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index d433b8a9e230..2e015667ef43 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -971,27 +971,27 @@ static void mvebu_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ static const struct of_device_id mvebu_gpio_of_match[] = {
+ 	{
+ 		.compatible = "marvell,orion-gpio",
+-		.data	    = (void *) MVEBU_GPIO_SOC_VARIANT_ORION,
++		.data	    = (void *)MVEBU_GPIO_SOC_VARIANT_ORION,
+ 	},
+ 	{
+ 		.compatible = "marvell,mv78200-gpio",
+-		.data	    = (void *) MVEBU_GPIO_SOC_VARIANT_MV78200,
++		.data	    = (void *)MVEBU_GPIO_SOC_VARIANT_MV78200,
+ 	},
+ 	{
+ 		.compatible = "marvell,armadaxp-gpio",
+-		.data	    = (void *) MVEBU_GPIO_SOC_VARIANT_ARMADAXP,
++		.data	    = (void *)MVEBU_GPIO_SOC_VARIANT_ARMADAXP,
+ 	},
+ 	{
+ 		.compatible = "marvell,armada-370-gpio",
+-		.data	    = (void *) MVEBU_GPIO_SOC_VARIANT_ORION,
++		.data	    = (void *)MVEBU_GPIO_SOC_VARIANT_ORION,
+ 	},
+ 	{
+ 		.compatible = "marvell,armada-8k-gpio",
+-		.data       = (void *) MVEBU_GPIO_SOC_VARIANT_A8K,
++		.data	    = (void *)MVEBU_GPIO_SOC_VARIANT_A8K,
+ 	},
+ 	{
+ 		/* sentinel */
+-	},
++	}
+ };
+ MODULE_DEVICE_TABLE(of, mvebu_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 32ded7b548fb..2e61fd79edbe 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -139,7 +139,7 @@ static struct mxc_gpio_hwdata imx35_gpio_hwdata = {
+ #define GPIO_INT_BOTH_EDGES	0x4
+ 
+ static const struct of_device_id mxc_gpio_dt_ids[] = {
+-	{ .compatible = "fsl,imx1-gpio", .data =  &imx1_imx21_gpio_hwdata },
++	{ .compatible = "fsl,imx1-gpio", .data = &imx1_imx21_gpio_hwdata },
+ 	{ .compatible = "fsl,imx21-gpio", .data = &imx1_imx21_gpio_hwdata },
+ 	{ .compatible = "fsl,imx31-gpio", .data = &imx31_gpio_hwdata },
+ 	{ .compatible = "fsl,imx35-gpio", .data = &imx35_gpio_hwdata },
+diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
+index 900315aba85a..c6172010c5c6 100644
+--- a/drivers/gpio/gpio-mxs.c
++++ b/drivers/gpio/gpio-mxs.c
+@@ -250,8 +250,8 @@ static int mxs_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
+ }
+ 
+ static const struct of_device_id mxs_gpio_dt_ids[] = {
+-	{ .compatible = "fsl,imx23-gpio", .data = (void *) IMX23_GPIO, },
+-	{ .compatible = "fsl,imx28-gpio", .data = (void *) IMX28_GPIO, },
++	{ .compatible = "fsl,imx23-gpio", .data = (void *)IMX23_GPIO },
++	{ .compatible = "fsl,imx28-gpio", .data = (void *)IMX28_GPIO },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, mxs_gpio_dt_ids);
+diff --git a/drivers/gpio/gpio-nomadik.c b/drivers/gpio/gpio-nomadik.c
+index 90293329b40b..32390bc00649 100644
+--- a/drivers/gpio/gpio-nomadik.c
++++ b/drivers/gpio/gpio-nomadik.c
+@@ -715,9 +715,9 @@ static int nmk_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id nmk_gpio_match[] = {
+-	{ .compatible = "st,nomadik-gpio", },
+-	{ .compatible = "mobileye,eyeq5-gpio", },
+-	{}
++	{ .compatible = "st,nomadik-gpio" },
++	{ .compatible = "mobileye,eyeq5-gpio" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, nmk_gpio_match);
+ 
+diff --git a/drivers/gpio/gpio-npcm-sgpio.c b/drivers/gpio/gpio-npcm-sgpio.c
+index 83c77a2c0623..99f57bcf2b9c 100644
+--- a/drivers/gpio/gpio-npcm-sgpio.c
++++ b/drivers/gpio/gpio-npcm-sgpio.c
+@@ -596,9 +596,9 @@ static const struct npcm_clk_cfg npcm845_sgpio_pdata = {
+ };
+ 
+ static const struct of_device_id npcm_sgpio_of_table[] = {
+-	{ .compatible = "nuvoton,npcm750-sgpio", .data = &npcm750_sgpio_pdata, },
+-	{ .compatible = "nuvoton,npcm845-sgpio", .data = &npcm845_sgpio_pdata, },
+-	{}
++	{ .compatible = "nuvoton,npcm750-sgpio", .data = &npcm750_sgpio_pdata },
++	{ .compatible = "nuvoton,npcm845-sgpio", .data = &npcm845_sgpio_pdata },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, npcm_sgpio_of_table);
+ 
+diff --git a/drivers/gpio/gpio-octeon.c b/drivers/gpio/gpio-octeon.c
+index 777e20c608dc..2854443226b7 100644
+--- a/drivers/gpio/gpio-octeon.c
++++ b/drivers/gpio/gpio-octeon.c
+@@ -121,7 +121,7 @@ static const struct of_device_id octeon_gpio_match[] = {
+ 	{
+ 		.compatible = "cavium,octeon-3860-gpio",
+ 	},
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, octeon_gpio_match);
+ 
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index a9b9a3d9631e..fa7a18d37e91 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1383,7 +1383,7 @@ static const struct of_device_id omap_gpio_match[] = {
+ 		.compatible = "ti,omap2-gpio",
+ 		.data = &omap2_pdata,
+ 	},
 -	{ },
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, xgene_gpio_acpi_match);
- #endif
-diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
-index 50625f98f8e2..d659112d7f1c 100644
---- a/drivers/gpio/gpio-xlp.c
-+++ b/drivers/gpio/gpio-xlp.c
-@@ -306,7 +306,7 @@ static int xlp_gpio_probe(struct platform_device *pdev)
- static const struct acpi_device_id xlp_gpio_acpi_match[] = {
- 	{ .id = "BRCM9006" },
- 	{ .id = "CAV9006" },
+ MODULE_DEVICE_TABLE(of, omap_gpio_match);
+ 
+diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
+index e64ee0487718..ebf2a29d8210 100644
+--- a/drivers/gpio/gpio-palmas.c
++++ b/drivers/gpio/gpio-palmas.c
+@@ -151,11 +151,11 @@ static const struct palmas_device_data tps80036_dev_data = {
+ };
+ 
+ static const struct of_device_id of_palmas_gpio_match[] = {
+-	{ .compatible = "ti,palmas-gpio", .data = &palmas_dev_data,},
+-	{ .compatible = "ti,tps65913-gpio", .data = &palmas_dev_data,},
+-	{ .compatible = "ti,tps65914-gpio", .data = &palmas_dev_data,},
+-	{ .compatible = "ti,tps80036-gpio", .data = &tps80036_dev_data,},
+-	{ },
++	{ .compatible = "ti,palmas-gpio", .data = &palmas_dev_data },
++	{ .compatible = "ti,tps65913-gpio", .data = &palmas_dev_data },
++	{ .compatible = "ti,tps65914-gpio", .data = &palmas_dev_data },
++	{ .compatible = "ti,tps80036-gpio", .data = &tps80036_dev_data },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, of_palmas_gpio_match);
+ 
+diff --git a/drivers/gpio/gpio-pca9570.c b/drivers/gpio/gpio-pca9570.c
+index db027c10494f..8f4f97d723fd 100644
+--- a/drivers/gpio/gpio-pca9570.c
++++ b/drivers/gpio/gpio-pca9570.c
+@@ -171,7 +171,7 @@ static const struct i2c_device_id pca9570_id_table[] = {
+ MODULE_DEVICE_TABLE(i2c, pca9570_id_table);
+ 
+ static const struct of_device_id pca9570_of_match_table[] = {
+-	{ .compatible = "dlg,slg7xl45106", .data = &slg7xl45106_gpio},
++	{ .compatible = "dlg,slg7xl45106", .data = &slg7xl45106_gpio },
+ 	{ .compatible = "nxp,pca9570", .data = &pca9570_gpio },
+ 	{ .compatible = "nxp,pca9571", .data = &pca9571_gpio },
+ 	{ /* sentinel */ }
+diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
+index 75a8f3efaf94..bb533070f46b 100644
+--- a/drivers/gpio/gpio-pisosr.c
++++ b/drivers/gpio/gpio-pisosr.c
+@@ -156,7 +156,7 @@ static const struct spi_device_id pisosr_gpio_id_table[] = {
+ MODULE_DEVICE_TABLE(spi, pisosr_gpio_id_table);
+ 
+ static const struct of_device_id pisosr_gpio_of_match_table[] = {
+-	{ .compatible = "pisosr-gpio", },
++	{ .compatible = "pisosr-gpio" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, pisosr_gpio_of_match_table);
+diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
+index cb015fb5c946..8012ca4299f6 100644
+--- a/drivers/gpio/gpio-pmic-eic-sprd.c
++++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+@@ -362,7 +362,7 @@ static int sprd_pmic_eic_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id sprd_pmic_eic_of_match[] = {
+-	{ .compatible = "sprd,sc2731-eic", },
++	{ .compatible = "sprd,sc2731-eic" },
+ 	{ /* end of list */ }
+ };
+ MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index d241fd4c3d31..ac117abf0b52 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -573,15 +573,15 @@ static const struct irq_domain_ops pxa_irq_domain_ops = {
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id pxa_gpio_dt_ids[] = {
+-	{ .compatible = "intel,pxa25x-gpio",	.data = &pxa25x_id, },
+-	{ .compatible = "intel,pxa26x-gpio",	.data = &pxa26x_id, },
+-	{ .compatible = "intel,pxa27x-gpio",	.data = &pxa27x_id, },
+-	{ .compatible = "intel,pxa3xx-gpio",	.data = &pxa3xx_id, },
+-	{ .compatible = "marvell,pxa93x-gpio",	.data = &pxa93x_id, },
+-	{ .compatible = "marvell,mmp-gpio",	.data = &mmp_id, },
+-	{ .compatible = "marvell,mmp2-gpio",	.data = &mmp2_id, },
+-	{ .compatible = "marvell,pxa1928-gpio",	.data = &pxa1928_id, },
+-	{}
++	{ .compatible = "intel,pxa25x-gpio",	.data = &pxa25x_id },
++	{ .compatible = "intel,pxa26x-gpio",	.data = &pxa26x_id },
++	{ .compatible = "intel,pxa27x-gpio",	.data = &pxa27x_id },
++	{ .compatible = "intel,pxa3xx-gpio",	.data = &pxa3xx_id },
++	{ .compatible = "marvell,pxa93x-gpio",	.data = &pxa93x_id },
++	{ .compatible = "marvell,mmp-gpio",	.data = &mmp_id },
++	{ .compatible = "marvell,mmp2-gpio",	.data = &mmp2_id },
++	{ .compatible = "marvell,pxa1928-gpio",	.data = &pxa1928_id },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, pxa_gpio_dt_ids);
+ 
+diff --git a/drivers/gpio/gpio-qixis-fpga.c b/drivers/gpio/gpio-qixis-fpga.c
+index b590572ac2bd..00bef538f94f 100644
+--- a/drivers/gpio/gpio-qixis-fpga.c
++++ b/drivers/gpio/gpio-qixis-fpga.c
+@@ -91,8 +91,7 @@ static const struct of_device_id qixis_cpld_gpio_of_match[] = {
+ 		.compatible = "fsl,ls1046aqds-fpga-gpio-stat-pres2",
+ 		.data = &ls1046aqds_stat_pres2_cfg,
+ 	},
+-
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, qixis_cpld_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 54dc47d45de7..88ce42399b2b 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -493,7 +493,7 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 		.data = &gpio_rcar_info_gen1,
+ 	}, {
+ 		/* Terminator */
+-	},
++	}
+ };
+ 
+ MODULE_DEVICE_TABLE(of, gpio_rcar_of_table);
+diff --git a/drivers/gpio/gpio-rda.c b/drivers/gpio/gpio-rda.c
+index f6c05fdbe63f..b2ab9572434d 100644
+--- a/drivers/gpio/gpio-rda.c
++++ b/drivers/gpio/gpio-rda.c
+@@ -280,7 +280,7 @@ static int rda_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id rda_gpio_of_match[] = {
+-	{ .compatible = "rda,8810pl-gpio", },
++	{ .compatible = "rda,8810pl-gpio" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rda_gpio_of_match);
+diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek-otto.c
+index 5d98ad597d9e..46ded0e22882 100644
+--- a/drivers/gpio/gpio-realtek-otto.c
++++ b/drivers/gpio/gpio-realtek-otto.c
+@@ -356,7 +356,7 @@ static const struct of_device_id realtek_gpio_of_match[] = {
+ 		.compatible = "realtek,rtl9607-gpio",
+ 		.data = (void *)GPIO_PORTS_REVERSED,
+ 	},
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, realtek_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 77b239a9a601..0f46ff095a24 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -806,9 +806,9 @@ static void rockchip_gpio_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id rockchip_gpio_match[] = {
+-	{ .compatible = "rockchip,gpio-bank", },
++	{ .compatible = "rockchip,gpio-bank" },
+ 	{ .compatible = "rockchip,rk3188-gpio-bank0" },
+-	{ },
++	{ }
+ };
+ 
+ static struct platform_driver rockchip_gpio_driver = {
+diff --git a/drivers/gpio/gpio-sama5d2-piobu.c b/drivers/gpio/gpio-sama5d2-piobu.c
+index 5005688f6e67..ab8655e9a518 100644
+--- a/drivers/gpio/gpio-sama5d2-piobu.c
++++ b/drivers/gpio/gpio-sama5d2-piobu.c
+@@ -228,7 +228,7 @@ static int sama5d2_piobu_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id sama5d2_piobu_ids[] = {
+ 	{ .compatible = "atmel,sama5d2-secumod" },
 -	{},
 +	{ }
  };
- MODULE_DEVICE_TABLE(acpi, xlp_gpio_acpi_match);
- #endif
+ MODULE_DEVICE_TABLE(of, sama5d2_piobu_ids);
+ 
+diff --git a/drivers/gpio/gpio-sifive.c b/drivers/gpio/gpio-sifive.c
+index e9a992cd4b9c..5b719b9f7650 100644
+--- a/drivers/gpio/gpio-sifive.c
++++ b/drivers/gpio/gpio-sifive.c
+@@ -258,7 +258,7 @@ static int sifive_gpio_probe(struct platform_device *pdev)
+ static const struct of_device_id sifive_gpio_match[] = {
+ 	{ .compatible = "sifive,gpio0" },
+ 	{ .compatible = "sifive,fu540-c000-gpio" },
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sifive_gpio_match);
+ 
+diff --git a/drivers/gpio/gpio-sl28cpld.c b/drivers/gpio/gpio-sl28cpld.c
+index ca7a9b9bcf48..ac9cf23a865f 100644
+--- a/drivers/gpio/gpio-sl28cpld.c
++++ b/drivers/gpio/gpio-sl28cpld.c
+@@ -141,7 +141,7 @@ static const struct of_device_id sl28cpld_gpio_of_match[] = {
+ 	{ .compatible = "kontron,sl28cpld-gpio", .data = (void *)SL28CPLD_GPIO },
+ 	{ .compatible = "kontron,sl28cpld-gpi", .data = (void *)SL28CPLD_GPI },
+ 	{ .compatible = "kontron,sl28cpld-gpo", .data = (void *)SL28CPLD_GPO },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sl28cpld_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-spear-spics.c b/drivers/gpio/gpio-spear-spics.c
+index 3099deb2b290..6df67b6bdf34 100644
+--- a/drivers/gpio/gpio-spear-spics.c
++++ b/drivers/gpio/gpio-spear-spics.c
+@@ -155,7 +155,7 @@ static int spics_gpio_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id spics_gpio_of_match[] = {
+ 	{ .compatible = "st,spear-spics-gpio" },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, spics_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-sprd.c b/drivers/gpio/gpio-sprd.c
+index 042a83f60eaa..7ddbe0eb500d 100644
+--- a/drivers/gpio/gpio-sprd.c
++++ b/drivers/gpio/gpio-sprd.c
+@@ -261,7 +261,7 @@ static int sprd_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id sprd_gpio_of_match[] = {
+-	{ .compatible = "sprd,sc9860-gpio", },
++	{ .compatible = "sprd,sc9860-gpio" },
+ 	{ /* end of list */ }
+ };
+ MODULE_DEVICE_TABLE(of, sprd_gpio_of_match);
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index ccdf13a741b7..31317ddf1982 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -533,7 +533,7 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id stmpe_gpio_of_matches[] = {
+-	{ .compatible = "st,stmpe-gpio", },
++	{ .compatible = "st,stmpe-gpio" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, stmpe_gpio_of_matches);
+diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
+index 78d6c78d4aab..37c480c1f031 100644
+--- a/drivers/gpio/gpio-stp-xway.c
++++ b/drivers/gpio/gpio-stp-xway.c
+@@ -315,7 +315,7 @@ static int xway_stp_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id xway_stp_match[] = {
+ 	{ .compatible = "lantiq,gpio-stp-xway" },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, xway_stp_match);
+ 
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index ccda3a56d599..98b393f6dfec 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -669,8 +669,8 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+ };
+ 
+ static const struct of_device_id tegra_pmc_of_match[] = {
+-	{ .compatible = "nvidia,tegra210-pmc", },
+-	{ /* sentinel */ },
++	{ .compatible = "nvidia,tegra210-pmc" },
++	{ /* sentinel */ }
+ };
+ 
+ static int tegra_gpio_probe(struct platform_device *pdev)
+@@ -808,7 +808,7 @@ static const struct of_device_id tegra_gpio_of_match[] = {
+ 	{ .compatible = "nvidia,tegra210-gpio", .data = &tegra210_gpio_config },
+ 	{ .compatible = "nvidia,tegra30-gpio", .data = &tegra30_gpio_config },
+ 	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, tegra_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 50de4bf20a5a..dc25db599fc3 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -1559,49 +1559,49 @@ static const struct tegra_gpio_soc tegra410_system_soc = {
+ static const struct of_device_id tegra186_gpio_of_match[] = {
+ 	{
+ 		.compatible = "nvidia,tegra186-gpio",
+-		.data = &tegra186_main_soc
++		.data = &tegra186_main_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra186-gpio-aon",
+-		.data = &tegra186_aon_soc
++		.data = &tegra186_aon_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra194-gpio",
+-		.data = &tegra194_main_soc
++		.data = &tegra194_main_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra194-gpio-aon",
+-		.data = &tegra194_aon_soc
++		.data = &tegra194_aon_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra234-gpio",
+-		.data = &tegra234_main_soc
++		.data = &tegra234_main_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra234-gpio-aon",
+-		.data = &tegra234_aon_soc
++		.data = &tegra234_aon_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra238-gpio",
+-		.data = &tegra238_main_soc
++		.data = &tegra238_main_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra238-gpio-aon",
+-		.data = &tegra238_aon_soc
++		.data = &tegra238_aon_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra256-gpio",
+-		.data = &tegra256_main_soc
++		.data = &tegra256_main_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra264-gpio",
+-		.data = &tegra264_main_soc
++		.data = &tegra264_main_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra264-gpio-aon",
+-		.data = &tegra264_aon_soc
++		.data = &tegra264_aon_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra264-gpio-uphy",
+-		.data = &tegra264_uphy_soc
++		.data = &tegra264_uphy_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra268-gpio",
+-		.data = &tegra268_main_soc
++		.data = &tegra268_main_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra268-gpio-aon",
+-		.data = &tegra268_aon_soc
++		.data = &tegra268_aon_soc,
+ 	}, {
+ 		.compatible = "nvidia,tegra268-gpio-uphy",
+-		.data = &tegra268_uphy_soc
++		.data = &tegra268_uphy_soc,
+ 	}, {
+ 		/* sentinel */
+ 	}
+diff --git a/drivers/gpio/gpio-tps65218.c b/drivers/gpio/gpio-tps65218.c
+index bf85663349fb..79e13adeb21e 100644
+--- a/drivers/gpio/gpio-tps65218.c
++++ b/drivers/gpio/gpio-tps65218.c
+@@ -196,7 +196,7 @@ static int tps65218_gpio_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id tps65218_dt_match[] = {
+ 	{ .compatible = "ti,tps65218-gpio" },
+-	{  }
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, tps65218_dt_match);
+ 
+diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
+index 0207c2b813f4..a67f6808ea16 100644
+--- a/drivers/gpio/gpio-ts4800.c
++++ b/drivers/gpio/gpio-ts4800.c
+@@ -48,8 +48,8 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id ts4800_gpio_of_match[] = {
+-	{ .compatible = "technologic,ts4800-gpio", },
+-	{},
++	{ .compatible = "technologic,ts4800-gpio" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ts4800_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
+index b46b48e56c56..e7acc4937f26 100644
+--- a/drivers/gpio/gpio-ts4900.c
++++ b/drivers/gpio/gpio-ts4900.c
+@@ -132,7 +132,7 @@ static const struct of_device_id ts4900_gpio_of_match_table[] = {
+ 		.compatible = "technologic,ts7970-gpio",
+ 		.data = (void *)TS7970_GPIO_IN,
+ 	},
+-	{ /* sentinel */ },
++	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, ts4900_gpio_of_match_table);
+ 
+diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
+index a851702befde..d61bf331395d 100644
+--- a/drivers/gpio/gpio-twl4030.c
++++ b/drivers/gpio/gpio-twl4030.c
+@@ -604,8 +604,8 @@ static int gpio_twl4030_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id twl_gpio_match[] = {
+-	{ .compatible = "ti,twl4030-gpio", },
+-	{ },
++	{ .compatible = "ti,twl4030-gpio" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, twl_gpio_match);
+ 
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index adfa2c2d5873..0b67194de573 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -79,8 +79,8 @@ static const struct fsl_gpio_soc_data imx8ulp_data = {
+ 
+ static const struct of_device_id vf610_gpio_dt_ids[] = {
+ 	{ .compatible = "fsl,vf610-gpio",	.data = &vf610_data },
+-	{ .compatible = "fsl,imx7ulp-gpio",	.data = &imx_data, },
+-	{ .compatible = "fsl,imx8ulp-gpio",	.data = &imx8ulp_data, },
++	{ .compatible = "fsl,imx7ulp-gpio",	.data = &imx_data },
++	{ .compatible = "fsl,imx8ulp-gpio",	.data = &imx8ulp_data },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, vf610_gpio_dt_ids);
+diff --git a/drivers/gpio/gpio-visconti.c b/drivers/gpio/gpio-visconti.c
+index 6d5d829634ad..59e57b8e8604 100644
+--- a/drivers/gpio/gpio-visconti.c
++++ b/drivers/gpio/gpio-visconti.c
+@@ -219,7 +219,7 @@ static int visconti_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id visconti_gpio_of_match[] = {
+-	{ .compatible = "toshiba,gpio-tmpv7708", },
++	{ .compatible = "toshiba,gpio-tmpv7708" },
+ 	{ /* end of table */ }
+ };
+ MODULE_DEVICE_TABLE(of, visconti_gpio_of_match);
+diff --git a/drivers/gpio/gpio-waveshare-dsi.c b/drivers/gpio/gpio-waveshare-dsi.c
+index 38f52351bb58..bb862f450140 100644
+--- a/drivers/gpio/gpio-waveshare-dsi.c
++++ b/drivers/gpio/gpio-waveshare-dsi.c
+@@ -190,7 +190,7 @@ static int waveshare_gpio_probe(struct i2c_client *i2c)
+ 
+ static const struct of_device_id waveshare_gpio_dt_ids[] = {
+ 	{ .compatible = "waveshare,dsi-touch-gpio" },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, waveshare_gpio_dt_ids);
+ 
+diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
+index 30b6e9f3f8ba..b1e0008679d0 100644
+--- a/drivers/gpio/gpio-xgene-sb.c
++++ b/drivers/gpio/gpio-xgene-sb.c
+@@ -334,7 +334,7 @@ static void xgene_gpio_sb_remove(struct platform_device *pdev)
+ 
+ static const struct of_device_id xgene_gpio_sb_of_match[] = {
+ 	{ .compatible = "apm,xgene-gpio-sb" },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, xgene_gpio_sb_of_match);
+ 
+diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
+index f4adf2962557..2aa0432dab7f 100644
+--- a/drivers/gpio/gpio-xgene.c
++++ b/drivers/gpio/gpio-xgene.c
+@@ -188,8 +188,8 @@ static int xgene_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id xgene_gpio_of_match[] = {
+-	{ .compatible = "apm,xgene-gpio", },
+-	{},
++	{ .compatible = "apm,xgene-gpio" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, xgene_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-xgs-iproc.c b/drivers/gpio/gpio-xgs-iproc.c
+index 77eb29dcc217..211e64b793a6 100644
+--- a/drivers/gpio/gpio-xgs-iproc.c
++++ b/drivers/gpio/gpio-xgs-iproc.c
+@@ -310,7 +310,7 @@ static void iproc_gpio_remove(struct platform_device *pdev)
+ 
+ static const struct of_device_id bcm_iproc_gpio_of_match[] = {
+ 	{ .compatible = "brcm,iproc-gpio-cca" },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, bcm_iproc_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 9406ce85f933..8a03d33f7b2a 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -660,8 +660,8 @@ static int xgpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id xgpio_of_match[] = {
+-	{ .compatible = "xlnx,xps-gpio-1.00.a", },
+-	{ /* end of list */ },
++	{ .compatible = "xlnx,xps-gpio-1.00.a" },
++	{ /* end of list */ }
+ };
+ 
+ MODULE_DEVICE_TABLE(of, xgpio_of_match);
+diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
+index 3713475bdb75..03c216d6d03f 100644
+--- a/drivers/gpio/gpio-xra1403.c
++++ b/drivers/gpio/gpio-xra1403.c
+@@ -192,7 +192,7 @@ MODULE_DEVICE_TABLE(spi, xra1403_ids);
+ 
+ static const struct of_device_id xra1403_spi_of_match[] = {
+ 	{ .compatible = "exar,xra1403" },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, xra1403_spi_of_match);
+ 
+diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
+index f1c5c6a20673..78c6988b5027 100644
+--- a/drivers/gpio/gpio-zevio.c
++++ b/drivers/gpio/gpio-zevio.c
+@@ -210,8 +210,8 @@ static int zevio_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id zevio_gpio_of_match[] = {
+-	{ .compatible = "lsi,zevio-gpio", },
+-	{ },
++	{ .compatible = "lsi,zevio-gpio" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, zevio_gpio_of_match);
+ 
+diff --git a/drivers/gpio/gpio-zynqmp-modepin.c b/drivers/gpio/gpio-zynqmp-modepin.c
+index 5e651482e985..dcf41101a1e6 100644
+--- a/drivers/gpio/gpio-zynqmp-modepin.c
++++ b/drivers/gpio/gpio-zynqmp-modepin.c
+@@ -145,7 +145,7 @@ static int modepin_gpio_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id modepin_platform_id[] = {
+-	{ .compatible = "xlnx,zynqmp-gpio-modepin", },
++	{ .compatible = "xlnx,zynqmp-gpio-modepin" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, modepin_platform_id);
 -- 
 2.56.0.rc1
 
