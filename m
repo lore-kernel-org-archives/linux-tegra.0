@@ -1,79 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792968617;
-	b=YW4Ru38j0EtSGfiKmDLaKQddns6+vfZXfmyd51UUKd+T9AhEnOWNYLZpLTNgXWPfwG7X
-	 Ih7o7GX+KHmOY0GVNik+ByaI+CiAB1YbOfrb+sVaXJQEsBR3IIJ9BGSpkDASmgBCT/Vic
-	 QM+4ZMOaAdNl+jzvyY+sLqaSzSqkBh/OlWzuV6BiH/veurStI0YiG9L1fsE/jNuPxaZ1T
-	 Y21Yz57NUiJH6Q60aerKBBPsvPmVbuKimTSjfLNlHCawLasMa4qwvYkk+tJbQw1XOIlVz
-	 05HSSl0cg7z4SjyTOVzYrBBNi51qFj94t3rzt6cs2dldM/gYOmhM4PlEXUFm6gMTy+Q==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792968617;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=M4JfuQ+Msvav2X1dVxO39CxfzfONFoSGhNqMG6zkrTY=;
-	b=yFzvNam0fp9FLuDc+GagJ6ij3rCmO1tofxxiImOcyRuqrnQ0ez6WyhYOr5jEW3v5DsDx
-	 ws/j/b5Jqnc47avOxDT3Iy8S8K/Sn38+vapqhsq4dASODffxF6dIyz+G/0xorqTUi/FTp
-	 u5UtRALeMmoCD31eFFhF+8GUE7Py6w4XypfpHWmUhi/BWZJF0guBGqYr16aGlsTQX21+T
-	 J2mg4Gqa5PfXj0OQ2dm3wzRS85ww6AlkCimOAkkLJJCwz2/UAUJjoph3fxMlraGPr1GWZ
-	 OaZ2qPTMTy7qWP+/3fHDuhYtBsIdv2B88StRqfO88J1J0fh2uTMa/wk+gx+4Pe06wWg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JFwyJDoR;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37CB606A321;
-	Sun, 25 Oct 2026 22:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JFwyJDoR
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792968616;
-	b=JJKHokXBdjgGW9NuXUubfkLPmiW0ugAu9T4yRM8E34+DKKGDnqxJuW72ujB+PxJ42A9g
-	 VP/Kcmfmzf5VtmHSIOP2++SzxidgwBK9o39AlideRTWNQmUgjQqCFUTeZdORJmyGIKPLc
-	 kXalmNLWa3j+Z6fxzN6SJ41feu9eRDaMDYfjAv1DEY3SftuJJkjusWQ3ogBpeGBpXORfP
-	 n1PCI22rcoFEl3Tyb8kWvlhe3KBu4QD5koT2b/9Y3w5G/wX6nR6HL5NrcVzZOGwriA5dd
-	 WMcX9jWQt64+8+aoRtXnEkEgpct+PWZIpnHnx4WZR32bwkDA1Lv8+aWW4PwXQAQaqIg==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792968616;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=M4JfuQ+Msvav2X1dVxO39CxfzfONFoSGhNqMG6zkrTY=;
-	b=1hxkaifTt4DMopyWq/EgGlcniebCmuKdEBYT/t0/KUk2bmMsWjPl1Pc553bn+Isig4RY
-	 Cr9ue8w8L1sPXVXs1QF1REAz9akfEVgkLl2VEhhkF76z3Z79f7a2dCl8Jr4bKzSALMwY1
-	 0hRNM4I+0zOIEvWa9M8VH+YPMkC7IlUlN/IQX52pNP1XX5Wb/MLDBV6cWd4CyhIs09JD4
-	 lx3bVQrzjKR6GxdcXMDDVjryDKiOrtrpSzPIt31javXadyn3y7RqhN1e4c0Bv8MR3g2GE
-	 qh8Aam94IuEiusbQfzFgKopyi/0rSVq0sFbb+9sNEPNmvrGz5qRLTErtAtPFPM2HC7w==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.54
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792994338;
+	b=nD2onWEJ43mridT8P3F0RnF9GjJRVB2DlI7wml9MG8ijUbheQiRtjKVep0PAIDLh87aY
+	 AstFzOGDgHNrbMn6iaQoS+ANBDKrf7VVXtzBbdPMeeCQ26AJToN7SPwQ/3I5nCEcNTGmL
+	 r4ghDMj4RDD4W9mG9d9QCn5sL8mYKwbNSkKLLh9gVlpWNQkMqTChwxJXDYl2Voayjo8am
+	 PF9siuD5WUVkz4d6j79VGF7rONzMUUyOZwjq+EUKsN9d0WMJ8enIacNvfbXK3GPjRx/vI
+	 NnUNnbTM/1fWy1MG0979z9zagMIpEHlznA2ubcfakystitTbFQADIfhIr0Xt2xESxAg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792994338;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=3gJomeBmHPSa1nSKsQOjrx0jFw6wNV5cIGdR0fKlHFY=;
+	b=HwUxaVofyfoADHBDUufwwTqAuX3V5I38LA3pgprLXfBaBJIfewR3FqQf9H9pn2yM7bcT
+	 a6TJxG/mx+9NEE8INgnWnF0pxhr2AytD7m2x11xSpifrqd1CIhCCb7cRkCHDLtTvf7Suh
+	 LdJxOTOkga3egQ3nEMxeOPZ2a0wgSMIMdDTb/0XlaiMDzLWH69z/jfU04RSUcujotgh/L
+	 TPSnhkszjW+mZpORIIboQz0GosPilrC/Fwy4tTPeQD9xu15B0e5Iu1NClrRwW6l+QPsTt
+	 U9LNv+Y4QFR5EqlsVF1NOsVwt1pv52Ri4ClpAqwR8q4+lppc8pNhPBc22Bi7ANyHecw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b="I/iLmABM";
+	arc=none smtp.remote-ip=209.85.221.54
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 425521F01825;
-	Sun, 25 Oct 2026 22:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792968616;
-	bh=M4JfuQ+Msvav2X1dVxO39CxfzfONFoSGhNqMG6zkrTY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=JFwyJDoRmHYN/yhZFl1u6qW0QjjKQNCotYZy7gUWqSaVmoW2XYX/RGkF9uMOy/pUK
-	 n07FXmbcvZuVqOpXP0TrSp0Hz1zVLxt5L4/pYNWNAjh5sTnEi0CCpwgSEN8DPOoSLa
-	 e1ZcK/Vo2HUJy+ahtWYMb02d3ZGeVK9P1LC76sKWnWChw7Kiuv181Yibx9xus5uWDF
-	 oXIshT/mk9lya/6QVRZHp1rWDhHJqL1xuyPlvEHFcElgeaj0JDINNiCF01d6RPb/5h
-	 cBIdFXtLc+/+AH/vyXPbPoPm0Ub02WUL0LLwOS+YLfHhw+N16OvWO+yF0OlPubb4Iv
-	 S98r4WX97EoBA==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id C86AB44B0F;
-	Sun, 25 Oct 2026 22:50:14 +0000 (UTC)
-From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
-Date: Sun, 25 Oct 2026 23:50:04 +0100
-Subject: [PATCH 1/2] serial: tegra: Fix overflow in
- tegra_get_tolerance_rate()
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF79606A31B
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 05:58:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BFF79606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=I/iLmABM
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-48c4be28b82so2234122f8f.2
+        for <linux-tegra@vger.kernel.org>; Sun, 25 Oct 2026 22:58:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792994336; x=1793599136; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=3gJomeBmHPSa1nSKsQOjrx0jFw6wNV5cIGdR0fKlHFY=;
+        b=I/iLmABMgLUn9YNum9Hg49oTL3h7Cgb6pHXIH8fdZZisy50s+0le+XnLFZRaztOoq8
+         kiVk55sAcoIyKG5AMrHzYIOtdmPbyyItM+5VXPxZot99yRKlEnf2HK+u6EJ37PPaKh1T
+         A9IGPd689WTuVRYUVu6G9K/HLRcoZXoOTWXLA49rxpkzSzjHsJl/11roSeOpko9CgKIJ
+         MmYghK+ZOoM3x/iJnxDmc0DEmaFlD1Uxz3u+ZvhK5cMcGckfnIl5UExSIFZHAExIBD8B
+         5VJkAlSjhO8SR+Nav4rDBYxypUA0Rr3JTsjvfwNWTeb6PA5iw+1SU1J/JT2w0Y0P9kmZ
+         SWEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792994336; x=1793599136;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3gJomeBmHPSa1nSKsQOjrx0jFw6wNV5cIGdR0fKlHFY=;
+        b=wuMPdvHhx+aTgMNQb0w5Z9+kXk8yGaW4B8+ZhxJYOrkzArBLJoLnPWdNzMJCjRv/6p
+         ebjDVaAclSU+eRNOHG1J0J7aDwcR08o0eyrPrKYOpusAYRcX4ztMIFBPOMdGbwTcXoZF
+         P5rFzKiFhDvtKaPeEJ95CEn+a2w6jvwq6AO/msT1mlrg4/nE1nm5Qbdg7lnKfptkRqKb
+         CboiBQ+48VkiXFigz5Zl2M9YEGlKVd5zCyAXak+rvjVL4G2w0cFLagDUXZ4oY6sv+sY6
+         MFPutcGFagtqVimsADhpXcQB4wVeUnDx/ReqH5uXHQTWVzdjfzGfqG8MVcBMkI27anMx
+         oJfA==
+X-Forwarded-Encrypted: i=1; AKwUvBzRkh9Ix9WT14NuF2nbj9I91zFn3YIlRzEzIvQ8H+j5d21Ald4BMLU79ORDB9MSxhkytSWX3ldwskjCig==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIEBhzOC1h1ydzMR4LVfQndSEFdvuAeRj8khZiS8rFLZV/Ybc/H
+	Cgc+ezfM2NQTTwR6qXzSVt3ngtzFtpvF8GCQ1GeauLI+klZiavFavQ1d
+X-Gm-Gg: AYBFou1QZk1X0wl/tBk/QYvZt95zTL0t1z/1P/+gZ8s+2H6j7tmdKXJ+eprGo8JSy69
+	ah51l7+SXMFBTUi2qshu9cZWf+X5g4dz/tetHOTw3a+cnxM66h9HsY/nf35gmLDPWu3ROVHANuR
+	HE1zumYeDBo+2I3rms0BvhSIgLT9VumZHhkb+2i4RJ5LKbKw86V4o4LqrgShkwsAA4BMflLpIOc
+	Cj9FvAGh5MXZbKPUaxXigfpmQxfg1oU+M//TbLpEsqvDdSoEalFC6qVi0MxZLKRWRzRuoJHituy
+	1e7Bh9zOpXKZPpKrqVPjzuDdX/MmdJMiuMziVibyORU3qna6CTnCfBOdU37mFQ5rwxEtW03D4EJ
+	uA4QjdGjktYbtuc/r/AHw5YugIzqtj5fByG238d4hCGQcZXrmxVuQtq6PE+mXG1REKisa1YVHRP
+	wV1opFVUbOlXSsco/S9/0m2qSKd+L86wsySU56ps+jwsBvHOTrHByEwAOoW+mc9vLHWREncmOHQ
+	i6xqn8JQeo28VadpNn8YbhpjIC5SNh9QI8n4A+XWaDEZAZ3UpSuTXQbg/OkwqOJgU6lGQG0MN19
+	EJ23H/QYfoZLADzYaEmqNEWFPyDNFhtHDNrNvOKcuPZYD77bZdZv437clGRs80O1mncm/5gpyv9
+	xI9K2d1yAqaeCAQR/5LSW6HcyLgNIkuxvPZPmg4oyQ/thug0nctUW2os07+o5nELN
+X-Received: by 2002:a05:6000:4386:b0:48d:ba3b:af36 with SMTP id ffacd0b85a97d-48e3eba7fdemr8948523f8f.37.1792994335994;
+        Sun, 25 Oct 2026 22:58:55 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a02-3100-b1a4-1201-5c78-89f4-99d8-70d7.310.pool.telefonica.de. [2a02:3100:b1a4:1201:5c78:89f4:99d8:70d7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3eb8f25fsm13901379f8f.2.2026.10.25.22.58.54
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 25 Oct 2026 22:58:55 -0700 (PDT)
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Karl Mehltretter <kmehltretter@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/tegra: Fix dma-buf reference on import errors
+Date: Mon, 26 Oct 2026 06:58:42 +0100
+Message-Id: <20261026055842.96484-1-kmehltretter@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,92 +106,67 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261025-upstream-serial-tegra-overflow-v1-1-267b5b7a79ee@tsv-stahl-riesa.de>
-References: <20261025-upstream-serial-tegra-overflow-v1-0-267b5b7a79ee@tsv-stahl-riesa.de>
-In-Reply-To: <20261025-upstream-serial-tegra-overflow-v1-0-267b5b7a79ee@tsv-stahl-riesa.de>
-To: Laxman Dewangan <ldewangan@nvidia.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Shardar Shariff Md <smohammed@nvidia.com>, 
- Krishna Yarlagadda <kyarlagadda@nvidia.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, 
- stable@vger.kernel.org, Patrick Fischer <admin@tsv-stahl-riesa.de>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792968614; l=2309;
- i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
- bh=gJnftTJ6jB1jgdWypz21lUHPmEbydEvI3zikNjoJOxA=;
- b=85/ZmKHsXEBUB4ErFANq04SO6vKwA0ekArL5/pX4906QeA+JXgLi9gupwXcRW8pZdRbd+HyVo
- x/XKjCDg41oBgSsBgY25ZFYxvz4TGqPhbtp6TtrDbrgzHZsyB5XNXZz
-X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
- pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
-X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
- auth_id=1251
-X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
-Reply-To: admin@tsv-stahl-riesa.de
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+tegra_bo_import() acquires the reference retained by a successfully
+imported object only after all attachment and mapping operations have
+completed. Its detach error path nevertheless calls dma_buf_put().
 
-tegra_get_tolerance_rate() raises or lowers the UART clock rate by the
-tolerance from "nvidia,adjust-baud-rates", given in units of 0.01 %. It
-calculates rate * tolerance in a long, which is only 32 bits wide on
-32-bit ARM. With a tolerance of 136 this overflows from a clock rate of
-about 15.8 MHz, i.e. from about 1 Mbaud, and the rate ends up adjusted
-in the wrong direction.
+drm_gem_prime_fd_to_handle() holds a temporary reference while invoking
+the import callback and drops it after the callback returns. Consequently,
+when mapping fails after a successful attachment, tegra_bo_import() drops
+that borrowed reference and the caller drops it again.
 
-The Tegra Note 7 (Tegra114) uses a tolerance of 136 for 1 to 4 Mbaud on
-its Bluetooth UART, as in the downstream device tree. For 3 Mbaud the
-driver asks for 47.79 MHz instead of 48.65 MHz, the clock rounds that
-down to 408 MHz / 9 = 45.33 MHz (-5.6 %), and the WL1801 controller
-stops answering after the switch to 3 Mbaud (HCI commands time out
-with -110). The same overflow gives 23.31 MHz instead of 24 MHz at
-1.5 Mbaud; both rates were confirmed on the device.
+With only the installed file descriptor and the temporary import
+reference present, these two puts reduce the file reference count to zero.
+This queues the dma-buf file for release while its descriptor remains
+installed, leaving the descriptor without a live reference for later use
+or close. On a Jetson Nano, forcing the mapping to fail after attachment
+produced:
 
-Do the multiplication in 64 bits. With that the driver asks for
-48.65 MHz at 3 Mbaud and gets 48.00 MHz.
+  VFS: Close: file count is 0 (f_op=dma_buf_fops)
+  imbalanced put on file reference count
 
-Tested on the Tegra Note 7 with the tolerance of 136: Bluetooth comes
-up at 3 Mbaud, scans and connects to a paired device, and the HCI
-counters show no errors.
+Remove the unmatched dma_buf_put(). Successful imports continue to take
+their own reference before storing bo->dma_buf, and tegra_bo_free_object()
+drops that reference when the imported object is destroyed.
 
-64-bit platforms are not affected.
-
-Fixes: f04a3cc8d455 ("serial: tegra: add support to adjust baud rate")
+Fixes: f5b8794e17e4 ("drm/tegra: gem: Don't attach dma-bufs when not needed")
 Cc: stable@vger.kernel.org
-Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+Assisted-by: LLM
+Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
 ---
- drivers/tty/serial/serial-tegra.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Found while auditing Tegra PRIME-import error handling for
+CONFIG_DMABUF_DEBUG testing.
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index b0fc4ae3686f..cc09fbc3aad8 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -18,6 +18,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-+#include <linux/math64.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/pagemap.h>
-@@ -368,8 +369,8 @@ static long tegra_get_tolerance_rate(struct tegra_uart_port *tup,
- 	for (i = 0; i < tup->n_adjustable_baud_rates; ++i) {
- 		if (baud >= tup->baud_tolerance[i].lower_range_baud &&
- 		    baud <= tup->baud_tolerance[i].upper_range_baud)
--			return (rate + (rate *
--				tup->baud_tolerance[i].tolerance) / 10000);
-+			return rate + div_s64((s64)rate *
-+				tup->baud_tolerance[i].tolerance, 10000);
- 	}
+Tested on a Jetson Nano (p3450-0000) with CONFIG_DMABUF_DEBUG=y and a
+separate change that rejects zero-byte IOMMU mappings to exercise the
+post-attachment error path. Without this patch, the forced failure
+produced the diagnostics quoted above. With this patch, 100 consecutive
+failures returned -EINVAL, preserved the original dma-buf FD and left zero
+dma-buf objects. No file-reference warnings or DMA-API errors occurred.
+
+Additional regression coverage passed 33 dma-buf heap selftests, with
+three vgem-only tests skipped, and all seven udmabuf selftests using a
+volatile 2 GiB HugeTLB pool.
+
+ drivers/gpu/drm/tegra/gem.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index f76af73..ed35a34 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -502,7 +502,6 @@ detach:
+ 		dma_buf_unmap_attachment_unlocked(attach, bo->sgt, DMA_TO_DEVICE);
  
- 	return rate;
+ 	dma_buf_detach(buf, attach);
+-	dma_buf_put(buf);
+ free:
+ 	drm_gem_object_release(&bo->gem);
+ 	kfree(bo);
 
+base-commit: 21a7f44fd0765fcc5194130b28767786eba1d1e7
 -- 
-2.56.0
-
+2.39.5 (Apple Git-154)
 
