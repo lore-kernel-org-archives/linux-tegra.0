@@ -1,97 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.48
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793016752;
-	b=CjcPONghBzl0I5rBh25Rx0X7arC8eY8Q9Z4HYIRv7Lg1MLC2nCednVucd5cD1ujXRggX
-	 C0wXukN5eOBODDiqAZ+cKFtuHKeyPbXq3wdv6KJkYjksIDEkajOOud8SahuC8UFrTjKRj
-	 4UYwUXiJnt1JIx++tDpbO7jL3FiEm/6fpI1hPlTa2rAaiglQHclFAf6E7yRmyQhE6gY50
-	 K7r8x28bCMod2SQ2l6uR/GyqHtjCJtmNBuSj9QKUNs9ZI3LVjhFyRS4pBmxk42tnNomjS
-	 m34X9efSA2uHp+WEe2VqtYh/z41xFrzSci5VvxP3ZipQsMi3MDI+vg+0npV2s2HHjiQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793016752;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Date:Subject:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:
-	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=DEwPdeMbxdoAuOZqLsXXABnbpCCVYFJnIF9CBlK5/Hs=;
-	b=xbEPHGgjD3CdqV3Bsyzvsngkhtap+qxteZW7h6pcvrG7vFk0UO24/aj4GYinFCOz/21l
-	 xi3Vor/Pk/EWZBdFbmUf32lXCZ5Od3ljeiFZg4BswfMwq+2D2e2wiyrIq9BpoNFU3CzdF
-	 LAX2VjcGpVk/aRI/Fk2u8uCwOVmD5hZKpgRTXuTS1RjN90IVSgbKqcU0xQ80huJu1S4v/
-	 XYjg6+4+0ZRfR+wzveVKCSl03ioh6CfRq8A0whU5QOef2NJ597qWR9GjTCRFsWE8a08H4
-	 U4atKJWQciTXSIiT/O/S5Wa4P6zEMnHVLRz2zLlbPFtHxx7cNfuMRmBPz/2zZ7ZOxxg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=XTQPQwcl;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.48
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012048.outbound.protection.outlook.com [40.107.209.48])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.28.169
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793020912;
+	b=dH5avFpAAqOpJnMGBF34RVdubyXP4kMq7p3DJpVh9TUdmS19szkDeu8JXDzD+xVydDkK
+	 ISxegRP1NuzJ1H+5CaFslNKwbBsW5nWCm37yzbHneze21Yp8BRWMeBf1TO09N5vaLcueo
+	 HAbFMB/0GfZwLnsLOQBhw4ew5ItU4Hdj2Jhu0N/rlsNahQ82a+AdB208CuSeiewQH+scy
+	 OFFW83WcxZVuToBASyzmbvDSpJbp6rJo6SfdEupDRxpOwJSM/U/YGRqk3EK+1IWMoRv2K
+	 vyv/fhlweuNL5mxcOfDLLUCK4N74v2AHzVIZXu3rNeM3Wg/ytk/XvDiEWfpaCyzTPSw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793020912;
+	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
+	 Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=JudSgXLcJ6+6LonVY2e4IdR3mh1sh7zUR10EIzFcThs=;
+	b=DXUmuh1QDcRM6uKU3MCcullUXRcjZ1gh/Ji2HMIQD55uDFtH3NdPK/LjZ8WIE3D5DOTl
+	 4aI6o4tVflzaTSScARJvTiZzybFrHe7XFWqE7MPVyf69JSqhG8sNxRKmIpnd1rGdjMsoN
+	 ZC6PiCPkj8gdZlkNv8+zdWYGPyI2Km3XpN3JDlmn6T60nWu6dlWDAfxKRl1T/jlEj+iJR
+	 kDqX2pWwRbm7lanqCbh79H71uG5f/l+AR+XEr0GJC0IcSMEBRLmJEC1QB/QrTtnZix9Op
+	 3xvwKYcvSx+G6JZVEobFywIAidaW/pXVmZ41geIX+YNSRXQDV3fiTDpHyIAC5HlKycg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=xiaopeng.com;
+	spf=pass smtp.mailfrom=xiaopeng.com;
+	dkim=pass header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=rL+LFenj;
+	arc=none smtp.remote-ip=115.124.28.169
+Received: from out28-169.mail.aliyun.com (out28-169.mail.aliyun.com [115.124.28.169])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC3C606A31A
-	for <linux-tegra@vger.kernel.org>; Mon, 26 Oct 2026 12:12:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4DC3C606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E34606A31A;
+	Mon, 26 Oct 2026 13:21:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 53E34606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaopeng.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=XTQPQwcl
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AOkIMk2ysbu+era8UoCW1SxtXSCrjgxxIHA6r0Ww/OsdKieMKpTV7yaCqf/GXFrvN6b7u1cmnoDw5CuMcvNeBQu2z6ILALABPRESUJHtNYs6Buv9iGPo3+UWFh2Tev0U2jBHeCDE1tOh+8TJ7137G2n2tLzZ6aXcaLbU3Ktj8QjU2CpcfqdLJ3/0TDtLzTXOnMYm3PUTDpaAKtuPUN4i1tbCml2uY3h0y+PCeA6FpdY3XrGr8VRzTPNsztAt5d8T/NR8FCE3f4XSdev1YWorwZOxGoLHJJQNPO1crtwc+WPEC8sqI7seUKrU9aB+5Z4dvY2mnDEvp+GXNmKMIj4wTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DEwPdeMbxdoAuOZqLsXXABnbpCCVYFJnIF9CBlK5/Hs=;
- b=pjVQBIHbh8JO2hPhV1fStFRhRprXl8IvmYmLZ1jpmIELuRjrPF3IlSrwXT7Pq9SBPxtA32tI6POHPeuxO4Unde7WCnGbV9y4g0jcVaUMgb1rkPpWL1ysv5kh6b4REp9WOwTflptQkGt4ouaB3ftVAUA9zYK1rrDK2TOOytCK1ULQu7zDwTL7eUgNcMAUHy25iZO3Pb1Wai0TDU+UDeuU1FeWv8FsVP4zfM99NIoXO+ZYTxf+0U86jwe0anPH2qz9xYubUyp9DF7zKhibXcP2Pon323SfSPXsE5zTxR0M380mVD8Hq6ClShKlbjyMmC+YnlsURt20iiCEUAbPmprbrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DEwPdeMbxdoAuOZqLsXXABnbpCCVYFJnIF9CBlK5/Hs=;
- b=XTQPQwcllwzGiQu1aF1lLed2jlWbq9mf0guI2H8DOenDmpOPIQNpz3kvKNunWEO5MurpfpxjGP2eRxZYia4got617tgEq+t1PH4LpqNTo2smugjk83+S9bFH6G1n2jLDcqwBUWSSN1u2U2Ls8DRn9dH67dMpnj9GOtqbwpzZjgzu5qNuwv5nrNHs+f7qZAck90X5G7PNJ/DO1kWHKzJYpJ6ahY7oS/xMLffgrXWTP4nxinu5NJM3HuARejGNxuntPsMULaqJvSTzG/vv/M5MQEo9DjitkBXhI53bb9SNux35YEbsZ6GqFdK8Zm9C/iM6apu0o++3x3t+NwNIrZlQYA==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by CH3PR12MB8935.namprd12.prod.outlook.com (2603:10b6:610:169::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Mon, 26 Oct
- 2026 12:12:27 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0546.021; Mon, 26 Oct 2026
- 12:12:26 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Date: Mon, 26 Oct 2026 21:12:08 +0900
-Subject: [PATCH] drm/tegra: Use shmem for DMA IOMMU buffer allocations
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261026-b4-tegradrm-allocate-shmem-v1-1-eae07ab827d6@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQqDQAxA4atI1g2MYkV7FeliZoya4h/JtBTEu
- zfVxVt8m7eDkjApPLIdhD6svC6G/JZBHP0yEHJnhsIVVW5hKDHRIL6TGf00rdEnQh1nMjrXuNC
- UdX+PYINNqOfvOW+fl/UdXhTT/wjH8QNXhR42fgAAAA==
-X-Change-ID: 20261026-b4-tegradrm-allocate-shmem-a0090b948f5c
-To: Thierry Reding <thierry.reding@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
- Mikko Perttunen <mperttunen@nvidia.com>
-X-Mailer: b4 0.16-dev
-X-ClientProxiedBy: TY6P301CA0014.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:3be::19) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (1024-bit key, unprotected) header.d=xiaopeng.com header.i=@xiaopeng.com header.a=rsa-sha256 header.s=default header.b=rL+LFenj
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xiaopeng.com; s=default;
+	t=1793020908; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=JudSgXLcJ6+6LonVY2e4IdR3mh1sh7zUR10EIzFcThs=;
+	b=rL+LFenjxlNw1X3GFOWGZxAoSvxuru+takJI9cskKx8/X2T0k53vz4GmYYui65+faJ7y6OHl0Ra0krnrismulhA2YQ+f+ePHFzTrTgLqSHWjb56dRC912dwLT6js3jOpSsVNX3Moqq44dxmowGTJigBiC4VkUkBB6/zcx5QqwVU=
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07575639|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.00077706-5.23839e-05-0.999171;FP=14943764304330181682|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033045166233;MF=liuwb@xiaopeng.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.jpwPFyQ_1793020906;
+Received: from localhost(mailfrom:liuwb@xiaopeng.com fp:SMTPD_---.jpwPFyQ_1793020906 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Mon, 26 Oct 2026 21:21:47 +0800
+From: Weibin Liu <liuwb@xiaopeng.com>
+To: ldewangan@nvidia.com,
+	linux-spi@vger.kernel.org,
+	broonie@kernel.org
+Cc: thierry.reding@kernel.org,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	swarren@nvidia.com,
+	linux-tegra@vger.kernel.org,
+	zhugl3@xiaopeng.com,
+	stable@vger.kernel.org
+Subject: [PATCH v2] spi: tegra20-slink: size words with spi_bpw_to_bytes()
+Date: Mon, 26 Oct 2026 21:21:46 +0800
+Message-ID: <20261026132146.3806906-1-liuwb@xiaopeng.com>
+X-Mailer: git-send-email 2.50.1
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -101,217 +66,68 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|CH3PR12MB8935:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ff79cfc-e5b5-46c3-7708-08df335a65e4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|10070799003|366016|23010399003|1800799024|11063799006|56012099006|261021123027099003|261021121427099003|261022105027099003|261022075727099003|261009223027099003|10067099003|18002099003|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	+GyWSf6Apd/yj68MH6UcBm4DHVwK0yNcL4k29cNLnW1/xDg1X6hl9qbixm0tkh2I2zHHZKsCSJb/09v2BddjPvZH2Xkn9EInNGKBX2+cBoqUd4pqimJXFPB6S54zkDUqH7O8CnlGtOTc3rYjs6doT/1Ss39X2cCbhn+Ye3fzBzmNW1ZErFtI7r8LgT64vhVjeCe/AebsbNYQVq2AzELf+lb7URDoHAwCigmF+5Uc2xv+6WxHqpeA+gQhNcJHpZie+1oR/iK77NIlptmS55gV5IBmGQTFdHOwqFDO5NdgX9BIGHN+8K8sChi4epgpv3CVnmLT0a84/11rZJqzLEW0KADE2qMBmnXRNE3pkjUNgBflL+wzhs+wrni10KFZOOT0WOQFIXo+gU6e4Ul8mMmGhXGMqtVlBy04fhXuNTnAjFijwvPyHHpo7MdDEcG3zrqW8CEEwSff8y9EwSdUIMskGYgqKqtDwaQTr+nDdSgo4gcV4nIymVypGPhHZj+RJvRbISxB+VwJ74nfamWLTEdwZPM0bxvdvJQijKaNawIE+OzPyqiKuYwkn700lqZu1fNCd2asIt1xceLtCd1XL0EG9H0RS7O2O83t8wSlO+mRfo11bh/83pVJ7h436AP7mPZ0Dqtrey0GN+igBx6T5oLP8y+KvLF6BRZEGAgGxhUpj4I=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(23010399003)(1800799024)(11063799006)(56012099006)(261021123027099003)(261021121427099003)(261022105027099003)(261022075727099003)(261009223027099003)(10067099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MU5zWE5mK2NTMStpeS93a0JJaG1yWW5UZXVMYnRGcEJnYzljZFFIMEtwSnlO?=
- =?utf-8?B?N2g3M3VYWFRJZ0k0M1ZvcmZhenlRSlZrYSszRUhlRUlaMjZoR1d3L1JRVjR3?=
- =?utf-8?B?U1ZCUzJPSDNLTzRWekxnOUZvNkJ1QnRCTHlLZXlFeTZrTFcxd3JNcmpZQU9S?=
- =?utf-8?B?ZXkyY3VwT0dFWTc2b2tCVGg4KzAxdVk1c0p4TFlBUzZrV1dRQVpRZk5uam1T?=
- =?utf-8?B?SEJrUEg5aFd1OFYrbGhPekVGdnV4MmJRZVgxVUkzanRTMzFNdEVHcDNQN2dt?=
- =?utf-8?B?czVScE5xNVhqS1NPdy9kSTNRdTlqbUFObnRYNFZjVVA2aXlwdkRIemJ2VWNG?=
- =?utf-8?B?SEJMRXIyeWVGa0dIRE53Tk1iczlSUlVEUWZiS3RMUnVSaXVxeG8zeGJnNS94?=
- =?utf-8?B?S0V0WUpIdXR5UGFPSURKMzNqTHFIWHdURXNLelpRN2pQUll6amw2THFld3lT?=
- =?utf-8?B?VjBKSDRNcEhSdXFPU3N3VmIzalU4dEhlV1k2Y01wbnB6VGxwYjlrRXpOamls?=
- =?utf-8?B?T2JodGZUejEwQ09zQWo1Sytlb1ZISndidEN4QTlOVTZERVlSQWhjZXpUaE9H?=
- =?utf-8?B?OHdNcWJ2bytkTGJ0T3A1a3ZQR3Rwekp5WUR5WEJuQXBEVXdBaXQwS1o3R1M2?=
- =?utf-8?B?TlFLZnpyQUU3c1c1a1AzbTZiKzRhWUdEWVFnOXVmMmxjSHlZMStvU1huREpR?=
- =?utf-8?B?NnRzL1pOek5OdXpWaVpuSFBHVVh3KzdDSXBRNERNL0ZVbzZUZ2FzMlBGd2Nv?=
- =?utf-8?B?WTdXRWpCaU9NeFlyMWJ0Z0VpQzhwaEVRclgwbFZOZmx4cCt6UUh0V2o5T01T?=
- =?utf-8?B?RzVSWkwxZVFqVnlJT2xtbFNuT3U4bWsyNlh6TDErbjJRRUViT3ZrQk45d2hw?=
- =?utf-8?B?U1RlL0hsbTZyM1E4MFpIaFpqOTdzeTlJdWdPWjYxSHBvK2xLV0RDZldKV2hV?=
- =?utf-8?B?dEY2eUlqaWE5Q0ErZ2lIaHpFcW5zbzdOZGV3QlY5UzBYaXRCTlVGQXJPYVZp?=
- =?utf-8?B?cGJwaGg1alc5M1QySnpwZU1jV05mNFlnbVpvc2hhb3ZlSzFUdzNrZmU1cHQ4?=
- =?utf-8?B?ekpXY1dHVTZDQzU0QmRlMkk3OTJHckNZdk53Z2xheXBIY25sVWVWY0U4M0pH?=
- =?utf-8?B?WXN2c1AxemFsd0FJcnVrZFlYc2Y3M2xPaG9xQ3JDazIrUHBGSlZsemFmTmtz?=
- =?utf-8?B?M2lyVUdoUVlQOVFYZzdOUUxnNklWNGtHQlM3UW42U2V0TWFuajJpUnl4ZkVu?=
- =?utf-8?B?Ly9pL205TXQ1dGdiZTIwNERlaXBDNVI4SGZhZ3RzSkEwczl2ZnA5S1hBbE1x?=
- =?utf-8?B?Q3lPdGRUenpBTVY3LzZkNmN3Wis1SkxtTFJjS2t6UWpiRHJ6YWZLZGVYY2Y4?=
- =?utf-8?B?bEhGVitEMFN1Q05iOFZQOCttYnB0dUhEdVljWjRUdHdDU0RXUmg0YkdqSWwy?=
- =?utf-8?B?RTJEY0NaWFpnM3JvZmcxTTVXVyt0M2hBNi9aV01TNHBsOTNUeUdjK0NzZkdm?=
- =?utf-8?B?dStyOHBzTUh6aHJpcXExcjd3bzBMMnpsdlg0VzQ2c3JwaFVTY2NIeFNTNlFw?=
- =?utf-8?B?aHVzUXVEd0tlQXZta3lZaVphMEo5TkUwa1lvVXhnNUs5eE90MTZtQ2ROVkRF?=
- =?utf-8?B?UjFsQ0NSN3hkeVVNSFZxdlpxOEc4bGhCNGk4dXo5cXJKT1pGNytLMzJ6Mjcz?=
- =?utf-8?B?QzNRUk55MTJhUGFjeTFRS1lWNnhiL1B4bExSRFVVNlgzTjVLZGJPMWEwMUZH?=
- =?utf-8?B?UEMyQUgvRHRTU0VxYVFyek4rUEp0eG1vYms0OXJueTk2OXhpSmV2YXN0Zk1l?=
- =?utf-8?B?ZmxvNEdxZThDWmc1bjdaSlM2T2ZNeDQ4T0VVVGZwVUZDM08xNW40MEpNaU1s?=
- =?utf-8?B?cDRVaXZHUzdOQURHMmIvcElpbG9GenpzMDZXUzk0bDJ5V09BMGVZMSttN2Mz?=
- =?utf-8?B?cTY4N0dYemFjU3ArZ0NvKzR6R2l6dmV5NDZBOVo1elFWbzFHR0FtaFlMV2p4?=
- =?utf-8?B?Rzloc004cnZBUlhpdUJSK1VkcHZRbEtyQ1E2bUttaWhjREhZWk9nTWcwaklC?=
- =?utf-8?B?KzZqQ2V5dzkwNkhDQTdzbmdmNURKdlEwNXV0Ukl5bW5FRi9jeXRva2YzWFV1?=
- =?utf-8?B?THY4QWY3RmtNYk9nNGFQMmt1QlRza21CM0pMZStpSGUwWERDblpnN0VxeFhN?=
- =?utf-8?B?YWhuT2xyU0k4R2JIK2pxeC9GV05XU1hMa3I5b2FmcXRjcTFNTmh0VkNzM1Nn?=
- =?utf-8?B?NmhoSkxPU3VRRlpxMkk4SldVb05rNWdieVMrR0VPakw1d2xXZituaXpKNUo1?=
- =?utf-8?B?M0w4ZTdROEtLb1g3M0tld21KUHZQREdCYU1mOWxpdWJQRCt6REtHaEkraytX?=
- =?utf-8?Q?rwjg+m3/+HA+B/mSCoby+nNrfkYrzkyotlr4q2btTAwig?=
-X-MS-Exchange-AntiSpam-MessageData-1: qdw15MNPKZuFDQ==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ff79cfc-e5b5-46c3-7708-08df335a65e4
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2026 12:12:26.1166
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FyJ4G1tFjpYz8zfj0+hol1DQ3ipMl4SkzLwuiCnrNO0h30yZ0IMPzEfgdnzEvdk/RFnR5HjDu16j1ZJkaDBwlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8935
+Content-Transfer-Encoding: 8bit
 
-tegra_bo_alloc currently uses drm_gem_get_pages only when tegra->domain
-is set; otherwise memory is allocated using dma_alloc_wc on the drm
-device. The latter is correct when clients are not backed by an IOMMU
-and they need physically contiguous buffers, but the path also gets
-taken with IOMMU-backed DMA API, as tegra->domain is only set when using
-the explicit IOMMU api.
+tegra_slink_calculate_curr_xfer_param() derives bytes_per_word with
+DIV_ROUND_UP(bits_per_word, 8), but the SPI core sizes words with
+spi_bpw_to_bytes(), i.e. roundup_pow_of_two(BITS_TO_BYTES()), and
+__spi_validate() only accepts lengths that are a multiple of that
+power-of-two word size.  For bits_per_word of 17..24 the two differ
+(3 vs 4 bytes): a length like 8 passes core validation yet is measured
+as three 3-byte words, so the copy helpers touch one byte past the
+buffer, and cur_tx_pos/cur_rx_pos advance in multiples of 3 and never
+land on the equality check cur_pos == t->len.  The ISR then recomputes
+remain_len = t->len - cur_pos, which wraps, and the driver keeps
+copying 4096-word blocks past the client buffers until the transfer
+times out.
 
-Record whether clients are attached to a DMA IOMMU domain during
-initialization, and use the drm_gem_get_pages path in that case.
-Initialization for all clients has to finish before GEM allocation is
-available so this is safe. Typically all devices should be IOMMU-backed,
-or none of them. In a mixed configuration, fall back to the physical
-memory path since we don't know which client accesses the buffer at
-allocation time.
+Use spi_bpw_to_bytes() for bytes_per_word: 24 bit words can have
+padding.  The word count then divides the transfer length exactly, the
+copies stay within t->len, the position counters land on t->len, and
+the wire carries the words the caller asked for.  For power-of-two
+word sizes spi_bpw_to_bytes() returns the same value as
+DIV_ROUND_UP(), so only bits_per_word of 17..24 change behaviour.  The
+non-packed setup already used the 4-byte configuration
+(SLINK_PACK_SIZE_32) that bits_per_word = 32 has always used, TX
+padding stays in the upper byte that the hardware does not shift out,
+and the RX paths already mask the padding.
 
-The drm device's DMA masks are also changed to DMA_BIT_MASK(64) when the
-DMA IOMMU path is enabled to avoid bounce buffer related issues when
-mapping the allocated memory to the drm device for cache maintenance
-purposes.
+Verified with a userspace replica of the transfer arithmetic covering
+all core-legal lengths for bits_per_word 8/16/24/32 in both
+directions: the shipped driver and v1 overrun the buffers and never
+complete for bits_per_word of 17..24 with lengths not divisible by 3,
+while with this change no copy exceeds t->len and every transfer
+completes.  Compile-tested only; no Tegra SLINK hardware was
+available.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Suggested-by: Mark Brown <broonie@kernel.org>
+Fixes: dc4dc3605639 ("spi: tegra: add spi driver for SLINK controller")
+Cc: stable@vger.kernel.org # 3.8+
+Signed-off-by: Weibin Liu <liuwb@xiaopeng.com>
 ---
- drivers/gpu/drm/tegra/drm.c | 23 ++++++++++++++++-------
- drivers/gpu/drm/tegra/drm.h |  2 ++
- drivers/gpu/drm/tegra/gem.c | 16 +++++++---------
- drivers/gpu/drm/tegra/gem.h |  4 +++-
- 4 files changed, 28 insertions(+), 17 deletions(-)
+Changes in v2:
+- v1 clamped the four copy loops to t->len.  As Mark Brown pointed out,
+  the compact word size itself is the problem: 24 bit words can have
+  padding, so the core only guarantees lengths that are multiples of
+  spi_bpw_to_bytes().  Size words with spi_bpw_to_bytes() instead,
+  which also drops the clamps and lets the position counters land on
+  the equality completion test.
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 324480c87fb1..1013bbd662f8 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -958,14 +958,10 @@ int host1x_client_iommu_attach(struct host1x_client *client)
- 	}
- #endif
- 
--	/*
--	 * If the host1x client is already attached to an IOMMU domain that is
--	 * not the shared IOMMU domain, don't try to attach it to a different
--	 * domain. This allows using the IOMMU-backed DMA API.
--	 */
--	if (domain && domain->type != IOMMU_DOMAIN_IDENTITY &&
--	    domain != tegra->domain)
-+	if (domain && iommu_is_dma_domain(domain)) {
-+		tegra->use_dma_iommu = true;
- 		return 0;
-+	}
- 
- 	if (tegra->domain) {
- 		group = iommu_group_get(client->dev);
-@@ -981,6 +977,8 @@ int host1x_client_iommu_attach(struct host1x_client *client)
- 		}
- 
- 		tegra->use_explicit_iommu = true;
-+	} else {
-+		tegra->use_direct_dma = true;
- 	}
- 
- 	client->group = group;
-@@ -1232,6 +1230,17 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 		iova_cache_put();
- 	}
- 
-+	if (tegra->use_dma_iommu && tegra->use_direct_dma) {
-+		dev_warn(&dev->dev, "Mixed IOMMU and direct DMA clients, using contiguous buffers\n");
-+		tegra->use_dma_iommu = false;
-+	}
-+
-+	if (tegra->use_dma_iommu) {
-+		err = dma_set_mask_and_coherent(&dev->dev, DMA_BIT_MASK(64));
-+		if (err)
-+			goto device;
-+	}
-+
- 	if (tegra->hub) {
- 		err = tegra_display_hub_prepare(tegra->hub);
- 		if (err < 0)
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index bc720ae8d95e..63d99d3ff422 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -36,6 +36,8 @@ struct tegra_drm {
- 
- 	struct iommu_domain *domain;
- 	bool use_explicit_iommu;
-+	bool use_dma_iommu;
-+	bool use_direct_dma;
- 	struct mutex mm_lock;
- 	struct drm_mm mm;
- 
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index f76af733ea79..bb8d9f9e6453 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -111,10 +111,6 @@ static struct host1x_bo_mapping *tegra_bo_pin(struct device *dev, struct host1x_
- 	}
- 
- 	if (obj->pages) {
--		/*
--		 * If the buffer object was allocated from the explicit IOMMU
--		 * API code paths, construct an SG table from the pages.
--		 */
- 		err = sg_alloc_table_from_pages(map->sgt, obj->pages, obj->num_pages, 0, gem->size,
- 						GFP_KERNEL);
- 		if (err < 0)
-@@ -378,15 +374,17 @@ static int tegra_bo_alloc(struct drm_device *drm, struct tegra_bo *bo)
- 	struct tegra_drm *tegra = drm->dev_private;
- 	int err;
- 
--	if (tegra->domain) {
-+	if (tegra->domain || tegra->use_dma_iommu) {
- 		err = tegra_bo_get_pages(drm, bo);
- 		if (err < 0)
- 			return err;
- 
--		err = tegra_bo_iommu_map(tegra, bo);
--		if (err < 0) {
--			tegra_bo_free(drm, bo);
--			return err;
-+		if (tegra->domain) {
-+			err = tegra_bo_iommu_map(tegra, bo);
-+			if (err < 0) {
-+				tegra_bo_free(drm, bo);
-+				return err;
-+			}
- 		}
- 	} else {
- 		size_t size = bo->gem.size;
-diff --git a/drivers/gpu/drm/tegra/gem.h b/drivers/gpu/drm/tegra/gem.h
-index bf2cbd48eb3f..da43bef546ec 100644
---- a/drivers/gpu/drm/tegra/gem.h
-+++ b/drivers/gpu/drm/tegra/gem.h
-@@ -37,7 +37,9 @@ struct tegra_bo_tiling {
-  *
-  * Buffer source  | Mapping API(*)  | Fields
-  * ---------------+-----------------+---------------
-- * Allocated here | DMA API         | iova (IOVA mapped to drm->dev), vaddr (CPU VA)
-+ * Allocated here | DMA API, IOMMU  | pages/num_pages (Phys. memory), sgt (Mapped to drm->dev)
-+ *
-+ * Allocated here | DMA API, direct | iova (DMA address on drm->dev), vaddr (CPU VA)
-  *
-  * Allocated here | IOMMU API       | pages/num_pages (Phys. memory), sgt (Mapped to drm->dev),
-  *                                  | iova/size (Mapped to domain)
+ drivers/spi/spi-tegra20-slink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
-base-commit: 20a33c6b6cbe7e4805dfb6cd68816937443aa148
-change-id: 20261026-b4-tegradrm-allocate-shmem-a0090b948f5c
-
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index ed1fcf57dd30..3f507176b0c8 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -261,7 +261,7 @@ static unsigned tegra_slink_calculate_curr_xfer_param(
+ 	unsigned total_fifo_words;
+ 
+ 	bits_per_word = t->bits_per_word;
+-	tspi->bytes_per_word = DIV_ROUND_UP(bits_per_word, 8);
++	tspi->bytes_per_word = spi_bpw_to_bytes(bits_per_word);
+ 
+ 	if (bits_per_word == 8 || bits_per_word == 16) {
+ 		tspi->is_packed = true;
+-- 
+2.50.1
