@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=85.128.243.59
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793045975;
-	b=buZGW9mNsNjPxMc3WCQ8zSHG/vZsobnpLf2G+k60IDsz1S+RwiUeIUXygCbGKBo1EGMx
-	 +IJOH7QbUpaaONP6VhhpbpnAzJphbmBZxXDbAwvWKdntNV9RaqrYrJEws8vO6QYms30KL
-	 V1UEJ/PNIYnEW+A895A4kdpILsIwIzufzgyfl8TUUvuyhgnBTFUJ4wlOD8aFl7iAJJmIM
-	 uc+3T5FdFBjZWia/t3YxMQxoUugHUT73X5criUtVXIIDYQLF8MZQuzOw2yMd99Vr99AZ0
-	 HW7EJzOnrrWBrXrwTqs2pQkHg74Bxyoo1RfGx/Z0nowI/anTvqpAKw8QUuhN4Yku7Kw==
+	t=1793045972;
+	b=TODYXhxYeHSOXo1L2PrEjf4BPPzrMNYomkfNHICahjqStnGRufQwXm1JQLF3j8qsJAM6
+	 AX/XKMDTRA/eJOsrhcMsFIT/vK0Ow+ZTMF5bGv3N1YO1d4iPG1DCLrdu2H0kppABle4Yo
+	 zL+LoVpY7DS4qqHJygRkiNfkHN23vtX+YuH6kZy51lfGC77uiYTZ2WYNNypqyudQvU6LZ
+	 hnLLM7kcamO09jNUWLNToI9HVrg4/ezyFJ+fLy1cJjQvcYvpGVa4pv7258VdoD/4Iux10
+	 XcBkmjkTuXmILjpxnSkJHgvH/7a+G+lr6tiILR5ZCsaVjy+erZ7MVwdb+8ZPk2Mh1Vg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793045975;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793045972;
 	h=DMARC-Filter:X-Virus-Scanned:X-Spam-Flag:X-Spam-Score:X-Spam-Level:
 	 X-Spam-Status:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
+	 Message-ID:X-Mailer:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=1g9jwwou7V27cT8YBwJj5mCRlkzBXId6baxySojA018=;
-	b=F1XExGWMNitRmOPhdQXh3q7TxxIbKTSsNbxlptNA4zpICcmgOhKDP4OwntNMjWtYrC2e
-	 PIGurElojBL0FnqJFYzPcpYEOAXF9XzStN8sjQu88h2g2006Ng044ZvksqUHvur5FIHWJ
-	 kGWZJK5OmoMc0pxn9NR7pZVFfRViQhtyXzNt0lGsel1YbYJmrULP0NrLbyVxXje9/+0Pv
-	 XDT47UlPlCIcDMiy6wIQom6p2zZCSgLN7cOCQn1wH5q9zrR70IyMkKIc57IhLq+Q2uOeE
-	 0n4Bv79yl3uSlE4F05a9fVmGDv9OoQrHtmRVBAH4IHjmKdoI3S+9RMzD+ZcSQkpiZXA==
+	bh=wHAlF6yDlXhW0ZWr1IcAwZGVsRcN5yxAZVVVJzrwzhQ=;
+	b=f3yyI7KT19DgdlaTy+DvSiXrHrOxDe8ny9DhjooR0IVaCOgSH1BujUj1ZeldnKWvOd52
+	 aufbNAEuRh74rSUUGT6WSMMHaeCCsXCzvqcPvXbMRMimqcx4DcVnpOrvd9soGZa+q8g2p
+	 cIONP5SU0j+11KlM1gZL2ltiZC9jGocTDuuSEUCpGhOlt8G8OerokS/jEBOtfAfkrHW1w
+	 /hYFyPOwCx5xhZ06LOz3yH/Lbu6EipoNih/sVIlo3gLlYXnwjQMCQSqBPbiZSGDOZLNK9
+	 B/WPfuu1CO3RMIEJ5CFU/KwZK3dErAnQdXca+fJpSA7XBoY3gHlx76MyBgU7CgkWF/A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=asmblr.net;
 	spf=pass smtp.mailfrom=asmblr.net;
-	dkim=pass header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=bwMHUXxu;
+	dkim=pass header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=HsYjdScD;
 	arc=none smtp.remote-ip=85.128.243.59
 Received: from shared-aoh59.rev.nazwa.pl (shared-aoh59.rev.nazwa.pl [85.128.243.59])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66808606A337;
-	Mon, 26 Oct 2026 20:19:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66808606A337
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA91606A31A;
+	Mon, 26 Oct 2026 20:19:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2CA91606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asmblr.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asmblr.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=bwMHUXxu
+	dkim=pass (2048-bit key, unprotected) header.d=asmblr.net header.i=@asmblr.net header.a=rsa-sha256 header.s=1706450368.internal header.b=HsYjdScD
 X-Virus-Scanned: by amavisd-new using ClamAV (18)
 X-Spam-Flag: NO
-X-Spam-Score: -0.625
-X-Spam-Level: 
+X-Spam-Score: 4.374
+X-Spam-Level: ****
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=asmblr.net;
-	s=1706450368.internal; t=1793045968;
-	bh=1g9jwwou7V27cT8YBwJj5mCRlkzBXId6baxySojA018=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=bwMHUXxuwBRv4nCvtsOzgKGGWGj2Bg5TOAHHSLH4nAIwX1Lt4Ejdg9mKRJ3nuBxX1
-	 4YeQ0gZh/Tk4lQ5pRlf5QJINC1Buekn8zms3dUGNQOCA+Lco6DKRC31ouhIIw2n8JU
-	 ML0NbdJERN5eZryb4qISf9397NI3vBULxoyMWQwl2G7QwI7i6GahEojWqjWWjSIfWT
-	 Pp+JpF4T0Pty4GYi2s8wEE07TUnzc1jQ8XGW+rUoQhxZeUTSx3jWHQbXKtUyipXjw/
-	 hDaQwt57kaxyzJlUqyVhqT9VQAJvPjc6Vog06oz0N7+q1VdsQxinT5JGYljIQHiZG/
-	 MdhU8lkSqXw5w==
+	s=1706450368.internal; t=1793045963;
+	bh=wHAlF6yDlXhW0ZWr1IcAwZGVsRcN5yxAZVVVJzrwzhQ=;
+	h=From:To:Cc:Subject:Date;
+	b=HsYjdScDJXTp9VM8GOENlHjEHp8yNBAbzRzaWg/MXWGZdJLVj/HYVcCnkIPwAt2O1
+	 2w8b+wpGlLgvUB0hnHLZC+8DkQ2RVkjpVjSCMkw+WExeyjYDsHO/aguT6e7dH6je8b
+	 hhlpSG/jQCGATvbWZlSJbgGRwLL0CkV1MVXpVOPq6CxFhyBgYy7sOvcLUuUHQz0L8g
+	 el9yg68sdhaddvrWMCNORCS7c3LPYeDczlRAoFqL/kb05Ur9wg5+nBlqo9XxNmHydn
+	 j7XQvMjJFXjv5yUYp1sA4th9qg7VeFeH3NiEILLlJYjEwXwvuvA88FmRYQjYUU18+h
+	 cTES1dd+SzR5g==
 Received: from milkyway (91-150-221-36.dynamic.play.pl [91.150.221.36])
-	by server753313.nazwa.pl (Postfix) with ESMTP id 669EC1BE0B6;
-	Mon, 26 Oct 2026 21:19:28 +0100 (CET)
+	by server753313.nazwa.pl (Postfix) with ESMTP id 205C61BDF80;
+	Mon, 26 Oct 2026 21:19:23 +0100 (CET)
 From: =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amade@asmblr.net>
 To: linux-sound@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -64,12 +64,10 @@ Cc: linux-kernel@vger.kernel.org,
 	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
 	=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amade@asmblr.net>
-Subject: [PATCH 11/12] ASoC: codecs: wm8962: Make wm8962_mic_detect() static
-Date: Mon, 26 Oct 2026 21:19:14 +0100
-Message-ID: <20261026201915.57184-12-amade@asmblr.net>
+Subject: [PATCH 00/12] ASoC: Convert last few codecs to set_jack
+Date: Mon, 26 Oct 2026 21:19:03 +0100
+Message-ID: <20261026201915.57184-1-amade@asmblr.net>
 X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261026201915.57184-1-amade@asmblr.net>
-References: <20261026201915.57184-1-amade@asmblr.net>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -82,47 +80,50 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Now that all callers have been switched to snd_soc_component_set_jack(),
-make wm8962_mic_detect() static and unexport it.
+There were still few codecs left using old method of jack detection by
+exporting public *_mic_detect() function. Convert them to .set_jack
+callback.
 
-Signed-off-by: Amadeusz Sławiński <amade@asmblr.net>
----
- sound/soc/codecs/wm8962.c | 3 +--
- sound/soc/codecs/wm8962.h | 2 --
- 2 files changed, 1 insertion(+), 4 deletions(-)
+First implement the wrapper around *_mic_detect, currently either none
+or just one of the arguments is used, so even if function exposes more,
+wrap it, by accepting only one. (If in the future there is usecase for
+more arguments, it can be easily added, by exposing jack setting struct,
+and passing it by data pointer.)
 
-diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
-index b36e73fabbdd..31c9080cd814 100644
---- a/sound/soc/codecs/wm8962.c
-+++ b/sound/soc/codecs/wm8962.c
-@@ -3244,7 +3244,7 @@ static irqreturn_t wm8962_irq(int irq, void *data)
-  *
-  * If no jack is supplied detection will be disabled.
-  */
--int wm8962_mic_detect(struct snd_soc_component *component, struct snd_soc_jack *jack)
-+static int wm8962_mic_detect(struct snd_soc_component *component, struct snd_soc_jack *jack)
- {
- 	struct wm8962_priv *wm8962 = snd_soc_component_get_drvdata(component);
- 	struct snd_soc_dapm_context *dapm = snd_soc_component_to_dapm(component);
-@@ -3282,7 +3282,6 @@ int wm8962_mic_detect(struct snd_soc_component *component, struct snd_soc_jack *
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(wm8962_mic_detect);
- 
- static int beep_rates[] = {
- 	500, 1000, 2000, 4000,
-diff --git a/sound/soc/codecs/wm8962.h b/sound/soc/codecs/wm8962.h
-index e7f4a70ab8a4..f7e886978a50 100644
---- a/sound/soc/codecs/wm8962.h
-+++ b/sound/soc/codecs/wm8962.h
-@@ -3776,6 +3776,4 @@
- #define WM8962_VSS_ENA_SHIFT                         0  /* VSS_ENA */
- #define WM8962_VSS_ENA_WIDTH                         1  /* VSS_ENA */
- 
--int wm8962_mic_detect(struct snd_soc_component *component, struct snd_soc_jack *jack);
--
- #endif
+Then convert the boards to use standard snd_soc_component_set_jack call.
+
+And finally remove *_mic_detect() from headers and unexport it.
+
+Amadeusz Sławiński (12):
+  ASoC: codecs: wm8903: Implement set_jack callback
+  ASoC: codecs: wm8962: Implement set_jack callback
+  ASoC: codecs: wm8994: Implement set_jack callback
+  ASoC: tegra: tegra_wm8903: Use standard callback to set jack
+  ASoC: tegra: tegra_wm8962: Use standard callback to set jack
+  ASoC: tegra: tegra_wm8994: Use standard callback to set jack
+  ASoC: samsung: littlemill: Use standard callback to set jack
+  ASoC: samsung: midas_wm1811: Use standard callback to set jack
+  ASoC: samsung: tobermory: Use standard callback to set jack
+  ASoC: codecs: wm8903: Make wm8903_mic_detect() static
+  ASoC: codecs: wm8962: Make wm8962_mic_detect() static
+  ASoC: codecs: wm8994: Make mic detect functions static
+
+ sound/soc/codecs/wm8903.c        | 18 +++++++++++++++---
+ sound/soc/codecs/wm8903.h        |  5 -----
+ sound/soc/codecs/wm8962.c        | 10 ++++++++--
+ sound/soc/codecs/wm8962.h        |  2 --
+ sound/soc/codecs/wm8994.c        | 30 +++++++++++++++++++++++-------
+ sound/soc/codecs/wm8994.h        |  6 ------
+ sound/soc/samsung/littlemill.c   |  6 +-----
+ sound/soc/samsung/midas_wm1811.c |  3 +--
+ sound/soc/samsung/tobermory.c    |  2 +-
+ sound/soc/tegra/tegra_wm8903.c   |  5 ++---
+ sound/soc/tegra/tegra_wm8962.c   |  4 ++--
+ sound/soc/tegra/tegra_wm8994.c   |  4 ++--
+ 12 files changed, 55 insertions(+), 40 deletions(-)
+
+
+base-commit: cc3fc99f1bce93c3ae3771ef98cb91a566da857e
 -- 
 2.56.0
 
