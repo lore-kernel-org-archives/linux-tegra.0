@@ -1,90 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.47
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793126621;
-	b=m7krgDBNav2Os43MdrctiZxHqqKEOJn35epamtDHzkDGTwFKF818vhwE14OHb2u7OB+M
-	 Uo2Pz2gg4sIT9JdR34L3UrJNV8Gh1pdpGIpagsE63SEFOno46NKFwIiJPWiAK0t7Umj8v
-	 uI0ARnA5O+jfOqFl5+3kalXOf7HzC54qz4kNwaGhkvJl/VdORfGKh3jsrk6JP3hFTqE2y
-	 XGMXu174uWECKHrmfxzDd1IAD1MEqNt1ElWQZDnVHF0F62leO4QKPGkXNXDqy5yDlVQ1f
-	 QAbp7QZ9qKG10w7dQF/OhvvnLUsKgl/+376g2q3GZPA6KNggrtLbHbPf6QEMtzMwO4A==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793126621;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.173
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793126696;
+	b=gCfMfC3vL/RmhK5bjw3aMbK8u8d3jIaqPn6aeHrGWTTRsqCYEk4dFmZQyVvxnkUxBiA2
+	 0md8nlhuiaFZdWbAo1Q35jNG6mua2u6kru4lbo3dkwf7qUBXR/8CTNQGlW4bfsI3tU9Jj
+	 B+UQcTWcraPrNGW2Ki7Mt40qeJ7l+JjYRkStAZgDiYMua5IfYQIxyYHK9OEfjaJdA3I8a
+	 NlbUvI4Ttq2ATIuWbkAUZwtkJhTfM46wQbxhpg1LFGu40We2aUvPhum9TLIWRiLbITsG/
+	 RK4MBVuwg94QhZquU9GFyNmZ1zIiGiOLR6ppDiNjGpIs4lcK0+aHWHLwDbrZBve6OFw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793126696;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=ETa6PEiQPvx4Sm9llFa3xDCORaPT2KrvUrXEonwMbCs=;
-	b=advXwnkqowQqRC+FKnovEf2JOUrB6eKFwCLO9/aG0pH0wwfSAwn5YdULU2VsaqIST9f2
-	 gZF/tagqIO5SYRtm3JtVUVCZSD7abGSWfX0lirAGcteY7RtVnaY664z3cf2XLuzx+rkWo
-	 mPptGzG6MbKgHzRM9U3eF/5YCs4egwhTjdJD4G1AtxEIu55dFJ6DZlLxV8Tbuuxm1Y9sn
-	 EqobMvrcjqTKVXv9CHceNXD4dwPJmE0js/JrgvzqFO4qM0R6zwdH4fDiEVhDZ9UHOsFg3
-	 EcXmdj2fyrVf07Kgc+dDdV6LpoD451YFPW32id+SPwisGfl5RMgzNn6wjYjuAjwNpEg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=tEoWr6oOVnosU4poLjW2kjTOYuqBMD/9cOa8c5tjMMU=;
+	b=eaFpRkeAk1qUjUAOEdJA6ZZmkQDkOWTqv1m+LFzeKzSUyUo9v6ios8E4P9y2o2CkjzBL
+	 lt5oO9FvDlCxIWvJDEGxU1x3qE/r+u31nhZwu1rWFF7UWAyGhbQFxbkNmBi/7KS6EYgvL
+	 5UZU/t1+y/fj2xoQ5XqPekmOImw9iKzpfYOa8StGqSloovMbnZmDBQX7IvAbhK3ABbVx7
+	 GcGSNDntQhEF2Lv0srekAilVv7U1RmdEC4n6Ern8601WQfL+Ogq2OCqXfqO5ZiiGhWfjX
+	 ikhoCSELF/s1k91mdVQueSSO7oY/5LtoBAQm8+VbL55J9iwRlQGHQM++fTgkNpx17Ww==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oD4jcY1c;
-	arc=none smtp.remote-ip=209.85.210.47
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RZ9Tmw7X;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.173
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB98606A320
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 18:43:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3FB98606A320
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB01606A31E
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 18:44:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6CB01606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oD4jcY1c
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-83bbcfba0ffso136701a34.0
-        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 11:43:39 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RZ9Tmw7X
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-3645f0f3fcdso333010eec.0
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 11:44:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793126695; cv=none;
+        d=google.com; s=arc-20260327;
+        b=CJbkDATjtNaTnkmULKny0Bov0qIN28ZeNzCOAWkJn+QEQwKnWGXU4ezJJEobAAM8UE
+         PtBO0BZ2iSk1gaK/CGMJgh4Olv622h96c3Uwkeu/oruR9KH0/vAGE+4mpd1xSdHMLd3G
+         9ijSNSNglbxljwJiJ0W5o0kqCTy2Hd7QYKf4DpMF35rMF4v3aCsL4VsGU2EUORalbTOH
+         XOcpxMdD556+CTCOQnMAlEK4zp3ayjPBS99S3RB5iPExcPcOTQFeaTELrV/aL+h7mFoB
+         tQ/fkBdelJe7RGW5Oq5BvpwZeYBNyL4PDYJ2Ozc7cjGVa/+vw8mPbhn04I6ezJgDodhn
+         9hig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=tEoWr6oOVnosU4poLjW2kjTOYuqBMD/9cOa8c5tjMMU=;
+        fh=RYymoO9G4BbUmdzBkbu4tKrZxOuwHBm92zvKIM/aBvA=;
+        b=F7f8pp9CZ3iYSfEc6NCvzLOSh9q4kbTrPeQUxlyNSMhYmpyJhTVC1zmYhxe0Jv/7CD
+         WNq43es7CIpJ5KYEuwz3eDwKBMrh3RpWEpA2UYNf/tmJdlAifBPXxlJmbCbTc7AFVKL/
+         rROCNtqNuzYXgstyBwk3jPeyoZVBXPuMFYWIPfYHb1Nw9XUJ1gY8AxOTVbk7CQROheVV
+         Sq+zchRRhCj1EKkpOySAnAIABuAajRdBNVNCKnQXxCEr4DUZrUw1bl4QTvb8g9W7fc7p
+         L1ArV6IFHKOx0CyfdipA8zZCh8BkZxVjGtn/BxVYgwK/7MligZipuJ3iCyUWdfai9rQM
+         8EBg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793126619; x=1793731419; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ETa6PEiQPvx4Sm9llFa3xDCORaPT2KrvUrXEonwMbCs=;
-        b=oD4jcY1ckBrn+CHRQVBS4t7Gqd7I3QR1HDTTSxzsfsCSxcWeyJQThuiiRWuYZ4Fge4
-         6hldgR44OA9FSOV+KLpiLU3F2F3r7GcerlTxGQaozu+0P3YB2/AmtvR8xJEd+SRU0er1
-         NJ/F0wbZrHse2TmHLy3S6Su/JuOGAC6+zvDSOw2aemAmXLMvc3Qe3MjzfgTS3e292ybr
-         nG8k9a2OtoVVGLohrW1vZWMs8k5ud+6L9TuhyQtsfPZtcEBPgAlPONovF3UV2vk9dkLY
-         Eph1ZHn3cV2DKozFt5a76nNT6OiqerhHlwyPTU35ZgNydHsTDEnNHtAiHwDG/5d1acGP
-         cD4w==
+        d=gmail.com; s=20260707; t=1793126695; x=1793731495; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=tEoWr6oOVnosU4poLjW2kjTOYuqBMD/9cOa8c5tjMMU=;
+        b=RZ9Tmw7X9onYeXIfmAJ7wd3QPCdcDBD4paScJ30dfXx3BWGyoV/6iQVFuzt/zccTjD
+         /R35Yw+g8tOlNVl9zG9vBSMJgjxM/01FiXo4i4OMwmfBWTkYxrwCTYp23TJhNnIZrNUl
+         5Td6Blf2bHUxOSbtHInNeN2TmSkk/7hRDPWcbGC29dn8i2aJUskeIehrHrFKYXyCVFqa
+         ChvsxSNNwMjawkbG0F8uJ6EhS+Ro7P32dpB1Tr1pYwVglEU/MTXh2lSmWArCdzF1Ufqs
+         8fXSzdJJ/apgn4X+SdnXZz/JC0H46gG4PTYJHNOcuPBLOwpeR4FONKL3Vf8zqXYbDJsv
+         Ym1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793126619; x=1793731419;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1793126695; x=1793731495;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ETa6PEiQPvx4Sm9llFa3xDCORaPT2KrvUrXEonwMbCs=;
-        b=pqsx3myLBuelGPNdKNpzFgT7o/EBeMke+J/cINBjZKka9NuOzeCcCe582reGkqkCug
-         oQuf6iHuhmfXTydKFrfLalFutQZ0tsnGAquM2AwyZQxvdsP/b0diJw9S4fdpVDLZg7Wl
-         Zd8+QYcM8JX7Yyw7ZmZb1EphP2zlOKC18vLVhjPnHc8FNv9HXZNSnZYZYVL9rqP/SJ6B
-         hiQIt/crIY5woqQU5mqEyS3PDtXCRce4nrrQh4C1nKJtJ8Le53Q3j5gGJvsErP3E2pZz
-         7O/P3i7Y47yJrHSiHZbJusV1PxTwAmce/eBde5ohG790iF7ppY0HI3R6x5y70Re+3nsg
-         ATsg==
-X-Forwarded-Encrypted: i=1; AKwUvByPTk2l765FHUqYN46wHUYBJcOOoOQxTS6rGbL6cjDAYP9Sp8SSjXEaOSsZEVPsHzYvLRT6obD2VTicAg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIsQgSSBSctmLqusQr2GbRyQ81Sk42baUR4PlZDkbRjonbaAR+p
-	K1sbUw3u48OAOXOO9xg2+OMAlRFTCLLjAAEPZTZo+hnLRE41WbCtk+g8
-X-Gm-Gg: AYBFou1UXIk3uW7FU6UBD4yiy2OL/DVtOYqqy2+RuQDmc51QaAYNTAaBRETV4nO2oS5
-	mhL7FNB8pw69vMttrwRTLW+srYD4riTzJqWYpB7ftCr6LmECd7xwJEFS8mFD3p14nQhphOQOMlw
-	HGN0bTK0coly4nU3E6gyGOU1dH2a5PFKXEZ+hID1uJKhSMrf7947pGKtW+/zyDfGm54KjquDwiK
-	4EHFCQvPFFaXhcIqC5h4xWXUmjgCas3hO5RuxeqZvA9gBVNRoGmQcQcSKJhjFtmTc3t93ygwmtV
-	cSSN1rSnXSdG5jwq++g7SiPttnLwMUaRo1JpGJq0rHHO8DTmtGOOILHJvq6Cv9LpzJOHIyytvsx
-	Zb+M6CwsoDI6IbkebPW9k0h9uvwakUDYXy4hb+qv1z/NrNrdgqDJ6AJZFH1uCCjMXBevFgPZywv
-	xYj12oRgplFBQlgQbYpqZgYysPACM6JRJy/hWTUwoNBF9FPa5dvQ1d5K/dKx/Dg24YaQsMuyw+2
-	tQnJtLW+twKaJ7robFyfwELqMYCchTZ6+HpbOSBm435scVgAoPYSR8AZKOXA+hf+z8nnwgghgE4
-	7154kPXmKMbWdldLelz6XFNDBW28/90GseBFKbqWeyX7UAKuZKa9p3IqBVVBJgKsAphvNsWu/M+
-	xEe71i1AOfk8G0Mj4gf9UG1ESttoiqoov2aIahJw8JEQ1+LS9ENxV9eGnvZYTFJQC25xNM8GTg1
-	BEdaM=
-X-Received: by 2002:a05:6830:230f:b0:814:57a9:4243 with SMTP id 46e09a7af769-85abdb098e0mr329067a34.17.1793126618937;
-        Tue, 27 Oct 2026 11:43:38 -0700 (PDT)
-Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-850fb074fb6sm12488338a34.12.2026.10.27.11.43.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2026 11:43:38 -0700 (PDT)
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Tue, 27 Oct 2026 12:22:27 -0600
-Subject: [PATCH v3 2/2] dmaengine: mediatek: uart: synchronize completion
- callbacks
+        bh=tEoWr6oOVnosU4poLjW2kjTOYuqBMD/9cOa8c5tjMMU=;
+        b=h9v1gMmbzPJauzbJpL6nne2ia4Q0ATdoQja4sZF+H8brunr3rHakMZBeufhgfAVPUN
+         8KlfvaI6rjsuV1GUVb2X8ULLY5cZqrJSGFCR3bw6IglPefXLxadlU8Cr5qdQhjh694p1
+         urcgxes1eawXZrKVUrdnbnc3bbfHubalrZpDG0EPVUYFMxzhsrnDIgmvXa7AANaJazOQ
+         MCmohdl+oDaYh/D4DhtjYb4r7brXQqgEDhiviz9OAqXfpJnLbZnIfk3J3PbVYeLqkWDr
+         WXqzYIRco0TBB/nzQrCWoM7tj8w6lozVmf0wlVLyesawDkht1mXmhbvzeaUyM8HcExDH
+         TZyg==
+X-Forwarded-Encrypted: i=1; AKwUvBz7+qLSLjDhG3aGHZ0FfSbYv79IxXb5RREqMQphqe5K+hDoF9a3EsfSNLf1w3N9mpaSIqZZsrTIrL88DA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKQpFJAcbtf1ZpFN3D4h6qUG4b6Sp6CnLg5IW55NWDoWKshvDVv
+	3d5W6198Ds4T1kgCXbGsAi3iZNo/ssXIEUvrYhrOLpayliaaw6S+BJnkSJLiWWPXNZ+QZCl2j/H
+	65v+hNbnKvufbbqO+Gkp0JCNNGRUMLYJuXw==
+X-Gm-Gg: AYBFou395u82L1eZxfPKbAK2+dnbkxO3UNOxwk9QDvpVhTW1bOzMXlMVA/3ujFkf04n
+	XSDCuwMqaRF2y0ad/my7vKJmqiGrfj7DpYJZQkai6j3gQ8kgzVDbYcNq3OwP4/cEi+1H3p1nUyB
+	QEQb6zgphFj+X54QX3OxlfngyUDwEmHmdHhPNYcztWeJY9hODNsDpipJVImcJtPCrHX8bQA0dHB
+	M+35oAK7L0QaA7XwrTxE8EiGuHmnAVuUBPj+P3XDQ0vRODGddyK4Z2B9UoqKE+oBsKcTDViql3D
+	b4JCveGjveF+PWvwoT+orfS4V4/hjBlT/rr4pR5XZtTBuYU/dQUFUPEnUpqzY4JYqiwB0ZI5T4X
+	ggMwDslFlJp4K4Pawzc3K1xeM4/aPYKMS1Y+XuwbE4SCUg6fYOMveCeGNuXruaoHcK4kvi9NOOf
+	jrkh2W+JBXe923VS0=
+X-Received: by 2002:a05:7300:c88:b0:369:eec1:1d7e with SMTP id
+ 5a478bee46e88-36a2011245fmr748593eec.11.1793126695515; Tue, 27 Oct 2026
+ 11:44:55 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -94,72 +105,41 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261027-submit-mtk-uart-dma-synchronize-v1-v3-2-aad7a6b3c62e@gmail.com>
-References: <20261027-submit-mtk-uart-dma-synchronize-v1-v3-0-aad7a6b3c62e@gmail.com>
-In-Reply-To: <20261027-submit-mtk-uart-dma-synchronize-v1-v3-0-aad7a6b3c62e@gmail.com>
-To: Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
- Frank Li <Frank.Li@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
- Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, 
- Zhou Wang <wangzhou1@hisilicon.com>, Longfang Liu <liulongfang@huawei.com>, 
- Andy Shevchenko <andy@kernel.org>, Keguang Zhang <keguang.zhang@gmail.com>, 
- Binbin Zhou <zhoubinbin@loongson.cn>, 
- Taichi Sugaya <sugaya.taichi@socionext.com>, 
- Takao Orito <orito.takao@socionext.com>, 
- =?utf-8?q?Am=C3=A9lie_Delaunay?= <amelie.delaunay@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Vignesh Raghavendra <vigneshr@ti.com>, 
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
- Masami Hiramatsu <mhiramat@kernel.org>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-rpi-kernel@lists.infradead.org, imx@lists.linux.dev, 
- linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org, 
- James Hilliard <james.hilliard1@gmail.com>, Frank Li <Frank.li@oss.nxp.com>
-X-Mailer: b4 0.15.2
+References: <20261027120019.93611-1-clamor95@gmail.com> <20261027120019.93611-6-clamor95@gmail.com>
+ <179312433904.199157.3178610408209114840.b4-review@b4>
+In-Reply-To: <179312433904.199157.3178610408209114840.b4-review@b4>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 27 Oct 2026 20:44:44 +0200
+X-Gm-Features: AclHuK9YRoKNp7VL85UdMjrZOorWmZTdr54Qmc8Jf3CO54OLWmTMK4fUeFsGC7k
+Message-ID: <CAPVz0n3MXT7_h6_REqcyayC_qyi9xXLNUjJLPzeyACFipr=TMA@mail.gmail.com>
+Subject: Re: [PATCH v1 5/7] ASoC: dt-bindings: wlf,wm8994: Update
+ #sound-dai-cells property
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>, 
+	Leon Romanovsky <leon@kernel.org>, Animesh Agarwal <animeshagarwal28@gmail.com>, 
+	patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Terminating a UART APDMA channel waits for its interrupt handler, but
-completion callbacks run in the virt-dma tasklet. A callback already
-removed from desc_completed can still be running after termination
-returns. With no device_synchronize hook, dmaengine_synchronize() does
-not wait for that callback either.
+=D0=B2=D1=82, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 20:0=
+5 Mark Brown <broonie@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> > The Wolfson Microelectronics WM8994 codec provides three DAI cells.
+>
+> >    '#sound-dai-cells':
+> > -    const: 0
+> > +    const: 1
+>
+> We have existing Exynos users which are validated with 0, this will break
+> validation for them.
+>
 
-Use vchan_dma_synchronize() as the UART APDMA device_synchronize callback
-so clients can wait for completion callbacks before reusing callback
-state or freeing DMA buffers. Keep the callback wait separate from
-device_terminate_all so it can run without locks acquired by the callback.
+Yes, sorry, it should be enum [0, 1] my bad, I will update in v2.
 
-Fixes: 9135408c3ace ("dmaengine: mediatek: Add MediaTek UART APDMA support")
-Suggested-by: Frank Li <Frank.li@oss.nxp.com>
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
----
- drivers/dma/mediatek/mtk-uart-apdma.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/dma/mediatek/mtk-uart-apdma.c b/drivers/dma/mediatek/mtk-uart-apdma.c
-index f74e9a328588..6bc4f20d8b06 100644
---- a/drivers/dma/mediatek/mtk-uart-apdma.c
-+++ b/drivers/dma/mediatek/mtk-uart-apdma.c
-@@ -514,6 +514,7 @@ static int mtk_uart_apdma_probe(struct platform_device *pdev)
- 	mtkd->ddev.device_config = mtk_uart_apdma_slave_config;
- 	mtkd->ddev.device_pause = mtk_uart_apdma_device_pause;
- 	mtkd->ddev.device_terminate_all = mtk_uart_apdma_terminate_all;
-+	mtkd->ddev.device_synchronize = vchan_dma_synchronize;
- 	mtkd->ddev.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE);
- 	mtkd->ddev.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE);
- 	mtkd->ddev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
-
--- 
-2.53.0
-
+> --
+> Mark Brown <broonie@kernel.org>
