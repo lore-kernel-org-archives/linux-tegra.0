@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793110455;
-	b=jJfkefJNO/RnYN/7z8o3TPclerkI7KVSpMQVx6wzAhZ2zjIBdcrIXm3oohU5GlfxeGJO
-	 g+bQhLb1ojPUDApNW2XyvhLaZ3Fy/qYd+Aow17g4ZpyQry7mrFNrsrmMt7SmnhlqaBgkJ
-	 UaRQVUxhSX+BYXPzG7mASMKLAsxsKwEbGd5eg9a2oPw2+KCNwP0ppeu+llLOdCNpQkdzM
-	 c50Sftj1c50cvDqubgpvrctBkae52q6DMUygg9ddl1+dZYwpQ58JVIVhd8DAcYdE72CJ+
-	 i+4mX8HIq13lraE46U6h14YKFEnsR+CMjzxyrcoeIdapGGMQDZGXjLKnIKy84uj5Zlw==
+	t=1793110493;
+	b=1X8ZXSexBJ08D41kSL7Pr8H2kdrtbHV+unif8uNKdAszZr4tsAWL7Dnz6rNLgkvPUnj7
+	 kiAGevVWPetclKQvdvhaKYBKR2nphMkisTN7reGJkd1Asl2SmWsPBmXtwF/+m0jpVbp66
+	 lzBQfQ2o4UCED+KRrcPZ4gbK7fZWxAr9ShZ6gqWBAz0oB6XriLtF4+Jeqf3BnNOzZnz1d
+	 CRFlcTmxPVRRDMOS6Ha+8ttYQqaBd/1h0oAxe2B75IjBMrdt9VKgDDG0Q6nUfJum4nSU6
+	 UFqo/E2XxZe1IQ+7P5ODrefi2DJ/ByNPy1pTw6O6A6/gGMd7SL+31Qflp1fQR/VmjlA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793110455;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793110493;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
-	b=ZzK0qaYTeIXl8FOydq1f+U26tYiglCYXNcUQSWCiLNrb3DFutZ5fdmeChQpxvIaCt5Zd
-	 fLvEamLbep742J2wXuQ4fwrxdBqpVL39KN9MudOBdY0C9VkfkmE93UxLfxbpJ3lwjNPjF
-	 fbCM7Sw4tvCL7Cv3J4zn/HxQzbOhBe8xSPunm9z2YUfbQALSjnWWQzzfReLe80xE8ZpKx
-	 U+sYFzomiTvdIBySd0hvX1g6tySX3T8V/iGc58GYlgDzVOUOaTUJ5JuURrC1uhiFXy/sN
-	 0eeN8RHsSDfvhbr48RjYbx8rzZP25ZTtRaATkO44F1QfsG3fVGhoSKpaeqXu3p4rxgA==
+	bh=GaS9DIAzMYp6Tb26jgRNliWQoK7YtOPDgti3i8/xKo0=;
+	b=2QznWJcPe9+ThxJwZk6zixcJtpvVZstu9y7w4WEDtkjab7ghrlwIDRw9qEgaTrdK1UWb
+	 9gIOp1IUWRrnHsrsFSI++h2tjGv2TWc++f0SGLCxaI5WRs08tPdndWsGfIQ+tvUztc77S
+	 /nWoUEcM5iii8MC2Vi9lQEjH2jkoI0AWqni+pPSGSn1MfRboSZH2wPhd74yiWsUmSvGUi
+	 MNBgsF5jJvtsFhQyFmdD2BFRPWXX4ArGxQU/dF75s22y9Cb1idBXKUcSRWRj1kPiBL20q
+	 AGyRcSe/qFvE31xSUdc2KeJPDpPXf6Y10fCwRtLLNLwbEjtWGwIoet74kVhYueHXapg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DZ554ALk;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VexdIKwR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58215606A32A
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 14:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35991606A327
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 14:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DZ554ALk
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A75E1F031E7
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 14:14:15 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VexdIKwR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C61771F01394
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 14:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793110455;
-	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
+	s=k20260515; t=1793110492;
+	bh=GaS9DIAzMYp6Tb26jgRNliWQoK7YtOPDgti3i8/xKo0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=DZ554ALk3Juy4V9i4r0GutcW1KeVocqm7MPBWZMmYgo9jFftcvO1+gSlBwLYGS6Yh
-	 s/It4+4OVAo2Oq8xnWV6L48pQgyX7LX70qBP9WAUDnwcEedqo/6TgfU/rRGIQq1a8h
-	 sS0bPJ6tVu8Snq+Rf0i+LsZMCWE7cTa53dQwB7o69pA3H7TbSzwL/8+CX6eUMWPqs8
-	 EAGTVacQhX+mwjNJqIeAebRWgxfegbwC7xaRxXP0tXJZt8fk9bVk4MAviShWAhNDHH
-	 Uct5t20uzZ8fLh5btli+tenvEOIc+QIOGs1OfwaxaRZO0q6sJJCkCL7LwwOPzt2RHJ
-	 XO+xyuzj075ag==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-4a6f2825dd6so1073008fac.2
-        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 07:14:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwt4MQn/56hfm00IfmU9bjEg6zx5L5dZKfIaALiPfB1bVLid01RJSP5NXDgWRd8ACSWaV9RU/EsLF7xVw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ7Uuu3B0zMEUyTLy1xp0iIhyrYs7rQsMjfc/Jj7y6pTqcLc78h
-	iNwmQqHvvcK8POu0jjnicH3376FKb72AGbIvMfLSzWbOJuQHqqiWD3xrgYIepPgsoteMKvKa60t
-	WjDMsHWctV+pAKSG76GDkozP3e6fJl1g=
-X-Received: by 2002:a05:6870:c69e:b0:49d:c8ab:967b with SMTP id
- 586e51a60fabf-4a83f542697mr5910295fac.47.1793110453054; Tue, 27 Oct 2026
- 07:14:13 -0700 (PDT)
+	b=VexdIKwRzOvQEEgvmO8caE4nbf6xorObDq11NXYDvDa2mjeHckRll+Nx4EKxJD8ht
+	 W4KblFOO6y2af+SJ9nHUVFfDbKNeYcztIFgJWMAPsIy9N1QOvtFFKP0BwXuQ+Pz1Oq
+	 PU638njjn8Fyn5tTjko7v2pOLaNRMNrq1KUOtcwLu54gCfmwSIJkMaA3Tt4mtBszUY
+	 jK4rZKNgVSfkDM6vYqEpQDMMbEruHEMg4wX16UMopLSeUCvdYbUshewmZdxFr4vMsQ
+	 k2dDIfevo2EjeDJmoMRMUFEBreWAsQ6h7m2er3IkNb2RpM4W6NQJkmSB+FLbqt353i
+	 k7gwr/P6ceULQ==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-48eee44b908so2512515fac.1
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 07:14:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwFwmKusDtSPBL68uU9/bK4RNO+CBRB5oP1A9EXE5SzGsJ2Udp7RlVk6Ov6lQDfg0hUWRxOfqBNTiVXBQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKQW74cGjWcsq3r4dQkTrIBMeVW5owzVZKC6nGhlIrupcgOmQyv
+	UrDgQJ2K5QT64G0gZPlKO+dlXen6rtZmb+5qB2QcYIlQibaFl2k5I51DG8Lvp5k3haRHF6rcpIC
+	qVJSfbeaD00xQS6jHuhRV8UGsN5PnAh8=
+X-Received: by 2002:a05:6870:2189:b0:4a7:5508:c526 with SMTP id
+ 586e51a60fabf-4a83f42f572mr6040267fac.21.1793110491448; Tue, 27 Oct 2026
+ 07:14:51 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,14 +59,14 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
-In-Reply-To: <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-10-5e3070a3478f@oss.qualcomm.com>
+In-Reply-To: <20261026-drm-panel-funcs-v1-10-5e3070a3478f@oss.qualcomm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 27 Oct 2026 15:13:57 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
-X-Gm-Features: AclHuK8ruqZCGkf4O-7fY-Pys0rgaueWTZBuD-NGSUOyqWUpd7La4hdhioD434w
-Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
-Subject: Re: [PATCH 09/35] drm/mcde: use drm_panel_bridge_add()
+Date: Tue, 27 Oct 2026 15:14:29 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnmuXaoKDLyCsPzUBYohOxqjVGVndz0047vmhZFgvvo6A@mail.gmail.com>
+X-Gm-Features: AclHuK9bjg1W8yVOv6xb18mY_G1euLOiDqjDsy95KUm0kaVExInNMT0MB46F2ok
+Message-ID: <CAD++jLnmuXaoKDLyCsPzUBYohOxqjVGVndz0047vmhZFgvvo6A@mail.gmail.com>
+Subject: Re: [PATCH 10/35] drm/pl111: use drm_panel_bridge_add()
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
 	Jessica Zhang <jesszhan0024@gmail.com>, 
@@ -134,8 +134,6 @@ On Mon, Oct 26, 2026 at 12:10=E2=80=AFPM Dmitry Baryshkov
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
-
-Thanks for driving this patch series Dmitry!
 
 Yours,
 Linus Walleij
