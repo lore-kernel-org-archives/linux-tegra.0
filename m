@@ -1,44 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.79.60.207
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793106793;
-	b=pUpKhP2KLSjhULZntbSTjFbJkXLt3ylsfI1fkYSBJErfL96jjbhvsYRkF2OEX9ocgbix
-	 ShHfYqdhyNdAyVDUXwxpK60TqFLJcknt9RqOzIkgJ6F+4sst5ClZMMbQz++qDuGjDlJfB
-	 bY1C79TwojA1jn3hv+MtCO5JDgAKytgx5KTrkmMPWoIFMf1okf+win4jy60q66hZAMuH/
-	 mhCx3/IIMcc0jC5Sq2azWWk6YuywyL+uJPSxH1FQx7+TUoATSZhxRUcmtRWZIB6mYC0nx
-	 V1hzmn3uNuxJmb4CbVV7AXrbGI4FUDxnGYyU+YPhzfLpg1QEn+LE/G5ApwmJa8Nd6bA==
+	t=1793110455;
+	b=jJfkefJNO/RnYN/7z8o3TPclerkI7KVSpMQVx6wzAhZ2zjIBdcrIXm3oohU5GlfxeGJO
+	 g+bQhLb1ojPUDApNW2XyvhLaZ3Fy/qYd+Aow17g4ZpyQry7mrFNrsrmMt7SmnhlqaBgkJ
+	 UaRQVUxhSX+BYXPzG7mASMKLAsxsKwEbGd5eg9a2oPw2+KCNwP0ppeu+llLOdCNpQkdzM
+	 c50Sftj1c50cvDqubgpvrctBkae52q6DMUygg9ddl1+dZYwpQ58JVIVhd8DAcYdE72CJ+
+	 i+4mX8HIq13lraE46U6h14YKFEnsR+CMjzxyrcoeIdapGGMQDZGXjLKnIKy84uj5Zlw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793106793;
-	h=DMARC-Filter:Received:Message-ID:Date:MIME-Version:User-Agent:Cc:
-	 Subject:To:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-HM-Tid:X-HM-MType:X-HM-Spam-Status:
-	 DKIM-Signature;
-	bh=g7rGr35rsfUat/aHvoe/Mi5rDCRRMxT0NcwnokuEoLQ=;
-	b=uSPHGRq9dRbvUjAaSI8r0KRXmqbAovuFgcddiB6+iq9cn7saAjc3H1lpvfn266W0rlpL
-	 m22auPgo8kEYpoqq4XKaS4BuwhXe+tUYPptGUVg8QKvkSeuIO8V5tyKDGzT7QrqjF+Mrn
-	 M10AVxxdYfC9IBeqfHfcvX5UG6/LvsYWW3hbZpSyz3nXQdFioVKyHk9WsoH8xe1NNg9iO
-	 lxNnWO75ZFTIyoJiAdfHXzBX3DwAp5OOKZBz75amVI/jz8g8bj5rB4tMGCIFqwGu2tUMv
-	 azn/Do/XbsneJ5oQoQNtWus3fNbIpjNlgMRtZSzK/rbkfjoNk/RGeDxEQVMpA0hkeoQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793110455;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
+	b=ZzK0qaYTeIXl8FOydq1f+U26tYiglCYXNcUQSWCiLNrb3DFutZ5fdmeChQpxvIaCt5Zd
+	 fLvEamLbep742J2wXuQ4fwrxdBqpVL39KN9MudOBdY0C9VkfkmE93UxLfxbpJ3lwjNPjF
+	 fbCM7Sw4tvCL7Cv3J4zn/HxQzbOhBe8xSPunm9z2YUfbQALSjnWWQzzfReLe80xE8ZpKx
+	 U+sYFzomiTvdIBySd0hvX1g6tySX3T8V/iGc58GYlgDzVOUOaTUJ5JuURrC1uhiFXy/sN
+	 0eeN8RHsSDfvhbr48RjYbx8rzZP25ZTtRaATkO44F1QfsG3fVGhoSKpaeqXu3p4rxgA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rock-chips.com;
-	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=if1OE+s+;
-	arc=none smtp.remote-ip=210.79.60.207
-Received: from mail-m60207.netease.com (mail-m60207.netease.com [210.79.60.207])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DZ554ALk;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AAB606A327;
-	Tue, 27 Oct 2026 13:13:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C8AAB606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58215606A32A
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 14:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=if1OE+s+
-Received: from [172.16.12.48] (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 528713ae7;
-	Tue, 27 Oct 2026 21:12:59 +0800 (GMT+08:00)
-Message-ID: <80f85ae9-7162-4940-8dec-690bc00098b4@rock-chips.com>
-Date: Tue, 27 Oct 2026 21:12:57 +0800
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DZ554ALk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A75E1F031E7
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 14:14:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793110455;
+	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=DZ554ALk3Juy4V9i4r0GutcW1KeVocqm7MPBWZMmYgo9jFftcvO1+gSlBwLYGS6Yh
+	 s/It4+4OVAo2Oq8xnWV6L48pQgyX7LX70qBP9WAUDnwcEedqo/6TgfU/rRGIQq1a8h
+	 sS0bPJ6tVu8Snq+Rf0i+LsZMCWE7cTa53dQwB7o69pA3H7TbSzwL/8+CX6eUMWPqs8
+	 EAGTVacQhX+mwjNJqIeAebRWgxfegbwC7xaRxXP0tXJZt8fk9bVk4MAviShWAhNDHH
+	 Uct5t20uzZ8fLh5btli+tenvEOIc+QIOGs1OfwaxaRZO0q6sJJCkCL7LwwOPzt2RHJ
+	 XO+xyuzj075ag==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-4a6f2825dd6so1073008fac.2
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 07:14:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwt4MQn/56hfm00IfmU9bjEg6zx5L5dZKfIaALiPfB1bVLid01RJSP5NXDgWRd8ACSWaV9RU/EsLF7xVw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ7Uuu3B0zMEUyTLy1xp0iIhyrYs7rQsMjfc/Jj7y6pTqcLc78h
+	iNwmQqHvvcK8POu0jjnicH3376FKb72AGbIvMfLSzWbOJuQHqqiWD3xrgYIepPgsoteMKvKa60t
+	WjDMsHWctV+pAKSG76GDkozP3e6fJl1g=
+X-Received: by 2002:a05:6870:c69e:b0:49d:c8ab:967b with SMTP id
+ 586e51a60fabf-4a83f542697mr5910295fac.47.1793110453054; Tue, 27 Oct 2026
+ 07:14:13 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -48,136 +59,83 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, imx@lists.linux.dev,
- linuxppc-dev@lists.ozlabs.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- sophgo@lists.linux.dev, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-tegra@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 01/16] PCI: dwc: Add pcie_cap field and caching helper
-To: Hans Zhang <18255117159@163.com>, bhelgaas@google.com,
- lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
- jingoohan1@gmail.com
-References: <20261027122827.2725643-1-18255117159@163.com>
- <20261027122827.2725643-2-18255117159@163.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20261027122827.2725643-2-18255117159@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa17d7e1c8c03a4kunmbc22d35997dd
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaTkxPVksdSUpMGR9OGhlMTVYVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
-	9PT0hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=if1OE+s+0vJEWd3Li6qhSK+6BnN+GRMpiXbxk3rZd8OP+gZRRJTgOPkxvlHVvkfTSHfgfCHrlQaCwDegrXIGqsg5RiwE8+kwUi0A9fecpSt8Hux3Z2shlMceNBl4RxxWxv/AwzexIk4Q9bjOpYyaV2XS7lJ5MiQP1V21+XMyr64=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=g7rGr35rsfUat/aHvoe/Mi5rDCRRMxT0NcwnokuEoLQ=;
-	h=date:mime-version:subject:message-id:from;
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
+In-Reply-To: <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 27 Oct 2026 15:13:57 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
+X-Gm-Features: AclHuK8ruqZCGkf4O-7fY-Pys0rgaueWTZBuD-NGSUOyqWUpd7La4hdhioD434w
+Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
+Subject: Re: [PATCH 09/35] drm/mcde: use drm_panel_bridge_add()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Sandy Huang <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Igor Reznichenko <igor@reznichenko.net>, 
+	Michael Walle <mwalle@kernel.org>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+	Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
+	=?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Purism Kernel Team <kernel@puri.sm>, Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
+	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Casey Connolly <casey.connolly@linaro.org>, Michael Tretter <m.tretter@pengutronix.de>, 
+	Cristian Cozzolino <cristian_ci@protonmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
+	Ryan Brue <ryanbrue.dev@gmail.com>, Nickolay Goppen <setotau@mainlining.org>, 
+	Stefan Mavrodiev <stefan@olimex.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Robert Chiras <robert.chiras@nxp.com>, Alexander Koskovich <akoskovich@pm.me>, 
+	Markuss Broks <markuss.broks@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
+	David Heidelberg <david@ixit.cz>, Dzmitry Sankouski <dsankouski@gmail.com>, 
+	Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Hans,
+On Mon, Oct 26, 2026 at 12:10=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 
-在 2026/10/27 星期二 20:28, Hans Zhang 写道:
-> The DWC PCIe core and its platform drivers repeatedly call
-> dw_pcie_find_capability(pci, PCI_CAP_ID_EXP) to obtain the offset of the
-> PCI Express Capability structure. Besides being verbose, that performs a
-> DBI read every time, including in paths that run repeatedly such as link
-> up polling, suspend/resume and interrupt handlers.
-> 
-> Add a pcie_cap field to struct dw_pcie and a helper
-> dw_pcie_get_pcie_cap() that performs the lookup on first use and caches
-> the result for the subsequent calls.
-> 
-> The lookup is deliberately done lazily, at the first place that needs the
-> offset, instead of at a fixed point during controller initialization.
-> This guarantees that the DBI read happens exactly when the open coded
-> dw_pcie_find_capability() call it replaces used to happen, so no DBI
-> access can be made before the controller clocks, resets and power are
+> The connector type passed to drm_panel_bridge_add_typed() has been
+> ignored since commit b7797081ccfe ("drm/panel: embed a drm_bridge into
+> every drm_panel"), the bridge always has the type of the panel.
+>
+> Assisted-by: LLM
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-With the controller inaccessible (clocks/power gated), what a DBI
-read returns is platform dependent, most integrations just hang the
-accessing CPU, like Rockchip's SoCs, others might return zero or
-garbage. Zero self-heals as the commit message describes, but a garbage 
-non-zero lookup would now be cached indefinitely, so every later caller
-would use a bogus offset?
+Thanks for driving this patch series Dmitry!
 
-Perhaps the "TX Interface Progression Detection Features" of dwc IP
-could help return a dedicated value? I don't know, so I need to check
-it internally. I will get back to you later.
-
-
-> enabled. This matters for endpoint controllers such as qcom-ep and
-> tegra194, where DBI is only accessible after PERST# is deasserted, and it
-> also means platform drivers do not have to call the helper from a
-> specific callback at the right time.
-> 
-> The cached value is accessed with READ_ONCE()/WRITE_ONCE(), because the
-> first lookup may be triggered from different contexts, for example the
-> qcom-ep global IRQ and PERST# IRQ handlers. A concurrent lookup stores
-> the same value, so this race is benign.
-> 
-> A return value of 0 means that the capability is not present. This
-> cannot happen on real DWC hardware, where the PCI Express Capability is
-> mandatory, so a negative result is not cached separately: it only causes
-> the search to be repeated, which does not affect correctness.
-> 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->   drivers/pci/controller/dwc/pcie-designware.h | 34 ++++++++++++++++++++
->   1 file changed, 34 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 0735ae940924..fa31e8b763bc 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -592,6 +592,8 @@ struct dw_pcie {
->   	 * use_parent_dt_ranges to true to avoid this warning.
->   	 */
->   	bool			use_parent_dt_ranges;
-> +
-> +	u8			pcie_cap;	/* Offset of PCI_CAP_ID_EXP */
->   };
->   
->   #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie, pp)
-> @@ -830,6 +832,38 @@ static inline void dw_pcie_dbi_ro_wr_dis(struct dw_pcie *pci)
->   	dw_pcie_writel_dbi(pci, reg, val);
->   }
->   
-> +/**
-> + * dw_pcie_get_pcie_cap() - Return the PCIe Capability offset
-> + * @pci: DWC instance
-> + *
-> + * The offset of the PCI Express Capability structure is read once from
-> + * the DBI configuration space on the first call and cached in
-> + * @pci->pcie_cap for the subsequent ones.
-> + *
-> + * The lookup is done lazily at the first place that actually needs the
-> + * offset, so the DBI read happens exactly when it used to happen before
-> + * caching was introduced, i.e. never before the controller's clocks,
-> + * resets and power are enabled.
-> + *
-> + * DWC PCIe controllers always implement the PCI Express Capability, so a
-> + * return value of 0 means that the hardware is not usable. Callers that
-> + * check the returned offset keep working, and the (never expected)
-> + * lookup is simply repeated on the next call.
-> + *
-> + * Return: the cached offset, or 0 if the capability is not present.
-> + */
-> +static inline u8 dw_pcie_get_pcie_cap(struct dw_pcie *pci)
-> +{
-> +	u8 cap = READ_ONCE(pci->pcie_cap);
-> +
-> +	if (!cap) {
-> +		cap = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> +		WRITE_ONCE(pci->pcie_cap, cap);
-> +	}
-> +
-> +	return cap;
-> +}
-> +
->   static inline int dw_pcie_start_link(struct dw_pcie *pci)
->   {
->   	if (pci->ops && pci->ops->start_link)
-
+Yours,
+Linus Walleij
