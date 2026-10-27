@@ -1,64 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793101811;
-	b=gCcaJecHyufMGYb4ajLysXH/U+pfHudbX76vlartqYY0J+p6MyYMTkvk/5Afq+y2hR/v
-	 hCMBs/VJ8NB9P7vSWHhrlxTECwUjpKTAJue2ySJW3etQJ67Nhodt+T1eYjBFI0D2+o4WN
-	 +SFAfzXuYi5wkBUPWNrSaq6Q9PV/3auaoU7McfiLMjYsXUWblYI9goDSe4VxgE6d2arE9
-	 kqxS6QS0p+lxCmB8maFTHlhvK2zfby+1bnOTn2zefjdjM5Ux11WnWxkHWDJC/9dOR+ZMM
-	 YAYx1Jt66b3w/+ndNVVqpH3r3ed4oUDzewQB6RY2lTmimDV1PeStR1OukqEtk4OdNSQ==
+	t=1793102444;
+	b=fZfkilFplfxwNxblDKDCZSwWXRJpV9Ui1XLw2c4W515s4VJEJVaik1Ux0keA09piG+/2
+	 o73LI8tUlGZVhWgkufQFZqC+Lb6v1ec5uyK5VJHTOsQmGYLDyakXBJN2y9nTMOFWBaLsC
+	 yjM9SVh1spkZwQESkgJdj77o8pkWPHf+iaMnsd7x3truvfK2uMpUeYclfISmrYpPPQQ7e
+	 63r+q+Ha4/MowSWOjstpJ6S19e1vobb5+loRccHzb2AWByG93n2e3pEUys4VUba3G/MZ9
+	 r55fv+sII47jPrBDz9S9atAUR3fcAPu7UFqNeqkwgON9kqJVGNRfCYdcTSw110N6ypQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793101811;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=4LS2QAZea28L14x36x4SE8vt4l1NVp0NgIHFN/fX/Z4=;
-	b=ESlN1H0Hd3WYDNAV2VzatAsAL+2HjnjPmOcJfOKUpOrb6YvIz06TvYlzoMct08F05cNE
-	 v3GCMmxXJQafg+Lx4Ipvly0RG+G3Tcy0Nzs+DB+U6jH6Aj9XHo1uwaxxgeSpwFOmVgR5B
-	 jbLLEauPJi1Z5tMKUpIa9v+6gpdEQTp12v/xXFdhCdtvq36tJIhKor0eTQWFWyRc7Tj6r
-	 PfH8Yws+WFieaWS9ZeFzs4D/CMHc7ZhV/FsPcw1KRQbePP8fB1adWT08/sLT5jQAXRk3U
-	 XodXeFgjgy7jr1RXggZhOUsTq3QYHHXsPoq+fWKHAesGBvjD3PXU3B4PP+a4OQWKSPQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793102444;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=4KBnKZ2ldhWTCS/0yCI6Y+UH0y9EQUDr5Imq5+wRBAk=;
+	b=eLt0aF7ba05kEh4QkBHDfsJ/QEuHO1J0RvUYuvMmjEJCp8/zk+KH5EilvrWmyxJ/cjzG
+	 hG4VoPfNxRlzgGo/VPK9Djlv/CM/2xqATeKY27/DrzHd19rUyGa3xNO6eb++p+av4/V05
+	 EuRS6b3wznx+2GfrjVJTGtv5KTqZyzloiDq5KemdXGnkjlejeRFXkX/6CtX5jWUOdGpiu
+	 X/hn+sw9GxRIt7wWnpJ3c3QyOWx9Ovgyq8VLjqtcyNMgN2yitoMi+bFET5PU0hbS/dFuO
+	 VG7/LD8bG+tu5yCKmil0R8Zm62erWtqDiFpVylEO/bJ2BCEU7JNvUVDQG9rLV73pQuA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OEIEL8hK;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=UBMmomfb;
+	arc=none smtp.remote-ip=209.85.208.44
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3C660A2606;
-	Tue, 27 Oct 2026 11:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC8D606A31A
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 12:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1FC8D606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OEIEL8hK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFCF1F031E9;
-	Tue, 27 Oct 2026 11:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793101810;
-	bh=4LS2QAZea28L14x36x4SE8vt4l1NVp0NgIHFN/fX/Z4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OEIEL8hK7rvYWMnv3aG7L6E4w+3sZiKjXJ4yAloB3MhefqoDcSwnlGvpB7zRqgNcu
-	 NgfPhgV0R37+wc/NRm9VFs7uloK3ui3LOVlohhrtr5pIxojh2LUZTkqLfN/wxuQGvL
-	 9DLx9oHgrHoxeTXqzBxvHAtkkX5gVIjBWH+M+eMK3wxm3nmHYOeJRZN3Y8r1qF7YxH
-	 cQzV+WEvkqKMlQT+NINhkuDvUkzQugCWattd7Z/yPoWj2t9pdW8UOobSWpbLHYz1K8
-	 WxBrEX1Uk6f8QkulZMwYw4GZGU/w38esQDjawqCtnI7wxJVEDLlxhcEZNSS+PnWiTl
-	 ZdRP0ig2uvzAw==
-Date: Tue, 27 Oct 2026 06:50:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=UBMmomfb
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6b1f4d8e09aso6064083a12.1
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 05:00:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1793102442; x=1793707242; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=4KBnKZ2ldhWTCS/0yCI6Y+UH0y9EQUDr5Imq5+wRBAk=;
+        b=UBMmomfbj2Z/DjSKvnujnL23eqaP+gUcQIKIHuZb2TRimkcNNzFUtX4uedUvg7v/UD
+         XE/n06vqJED+aa4VxKMc9zLcxSqlgFmpYhl7WWHaarYZpQIYo55qJ5WpZP4vRXubHNn6
+         +VIA1vOgufoGjryjPWh2UHMWrCMPZNgMOY6T9Q9b6QJ2LbBSdC0yHPAa36W9QD4MUFsF
+         fcjj++1d1mBqdo4lLIQVHrdb9YrVjJP6rjtRmydlhgaD4n4h6Itk3zBVtUjzBfGIWlRs
+         Uel4I0aabouVD9+O6DmFg8uWJW71hea87Y9SuQQvToogunsgIs0+POC08uZOoJDciL3p
+         PEHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793102442; x=1793707242;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=4KBnKZ2ldhWTCS/0yCI6Y+UH0y9EQUDr5Imq5+wRBAk=;
+        b=bw2HnPo8YrxFmzuUGD6JP214t6wVqR9x71tULVPqLxhkybo/ajVPxuwIsf9frFy569
+         BKlutub2KTe/aFPjw67Ytw6y+VsP/p9+/GfjxdPkYVRoZCRPA+o00WcbdjZjbeAGE87B
+         LG4nCZw/eLxO8saO4EQxIm2aXS9iIBVBfZyp/WmqOnS9Ufhj9N+OCVnUJDqJqhxFltna
+         ZtDyHMiZN/guW07HQK2ljdEiFgTGs7F8VrX7kYO+/ssE9ZSYJy0/L0XeROUC2VRUkkLo
+         cfDi5sCjofWO87qNKDG9NgtrkgU4ypec6VwejKoGae5oKGnk7sVDwqzrf6j8kaKKZ4GK
+         FWwQ==
+X-Forwarded-Encrypted: i=1; AKwUvBy/l0ykFOFjP7Odbpn2pt7aUGj0hmoaQubTlYZPCceHsvpNdoq9SklB25OKLx0i4oZtuMEqmRIMnAPG/w==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJYXgLzjwv2yrE0xK+pM2Z33UvjqMFdF4WllTyPiE/2o4nfIpHE
+	b3qCKf8skriJd9CfizwQRTdSm/WCTtab+4qr22twscRw5YvJ+1jX36hX
+X-Gm-Gg: AYBFou0ZE+94Q7T3r3RrALF2zPHbw3oiDiLvzDMyteGRYrT5guvd8arnaOGuaohR1Zy
+	PjyHgLOoRA8KOLBmc6A0647aqY3vHFDCMXtiDeILJ7W7JlLoN/qRJM1pDQADIBCUlxjj/3voEaq
+	L5HOx6UCAY2An5lHJLhiOFMjlSXzGguDwe7kNwDHk0NbM9S8sVGLlomyo6lu6zVRfPB51n3swdt
+	4BLUwXYGEAD2YEn1L23tDUGsbNFGo1QfthgxAmxKncMkZFHfMZCEYyGGA8tMpjg8gi3OoMRJGHC
+	I6keRiuOo97clCYOlATztK1vHbHAJrZqBu7tZZanksTmLrdVb4RRYsfh6hMLvkLVeJwKhQ3Jla+
+	XSjBx/MQTf3iJQQ6u3JzxObytIKK9Pb4TSDwTmjjhSmBbaT7kBpgmk+KjWbtaXVc8QpJFxG3Jl6
+	TxNLg+29ZefbQNsth4SiE8LOXHv7ro49cd1tSJsSrtebJFv0xBk/RmVT2u9cB58DI2wUkDBFVsJ
+	zqaHvVTXNG8O5b/G088IfFdVT/+tnXynpkIfVxMF4xTtJl7OGIvgr5PsdCJ3uyDTz19tiPJWUEO
+	yvzQM7YsC+LiSW20nb0p/Q==
+X-Received: by 2002:a05:6402:c14b:b0:6b4:2d6:cbea with SMTP id 4fb4d7f45d1cf-6b442fcab59mr6665292a12.9.1793102442085;
+        Tue, 27 Oct 2026 05:00:42 -0700 (PDT)
+Received: from xeon ([188.163.112.62])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b44598480dsm4717844a12.24.2026.10.27.05.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Oct 2026 05:00:32 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
 	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jordan Viknar <jordanviknar@gmail.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: usb: Move Tegra-specific Chipidea
- USB properties into a dedicated schema
-Message-ID: <20261027115006.GC3598537-robh@kernel.org>
-References: <20261004165204.205660-1-clamor95@gmail.com>
- <20261004165204.205660-2-clamor95@gmail.com>
- <20261026222928.GA15139-robh@kernel.org>
- <CAPVz0n2rkWikz1CZhkKiZnX5P+NdDH0RfJi69AyVTEV7qw_VXg@mail.gmail.com>
+	Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v1 0/7] ASoC: dt-bindings: Add/Update #sound-dai-cells to Tegra related codecs
+Date: Tue, 27 Oct 2026 14:00:12 +0200
+Message-ID: <20261027120019.93611-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -68,43 +108,38 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n2rkWikz1CZhkKiZnX5P+NdDH0RfJi69AyVTEV7qw_VXg@mail.gmail.com>
 
-On Tue, Oct 27, 2026 at 10:51:52AM +0200, Svyatoslav Ryhel wrote:
-> вт, 27 жовт. 2026 р. о 00:29 Rob Herring <robh@kernel.org> пише:
-> >
-> > On Sun, Oct 04, 2026 at 07:52:03PM +0300, Svyatoslav Ryhel wrote:
-> > > Move all Tegra-specific Chipidea devices and their properties into a
-> > > dedicated schema file, by analogy with i.MX.
-> >
-> > I don't really see the point given it is only 2 deprecated properties.
-> > Maybe those can be removed? Depends if they are deprecated and still
-> > used or deprecated and removed from .dts files years ago.
-> >
-> 
-> The ci-hdrc-usb2.yaml schema contains properties that are not
-> applicable to Tegra, and conversely, Tegra-specific properties are not
-> applicable to qcom, nxp, nuvoton, etc.
-> 
-> The 'nvidia,needs-double-reset' property is required for Tegra20 and
-> Tegra30, and it is still actively in use, as you can see here [1]. Its
-> marked deprecated state appears to be incorrect, as it should simply
-> be restricted to Tegra20 and Tegra30.
-> 
-> The 'nvidia,phy' property is still used across all ARMv7 Tegra
-> generations + Tegra210, as the Chipidea driver has not yet been
-> converted to use the generic property. Therefore, while it is marked
-> as deprecated, it remains in active use.
-> 
-> The example I added is from Tegra30, which in the real devicetree uses
-> both properties, so I've included them here as well. With your
-> permission, I can remove the Tegra-specific parts from
-> ci-hdrc-usb2.yaml and tailor the proposed schema to better fit the
-> current state.
+Add/Update #sound-dai-cells to some codecs often used by Tegra devices.
+Document #sound-dai-cells property for i2s and ac97 nodes of Tegra20
+and Tegra30 devices since they all provide a single dai cell. Add these
+properties to SoC level Tegra audio-related nodes. This is required for
+creating more complex audio paths.
 
-Okay, please add these details to the commit msg.
+Svyatoslav Ryhel (7):
+  ASoC: dt-bindings: maxim,max98088: Document #sound-dai-cells property
+  ASoC: dt-bindings: realtek,alc5632: Document #sound-dai-cells property
+  ASoC: dt-bindings: realtek,rt5631: Document #sound-dai-cells property
+  ASoC: dt-bindings: wlf,wm8903: Document #sound-dai-cells property
+  ASoC: dt-bindings: wlf,wm8994: Update #sound-dai-cells property
+  ASoC: dt-bindings: nvidia,tegra20/tegra30: Document #sound-dai-cells
+    property
+  ARM: tegra: Add '#sound-dai-cells' property for audio-related nodes
 
-Rob
+ .../devicetree/bindings/sound/maxim,max98088.yaml      |  8 +++++++-
+ .../devicetree/bindings/sound/nvidia,tegra20-ac97.yaml |  8 +++++++-
+ .../devicetree/bindings/sound/nvidia,tegra20-i2s.yaml  |  8 +++++++-
+ .../devicetree/bindings/sound/nvidia,tegra30-i2s.yaml  |  8 +++++++-
+ .../devicetree/bindings/sound/realtek,alc5632.yaml     |  8 +++++++-
+ .../devicetree/bindings/sound/realtek,rt5631.yaml      |  8 +++++++-
+ .../devicetree/bindings/sound/wlf,wm8903.yaml          |  8 +++++++-
+ .../devicetree/bindings/sound/wlf,wm8994.yaml          |  2 +-
+ arch/arm/boot/dts/nvidia/tegra114.dtsi                 | 10 ++++++++++
+ arch/arm/boot/dts/nvidia/tegra124.dtsi                 | 10 ++++++++++
+ arch/arm/boot/dts/nvidia/tegra20.dtsi                  |  7 +++++++
+ arch/arm/boot/dts/nvidia/tegra30.dtsi                  | 10 ++++++++++
+ 12 files changed, 87 insertions(+), 8 deletions(-)
+
+-- 
+2.53.0
+
