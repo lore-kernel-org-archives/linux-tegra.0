@@ -1,101 +1,117 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.182
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793091126;
-	b=sKVg4laZSd44piB7E2MIk3mmo789cxTyDIdpeIJ83mci9Av4j0nEeMQbwxlS/vsLguhX
-	 7CANY6rhJw4Ht7b29GdhduvERUvrF+LByWLK2TS+PIiVaDizDc5Lpi2i19Ct7nFa6V21H
-	 Zc5W/3h6D7U8f4O7fxmGySmnlW46cCiQFUaddIWsC//hIsF0gdDaF43DZ50UPUOneYqCU
-	 +oxtpMzlaT3loppPgWRMP8RdHK+yezMRWeTdgwi8KghIsCg5ZMSUnOymGHQ3ABGYrlJD2
-	 ah93XdnP8FjExXKtNJoqziaLAVwejDu+pWbNjpIAF2g5wWbQD7vmw+pef8WM79mRg7A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793091126;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793094117;
+	b=RnhBNpRkoxC+o3gKPjQrhnKt4+TO1H5b5q8HEQ3HMcL1V3F5kRzV2YggyW2nk4C3EamQ
+	 3Ci4DQoJ6GgbLNQOOdjx80ZEohSlJBk1hheUkxz9v4k91VhdkVdNPc+VeljmSYiKncJ6v
+	 kCNOQn98dARVzWfNNMwab0a4vtxIV4HdtW/gEFE6ngptwiAjwzg3JnwT82FwpJ5LaPdRB
+	 AKnN1lomu/pi4Kx0gCEuz5oKzdBa9JZCHRU8q71dl7VBkPcr4CWyh8bzhAHs4+4/q65M3
+	 PySg0GeXPrw8YHy/M/i7VtfqW+7iLhf/qHRZluFCdKa7aZpRt3OAM5H8DcHAEON1UsA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793094117;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=544Vs5W0iQqaMJeYnY15/Vfb543TMzE2RWHWwProMBw=;
-	b=4DQW7GrnKHhUboCvz6Hv8fiVJwF3dhuJSkzM2XnqWZy+Q8ufhnKxSOh9l2J/+8ckAfAK
-	 5fLZ++h3tBUMMUd+arjjPn4o85MZvH9/kWgVVH1TBmLmlDU1EyOIGMEKedV0dLetIp2UP
-	 aGsdlPHSZbOv97mJBAInY1UNkgRUie84upHLVawfy8hC3RHB+1BFOjlagP848pJ6EF53M
-	 SZWEnrZ2M1wSvaRahL5GVW7gXfBB4sP4F9aL3HN3ec3ByTCQAgz6rPElxfhyqJk+DbMbW
-	 luLkMc2Zz8M08VZGbq0/ZJB12h1+4hoSkvQu9bH2fBnvQuTzH+xHheUWCRJTaogQNkQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=pUf0+7wZ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.182
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=0G5Gh9P2KO0+5GGiKNPkOdO6AKt1oHHc652uqXaZcqY=;
+	b=ByoZQYJfNAlz2QVtBwDLOlt++pGVAUlKFFuPQ0O2gYcJ44pMWd3vjLwopJWUb/zna6Yj
+	 gK2Qv0KWUOZgD/EKGH0nW72lQMub6SrbuGrvMP2HK4R2t3vb8Om/H/QAxPO5h09gAm2z8
+	 8mH807uV4Ll4uvgKAdOaZROlXcH6//GDU3YXEXLsB3WKspC1d+1fOV33YTX+xnBkfAEfl
+	 G+EhDbB/9Pgc0TPMPCDUZjC5LsSKawyl8D+YNA9PLXBIREoJJIoxxVALmOMUAflx/+Ya7
+	 cDw/I2D1cnn8EZCF27IKpnYH9/hNR8bqixzJe8HhF0I0k/hIp1Rqy1GOW3fiSpj6t9Q==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Lrgqg8Sw;
+	arc=none smtp.remote-ip=209.85.128.44
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8188606A321
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 08:52:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C8188606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7F9606A31E
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 09:41:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6E7F9606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=pUf0+7wZ
-Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso11358923eec.0
-        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 01:52:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793091125; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Fr55TsepKdGqbhp9Vk4S/VCY39usbbRcnckooUc8igfPPG0fcvwlXIocXKsauoGp0l
-         AHvdde1abZnmtEPhBPLq2BmC67suheQBDyVoYPaeqbNC6RJosuRsmEiLVj1OlTFfMOvl
-         98KlYlxhs7sAn3pZE3Vis6ZVFk6+kyY1gASEJyxGHmtPrbg9MtA2xOUxdnEQkN2UMqXb
-         qunJM+uGCR18MfhdAiRMl1wLBj2GV+U64SZgEhkhQA/g5P8dmO+Wk/+pGzd62x5En311
-         KHt4kKLkIZZuQw90W/g/js5sWWo5LMPGVVsxa133eXVRh4K7aSY943P4XDBOFwFA7qAD
-         EUCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=544Vs5W0iQqaMJeYnY15/Vfb543TMzE2RWHWwProMBw=;
-        fh=f42yx1rpu9abadSuIAAJIFTr9f5n+4Eu48lWLjuR2y0=;
-        b=O6r8eWMaL97J2mz/DTeHLMDO9kd5spqQ8R7fBGYKruPKv8YNqHA/iEOuzAjMO0k4Lu
-         RMSzVOu3KjOVv3l10UJXxm+JSCZuKty9BG/wnAa2j32u2sWTUZa5hLR5MKt0VRvcx8CF
-         M7BQByAbOJbTXEwJWzIzYfnwXxAq58b/ijfP5F4nFh2V8POHXS1J83YGRhIcFoIDwbo0
-         OgL15IchKj/PR0orTPa2UVz0XKYSRtlxz4Yfdpes8CRHPKnpic568cEVoRSBujII/DGc
-         FObiEQpjmCp1xJ8NDOWSOjlw2/yPlbf26w8SiUgoqFsMdWqzrRiK0+/ivYrO/mTxJKqA
-         1E1A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Lrgqg8Sw
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a2153c8525so25370415e9.3
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Oct 2026 02:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1793091125; x=1793695925; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=baylibre.com; s=google; t=1793094115; x=1793698915; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=544Vs5W0iQqaMJeYnY15/Vfb543TMzE2RWHWwProMBw=;
-        b=pUf0+7wZWPc6vb08pmDR5P6yk7mSd0eNZggr2tJrJzBo7w39uEiKa1QXLZjKmWm7M2
-         lND4nL5vqeLmDtdnhvuFcc0vihOhPvYKaLsfE9Bm0ztBkLkB82jqwgxcK0mUGN5F4HT0
-         Yqab/3TcmGLFulnpxU5OwJi2wlujE4b54oEC7pPMBoxOyUitR1v8ONiQjoWzoRTs91Gz
-         ar2IIukgQB0zJMUt4nOtS62GihnblGXHDNbM7czAPOIgkpWaxrl2p4PVrut6ORDx+vpd
-         EhZZyqKNwyJxUGDJ/rfbjW5Bx0ZaZRG2zdnaTiXAaiQxEDeGAtFAkJxEEF4fgs774y7Q
-         jLpg==
+        bh=0G5Gh9P2KO0+5GGiKNPkOdO6AKt1oHHc652uqXaZcqY=;
+        b=Lrgqg8Sw8B0MTFHOgBFBsZea8yJ5PGupCUU44KFrLSJFOaY7P+6n7vJiqmkm/ccK36
+         mnRTBEXSzJjw7xIZDs+5PWEyIB3Wnj60O8VDRG9CRFrmAAqy0R3jrwSfYzp2RC+iR/da
+         CX+EOdAr1Jmfgg5HdNz0YL53TuoXKnFmWUVNvqvRiGwB3nJhgXmXudPcUEBUs2LGCCW0
+         LQyNCaOKCXuojR58IHPS9Xzm4UhEno4FBNeMmanacYHfeaoNrvJdsY835na+t3EpbJf7
+         NUxkcOBM73+LfGKKxWz0wEGr7pjwv7WTp6KLUY4Dk+hm7tkmDbCofa1WaCwsvjoa4tVW
+         RVcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793091125; x=1793695925;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1793094115; x=1793698915;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=544Vs5W0iQqaMJeYnY15/Vfb543TMzE2RWHWwProMBw=;
-        b=EZlD2H1QNpxFOiHOE64oUnYvU3NeGwPuUFxvxTTM5pi+wGWd709En6Y23ISK4ghkT5
-         ZHnB219aSjHX9G6fSV6Fdr1TL0GPGbfgEhXiwov4d8LkurY1N4JKjLQABqsPp362oeUp
-         /6i+cfsZWbb51b+QN3txhd5SsC2jP8GfdVE3ZAyNxr6IiKdsYdKoQLMV2tl4KOhbYAwy
-         pKhFFZ6U1VIJnWvmkiIbIFxiRxhjedn6AFvZ0dZrZSKYV2MbHdsVn+lXeXvZfyZ2yqdp
-         DQ7ugWP6SYpBwgmERkfbTLox5QOBlTcO4WccWbFEPEo8C/YoXSs2PHEpsN17qhR6qyP/
-         TPLA==
-X-Forwarded-Encrypted: i=1; AKwUvBwCUzYIFu/bPJSRTQLdkWBPuDvk1jGwY6+gQb/0u5tUlNtKc8ZfmZC7Ba25pz7a7BnfqUQyP5U3YdyzHQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIawpjPHlQuzwcCkSeueT2ygWgPt27nXFQDYKjqfOZrOfNxfOiU
-	3yRWMqyq6Ds34ydHXHWdC8dqjqWUJbghzXeOxDJp0jSb9S9s2RwE+dG8oM91ApoJbqxzL2y55f7
-	cDBtiFeeJlmw9msuLBfPcMEKMtSd76/4=
-X-Gm-Gg: AYBFou1WbckkZqWN0VFCkpu+hVMrfGBuuyx3dl+sXLX6afkfmRc65sBEpsxWgYvcnpn
-	oQhZQvIkEk22CFy5D+vJ87OGQIXUODyVUBykSB4V55mkibDNM/977D/Ck2kp2X8PBq7oGRrMlld
-	gQgun6PSlg23NHrD1ntawn57geitvXMSY6vidTb2XRePb6pI49qIf5la90DvjZ0kzDjBFJPftJH
-	v+JWE8dSUChM5W1Cx8gn24+/hLxuIumWE6xrSaFhsh4TlSFQ+XHIb7yWsbZd6W/jsmXYeDv9M82
-	w2StkEQLsnVMm5mZmsoyhW8KJ4N84DdzfdS7xXea5nM8C1rhmuHaTnd29cG7Os39AwTUQbtwMz6
-	J5e0W0SKEqAoQYRjh31PyZthr592LwC9w6oS+O1KgrlIBLgtkdPoKhjxrmxEvXhWPzqe3jQBMVO
-	kDmVdsFNC4AR+jdX0=
-X-Received: by 2002:a05:693c:8110:b0:359:2edc:e1d8 with SMTP id
- 5a478bee46e88-369e836b39bmr13749085eec.5.1793091124761; Tue, 27 Oct 2026
- 01:52:04 -0700 (PDT)
+        bh=0G5Gh9P2KO0+5GGiKNPkOdO6AKt1oHHc652uqXaZcqY=;
+        b=fJWqwaG7qP5oy+RfXpr4yC39ffYB7Dmw/LcjHF+wMlX0VBKoIKyP3j0N9tA74hh3OR
+         OjbxGo2nqBIheVqWpEj2TNcgUdCI94VrV4kysyLHic6Vjx+XYA7oBNOQkpvf3kAv/67F
+         wBEVk+nb4YGz6+1ZksBBy60t9ELwIHOM9i+GhvbFBeu8581xi92dZn+dAW1LcpNapL5h
+         xSqWbl914vJWHfrOEfONNWeeMU22B94F7a7ktg1Qap/18MYSWCkQ0IKAUIqybmyi8CYv
+         Fgvi/mdGIHjuFqPjtqN+af3QUYVBB6rxKOh97NbiBl9pWN9NX7SsIPv4oK2h0Dk96yD7
+         Cu5Q==
+X-Forwarded-Encrypted: i=1; AKwUvByCT30wk7RVRBna5lBkgzK6T1n7dqyzT5TGL9p0rPToyLBREWZLsdcweFfhK+USWJmPCdzXTgokGFhMPw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJng3EFcYdDzs8pAEz1R+FKJGQXCAuVT9028atG/EVWAu+i9UZ8
+	MgsdryCE6eZzRQvNsmygkPPld/zh6qe4yje6xXD8hzHaNlHYNnkHb2F9CYI+++10WXQ=
+X-Gm-Gg: AYBFou2s3dGLongs+Q1hFGPjQ5duTsJoZJ0WE5XJwTG74QGSIbIxV3G52xLXeM7J9ls
+	BhKf/KXpVQJ0ade4KzF/XwZGjwClrWCSYXKbwIO+BLwI36ec0UjlJDpvNDxMB9Xe5FJrvfM5uPs
+	V1a5+FqEcmYCw59LUPHgeUe1jrds8mZhKO5VNH8Yk+yyC+WZN9ea24ZwsWTSs2PeKDniTr0VzY3
+	Nk5lick2xcrGqKO5x9MiqHC0dH7jbofScJB+OIizZSUOUaWAobc2167iYZb4MZqsAQl7EhmM5wC
+	lxF7IBLNSLUeeH+pA3m+gRXbBkV+3sa90kcogYpv2bLeKK92gTuHnq37RWhDSMXzmHr6zZo0qrY
+	pXnJ3FlsKo4VYGJUUQTaUAunbrc/6MKqSbihm1GWEgIOKPSp1iADQTvi76P5CqV0OM/wXoFPpyv
+	Y6x9wfu0ApBWmTGQqL1FTScczJqi2fLgcopYtY4NN0EpbZeifWtO5RUi+XwZioO1zxFP/3ZNcW2
+	MYns5GLZ2Z7f0tQTZLsTKdyakEms5p0f8JAoQZMS5+lm3H+yya6AgJ/mm3fXOC6IR2C1k0/dFZD
+	mcdJcd6NMXU6M1vGvXjFTYyddOOJdNYcECxYQfASmiA=
+X-Received: by 2002:a05:600c:8a08:b0:4a4:7a8d:c736 with SMTP id 5b1f17b1804b1-4a47a8dc93bmr110335135e9.9.1793094114509;
+        Tue, 27 Oct 2026 02:41:54 -0700 (PDT)
+Received: from localhost (p200300f65f19a904240e81f1f32a429c.dip0.t-ipconnect.de. [2003:f6:5f19:a904:240e:81f1:f32a:429c])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a35a59d998sm263939065e9.15.2026.10.27.02.41.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Oct 2026 02:41:53 -0700 (PDT)
+Date: Tue, 27 Oct 2026 10:41:52 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Lixu Zhang <lixu.zhang@intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Imre Kaloz <kaloz@kernel.org>, 
+	Conor Dooley <conor.dooley@microchip.com>, Valentina Fernandez <valentina.fernandezalanis@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>, 
+	Mika Westerberg <westeri@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, "Enrico Weigelt, metux IT consult" <info@metux.net>, 
+	Viresh Kumar <vireshk@kernel.org>, virtualization@lists.linux.dev, Yinbo Zhu <zhuyinbo@loongson.cn>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-tegra@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Srinivas Neeli <srinivas.neeli@amd.com>, 
+	Michal Simek <michal.simek@amd.com>, linux-aspeed@lists.ozlabs.org, asahi@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-unisoc@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
+	Michael Buesch <m@bues.ch>, William Breathitt Gray <wbg@kernel.org>, 
+	Robert Richter <rric@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v3 00/22] gpio: Improvements around device-id arrays
+Message-ID: <auBxfVzkveb7KlEk@monoceros>
+References: <cover.1793030820.git.u.kleine-koenig@baylibre.com>
+ <at-CGVq5jVsMQief@SMW015318>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -105,58 +121,53 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261004165204.205660-1-clamor95@gmail.com> <20261004165204.205660-2-clamor95@gmail.com>
- <20261026222928.GA15139-robh@kernel.org>
-In-Reply-To: <20261026222928.GA15139-robh@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 27 Oct 2026 10:51:52 +0200
-X-Gm-Features: AclHuK8LjCWDpNP4DuV4ZuevBx5z2yzl2RQeYjmP-HIeitxouPX3pu1AzADU8K4
-Message-ID: <CAPVz0n2rkWikz1CZhkKiZnX5P+NdDH0RfJi69AyVTEV7qw_VXg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: usb: Move Tegra-specific Chipidea USB
- properties into a dedicated schema
-To: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jordan Viknar <jordanviknar@gmail.com>, linux-usb@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qlk6jmpzfns64bdk"
+Content-Disposition: inline
+In-Reply-To: <at-CGVq5jVsMQief@SMW015318>
+
+
+--qlk6jmpzfns64bdk
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 00/22] gpio: Improvements around device-id arrays
+MIME-Version: 1.0
 
-=D0=B2=D1=82, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 00:2=
-9 Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Sun, Oct 04, 2026 at 07:52:03PM +0300, Svyatoslav Ryhel wrote:
-> > Move all Tegra-specific Chipidea devices and their properties into a
-> > dedicated schema file, by analogy with i.MX.
->
-> I don't really see the point given it is only 2 deprecated properties.
-> Maybe those can be removed? Depends if they are deprecated and still
-> used or deprecated and removed from .dts files years ago.
->
+Hello,
 
-The ci-hdrc-usb2.yaml schema contains properties that are not
-applicable to Tegra, and conversely, Tegra-specific properties are not
-applicable to qcom, nxp, nuvoton, etc.
+On Mon, Oct 26, 2026 at 11:38:49AM -0500, Frank Li wrote:
+> On Mon, Oct 26, 2026 at 05:28:11PM +0100, Uwe Kleine-K=F6nig (The Capable=
+ Hub) wrote:
+> > [...]
+> >  drivers/gpio/gpio-imx-scu.c         |  1 +
+> > [...]
+> >  drivers/gpio/gpio-mxc.c             |  2 +-
+> >  drivers/gpio/gpio-mxs.c             |  4 ++--
+>=20
+> For all imx part:
+>=20
+> Acked-by: Frank Li <Frank.Li@nxp.com>
 
-The 'nvidia,needs-double-reset' property is required for Tegra20 and
-Tegra30, and it is still actively in use, as you can see here [1]. Its
-marked deprecated state appears to be incorrect, as it should simply
-be restricted to Tegra20 and Tegra30.
+I'll apply this to all patches touching the three files left in my
+quote.
 
-The 'nvidia,phy' property is still used across all ARMv7 Tegra
-generations + Tegra210, as the Chipidea driver has not yet been
-converted to use the generic property. Therefore, while it is marked
-as deprecated, it remains in active use.
+Best regards
+Uwe
 
-The example I added is from Tegra30, which in the real devicetree uses
-both properties, so I've included them here as well. With your
-permission, I can remove the Tegra-specific parts from
-ci-hdrc-usb2.yaml and tailor the proposed schema to better fit the
-current state.
+--qlk6jmpzfns64bdk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tre=
-e/arch/arm/boot/dts/nvidia/tegra30.dtsi?h=3Dnext-20261026#n1146
+-----BEGIN PGP SIGNATURE-----
 
-> Rob
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrgcd0ACgkQj4D7WH0S
+/k4RSwf+IK0Zg4d+0uYc5szRXc18DV2GOQKuWytvc6Mb7rb8wBUlhLcCzHXfHJw5
+GKyFFUIrW1GHu/p4aSlsaOLm8RjGYbgR1RTnxQySdf79td9IxG/EXqQcp6FcxSH5
+30Ema9IFNIy1Z1fLQlqcQWR4FaujBuohFx12psbgjzkhMn3OY0x3w6FsZddRxBu6
+hjb1B8M89jP2R7VcM2CC+KYKqlxNoQYiS/XOiE7oyKj9CqBRDIrGPNwKtLxUelaD
+kKhTCJUSL4uTa26RZDC42xIr79ip8u0RW/+hzEwjtlicpsH0uFemsO1TO74xS/ol
+PbKbBRoQJlRhoDMBJ7sTb6K4gJHPEA==
+=KSfn
+-----END PGP SIGNATURE-----
+
+--qlk6jmpzfns64bdk--
