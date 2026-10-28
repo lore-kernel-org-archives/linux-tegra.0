@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793156866;
-	b=P1viI4skymmP52gIiItA2jmKOb6ydC8b4zcEuIq2XvjTvAcoE1CJZK7xfN8U4LRDElM6
-	 tZnGrMaFCU1nhK7IlZXX0VYV/8AJXrbkvSJP/ZP0pcuUiW9thaWCTa7p1OjtzB99N+OVX
-	 xGaDd3S2TiGApmqwbq7Ief/cWODZGVQqQrnElaecGaSKuxlj1V7Unj/ZTRQRUv4XYZqzD
-	 gDtPDdYK4ZDnGSdUZWhXb1QvlqgRCcGZp8v984RNPqWeiA9EX7IcHs9O874FNaOtQnFoW
-	 y0NDb2xhC/HVisQRxD/rV+HJ+fZLI0sfOKZuU+vSuA3JrbYyHbQDHsSCGpuWmp6ECRQ==
+	t=1793156860;
+	b=gC2nOKEU1rscV7eleja5kdxiIDKk+XV93cUa4er1PqaJMcEB/A1Skuz6/pPJJ42dEeU9
+	 8k+gQh9WYyAVoC2qDeCldifOFFmyouSK3bZGgW6xQ98uiYiGIYkJ5xRKHhYlD6fINnDdO
+	 Qn2ghKNwW6Xa8y2sRnGwdTF+tXTEXKw+5LGhuw/gotwIqV9Dj9Cb/RvozP32qcOwv0X/7
+	 KxhrqpOHyjzhD582rdmPBPx5coFbC6Tmg48Vewi1Nw9ObGeHCRYNcFUMzOOpFO8j+PISR
+	 pLo2KX4TJsiarKLZMaQ4Mkm77UrmcDIiYEit74POR42qHEuowfEOmb5F+eiS08GWCng==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793156866;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793156860;
 	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
 	 X-CM-SenderInfo;
-	bh=tIbcK9QjGE9c4lpPc7mfj5ekNF6tijyVodhkpLjG8sQ=;
-	b=WsrMp65xls3NqtZeb4LDP7zhL5PYcVA9OvFw+PQWJHvAEqk+jy1o3S/257pttRinmQyi
-	 EDqcnbBfgW4rpPAnw+jBmbk1RwTGG0B6ffEqCNE+uXxCPfdcRqG+FQjzGnFR9CC7W/K1O
-	 cXqsu8SSfWIKAUFdObGwDRLux+FK4/0PgNh+MIi2cogoCzaXorYXeGh7lMbgmlAHMkYiI
-	 BwMqu9nYzB2QqtmeKx+FsoL5/309JHhJdiZtB3KCSHdigmqdNtpwIIrddiCd7hIhNqajf
-	 zcMty/2/a28z4GEVB7mHniNDZaX688ev0LaGKmjKwnrOZADz8O/c7aYZ8+j6BHjzkCQ==
+	bh=U80Wmdsj12fusZWg64ofRVwUMzzXEmzCkUfqbRVT4lc=;
+	b=nqZAiu3uGTc3Ox6ALKH0rHT5/Lr34r80QtyU/Qn2UVIOtMRVEWJAL8Wt16RJ950unOZs
+	 kRjNGZbvZ3IbAGGbII4pGFBcgMklHmw5UmDWrZRLmRqS33MyClBW8OLNcYbm6uMSSDur7
+	 ucNQXSucT74WKtOurc8bM6bvsxNg47A1P3Pac7v0GD136Ch9xb/FjVp1tUKSzllcKoBsu
+	 bvH2KRk8rS9FTQQFUZDg56X8iJHBRxZ8BnLnN6q2ySil5Z/D1jocCgseHbSyi5Zw8ABkX
+	 zBdTTdTmH3J0HUsHqBxxnKfsoaoF83Iugl9E2wQYQcVOAqeTsReNs0rlRkLay3VIHcw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=163.com;
 	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=ntWlrT6R;
+	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=cxmqqI8v;
 	arc=none smtp.remote-ip=117.135.210.5
 Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4650E60A381F;
-	Wed, 28 Oct 2026 03:07:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4650E60A381F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9966660A2602;
+	Wed, 28 Oct 2026 03:07:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9966660A2602
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=ntWlrT6R
+	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=cxmqqI8v
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=tI
-	bcK9QjGE9c4lpPc7mfj5ekNF6tijyVodhkpLjG8sQ=; b=ntWlrT6RoX39yXz/iz
-	soOJfC3ZjqPIOY9BC7rCiihN+Sx0E8bdQeKbCipvfVhYucPlj5BKbE8uRXngQdxH
-	VrPPc4aAqWYvJBuslL+Q9zmHFU1XaHFhpMbSljPOwF8e5hWPyNLK3RWGkwU0XW/k
-	de8OUC/uSB085wBRFkveHKwKM=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=U8
+	0Wmdsj12fusZWg64ofRVwUMzzXEmzCkUfqbRVT4lc=; b=cxmqqI8vb7VAeGamUa
+	L+ah58/1rzK2nAEkKUGB+Mcsu+KQajbzlvlpHTX34yrE1p0j0+U/pJf32Z7uOjjM
+	bhWAO149qlw6WVR6EolQhQ8UFN6HSAd5+REfz1VLjykS9Z/pqmgwhKtYq1+hX95h
+	ZH63h1HSKzSzjIPWEuvb4Q62Q=
 Received: from Precision-7960.. (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnVwncZuFqLzE4DA--.33198S5;
-	Wed, 28 Oct 2026 11:07:12 +0800 (CST)
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnD07QZuFqZiY4DA--.60713S4;
+	Wed, 28 Oct 2026 11:07:00 +0800 (CST)
 From: Hans Zhang <18255117159@163.com>
 To: bhelgaas@google.com,
 	lpieralisi@kernel.org,
@@ -61,9 +61,9 @@ Cc: imx@lists.linux.dev,
 	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v5 11/16] PCI: dwc: qcom: Use cached PCIe capability offset
-Date: Wed, 28 Oct 2026 11:06:47 +0800
-Message-ID: <20261028030652.2917756-12-18255117159@163.com>
+Subject: [PATCH v5 02/16] PCI: dwc: Use cached PCIe capability offset in core
+Date: Wed, 28 Oct 2026 11:06:38 +0800
+Message-ID: <20261028030652.2917756-3-18255117159@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261028030652.2917756-1-18255117159@163.com>
 References: <20261028030652.2917756-1-18255117159@163.com>
@@ -77,111 +77,92 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnVwncZuFqLzE4DA--.33198S5
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZry3GrWfWr18CFW3ZFyxZrb_yoW5KFy5p3
-	yYvrn0kF4UJrZ7WFn2yFZ3Xr1avrn8ArW7CayxK34aqFy3tryUGa1jyrySyFn3CFZ2kFy7
-	Gr1Utr17Wan5Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziDPEhUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC6wDkiGrhZuDG+wAA33
+X-CM-TRANSID:_____wDnD07QZuFqZiY4DA--.60713S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXry3AF4UurW3tw45Ary8Grg_yoWrJr1rpa
+	y5JFyYyFy8AF45ZFs2vas3ZF15tF9xArW7Ga9agrnI9Fy2yFZFga10yry3tFn2yFsFkrya
+	9r1Utr15Cwn3JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziDDG8UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC7BThhWrhZtTO4QAA3K
 
-Convert the dw_pcie_find_capability(pci, PCI_CAP_ID_EXP) users in the
-Qualcomm host driver to dw_pcie_get_pcie_cap():
+Convert the DWC core users of
+dw_pcie_find_capability(pci, PCI_CAP_ID_EXP) to dw_pcie_get_pcie_cap():
 
-  qcom_pcie_clear_aspm_l0s()
-  qcom_pcie_set_slot_cap()
-  qcom_pcie_post_init_2_3_3()
-  qcom_pcie_post_init_2_9_0()
-  qcom_pcie_link_up()
-  qcom_pcie_icc_opp_update()
+  dw_pcie_wait_for_link()
+  dw_pcie_link_set_max_speed()
+  dw_pcie_link_get_max_link_width()
+  dw_pcie_link_set_max_link_width()
+  dw_pcie_ep_init_non_sticky_registers()
 
-Note that the .post_init callbacks of struct qcom_pcie_ops run from
-qcom_pcie_host_init() before qcom_pcie_clear_aspm_l0s(), so relying on
-that function to populate the cache would have left the offset
-uninitialized for them. Doing the lazy lookup inside each function
-makes the ordering irrelevant: the capability is searched exactly where
-the register is accessed, i.e. where the open coded
-dw_pcie_find_capability() call used to be, and every one of these paths
-runs after qcom_pcie_init_*() has enabled clocks, resets and power.
+These functions are reached in exactly the same situations in which the
+replaced dw_pcie_find_capability() call used to be executed, so DBI is
+accessible whenever the helper performs its first lookup. Because the
+lookup happens at the point of use, there is no window in which
+pci->pcie_cap could be used uninitialized, neither in Root Complex nor
+in Endpoint mode.
+
+While at it, remove the now redundant capability lookup in
+dw_pcie_link_get_max_link_width(): the offset variable it filled is the
+one used for the register access.
 
 Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
- drivers/pci/controller/dwc/pcie-qcom.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware-ep.c | 2 +-
+ drivers/pci/controller/dwc/pcie-designware.c    | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index d903f10211c23..dfd2d10414ec9 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -379,13 +379,13 @@ static int qcom_pcie_start_link(struct dw_pcie *pci)
- static void qcom_pcie_clear_aspm_l0s(struct dw_pcie *pci)
- {
- 	struct qcom_pcie *pcie = to_qcom_pcie(pci);
--	u16 offset;
-+	u8 offset;
- 	u32 val;
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 630ba172280c2..b410f6ebed4ba 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -1268,7 +1268,7 @@ static void dw_pcie_ep_init_non_sticky_registers(struct dw_pcie *pci)
+ 	 * to all other functions as well.
+ 	 */
+ 	if (funcs > 1) {
+-		offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++		offset = dw_pcie_get_pcie_cap(pci);
+ 		func0_lnkcap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
+ 		func0_lnkcap = FIELD_GET(PCI_EXP_LNKCAP_MLW |
+ 					 PCI_EXP_LNKCAP_SLS, func0_lnkcap);
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 074b007dc2963..c5a6c6cba4da0 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -808,7 +808,7 @@ int dw_pcie_wait_for_link(struct dw_pcie *pci)
  
- 	if (!pcie->cfg->no_l0s)
- 		return;
- 
--	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	offset = dw_pcie_get_pcie_cap(pci);
- 
- 	dw_pcie_dbi_ro_wr_en(pci);
- 
-@@ -398,7 +398,7 @@ static void qcom_pcie_clear_aspm_l0s(struct dw_pcie *pci)
- 
- static void qcom_pcie_set_slot_cap(struct dw_pcie *pci)
- {
--	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	u8 offset = dw_pcie_get_pcie_cap(pci);
- 	u32 val;
- 
- 	dw_pcie_dbi_ro_wr_en(pci);
-@@ -998,7 +998,7 @@ static int qcom_pcie_init_2_3_3(struct qcom_pcie *pcie)
- static int qcom_pcie_post_init_2_3_3(struct qcom_pcie *pcie)
- {
- 	struct dw_pcie *pci = pcie->pci;
--	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	u8 offset = dw_pcie_get_pcie_cap(pci);
- 	u32 val;
- 
- 	/* Force PHY out of lowest power state */
-@@ -1362,7 +1362,7 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
- static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
- {
- 	struct dw_pcie *pci = pcie->pci;
--	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	u8 offset = dw_pcie_get_pcie_cap(pci);
- 	u32 val;
- 	int i;
- 
-@@ -1410,7 +1410,7 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
- 
- static bool qcom_pcie_link_up(struct dw_pcie *pci)
- {
--	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	u8 offset = dw_pcie_get_pcie_cap(pci);
- 	u16 val = readw(pci->dbi_base + offset + PCI_EXP_LNKSTA);
- 
- 	return val & PCI_EXP_LNKSTA_DLLLA;
-@@ -1785,14 +1785,15 @@ static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
- 
- static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
- {
--	u32 offset, status, width, speed;
-+	u8 offset;
-+	u32 status, width, speed;
- 	struct dw_pcie *pci = pcie->pci;
- 	struct dev_pm_opp_key key = {};
- 	unsigned long freq_kbps;
- 	struct dev_pm_opp *opp;
- 	int ret, freq_mbps;
+ 	pci_host_common_link_train_delay(pci->max_link_speed);
  
 -	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
 +	offset = dw_pcie_get_pcie_cap(pci);
- 	status = readw(pci->dbi_base + offset + PCI_EXP_LNKSTA);
+ 	val = dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKSTA);
  
- 	/* Only update constraints if link is up. */
+ 	dev_info(pci->dev, "PCIe Gen.%u x%u link up\n",
+@@ -846,7 +846,7 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci)
+ {
+ 	u32 cap, ctrl2;
+ 	enum pci_bus_speed link_speed;
+-	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++	u8 offset = dw_pcie_get_pcie_cap(pci);
+ 	u16 ctrl2_speed;
+ 
+ 	cap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
+@@ -881,7 +881,7 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci)
+ 
+ int dw_pcie_link_get_max_link_width(struct dw_pcie *pci)
+ {
+-	u8 cap = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++	u8 cap = dw_pcie_get_pcie_cap(pci);
+ 	u32 lnkcap = dw_pcie_readl_dbi(pci, cap + PCI_EXP_LNKCAP);
+ 
+ 	return FIELD_GET(PCI_EXP_LNKCAP_MLW, lnkcap);
+@@ -927,7 +927,7 @@ static void dw_pcie_link_set_max_link_width(struct dw_pcie *pci, u32 num_lanes)
+ 	dw_pcie_writel_dbi(pci, PORT_LINK_CTRL, plc);
+ 	dw_pcie_writel_dbi(pci, LINK_WIDTH_SPEED_CTRL, lwsc);
+ 
+-	cap = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++	cap = dw_pcie_get_pcie_cap(pci);
+ 	lnkcap = dw_pcie_readl_dbi(pci, cap + PCI_EXP_LNKCAP);
+ 	FIELD_MODIFY(PCI_EXP_LNKCAP_MLW, &lnkcap, num_lanes);
+ 	dw_pcie_writel_dbi(pci, cap + PCI_EXP_LNKCAP, lnkcap);
 -- 
 2.43.0
 
