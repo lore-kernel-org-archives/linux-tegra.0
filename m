@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.2
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793156865;
-	b=hZF2/m1wdPuQp94m7Gzk4JkftC5THrxJYGWQaHOFa7bwYc+vYEXdyztQ/jzzYWUXffb0
-	 ETtc1461WeZribrCUrKuVz2wLyhoHcju8ps5Ch+naUX0gbhHlkHWg64O/ZtbFBnf0x+DB
-	 fi+BwK47J1+6jSw6+f+z6OTOQTgEfHq9bhQfUZLzOwmTR8SqfVNQWd9Mfv0nGyXyYoEY1
-	 RQMneVdW4uf9xN3dig1P8+bzN7SzF9MwEkkz61Pljbw/DdwuLdhWbphJU1Y5r2mg6+s4O
-	 EZPnuIB0Hr1f6T9Hac31/wLZiNjUfRJKBMxjIbGlUYJWYlkQEMIxKzOh6N5NISrJoeQ==
+	t=1793156866;
+	b=Bk+fZUS1fyPvSOD4apoZGmXEtasPQNNBI0ybzQxiDpOOQoGMWuQ/rGYvpgjQZ0Zoq11x
+	 tWvsEXY9YkNpEK6mitdYHO4gIIZGkeb1rXxSxV+yDSNbkT5LycTHey8483iSFzGRaGAFz
+	 oPU+XTdorG2QgSCQ/5V7S++vvBWQI54+UKfacmjtLn3ZB9JJY15EnPLTtTmnZ0ohWDq0O
+	 A7vVKlO4PTHErskoMiVvbA13z61VZu2tfITe5uw28YYfmKuHQfBVyp5FxKa1sGBbZ2Dxa
+	 LClaqTxa7fzYN1Nytv0rnjMK6ceStWUpVCVuBvuiFKkoTwECBpodHjA1A7gd2FkPekQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793156865;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793156866;
 	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
 	 X-CM-SenderInfo;
-	bh=o/IRs6JzA5LFZdnsRQ+spSM1tkDMabFMzmbDWv96JLM=;
-	b=eR/hOxSsRQM54U8LqKgPRuuatjndu4WzC4nl0qoqCSM0OsSw+zWYiKjRDcjSBltrdlow
-	 leDUznGe4Ha++pgLl6rSCbCM0cFC/Plfiz2PzHdRv4gvAz4A3qm1Gl67i6/l3AsFUfzWj
-	 hBrIPCFWSZHbVPL/PD0HBXMzhWO+tKCnUW/N/Lk+QoITsao0XdqJ3TRd0kPHs4UzwCZi6
-	 EPadFD8NWPqwOiOgHIjT98A9dZ0D5BttQhDl0VrNXoV7Vqyd1V+eoPWM9PGdTf4gMTtYt
-	 aMhkRi8RHDYZS7C4O0gdPoocGkqSmpKRswf25yJZQXbbisxms50itrTV4CBmu6lHEvg==
+	bh=lAmxH5StbC92YG4VwJJRjtxwLxu+DmfhuOFV/GCQrHU=;
+	b=Pbn6tqDUnEK5mpNnkwRCYji1d4Ct4qOO4zMr58z5F8eB3Z1JoYetdbUsOyxLQb0xyJ3C
+	 W5iGig1vsX682bCQ6ZU2B6HIX8uvnrZMbYl2TGIrKK6vRiG45PPA9MLEDAMmap0zrBqnM
+	 Ig+dby9xIjqY5PRalr9NedW2O2vBV7akXzHNBRjvg/l1Ua4OQl6BV99rMpGKBJZDe5ukW
+	 LiR36cRis5NfllTHECdxeC63sPDgPEsAjBsAHi/BvxCs1dSz0tDYGIecW/qm2nkVgZSlU
+	 kMgeafwoSqJwLNoqcuY2e9c2dURdqlr4JAijUCKO9Z55SgHDrzbHlqQuhwe9Spqowpw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=163.com;
 	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=GoamCqJY;
+	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=IQAGmgt4;
 	arc=none smtp.remote-ip=117.135.210.2
 Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4E560A380F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DAA60A261C;
 	Wed, 28 Oct 2026 03:07:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6B4E560A380F
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 08DAA60A261C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=GoamCqJY
+	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=IQAGmgt4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=o/
-	IRs6JzA5LFZdnsRQ+spSM1tkDMabFMzmbDWv96JLM=; b=GoamCqJYHM933HGiPB
-	ypqZ4tGSvn84jILo/LfRPAfsqKV6PV5Hx3NHfKM/w6HK7jxgOIIvp7LSh84gwXrq
-	Rq4DKgtb7JLCSIVjAyF+LeMLqoC2SzYmXA7UyCc9mxN2wpviFAIe70HvX5D0g//8
-	oVFzf2KK8i5Zm3x0LwBuvvfhc=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=lA
+	mxH5StbC92YG4VwJJRjtxwLxu+DmfhuOFV/GCQrHU=; b=IQAGmgt4PNZWbso6+V
+	pffK2rsO3R0sJtHr69fYShXhUdAZQYnX+4I+/tJXe36UNjjKRCZS8pASyZkOJqZw
+	5wAgwiIxCroZtGVTERPriDLYCOVguaN84E1UpII75b3Y/1GlQdZMPZiBlolV1mrd
+	meokRbdBJrzjJFIhQr1h7lQwk=
 Received: from Precision-7960.. (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnVwncZuFqLzE4DA--.33198S6;
-	Wed, 28 Oct 2026 11:07:13 +0800 (CST)
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnVwncZuFqLzE4DA--.33198S8;
+	Wed, 28 Oct 2026 11:07:15 +0800 (CST)
 From: Hans Zhang <18255117159@163.com>
 To: bhelgaas@google.com,
 	lpieralisi@kernel.org,
@@ -61,9 +61,9 @@ Cc: imx@lists.linux.dev,
 	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v5 12/16] PCI: dwc: sophgo: Use cached PCIe capability offset
-Date: Wed, 28 Oct 2026 11:06:48 +0800
-Message-ID: <20261028030652.2917756-13-18255117159@163.com>
+Subject: [PATCH v5 14/16] PCI: dwc: spear13xx: Use cached PCIe capability offset
+Date: Wed, 28 Oct 2026 11:06:50 +0800
+Message-ID: <20261028030652.2917756-15-18255117159@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261028030652.2917756-1-18255117159@163.com>
 References: <20261028030652.2917756-1-18255117159@163.com>
@@ -77,39 +77,35 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnVwncZuFqLzE4DA--.33198S6
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtFW8tFy8Cry5CF1DZr4DXFb_yoWDWwbE9r
-	9rCFZ7ArWUCry5K3ZFyw4rXr90va47ZF1j9ay8tF90vFn7Zw18tr9rZrZ8A3W8Gr1DJF97
-	Jr1qyF1rArW7JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID:_____wDnVwncZuFqLzE4DA--.33198S8
+X-Coremail-Antispam: 1Uf129KBjvdXoWruw17Zr17XFWkuFW5ZF47Jwb_yoWDCFXE93
+	s8WFnrAr4UGFy5GFnFyryrXryYva4fWw1jga9aqFZxAFn7Xw1kWr92qrZrAF95Cr1DXF97
+	Jr1qvF4rJ3y8KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
 	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRM89NtUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC6wHkiGrhZuHHSwAA3G
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC7APkiGrhZuPTEwAA3N
 
-sophgo_pcie_disable_l0s_l1() runs from the .init callback with the
+spear13xx_pcie_host_init() runs from the .init callback with the
 controller already enabled. Replace the capability search with
 dw_pcie_get_pcie_cap() and store the offset in a u8.
 
 Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
- drivers/pci/controller/dwc/pcie-sophgo.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pcie-spear13xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-sophgo.c b/drivers/pci/controller/dwc/pcie-sophgo.c
-index 044088898819e..39703d2b7b5f2 100644
---- a/drivers/pci/controller/dwc/pcie-sophgo.c
-+++ b/drivers/pci/controller/dwc/pcie-sophgo.c
-@@ -164,9 +164,10 @@ static void sophgo_pcie_msi_enable(struct dw_pcie_rp *pp)
- static void sophgo_pcie_disable_l0s_l1(struct dw_pcie_rp *pp)
+diff --git a/drivers/pci/controller/dwc/pcie-spear13xx.c b/drivers/pci/controller/dwc/pcie-spear13xx.c
+index 01794a9d3ad29..6e4c11b497d45 100644
+--- a/drivers/pci/controller/dwc/pcie-spear13xx.c
++++ b/drivers/pci/controller/dwc/pcie-spear13xx.c
+@@ -122,7 +122,7 @@ static int spear13xx_pcie_host_init(struct dw_pcie_rp *pp)
  {
  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	u32 offset, val;
-+	u8 offset;
-+	u32 val;
+ 	struct spear13xx_pcie *spear13xx_pcie = to_spear13xx_pcie(pci);
+-	u32 exp_cap_off = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++	u8 exp_cap_off = dw_pcie_get_pcie_cap(pci);
+ 	u32 val;
  
--	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	offset = dw_pcie_get_pcie_cap(pci);
- 
- 	dw_pcie_dbi_ro_wr_en(pci);
- 
+ 	spear13xx_pcie->app_base = pci->dbi_base + 0x2000;
 -- 
 2.43.0
 
