@@ -1,100 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.194.39
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793153067;
-	b=pnFpH++THuG4R1NBUTcD1HfUTIUdCaxhQiKZRYrU3uHFl/ka5iQNBcQ+QVe5+/X+Kvwo
-	 W1fv4OKKSuwSbxrOZyd/bkVQkuX4Dr+p4g4O8V0UNn7vsaygoQd+3cIoPiOfuHWd+PsCR
-	 wFHOWz0vKGcfapXEMkuTMGQFiwnDrPPwrXE1/+6B/sR6jZrfX8lTlNxw3RdTHGGv/fBdG
-	 pQqONAEpyNsz1rFMlMN4muAq7kMkKzurWAjgMbzjfVUNfwxYS8700olNxaqRgyWj3Z24m
-	 5UyMK4oU4apmRwsFfrXDOkpkoOqnH5DpiNScvHxXrhsEy+BpH7UAFSy2Mb943Xa5lfQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793153067;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
-	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:
-	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=2lVuRy2gWGxjsf1R6JK3SvvTrJxE1D0C2aENTplraHY=;
-	b=sPIk/iJJ4T3TKYCgIAeqeYN2k8xuJk5Y8ay73llNERW9rNJIJU04c/HvBatyPrdApUwp
-	 K6bPLB57KZ5v89STycrGcyjnrV4305VrG8m73Mk9aTmPtioyS/5QNfp6nGVlWhYzXLOX9
-	 YygRLH5zPQ94t25uLdS9rXqFSWeSiw2P0R1nlH8bcxbtKlNX0MWnk337MKeC/f8H23DHX
-	 WUaHttdcEQtIVjhAJfNKPNP8EeFJgfaf63j5Yib+7BVJOtGzQ0INZ18npyx/eAiFH8q11
-	 wABMKIfcuhQGk7xiB+TkdNgv7RoKUvHm0eDFSYllHco71EXhdfMXdO5NEgaxbMvoLvw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=TWoxkcp8;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.194.39
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011039.outbound.protection.outlook.com [40.93.194.39])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.197.31.4
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793153506;
+	b=a7+uOLa6ZzKL7j0AI6o68dLnvcYeY191l30OxNqlj3kc1Wrh/EIdKyKn2LfD1X9GUUHI
+	 gADYGozL0QCADwrgNZvKL8wUvIIQ3i/yEx5DhAjAioLcpPisuCcYZ3Xrvkj2x4+E+hrWq
+	 UcUfnmr7EgMBPl2RkO+BPRm9eMns7ZUJb0ozX1JgAsMsJJb6KxiQgPbsLPst3LdNNZgYU
+	 1LYjkfjrAQ5Koq3z64tavK+YW4AycgSkp3OAUVMjltdKYKfI802KhmNp+lKKUMDd2u7k/
+	 xvC03jRFAt7BFSLHCWFZb2n+JYtnTGIaiwRW91C7tN7tp55u4YsAuL3JFUajgII5GNA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793153506;
+	h=DMARC-Filter:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-CM-TRANSID:
+	 X-Coremail-Antispam:X-CM-SenderInfo;
+	bh=dRf6oI9OjFWY1cb4Veae1z+HSgCdbz4ogw7DjgHpwGM=;
+	b=B09TjISVevEf+ZFWoDBxUpiiKD4DC1rPJJPHYbc+lnn8Zs/RuySCRWco4J/wkQSL+GZo
+	 mJ8hJ/rcdyyU+2/C0UaaBCJ2oG+oeQEq/HbANMHkMafW9GyB1nDzlDixu0x9NpJSyE3b3
+	 yrnazxT/6GtALSnhy8FA0pG+9xwtqlZU5TT0jRARWQfRsfoNaSiAU6aaLC8UzC0Zf1dzk
+	 Q4UzHXD5NHpBkxodPL/SPozqPDvlCAk4nIe2p9k60QarouDD4SHNxo3/+8K6hNyI753hH
+	 lVPKhVfXIq904xg+7vZnTlyqFhckOYG90liHYdPxwyr8F8J+B/C3FozAnw2SYQ8po4g==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=163.com;
+	spf=pass smtp.mailfrom=163.com;
+	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=qYpt+RJw;
+	arc=none smtp.remote-ip=220.197.31.4
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DBF606A31A;
-	Wed, 28 Oct 2026 02:04:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 48DBF606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC69606A31D;
+	Wed, 28 Oct 2026 02:11:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EFC69606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=TWoxkcp8
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NpTfHs79GA7ntzYguwM4EBgt4qWbYVJyvqRIBpyrdHveNSkiI/ovqS/4kF51WuPHfjwm0CmAmc3pJbRwBaNCV0DT5rmRcD8gTht41GVPBBQlsu4tk1SKn34OaD8edohLUaAqaRK+5OWSzbQbURlIeNcNe3tzRfgzDqNQxvFq0+IQvuieBCA+uA4VfUd1XQaD+9kvN9N0oeP/FAcZ1H97BynpI4ZlJKbBpjwwpYwydeT7pyfuT/s7Ew0mGjYPhj0m+fs7Qdo/Dq93gOGW9354yI4nmKipKBm+25L61gPAG3hVILU64SOfjejSHrVd6KFfdoIGl1prThB75cMe4G7xPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2lVuRy2gWGxjsf1R6JK3SvvTrJxE1D0C2aENTplraHY=;
- b=F0I9AEd2RQsNgdQCGzYYql8x/QwGBFTkEDtXKSd+om+7l0BqVC8qa/0GOmfLGEOjIhps8HIJ7sCD9562AXaFNyVjOcBKwmAclaZNkH11o95BEBOj9/pEHMX7pJqDtQM8uhWx/EjwGfoHpxOcwjXJRCF9R+9iYpQiSjmXaADvScA44YYTNrIT+Ohkuj6JwhATqMQSbCm4b3O6B4qBFOFO3TefxdpIH+cbaezOZkGc5rpmKTZYkm3nzm7Ob82mvIoxTIodCGTi2dAEcShTaT6dBqjb1+fKTLZpmyw8QHB0tWZaqLCKaBeKQ3Zc2BBDiKX9wPnI7V9OAopd+yzpiQGD5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2lVuRy2gWGxjsf1R6JK3SvvTrJxE1D0C2aENTplraHY=;
- b=TWoxkcp8x1/BF0oqCR32vAAUdZykItHM027F9ReIJIVmuaZHN1uXswX/CLPeo/EvExTFIYeC/nXxT93AXj0TcKNf2yg0WP952iWjfjS1ta1EATc11vwYdst7uUxPImXIFInObNs0wczNolrc/uVHuQ4A8xauVdIfRETzB54KAQjTmWnQlpUijJ1ITp+rhMxBAmgEmwObjJAEW7p+82gI9FVbTq9wmHDoIzIUWKwkvNQenhSg+wOLWockFi79ja78VtCAKjL9dK+VKB1aLsuLQ2oqXERFSs1dEZ4NkmZMc+v3uSi6FHN+111pxnajLCyHL8JpjRVZrBMyTcGqonXD7g==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by DS2PR12MB927960.namprd12.prod.outlook.com (2603:10b6:8:403::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Wed, 28 Oct
- 2026 02:04:24 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0546.021; Wed, 28 Oct 2026
- 02:04:24 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org,
- Svyatoslav Ryhel <clamor95@gmail.com>, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Patrick Fischer <admin@tsv-stahl-riesa.de>,
- admin@tsv-stahl-riesa.de
-Subject:
- Re: [PATCH] gpu: host1x: mipi: Disable clock again after powering down the
- pads
-Date: Wed, 28 Oct 2026 11:04:20 +0900
-Message-ID: <w40wFI2SQUWozyQ_FyS3Bw@nvidia.com>
-In-Reply-To:
- <20261025-upstream-host1x-mipi-clk-v1-1-6bc6e755b4cb@tsv-stahl-riesa.de>
-References:
- <20261025-upstream-host1x-mipi-clk-v1-1-6bc6e755b4cb@tsv-stahl-riesa.de>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0231.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c7::9) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=qYpt+RJw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=dRf6oI9OjFWY1cb4Veae1z+HSgCdbz4ogw7DjgHpwGM=;
+	b=qYpt+RJwRCF0KX/+Je23SE2RJtdg8sWfRlTJBYkgQjazqIosKZrPy7BmiKqm9R
+	lMeSBT6H/smy5N567aYskw3soxO2lZEjFu6+3moV22mJgNt2lfVoA1/U+RSmdIP+
+	eNPBKt+kFxH/QXb7xPiQMm1mkDGc1IgvPyHBAIFAj2h4o=
+Message-ID: <9a761c42-9edd-48f4-b3a4-c275b603cc3e@163.com>
+Date: Wed, 28 Oct 2026 10:10:33 +0800
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -104,142 +51,67 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS2PR12MB927960:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25ae4ecf-c2c6-4c21-2c12-08df3497c9a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|10070799003|23010399003|366016|1800799024|11063799006|56012099006|261026121527099003|261021121427099003|261022113327099003|261022075727099003|261009223027099003|10067099003|22082099003|18002099003|3023799007|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	sVEnzldewBPhWE+kiVlc2ATdOjoUZflQV0HevBrZ8/ws73M4eF7DZa2EtPGz3ybdZVZ1f5mBX64OhOvTWxElktfKcKSr8S3m9KAtDdwNkC59HegX0A54sg8amYxlyy2l7LI+lbV3TkT4jzoRCIC2SLUlPyOtkRMX6TSD/JAkyD+8OnsNw7yE9H2NzZujbC8IVlDOz3OToDsQPZmZ03qiPRrW+DiiSBRvLICKI8d5tI0Jk78fFM+rNPxCtX9yj7T5b1KD1B3a/Pss9ZL2VIH/6FOTiI58qxb+S5UrtvAkr01UHCjwDM4fn/JEA/w/jJgIuAb0B9MWOdfbyZjoHj5z6L70pLAk5e65s/Hi1kpS65SbySy53gfwi8QQOUvMI1lADl/Hz1bnLqzGuVpbk3KKZuxT8xNtqcghTYHJDDwEkIiO/Yt5kXvr6lwjQgYeb58u9aV7A7uDhkJbTAKX6i+UZIUStPVBY4eDntl7jue2usQs6DAGlFh/iatAo7ryZViP9wsoRO6TldJIEnXsaiCCzTYNkUil4VWzGyuJ/jZFL8aeZ6CPKuy5EknH3FbDboN80JWKcvGj2TthAx8bqg85sjyb48V8jH/B8l8KaEUjnkPbf77Uh7XJ7fcG1AZMKNvfIpY19FfN4VF5JRueLNikt6QHf7p1f17oHL7qrhRqPqA=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(23010399003)(366016)(1800799024)(11063799006)(56012099006)(261026121527099003)(261021121427099003)(261022113327099003)(261022075727099003)(261009223027099003)(10067099003)(22082099003)(18002099003)(3023799007)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Znp1Zk1od044UGIyb0ovUjYyMWpCRGNiWndIOXh0OS8yNWRuZmJQckVCWFFr?=
- =?utf-8?B?a0FkYUI0UytjZkNoYWlyYVd3eFhSSEVRdmlIVXZzUGQzdk1SZHkrSWloWW1N?=
- =?utf-8?B?K3ZSK3FTOFlhWFNSSGJ5YkFRcUdQbVJxcnUzSjhRS0sxanNmSHRMVlk2R3Ni?=
- =?utf-8?B?OWRuamVDcU82Z3FWSkZsK1IxMFUvNXRHb0wzNGE5WVExT2RtZjNYS0tTaDQ3?=
- =?utf-8?B?R2RTdUdWbW1oQ1JTNWJEMkNoZWZ6V3plZWxVSnBJWWZrTHF0U2JMcFVjc09S?=
- =?utf-8?B?QUtOUzBEc3J2RHpENVNNOEdWZjI5WVIvenF2Nm80QXZEM3ovZlI1RVZLMXlR?=
- =?utf-8?B?TUFoMUdLM2FGK1FtMHlCY0MyRFR1Qy9FU3F1MWhXWis5SXNEZkQ0dk5hczFN?=
- =?utf-8?B?L0tlQzcyM3FwcVRwbzcrSW1OcmJpcUh1bVYzbWJXWHVOVlI4Nk5VVWNRYXpM?=
- =?utf-8?B?T2hlZG9tL0YzTGVOSlRoS1d6M1hPelltVmZpK3dsc2FmZEUwNEhMVHJwejkr?=
- =?utf-8?B?dlF4b01GQzNrK0xYS2Q4RDYrTFRaVng3M2lSUVpYL0dxYlh0dE5YbnVFSGJz?=
- =?utf-8?B?cXV1ejBEMStaRjBlNjI2U2d1dzFoRytGK0dXdXVYNCszL3dzTW9INFJRSjFM?=
- =?utf-8?B?dSs3dWtpT2NqNW5KUlZuYlhoZE5vOFJ5aUp0TEFyNlZqa2lwTSt2QVV0Nm9M?=
- =?utf-8?B?bHdPc2N3aWluOHc0dk9CeVExZEtJK2hacXlwOWtnWXo1blJJc0R3VndPOTJ5?=
- =?utf-8?B?bnZ6empjQWJqZjJoazNxUE9GSHFxeU5tRFkzTkpsd2Erb3VmdC9mb294a0V3?=
- =?utf-8?B?R3crYzQ5eHJrWEhFMGR5QmN3K3d0dHVCdlFaSGtyK1RudkZyRTRMY0cxNUJv?=
- =?utf-8?B?Um1kbUdSMjk3UHRIVUNRQnhOL200bmNEVjVoc0U1M2ZJNm5JcnkvMHVJYmFq?=
- =?utf-8?B?MUtPc0EwNUk5Um5pekFZUnBwKzNjdWxvU2NaekxzWVVMK1VOY09OWmlLWERY?=
- =?utf-8?B?NS9HRTRGTUFMb0VSb1VOOWFNUThUS1lTdEE2SzkzVlRiUXdCeE85a1M2V1Bx?=
- =?utf-8?B?ejRoNEVPbU5pYmhBNU83T2tQR3BQRDVVL0VBTlk5Tk5qS2x6K2gza2pMMDh6?=
- =?utf-8?B?TTdqQXJSM1lmbG5jaHlJRldxUmRCcnRRb0xsYU42R2hGKzEwOVlKYmx4MGVp?=
- =?utf-8?B?ZUxRV2IvNGVKTzZDNFNnMms2NHpaN2lzblBYenB2STRIeG54cVFveEM3ek5H?=
- =?utf-8?B?ajRVUEhCbFFRUjdtN0ZaamZSdDRqUnNJalVxMmQ2S25jc1diVkg2dUJoVjRp?=
- =?utf-8?B?dmp2RjEyWGQ3WC9IZTJKNDZqdWE0OFlWWTB0NWIzYzZvcUtGZ3pNZDVJeVdO?=
- =?utf-8?B?Yk9EWkxMam9WMGlrOE83eUtHOWRQK0VkNWRzWVZjRUpRbzhlaUU5YWNKdXlu?=
- =?utf-8?B?aWRob1lZU0pPTXNtYW1NUm5lWW51akFmRlhEekRIWWN0N3FlNzJleWsvdjdG?=
- =?utf-8?B?WUFuekYzejV0cE5KcEZsUGpBRlk1aW5oUk1WdWRpaENFKzlwUXQrZ1plQ252?=
- =?utf-8?B?VVcyTGxsSzVkWWFmRkd0eGNHbnVSMGJuYzFyQmxaQm0wYk85NEFtVHFISE5x?=
- =?utf-8?B?emFRYlpFbUI1ZVpNdVp1NTkyQXFZNGJyYUNLVS82VnZidlppMWJ0M0hLaVpx?=
- =?utf-8?B?UzFnUXVma0hVZ29peHFnSTFHVTdnUGlSZkZLYWlRMkdWd1Zlc0J0clBuY05u?=
- =?utf-8?B?VGIwaytwaWhQQ1J5RHhtRDNBRnJiVHVuZW5LWmhMNElBbTFiZnF6amJoUGhI?=
- =?utf-8?B?R0psWk1rSVd4cXplTGxJUnVrM1ROMlM0VnFKUG9BNW56Wm95RmhOWHNralVu?=
- =?utf-8?B?RnZvYXBDVEcwa1A4RkVTcUpMMDlTTHlKb21YOURSeGMwSVl5b0U2WDNQTzlV?=
- =?utf-8?B?L1N0bzlLZGFhWktZaGdFZmc3T1QzaGFzeDYvVFRRTUdocktJVldWazBvWE02?=
- =?utf-8?B?Y1ExN0szbU9wSlRjTTNMTWZqUUUzcUZCS05QTnl0ZjhuczdNOUlwRmlscHll?=
- =?utf-8?B?T0x3T1dCOW5RR2Q3Zi9GTlF0ZWowQytGZVQ3Ni9FeE1ZbExibGdHN09XcUZq?=
- =?utf-8?B?UXFDQkVjV3ExQjIzeUdPazQ0elBlVVQ2WXNvWkxZRGsvZitPcTAyWmxHazl1?=
- =?utf-8?B?dVNMWmNlRnZ2VnE0YWgwWDVQSE5CSkYzTUNIR3pHa2d5NWFpQjh4WCtwWFFt?=
- =?utf-8?B?KzFETGlDY0J2QmhnSWVRbXRrd29rNjdtSjlYajdSYjNlM2hzTmVjcE1VTlFz?=
- =?utf-8?B?V1JOa1kxcnlDay9RQnQ5eEwwVzR3V1VwYSt3cXB3em9XMW5RTkIrbWQ2NnlB?=
- =?utf-8?Q?nedshV6bMW9tcxGyxsJls0YGtZozzcPZ0LiGMzTpfh+Zs?=
-X-MS-Exchange-AntiSpam-MessageData-1: lajNUi6f2J06nA==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25ae4ecf-c2c6-4c21-2c12-08df3497c9a4
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2026 02:04:24.0100
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SkVkrcUh8EyIZnFO0J6LCpAarXIaHNOJOa33fqFkzWeuG0p54hZ+vNhEfKonDzQWgGkHGHFvd9Pksmzq90nQ4Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB927960
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/16] PCI: dwc: Cache PCIe capability offset
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ mani@kernel.org, jingoohan1@gmail.com, imx@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-amlogic@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ sophgo@lists.linux.dev, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261027231534.GA520774@bhelgaas>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20261027231534.GA520774@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD33x2jWeFqyfNqDQ--.48494S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar4DJr17Xr4kCw1xZw47urg_yoW8Xr4kpF
+	Wjgrs2yF4kXrn2vanF93Wj93W7AF9Iy3y3CanxG34avr90vF4IgF40vrW3GF9Fyrs29r4a
+	yFWjq3s8Gas8AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U4UDXUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC7ASSNmrhWaRq6QAA35
 
-On Monday, October 26, 2026 2:13=E2=80=AFAM Patrick Fischer via B4 Relay wr=
-ote:
-> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
->=20
-> tegra114_mipi_power_down() enables the MIPI calibration clock to access
-> the bias pad registers but never disables it. Every disable/enable cycle
-> of a DSI or CSI user therefore leaks one enable count, and the clock
-> stays on for good after the first power down.
->=20
-> Add the missing clk_disable(), matching tegra114_mipi_power_up().
->=20
-> The leak gets more costly with "clk: tegra: Fix Tegra114 MIPI
-> calibration clock parent", which makes PLL_P_OUT3 the parent of
-> mipi-cal: without this fix PLL_P_OUT3 would then stay on as well.
->=20
-> On a Tegra Note 7 (P1640) the enable count of mipi-cal in clk_summary
-> grew by one with each DPMS off/on cycle of the DSI panel. With this
-> patch it returns to 0 after each cycle.
->=20
-> Fixes: 15372d4be7f0 ("gpu: host1x: mipi: Power down regulators when unuse=
-d")
-> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
-> ---
-> Mikko's "clk: tegra: Fix Tegra114 MIPI calibration clock parent" [1]
-> fixes the MIPI calibration timeouts on Tegra114. While testing the same
-> change on a Tegra Note 7 (P1640) I noticed that
-> tegra114_mipi_power_down() leaks the clock enable it takes. With [1]
-> applied that leak keeps PLL_P_OUT3 on after the first DPMS off, so the
-> two belong together, although this patch applies and makes sense on
-> its own.
->=20
-> [1] https://lore.kernel.org/all/20260930-b4-dalmore-fixes-mipical-clk-v1-=
-1-0518be6c7979@nvidia.com/
->=20
-> Tool use (see Documentation/process/generated-content.rst): this patch,
-> its changelog and this note were prepared with an LLM coding assistant
-> (Claude Code). It traced the clock enable counts from my clk_summary
-> dumps and wrote the code change and the texts from my measurements and
-> instructions. I reviewed the change and ran the test on the device.
-> ---
->  drivers/gpu/host1x/tegra114-mipi.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/gpu/host1x/tegra114-mipi.c b/drivers/gpu/host1x/tegr=
-a114-mipi.c
-> index c084a09784d1..83a43a5e33af 100644
-> --- a/drivers/gpu/host1x/tegra114-mipi.c
-> +++ b/drivers/gpu/host1x/tegra114-mipi.c
-> @@ -197,6 +197,8 @@ static int tegra114_mipi_power_down(struct tegra_mipi=
- *mipi)
->  	value |=3D MIPI_CAL_BIAS_PAD_PDVCLAMP;
->  	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG0);
-> =20
-> +	clk_disable(mipi->clk);
-> +
->  	return 0;
->  }
-> =20
->=20
-> ---
-> base-commit: 734bef548a96e8774d6eef5dfa2026c6edc4e80b
-> change-id: 20261025-upstream-host1x-mipi-clk-867edad177b0
->=20
-> Best regards,
-> -- =20
-> Patrick Fischer <admin@tsv-stahl-riesa.de>
 
-Thanks!
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+On 10/28/26 07:15, Bjorn Helgaas wrote:
+> On Tue, Oct 27, 2026 at 08:28:11PM +0800, Hans Zhang wrote:
+>> Hi,
+>>
+>> The DWC PCIe core and its platform drivers repeatedly call
+>> dw_pcie_find_capability(pci, PCI_CAP_ID_EXP) to obtain the offset of the
+>> PCI Express Capability structure, including in paths that run more than
+>> once such as link polling, suspend/resume and interrupt handlers.
+>>
+>> Add a cached pcie_cap field to struct dw_pcie and a
+>> dw_pcie_get_pcie_cap() helper that performs the lookup on first use and
+>> caches the result, then convert the core and the 14 platform drivers
+>> that use PCI_CAP_ID_EXP.
+>>
+>> After this series, dw_pcie_find_capability(..., PCI_CAP_ID_EXP) no
+>> longer appears in drivers/pci/controller/dwc/ outside of the helper
+>> itself.
+>> ...
+> 
+>> base-commit: 4352b8aee98005853aa63f57d6377282de17a33f
+> 
+> This does indeed apply cleanly on 4352b8aee980 ("Merge tag
+> 'i3c/for-7.3' of git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux"),
+> but that's pretty old and not really useful any more.
+> 
+> PCI topic branches are typically based on -rc1, but of course v7.4-rc1
+> hasn't been tagged.  Until it is, you can use pci/main as a good base.
+> It's currently 17bb0e2f6c80 ("Merge tag 'pci-v7.4-changes' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci"), so
+> drivers/pci/ in v7.4-rc1 will be pretty close to that.
 
+Hello Bjorn,
+
+Will rebase on pci/main.
+
+Best regards,
+Hans
 
 
