@@ -1,48 +1,48 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.197.31.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793156856;
-	b=r8h20F0VvrCslEMryMSbGqjRSoQ8ihj4OcOrw5iZ7SSaAohALXqNhx3fPXrrA74tmEwx
-	 NBnoYsCKI0/ac/k7/uVzjjuvxNoehUMJH1HjLfFy6dsasIJbvbrXGbb1zN5JqR9LI2NHE
-	 k2+Csuuk8hmsSlH+B1cfV+VyaiRyLCDoh9nXS3LB88NedD/yvmNVfQjqmqxiuZSlf8yZw
-	 D0DKxAiTvldvkevQxQAM4o5fTC6E+h4HuXMGObClvr6/k/HsTWBe8Zaw7ZyxkkbT7PE8b
-	 fMYo+lpu2lK3R1U8EkwozAxBpTgQZreRpWazNLA+4yrCzeDAYxAlGssGpvyuhLLJGGA==
+	t=1793156862;
+	b=Mj2H9dQqF75PnivrZwhhUNik2uyTytkUmoo5JVJu89OXRcaGFDvYtUt4KrGCYRJBXcyH
+	 jN5i6j25YTuc/uQeFr26qyGHj37KtTbXXJV2XIGX7hEDAfALfDLrNvndaPveuoecIm0zD
+	 aRY2v7Vxa9NIqJG+C5Xb14twY8zHB9RPJy7B167K7pFTgQJ7W7CccKDaDUHUk7vbCNGXz
+	 cvF2w0bkIB53N5hjRGPH0ecvrsgG30bWAqUq5ZkEBcB1vRlOdWi6iCqVg67cS6EszW/Tz
+	 QsOH0glyucEBeq/TB4vZykiry9ZGqtQvr+7XufEL0ZUGfIM1PvW4nLiIR4VLciyXlIw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793156856;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793156862;
 	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
 	 X-CM-SenderInfo;
-	bh=z/0/W91UT1Vwlpm+eF8iJgUejxlxvh3iRjeFAbR8/Vg=;
-	b=JiTOqN+RBGWADc0qhzqGSIJ4oVUpBBjvM/vLoQiVokFVkHpoYPSBOudz5AkbzWe07zy/
-	 C1iGCrjvAJw6VpOFfvZFhDJ/Ydct+2YofWAE1Hyff6AxKOXrMD782eOsnSMlIjQW/B0S5
-	 A/e/jh1H1ZL3eYLpbyN8u1U/cIda2/65bPFsjchgk/XQoTZRfc1gW+wiLP86/M9QS9M3b
-	 egEXh3Cpg3+ypgaWWG/I7xF9tVcHUNoBnXjDChlx9PlDSq5DcZVZrnu+oUC62RJe9EqwD
-	 l7z/GCeSY914hHVwL35Qk8SlqXMD7TLj7VnSJFdYePPbimojH/8uuDshAJPCzKmiRiQ==
+	bh=OY/nKIFipbhUneBZ6EWbb2qdOnB0mX9Xjv8WIqIqTe0=;
+	b=x53nbt4E1+ybBVW/xqF01V0/yeT0p5xJ5c945+HDselemsP2BRrQ23/N+SE1P5op7GGv
+	 05yy6WEYP152KYVzi8EKlRDzDar01UZ/ux5wpDxEd4Kj2AmGtGbtQSjtZUrskK6LcjqCp
+	 524V3GwNQ1JU+uq1qPU0td0cDRfIJ+Mb2Sr5oONg8eabO3EhIn+VQ4MDimpc9ZLE3fs2X
+	 9M+9TrKkfC+poLL3taXInzzZig0U4zNUGrLkez/c+VNJm5SIsjpAQpDB3K7Fy7b2mqhGB
+	 YineWCyrGvKyzKtzhDWXIMYtuCgBV1Xz1gixtAxQcYdBEbgC3VzMQRKEGgV3cLKjRNA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=163.com;
 	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=E4Txy1Ri;
-	arc=none smtp.remote-ip=117.135.210.3
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b="JHVEs9/F";
+	arc=none smtp.remote-ip=220.197.31.5
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B59606A326;
-	Wed, 28 Oct 2026 03:07:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C5B59606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1D260A2630;
+	Wed, 28 Oct 2026 03:07:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2C1D260A2630
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=E4Txy1Ri
+	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=JHVEs9/F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=z/
-	0/W91UT1Vwlpm+eF8iJgUejxlxvh3iRjeFAbR8/Vg=; b=E4Txy1Ri6ZRV5/0N3h
-	ALQPC8XqSOXEzWdWCT/LGIOz49B2mIz+SlnEJKxeXP2kihEPLe933v6fAPM89yo6
-	esKy4C28U7hICmHY/qlBei+N6NlIO26MWDGzqsXm8imDr9LFzgQnaFnaQQndpWJh
-	zvPbgXDM8K5aeLSocyXz8UHXU=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=OY
+	/nKIFipbhUneBZ6EWbb2qdOnB0mX9Xjv8WIqIqTe0=; b=JHVEs9/FcCLjbRxwb6
+	ZtPbxyG9rUTPsqqbK3MYQOLZzliU00LrGUeqZDcuTkE2rK74s0NJ2I1WGzX+hOPH
+	wvx5yHDAb1Pg+ZCdSDljZ+kMspehvDecSf+YOJ9/uOWY/3H335c+u+nheJ5iAXCQ
+	QAZSAAaK/772fZWEtudMEywHI=
 Received: from Precision-7960.. (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnD07QZuFqZiY4DA--.60713S7;
-	Wed, 28 Oct 2026 11:07:02 +0800 (CST)
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnVwncZuFqLzE4DA--.33198S2;
+	Wed, 28 Oct 2026 11:07:09 +0800 (CST)
 From: Hans Zhang <18255117159@163.com>
 To: bhelgaas@google.com,
 	lpieralisi@kernel.org,
@@ -61,9 +61,9 @@ Cc: imx@lists.linux.dev,
 	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v5 05/16] PCI: dwc: meson: Use cached PCIe capability offset
-Date: Wed, 28 Oct 2026 11:06:41 +0800
-Message-ID: <20261028030652.2917756-6-18255117159@163.com>
+Subject: [PATCH v5 08/16] PCI: dwc: fu740: Use cached PCIe capability offset
+Date: Wed, 28 Oct 2026 11:06:44 +0800
+Message-ID: <20261028030652.2917756-9-18255117159@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261028030652.2917756-1-18255117159@163.com>
 References: <20261028030652.2917756-1-18255117159@163.com>
@@ -77,49 +77,35 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnD07QZuFqZiY4DA--.60713S7
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uFyrtr45Xw1kZr4rZFyxXwb_yoW8WF1kpr
-	W5Kr40kr1rAr4YgwsFka15uFy3Jas8Ary7Ja9xKw1S9Fy7KanrJ34akFWfKa4xWFsF9Fn0
-	9Fn8tryUZw4rJrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pip6wNUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC6xfhhWrhZtfEWgAA38
+X-CM-TRANSID:_____wDnVwncZuFqLzE4DA--.33198S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZrWDXrWkJw4Dtr4rZFWUArb_yoWfZrbE9F
+	yDGr97ArWDKr9Yy3W2kwn3JFykZa47WF1jgayftFZxZFn7Ww10qrykXFZ8AF4kWFZxXF97
+	Jr1qyF48Jay7CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRtZXo5UUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC6x3jh2rhZt3GFwAA3z
 
-Replace the dw_pcie_find_capability(pci, PCI_CAP_ID_EXP) calls in
-meson_set_max_payload() and meson_set_max_rd_req_size() with
-dw_pcie_get_pcie_cap() and store the offset in a u8, which is the type
-used everywhere else for a capability offset.
-
-Both functions are called from meson_pcie_host_init(), which runs after
-the controller clocks and resets have been enabled, so the first lookup
-happens exactly where the open coded search used to happen.
+fu740_pcie_start_link() is the .start_link callback. It runs after the
+controller has been powered up, so replace the capability search with
+dw_pcie_get_pcie_cap() to cache the offset.
 
 Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
- drivers/pci/controller/dwc/pci-meson.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pcie-fu740.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index 8559d132dcde8..03dd1282f3f32 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -277,7 +277,7 @@ static void meson_set_max_payload(struct meson_pcie *mp, int size)
+diff --git a/drivers/pci/controller/dwc/pcie-fu740.c b/drivers/pci/controller/dwc/pcie-fu740.c
+index 6c7ce16031704..00ec69a091647 100644
+--- a/drivers/pci/controller/dwc/pcie-fu740.c
++++ b/drivers/pci/controller/dwc/pcie-fu740.c
+@@ -178,7 +178,7 @@ static int fu740_pcie_start_link(struct dw_pcie *pci)
  {
- 	struct dw_pcie *pci = &mp->pci;
- 	u32 val;
--	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	u8 offset = dw_pcie_get_pcie_cap(pci);
- 	int max_payload_size = meson_size_to_payload(mp, size);
+ 	struct device *dev = pci->dev;
+ 	struct fu740_pcie *afp = dev_get_drvdata(dev);
+-	u8 cap_exp = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++	u8 cap_exp = dw_pcie_get_pcie_cap(pci);
+ 	int ret;
+ 	u32 orig, tmp;
  
- 	val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
-@@ -293,7 +293,7 @@ static void meson_set_max_rd_req_size(struct meson_pcie *mp, int size)
- {
- 	struct dw_pcie *pci = &mp->pci;
- 	u32 val;
--	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	u8 offset = dw_pcie_get_pcie_cap(pci);
- 	int max_rd_req_size = meson_size_to_payload(mp, size);
- 
- 	val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_DEVCTL);
 -- 
 2.43.0
 
