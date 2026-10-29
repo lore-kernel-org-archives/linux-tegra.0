@@ -1,150 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793268038;
-	b=g2QFQCL144PmHJmbZQy40u5ExsADUlHoGq1QzwBNpBIHmVIaNBgHBn1aSGobK91xU1k+
-	 efUkOm+jsRglhrieVkzO7KQ+x7ztwqgj6RPyR3KRFt5QSPLrXUP9wDny3E3EaZE+oz4Z+
-	 3xgBWuT8/9sD6HMMMJZL4T3UV5FsYuD2j3LxxhWHho+3XMej8gvv/hPsUk+5GHyK1m5zz
-	 zvDILl93s2BNeHcvK7DN4wgoGZwxQ3ZvW0zmf8zSi4G+rt/p3vBZ6OYVGFy9yFoRmU0jq
-	 02ChY7agMWvuu7tHOodXEVtzlOYmRsy60C0/bQggxyddoUCTVKW2f2rD3wH7q/QD5Hg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793268038;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=o9F+8U/pYwzcZNAGQzHna6ktO5krumv1cnerGWMGoFQ=;
-	b=U7LhvaVc1aiHOtab/s3758NgxqMcZChwrlEFPA0gOBEekejr3D1toRelTox/S8PzMC2T
-	 TvxvJ8VbOWfOy++0AnYhfnA6gDlSz3BcI5pU3Dyhn7iz1njXHy6slIPy/A2ozMyK9uuLL
-	 VmL8gH5WIP9hXvEuyie8zDzhGW8eS7F2uxbbouCITW5VTHVZkCHaso+BHTR1/BxD2xB51
-	 RZrSHsYXUw/RzgKRrvRgbn9C6jXdHkkDe9wM9QHLqJSYLeh0TyirpDaqxnmxRbWQDjTJq
-	 rmgtRauVCZNyPy419z2fkFSEMxfwAJ/Eemb75DUIMGYcpa2FzclZngzRPvQYK750T4Q==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LXa+hDCU;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.181
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793268694;
+	b=UKSYRhdCGjF7OfDY9m1uG54JLBU+Qha6J2/YJIdzVvYX0FT6QQXM+BXDuIRa2gJ1oxoM
+	 N1VWRj7vB/PvmWslHI1XSVQt/3SEgk4XrA4kv+JErFsTX7yoni4f0dGEEZGRXToChNfa9
+	 Ng/OzuyEH3cWy8oCYctQnN3QtcRHiIhTbFe3fdloM6rTMmOPYREJyWPnYd6EIsY/IbQI5
+	 36VIhd9UfLT6f65KMQpsNSLmBFu7ih8pyXxTk7ZkjNDLAcfQc4I9vLu8S5PqxILedbHKa
+	 Qlf9YYRrs+KUojTIiu26XmTPCXV0eBwlW5wAInKRXkY9Oi4vjDCbzJuDjBJYDTE2RLA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793268694;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=jgkJopx5kExqkUv6b/vCU6btPQBGSF/P3vuAWpTWJb4=;
+	b=f5Oj1bm1zg/5pPd17PaMpz2HeYFeLlDAjmvA1KOw2qgRP4Uc/eNFq2ypuVCaHtoamQCz
+	 cPtIFC0Hlq9r4OKPnfAgO7qK7+vuKHHvppH+/4H7AIESCGq6erf1UTtxJzIsOen08i2DF
+	 Rl4sMVs0KK76L1Q8EkT5pOJvhxyRz0Bg+k7tj8T5YFvu9LF6WPwrdSz3Mvsr5KrimJ+FS
+	 X7JTWhng0ozk7tVXW7nHZjBdx+QhxHUI/3ENgd3bppmSz7Okf6vtBg5+7xwjV5ZMR931V
+	 ja6JbN9mS3c30kR+RXd6C5G6sg1Tq39TIvYREKctV0DWmYD8zkYlqMIWtTX1WaQOYbA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=m+uDtHfY;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.181
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C13960A2611;
-	Thu, 29 Oct 2026 10:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF1A606A31D
+	for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 10:11:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4EF1A606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LXa+hDCU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007CA1F01829;
-	Thu, 29 Oct 2026 10:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793268038;
-	bh=o9F+8U/pYwzcZNAGQzHna6ktO5krumv1cnerGWMGoFQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LXa+hDCUk4TM0mWNpE3iuZljtU2J4GwCtcoSXlnis19mUHexAmBC5ycNYFl7ULPuE
-	 V5MUmVkEHO/2F7bMQebbozfATjnM3H/bwM0WriN+6CeoVQEwHlEpPp1+xJNJ+x2jey
-	 p6sj4w1olF8OhWpsAtxs+UAFgN1AitB7cWiZxDlhV4ViXZaHs40ISGu//KgICScLnx
-	 v3fR5o58AlOu6dFIn6haSV1JykkqJNoVUaIWo8k3jdXE3OPfFtIkn48ZML7ljiDpv5
-	 M5pu+Fjq4sCw9rDAC3gCa1lKopChmjAz/ghtF4FgZj4Xqe3nHaLIphuX/VvNW3n+vm
-	 Tz+ge83o+kz4w==
-From: Philipp Stanner <phasta@kernel.org>
-To: Min Ma <mamin506@gmail.com>,
-	Lizhi Hou <lizhi.hou@amd.com>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Tomeu Vizoso <tomeu@tomeuvizoso.net>,
-	Karol Wachowski <karol.wachowski@linux.intel.com>,
-	Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Felix Kuehling <Felix.Kuehling@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Russell King <linux+etnaviv@armlinux.org.uk>,
-	Christian Gmeiner <christian.gmeiner@gmail.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Alessio Belle <alessio.belle@imgtec.com>,
-	Luigi Santivetti <luigi.santivetti@imgtec.com>,
-	Qiang Yu <yuq825@gmail.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Dave Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Natalie Vock <nat@pixelcluster.dev>,
-	Arun Pravin <arunpravin.paneerselvam@amd.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Melissa Wen <mwen@igalia.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sunil Khatri <sunil.khatri@amd.com>,
-	Kees Cook <kees@kernel.org>,
-	Jesse Zhang <jesse.zhang@amd.com>,
-	=?UTF-8?q?Timur=20Krist=C3=B3f?= <timur.kristof@gmail.com>,
-	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-	Kexin Sun <kexinsun@smail.nju.edu.cn>,
-	Prike Liang <Prike.Liang@amd.com>,
-	David Rosca <david.rosca@amd.com>,
-	Krzysztof Karas <krzysztof.karas@intel.com>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Shixiong Ou <oushixiong@kylinos.cn>,
-	=?UTF-8?q?Jouni=20H=C3=B6gander?= <jouni.hogander@intel.com>,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Neill Kapron <nkapron@google.com>,
-	Michael Bommarito <michael.bommarito@gmail.com>,
-	Sam Day <me@samcday.com>,
-	Gabriel Prostitis <prostitisgabriel@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org,
-	etnaviv@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	imagination@lists.freedesktop.org,
-	lima@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	spice-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [RFC PATCH 6/6] drm/nouveau: Remove hacky fence check
-Date: Thu, 29 Oct 2026 10:55:43 +0100
-Message-ID: <20261029095542.1526750-9-phasta@kernel.org>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261029095542.1526750-3-phasta@kernel.org>
-References: <20261029095542.1526750-3-phasta@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=m+uDtHfY
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-35b2c599f43so4204079eec.0
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 03:11:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793268693; cv=none;
+        d=google.com; s=arc-20260327;
+        b=PNAoEYjbiPoKczxdYKmBFrDhaTB2Q3Quvde6Q0ZUnYonHFLal3e4QUOdF3hO29fiXk
+         ORTJrgN2NwJ6HZxpf0xH8RprYAZYfHBqtQu2nx8E3oKLxgxnl/8v8Kd/GlIgb4gm0il1
+         s+MmEnFKD9sZKTa3+GWIBrdr7TlykfLClKkhVjgC6rhBfRJpKcgGBHmkNc4uxTtabp65
+         /Yx4gXCPGToKzAE6cuzrjSvfiewtfAGKOYlG8I5Hk/uJc+J8D5cU4XefOcvewufHk+mR
+         ytzn4jZpds1DsF6w3VqdgvCusOVmimaPho6jNKielUsm9OT669tEx8H1euLxSWhmSMsP
+         zbrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=jgkJopx5kExqkUv6b/vCU6btPQBGSF/P3vuAWpTWJb4=;
+        fh=kjd2X5ZX80VVxxaklzX0Ubzu6ZJB4uQZgsB6KKFnYC0=;
+        b=pIlN3Y9s3H2Idz9Yo1U7bS409ye3STP/fY7wBziFJkogH11JVuM3DYedDkp7VXyWdf
+         fHuKLcbIjfE8pp/6U6XX+N36ZrNQgtHim4rRlnR5HpizHzOG2NJpcmxQOOPDJnfv6OUI
+         KNxhBWc+2GSbG03PS/UOESkgkGq1UeWoIH9ciYV7Wq12e7bhXt8lB+z72a9A2/Dq8787
+         iimZn/8R+WpWN9L4a/bka/M+AUOI+3tPeR0xBwXPSvtjw7dd0jMqv0kxBLqcvV7UJ90U
+         IbGXLRPCSDjJUlUS7ZsrXf68R3RAj6FS00G9GWUOriP9xfEMs7wZcq9e2CczU/APxmmk
+         sgyQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793268693; x=1793873493; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=jgkJopx5kExqkUv6b/vCU6btPQBGSF/P3vuAWpTWJb4=;
+        b=m+uDtHfYNrebraUeNO71Kwkxzuqpdu3zCHQC48XO/a+1chRZiH7mHXPDqLP8HQ2yiH
+         Tr0GNTkJJBfuOJDO/AX4VaktcSnRFMWJDv5mItb9Db77+hvYsFIxDorsRWc563PDbMSC
+         WFf/XcMi0JTg23ul4cIHTqnY3lIIPwrFyN6/bltmGyVtwoQ6kqzgzklFux4nuOjGKS+i
+         tPeerm8onxx4BYHYLafWUxDHX2QG6ZEOT640AX6ke/L3iW4tOH5g27ApyIfQllKU9Y6G
+         y8HuQZBr1vP3B3fbPuvMufo+5KSREll/cupagNW82ra5HvG1N466DCf/4msA6IkJseEM
+         2HBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793268693; x=1793873493;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=jgkJopx5kExqkUv6b/vCU6btPQBGSF/P3vuAWpTWJb4=;
+        b=vOt/FPV8ZkRlEDJpWUAgKyH5KydIPIFj4Gft3tDKHCgTTIBKnH3VuSTO5oUMPN+DM6
+         8SspTjKePfRNuH5VCf/5+jm7nNyBfFcjqfTPR39onERbklozEUhLpQ9b51YW/60wc+jp
+         FK2eUlmG5zkiil1CBIhqVGLlqKg/PnmA1+vkoxozN/sbl4ctTRLhV7cdNvTV9oNOmLzM
+         Tm29XnEf166XIJUU6rfbgpToeV4X1d/OHWgyPPKyXNKmBi43N5bkFFjoF643z3l4N8nb
+         dsyXILiBo/bnslCkJVhVRKyj3V280AbxxYJlj60Fsh85DJC5L7qpLH1Hw5qRwb04yQf5
+         VJxg==
+X-Forwarded-Encrypted: i=1; AKwUvBx90n4W+wl343zl7aMCrIwI2ns1KXct8CAITHQJkoMIm22Px9u28IBQjc5QH6ETe5Gkm/H7qOXx2AK41A==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLNsUhdnqZezjgn8b7Ml4/sO7kQQxBnwFeV+y43N0PYSGT8MXZW
+	D3ey/jHlw3XwchB7UPVPFC9vCVJeave0l26Nkqiqle3jbHw2pRGuXaQS040aOAv0srN5zmolbgm
+	HlAq421l0X4eaiav2q/QnjHjMyubfVBM=
+X-Gm-Gg: AYBFou32i9tXgXrfgPvH/lpXtkdQip0yYRZXlLCqxya3gLw5ICYelN1gfdWiHQwEUEr
+	nrIHJrSmGXGglJmxQ9f1KO+BQXj/dbCw/mtnf4tPcscfvPNzCOgrj9pSO1N4rsl7oJzDM1MasFh
+	4VGOHFo3Y4wghlgRYLwq2t2dwq2sKiTnh5kYShaB/2Ls6ECc/022EDdRk49UJQVTBVN6cP3mUGG
+	R7w33WtKsD9cGO7N15LzCS/Py5oKcXvbPStnj2z+EH8cU6f0HQcrCMe96uKmh819rs22KiF1ePc
+	N5ngK0AmFzVNY7O+KZQohdEYqM4XzdyoVHpw/OpFi/dUUxAjuuCUmcV8Biqpn4TAHWOKdjxhwXB
+	uRgbbJZ3RpIlBycXKnnXOBSGxIrWrKEEg2x7NK2ZYMNlpnnJ83rGYTj2n8MUbIjHuJdIgMA==
+X-Received: by 2002:a05:7301:618b:20b0:366:83dd:46f3 with SMTP id
+ 5a478bee46e88-36a20434490mr7778201eec.14.1793268693130; Thu, 29 Oct 2026
+ 03:11:33 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -154,55 +104,106 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261029-upstream-speedo-t114-v1-0-81457cc9d94c@tsv-stahl-riesa.de>
+ <20261029-upstream-speedo-t114-v1-1-81457cc9d94c@tsv-stahl-riesa.de>
+In-Reply-To: <20261029-upstream-speedo-t114-v1-1-81457cc9d94c@tsv-stahl-riesa.de>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 29 Oct 2026 12:11:20 +0200
+X-Gm-Features: AclHuK8_mii-vqm8jDLm-mNdMkH2Er6-ZHBho7KaLFga9WcAe3FyT06Xlc5Ki2w
+Message-ID: <CAPVz0n3tFvEycAAhjA5ZqoBrx8MsJwDuBssAzLMrFnicSQ+eMg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] soc/tegra: fuse: Fix Tegra114 speedo fuse offsets
+To: admin@tsv-stahl-riesa.de
+Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-nouveau_cli_work() contains a section where a dma_fence lock is manually
-taken and immediately released afterwards. This was added in
+=D1=87=D1=82, 29 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 11:3=
+3 Patrick Fischer via B4 Relay
+<devnull+admin.tsv-stahl-riesa.de@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+>
+> tegra_fuse_read_early() takes offsets relative to the start of the fuse
+> words at FUSE_BEGIN (0x100). When the fuse driver moved out of
+> mach-tegra, the Tegra30 speedo code was converted to such offsets
+> (FUSE_SPEEDO_CALIB_0 0x114 became 0x14), and the Tegra124 code uses
+> them as well. The Tegra114 code kept the absolute offsets from the
+> vendor kernel, so since then it reads the CPU and SoC speedo values and
+> the A01 CPU2/3 fuses 0x100 bytes too far.
+>
+> On a Tegra Note 7 (Tegra114 A02, SKU 5) the fuses at the correct
+> offsets 0x2c and 0x34 read 718 and 1156. That gives CPU speedo 1742 and
+> SoC speedo 1156, which is exactly what the vendor kernel prints for this
+> device. The current code reads 172094 and 0, and so reports SoC process
+> 0 instead of 1.
+>
+> Today only the reported process IDs depend on these values, since the
+> Tegra114 core OPPs are selected by the SoC speedo ID and the CPU DVFS
+> tables apply to all process IDs. The CPU speedo value is needed,
+> however, to compute correct CPU DFLL voltages, which the next patch
+> fixes.
+>
+> Fixes: 783c8f4c8445 ("soc/tegra: Add efuse driver for Tegra")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+> ---
+>  drivers/soc/tegra/fuse/speedo-tegra114.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/soc/tegra/fuse/speedo-tegra114.c b/drivers/soc/tegra=
+/fuse/speedo-tegra114.c
+> index 6695702bdb4c..1e6c2b5be759 100644
+> --- a/drivers/soc/tegra/fuse/speedo-tegra114.c
+> +++ b/drivers/soc/tegra/fuse/speedo-tegra114.c
+> @@ -14,6 +14,11 @@
+>  #define SOC_PROCESS_CORNERS    2
+>  #define CPU_PROCESS_CORNERS    2
+>
+> +#define FUSE_CPU_SPEEDO_1      0x2c
+> +#define FUSE_SOC_SPEEDO_0      0x34
+> +#define FUSE_OPT_CPU23_DISABLE 0x16c
+> +#define FUSE_OPT_CPU23_REENABLE        0x170
+> +
+>  enum {
+>         THRESHOLD_INDEX_0,
+>         THRESHOLD_INDEX_1,
+> @@ -63,8 +68,8 @@ static void __init rev_sku_to_speedo_ids(struct tegra_s=
+ku_info *sku_info,
+>         }
+>
+>         if (rev =3D=3D TEGRA_REVISION_A01) {
+> -               tmp =3D tegra_fuse_read_early(0x270) << 1;
+> -               tmp |=3D tegra_fuse_read_early(0x26c);
+> +               tmp =3D tegra_fuse_read_early(FUSE_OPT_CPU23_REENABLE) <<=
+ 1;
+> +               tmp |=3D tegra_fuse_read_early(FUSE_OPT_CPU23_DISABLE);
+>                 if (!tmp)
+>                         sku_info->cpu_speedo_id =3D 0;
+>         }
+> @@ -84,8 +89,8 @@ void __init tegra114_init_speedo_data(struct tegra_sku_=
+info *sku_info)
+>
+>         rev_sku_to_speedo_ids(sku_info, &threshold);
+>
+> -       cpu_speedo_val =3D tegra_fuse_read_early(0x12c) + 1024;
+> -       soc_speedo_val =3D tegra_fuse_read_early(0x134);
+> +       cpu_speedo_val =3D tegra_fuse_read_early(FUSE_CPU_SPEEDO_1) + 102=
+4;
+> +       soc_speedo_val =3D tegra_fuse_read_early(FUSE_SOC_SPEEDO_0);
+>
+>         for (i =3D 0; i < CPU_PROCESS_CORNERS; i++)
+>                 if (cpu_speedo_val < cpu_process_speedos[threshold][i])
+>
+> --
+> 2.56.0
 
-	commit c8a5d5ea3ba6 ("nouveau: fix client work fence deletion race")
+Thanks!
 
-as a bugfix because the function dma_fence_is_signaled() could return
-true while the fence was still signaling.
-
-The fix was later modified in
-
-	commit a80d12eafad1 ("drm/nouveau: Simplify nouveau_cli_work")
-
-Luckily, the dma_fence backend now fully synchronizes
-dma_fence_is_signaled() with the spinlock. Thus, the check in nouveau is
-not necessary anymore.
-
-Remove the manual lock-unlock section.
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
- drivers/gpu/drm/nouveau/nouveau_drm.c | 13 -------------
- 1 file changed, 13 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index b0f9fb10a74d..74632bb29f2f 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -163,19 +163,6 @@ nouveau_cli_work(struct work_struct *w)
- 		struct dma_fence *fence = work->fence;
- 
- 		if (!fence || dma_fence_is_signaled(fence)) {
--			if (fence) {
--				unsigned long flags;
--
--				/*
--				 * Because fence can still be in the process of
--				 * processing the callback list, and the
--				 * callback references the work we are about to
--				 * free, we need to sync with the callback
--				 * processing before freeing the work.
--				 */
--				dma_fence_lock_irqsave(fence, flags);
--				dma_fence_unlock_irqrestore(fence, flags);
--			}
- 			list_del(&work->head);
- 			work->func(work);
- 			dma_fence_put(fence);
--- 
-2.56.0
-
+Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab (P1988)
+and ASUS TF701T
+Reviewed-by: Svyatoslav Ryhel <clamor95@gmail.com>
