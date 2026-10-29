@@ -1,83 +1,83 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793287778;
-	b=lAlAy7BecQbnhKQegPs7XJqtP6UwoaR+sVtYL5jHd3s1LCFMGVK0M8B/mvKY/LF3RWfA
-	 9xEPXClC1uhjwhOKIM/tv1bAFQvlF+wJWFuKZSdTU1gcDlEZptC0AeQXrxKqnS8Aa0u8O
-	 HhHAgAal6/fHBky71MhJPy6OgpYImsDw7vvQ7UX+xwxsB0svg/gipHU2Ea8rmfJd+kFjc
-	 1SgUZS6uYjLwJvSSb6gbDuFl2dx3PpPVaqyevun/yIUdQsg6eiZQU75cPzMXYnQNWKQcf
-	 Z5nIfwROJ1nJmo2k39JQPMU1uHgVO+tQfqhWT6E5mgD3UQeF3WajsHXhB1bAT0KjvAA==
+	t=1793287780;
+	b=pvWLd+5ln/DOxTiF0rW2b1RVVwlqfvk+S2KEUgv7YXuNAvmEWP+bUy2ujVxiSmP+kz8f
+	 TgDDGRvOjxBhDKuwb5Boe64rdy6UPTDDC0ecF0YF+YJ0kQdbjztA/UaEX9czEwM1bkZ+b
+	 Hkah2jKjimM/eYe6JbKj1t5FjiXzKx7R+vrr5G7XZEPD+rrvvZa0IYG9xfEEIFyZvBz+x
+	 k3+TVYtEwhq81jDwiU48p+PFNb3FgJHIJWyNgjQjXUC6yAieNl7sFzLgBBue70m91I8YG
+	 kcgsPwPdyF1vxwkFkYmSJmejxYgfAUTtd5fnIkSrry3wNmJ4zMSOCJaWYy/PolaCsxw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793287778;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793287780;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=AKlnNUPAZYqn7bdU1beV1huh2DASjeUZeMyqIT8C+UA=;
-	b=Ln/xJU+1QTfKytwgIZTQYEOsUMTiEBT8Wv1LEvMRVWPkZFB5t17yyoM0OIk2JIZhqTCl
-	 EHtMY0CcbhoOsav1E8eV0dLza2uK+rV7iGB/2WykrNL3nL2wJkBOhcBuBd6QRqE4BIcrk
-	 KYSBgxVW3AAytqRtqyOK33e67i3OEL5eazqp/xpVBgfyM/F+Qyeb1vcceIjFg0R+x15Bz
-	 SCeIvCnEEH+MwCbp0rTeG526wxW9Odv87uQfVOOSX/Yo03U0nQEtNuPf1EAwp4OGfwE2b
-	 WXKWseVM/reKHWFxNFrB1DabxKLfc2WHngDH54dwnurhVyHV4ZhhBCDsk7uxw/WlqhQ==
+	bh=0t137TYCXhuqa7rZmb7FtPECWpgLDjqquYuvOdmaVB0=;
+	b=fXbX5Oym0jbsxXzvylx4oOQm4sAUUZWCuUzxw/cE8qXNWt8htSJz4plc5+QzX0HTFQE6
+	 vuP+CbB6B+/RCyROltwyY+c+HdDbXJ7K1JgJQHseSB6HW6LE05HznZRLdz6pOZEE0zrXE
+	 DQj1FoMMdoiv/mXuLHp9OMU5RTAUTycjKBpvFeX256DHITFzI0Kyw0Yk/qhaUXUVcM4rt
+	 XeA5n7aHhWCk2snb1xDoVCNquCcRLqjfkx3y0mTzYMeybhjrKY3YWo3YWI6UiTQR3a4Hw
+	 p0R1/08/7HU9dnDnF8IE8flakRlNGfiH1HQ7hzOSd9UAOslfB4caD7MNc68nonUbwPg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="s/iGFxHK";
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TmtGtAU1;
 	arc=none smtp.remote-ip=209.85.218.43
 Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4740B606A31C
-	for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 15:29:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4740B606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC108606A33A
+	for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 15:29:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EC108606A33A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=s/iGFxHK
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c40e30c26a4so178718966b.0
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 08:29:38 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TmtGtAU1
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c4203bbb1e9so369367666b.3
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 08:29:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793287777; x=1793892577; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793287778; x=1793892578; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=AKlnNUPAZYqn7bdU1beV1huh2DASjeUZeMyqIT8C+UA=;
-        b=s/iGFxHK9NC2DxZTBNiiMRquVUfTd9KD5ThMd4/6IS8a7gbj+VVj3A4hdmtJUFtq9v
-         hC36AcrfLT5rriJ/qQOxtcYVo9syg1B4TkJmOYTBjZG06/bABEQA1SM9IZeu1VRgaMUV
-         D2Gdec216cezCEvUl2Jyd82uNKcZHWHth1xmkgC9sszY72XMX8Apvm7h4D3+F3WBhc0z
-         dW5KkqZahneAOSQcMzJlQgln9XFsiYKAlQ/ZlWj6mQ1dr+iHAFLBLuqDDFjts1UjM9pb
-         SWNeUjAce+QCwV4ujkqKaz6uV07/jxxgiVfSjrgO7kD/Bs2MHb67TE6rb16eJ2/GggPq
-         WINg==
+        bh=0t137TYCXhuqa7rZmb7FtPECWpgLDjqquYuvOdmaVB0=;
+        b=TmtGtAU1E0AyyLvNMnBcRMrA8ouZFuEb0Xzy3apDYtaD/X6xnJLsfzFfq7DXw0JphV
+         5TIrq169teqAgIZZOoozEApSy4YSy+rkeKRoFTqcVf9EPVnBpEHvOryw0CxFkDqnMGhE
+         pnNBTK55wjUgG0OrHe9xMHFWON6Z24V7PffvWi2p7xyJ3w5GxKk3vO7tqbvPUXOjegEa
+         5hNTNJmhmpCOQn//35JD+EdH4yvhLHBGoHv8URYPlA1E1Hk35LQywLddwmbMGYLNDCFC
+         ZEnxyMmkk382AG5FEQUDGd8ttnoWPIRA3l8CpUCR8cBaC3km02ZCs0H4dM0Yx+A9VQ0T
+         mvyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793287777; x=1793892577;
+        d=1e100.net; s=20260707; t=1793287778; x=1793892578;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=AKlnNUPAZYqn7bdU1beV1huh2DASjeUZeMyqIT8C+UA=;
-        b=AOuVx47slR6wMBocT6anVnre36XxhZRDM+blqcV+UQvNPYrEMf22kNR49RitKc0Iue
-         ATfXlniuqeLq89DUIF43e2L41g9kOf/FaBUbSBceCAsRbdICtgosGNuAMZuyEfh18wXr
-         INujfzlFX153G9UFmKZ6Cr7dPDXf8NlEdEPzuW3NdeVkRoAQ+QeSlHVBtgCzsgdzL5ZK
-         iB/bzum+5O0cBIPtMpws9sA5LSDFvpsNmI//RWOui5pLo25NtO88AGBlmXkNILyGJ2Y7
-         g/vUMK+7Z6qkqIhObSqq4J0ibMDmckZ+yqfpg4AnZWQRMQJRJ0EYxGaSjyUt3HXZ/Kn1
-         M3ng==
-X-Forwarded-Encrypted: i=1; AKwUvBxL64h8FTFavlj53avx8IQ1YwxMzwWHLxtDP9xCyDL5VKyhHDDOWWMOcikRMrMh0ZOY6chDYWXcsK2sHA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJCIIjrVuL/73REht7TALHEWiTaUmf46F207MLNgA8IS5K5oO4h
-	Qgq8lA+iX18M/s4p0F2fJGwaAVkytdZGVyY3o6tmyryhCXqbrQsfgmeo
-X-Gm-Gg: AYBFou2fVpJFgnSf1fLQK+MG9/HfrghghYnEiuqJctbS7HT5bJ1vkM6RrsbzRor1uHe
-	4vtm6LPu7CuOZkGvjaGAU1CjdiDzEg9XWhzVk9ofIe05UmnUe083q5PvF6KZxZvfMRfi/TGhRtZ
-	3Rlclf4FiiGtHXw4FuQKmgc7EK/8tEUB3WFZ8qPYYmDgYx6owWbKogE7H8spZK5VcYTpnVYl4yF
-	I3wZ0a3HUGjs67VRfYay3t52AZ2gJYGP3E/75DCTaXpxnq/G26qFh59mrFwVRm4PcJUH5x1Lq5S
-	cz4TDou7SNRMZ+I8jLBmhO8dO3hhVnf+Z3ItSnayIFnPuTJE1RgYHtEkv0vRylxwujg9N9ZVb1F
-	uoIJ67Yyf5DAXLBRkFp+1QBAjqR8TIo+xDVpea0ZwVkZWmVd3kGRCoolMG9HVpUNpZlc5sPWQtb
-	y59PaKbwMlZw4SpQyf4O65JctiPU7eJYQUSMDWwddPBdQiSVRQ/6+KQaHlEL0++qxCcKD5ViGi4
-	XYuKWI/CBlTjuqqbGbkbrjk2n7KF6yZG8VS/8McewKzhNY04pOFHnqa8XIKGdjgRGyqR+hTs6Zx
-	XPhvobK/011KKMaD/PLEWZ7+VKqIJeSG6BGuZMFmBabtF+o5ZLq+oCaMoJre3JNUz+/GChU=
-X-Received: by 2002:a17:907:3faa:b0:c21:5cd6:3e49 with SMTP id a640c23a62f3a-c49d11364c7mr261281866b.9.1793287776394;
-        Thu, 29 Oct 2026 08:29:36 -0700 (PDT)
+        bh=0t137TYCXhuqa7rZmb7FtPECWpgLDjqquYuvOdmaVB0=;
+        b=l/SFrffstZ0H9+FuKlPMYUjI6JeQwBUl6nVqh60smzacB02cMk2ESaCpaK3BI294/U
+         JVH+b7iCa2znQ8xfpWzmTGhMkHapM3hYwyrZyxIVj4h8zmxrPkJjfAjmXZsQobbMUPCV
+         1axeZ/AUg0vka5UMsClz0bQOmRtA1vNuxUelHJfm8SFdz1e0uRiC4Te6UG6xloUSsFLR
+         AkOF2DRbi0SYLrzi+mQ7TMh0RQZcg/Xu/CanLlJYQ6QV6EMReVXelrbdh+eM2CeuzaP4
+         G8vClVhJCKQUcnJ/zbp3uYqyB8Kj8OFkeb1SUA1iCKYRlfDCoEHaGtkEe5Oo2y+B4zc4
+         i8Yw==
+X-Forwarded-Encrypted: i=1; AKwUvBxHTfQmjfS1Ccpr1vGCvQ/lBD3VZtb2Ix7RhQWP1srmTz1ooRTZSm4oZNMc2ZMMvfKLJiM70aBlqt4P9A==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKe4AIUzlQUiBMXNMnawI21dzW8tMDqSw9vUwiCuxTfhhJJXt42
+	TNvi9jl3Ts268cJDNE9Jdy/PjFBeyYOyciFsvSYPgieiZc1BeZZWijcR
+X-Gm-Gg: AYBFou15nAhjeh9SPYLbK5uRquDMCqfD5pfxz12e8a/EdeQJv7b1BiTdISTJzitvR5t
+	meZlvKMjw3aG6ftCsVzGG2mFvIOImNj1DZ8v/XABxr92Ico6WnUBuXECb/milsDvuoJiFRYDJZ2
+	SzUBypBqTeWMBj+enmVSeWPurLLZTah3114r72ZRo3zVdOEGe/6JnsdYiLviMBn6fXM0fihDaJP
+	EaoXU28Pui51sO6urY4Y5ORBCn0qTwXOivpOP3Op08uB0lAxs/FWF/S3ovFt24SYLDBug3FknfV
+	xPUGOe0gbbLn/857nV6SDCtSree6mlyk3Dw2xFCCtweAfhojG+tsuEtxbWPth1wSiJqRCn4UBI1
+	5Vp82Pdj+RuZckuCaoYAQfzlJGrySSULv1b/eu55JW92z/UUTZHdUIt7TfeaUNcKq6RWQ9lRSfZ
+	ruCe4BaDUjshEQVhCg901W+a5/WG6OQwNJ8sGBgHeS3WyLs7ToLgqlBDFUGMkKFr1U2ieTWNCxN
+	OUnRin1+QUeaZa5kHxYOpwFpSpySfYCjyQB0zwH6N10nS2p3N3EwdxdIu8mNLcwJAC8iJKv+uFr
+	bar57ivsiP/KDS7cirPqnfPFptRrFP6ppKggPIvBxOf8IZ1hCg==
+X-Received: by 2002:a17:906:24c2:b0:c49:c76f:dad3 with SMTP id a640c23a62f3a-c49c76fdf1dmr322126266b.34.1793287778021;
+        Thu, 29 Oct 2026 08:29:38 -0700 (PDT)
 Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4ca27984f8sm1252166b.80.2026.10.29.08.29.34
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4ca27984f8sm1252166b.80.2026.10.29.08.29.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 08:29:35 -0700 (PDT)
+        Thu, 29 Oct 2026 08:29:37 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <jesszhan0024@gmail.com>,
@@ -97,9 +97,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v5 03/11] drm/panel: Add Hitachi TX10D07VM0BAA MIPI DBI Type B panel driver
-Date: Thu, 29 Oct 2026 17:29:01 +0200
-Message-ID: <20261029152909.234584-4-clamor95@gmail.com>
+Subject: [PATCH v5 04/11] drm/panel: Add LG LH400WV3-SD04 MIPI DBI Type B panel driver
+Date: Thu, 29 Oct 2026 17:29:02 +0200
+Message-ID: <20261029152909.234584-5-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261029152909.234584-1-clamor95@gmail.com>
 References: <20261029152909.234584-1-clamor95@gmail.com>
@@ -119,55 +119,54 @@ DBI Type B linked to DRM encoder via RGB to DBI bridge.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- drivers/gpu/drm/panel/Kconfig                 |  14 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../drm/panel/panel-hitachi-tx10d07vm0baa.c   | 294 ++++++++++++++++++
- 3 files changed, 309 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
+ drivers/gpu/drm/panel/Kconfig             |  13 ++
+ drivers/gpu/drm/panel/Makefile            |   1 +
+ drivers/gpu/drm/panel/panel-lg-lh400wv3.c | 233 ++++++++++++++++++++++
+ 3 files changed, 247 insertions(+)
+ create mode 100644 drivers/gpu/drm/panel/panel-lg-lh400wv3.c
 
 diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 7a520b4d60fef..0e86628bcdb80 100644
+index 0e86628bcdb80..036602e577953 100644
 --- a/drivers/gpu/drm/panel/Kconfig
 +++ b/drivers/gpu/drm/panel/Kconfig
-@@ -274,6 +274,20 @@ config DRM_PANEL_HIMAX_HX8394
+@@ -554,6 +554,19 @@ config DRM_PANEL_LG_LG4573
+ 	  Say Y here if you want to enable support for LG4573 RGB panel.
+ 	  To compile this driver as a module, choose M here.
  
- 	  If M is selected the module will be called panel-himax-hx8394.
- 
-+config DRM_PANEL_HITACHI_TX10D07VM0BAA
-+	tristate "Hitachi TX10D07VM0BAA MIPI DBI Type B panel"
++config DRM_PANEL_LG_LH400WV3
++	tristate "LG LH400WV3 MIPI DBI Type B panel"
 +	depends on OF
 +	depends on BACKLIGHT_CLASS_DEVICE
 +	select DRM_MIPI_DBI
 +	select VIDEOMODE_HELPERS
 +	help
-+	  Say Y here if you want to enable support for the HITACHI
-+	  TX10D07VM0BAA MIPI DBI Type B panel found in the LG Optimus 2X
-+	  P990 smartphone.
++	  Say Y here if you want to enable support for the LG LH400WV3 MIPI
++	  DBI Type B panel found in the LG Optimus 2X P990 smartphone.
 +
 +	  To compile this driver as a module, choose M here: the module will
-+	  be called panel-hitachi-tx10d07vm0baa.
++	  be called panel-lg-lh400wv3.
 +
- config DRM_PANEL_HYDIS_HV101HD1
- 	tristate "Hydis HV101HD1 panel"
- 	depends on OF
+ config DRM_PANEL_LG_SW43408
+ 	tristate "LG SW43408 panel"
+ 	depends on GPIOLIB
 diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index da5175909d540..2f57e350311f3 100644
+index 2f57e350311f3..bed77ae90b660 100644
 --- a/drivers/gpu/drm/panel/Makefile
 +++ b/drivers/gpu/drm/panel/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_DRM_PANEL_HIMAX_HX83112A) += panel-himax-hx83112a.o
- obj-$(CONFIG_DRM_PANEL_HIMAX_HX83112B) += panel-himax-hx83112b.o
- obj-$(CONFIG_DRM_PANEL_HIMAX_HX83121A) += panel-himax-hx83121a.o
- obj-$(CONFIG_DRM_PANEL_HIMAX_HX8394) += panel-himax-hx8394.o
-+obj-$(CONFIG_DRM_PANEL_HITACHI_TX10D07VM0BAA) += panel-hitachi-tx10d07vm0baa.o
- obj-$(CONFIG_DRM_PANEL_HYDIS_HV101HD1) += panel-hydis-hv101hd1.o
- obj-$(CONFIG_DRM_PANEL_ILITEK_ILI7807S) += panel-ilitek-ili7807s.o
- obj-$(CONFIG_DRM_PANEL_ILITEK_ILI7836A) += panel-ilitek-ili7836a.o
-diff --git a/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c b/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
+@@ -54,6 +54,7 @@ obj-$(CONFIG_DRM_PANEL_LINCOLNTECH_LCD197) += panel-lincolntech-lcd197.o
+ obj-$(CONFIG_DRM_PANEL_LG_LB035Q02) += panel-lg-lb035q02.o
+ obj-$(CONFIG_DRM_PANEL_LG_LD070WX3) += panel-lg-ld070wx3.o
+ obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
++obj-$(CONFIG_DRM_PANEL_LG_LH400WV3) += panel-lg-lh400wv3.o
+ obj-$(CONFIG_DRM_PANEL_LG_SW43408) += panel-lg-sw43408.o
+ obj-$(CONFIG_DRM_PANEL_LXD_M9189A) += panel-lxd-m9189a.o
+ obj-$(CONFIG_DRM_PANEL_MAGNACHIP_D53E6EA8966) += panel-magnachip-d53e6ea8966.o
+diff --git a/drivers/gpu/drm/panel/panel-lg-lh400wv3.c b/drivers/gpu/drm/panel/panel-lg-lh400wv3.c
 new file mode 100644
-index 0000000000000..5ccc8d4725bc6
+index 0000000000000..8a11049948635
 --- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
-@@ -0,0 +1,294 @@
++++ b/drivers/gpu/drm/panel/panel-lg-lh400wv3.c
+@@ -0,0 +1,233 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +
 +#include <linux/array_size.h>
@@ -190,11 +189,11 @@ index 0000000000000..5ccc8d4725bc6
 +#include <drm/drm_panel.h>
 +#include <drm/drm_probe_helper.h>
 +
-+static const struct regulator_bulk_data hitachi_tx10d07vm0baa_supplies[] = {
++static const struct regulator_bulk_data lg_lh400wv3_supplies[] = {
 +	{ .supply = "avci" }, { .supply = "iovcc" },
 +};
 +
-+struct hitachi_tx10d07vm0baa {
++struct lg_lh400wv3 {
 +	struct drm_panel panel;
 +	struct mipi_dbi_device *dbi;
 +
@@ -202,9 +201,9 @@ index 0000000000000..5ccc8d4725bc6
 +	struct gpio_desc *reset_gpio;
 +};
 +
-+static inline struct hitachi_tx10d07vm0baa *to_hitachi_tx10d07vm0baa(struct drm_panel *panel)
++static inline struct lg_lh400wv3 *to_lg_lh400wv3(struct drm_panel *panel)
 +{
-+	return container_of(panel, struct hitachi_tx10d07vm0baa, panel);
++	return container_of(panel, struct lg_lh400wv3, panel);
 +}
 +
 +#define panel_dbi_command(dbidev, cmd, seq...) \
@@ -218,15 +217,15 @@ index 0000000000000..5ccc8d4725bc6
 +	ret; \
 +})
 +
-+static int hitachi_tx10d07vm0baa_prepare(struct drm_panel *panel)
++static int lg_lh400wv3_prepare(struct drm_panel *panel)
 +{
-+	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
++	struct lg_lh400wv3 *priv = to_lg_lh400wv3(panel);
 +	struct device *dev = panel->dev;
 +	int ret;
 +
 +	gpiod_set_value_cansleep(priv->reset_gpio, 1);
 +
-+	ret = regulator_bulk_enable(ARRAY_SIZE(hitachi_tx10d07vm0baa_supplies), priv->supplies);
++	ret = regulator_bulk_enable(ARRAY_SIZE(lg_lh400wv3_supplies), priv->supplies);
 +	if (ret) {
 +		dev_err(dev, "failed to enable power supplies: %d\n", ret);
 +		return ret;
@@ -241,136 +240,75 @@ index 0000000000000..5ccc8d4725bc6
 +	return 0;
 +};
 +
-+static int hitachi_tx10d07vm0baa_enable(struct drm_panel *panel)
++static int lg_lh400wv3_enable(struct drm_panel *panel)
 +{
-+	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
++	struct lg_lh400wv3 *priv = to_lg_lh400wv3(panel);
 +
-+	panel_dbi_command(priv->dbi, MIPI_DCS_SET_PARTIAL_ROWS, 0x00, 0x00, 0x03, 0x1f);
-+	panel_dbi_command(priv->dbi, MIPI_DCS_SET_SCROLL_AREA, 0x00, 0x00, 0x03, 0x20,
-+			  0x00, 0x00);
++	panel_dbi_command(priv->dbi, MIPI_DCS_EXIT_INVERT_MODE);
++	panel_dbi_command(priv->dbi, MIPI_DCS_SET_TEAR_ON);
 +
-+	panel_dbi_command(priv->dbi, MIPI_DCS_SET_ADDRESS_MODE, 0x0a);
-+	panel_dbi_command(priv->dbi, MIPI_DCS_SET_SCROLL_START, 0x00, 0x00);
++	panel_dbi_command(priv->dbi, MIPI_DCS_SET_PIXEL_FORMAT, MIPI_DCS_PIXEL_FMT_24BIT |
++			  MIPI_DCS_PIXEL_FMT_24BIT << 4);
 +
-+	panel_dbi_command(priv->dbi, MIPI_DCS_SET_PIXEL_FORMAT, MIPI_DCS_PIXEL_FMT_24BIT);
-+	panel_dbi_command(priv->dbi, MIPI_DCS_SET_TEAR_SCANLINE, 0x00, 0x00);
++	panel_dbi_command(priv->dbi, 0xb2, 0x00, 0xc8);
++	panel_dbi_command(priv->dbi, 0xb3, 0x00);
++	panel_dbi_command(priv->dbi, 0xb4, 0x04);
++	panel_dbi_command(priv->dbi, 0xb5, 0x42, 0x10, 0x10, 0x00, 0x20);
++	panel_dbi_command(priv->dbi, 0xb6, 0x0b, 0x0f, 0x3c, 0x13, 0x13, 0xe8);
++	panel_dbi_command(priv->dbi, 0xb7, 0x4c, 0x06, 0x0c, 0x00, 0x00);
 +
-+	panel_dbi_command(priv->dbi, 0x71, 0x00);		/* Ex_Vsync_en */
++	panel_dbi_command(priv->dbi, 0xc0, 0x01, 0x11);
++	panel_dbi_command(priv->dbi, 0xc3, 0x07, 0x03, 0x04, 0x04, 0x04);
++	panel_dbi_command(priv->dbi, 0xc4, 0x12, 0x24, 0x18, 0x18, 0x02, 0x49);
++	panel_dbi_command(priv->dbi, 0xc5, 0x65);
++	panel_dbi_command(priv->dbi, 0xc6, 0x41, 0x63);
 +
-+	panel_dbi_command(priv->dbi, 0xb2, 0x00);		/* VCSEL */
-+	panel_dbi_command(priv->dbi, 0xb4, 0xaa);		/* setvgmpm */
-+	panel_dbi_command(priv->dbi, 0xb5, 0x33);		/* rbias1 */
-+	panel_dbi_command(priv->dbi, 0xb6, 0x03);		/* rbias2 */
++	panel_dbi_command(priv->dbi, 0xd0, 0x00, 0x46, 0x74, 0x32, 0x1d, 0x03, 0x51, 0x15, 0x04);
++	panel_dbi_command(priv->dbi, 0xd1, 0x00, 0x46, 0x74, 0x32, 0x1d, 0x03, 0x51, 0x15, 0x04);
++	panel_dbi_command(priv->dbi, 0xd2, 0x00, 0x46, 0x74, 0x32, 0x1f, 0x03, 0x51, 0x15, 0x04);
++	panel_dbi_command(priv->dbi, 0xd3, 0x00, 0x46, 0x74, 0x32, 0x1f, 0x03, 0x51, 0x15, 0x04);
++	panel_dbi_command(priv->dbi, 0xd4, 0x01, 0x46, 0x74, 0x25, 0x00, 0x03, 0x51, 0x15, 0x04);
++	panel_dbi_command(priv->dbi, 0xd5, 0x01, 0x46, 0x74, 0x25, 0x00, 0x03, 0x51, 0x15, 0x04);
 +
-+	panel_dbi_command(priv->dbi, 0xb7, 0x1a, 0x33, 0x03, 0x03,
-+			  0x03, 0x00, 0x00, 0x01, 0x02, 0x00,
-+			  0x00, 0x04, 0x00, 0x01, 0x01, 0x01);	/* set_ddvdhp */
-+	panel_dbi_command(priv->dbi, 0xb8, 0x1c, 0x53, 0x03, 0x03,
-+			  0x00, 0x01, 0x02, 0x00, 0x00, 0x04,
-+			  0x00, 0x01, 0x01);			/* set_ddvdhm */
-+
-+	panel_dbi_command(priv->dbi, 0xb9, 0x0a, 0x01, 0x01, 0x00,
-+			  0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgh */
-+	panel_dbi_command(priv->dbi, 0xba, 0x0f, 0x01, 0x01, 0x00,
-+			  0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgl */
-+	panel_dbi_command(priv->dbi, 0xbb, 0x00, 0x00, 0x00, 0x00,
-+			  0x01, 0x02, 0x01);			/* set_vcl */
-+
-+	panel_dbi_command(priv->dbi, 0xc1, 0x01);		/* number of lines */
-+	panel_dbi_command(priv->dbi, 0xc2, 0x08);		/* number of fp lines */
-+	panel_dbi_command(priv->dbi, 0xc3, 0x04);		/* gateset(1) */
-+	panel_dbi_command(priv->dbi, 0xc4, 0x4c);		/* 1h period */
-+	panel_dbi_command(priv->dbi, 0xc5, 0x03);		/* source precharge */
-+	panel_dbi_command(priv->dbi, 0xc6, 0xc4, 0x04);	/* source precharge timing */
-+	panel_dbi_command(priv->dbi, 0xc7, 0x00);		/* source level */
-+	panel_dbi_command(priv->dbi, 0xc8, 0x02);		/* number of bp lines */
-+	panel_dbi_command(priv->dbi, 0xc9, 0x10);		/* gateset(2) */
-+	panel_dbi_command(priv->dbi, 0xca, 0x04, 0x04);	/* gateset(3) */
-+	panel_dbi_command(priv->dbi, 0xcb, 0x03);		/* gateset(4) */
-+	panel_dbi_command(priv->dbi, 0xcc, 0x12);		/* gateset(5) */
-+	panel_dbi_command(priv->dbi, 0xcd, 0x12);		/* gateset(6) */
-+	panel_dbi_command(priv->dbi, 0xce, 0x30);		/* gateset(7) */
-+	panel_dbi_command(priv->dbi, 0xcf, 0x30);		/* gateset(8) */
-+	panel_dbi_command(priv->dbi, 0xd0, 0x40);		/* gateset(9) */
-+	panel_dbi_command(priv->dbi, 0xd1, 0x22);		/* flhw */
-+	panel_dbi_command(priv->dbi, 0xd2, 0x22);		/* vckhw */
-+	panel_dbi_command(priv->dbi, 0xd3, 0x04);		/* flt */
-+	panel_dbi_command(priv->dbi, 0xd4, 0x14);		/* tctrl */
-+	panel_dbi_command(priv->dbi, 0xd6, 0x02);		/* dotinv */
-+	panel_dbi_command(priv->dbi, 0xd7, 0x00);		/* on/off sequence period */
-+
-+	panel_dbi_command(priv->dbi, 0xd8, 0x01, 0x05, 0x06, 0x0d,
-+			  0x18, 0x09, 0x22, 0x23, 0x00);		/* ponseqa */
-+	panel_dbi_command(priv->dbi, 0xd9, 0x24, 0x01);			/* ponseqb */
-+	panel_dbi_command(priv->dbi, 0xde, 0x09, 0x0f, 0x21, 0x12,
-+			  0x04);					/* ponseqc */
-+
-+	panel_dbi_command(priv->dbi, 0xdf, 0x02, 0x06, 0x06, 0x06,
-+			  0x06, 0x00);					/* pofseqa */
-+	panel_dbi_command(priv->dbi, 0xe0, 0x01);				/* pofseqb */
-+
-+	panel_dbi_command(priv->dbi, MIPI_DCS_SET_DISPLAY_BRIGHTNESS, 0xff);
-+	panel_dbi_command(priv->dbi, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x40);
-+
-+	panel_dbi_command(priv->dbi, 0xe2, 0x00, 0x00);		/* cabc pwm */
-+	panel_dbi_command(priv->dbi, 0xe3, 0x03);			/* cabc */
-+	panel_dbi_command(priv->dbi, 0xe4, 0x66, 0x7b, 0x90, 0xa5,
-+			  0xbb, 0xc7, 0xe1, 0xe5);		/* cabc brightness */
-+	panel_dbi_command(priv->dbi, 0xe5, 0xc5, 0xc5, 0xc9, 0xc9,
-+			  0xd1, 0xe1, 0xf1, 0xfe);		/* cabc brightness */
-+	panel_dbi_command(priv->dbi, 0xe7, 0x2a);			/* cabc */
-+	panel_dbi_command(priv->dbi, 0xe8, 0x00);			/* brt_rev */
-+	panel_dbi_command(priv->dbi, 0xe9, 0x00);			/* tefreq */
-+
-+	panel_dbi_command(priv->dbi, 0xea, 0x01);			/* high speed ram */
-+
-+	panel_dbi_command(priv->dbi, 0xeb, 0x00, 0x33, 0x0e, 0x15,
-+			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r pos */
-+	panel_dbi_command(priv->dbi, 0xec, 0x00, 0x33, 0x0e, 0x15,
-+			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r neg */
-+	panel_dbi_command(priv->dbi, 0xed, 0x00, 0x33, 0x0e, 0x15,
-+			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g pos */
-+	panel_dbi_command(priv->dbi, 0xee, 0x00, 0x33, 0x0e, 0x15,
-+			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g neg */
-+	panel_dbi_command(priv->dbi, 0xef, 0x00, 0x33, 0x0e, 0x15,
-+			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b pos */
-+	panel_dbi_command(priv->dbi, 0xf0, 0x00, 0x33, 0x0e, 0x15,
-+			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b neg */
++	panel_dbi_command(priv->dbi, MIPI_DCS_SET_COLUMN_ADDRESS, 0x00, 0x00, 0x01, 0xdf);
++	panel_dbi_command(priv->dbi, MIPI_DCS_SET_PAGE_ADDRESS, 0x00, 0x00, 0x03, 0x1f);
 +
 +	panel_dbi_command(priv->dbi, MIPI_DCS_EXIT_SLEEP_MODE);
-+	msleep(110);
++	msleep(120);
 +
++	panel_dbi_command(priv->dbi, MIPI_DCS_WRITE_MEMORY_START);
 +	panel_dbi_command(priv->dbi, MIPI_DCS_SET_DISPLAY_ON);
 +
 +	return 0;
 +}
 +
-+static int hitachi_tx10d07vm0baa_disable(struct drm_panel *panel)
++static int lg_lh400wv3_disable(struct drm_panel *panel)
 +{
-+	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
++	struct lg_lh400wv3 *priv = to_lg_lh400wv3(panel);
 +
 +	panel_dbi_command(priv->dbi, MIPI_DCS_SET_DISPLAY_OFF);
-+	msleep(35);
-+
 +	panel_dbi_command(priv->dbi, MIPI_DCS_ENTER_SLEEP_MODE);
-+	msleep(50);
++	msleep(150);
++
++	panel_dbi_command(priv->dbi, 0xc1, 0x01);
++	usleep_range(10000, 11000);
 +
 +	return 0;
-+}
++};
 +
-+static int hitachi_tx10d07vm0baa_unprepare(struct drm_panel *panel)
++static int lg_lh400wv3_unprepare(struct drm_panel *panel)
 +{
-+	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
++	struct lg_lh400wv3 *priv = to_lg_lh400wv3(panel);
 +
 +	gpiod_set_value_cansleep(priv->reset_gpio, 1);
-+	regulator_bulk_disable(ARRAY_SIZE(hitachi_tx10d07vm0baa_supplies), priv->supplies);
++	regulator_bulk_disable(ARRAY_SIZE(lg_lh400wv3_supplies), priv->supplies);
 +
 +	msleep(50);
 +
 +	return 0;
 +}
 +
-+static const struct drm_display_mode hitachi_tx10d07vm0baa_mode = {
++static const struct drm_display_mode lg_lh400wv3_mode = {
 +	.clock = (480 + 10 + 10 + 10) * (800 + 4 + 4 + 4) * 60 / 1000,
 +	.hdisplay = 480,
 +	.hsync_start = 480 + 10,
@@ -385,8 +323,8 @@ index 0000000000000..5ccc8d4725bc6
 +	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
 +};
 +
-+static int hitachi_tx10d07vm0baa_get_modes(struct drm_panel *panel,
-+					   struct drm_connector *connector)
++static int lg_lh400wv3_get_modes(struct drm_panel *panel,
++				 struct drm_connector *connector)
 +{
 +	u32 bus_format = MEDIA_BUS_FMT_RGB888_1X24;
 +
@@ -398,30 +336,30 @@ index 0000000000000..5ccc8d4725bc6
 +					    DRM_BUS_FLAG_DE_HIGH |
 +					    DRM_BUS_FLAG_DATA_LSB_TO_MSB;
 +
-+	return drm_connector_helper_get_modes_fixed(connector, &hitachi_tx10d07vm0baa_mode);
++	return drm_connector_helper_get_modes_fixed(connector, &lg_lh400wv3_mode);
 +}
 +
-+static const struct drm_panel_funcs hitachi_tx10d07vm0baa_panel_funcs = {
-+	.prepare = hitachi_tx10d07vm0baa_prepare,
-+	.enable = hitachi_tx10d07vm0baa_enable,
-+	.disable = hitachi_tx10d07vm0baa_disable,
-+	.unprepare = hitachi_tx10d07vm0baa_unprepare,
-+	.get_modes = hitachi_tx10d07vm0baa_get_modes,
++static const struct drm_panel_funcs lg_lh400wv3_panel_funcs = {
++	.prepare = lg_lh400wv3_prepare,
++	.enable = lg_lh400wv3_enable,
++	.disable = lg_lh400wv3_disable,
++	.unprepare = lg_lh400wv3_unprepare,
++	.get_modes = lg_lh400wv3_get_modes,
 +};
 +
-+static int hitachi_tx10d07vm0baa_probe(struct mipi_dbi_device *dbi)
++static int lg_lh400wv3_probe(struct mipi_dbi_device *dbi)
 +{
-+	struct hitachi_tx10d07vm0baa *priv;
 +	struct device *dev = &dbi->dev;
++	struct lg_lh400wv3 *priv;
 +	int ret;
 +
-+	priv = devm_drm_panel_alloc(dev, struct hitachi_tx10d07vm0baa, panel,
-+				    &hitachi_tx10d07vm0baa_panel_funcs, DRM_MODE_CONNECTOR_DPI);
++	priv = devm_drm_panel_alloc(dev, struct lg_lh400wv3, panel,
++				    &lg_lh400wv3_panel_funcs, DRM_MODE_CONNECTOR_DPI);
 +	if (IS_ERR(priv))
 +		return PTR_ERR(priv);
 +
-+	ret = devm_regulator_bulk_get_const(dev, ARRAY_SIZE(hitachi_tx10d07vm0baa_supplies),
-+					    hitachi_tx10d07vm0baa_supplies, &priv->supplies);
++	ret = devm_regulator_bulk_get_const(dev, ARRAY_SIZE(lg_lh400wv3_supplies),
++					    lg_lh400wv3_supplies, &priv->supplies);
 +	if (ret)
 +		return dev_err_probe(dev, ret, "Failed to get supplies\n");
 +
@@ -444,23 +382,23 @@ index 0000000000000..5ccc8d4725bc6
 +	return devm_mipi_dbi_attach(dev, dbi);
 +}
 +
-+static const struct of_device_id hitachi_tx10d07vm0baa_of_match[] = {
-+	{ .compatible = "hit,tx10d07vm0baa" },
++static const struct of_device_id lg_lh400wv3_of_match[] = {
++	{ .compatible = "lg,lh400wv3-sd04" },
 +	{ /* sentinel */ }
 +};
-+MODULE_DEVICE_TABLE(of, hitachi_tx10d07vm0baa_of_match);
++MODULE_DEVICE_TABLE(of, lg_lh400wv3_of_match);
 +
-+static struct mipi_dbi_driver hitachi_tx10d07vm0baa_driver = {
++static struct mipi_dbi_driver lg_lh400wv3_driver = {
 +	.driver = {
-+		.name = "panel-hitachi-tx10d07vm0baa",
-+		.of_match_table = hitachi_tx10d07vm0baa_of_match,
++		.name = "panel-lg-lh400wv3",
++		.of_match_table = lg_lh400wv3_of_match,
 +	},
-+	.probe = hitachi_tx10d07vm0baa_probe,
++	.probe = lg_lh400wv3_probe,
 +};
-+module_mipi_dbi_driver(hitachi_tx10d07vm0baa_driver);
++module_mipi_dbi_driver(lg_lh400wv3_driver);
 +
 +MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
-+MODULE_DESCRIPTION("HITACHI TX10D07VM0BAA MIPI DBI Type B panel driver");
++MODULE_DESCRIPTION("LG LH400WV3-SD04 MIPI DBI Type B panel driver");
 +MODULE_LICENSE("GPL");
 -- 
 2.53.0
