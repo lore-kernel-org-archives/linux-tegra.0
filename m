@@ -1,100 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.169
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.172
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793268721;
-	b=NeT4uk3VGJUCRRHkByGECQ1wo3J6YrjSBjj+YKRBdEAlwLw3L2F/S4A+D4Ccbc729Hks
-	 cYcberG+assrG4WNi6/WNAOCjbsbcMHZB3xOaxd9VJOh9mJ1jKJ4/AdffnHM6/akNrzIz
-	 Wq/Emba/v0CCp3vUeU2FPQWrdEXF0g7A+4LXohc13mxsOpkdnVLSBv0EwrJAciGZiQI/0
-	 j+yvSoOQviGDqqfjXsHgnS8FVRQ6n0AOWV/PVImsstduBZ72ewJcse6u2D+KJ0uHQ5T/D
-	 Z4f7XtRGQ5xZ5onoQQkUqbCNMRu93GWGDcAjabxkhZPofQ4IYJZDXhqlbg1LC5l+WNg==
+	t=1793268918;
+	b=oGxytcEc5JYN84JrE4rvNPnpO+CDfD3ECbu0fa0te7aT2UAA+SYi0NrfpKAfUAnWAJjt
+	 rIIk3jyV3nbq6QR7+dZBEc3Sgaz6yafbszD7nm3l3bLWASnl7cLRR4WRARlaaoUvspy2d
+	 ZUJp0/Iv+eXSxvUd9NXKc0Xtw/kAO49q2oUlF7pxlQtUmD7RxHl2ThliPXLmnzX7WTHq/
+	 93v6fmTlW8MBCNthkEj2xhhcZDyWGXn0E9o9QGW/VNRUDvN8Pkf5tpRWcwPOct3rReSmy
+	 Vdk5Ufal+4s5ljubywNXSMFYWrMl9P/vI6FDkPu8/vVku0868UMYez9+HhTt/LjpsFQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793268721;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793268918;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=7s60NUUwdXZLJ5wOWPuuDFc73pKrbdpj75fVNegY9N0=;
-	b=r2LUFfGHQfQMCX1NEwbRMNWmWGQP3dFHVHD+HNHCMLJq2ARJn42BI7+FpIA5QO9uyRnC
-	 TX2lUASJ5bmGoZbO5NaYC1Psk4wkoQOC0nF3QrRPmzeOtRcfq7r1sG8YARNAm1F7J+1lm
-	 flgq/m9rtiWJhtnX1wdD0l3dXo4oFCu9chGseiBoAPEnr8EpT4bNNId16GtLywNaekaB5
-	 YPOG+9njl4u4Zn8qrHCoATfcd/T2Tta6xCbThJ4vDGSC8oJi16oS7rNEarPGbYFa59kir
-	 ztq/BrUTX7BgFfO/SEUpMFCM7V1K5WZX6NNeBL0zxVw+zrvhxsMCCTUFDuIR4j2Zk4A==
+	bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
+	b=Zcnx1M5MYgtaOEHjhmGPLATtic5FOM4uDPgUHzpGe22QIqpTW3S8fCkfyJVAWwr7MGGZ
+	 6HMQo8OcX0UYgq+M8esgyAPYYL9M8DqrH3iyAazq0YL1oTU5GCJoUb2GA51R9RpIXTINM
+	 XnJi6VW4eAXJeC/od4aNfBSh1pCNy4rM90lxsQyswmg89JlOSG2tQvdUC9Lfrm0+vIkK1
+	 NeHRFauiC/IhunIZjJjNXcqlYIly3Sls81a1RNEEs5R1Qnxy4pcIKl9jqh5HVdS/Jz86X
+	 adzYDOmwsOvAz1xWCV517DOkxIhsMplrEYzmW1lMCy0ZoSw41GUaQGtQgEhp21F+Lcg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=u2sBbzu2;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.169
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yYaDw9Qa;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.172
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D9C606A31F
-	for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 10:12:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E9D9C606A31F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB569606A329
+	for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 10:15:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB569606A329
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=u2sBbzu2
-Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-35b2c599f43so4204817eec.0
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 03:12:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793268720; cv=none;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yYaDw9Qa
+Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-353804b591eso3026328eec.0
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 03:15:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793268917; cv=none;
         d=google.com; s=arc-20260327;
-        b=ic10oj2yq7+7EemlpFGFHLa7m60LvHgCmmY+WQifBshqrNAHvahfEEUeFTzM4+ROHU
-         gh78B0Hmu3H5b4I3QpFrBJIPSDS5Iy0ryVH9yUbkwwbpZvPO1Mzi2DbRJw3f00uXJ7ey
-         TMQQcd+0C5FhfqEgm3GRkO0BPCaGXiWmbZHvcfx5v3Ahyb5R2+brNjt1E+BibK9G4MqU
-         IzlYyGhEhy2qEYB/rYVi+ms7/7w4MtiAQNn7U6oaYhs8DdJyEMUXr/UQTSRK51Q3K7sI
-         zXGV78T/N5N+z/6+cpct48FxdDq8wH8LZQ6w7t2NdUCulrMWkA/ddZs6ERVUH4dTyeKr
-         BcFw==
+        b=AHdRhKzDm/dZl2A0tVlsd8IhEY4p7h5tfOCyb5gk9hKxt54TJEyp/NpRY2tPhENEbJ
+         TQKjnMkG03Qy+nWY3DugIIAIIx6Cma+aEv2UtS5yZ9DoXgZRjNoBYFtodM8GByfBzcVr
+         NPWT7Kz7310i3L5W04XxQIMIentgJirC8iek09ceKZnF+gpHNz2GBEUXUyshMVbwGCay
+         Xwkd3zfqDz+8/8JSrdvqHwUtCABksOEuAwegfsGtIt9FtPMDyRDZxg7ZlcUNlgMQOWbO
+         kspF/S3yzoQ/pHyK+fDaRdFUg0YKo+uCiauDYFTU8hIzkP77YW4XgSnDlb9F/bpRNqXj
+         8Qwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=7s60NUUwdXZLJ5wOWPuuDFc73pKrbdpj75fVNegY9N0=;
-        fh=Ip06zAWe6ybjyW+CJeD1f36PJHzII0V11ouBx5NIsvk=;
-        b=Dkcd5EJYCvbM3XVQUZjCW6gx5MFyfEy9QR6jYzDBvSGIb5kkFmWbfd536fLuQ8SHqQ
-         8m1FC+9SPO8df+zWocZ1eMdVipMOE/c1IVXF1FQETVkm5TQQHQcU2xwd7bj+L2fvzunO
-         gKn0Kh8uBtafPsiNCzQxI7mhFzaQTsZ695I1X8/shDmogf3vHlN8HyIu4OHmwJatf7Fz
-         etGMY8RWbS+gCHdJClPsSyER5L0XtlF5mkZnQLXRVleC59tlFQgWZ40TooUZUDTlMoJX
-         78jsx78cMVoR98KnhpoBOqBZJv6KcGN5kvdvYXGnIrOyOZNLkzmJMtpLUc5K9unc+nSc
-         9jSQ==;
+        bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
+        fh=Pubti4TrqNiYMkMxx2V8klPHN1UERaFz9fkvEf6+3dw=;
+        b=cyiFhvfg2XKARVctdr9YHOEqyKGJx0Q4gs0xLG1rY+WyD9y4C1A17m0eq1U0VBkNKt
+         BQvguTT1x/yrMlEb/NG9ndR8+T53Nht/eOq6pl9/Qe/y4HHdXCSC18Rard1pGOAsTZ3Q
+         Bmt78NIVkvKJW3LwY3T+AyzBnq+A+2WDF9w8nr/nfSND5m6t8hlOhACjcSjnOgLB3Ip6
+         9JEZYMaVzeUH09qUzofxXUrr7RJ6YKunboFqRXiGHQUXUTshVBiHO50uhiNJdwl6QqwN
+         pq1XYh1YtFLCo9ubmDzqYNf5k2r3sgZ9H0HZscXrBUIENyWDtPy7nL7Qj82clQlRJmI+
+         3wuw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793268720; x=1793873520; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793268917; x=1793873717; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=7s60NUUwdXZLJ5wOWPuuDFc73pKrbdpj75fVNegY9N0=;
-        b=u2sBbzu2hkGqyQz96k0avHJnOd0ePQgrM+7rXIY5CaAiiyZJB7fbos+LVo4+Z+VJie
-         mfAk52msiWbRDYHSp6K9F0r3vBVAu42VWJJcIswYAYEyddym4KipIWcJYlkp0v7JFUHa
-         k3ysl41ONGLKIb+TkwkfXEuupnVYF5//5j061LJHXetcAlOvsUOPH6qQWPgEteyujjbk
-         j5jaHwJArz0QdE8bFA4OOAr9Ey0Qm8lid05av05lDTQ9eH0RF0QJbM7I7Q/+KzxUNVQ7
-         KpVI1eN/Yc8p8K+7W2df991+0sj/x6HGrbPlXbQCBSgjIoZCtd4sLnyYEm3nyAEBrykc
-         JUfw==
+        bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
+        b=yYaDw9QaXvy/ey4C72CgmAyNvMVNhiCEbTAs49OXnei/ZdR9HQ4ujPrhIh3QcHQSf7
+         NDNxbOTB3YbR4C5RZkRF1VYNQP/S9u9CTY/EcbOtaFoOwTlwhStsSoAYDGToa1nmQtNO
+         YzwjyQR+93YuejSkGmUY0kn2j9hcgkPiDJwI1AyQp59CWfrSnG03qEcX6cdeyJsEzFsw
+         kCBMMLbhIyYKc0Cd6jkfxWdtQZ0o8y/ZdFG7wS24RfvUZMiGg+y1laVgz5IwvjdD1ZxB
+         vlAGCgNtoUkDkkfWdDnkBwwJ8+30su/Nh5RoEMMkpkUI5HlQCyjPh5KDG/1XUj1VvTak
+         iP9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793268720; x=1793873520;
+        d=1e100.net; s=20260707; t=1793268917; x=1793873717;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=7s60NUUwdXZLJ5wOWPuuDFc73pKrbdpj75fVNegY9N0=;
-        b=q9gA/NCB3t/IbKcTyQFFvltUj/dWPGtlEEboMYR2ffAMOieZpm39RoOJwP6zEkmDIr
-         6Etw3tVhCGAAFywGBI+6F+pg2sR4eJ68FeX4LixRn0aunhZiEpmmQPGd4Ce2Uj6qlqAH
-         IIWY89gOam2vXJtLZnAWL2X8GFk+6fiNDLR1XgliFTa/0q2huzjDnCb0okEg0XtLRR/f
-         fmlLrTXoX5BteukSQcqTwNknYSZltUaTnKEzUZ9PWYz0pf7VDoZLqwY8dfuImCELhsQH
-         YXlU3xHc0xBzWVa6OPUIwpPjHlfn71mRo1dfv/SJ5UH7TmqKof2r0FOmYvSmymC3wUKs
-         7Igg==
-X-Forwarded-Encrypted: i=1; AKwUvByTstCQoD9beHUJHu4mM1+RJkt+6VmkpTRihVSf6dsLD5vdStc/xn/xnvORhbYWj3rYACRc0zqrtrPifg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKh1uff5KLIby9jxKJbTcX0YL/8NxZwbYt9NiWAIfIN/JJHLw/e
-	w7wErF8JaGP6VZcbS1v4y5jj+dGa+iKgxoY9Cnh/maRRrP1pe7H+CIPyebuU92u1m2cDWEE5dI+
-	eCM3Lzww3VfNTELNgCNfswB6i05m0EqY=
-X-Gm-Gg: AYBFou05rAJWUB00qGCd21NhzXnxytjpd1FHypMVrp+5IuRL7j44ns5XQ8eUJesfcvH
-	OWK4ku1h66Gq+aMolsE/mwN8tuV/luTi1QD2QLsxVmSYxRED7joKl3zehM98tbbQW7eghWyAvd8
-	0VDh9MFxfvVm7JZP6YAYXIMXl4EFTQALHTPKhYIvzMxXROVpYUJ2iDnuLd29nziUtW+nxIklWg9
-	WwKvFdMQNJOmKuJbF/RGhZm3gIh20+XuzUl6NTTvlMcaFZGvik9YBKvPyayLGZEbCbSafxqaLJt
-	crCjV+25k9wxliClg+0vs5rsbvDGjBZsIVl+MR+rtqDlg6fIkKLiMfZKxEgZFTHp4y8YTao2puh
-	8ym5Q637EqlqMnf9Cy9cfuRPT4gE32g1vjwjXpv8zyS2WhCxaV5y3TGUG6cjYjuZP3JOH6g==
-X-Received: by 2002:a05:693c:87c6:10b0:366:fabf:6273 with SMTP id
- 5a478bee46e88-36a20459a30mr7592769eec.22.1793268719830; Thu, 29 Oct 2026
- 03:11:59 -0700 (PDT)
+        bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
+        b=brdco+l6o+NytsMw6nu9XR6q9QsHIW1Zny6FRqGEX445GJ4y7zJahveUy/DxluNu0r
+         5COg3R3hnrPLN1VThSOrMzOeiwRvBkHRuqphgXPx8f30upQyidP9Y+yL7kmXhugssWHW
+         0/zygOlDpHJGIvEudwwKP6g6GlJOEyN8ND/xx5ieENeL85Z1ljjm/AJwrVMitFicwb24
+         knXEA9s9L1+OhPCJR1dEX6pm1YCtBDVbZpHacPGHiiosNCKchkUIVCmJ07ypzVhx8HtB
+         x1BIMzB1G+NOLGrDHaWFZBBUwhed8D7FOxSnr+M6KQE7Zcy94kiLXWg+ORu4ujYbW/Tb
+         +/tg==
+X-Forwarded-Encrypted: i=1; AKwUvByACBq8rkX/KGs/R9v7fTh0vPLiw6Zew68HWqXewlWClIjTafykBmg8CGBrzVdiNl4s56gDO9iWwmeiNQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKS1RM2dQZqJfKOIhO6jfcIrbp0oGLW1lB3pdgG540oed/yGnI+
+	Lh4HEUlHKOFx+LBHi8eAR+aSOFFInbmBStXqU+N9E/6CsiGy2T2GwWx1vNx1l7yg9GeblRk7Doy
+	AqG93yiQ9PkHSmce8YaPDsueFSi3BO/M=
+X-Gm-Gg: AYBFou01gLEs62iYcv5L2mQKIjtOJd9M5ILksuLvBfL6Dgc+6EZrYK+1uSp27hYa6s4
+	YeR4KCqYMvND4Hj/X58Eng8oqmZDCb++1OOgmLg525ix5V1BSZyGS7rLqCS5C83U5ukteUDjkn2
+	p1PLBFnE0dA0Bo0cObYyOq3C8pl5vkIFEBlxDMYftCFQ+6MJlxbew7nHxXZsU2lb2AZBTJMN7vD
+	6AwKcEWp43/JOVgyaTMuFnxGSHPHJbycWAs83MeIEWfetjqyN6A1TSnSieFp944fjkFo9cbRqHk
+	ltMaYgtAb31ofmg2ZYvhkmi/PW2AJdw72sH6EQp/eMtfIWU07qd+rq+eZuVg3Dpz5+4YEs4a1Lx
+	yVwbdO8GlA4kiAI+gNRW1T40u1kvLxxuEAn/E860L4MLCwMc5vplaLQlWnzGW/wCo8r0EYkxTm5
+	dGu0ymI8VywL2CenA=
+X-Received: by 2002:a05:693c:69c9:b0:36a:279:c93f with SMTP id
+ 5a478bee46e88-36a203e2a52mr6817742eec.33.1793268916731; Thu, 29 Oct 2026
+ 03:15:16 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -105,13 +106,13 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 References: <20261029-upstream-speedo-t114-v1-0-81457cc9d94c@tsv-stahl-riesa.de>
- <20261029-upstream-speedo-t114-v1-2-81457cc9d94c@tsv-stahl-riesa.de>
-In-Reply-To: <20261029-upstream-speedo-t114-v1-2-81457cc9d94c@tsv-stahl-riesa.de>
+ <20261029-upstream-speedo-t114-v1-3-81457cc9d94c@tsv-stahl-riesa.de>
+In-Reply-To: <20261029-upstream-speedo-t114-v1-3-81457cc9d94c@tsv-stahl-riesa.de>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 29 Oct 2026 12:11:47 +0200
-X-Gm-Features: AclHuK8mutFrWjpw6_PPdHUAyItvpAhM72OsxTaC6ggH-p4KNaOHRql6Fdiss_A
-Message-ID: <CAPVz0n3TSeed-SgBbvsXtPJtx5CGzuYcruqOiKVaijBu2w+HVg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] soc/tegra: fuse: Store Tegra114 CPU and SoC speedo values
+Date: Thu, 29 Oct 2026 12:15:04 +0200
+X-Gm-Features: AclHuK_nKjJOvqTdHrlTm0y6eXLR-uFJwQRZTvfrnf6NnzkRQXlz5soPbSPOmYM
+Message-ID: <CAPVz0n13YHVAGNoEYZaef7HL1HkQK9w+mLUV-h4AGC0mr3bkpQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: tegra: dfll: Get the voltage step of range-based regulators
 To: admin@tsv-stahl-riesa.de
 Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
 	Mikko Perttunen <mperttunen@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
@@ -128,52 +129,103 @@ Content-Transfer-Encoding: quoted-printable
 >
 > From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 >
-> The Tegra114 CPU DFLL computes its OPP voltages from the CVB tables
-> added in commit 5aba939e80f4 ("clk: tegra: dfll: Add CVB tables for
-> Tegra114"), using tegra_sku_info.cpu_speedo_value. The Tegra114 speedo
-> code computes this value but never stores it, so the DFLL uses speedo
-> 0 and only the c0 coefficient remains. For CPU speedo IDs 1 to 3 c0 is
-> 2190643 to 3395401, so "mv * 1000" in round_cvb_voltage() overflows and
-> the OPP voltages are wrong.
+> get_alignment_from_regulator() takes the voltage step from
+> regulator_get_linear_step(), which returns desc->uV_step. Regulators
+> described by linear ranges, such as the SMPS of the TI Palmas PMIC,
+> leave uV_step at 0.
 >
-> This is currently hidden by a zero voltage step with Palmas regulators,
-> fixed in the next patch. With both fixes the CPU OPPs range from 1000 mV
-> to 1270 mV on a device with CPU speedo 1742, which matches the vendor
-> kernel.
+> With a step of 0, round_cvb_voltage() returns 0 for every OPP, which is
+> then clamped to min_millivolts, so all CPU OPPs get the same voltage.
+> The I2C LUT is broken as well: find_vdd_map_entry_exact() and
+> find_vdd_map_entry_min() divide by the step, and on ARMv7 with hardware
+> division the result is 0, so selector 0 matches every voltage. The LUT
+> ends up with a single entry and the DFLL never changes vdd_cpu.
 >
-> Store the SoC speedo value as well, as Tegra124 and Tegra210 do.
+> This affects boards that run the DFLL in I2C mode with a Palmas SMPS as
+> vdd_cpu. In mainline these are the Xiaomi Mi Pad (Tegra124, since v6.19)
+> and the Asus Transformer Pad TF701T (Tegra114, DFLL enabled for v7.4).
+> The AS3722 and MAX77621 used by the other DFLL boards report a linear
+> step, and the PWM mode does not use the regulator.
 >
-> Fixes: 5aba939e80f4 ("clk: tegra: dfll: Add CVB tables for Tegra114")
+> On a Tegra Note 7 (Tegra114, TPS65913) all 16 CPU OPPs are at 1000 mV
+> and vdd_cpu stays at the 1.10 V left by the bootloader. The CPU runs at
+> about 1.34 GHz whatever cpufreq requests. With this patch the OPPs range
+> from 1000 mV to 1270 mV, the LUT holds the 1000 mV to 1270 mV selectors
+> and the DFLL follows cpufreq up to 1708.5 MHz.
+>
+> If the regulator reports no linear step, use the smallest step between
+> the voltages that are usable on the board. Fail the probe if there is
+> none instead of running with a step of 0.
+>
+> Fixes: b3cf8d069505 ("clk: tegra: dfll: CVB calculation alignment with th=
+e regulator")
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
 > ---
->  drivers/soc/tegra/fuse/speedo-tegra114.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 26 ++++++++++++++++++++++++=
+++
+>  1 file changed, 26 insertions(+)
 >
-> diff --git a/drivers/soc/tegra/fuse/speedo-tegra114.c b/drivers/soc/tegra=
-/fuse/speedo-tegra114.c
-> index 1e6c2b5be759..8bf1a1b1287a 100644
-> --- a/drivers/soc/tegra/fuse/speedo-tegra114.c
-> +++ b/drivers/soc/tegra/fuse/speedo-tegra114.c
-> @@ -92,6 +92,9 @@ void __init tegra114_init_speedo_data(struct tegra_sku_=
-info *sku_info)
->         cpu_speedo_val =3D tegra_fuse_read_early(FUSE_CPU_SPEEDO_1) + 102=
-4;
->         soc_speedo_val =3D tegra_fuse_read_early(FUSE_SOC_SPEEDO_0);
+> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/teg=
+ra/clk-tegra124-dfll-fcpu.c
+> index 457a77c5bb62..5bdea4775076 100644
+> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> @@ -642,6 +642,7 @@ static int get_alignment_from_regulator(struct device=
+ *dev,
+>                                          struct rail_alignment *align)
+>  {
+>         struct regulator *reg =3D regulator_get(dev, "vdd-cpu");
+> +       int i, n_voltages, uv, prev_uv =3D 0;
 >
-> +       sku_info->cpu_speedo_value =3D cpu_speedo_val;
-> +       sku_info->soc_speedo_value =3D soc_speedo_val;
+>         if (IS_ERR(reg))
+>                 return PTR_ERR(reg);
+> @@ -649,8 +650,33 @@ static int get_alignment_from_regulator(struct devic=
+e *dev,
+>         align->offset_uv =3D regulator_list_voltage(reg, 0);
+>         align->step_uv =3D regulator_get_linear_step(reg);
+>
+> +       /*
+> +        * Regulators described by linear ranges (e.g. the Palmas SMPS) d=
+on't
+> +        * report a linear step. Use the smallest step between the voltag=
+es
+> +        * that are usable on this board instead.
+> +        */
+> +       if (!align->step_uv) {
+> +               n_voltages =3D regulator_count_voltages(reg);
+> +               for (i =3D 0; i < n_voltages; i++) {
+> +                       uv =3D regulator_list_voltage(reg, i);
+> +                       if (uv <=3D 0)
+> +                               continue;
 > +
->         for (i =3D 0; i < CPU_PROCESS_CORNERS; i++)
->                 if (cpu_speedo_val < cpu_process_speedos[threshold][i])
->                         break;
+> +                       if (prev_uv && uv > prev_uv &&
+> +                           (!align->step_uv || uv - prev_uv < align->ste=
+p_uv))
+> +                               align->step_uv =3D uv - prev_uv;
+> +
+> +                       prev_uv =3D uv;
+> +               }
+> +       }
+> +
+>         regulator_put(reg);
+>
+> +       if (!align->step_uv) {
+> +               dev_err(dev, "failed to get vdd-cpu voltage step\n");
+> +               return -EINVAL;
+> +       }
+> +
+>         return 0;
+>  }
+>
 >
 > --
 > 2.56.0
 >
 
-Thanks!
+I can confirm capping CPU opps at 1000mV and this patch fixes this. I
+have tested on Tegra Note 7, ASUS Transformer Pad TF701T and Xiaomi Mi
+Pad which are all affected.
 
-Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab (P1988)
-and ASUS TF701T
+Tested-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Reviewed-by: Svyatoslav Ryhel <clamor95@gmail.com>
