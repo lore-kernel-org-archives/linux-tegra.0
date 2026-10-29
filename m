@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.169
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793268694;
-	b=UKSYRhdCGjF7OfDY9m1uG54JLBU+Qha6J2/YJIdzVvYX0FT6QQXM+BXDuIRa2gJ1oxoM
-	 N1VWRj7vB/PvmWslHI1XSVQt/3SEgk4XrA4kv+JErFsTX7yoni4f0dGEEZGRXToChNfa9
-	 Ng/OzuyEH3cWy8oCYctQnN3QtcRHiIhTbFe3fdloM6rTMmOPYREJyWPnYd6EIsY/IbQI5
-	 36VIhd9UfLT6f65KMQpsNSLmBFu7ih8pyXxTk7ZkjNDLAcfQc4I9vLu8S5PqxILedbHKa
-	 Qlf9YYRrs+KUojTIiu26XmTPCXV0eBwlW5wAInKRXkY9Oi4vjDCbzJuDjBJYDTE2RLA==
+	t=1793268721;
+	b=NeT4uk3VGJUCRRHkByGECQ1wo3J6YrjSBjj+YKRBdEAlwLw3L2F/S4A+D4Ccbc729Hks
+	 cYcberG+assrG4WNi6/WNAOCjbsbcMHZB3xOaxd9VJOh9mJ1jKJ4/AdffnHM6/akNrzIz
+	 Wq/Emba/v0CCp3vUeU2FPQWrdEXF0g7A+4LXohc13mxsOpkdnVLSBv0EwrJAciGZiQI/0
+	 j+yvSoOQviGDqqfjXsHgnS8FVRQ6n0AOWV/PVImsstduBZ72ewJcse6u2D+KJ0uHQ5T/D
+	 Z4f7XtRGQ5xZ5onoQQkUqbCNMRu93GWGDcAjabxkhZPofQ4IYJZDXhqlbg1LC5l+WNg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793268694;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793268721;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=jgkJopx5kExqkUv6b/vCU6btPQBGSF/P3vuAWpTWJb4=;
-	b=f5Oj1bm1zg/5pPd17PaMpz2HeYFeLlDAjmvA1KOw2qgRP4Uc/eNFq2ypuVCaHtoamQCz
-	 cPtIFC0Hlq9r4OKPnfAgO7qK7+vuKHHvppH+/4H7AIESCGq6erf1UTtxJzIsOen08i2DF
-	 Rl4sMVs0KK76L1Q8EkT5pOJvhxyRz0Bg+k7tj8T5YFvu9LF6WPwrdSz3Mvsr5KrimJ+FS
-	 X7JTWhng0ozk7tVXW7nHZjBdx+QhxHUI/3ENgd3bppmSz7Okf6vtBg5+7xwjV5ZMR931V
-	 ja6JbN9mS3c30kR+RXd6C5G6sg1Tq39TIvYREKctV0DWmYD8zkYlqMIWtTX1WaQOYbA==
+	bh=7s60NUUwdXZLJ5wOWPuuDFc73pKrbdpj75fVNegY9N0=;
+	b=r2LUFfGHQfQMCX1NEwbRMNWmWGQP3dFHVHD+HNHCMLJq2ARJn42BI7+FpIA5QO9uyRnC
+	 TX2lUASJ5bmGoZbO5NaYC1Psk4wkoQOC0nF3QrRPmzeOtRcfq7r1sG8YARNAm1F7J+1lm
+	 flgq/m9rtiWJhtnX1wdD0l3dXo4oFCu9chGseiBoAPEnr8EpT4bNNId16GtLywNaekaB5
+	 YPOG+9njl4u4Zn8qrHCoATfcd/T2Tta6xCbThJ4vDGSC8oJi16oS7rNEarPGbYFa59kir
+	 ztq/BrUTX7BgFfO/SEUpMFCM7V1K5WZX6NNeBL0zxVw+zrvhxsMCCTUFDuIR4j2Zk4A==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=m+uDtHfY;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.181
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=u2sBbzu2;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.169
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF1A606A31D
-	for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 10:11:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4EF1A606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D9C606A31F
+	for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 10:12:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E9D9C606A31F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=m+uDtHfY
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-35b2c599f43so4204079eec.0
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 03:11:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793268693; cv=none;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=u2sBbzu2
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-35b2c599f43so4204817eec.0
+        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 03:12:00 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793268720; cv=none;
         d=google.com; s=arc-20260327;
-        b=PNAoEYjbiPoKczxdYKmBFrDhaTB2Q3Quvde6Q0ZUnYonHFLal3e4QUOdF3hO29fiXk
-         ORTJrgN2NwJ6HZxpf0xH8RprYAZYfHBqtQu2nx8E3oKLxgxnl/8v8Kd/GlIgb4gm0il1
-         s+MmEnFKD9sZKTa3+GWIBrdr7TlykfLClKkhVjgC6rhBfRJpKcgGBHmkNc4uxTtabp65
-         /Yx4gXCPGToKzAE6cuzrjSvfiewtfAGKOYlG8I5Hk/uJc+J8D5cU4XefOcvewufHk+mR
-         ytzn4jZpds1DsF6w3VqdgvCusOVmimaPho6jNKielUsm9OT669tEx8H1euLxSWhmSMsP
-         zbrw==
+        b=ic10oj2yq7+7EemlpFGFHLa7m60LvHgCmmY+WQifBshqrNAHvahfEEUeFTzM4+ROHU
+         gh78B0Hmu3H5b4I3QpFrBJIPSDS5Iy0ryVH9yUbkwwbpZvPO1Mzi2DbRJw3f00uXJ7ey
+         TMQQcd+0C5FhfqEgm3GRkO0BPCaGXiWmbZHvcfx5v3Ahyb5R2+brNjt1E+BibK9G4MqU
+         IzlYyGhEhy2qEYB/rYVi+ms7/7w4MtiAQNn7U6oaYhs8DdJyEMUXr/UQTSRK51Q3K7sI
+         zXGV78T/N5N+z/6+cpct48FxdDq8wH8LZQ6w7t2NdUCulrMWkA/ddZs6ERVUH4dTyeKr
+         BcFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=jgkJopx5kExqkUv6b/vCU6btPQBGSF/P3vuAWpTWJb4=;
-        fh=kjd2X5ZX80VVxxaklzX0Ubzu6ZJB4uQZgsB6KKFnYC0=;
-        b=pIlN3Y9s3H2Idz9Yo1U7bS409ye3STP/fY7wBziFJkogH11JVuM3DYedDkp7VXyWdf
-         fHuKLcbIjfE8pp/6U6XX+N36ZrNQgtHim4rRlnR5HpizHzOG2NJpcmxQOOPDJnfv6OUI
-         KNxhBWc+2GSbG03PS/UOESkgkGq1UeWoIH9ciYV7Wq12e7bhXt8lB+z72a9A2/Dq8787
-         iimZn/8R+WpWN9L4a/bka/M+AUOI+3tPeR0xBwXPSvtjw7dd0jMqv0kxBLqcvV7UJ90U
-         IbGXLRPCSDjJUlUS7ZsrXf68R3RAj6FS00G9GWUOriP9xfEMs7wZcq9e2CczU/APxmmk
-         sgyQ==;
+        bh=7s60NUUwdXZLJ5wOWPuuDFc73pKrbdpj75fVNegY9N0=;
+        fh=Ip06zAWe6ybjyW+CJeD1f36PJHzII0V11ouBx5NIsvk=;
+        b=Dkcd5EJYCvbM3XVQUZjCW6gx5MFyfEy9QR6jYzDBvSGIb5kkFmWbfd536fLuQ8SHqQ
+         8m1FC+9SPO8df+zWocZ1eMdVipMOE/c1IVXF1FQETVkm5TQQHQcU2xwd7bj+L2fvzunO
+         gKn0Kh8uBtafPsiNCzQxI7mhFzaQTsZ695I1X8/shDmogf3vHlN8HyIu4OHmwJatf7Fz
+         etGMY8RWbS+gCHdJClPsSyER5L0XtlF5mkZnQLXRVleC59tlFQgWZ40TooUZUDTlMoJX
+         78jsx78cMVoR98KnhpoBOqBZJv6KcGN5kvdvYXGnIrOyOZNLkzmJMtpLUc5K9unc+nSc
+         9jSQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793268693; x=1793873493; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793268720; x=1793873520; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=jgkJopx5kExqkUv6b/vCU6btPQBGSF/P3vuAWpTWJb4=;
-        b=m+uDtHfYNrebraUeNO71Kwkxzuqpdu3zCHQC48XO/a+1chRZiH7mHXPDqLP8HQ2yiH
-         Tr0GNTkJJBfuOJDO/AX4VaktcSnRFMWJDv5mItb9Db77+hvYsFIxDorsRWc563PDbMSC
-         WFf/XcMi0JTg23ul4cIHTqnY3lIIPwrFyN6/bltmGyVtwoQ6kqzgzklFux4nuOjGKS+i
-         tPeerm8onxx4BYHYLafWUxDHX2QG6ZEOT640AX6ke/L3iW4tOH5g27ApyIfQllKU9Y6G
-         y8HuQZBr1vP3B3fbPuvMufo+5KSREll/cupagNW82ra5HvG1N466DCf/4msA6IkJseEM
-         2HBw==
+        bh=7s60NUUwdXZLJ5wOWPuuDFc73pKrbdpj75fVNegY9N0=;
+        b=u2sBbzu2hkGqyQz96k0avHJnOd0ePQgrM+7rXIY5CaAiiyZJB7fbos+LVo4+Z+VJie
+         mfAk52msiWbRDYHSp6K9F0r3vBVAu42VWJJcIswYAYEyddym4KipIWcJYlkp0v7JFUHa
+         k3ysl41ONGLKIb+TkwkfXEuupnVYF5//5j061LJHXetcAlOvsUOPH6qQWPgEteyujjbk
+         j5jaHwJArz0QdE8bFA4OOAr9Ey0Qm8lid05av05lDTQ9eH0RF0QJbM7I7Q/+KzxUNVQ7
+         KpVI1eN/Yc8p8K+7W2df991+0sj/x6HGrbPlXbQCBSgjIoZCtd4sLnyYEm3nyAEBrykc
+         JUfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793268693; x=1793873493;
+        d=1e100.net; s=20260707; t=1793268720; x=1793873520;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=jgkJopx5kExqkUv6b/vCU6btPQBGSF/P3vuAWpTWJb4=;
-        b=vOt/FPV8ZkRlEDJpWUAgKyH5KydIPIFj4Gft3tDKHCgTTIBKnH3VuSTO5oUMPN+DM6
-         8SspTjKePfRNuH5VCf/5+jm7nNyBfFcjqfTPR39onERbklozEUhLpQ9b51YW/60wc+jp
-         FK2eUlmG5zkiil1CBIhqVGLlqKg/PnmA1+vkoxozN/sbl4ctTRLhV7cdNvTV9oNOmLzM
-         Tm29XnEf166XIJUU6rfbgpToeV4X1d/OHWgyPPKyXNKmBi43N5bkFFjoF643z3l4N8nb
-         dsyXILiBo/bnslCkJVhVRKyj3V280AbxxYJlj60Fsh85DJC5L7qpLH1Hw5qRwb04yQf5
-         VJxg==
-X-Forwarded-Encrypted: i=1; AKwUvBx90n4W+wl343zl7aMCrIwI2ns1KXct8CAITHQJkoMIm22Px9u28IBQjc5QH6ETe5Gkm/H7qOXx2AK41A==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLNsUhdnqZezjgn8b7Ml4/sO7kQQxBnwFeV+y43N0PYSGT8MXZW
-	D3ey/jHlw3XwchB7UPVPFC9vCVJeave0l26Nkqiqle3jbHw2pRGuXaQS040aOAv0srN5zmolbgm
-	HlAq421l0X4eaiav2q/QnjHjMyubfVBM=
-X-Gm-Gg: AYBFou32i9tXgXrfgPvH/lpXtkdQip0yYRZXlLCqxya3gLw5ICYelN1gfdWiHQwEUEr
-	nrIHJrSmGXGglJmxQ9f1KO+BQXj/dbCw/mtnf4tPcscfvPNzCOgrj9pSO1N4rsl7oJzDM1MasFh
-	4VGOHFo3Y4wghlgRYLwq2t2dwq2sKiTnh5kYShaB/2Ls6ECc/022EDdRk49UJQVTBVN6cP3mUGG
-	R7w33WtKsD9cGO7N15LzCS/Py5oKcXvbPStnj2z+EH8cU6f0HQcrCMe96uKmh819rs22KiF1ePc
-	N5ngK0AmFzVNY7O+KZQohdEYqM4XzdyoVHpw/OpFi/dUUxAjuuCUmcV8Biqpn4TAHWOKdjxhwXB
-	uRgbbJZ3RpIlBycXKnnXOBSGxIrWrKEEg2x7NK2ZYMNlpnnJ83rGYTj2n8MUbIjHuJdIgMA==
-X-Received: by 2002:a05:7301:618b:20b0:366:83dd:46f3 with SMTP id
- 5a478bee46e88-36a20434490mr7778201eec.14.1793268693130; Thu, 29 Oct 2026
- 03:11:33 -0700 (PDT)
+        bh=7s60NUUwdXZLJ5wOWPuuDFc73pKrbdpj75fVNegY9N0=;
+        b=q9gA/NCB3t/IbKcTyQFFvltUj/dWPGtlEEboMYR2ffAMOieZpm39RoOJwP6zEkmDIr
+         6Etw3tVhCGAAFywGBI+6F+pg2sR4eJ68FeX4LixRn0aunhZiEpmmQPGd4Ce2Uj6qlqAH
+         IIWY89gOam2vXJtLZnAWL2X8GFk+6fiNDLR1XgliFTa/0q2huzjDnCb0okEg0XtLRR/f
+         fmlLrTXoX5BteukSQcqTwNknYSZltUaTnKEzUZ9PWYz0pf7VDoZLqwY8dfuImCELhsQH
+         YXlU3xHc0xBzWVa6OPUIwpPjHlfn71mRo1dfv/SJ5UH7TmqKof2r0FOmYvSmymC3wUKs
+         7Igg==
+X-Forwarded-Encrypted: i=1; AKwUvByTstCQoD9beHUJHu4mM1+RJkt+6VmkpTRihVSf6dsLD5vdStc/xn/xnvORhbYWj3rYACRc0zqrtrPifg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKh1uff5KLIby9jxKJbTcX0YL/8NxZwbYt9NiWAIfIN/JJHLw/e
+	w7wErF8JaGP6VZcbS1v4y5jj+dGa+iKgxoY9Cnh/maRRrP1pe7H+CIPyebuU92u1m2cDWEE5dI+
+	eCM3Lzww3VfNTELNgCNfswB6i05m0EqY=
+X-Gm-Gg: AYBFou05rAJWUB00qGCd21NhzXnxytjpd1FHypMVrp+5IuRL7j44ns5XQ8eUJesfcvH
+	OWK4ku1h66Gq+aMolsE/mwN8tuV/luTi1QD2QLsxVmSYxRED7joKl3zehM98tbbQW7eghWyAvd8
+	0VDh9MFxfvVm7JZP6YAYXIMXl4EFTQALHTPKhYIvzMxXROVpYUJ2iDnuLd29nziUtW+nxIklWg9
+	WwKvFdMQNJOmKuJbF/RGhZm3gIh20+XuzUl6NTTvlMcaFZGvik9YBKvPyayLGZEbCbSafxqaLJt
+	crCjV+25k9wxliClg+0vs5rsbvDGjBZsIVl+MR+rtqDlg6fIkKLiMfZKxEgZFTHp4y8YTao2puh
+	8ym5Q637EqlqMnf9Cy9cfuRPT4gE32g1vjwjXpv8zyS2WhCxaV5y3TGUG6cjYjuZP3JOH6g==
+X-Received: by 2002:a05:693c:87c6:10b0:366:fabf:6273 with SMTP id
+ 5a478bee46e88-36a20459a30mr7592769eec.22.1793268719830; Thu, 29 Oct 2026
+ 03:11:59 -0700 (PDT)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -105,13 +105,13 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 References: <20261029-upstream-speedo-t114-v1-0-81457cc9d94c@tsv-stahl-riesa.de>
- <20261029-upstream-speedo-t114-v1-1-81457cc9d94c@tsv-stahl-riesa.de>
-In-Reply-To: <20261029-upstream-speedo-t114-v1-1-81457cc9d94c@tsv-stahl-riesa.de>
+ <20261029-upstream-speedo-t114-v1-2-81457cc9d94c@tsv-stahl-riesa.de>
+In-Reply-To: <20261029-upstream-speedo-t114-v1-2-81457cc9d94c@tsv-stahl-riesa.de>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 29 Oct 2026 12:11:20 +0200
-X-Gm-Features: AclHuK8_mii-vqm8jDLm-mNdMkH2Er6-ZHBho7KaLFga9WcAe3FyT06Xlc5Ki2w
-Message-ID: <CAPVz0n3tFvEycAAhjA5ZqoBrx8MsJwDuBssAzLMrFnicSQ+eMg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] soc/tegra: fuse: Fix Tegra114 speedo fuse offsets
+Date: Thu, 29 Oct 2026 12:11:47 +0200
+X-Gm-Features: AclHuK8mutFrWjpw6_PPdHUAyItvpAhM72OsxTaC6ggH-p4KNaOHRql6Fdiss_A
+Message-ID: <CAPVz0n3TSeed-SgBbvsXtPJtx5CGzuYcruqOiKVaijBu2w+HVg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] soc/tegra: fuse: Store Tegra114 CPU and SoC speedo values
 To: admin@tsv-stahl-riesa.de
 Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
 	Mikko Perttunen <mperttunen@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
@@ -128,79 +128,49 @@ Content-Transfer-Encoding: quoted-printable
 >
 > From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 >
-> tegra_fuse_read_early() takes offsets relative to the start of the fuse
-> words at FUSE_BEGIN (0x100). When the fuse driver moved out of
-> mach-tegra, the Tegra30 speedo code was converted to such offsets
-> (FUSE_SPEEDO_CALIB_0 0x114 became 0x14), and the Tegra124 code uses
-> them as well. The Tegra114 code kept the absolute offsets from the
-> vendor kernel, so since then it reads the CPU and SoC speedo values and
-> the A01 CPU2/3 fuses 0x100 bytes too far.
+> The Tegra114 CPU DFLL computes its OPP voltages from the CVB tables
+> added in commit 5aba939e80f4 ("clk: tegra: dfll: Add CVB tables for
+> Tegra114"), using tegra_sku_info.cpu_speedo_value. The Tegra114 speedo
+> code computes this value but never stores it, so the DFLL uses speedo
+> 0 and only the c0 coefficient remains. For CPU speedo IDs 1 to 3 c0 is
+> 2190643 to 3395401, so "mv * 1000" in round_cvb_voltage() overflows and
+> the OPP voltages are wrong.
 >
-> On a Tegra Note 7 (Tegra114 A02, SKU 5) the fuses at the correct
-> offsets 0x2c and 0x34 read 718 and 1156. That gives CPU speedo 1742 and
-> SoC speedo 1156, which is exactly what the vendor kernel prints for this
-> device. The current code reads 172094 and 0, and so reports SoC process
-> 0 instead of 1.
+> This is currently hidden by a zero voltage step with Palmas regulators,
+> fixed in the next patch. With both fixes the CPU OPPs range from 1000 mV
+> to 1270 mV on a device with CPU speedo 1742, which matches the vendor
+> kernel.
 >
-> Today only the reported process IDs depend on these values, since the
-> Tegra114 core OPPs are selected by the SoC speedo ID and the CPU DVFS
-> tables apply to all process IDs. The CPU speedo value is needed,
-> however, to compute correct CPU DFLL voltages, which the next patch
-> fixes.
+> Store the SoC speedo value as well, as Tegra124 and Tegra210 do.
 >
-> Fixes: 783c8f4c8445 ("soc/tegra: Add efuse driver for Tegra")
+> Fixes: 5aba939e80f4 ("clk: tegra: dfll: Add CVB tables for Tegra114")
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
 > ---
->  drivers/soc/tegra/fuse/speedo-tegra114.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+>  drivers/soc/tegra/fuse/speedo-tegra114.c | 3 +++
+>  1 file changed, 3 insertions(+)
 >
 > diff --git a/drivers/soc/tegra/fuse/speedo-tegra114.c b/drivers/soc/tegra=
 /fuse/speedo-tegra114.c
-> index 6695702bdb4c..1e6c2b5be759 100644
+> index 1e6c2b5be759..8bf1a1b1287a 100644
 > --- a/drivers/soc/tegra/fuse/speedo-tegra114.c
 > +++ b/drivers/soc/tegra/fuse/speedo-tegra114.c
-> @@ -14,6 +14,11 @@
->  #define SOC_PROCESS_CORNERS    2
->  #define CPU_PROCESS_CORNERS    2
->
-> +#define FUSE_CPU_SPEEDO_1      0x2c
-> +#define FUSE_SOC_SPEEDO_0      0x34
-> +#define FUSE_OPT_CPU23_DISABLE 0x16c
-> +#define FUSE_OPT_CPU23_REENABLE        0x170
-> +
->  enum {
->         THRESHOLD_INDEX_0,
->         THRESHOLD_INDEX_1,
-> @@ -63,8 +68,8 @@ static void __init rev_sku_to_speedo_ids(struct tegra_s=
-ku_info *sku_info,
->         }
->
->         if (rev =3D=3D TEGRA_REVISION_A01) {
-> -               tmp =3D tegra_fuse_read_early(0x270) << 1;
-> -               tmp |=3D tegra_fuse_read_early(0x26c);
-> +               tmp =3D tegra_fuse_read_early(FUSE_OPT_CPU23_REENABLE) <<=
- 1;
-> +               tmp |=3D tegra_fuse_read_early(FUSE_OPT_CPU23_DISABLE);
->                 if (!tmp)
->                         sku_info->cpu_speedo_id =3D 0;
->         }
-> @@ -84,8 +89,8 @@ void __init tegra114_init_speedo_data(struct tegra_sku_=
+> @@ -92,6 +92,9 @@ void __init tegra114_init_speedo_data(struct tegra_sku_=
 info *sku_info)
->
->         rev_sku_to_speedo_ids(sku_info, &threshold);
->
-> -       cpu_speedo_val =3D tegra_fuse_read_early(0x12c) + 1024;
-> -       soc_speedo_val =3D tegra_fuse_read_early(0x134);
-> +       cpu_speedo_val =3D tegra_fuse_read_early(FUSE_CPU_SPEEDO_1) + 102=
+>         cpu_speedo_val =3D tegra_fuse_read_early(FUSE_CPU_SPEEDO_1) + 102=
 4;
-> +       soc_speedo_val =3D tegra_fuse_read_early(FUSE_SOC_SPEEDO_0);
+>         soc_speedo_val =3D tegra_fuse_read_early(FUSE_SOC_SPEEDO_0);
 >
+> +       sku_info->cpu_speedo_value =3D cpu_speedo_val;
+> +       sku_info->soc_speedo_value =3D soc_speedo_val;
+> +
 >         for (i =3D 0; i < CPU_PROCESS_CORNERS; i++)
 >                 if (cpu_speedo_val < cpu_process_speedos[threshold][i])
+>                         break;
 >
 > --
 > 2.56.0
+>
 
 Thanks!
 
