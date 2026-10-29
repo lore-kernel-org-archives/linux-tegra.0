@@ -1,80 +1,148 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793266665;
-	b=Eq9lzaH1zC3y6qPmVFHH8N7pTUyvYr4QEi3e97VpAudYAmfXtBLG2mQFLJKtk7zTxSNF
-	 MqhskGvUVXYazeq5chbY6BBSDqLvbqCX9q3KqIxgqysFEpLor1AtWJ7pIlGswUlMf6we9
-	 d532RcBkbMjni4yuG2AXmFPRAnZ3xel9AYvViSNAGQGPt297eZlTicIdczIHodXA4ry3x
-	 vzHrOhq8CYB2aHv4uwBQmS46WQiuQNa2EzfJLsEuubm4kFXUjmy20rXwfFaIxO81/QKoE
-	 t0WJXcztOSM03vDHBV75HzKVQnRNExsSlawgxzkq0v9vOmbRCdXHOEKCFsXB3+2s85g==
+	t=1793267915;
+	b=QTI7p51ynBMs2mLb/WT00Bdm7IoLt+DjKOcRc1YtdMcIXDy7C7+LcAAgXcYdDluYIrHD
+	 aElOX12JDansrk2VOfWxAACu0IhgW/kJTynvmyAstU/R/eqUq8BWVAfcT1AafyV+ZTklK
+	 /9mB4D74kKFzlG/NAxwjsb/GwsPDgV+Du6mC1LBQq84AkWZTngFqn5Dnbgb6XCk0sr6h1
+	 XLxBq0eSBbivfGqeH8BMcIfOSOybg+kzUC6MjM1Vl2BRZnRit8W47VmT4VodFliQIGAzx
+	 sw3ffJCQ2SIdHoHdpFyQaWgInzDCFiN0p9DgXSNB9sxN71J3CQqXX+RT3OZRkdc8wbw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793266665;
-	h=Received:DKIM-Signature:X-Mailer:From:To:Cc:Subject:In-Reply-To:
-	 References:Date:Message-ID:MIME-Version:Content-Type;
-	bh=b1L/YgA0unso+/Lv8s9MhtgPB5X7wkfHZu4ut24TmCk=;
-	b=YGULWsnAegFdkuZ+MwhXT0AtaXSrXoYLBV13KypWv2uehQo3SCZ3ZgHkTT3DtbuBrP3+
-	 FNAUefGK6G8DrrracbGIADNxIW0h5G93A9mMENlQo0khnH5cp7Y8gqUfR3qTL4B8nTwh0
-	 jd4NgGXhxhcQ5JVrCb4RY6wnpLqhrMGgjWU0D/+22qUGrhWEoJf+HT7os9iRKyMWwn5X4
-	 uCHuzOmWonaboU0J9nHe1mqBrowNdQuxHk+ywsKcEKvApN3gMCZ1kGZTpChkmHXd42jx9
-	 ir9XDXU3j4/dDpoVwFmul9E/2v5NWjImf0Yw+J4vaFh0F+vbFufytLK9MLFGLCwqalQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793267915;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=pvyVptf34gNXi8Bay+Y0wQ1+su1zbi4JW/reYBgb1VQ=;
+	b=iXWipHfQ9P8yqBpD1L+ahnnTIzBFtQ7ppqeF9S6cpC9TBDMCC9eQ/2GMzz2KM9H6EUhg
+	 6G7RWEZxcq6f2/Jr60SFJJjBUvWbY4jQJbPgCGMJAmxzuSlD0w7/BJ40ndvsucV9BrQvS
+	 iejOUI4ddT/0uxjaK4/vTFQx338G7xmI21OdUZZ7v6SpeYsM3I/IGCgzI9JKm4bMSBJ8G
+	 XIbZ8I4Dj3Q6cGQsigL3VhiHO2+Cs8aXbD1Zbse0sTqapXYnptvIa2NddeJZZaR860pjq
+	 Z2FxYFZCMoguMfYqseNBTip+zeJTmHrUUdn2PLs9+AA1OqUTR+JnqcHRRZ7IU0v8WRA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GYVH+Mm9;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E9blAECY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAA160A2609;
-	Thu, 29 Oct 2026 09:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E047606A31C;
+	Thu, 29 Oct 2026 09:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GYVH+Mm9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31D2D1F01829;
-	Thu, 29 Oct 2026 09:37:36 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E9blAECY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D52E1F01825;
+	Thu, 29 Oct 2026 09:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793266665;
-	bh=b1L/YgA0unso+/Lv8s9MhtgPB5X7wkfHZu4ut24TmCk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=GYVH+Mm9omq5BAsPPLcumqvOBUW7yKv6qRkJyIck5tFwfRa1tUfjtE1geDCpsmBEP
-	 2RwHK9Cy8sS2rBXuKXJvctC4Bq6C2jK6S/gBMA9x1sxt6ydKYVAFfAqpCKD+Lbm+RW
-	 CTkFLp+EHxcq2Q+0N+MiEyq8LgEaRZKBHMQZslmLTNkQz52CiV4VANY5UuxTSJYiXc
-	 HSEiViC0iMwJEQOI2/cy1vL8wqYF36gfQSfNXAqFM2CsYJ00Xwib/fXPCJXdfkBwli
-	 uFbEJD7BvWk6qn89ZMam6ipKB0JOazajL/SM6VxCjG3IQq3Hghn8AUsKjF5s6ntxKr
-	 WS9/dwDL4KSwQ==
-X-Mailer: emacs 31.1 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev, Alex Williamson <alex@shazbot.org>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jacob Pan <jacob.pan@linux.microsoft.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	s=k20260515; t=1793267915;
+	bh=pvyVptf34gNXi8Bay+Y0wQ1+su1zbi4JW/reYBgb1VQ=;
+	h=From:To:Cc:Subject:Date;
+	b=E9blAECYp6KG8AN9sCB1a35WZl4tql7Y8ZXp0RDyDE91uhItcOlCubJTDFxxfFQ1c
+	 FQ1oLcDZUFCI5NNc2ysWVgB/YRzMjzSxsJmTuSY+45io7wuL8LjueztYWrgRcpOECH
+	 VewapS1H9J02mVTfUi3oCFQKKGmnMRyzM3asO2oNSoHkcLOi0Td6e3tzSkHmyLmid0
+	 hdfX9MCzFdHpolJc2F/hD/ot11Mq8ijC0ZN/oRoyiR3cb6617vJjq0MXOsWWjMlgvu
+	 0oeqVetAnnaBq4kfE+Rq5DaPVbXmQggZR+obBEtf/xce5dNpC92pf3UDffILLhhSf6
+	 rLTIHQ1YDRYGA==
+From: Philipp Stanner <phasta@kernel.org>
+To: Min Ma <mamin506@gmail.com>,
+	Lizhi Hou <lizhi.hou@amd.com>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+	Karol Wachowski <karol.wachowski@linux.intel.com>,
+	Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Felix Kuehling <Felix.Kuehling@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Alessio Belle <alessio.belle@imgtec.com>,
+	Luigi Santivetti <luigi.santivetti@imgtec.com>,
+	Qiang Yu <yuq825@gmail.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
 	Steven Price <steven.price@arm.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Dave Airlie <airlied@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	Natalie Vock <nat@pixelcluster.dev>,
+	Arun Pravin <arunpravin.paneerselvam@amd.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Melissa Wen <mwen@igalia.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
 	Thierry Reding <thierry.reding@kernel.org>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Will Deacon <will@kernel.org>,
-	Xu Yilun <yilun.xu@linux.intel.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 10/16] iommufd: Add the vdevice TSM request ioctl
-In-Reply-To: <179321444123.2412245.6955528563980811144.b4-review@b4>
-References: <20261008055955.4014342-1-aneesh.kumar@kernel.org>
- <20261008055955.4014342-11-aneesh.kumar@kernel.org>
- <179321444123.2412245.6955528563980811144.b4-review@b4>
-Date: Thu, 29 Oct 2026 15:07:34 +0530
-Message-ID: <yq5a1p98c0f5.fsf@kernel.org>
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sunil Khatri <sunil.khatri@amd.com>,
+	Kees Cook <kees@kernel.org>,
+	Jesse Zhang <jesse.zhang@amd.com>,
+	=?UTF-8?q?Timur=20Krist=C3=B3f?= <timur.kristof@gmail.com>,
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+	Kexin Sun <kexinsun@smail.nju.edu.cn>,
+	Prike Liang <Prike.Liang@amd.com>,
+	David Rosca <david.rosca@amd.com>,
+	Krzysztof Karas <krzysztof.karas@intel.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Shixiong Ou <oushixiong@kylinos.cn>,
+	=?UTF-8?q?Jouni=20H=C3=B6gander?= <jouni.hogander@intel.com>,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Neill Kapron <nkapron@google.com>,
+	Michael Bommarito <michael.bommarito@gmail.com>,
+	Sam Day <me@samcday.com>,
+	Gabriel Prostitis <prostitisgabriel@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	etnaviv@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	imagination@lists.freedesktop.org,
+	lima@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	spice-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [RFC PATCH 0/6] dma-buf: Phase out is_signaled() race
+Date: Thu, 29 Oct 2026 10:55:37 +0100
+Message-ID: <20261029095542.1526750-3-phasta@kernel.org>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -84,186 +152,113 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Jason Gunthorpe <jgg@nvidia.com> writes:
+dma_fence_is_signaled() can return true *while* the fence is signaling.
+This has caused explosions before and I guess we can agree that it's
+just not ideal.
 
->> [ ... 300 lines skipped ... ]
->> +/**
->> + * enum iommu_vdevice_tsm_guest_req_op - Guest TSM request operations
->> + * @TSM_REQ_VALIDATE_MMIO: Validate and map a guest MMIO range for the trusted
->> + *                         device.
->> + * @TSM_REQ_SET_TDI_STATE: Transition the trusted device to the unlocked,
->> + *                         locked, or running state.
->> + * @TSM_REQ_SEV_ENABLE_DMA: Enable DMA for an SEV device.
->> + * @TSM_REQ_SEV_DISABLE_DMA: Disable DMA for an SEV device.
->> + * @TSM_REQ_READ_OBJECT: Read bytes from a device object, such as a certificate,
->> + *                       measurement, or interface report.
->> + * @TSM_REQ_REGEN_OBJECT: Regenerate a device object, such as a measurement or
->> + *                        interface report.
->> + * @TSM_REQ_OBJECT_INFO: Query the size of a device object.
->> + * @TSM_REQ_MAX: One past the last request operation; not a command.
->> + *
->> + * The request payload and response format depend on the TVM architecture.
->> + */
->> +enum iommu_vdevice_tsm_guest_req_op {
->> +	TSM_REQ_VALIDATE_MMIO = 1,
->> +	TSM_REQ_SET_TDI_STATE,
->> +	TSM_REQ_SEV_ENABLE_DMA,
->> +	TSM_REQ_SEV_DISABLE_DMA,
->> +	TSM_REQ_READ_OBJECT,
->> +	TSM_REQ_REGEN_OBJECT,
->> +	TSM_REQ_OBJECT_INFO,
->> +	TSM_REQ_MAX,
->> +};
->
-> This is still no where close to being well defined enough.
->
-> Everything here must tie back to defined spec references, listed in
-> the comments.
->
-> I cannot guess what data is passed over any of these APIs, how things
-> like "REGEN_OBJECT" select which object to regen, or what the format
-> of those objects even is. The formats of req/resp are never specified.
->
+The fundamental issue is that the fence-signaled-bit is set under lock
+protection but read without it.
 
-The request and response payload formats are specific to each CoCo
-backend. Since iommufd treats the payloads as opaque and does not
-validate their contents, what would documenting those formats here
-achieve?
+So ideally, we would read it with the lock. This would not change the
+relative order, i.e. the bit would still be true in the fence callbacks.
 
-The limited validation is intended to prevent this from becoming a
-general-purpose multiplexer ioctl. It restricts the ioctl to a defined
-set of guest-initiated operations that the host forwards to the
-firmware. The path is essentially:
+Christian informs us that taking the lock causes people to complain
+about performance regressions because the lock-taking shoots down copied
+cache-lines. (which is weird since it would mean that someone is
+repeatedly polling on fences instead of just registering a callback to
+notify himself once it signals)
 
-guest -> vmexit -> VMM -> iommufd ioctl -> TSM backend -> firmware 
+Let's accept the potential for regressions as true for now.
+Nevertheless, I think I can propose a path towards removing the race:
 
-> The comment for this should probably be *enormous*. Every arch should
-> explain what they do on every one of these ops, and it should be
-> identical if it is structured like this.
->
+This series suggests taking the lock in dma_fence_is_signaled() *unless*
+the driver explicitly asks for a check with a race-condition.
 
-That would require documenting a significant amount of backend-specific
-detail in iommufd. Could we instead require each TSM backend's
-guest_request callback to document its request and response formats?
+As a preparation, I allow drivers to set flags when initializing fences.
+Then, we add a flag with which the driver can switch locking off for
+that particular function.
+
+By default, we let all drivers take the lock.
+
+Should we then, in the kernel release process get reports about
+regressions, we can set the race-flag for the affected driver and
+restore the old behavior.
+
+Should there be no reports, we could phase the flag out again after a
+few releases, always taking the lock.
+
+New users would always see the lock.
+
+I put all potentially affected parties on Cc. Please point out if you
+can already foresee your driver being negatively affected by this.
+
+P.
 
 
-> I have a strong guess almost none of this is actually general, but
-> lets find out.
->
-> You can also put enum kdocs directly before each enum which helps alot
-> when they get as big as this stuff has to get.
->
-> My guesses with no information
-> 1) VALIDATE_MMIO why would the hypervisor ever need this? Guest
->    validates MMIO through secure communication to the secure world.
->
+Philipp Stanner (6):
+  dma-buf: dma-fence: Add flags parameter to dma_fence_init()
+  dma-buf: dma-fence: Add flag for using 64-bit seqnos
+  dma-buf: Port users of dma_fence_init64()
+  dma-buf: dma-fence: remove dma_fence_init64()
+  dma-buf: dma-fence: Close race in dma_fence_is_signaled() by default
+  drm/nouveau: Remove hacky fence check
 
-With VFIO PCI BARs backed by guest_memfd, the VMM can validate that the
-IPA and PA values provided by the guest belong to the VFIO device. We
-previously also used this operation to ask the CoCo TSM backend to map
-the device memory (the BAR regions). I have removed this operation from
-the latest series because that responsibility is now split between the
-VMM and guest_memfd. TDX and SNP still need to be updated accordingly.
+ drivers/accel/amdxdna/amdxdna_ctx.c           |  2 +-
+ drivers/accel/ethosu/ethosu_job.c             |  2 +-
+ drivers/accel/ivpu/ivpu_job.c                 |  2 +-
+ drivers/accel/rocket/rocket_job.c             |  2 +-
+ drivers/dma-buf/dma-fence-array.c             |  2 +-
+ drivers/dma-buf/dma-fence-chain.c             |  4 +-
+ drivers/dma-buf/dma-fence.c                   | 44 +++++------------
+ drivers/dma-buf/st-dma-fence-chain.c          |  2 +-
+ drivers/dma-buf/st-dma-fence-unwrap.c         |  2 +-
+ drivers/dma-buf/st-dma-fence.c                |  2 +-
+ drivers/dma-buf/st-dma-resv.c                 |  2 +-
+ drivers/dma-buf/sw_sync.c                     |  2 +-
+ .../gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c  |  2 +-
+ .../drm/amd/amdgpu/amdgpu_eviction_fence.c    |  7 +--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c     |  2 +-
+ .../gpu/drm/amd/amdgpu/amdgpu_userq_fence.c   |  5 +-
+ .../gpu/drm/amd/amdgpu/amdgpu_vm_tlb_fence.c  |  5 +-
+ drivers/gpu/drm/drm_crtc.c                    |  2 +-
+ drivers/gpu/drm/drm_writeback.c               |  2 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.c         |  2 +-
+ drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c  |  2 +-
+ drivers/gpu/drm/i915/i915_request.c           |  2 +-
+ drivers/gpu/drm/i915/i915_sw_fence_work.c     |  2 +-
+ drivers/gpu/drm/i915/i915_vma_resource.c      |  2 +-
+ .../gpu/drm/i915/selftests/i915_sw_fence.c    |  2 +-
+ drivers/gpu/drm/imagination/pvr_ccb.c         |  2 +-
+ drivers/gpu/drm/imagination/pvr_queue.c       |  2 +-
+ drivers/gpu/drm/lima/lima_sched.c             |  2 +-
+ drivers/gpu/drm/msm/msm_fence.c               |  2 +-
+ drivers/gpu/drm/nouveau/nouveau_drm.c         | 13 -----
+ drivers/gpu/drm/nouveau/nouveau_fence.c       |  4 +-
+ drivers/gpu/drm/panfrost/panfrost_job.c       |  2 +-
+ drivers/gpu/drm/panthor/panthor_sched.c       |  2 +-
+ drivers/gpu/drm/qxl/qxl_release.c             |  2 +-
+ drivers/gpu/drm/radeon/radeon_fence.c         |  2 +-
+ drivers/gpu/drm/scheduler/sched_fence.c       |  4 +-
+ .../gpu/drm/scheduler/tests/mock_scheduler.c  |  2 +-
+ drivers/gpu/drm/ttm/tests/ttm_bo_test.c       |  2 +-
+ .../gpu/drm/ttm/tests/ttm_bo_validate_test.c  |  2 +-
+ drivers/gpu/drm/v3d/v3d_fence.c               |  2 +-
+ drivers/gpu/drm/vc4/vc4_gem.c                 |  2 +-
+ drivers/gpu/drm/vgem/vgem_fence.c             |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_fence.c        |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_fence.c         |  2 +-
+ drivers/gpu/drm/xe/xe_hw_fence.c              |  2 +-
+ drivers/gpu/drm/xe/xe_oa.c                    |  2 +-
+ drivers/gpu/drm/xe/xe_preempt_fence.c         |  2 +-
+ drivers/gpu/drm/xe/xe_tlb_inval.c             |  2 +-
+ drivers/gpu/host1x/fence.c                    |  2 +-
+ drivers/iio/industrialio-buffer.c             |  2 +-
+ drivers/usb/gadget/function/f_fs.c            |  2 +-
+ include/linux/dma-fence.h                     | 48 +++++++++++++++++--
+ 52 files changed, 115 insertions(+), 105 deletions(-)
 
-> 2) TDI_STATE I thought at least RMM did this with an RSI?
->
+-- 
+2.56.0
 
-CCA uses RHI. The RHI reaches the VMM, which issues the ioctl to
-complete the request.
-
-> 3) ENABLE/DISABLE DMA, see #1, must not be done by hypervisor
->    See my reply to Alexey:
->    https://lore.kernel.org/linux-iommu/20261022123058.GC3008132@nvidia.com/
->
-> 4) READ/REGEN/INFO, what are the objects? What format are they in? How
->    do you select them?
->
-
-These objects are cached by the hypervisor. For CCA, they include the
-certificate, measurement, interface report, and VCA. They are read in
-response to guest requests. The requests reach the VMM through an
-RHI, and the VMM issues the ioctl to read the requested object. REGEN
-refreshes the objects/evidence at the guest's request.
-
->    Does this overlap with attestation subsystem? Should attestation
->    subsystem be used to access the SPDM related data?
->
-
-
-I had hoped we could use it, but I could not find an easy way to
-integrate the two. We need a simple way to read these evidence objects
-into userspace. I am not yet sure whether evidence-get can be used for
-that, since it does more than simply read the objects; it also updates
-evidence.generation, among other things.
-
->
-> Update the comment to explain all this, don't need to answer here.
->
-> We really need to do these defines along with implementations, that
-> probably will settle alot of the questions above.
->
->> +
->> +/**
->> + * struct iommu_vdevice_tsm_req - ioctl(IOMMU_VDEVICE_TSM_REQ)
->> + * @size: sizeof(struct iommu_vdevice_tsm_req)
->> + * @vdevice_id: vDevice ID the guest request is for
->> + * @op: One of enum iommu_vdevice_tsm_guest_req_op, excluding TSM_REQ_MAX
->> + * @tvm_arch: One of enum iommu_vdevice_tsm_guest_tvm_arch
->> + * @req_len: Size in bytes of the input payload at @req_uptr, at most INT_MAX
->> + * @resp_len: Size in bytes of the output buffer at @resp_uptr, at most INT_MAX
->> + * @req_uptr: Userspace pointer to the guest-provided request payload
->> + * @resp_uptr: Userspace pointer to the guest response buffer
->> + * @out_tsm_code: TSM-specific result code returned by the TSM implementation
->> + *
->> + * Forward a TSM request to the TSM bound vDevice. This is intended for
->> + * guest TSM/TDISP message transport where the host kernel only marshals
->> + * bytes between userspace and the TSM implementation.
->> + *
->> + * The request operation is guest initiated. The vDEVICE implementation
->> + * declares the TVM architecture and operations it accepts; iommufd checks
->> + * both before forwarding the request.
->> + *
->> + * The request payload is read from @req_uptr/@req_len. If a response is
->> + * expected, userspace provides @resp_uptr/@resp_len as writable storage for
->> + * response bytes returned by the TSM path.
->> + *
->> + * The ioctl is only suitable for commands and results that the host kernel
->> + * has no use, the host is only facilitating guest to TSM communication.
->> + */
->> +struct iommu_vdevice_tsm_req {
->> +	__u32 size;
->> +	__u32 vdevice_id;
->> +	__u32 op;
->> +	__u32 tvm_arch;
->> +	__u32 req_len;
->> +	__u32 resp_len;
->> +	__aligned_u64 req_uptr;
->> +	__aligned_u64 resp_uptr;
->> +	__aligned_u64 out_tsm_code;
->> +};
->
-> Should the viommu_id be passed in as well, or we know it implicitly
-> from the vdevice_id?
->
-
-We get final callback via
-
-vdev->viommu->ops->vdevice_tsm_req
-
->
-> I think this is probably a fine generic API, it should probably not be
-> "TSM request" so that the other viommu people can reuse the transport.
->
-> I would probably try to stick to exactly like the other APIs do with a
-> single enum. Two enums for op/arch is saying already that the ops are
-> not well defined.
->
-> So maybe strip this patch out to have no tsm stuff, define no ops and
-> just give a command transport into the viommu driver?
->
-
-Are you suggesting one ioctl per each guest request ops?
-
--aneesh
