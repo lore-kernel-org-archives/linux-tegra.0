@@ -1,68 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.172
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793269744;
-	b=QDf7E+HWqveHk5Ly8fi8hOvsV2tvSkENnmIOaC8YKtsmH5y/V4re/gb2rMlkCsIRGrQ7
-	 K3RVTZl9Tx8z/yYq74Taj1gGt2qJrnU66RGPe0xwhoGIEbodBte6H8BvzsAygcWx+j5he
-	 /oYRSRNkahgqt3mrI4iixiHz0AfsFajxxfpd6tIzqWwWfDPiMVoPVky4rvD+iyxUQtwkJ
-	 ukcPTxNzmWb6GArOp255SMqdjM8374LwldwAAGEzYrZcpKOIWLH1cyaFySBeq/10Jsvz7
-	 TXctPMX7nd5gyTxQ2VF6FJGxAleN4RhCqXywTzMlaqLXt17BmCElV1qRLoEqLZ8r5dA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793269744;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:
-	 Reply-To:To:Cc:Date:In-Reply-To:References:Content-Type:
-	 Content-Transfer-Encoding:User-Agent:MIME-Version:X-MBO-RS-META:
-	 X-MBO-RS-ID;
-	bh=PQfG2Km+YKrxCDPAAbbWYdryEevMUab9CWpj+Sh05TA=;
-	b=Xs+iTgw6VhhYUbyhejm/DW4DfoY0qUIGeXMPidvnBzLO5IqbxsMgHOU2H3GxMRFNKo+O
-	 GlV3s1tFk5Max++syaR3DWVZdUG8uA4yYDsCDSyp+3PC7TadA0+tQ/aUWj93x07PAXbwM
-	 5rSOTRTPaZgVceh5wIRjfwbb9O6Pwcu6uCfBjvJvcr+CSNWf+0nAf7zWWb2haZJwYHBST
-	 +mRf+fCIakCbQPMI987SDXHaGI7bLV4nn9FrrEN5XDBXZEQ0Ssixlr46GYLkok3oDRI42
-	 jtxBKTdurv0S6O8Bd9MD003wG1hanb50Dka5Y3jbb0MwPIAS8DTQedqxokKDmwQJCzg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mailbox.org;
-	spf=pass smtp.mailfrom=mailbox.org;
-	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=owjb1PqO;
-	arc=none smtp.remote-ip=80.241.56.172
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793273032;
+	b=w6QBzIFMEW8tEdQ3aiWTG8yaRyNGM6fnKj0NBgCnhwEmCh8xTSdQpXPjCXdOp1AO0Rw3
+	 POpDSLoYh1v/fzaD5pqnbmyNajGZzpF23ZOG6Vijbx/iTpSI3ZI3GHZc1dWcmgdVD6446
+	 GfmCPa3tgiAUmc3nH8S0+gIaLxkHgceI0MXsYoGkl3v0S6+Fk9Xhyt/slTnvzR9+mww3l
+	 g4m8xJByhPCuxUp26rV6diMF8WmfYkP1TQBZzqowH+rBPluR1pRt3NIIi/uW56TH9mk3N
+	 x16rFwtx1ZdNRXiSlWE8k8mEvIJ/o3t52RONVxkaP2PbIHUcxZ00ECrdn8QY+g77UEw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793273032;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=s4uscHTSNNyFgyqCTfvm7pgyQFz42LzvHFK7u0x0Cw0=;
+	b=PmWTb+KEy4cOaOjeBxs9dQ9UP32u+M6sWjiUE/ABOoBv0gmiIIMNhAe5EwXN38G8+puz
+	 5QNuNb7hKB4Njg7z+pvT/qVhnPv8kCt6nXIjo0FEEOtfqh2zUtfKq8FzjBnDcRZehryn1
+	 iFZBNEel6cv6bO1VCl/lU0mDrEAURzQKlBUdApQWbnicQMlvIlJ9gJ3zeuWh1F0CZRXz4
+	 OZoYiCn9ugXsxtb8oKdHe1L77dXFCO1plwXoxsbh9lt5FTzDheP9XmHfTieuGAe4FHfFb
+	 KuJAE37azJwpbfOy4wkemGj02JZ7UijkeO+FrN4meRDkF4g4x8/Kpxg8Ke+Sf3wiYMA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=YhheDy8E;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1255B606A31C;
-	Thu, 29 Oct 2026 10:29:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1255B606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7746606A31A;
+	Thu, 29 Oct 2026 11:23:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7746606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=owjb1PqO
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4jFgSW3XgszMlJf;
-	Thu, 29 Oct 2026 11:28:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1793269739; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=YhheDy8E
+Received: from [IPv6:::1] (ptz.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::77])
+	(Authenticated sender: lst@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 418BC2007F9;
+	Thu, 29 Oct 2026 12:23:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793273028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PQfG2Km+YKrxCDPAAbbWYdryEevMUab9CWpj+Sh05TA=;
-	b=owjb1PqOwF30L04GcK9Gww366AX2aDnKYxBGxkid6fiIMNw14Fg6DhRRdvbRSRfBeVSMQl
-	WaxlytFFpjs1RJoZ5N45Sz33bL9w1qJBlyeR1eU5rt65f55C6aO6qdifwEcZ130ppK53tP
-	pSveThL3uREOnABjLcdpsunrn9gRUFcZLXwXOSMIY/Byy+6Sd2LBtfvMGzoSgr9hC9w0Ly
-	5xXQ0diqvtpnZBddkWZNE4v0Z6yBzfp+Ldvy08kYgCZJDjkf6XZXF1wQdHfrhUyKVv7ICE
-	Oy4tVehaRM110/poQ6AB8ew8cPWmwyLlOdtLmIRxn5M7f9zit58chkxeIOjPjA==
-Message-ID: <3565783722927fa48a30f48b063ef99bcd703eab.camel@mailbox.org>
+	bh=s4uscHTSNNyFgyqCTfvm7pgyQFz42LzvHFK7u0x0Cw0=;
+	b=YhheDy8EfCQv89DyrUXN/Yqh1aav8HKOaPDt4/Y3XFIPfM2HQZksNK1Q4J8Xiva3N9Z1Am
+	tkP2eX7Gmfxohg3zXmJeyevXeiaQVGhGYtgf5DW7WiXDKCn+YIxVKqJUBhnT18fBqcR9od
+	pNUOxHrNlb/aeBZqcMinomv32QEtNIj5iOvnDLzi8UenUwl35U/mEBFZgBoAEnX3k3vgMh
+	WQOKG6XE+gjRy2dunur160DUflwOCoaEEllxXNkae4RdWnLlHPVfWZgcVG5KwuGlYdMS4j
+	K8l8J5jfGgLMMk0a9E7oE+GBGvUkDtPQtpWfP+urJK7Rg8cIfoftFRGLPfWCxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793273028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s4uscHTSNNyFgyqCTfvm7pgyQFz42LzvHFK7u0x0Cw0=;
+	b=YtyTqxntKVSuf0cXkpc84IWDjijQempbl/OM6z3jYncGCiwf/Ln99mK5+x8W0cyO9xO1gA
+	kZBUATT4teV385wTGMVEaT2ftHDv466XZMo/nCHJ+3VBjvaefh76HC4h6ZqGpVZBZzIif0
+	B0s67a7gzHS6sPKR61gN4QKr3LIKCsgfOapXu1CZ/XgwBY8WD5Dr2jHZMjCr5H6sThWMxU
+	MsRJbd3Mcfr33CLRmW8Bp3z2gPWqfmC5Y9O64Vqrjxd/mFXxtXsuyhRNEFalbt43sftG6G
+	xJ0leaBmncxO0k6VjKMNj5ycc2G3vyKocU53toT9hpLpEM+cmebxYVR8EEEN+Q==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=lst@pengutronix.de smtp.mailfrom=l.stach@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793273028; a=rsa-sha256;
+	cv=none;
+	b=CMz7Ii0BbFpIf3JOy1xOkUy1/GalemR2HX7An2NH4NYYc7nV9uA9ia33/CLwhOM5TIZVCO
+	r5SjbN1jtUnItbnYc85Z8xd4yR28RKXjpQwR04UflRreGYa/mpCLkcKsFkvwIJI+HcAAQT
+	e6tyb0XkfNDiCGGfk7D6jVoenCj3H0aH4beZaCr4Eu2G+Ql31BsMOvYsHkb91GsL5HKzlk
+	3XcSZVASLqeWZ4KZWuMaxSYPs7oxi8oIKtwvZ2vU+4PLj3JdRq+wZ2/4S5M1ckb3lR6s7O
+	ZyHtIMqbdSoBMc5gGXlEKgsiCFaxc5lHEpetkI/HR6kfcn8G0LRnwE1RHAFQyQ==
+Message-ID: <d0610126883f23bec3472f41e528aae786f27c8c.camel@pengutronix.de>
 Subject: Re: [RFC PATCH 0/6] dma-buf: Phase out is_signaled() race
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>, Philipp Stanner
- <phasta@kernel.org>,  Min Ma <mamin506@gmail.com>, Lizhi Hou
- <lizhi.hou@amd.com>, Oded Gabbay <ogabbay@kernel.org>,  "Rob Herring (Arm)"
-	 <robh@kernel.org>, Tomeu Vizoso <tomeu@tomeuvizoso.net>, Karol Wachowski	
- <karol.wachowski@linux.intel.com>, Andrzej Kacprowski	
+From: Lucas Stach <l.stach@pengutronix.de>
+To: phasta@kernel.org, Min Ma <mamin506@gmail.com>, Lizhi Hou
+ <lizhi.hou@amd.com>,  Oded Gabbay <ogabbay@kernel.org>, "Rob Herring (Arm)"
+ <robh@kernel.org>, Tomeu Vizoso	 <tomeu@tomeuvizoso.net>, Karol Wachowski
+ <karol.wachowski@linux.intel.com>,  Andrzej Kacprowski
  <andrzej.kacprowski@linux.intel.com>, Sumit Semwal
- <sumit.semwal@linaro.org>,  Christian =?ISO-8859-1?Q?K=F6nig?=	
+ <sumit.semwal@linaro.org>, Christian =?ISO-8859-1?Q?K=F6nig?=	
  <christian.koenig@amd.com>, Felix Kuehling <Felix.Kuehling@amd.com>, Alex
  Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
  Simona Vetter	 <simona@ffwll.ch>, Maarten Lankhorst
@@ -119,10 +136,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	spice-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
 	linux-tegra@vger.kernel.org, linux-iio@vger.kernel.org, 
 	linux-usb@vger.kernel.org
-Date: Thu, 29 Oct 2026 11:28:39 +0100
-In-Reply-To: <abca3f0039b07999e29558690c27fef23292bea3.camel@pengutronix.de>
+Date: Thu, 29 Oct 2026 12:23:45 +0100
+In-Reply-To: <3565783722927fa48a30f48b063ef99bcd703eab.camel@mailbox.org>
 References: <20261029095542.1526750-3-phasta@kernel.org>
-	 <abca3f0039b07999e29558690c27fef23292bea3.camel@pengutronix.de>
+		 <abca3f0039b07999e29558690c27fef23292bea3.camel@pengutronix.de>
+	 <3565783722927fa48a30f48b063ef99bcd703eab.camel@mailbox.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.60.2 (3.60.2-2.fc44) 
@@ -135,40 +153,72 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MBO-RS-META: j7weafhpcaunystyo7r38dam3cyszcnz
-X-MBO-RS-ID: 051d97976afa34da498
 
-On Thu, 2026-10-29 at 11:23 +0100, Lucas Stach wrote:
-> Hi Philipp, hi Christian,
-
-Jo Lucas
-
+Am Donnerstag, dem 29.10.2026 um 11:28 +0100 schrieb Philipp Stanner:
+> On Thu, 2026-10-29 at 11:23 +0100, Lucas Stach wrote:
+> > Hi Philipp, hi Christian,
 >=20
-> Am Donnerstag, dem 29.10.2026 um 10:55 +0100 schrieb Philipp Stanner:
-
-[=E2=80=A6]
-
-> I think we would all be interested in the actual use-case that's
-> sensitive to this kind of latency.
-
-Me too.
-
-Let me use this opportunity to stress that in the future, in DRM,
-whenever we have [to accept] a racy "optimization", both commit
-messages and code comments must document why it exists and who
-requested it with what proof.
-
-Would save us lots of time when those things are discussed >5 years
-later.
-
+> Jo Lucas
 >=20
-> However, I wonder if this is even an issue anymore with the lock
-> inlined into the fence structure.
+> >=20
+> > Am Donnerstag, dem 29.10.2026 um 10:55 +0100 schrieb Philipp Stanner:
+>=20
+> [=E2=80=A6]
+>=20
+> > I think we would all be interested in the actual use-case that's
+> > sensitive to this kind of latency.
+>=20
+> Me too.
+>=20
+> Let me use this opportunity to stress that in the future, in DRM,
+> whenever we have [to accept] a racy "optimization", both commit
+> messages and code comments must document why it exists and who
+> requested it with what proof.
+>=20
+I don't fully agree that this is a racy optimization. To me it seems
+the most critical issue here is that "fence is signaled" is under
+specified.
 
-Almost no one uses inline-lock so far. So unfortunately, we might
-regress old drivers, maybe.
+Does it purely mean that the actual hardware operation that the fence
+is guarding is done? In that case the current implementation is fine,
+as the bit is only set after the HW told us that it is done. This is
+the interpretation I would assume was the original intent behind the
+current implementation.
 
-But sounds as if you're in favor of phasing the locklessness out :)
+Does it mean that the hardware is done and all registered callbacks
+have been run, even if the actual work is done in a (indefinitely)
+deferred worker? You mentioning explosions caused by the pure signal
+state check outside the lock would imply that some consumers of the
+fence took the signaled state to mean this interpretation.
 
+> Would save us lots of time when those things are discussed >5 years
+> later.
+>=20
+> >=20
+> > However, I wonder if this is even an issue anymore with the lock
+> > inlined into the fence structure.
+>=20
+> Almost no one uses inline-lock so far. So unfortunately, we might
+> regress old drivers, maybe.
+>=20
+> But sounds as if you're in favor of phasing the locklessness out :)
+>=20
+I'm in favor of ripping out hard to reason optimizations if they turn
+out to not provide any optimization after all. However, before going in
+either direction we need to clarify the fence signal state interface.=C2=A0
 
-P.
+Either we keep the (in my interpretation) original intent of the signal
+state only telling about HW progress state and thus declare some
+current uses as wrong usage of the interface, which need to be fixed.
+Or we need to include the SW callbacks too, but then your current lock
+approach only guards against code directly executed in the callback
+functions. If the implementation of the callback defers anything to a
+worker this may still be racy.
+And that's also my criticism to this patchset now that I thought a bit
+more about this: by simply putting things under the lock you serialized
+more of the SW state without actually better defining the guarantees
+that this changed fence interface provides or doesn't provide to the
+consumers.
+
+Regards,
+Lucas
