@@ -1,101 +1,147 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.172
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793268918;
-	b=oGxytcEc5JYN84JrE4rvNPnpO+CDfD3ECbu0fa0te7aT2UAA+SYi0NrfpKAfUAnWAJjt
-	 rIIk3jyV3nbq6QR7+dZBEc3Sgaz6yafbszD7nm3l3bLWASnl7cLRR4WRARlaaoUvspy2d
-	 ZUJp0/Iv+eXSxvUd9NXKc0Xtw/kAO49q2oUlF7pxlQtUmD7RxHl2ThliPXLmnzX7WTHq/
-	 93v6fmTlW8MBCNthkEj2xhhcZDyWGXn0E9o9QGW/VNRUDvN8Pkf5tpRWcwPOct3rReSmy
-	 Vdk5Ufal+4s5ljubywNXSMFYWrMl9P/vI6FDkPu8/vVku0868UMYez9+HhTt/LjpsFQ==
+	t=1793269421;
+	b=nnlsqqqgOgw9RnGfx2rD4/0TpEFeN8N6o5yzVDsTD0O1+qSF6Chruw2kwvzUtx/fw6xf
+	 IUFGqD1srm+BNUMG8j6TorXf6VXPhrOYJGi2ZfIAsId3zyFave8ENarS5Gjm/fYtgD2xb
+	 U8xfVnOm7QcRDCOqSOmWM8iatJxzLf9LyzIs4rG9Zlw9DecQnoQjx9MXvOG9kjnE0/I/z
+	 NGwA7+10g7igo2tIKLW9c7WgCrXYlHJKIQ/eqUhGGgmTUcmQkwhw0FYrtFNpX0Xtj3neK
+	 ghWKiVzGJYcgZIOs9g4dhC9b3OdnQeITjecfZ7nwhvPUZlJJbgbmKmFYfk6kMgTMg2g==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793268918;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
-	b=Zcnx1M5MYgtaOEHjhmGPLATtic5FOM4uDPgUHzpGe22QIqpTW3S8fCkfyJVAWwr7MGGZ
-	 6HMQo8OcX0UYgq+M8esgyAPYYL9M8DqrH3iyAazq0YL1oTU5GCJoUb2GA51R9RpIXTINM
-	 XnJi6VW4eAXJeC/od4aNfBSh1pCNy4rM90lxsQyswmg89JlOSG2tQvdUC9Lfrm0+vIkK1
-	 NeHRFauiC/IhunIZjJjNXcqlYIly3Sls81a1RNEEs5R1Qnxy4pcIKl9jqh5HVdS/Jz86X
-	 adzYDOmwsOvAz1xWCV517DOkxIhsMplrEYzmW1lMCy0ZoSw41GUaQGtQgEhp21F+Lcg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793269421;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=h/NTq1WLBMPSLF6XFZgbhvzXQ8oYuf+0ZqChn7K5Lhk=;
+	b=oVQ7nlxXUPKmaMBLTzMQsx2rH43Zo7+vA3zI+mkmwloTA8ZYn3GeaE/xPpyfrvv5nVlX
+	 7+GvmheEi+Tr+pR73Xlrzk+3fsFB1zqtqe1Op4FNu+UQu7CJ195l7olw6O3SbC2BSvGGJ
+	 YcxrCIo5E9X8t0vDx0JRSdxFdOTHE1tfL6ozDJ3vhpHLAI5N7Lhkldbre7iKlQq2DI7b6
+	 utYM3mDyRly2Rh5pqIXSQhtaWvdU5wqTgYfFMrx8nZ+0dFPSj9wIPCDTAFvAWbskgBJ4f
+	 lfJpU8quEBM5eUTY2o91wqqzwIhZB4mqhrdGLa6wYkU9stI9nDQIq9YSdy2YPIMoxpg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yYaDw9Qa;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.172
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=Ql2h6Chx;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB569606A329
-	for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 10:15:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB569606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBD6606A320;
+	Thu, 29 Oct 2026 10:23:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7DBD6606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yYaDw9Qa
-Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-353804b591eso3026328eec.0
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Oct 2026 03:15:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793268917; cv=none;
-        d=google.com; s=arc-20260327;
-        b=AHdRhKzDm/dZl2A0tVlsd8IhEY4p7h5tfOCyb5gk9hKxt54TJEyp/NpRY2tPhENEbJ
-         TQKjnMkG03Qy+nWY3DugIIAIIx6Cma+aEv2UtS5yZ9DoXgZRjNoBYFtodM8GByfBzcVr
-         NPWT7Kz7310i3L5W04XxQIMIentgJirC8iek09ceKZnF+gpHNz2GBEUXUyshMVbwGCay
-         Xwkd3zfqDz+8/8JSrdvqHwUtCABksOEuAwegfsGtIt9FtPMDyRDZxg7ZlcUNlgMQOWbO
-         kspF/S3yzoQ/pHyK+fDaRdFUg0YKo+uCiauDYFTU8hIzkP77YW4XgSnDlb9F/bpRNqXj
-         8Qwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
-        fh=Pubti4TrqNiYMkMxx2V8klPHN1UERaFz9fkvEf6+3dw=;
-        b=cyiFhvfg2XKARVctdr9YHOEqyKGJx0Q4gs0xLG1rY+WyD9y4C1A17m0eq1U0VBkNKt
-         BQvguTT1x/yrMlEb/NG9ndR8+T53Nht/eOq6pl9/Qe/y4HHdXCSC18Rard1pGOAsTZ3Q
-         Bmt78NIVkvKJW3LwY3T+AyzBnq+A+2WDF9w8nr/nfSND5m6t8hlOhACjcSjnOgLB3Ip6
-         9JEZYMaVzeUH09qUzofxXUrr7RJ6YKunboFqRXiGHQUXUTshVBiHO50uhiNJdwl6QqwN
-         pq1XYh1YtFLCo9ubmDzqYNf5k2r3sgZ9H0HZscXrBUIENyWDtPy7nL7Qj82clQlRJmI+
-         3wuw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793268917; x=1793873717; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
-        b=yYaDw9QaXvy/ey4C72CgmAyNvMVNhiCEbTAs49OXnei/ZdR9HQ4ujPrhIh3QcHQSf7
-         NDNxbOTB3YbR4C5RZkRF1VYNQP/S9u9CTY/EcbOtaFoOwTlwhStsSoAYDGToa1nmQtNO
-         YzwjyQR+93YuejSkGmUY0kn2j9hcgkPiDJwI1AyQp59CWfrSnG03qEcX6cdeyJsEzFsw
-         kCBMMLbhIyYKc0Cd6jkfxWdtQZ0o8y/ZdFG7wS24RfvUZMiGg+y1laVgz5IwvjdD1ZxB
-         vlAGCgNtoUkDkkfWdDnkBwwJ8+30su/Nh5RoEMMkpkUI5HlQCyjPh5KDG/1XUj1VvTak
-         iP9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793268917; x=1793873717;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=hZhJRYKRYnpA55dTVl2RVAnPezaQl7o2LFp27rGTjlc=;
-        b=brdco+l6o+NytsMw6nu9XR6q9QsHIW1Zny6FRqGEX445GJ4y7zJahveUy/DxluNu0r
-         5COg3R3hnrPLN1VThSOrMzOeiwRvBkHRuqphgXPx8f30upQyidP9Y+yL7kmXhugssWHW
-         0/zygOlDpHJGIvEudwwKP6g6GlJOEyN8ND/xx5ieENeL85Z1ljjm/AJwrVMitFicwb24
-         knXEA9s9L1+OhPCJR1dEX6pm1YCtBDVbZpHacPGHiiosNCKchkUIVCmJ07ypzVhx8HtB
-         x1BIMzB1G+NOLGrDHaWFZBBUwhed8D7FOxSnr+M6KQE7Zcy94kiLXWg+ORu4ujYbW/Tb
-         +/tg==
-X-Forwarded-Encrypted: i=1; AKwUvByACBq8rkX/KGs/R9v7fTh0vPLiw6Zew68HWqXewlWClIjTafykBmg8CGBrzVdiNl4s56gDO9iWwmeiNQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKS1RM2dQZqJfKOIhO6jfcIrbp0oGLW1lB3pdgG540oed/yGnI+
-	Lh4HEUlHKOFx+LBHi8eAR+aSOFFInbmBStXqU+N9E/6CsiGy2T2GwWx1vNx1l7yg9GeblRk7Doy
-	AqG93yiQ9PkHSmce8YaPDsueFSi3BO/M=
-X-Gm-Gg: AYBFou01gLEs62iYcv5L2mQKIjtOJd9M5ILksuLvBfL6Dgc+6EZrYK+1uSp27hYa6s4
-	YeR4KCqYMvND4Hj/X58Eng8oqmZDCb++1OOgmLg525ix5V1BSZyGS7rLqCS5C83U5ukteUDjkn2
-	p1PLBFnE0dA0Bo0cObYyOq3C8pl5vkIFEBlxDMYftCFQ+6MJlxbew7nHxXZsU2lb2AZBTJMN7vD
-	6AwKcEWp43/JOVgyaTMuFnxGSHPHJbycWAs83MeIEWfetjqyN6A1TSnSieFp944fjkFo9cbRqHk
-	ltMaYgtAb31ofmg2ZYvhkmi/PW2AJdw72sH6EQp/eMtfIWU07qd+rq+eZuVg3Dpz5+4YEs4a1Lx
-	yVwbdO8GlA4kiAI+gNRW1T40u1kvLxxuEAn/E860L4MLCwMc5vplaLQlWnzGW/wCo8r0EYkxTm5
-	dGu0ymI8VywL2CenA=
-X-Received: by 2002:a05:693c:69c9:b0:36a:279:c93f with SMTP id
- 5a478bee46e88-36a203e2a52mr6817742eec.33.1793268916731; Thu, 29 Oct 2026
- 03:15:16 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=Ql2h6Chx
+Received: from [IPv6:::1] (ptz.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::77])
+	(Authenticated sender: lst@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 9E169200AD7;
+	Thu, 29 Oct 2026 11:23:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793269416;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h/NTq1WLBMPSLF6XFZgbhvzXQ8oYuf+0ZqChn7K5Lhk=;
+	b=Ql2h6ChxMtOcGZatguhKGOuEC+rmEILtn+if2SqEYCCbxsuZJ6Ru1gYHv8VOZp6Mh4UHgD
+	nqC+Abc2a38Cwsw0drk11FIo/o24C4d78/xhRP3/VTW8wljjZU8itJ+/kl8dIca91QxHTe
+	zvq2X5SIBOfNysNtdZi59WpQkG7l62333eKKoo1mxhb7lKFl0mbo4G2Zx6icW/xkO4bTTE
+	YLTxcS/jNobwPebe1QvNnKjEU9FWzz23p1+A9z4qKfS4d3UnGFoteuJK8i4EG/TbM+kgZm
+	36EtXeEIB1VKZmg46ZE6J8JvC49oxRtIkz9PpvGhCuexji4WQBw+w9KH7UeaQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793269416;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h/NTq1WLBMPSLF6XFZgbhvzXQ8oYuf+0ZqChn7K5Lhk=;
+	b=GGV5mVLTXHW8P1GM8MYEEw2sQLTe4MwdizvhP5Gb/W/2fDooOaBhx/Sa6fBxsgpigJrLiU
+	igwFXfs2zGARcG6oRLe3YbfOnTu/2cJUh7LRJrnnkQS9jz/1Y3UBwkh5VQ/POkNwIuxIT0
+	KQqycJPkCqfr8Rb3w+LWfxdHK9tZOIFSmALUHySLhH2nMw1ohIN5PV6epE7MfW9GnTgZiP
+	aB1o7tlQphCTr3i/eUUYsp9+VzsQAbIi7aed/Fs9CWQwqWGP3mh0SmpkOiff1MJ5KuNFqQ
+	/B16Le4NHB27ysqZuAH84XpNo3HERRJf+Gjr9xim0+G/tMzPUQcCR7egGl6w6w==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=lst@pengutronix.de smtp.mailfrom=l.stach@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793269416; a=rsa-sha256;
+	cv=none;
+	b=WpN8WUnDHqz9Mc+CuO1qqQ2s1JkX/YAqSIeMD64lYoC6u7e/Mf6zaDQORC81p8qVmhEOlB
+	Qyk2Tu3F5ZFoPi+6o3G5P8XatkbqSpZqIMxTmNYjN7iZ9PyGZF+UJ9ECFfr5xTsdvve48U
+	DwjbkCL6Gqu4fpyQEmvvgJ4MB8/2UNwQB3y97Tn6pks8uSBKkJNnVRBHkLNA79FYLoF/UQ
+	/Fka7A7sY843ZzZCE560WkHfHGLJkmQ0WFB126J4qtxaMZHhGGerIFlt07dEmX36MJuoaj
+	+Fi5x3cZiGZ8NviUZwVGZyTDLNtqw6kmMNQeZKWIuGV0RSo3ygqYDO8hsPjmKA==
+Message-ID: <abca3f0039b07999e29558690c27fef23292bea3.camel@pengutronix.de>
+Subject: Re: [RFC PATCH 0/6] dma-buf: Phase out is_signaled() race
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Philipp Stanner <phasta@kernel.org>, Min Ma <mamin506@gmail.com>, Lizhi
+ Hou	 <lizhi.hou@amd.com>, Oded Gabbay <ogabbay@kernel.org>, "Rob Herring
+ (Arm)"	 <robh@kernel.org>, Tomeu Vizoso <tomeu@tomeuvizoso.net>, Karol
+ Wachowski	 <karol.wachowski@linux.intel.com>, Andrzej Kacprowski	
+ <andrzej.kacprowski@linux.intel.com>, Sumit Semwal
+ <sumit.semwal@linaro.org>,  Christian =?ISO-8859-1?Q?K=F6nig?=	
+ <christian.koenig@amd.com>, Felix Kuehling <Felix.Kuehling@amd.com>, Alex
+ Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter	 <simona@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Russell King	
+ <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
+ <christian.gmeiner@gmail.com>,  Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, Alessio
+ Belle	 <alessio.belle@imgtec.com>, Luigi Santivetti
+ <luigi.santivetti@imgtec.com>,  Qiang Yu <yuq825@gmail.com>, Rob Clark
+ <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov	 <lumag@kernel.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang	
+ <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, Marijn Suijten	
+ <marijn.suijten@somainline.org>, Lyude Paul <lyude@redhat.com>, Danilo
+ Krummrich <dakr@kernel.org>, Boris Brezillon
+ <boris.brezillon@collabora.com>, Steven Price	 <steven.price@arm.com>,
+ =?ISO-8859-1?Q?Adri=E1n?= Larumbe	 <adrian.larumbe@collabora.com>, Liviu
+ Dudau <liviu.dudau@arm.com>, Dave Airlie	 <airlied@redhat.com>, Gerd
+ Hoffmann <kraxel@redhat.com>, Matthew Brost	 <matthew.brost@intel.com>,
+ Natalie Vock <nat@pixelcluster.dev>, Arun Pravin	
+ <arunpravin.paneerselvam@amd.com>, Matthew Auld <matthew.auld@intel.com>, 
+ Thomas =?ISO-8859-1?Q?Hellstr=F6m?=	 <thomas.hellstrom@linux.intel.com>,
+ Melissa Wen <mwen@igalia.com>,  =?ISO-8859-1?Q?Ma=EDra?= Canal	
+ <mcanal@igalia.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Raspberry Pi Kernel Maintenance	 <kernel-list@raspberrypi.com>, Dmitry
+ Osipenko <dmitry.osipenko@collabora.com>,  Gurchetan Singh
+ <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, Zack Rusin
+ <zack.rusin@broadcom.com>,  Broadcom internal kernel review list	
+ <bcm-kernel-feedback-list@broadcom.com>, Thierry Reding	
+ <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Cameron	 <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Greg Kroah-Hartman	
+ <gregkh@linuxfoundation.org>, Sunil Khatri <sunil.khatri@amd.com>, Kees
+ Cook	 <kees@kernel.org>, Jesse Zhang <jesse.zhang@amd.com>, Timur
+ =?ISO-8859-1?Q?Krist=F3f?=	 <timur.kristof@gmail.com>, Srinivasan Shanmugam
+ <srinivasan.shanmugam@amd.com>,  Kexin Sun <kexinsun@smail.nju.edu.cn>,
+ Prike Liang <Prike.Liang@amd.com>, David Rosca	 <david.rosca@amd.com>,
+ Krzysztof Karas <krzysztof.karas@intel.com>, Marco Crivellari
+ <marco.crivellari@suse.com>, Shixiong Ou <oushixiong@kylinos.cn>, Jouni
+ =?ISO-8859-1?Q?H=F6gander?=	 <jouni.hogander@intel.com>, Thadeu Lima de
+ Souza Cascardo <cascardo@igalia.com>,  Pierre-Eric Pelloux-Prayer
+ <pierre-eric.pelloux-prayer@amd.com>, Joel Fernandes
+ <joelagnelf@nvidia.com>, Al Viro <viro@zeniv.linux.org.uk>,  Neill Kapron
+ <nkapron@google.com>, Michael Bommarito <michael.bommarito@gmail.com>, Sam
+ Day <me@samcday.com>,  Gabriel Prostitis <prostitisgabriel@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
+	etnaviv@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	imagination@lists.freedesktop.org, lima@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	nouveau@lists.freedesktop.org, virtualization@lists.linux.dev, 
+	spice-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Date: Thu, 29 Oct 2026 11:23:34 +0100
+In-Reply-To: <20261029095542.1526750-3-phasta@kernel.org>
+References: <20261029095542.1526750-3-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.60.2 (3.60.2-2.fc44) 
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -105,127 +151,127 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261029-upstream-speedo-t114-v1-0-81457cc9d94c@tsv-stahl-riesa.de>
- <20261029-upstream-speedo-t114-v1-3-81457cc9d94c@tsv-stahl-riesa.de>
-In-Reply-To: <20261029-upstream-speedo-t114-v1-3-81457cc9d94c@tsv-stahl-riesa.de>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 29 Oct 2026 12:15:04 +0200
-X-Gm-Features: AclHuK_nKjJOvqTdHrlTm0y6eXLR-uFJwQRZTvfrnf6NnzkRQXlz5soPbSPOmYM
-Message-ID: <CAPVz0n13YHVAGNoEYZaef7HL1HkQK9w+mLUV-h4AGC0mr3bkpQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: tegra: dfll: Get the voltage step of range-based regulators
-To: admin@tsv-stahl-riesa.de
-Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-=D1=87=D1=82, 29 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 11:3=
-3 Patrick Fischer via B4 Relay
-<devnull+admin.tsv-stahl-riesa.de@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
->
-> get_alignment_from_regulator() takes the voltage step from
-> regulator_get_linear_step(), which returns desc->uV_step. Regulators
-> described by linear ranges, such as the SMPS of the TI Palmas PMIC,
-> leave uV_step at 0.
->
-> With a step of 0, round_cvb_voltage() returns 0 for every OPP, which is
-> then clamped to min_millivolts, so all CPU OPPs get the same voltage.
-> The I2C LUT is broken as well: find_vdd_map_entry_exact() and
-> find_vdd_map_entry_min() divide by the step, and on ARMv7 with hardware
-> division the result is 0, so selector 0 matches every voltage. The LUT
-> ends up with a single entry and the DFLL never changes vdd_cpu.
->
-> This affects boards that run the DFLL in I2C mode with a Palmas SMPS as
-> vdd_cpu. In mainline these are the Xiaomi Mi Pad (Tegra124, since v6.19)
-> and the Asus Transformer Pad TF701T (Tegra114, DFLL enabled for v7.4).
-> The AS3722 and MAX77621 used by the other DFLL boards report a linear
-> step, and the PWM mode does not use the regulator.
->
-> On a Tegra Note 7 (Tegra114, TPS65913) all 16 CPU OPPs are at 1000 mV
-> and vdd_cpu stays at the 1.10 V left by the bootloader. The CPU runs at
-> about 1.34 GHz whatever cpufreq requests. With this patch the OPPs range
-> from 1000 mV to 1270 mV, the LUT holds the 1000 mV to 1270 mV selectors
-> and the DFLL follows cpufreq up to 1708.5 MHz.
->
-> If the regulator reports no linear step, use the smallest step between
-> the voltages that are usable on the board. Fail the probe if there is
-> none instead of running with a step of 0.
->
-> Fixes: b3cf8d069505 ("clk: tegra: dfll: CVB calculation alignment with th=
-e regulator")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
-> ---
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 26 ++++++++++++++++++++++++=
-++
->  1 file changed, 26 insertions(+)
->
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/teg=
-ra/clk-tegra124-dfll-fcpu.c
-> index 457a77c5bb62..5bdea4775076 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -642,6 +642,7 @@ static int get_alignment_from_regulator(struct device=
- *dev,
->                                          struct rail_alignment *align)
->  {
->         struct regulator *reg =3D regulator_get(dev, "vdd-cpu");
-> +       int i, n_voltages, uv, prev_uv =3D 0;
->
->         if (IS_ERR(reg))
->                 return PTR_ERR(reg);
-> @@ -649,8 +650,33 @@ static int get_alignment_from_regulator(struct devic=
-e *dev,
->         align->offset_uv =3D regulator_list_voltage(reg, 0);
->         align->step_uv =3D regulator_get_linear_step(reg);
->
-> +       /*
-> +        * Regulators described by linear ranges (e.g. the Palmas SMPS) d=
-on't
-> +        * report a linear step. Use the smallest step between the voltag=
-es
-> +        * that are usable on this board instead.
-> +        */
-> +       if (!align->step_uv) {
-> +               n_voltages =3D regulator_count_voltages(reg);
-> +               for (i =3D 0; i < n_voltages; i++) {
-> +                       uv =3D regulator_list_voltage(reg, i);
-> +                       if (uv <=3D 0)
-> +                               continue;
-> +
-> +                       if (prev_uv && uv > prev_uv &&
-> +                           (!align->step_uv || uv - prev_uv < align->ste=
-p_uv))
-> +                               align->step_uv =3D uv - prev_uv;
-> +
-> +                       prev_uv =3D uv;
-> +               }
-> +       }
-> +
->         regulator_put(reg);
->
-> +       if (!align->step_uv) {
-> +               dev_err(dev, "failed to get vdd-cpu voltage step\n");
-> +               return -EINVAL;
-> +       }
-> +
->         return 0;
->  }
->
->
-> --
-> 2.56.0
->
+Hi Philipp, hi Christian,
 
-I can confirm capping CPU opps at 1000mV and this patch fixes this. I
-have tested on Tegra Note 7, ASUS Transformer Pad TF701T and Xiaomi Mi
-Pad which are all affected.
+Am Donnerstag, dem 29.10.2026 um 10:55 +0100 schrieb Philipp Stanner:
+> dma_fence_is_signaled() can return true *while* the fence is signaling.
+> This has caused explosions before and I guess we can agree that it's
+> just not ideal.
+>=20
+> The fundamental issue is that the fence-signaled-bit is set under lock
+> protection but read without it.
+>=20
+> So ideally, we would read it with the lock. This would not change the
+> relative order, i.e. the bit would still be true in the fence callbacks.
+>=20
+> Christian informs us that taking the lock causes people to complain
+> about performance regressions because the lock-taking shoots down copied
+> cache-lines. (which is weird since it would mean that someone is
+> repeatedly polling on fences instead of just registering a callback to
+> notify himself once it signals)
+>=20
+I think we would all be interested in the actual use-case that's
+sensitive to this kind of latency.
 
-Tested-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Svyatoslav Ryhel <clamor95@gmail.com>
+However, I wonder if this is even an issue anymore with the lock
+inlined into the fence structure. With the deprecated external lock you
+would potentially get two cacheline bounces/remote invalidations for
+the exclusive access: once for the lock and one for the
+test_and_set_bit atomic op on the flags field.
+Now with the inlined lock, the lock operation will bring the cacheline
+into exclusive state on the local CPU and the flag check would then
+operate on that same cacheline, so there should be only a very minimal
+penalty compared to the sole atomic op.
+
+Regards,
+Lucas
+
+> Let's accept the potential for regressions as true for now.
+> Nevertheless, I think I can propose a path towards removing the race:
+>=20
+> This series suggests taking the lock in dma_fence_is_signaled() *unless*
+> the driver explicitly asks for a check with a race-condition.
+>=20
+> As a preparation, I allow drivers to set flags when initializing fences.
+> Then, we add a flag with which the driver can switch locking off for
+> that particular function.
+>=20
+> By default, we let all drivers take the lock.
+>=20
+> Should we then, in the kernel release process get reports about
+> regressions, we can set the race-flag for the affected driver and
+> restore the old behavior.
+>=20
+> Should there be no reports, we could phase the flag out again after a
+> few releases, always taking the lock.
+>=20
+> New users would always see the lock.
+>=20
+> I put all potentially affected parties on Cc. Please point out if you
+> can already foresee your driver being negatively affected by this.
+>=20
+> P.
+>=20
+>=20
+> Philipp Stanner (6):
+>   dma-buf: dma-fence: Add flags parameter to dma_fence_init()
+>   dma-buf: dma-fence: Add flag for using 64-bit seqnos
+>   dma-buf: Port users of dma_fence_init64()
+>   dma-buf: dma-fence: remove dma_fence_init64()
+>   dma-buf: dma-fence: Close race in dma_fence_is_signaled() by default
+>   drm/nouveau: Remove hacky fence check
+>=20
+>  drivers/accel/amdxdna/amdxdna_ctx.c           |  2 +-
+>  drivers/accel/ethosu/ethosu_job.c             |  2 +-
+>  drivers/accel/ivpu/ivpu_job.c                 |  2 +-
+>  drivers/accel/rocket/rocket_job.c             |  2 +-
+>  drivers/dma-buf/dma-fence-array.c             |  2 +-
+>  drivers/dma-buf/dma-fence-chain.c             |  4 +-
+>  drivers/dma-buf/dma-fence.c                   | 44 +++++------------
+>  drivers/dma-buf/st-dma-fence-chain.c          |  2 +-
+>  drivers/dma-buf/st-dma-fence-unwrap.c         |  2 +-
+>  drivers/dma-buf/st-dma-fence.c                |  2 +-
+>  drivers/dma-buf/st-dma-resv.c                 |  2 +-
+>  drivers/dma-buf/sw_sync.c                     |  2 +-
+>  .../gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c  |  2 +-
+>  .../drm/amd/amdgpu/amdgpu_eviction_fence.c    |  7 +--
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c     |  2 +-
+>  .../gpu/drm/amd/amdgpu/amdgpu_userq_fence.c   |  5 +-
+>  .../gpu/drm/amd/amdgpu/amdgpu_vm_tlb_fence.c  |  5 +-
+>  drivers/gpu/drm/drm_crtc.c                    |  2 +-
+>  drivers/gpu/drm/drm_writeback.c               |  2 +-
+>  drivers/gpu/drm/etnaviv/etnaviv_gpu.c         |  2 +-
+>  drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c  |  2 +-
+>  drivers/gpu/drm/i915/i915_request.c           |  2 +-
+>  drivers/gpu/drm/i915/i915_sw_fence_work.c     |  2 +-
+>  drivers/gpu/drm/i915/i915_vma_resource.c      |  2 +-
+>  .../gpu/drm/i915/selftests/i915_sw_fence.c    |  2 +-
+>  drivers/gpu/drm/imagination/pvr_ccb.c         |  2 +-
+>  drivers/gpu/drm/imagination/pvr_queue.c       |  2 +-
+>  drivers/gpu/drm/lima/lima_sched.c             |  2 +-
+>  drivers/gpu/drm/msm/msm_fence.c               |  2 +-
+>  drivers/gpu/drm/nouveau/nouveau_drm.c         | 13 -----
+>  drivers/gpu/drm/nouveau/nouveau_fence.c       |  4 +-
+>  drivers/gpu/drm/panfrost/panfrost_job.c       |  2 +-
+>  drivers/gpu/drm/panthor/panthor_sched.c       |  2 +-
+>  drivers/gpu/drm/qxl/qxl_release.c             |  2 +-
+>  drivers/gpu/drm/radeon/radeon_fence.c         |  2 +-
+>  drivers/gpu/drm/scheduler/sched_fence.c       |  4 +-
+>  .../gpu/drm/scheduler/tests/mock_scheduler.c  |  2 +-
+>  drivers/gpu/drm/ttm/tests/ttm_bo_test.c       |  2 +-
+>  .../gpu/drm/ttm/tests/ttm_bo_validate_test.c  |  2 +-
+>  drivers/gpu/drm/v3d/v3d_fence.c               |  2 +-
+>  drivers/gpu/drm/vc4/vc4_gem.c                 |  2 +-
+>  drivers/gpu/drm/vgem/vgem_fence.c             |  2 +-
+>  drivers/gpu/drm/virtio/virtgpu_fence.c        |  2 +-
+>  drivers/gpu/drm/vmwgfx/vmwgfx_fence.c         |  2 +-
+>  drivers/gpu/drm/xe/xe_hw_fence.c              |  2 +-
+>  drivers/gpu/drm/xe/xe_oa.c                    |  2 +-
+>  drivers/gpu/drm/xe/xe_preempt_fence.c         |  2 +-
+>  drivers/gpu/drm/xe/xe_tlb_inval.c             |  2 +-
+>  drivers/gpu/host1x/fence.c                    |  2 +-
+>  drivers/iio/industrialio-buffer.c             |  2 +-
+>  drivers/usb/gadget/function/f_fs.c            |  2 +-
+>  include/linux/dma-fence.h                     | 48 +++++++++++++++++--
+>  52 files changed, 115 insertions(+), 105 deletions(-)
