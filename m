@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793360614;
-	b=tdYQckqtfJ3sMrM8YiO2NIRwo0dgdw5l1qhABv7FhkuphpFHaMByr7mzPLuKCPXjo8dd
-	 A4o7/hn4+F/ZC4byg0s8eOrYktnOe8xShVZi0MilK+y0E3zf0RvLFBxXPYLzdbyiVdgHb
-	 xb+RD+LGbNf+CRMuNG3ByhA2kc+aL6chxvB1BwKl89cv2Ir5uRtsTf0KgTlBjhMCic/cC
-	 dVxZ43ZE4rylsK49f9fukow9xZfFZGIVVvAB6ey4/iV0OBkBNuOQLF85N9NZEoDUVUWGa
-	 /AwrwhcMoGWStYtqUvpsrhTYuqH2oNr1XkP5mTlKJaGrE9qC2t7WDgQqhsklnALQcsQ==
+	t=1793360669;
+	b=S7GqeanAMDSsIpWuWbAZTQy6l0NsoFV/SwZNlZYxwAYv5t9rNydu/D6RupPwofE9gA7m
+	 s2CAlInjiGGChCLod2CfkaQugta/T6yD6U5bALNPlYgr7kgRItAAGwtP3g5mkXyapPQ8X
+	 LfJaZWfely+/QbE9oJ2qIXIUptTEPFQdcOthd489yE8LsbLr8am2ecYDVGkXz+kA9LVBL
+	 p7V3mTdyRMCbt6TBIz79x5DHQXMQAuvv4OQQ9bih8JN9dRLF5Du5UV26w9Y62sH1+VCWY
+	 z6eAQUkTQEZTSaAVIwuBiz+56Lte6rMCWpH9GNsLRbjpeDsxt/8VjLGUdvTnWf8sNtA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793360614;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793360669;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=TJmQD5eQngMpl84I/Tazwml+k+hDOh038iK+PnlxpTk=;
-	b=nsbzuMXkQjd2RVBCQPCVQO8F4QV/X7X9f+f5RUUTJAPQimAK5MTv2AjabFU6dk9kug/u
-	 nlGyXq2vnMMfvpB6dK3zVoC3eYkojJkkHPPjN/+6qYv1gQeLKP6cps/YiRkaYMD4IUaYS
-	 PTeFnl6QD7b+15TBg0K63Fyn3o1j2j+FlJ0xxho6Hmr/+52rtXQj2MqkMbNKkN/ah2/n4
-	 9lPfFT1igOCi8EOAU1x4uvyMFgI8HTue0EJ9RWOfOqNB7XOu/nPwh+W0cYFm6N8BuuNAI
-	 eeBVPdlCH6Q98CwZE0xZXR7JgXuDzVpphblzVL7Teom8SrmcGZTtImEKQ7YnsH45f0Q==
+	bh=DpTDFSree3Cxk/D2Qxb1KtBNeieq6f1ZN5i6RF8Q5TM=;
+	b=T2jkVHWK5h6t3qAHl/QGYsFMdZ2KOhC3RQZV3kk6JvGdLglJXH21QFaKR33AK2iZ7Iy9
+	 DOPFEMQVR8yZuKcfWtGnTT99Rk+77xQmocF/Ur2dms6u+kD5Cgs9v01PBo1Ajoblxxzs5
+	 Wv1fXx4sdHTa+S0BwSxIeERMX8W6B9SFIBKYxcPCeXBWva7dxMpYDlJw281n0vcfl8SFa
+	 9U15gZOUn5tok+XG7YnaDb873lXMN67sHa5EnsX73X75D9RBDP8w2JsmM+RUcre9No6zc
+	 eXFAu9GcvJmNwf9IMCXqxV2a20X1/Id5xxG6fMVgHsBEZixfQ+H6x5VZKOBa2so+7HA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Tphxlmcm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OVQFq7eq;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EA0606A31A;
-	Fri, 30 Oct 2026 11:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F020606A32D;
+	Fri, 30 Oct 2026 11:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Tphxlmcm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC4A1F000C1;
-	Fri, 30 Oct 2026 11:43:29 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OVQFq7eq
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1C21F000C1;
+	Fri, 30 Oct 2026 11:44:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793360614;
-	bh=TJmQD5eQngMpl84I/Tazwml+k+hDOh038iK+PnlxpTk=;
+	s=k20260515; t=1793360669;
+	bh=DpTDFSree3Cxk/D2Qxb1KtBNeieq6f1ZN5i6RF8Q5TM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TphxlmcmNlT/xiu/1JQ7Ce7Hxa8ceCDUw0QkxFMrqsoIphqB1axCG+UYyGTTc8GuH
-	 OekkorI/Bc9igWOXBRh4JT4qk4n573BbwJKSkSrKi5gZJlkLFmAw37KoNNGxiqwqy1
-	 XZP4gd2eMK73zjlvWi7HCddacqYJ2/bE5y/w5usdK/0J7BxJ3xTayp7Ulyu5vCcf3p
-	 FwAAvJ7MBI3SNbArcmKrmTJfTI+g4r9PthtAmG/IxonlZb7sshzVNvXQfR1+U2+d1H
-	 4Z75IxeHpXUxLsu2p8uVykq+d60ez3x8Dzz/CHbjUTtpM3ybHRBvZ6eT7jQ90anqRu
-	 w5rW13Pkw0Jbw==
-Date: Fri, 30 Oct 2026 12:43:27 +0100
+	b=OVQFq7eqKG529VBOc/jO+cib/pp2kbyG1EjsxMXt7na8IIN8Y14GWB1tIrUEFfEhl
+	 gikZa5wkwtZm4XnNuXAzyjAHLYwZr14j9BBzWiRH7KqNgsrYd9N/ExkR2qIFjlms2P
+	 wP5xZYRA1Zt3xo5/7wkRG+KkQMyil1rMKkoeCswuuyyx8WolJ2ajAH9yMyZa51m96/
+	 n9s1r+jHtuZYP0CpHqwW/BxekParj4RbHycUsuAbwr/semsJrKEX29nJHQWLas2XLG
+	 bgnrG2r6YqT580wVRdeDXjmzFC14L+kMFRfZyeQcyoik1NyYEqC47GujLyMkyDVs1o
+	 CWnxQ38vFDZlQ==
+Date: Fri, 30 Oct 2026 12:44:21 +0100
 From: Bartosz Golaszewski <brgl@kernel.org>
 To: Mikko Perttunen <mperttunen@nvidia.com>
 Cc: Manivannan Sadhasivam <mani@kernel.org>, 
@@ -48,11 +48,11 @@ Cc: Manivannan Sadhasivam <mani@kernel.org>,
 	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/6] PCI/pwrctrl: Add the Tegra264 iGPU to the generic
- match table
-Message-ID: <ppacouwr3kteic3ejouxq6ldtf5iltpyrsc6tuazarhaks5ogh@px3npku2feak>
+Subject: Re: [PATCH 4/6] PCI: tegra264: Power endpoint devices before
+ enumeration
+Message-ID: <qlyd6q5o4ubkq23bn7xhgo2jmsfvhrzvp5fqvobq55ivzh4ie4@wbvvspjde25s>
 References: <20261029-b4-t264-igpu-pci-v1-0-4d843dda0b02@nvidia.com>
- <20261029-b4-t264-igpu-pci-v1-3-4d843dda0b02@nvidia.com>
+ <20261029-b4-t264-igpu-pci-v1-4-4d843dda0b02@nvidia.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -64,16 +64,17 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261029-b4-t264-igpu-pci-v1-3-4d843dda0b02@nvidia.com>
+In-Reply-To: <20261029-b4-t264-igpu-pci-v1-4-4d843dda0b02@nvidia.com>
 
-On Thu, Oct 29, 2026 at 12:32:05PM +0900, Mikko Perttunen wrote:
-> Tegra264 exposes its integrated GB10B GPU as PCI device 10de:2b00.
-> Its power domain must be enabled before enumeration.
+On Thu, Oct 29, 2026 at 12:32:06PM +0900, Mikko Perttunen wrote:
+> Add calls into the PCI pwrctrl framework to do required power sequencing
+> for endpoint devices before attempting to enumerate them, and select
+> PCI_PWRCTRL_GENERIC in Kconfig.
 > 
-> Match pci10de,2b00 to let the generic power-control driver bind to the
-> GPU's platform device and enable its power domain before enumeration.
+> This is required for the integrated GB10B GPU on Tegra264 that requires
+> a power domain to be enabled before it appears on the PCI bus.
 > 
 > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
-
+ 
 Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
