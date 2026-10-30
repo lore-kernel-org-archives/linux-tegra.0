@@ -1,53 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793354663;
-	b=IEbGeEZVuHiwAogKxMKe6btheJ/PNJJoP2stEflOxfmFr+R1ls/zmsiWrx4lzjeSIUcx
-	 QcwN+Ag7kBGJg1lC0fwR5fjsoYERdTrusAaLv+2hr4zQMWKoclCM9zleD77AZ+rzCBaHw
-	 ZY433G9oHd+2p9U9UrHNiTTTf3IwuMj/KakV8unNDKFq8q8/SYEL1nUsbSDVx4l7D1enK
-	 fbR7dPqWF6/yD5OG5z20VPzf+mJ8TNBH9nKsg/SkQG7F4Ok1HXmWvDAb6A15K947M3ZK4
-	 AatEhXABALsLSDLIVp+zVqmU+wziCewFLnezB0G7CHm1CIzl5ud1Q/nPnhmxdOnanTw==
+	t=1793356618;
+	b=uUTyMcn/0MIpNcoaUPYfDvmZnbzx5nAd0Qc0G3Wkpc/FmB9zEr1wcoU3wNw2NW6C/r92
+	 DdCn++cr/5oa0o4mHvCzZ4ksSEpIufxP8+Xe6tL1MjXXOj2CcojfqVgyU1cN/QI8Hfl5f
+	 rlfDO5n8bidKguX9jGTr6SjB/zQJA5f5eyiAm2eWCf2CEl35LdrLzWBhOfeY7SdxOlKsG
+	 pHNfqz22fE/1D2jP4MDNtevMFHceYSdE/+6hA9D8eiFcGnTY7RzMs7Fe4cqHQD1yw3qM5
+	 VNbaPXwCrVYmFFI+zAAnhVW4LunE1yhQczCTTdAZQMD44+ofLx2K5HMIaiwOe6bbGsg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793354663;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=73z0TqG0XlzNUqRUtewQFDGpbVjqIXuOCzQpcnJCTes=;
-	b=Sqc/u3Z/sWPliePTfUsa8SxGn7Tob5uaPBSGReUjEZ0DQ7Dxr5YsVTkLwd7n67J9An9e
-	 dRjmmFYwGB3kN1OJI4Ys19BldyFmkKyh2/WmsjTOAKeKzR9SkYzKjWLFRL0OWKhgmbt8L
-	 1gQbg7GqTYlUYahRpHa1Of+NzFTHIOEfkn5oj6r2pmmzr3Jyu5+PvnCQPAzJtrBOdOPky
-	 mX+ADTs/i3MLOGJBM8IQM8cwfnHH6CvqX81oTay5N6ll4c9xGg4KQ1UvHDbLDHPIUcb1n
-	 +HRncx02hXAYJuG1t0d3iMFoNUKvSI4MFLRFuPm3jA4/SHWkQipuXQbHAutTUwGhyyA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793356618;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
+	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
+	 X-CMS-RootMailID:References;
+	bh=oXQ15hDbnS1B2Y9Ac6zuPUxaceab5plrwxGQ/lap8W4=;
+	b=EAD1HtcL3Mdb3+bqR2g3M8+TbinRarGXg2kYe1BNguh/GxnLd1AbrGrfYSCdzPBXzJ1E
+	 5zFD5bH6oeCWBLIu43WYCWnrQgkiL/IqgNKr0Y3VdmqfWBBERv9fLH3IiZ5Vlo42D9bnK
+	 7SbeZOyyHjKYYA2QJ4j4fz+buvgo2zfdMFGrM8HM7Dt5Lgs2j7jj5qs6kWwHtUzPHNGOV
+	 kRBJeQuIk1qFjKogH8GjMa6BrdKt14Lkf1d5rpH2r07ldiQ7vwaYoi9/fjfPEdui96dRG
+	 NPg88HNygjCJEXOvNftKBsKv0xPQevQJLtZjPxbKKvq3VAGwTTuOPd2AxzVgOxI718w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GrTjV0E6;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=Bn1maMdu;
+	arc=none smtp.remote-ip=210.118.77.12
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 5A097606A31A;
-	Fri, 30 Oct 2026 10:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B64606A604
+	for <linux-tegra@vger.kernel.org>; Fri, 30 Oct 2026 10:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47B64606A604
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GrTjV0E6
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 649C11F000C1;
-	Fri, 30 Oct 2026 10:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793354662;
-	bh=73z0TqG0XlzNUqRUtewQFDGpbVjqIXuOCzQpcnJCTes=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GrTjV0E6kcnNh5t0Ut/eEBg7rdJDhmLizwDyGa0tZuBLhYaW6L0dQszFK5SqujHFL
-	 Ey+uxTQ0Y22kJ6tAjnnJEuswolC24nJtH7lZdBADWxneecs9jdgR6TcNniLyEH3lRh
-	 9cmxOO5T7Rqsw071MtvprTZYUxbBMfPFAI9BcYk8DoQNmvatzAO05YieTG3OfyVO4j
-	 UuFZjjSpcnXhp2Uy5Ys73FYlPV2z6Pf+RtbTrEhnYcpIttq+spvjiY7i8x6kAHaVSn
-	 WOO8ux2MlHNAKshhgvoChgzWQv1gV85QX0xgmWkm6/aDPypJ+0h25VXwkckipEPaQz
-	 BYuEQT5TSpn0g==
-Date: Fri, 30 Oct 2026 11:04:20 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
-Subject: Re: [PATCH v2] pwm: tegra: Fix value discarding for duty and period
-Message-ID: <auRrUs-eGyJxrlXd@monoceros>
-References: <20261020133938.191013-2-u.kleine-koenig@baylibre.com>
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=Bn1maMdu
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261030103654euoutp02ffa2bfe3a3c83087d4de9bf658268d73~jSFbXviD12735027350euoutp02Y
+	for <linux-tegra@vger.kernel.org>; Fri, 30 Oct 2026 10:36:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261030103654euoutp02ffa2bfe3a3c83087d4de9bf658268d73~jSFbXviD12735027350euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1793356614;
+	bh=oXQ15hDbnS1B2Y9Ac6zuPUxaceab5plrwxGQ/lap8W4=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Bn1maMduqupHB2mk79itTPg2YYb2s2eoTiTiCAQr3tKsoCqkIdjJg9ZyToXDicMeu
+	 QC/eykVusT+mvuqbMsJw99fOxSE4H3ZMEbhvSQNamO2BFBa89xl0LTJMLRvfqWADIe
+	 2qDnY/yqLt8qf51Cl8m0sEfa5siJiL4tsWYBI/pg=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261030103653eucas1p1e35145674aa26e829f4cde451eda2411~jSFa8BzoE1749317493eucas1p10;
+	Fri, 30 Oct 2026 10:36:53 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20261030103652eusmtip25965ad5bbe769c2f2f82e49aa71e8d98~jSFZq8wI72310123101eusmtip2j;
+	Fri, 30 Oct 2026 10:36:52 +0000 (GMT)
+Message-ID: <6fb3327c-766c-433c-b49d-dc62470d7102@samsung.com>
+Date: Fri, 30 Oct 2026 11:36:52 +0100
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -57,61 +64,153 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l24jphlyjdu2l7gy"
-Content-Disposition: inline
-In-Reply-To: <20261020133938.191013-2-u.kleine-koenig@baylibre.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v3 00/10] Make the 32-bit ARM DMA API work with normal
+ IOMMU DMA default domains (+ Tegra PoC)
+To: Mikko Perttunen <mperttunen@nvidia.com>, Robin Murphy
+	<robin.murphy@arm.com>, "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Russell King <linux@armlinux.org.uk>, Heiko Stuebner
+	<heiko@sntech.de>, Thierry Reding <thierry.reding@kernel.org>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, Krzysztof
+	Kozlowski <krzk@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
+	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Yong Wu
+	<yong.wu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob
+	Clark <robin.clark@oss.qualcomm.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20261026-b4-arm32-iommu-dma-cookie-v3-0-3901d74b1ff2@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20261030103653eucas1p1e35145674aa26e829f4cde451eda2411
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261026092047eucas1p2686ac1a0ce893a16711cf7a137d081ce
+X-EPHeader: CA
+X-CMS-RootMailID: 20261026092047eucas1p2686ac1a0ce893a16711cf7a137d081ce
+References: <CGME20261026092047eucas1p2686ac1a0ce893a16711cf7a137d081ce@eucas1p2.samsung.com>
+	<20261026-b4-arm32-iommu-dma-cookie-v3-0-3901d74b1ff2@nvidia.com>
+
+On 26.10.2026 10:19, Mikko Perttunen wrote:
+> Depending on the probe ordering, TegraDRM does not currently probe on
+> kernels with CONFIG_ARM_DMA_USE_IOMMU enabled, such as with
+> multi_v7_defconfig. The Tegra SMMU puts several display and 2D/3D
+> clients into one IOMMU group, and the legacy 32-bit ARM DMA API path
+> creates one UNMANAGED domain per device and attaches it with
+> iommu_attach_device(). That only works for one device per group, so
+> every client after the first fails to attach,
+> iommu_device_use_default_domain() rejects the group with -EBUSY, and the
+> driver goes down with it. tegra_defconfig is currently working by virtue
+> of not enabling CONFIG_ARM_DMA_USE_IOMMU.
+>
+> Robin suggested [1] that instead of teaching the legacy path about
+> groups, we should explore modernizing the 32-bit ARM DMA code a bit by
+> making it use domain cookies and have the core code own the domains, as
+> is the case on other architectures. Still, ARM's own DMA code is kept to
+> support existing drivers and APIs that expect it, and because dma-iommu
+> is considered too big and unnecessary for 32-bit ARM.
+>
+> The series is in four parts:
+>
+> - Patches 1-2 are preparation in the IOMMU core:
+>   1. Add iommu_teardown_dma_ops, counterpart to iommu_setup_dma_ops.
+>   2. Add cookie type for ARM's DMA domains.
+> - Patches 3-6 implement the DMA API side on 32-bit ARM:
+>   3. Split up mapping alloc and init (bitmap alloc) code to separate
+>      functions.
+>   4. Implement parallel dma_ops / cookie APIs on ARM side.
+>   5. Avoid domain allocation when IOMMU core does it.
+>   6. Check upper DMA range limit during IOVA allocation.
+> - Patch 7 removes the forced IDENTITY default domain in core IOMMU
+>   code and adds explicit IDENTITY defaults to a few individual IOMMU
+>   drivers.
+> - Patches 8-10 convert Tegra:
+>   8. Fixes device parameter in calls to dma_get_sgtable.
+>   9. Allows deferring translation enable until driver handshake for
+>      selected devices.
+>   10. Switches to DMA default domain for selected Tegra devices.
+>
+> This moves 32-bit ARM devices from the unmanaged IOMMU DMA domain to the
+> core-owned default DMA domain except for mtk_iommu_v1, ipmmu-vmsa,
+> omap-iommu, and msm_iommu. (tegra-smmu also stays on the legacy path
+> until the last patch in the series.) See commit 7 for further
+> information. Existing drivers are intended to continue working without
+> changes.
+>
+> Patches 8-10 are provided for demonstration; we can deal with them 
+> separately if the rest of the series is accepted.
+>
+> Patches 1,2,3,6 are applicable independently.
+> Patches 4,5 depend on the previous patches.
+> Patch 7 requires the prior patches to be in place.
+>
+> Patches 1-7 only touch drivers/iommu/ and arch/arm/mm/ and associated 
+> headers.
 
 
---l24jphlyjdu2l7gy
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] pwm: tegra: Fix value discarding for duty and period
-MIME-Version: 1.0
+I've tested this patchset on ARM 32bit based Exynos boards and it works
+fine, although I get the following warnings during boot:
 
-Hello,
+platform 13400000.codec: Adding to iommu group 0
+iommu: Failed to allocate default IOMMU domain of type 0 for group (null) - Falling back to IOMMU_DOMAIN_DMA
+platform 11840000.jpeg-codec: Adding to iommu group 1
+iommu: Failed to allocate default IOMMU domain of type 0 for group (null) - Falling back to IOMMU_DOMAIN_DMA
 
-On Tue, Oct 20, 2026 at 03:39:38PM +0200, Uwe Kleine-K=F6nig wrote:
-> tegra_pwm_config() is called with u64 values passed for duty_ns and
-> period_ns in tegra_pwm_apply(). Make these parameters u64 instead of int
-> to not lose the upper bits for bigger values. If such a discard happens
-> the values that are written to hardware become wrong, or (if the
-> discarded period value becomes 0) a division by zero happens.
->=20
-> Adapt the math functions accordingly to not let the now potentially
-> bigger values result in overflows. While touching these, also limit the
-> scope of the required_clk_rate variable.
->=20
-> Reported-by: Sashiko <sashiko-bot@kernel.org>
-> Link: https://sashiko.dev/#/bug/linux-5c5b97d6-4da6-4d06-9dc7-957419dcd832
-> Fixes: fd3ddd4355c0 ("pwm: tegra: Implement .apply() callback")
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+This looks like an issue in iommu core, which doesn't expect devices with
+iommu to come up so early.
 
-pushed to
 
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-nexxt
+LLM proposes the following fix for it:
 
-which I will rebase to v7.4-rc1 once that's available and then put in
-my for-next branch as 7.5 material.
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 197a8f70c6de..612933306684 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -225,10 +225,8 @@ static const char *iommu_domain_type_str(unsigned int t)
+        }
+ }
+
+-static int __init iommu_subsys_init(void)
++static void __init iommu_init_def_domain_type(void)
+ {
+-       struct notifier_block *nb;
+-
+        if (!(iommu_cmd_line & IOMMU_CMD_LINE_DMA_API)) {
+                if (IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH))
+                        iommu_set_default_passthrough(false);
+@@ -254,6 +252,11 @@ static int __init iommu_subsys_init(void)
+                        iommu_dma_strict ? "strict" : "lazy",
+                        (iommu_cmd_line & IOMMU_CMD_LINE_STRICT) ?
+                                " (set via kernel command line)" : "");
++}
++
++static int __init iommu_subsys_init(void)
++{
++       struct notifier_block *nb;
+
+        nb = kzalloc_objs(*nb, ARRAY_SIZE(iommu_buses));
+        if (!nb)
+@@ -2939,6 +2942,12 @@ EXPORT_SYMBOL_GPL(report_iommu_fault);
+
+ static int __init iommu_init(void)
+ {
++       /*
++        * Select the default domain type before any IOMMU driver can register
++        * and create groups, which may happen before subsys_initcall.
++        */
++       iommu_init_def_domain_type();
++
+        iommu_group_kset = kset_create_and_add("iommu_groups",
+                                               NULL, kernel_kobj);
+        BUG_ON(!iommu_group_kset);
 
 Best regards
-Uwe
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
---l24jphlyjdu2l7gy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrka6EACgkQj4D7WH0S
-/k7RrAf+NaBPjS9wIMoQ9PKruv78TycZ0u93TnrdtzAl7pce7b/xd/mJjwgjuGAZ
-xYO/1ioUiAdeNWw73VrfBMq8TdonGvyL+8jZwO3+KdimN7R3853cYnE0Ti2MUE0Q
-penMy6/C0AOe5nCtmHohFx1fidtUNJjOYva2uCllXOVK6cOa6OyrkDPv48eTZ7sB
-dviopVffUoov+Bu/3U28muUSg+zmEZxKYuI4R/oAUav9dRyIiugfD1uRP+6Wpxcb
-lX/W9B8lMkA1/IOE38Sce/6xHZ5iZMTEadQJZarG4Gt2RMhKJcoUAye/iL5ydyCM
-w66vKq04D7RQ8a0bMwFTE8E3O07VuQ==
-=QGEi
------END PGP SIGNATURE-----
-
---l24jphlyjdu2l7gy--
