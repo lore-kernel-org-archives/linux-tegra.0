@@ -1,60 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793356618;
-	b=uUTyMcn/0MIpNcoaUPYfDvmZnbzx5nAd0Qc0G3Wkpc/FmB9zEr1wcoU3wNw2NW6C/r92
-	 DdCn++cr/5oa0o4mHvCzZ4ksSEpIufxP8+Xe6tL1MjXXOj2CcojfqVgyU1cN/QI8Hfl5f
-	 rlfDO5n8bidKguX9jGTr6SjB/zQJA5f5eyiAm2eWCf2CEl35LdrLzWBhOfeY7SdxOlKsG
-	 pHNfqz22fE/1D2jP4MDNtevMFHceYSdE/+6hA9D8eiFcGnTY7RzMs7Fe4cqHQD1yw3qM5
-	 VNbaPXwCrVYmFFI+zAAnhVW4LunE1yhQczCTTdAZQMD44+ofLx2K5HMIaiwOe6bbGsg==
+	t=1793360539;
+	b=nyBbeRJYqsDfs+rDbZPikC2H+1SkvsC5WV4SzEdUgotpXtul/RzL8k5LbQGjoMdpzJrd
+	 biPTlLkLZpd4aTuLz76BPbeWcjbIDzvuIEaw8meTpYIWW5p6GFjDAhbx+alMWgMizBABR
+	 Nj6jEkWS854fNUTa/BqZ7rdnTte4eMRfk7v5AtuXjewbtMBAg5p7KLoZLVBKmGuoGxAvg
+	 y9BMlkFhLW3Cp34WuyMT+do6jznh3Gzvb6NUXlOpU+6C7B+ZZhUFUst9k6o7PXJxfIpyJ
+	 TDNY+ywPstIL2xYI/6dzp71qFNmoJj73d1qtPIDXSG4Kk/Zcu0/yHwzDZ/h4XXlAn6Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793356618;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
-	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
-	 X-CMS-RootMailID:References;
-	bh=oXQ15hDbnS1B2Y9Ac6zuPUxaceab5plrwxGQ/lap8W4=;
-	b=EAD1HtcL3Mdb3+bqR2g3M8+TbinRarGXg2kYe1BNguh/GxnLd1AbrGrfYSCdzPBXzJ1E
-	 5zFD5bH6oeCWBLIu43WYCWnrQgkiL/IqgNKr0Y3VdmqfWBBERv9fLH3IiZ5Vlo42D9bnK
-	 7SbeZOyyHjKYYA2QJ4j4fz+buvgo2zfdMFGrM8HM7Dt5Lgs2j7jj5qs6kWwHtUzPHNGOV
-	 kRBJeQuIk1qFjKogH8GjMa6BrdKt14Lkf1d5rpH2r07ldiQ7vwaYoi9/fjfPEdui96dRG
-	 NPg88HNygjCJEXOvNftKBsKv0xPQevQJLtZjPxbKKvq3VAGwTTuOPd2AxzVgOxI718w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793360539;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=fp1gqCJQWC7Z4+tB0dKDQQvYxRSMJQy+4mMu2dwz1JM=;
+	b=iE9JczV5J0MtRLWaLosqLNAU0cP4hp4HpTvOxeQEBSIWgx3Q56Hl30LmlcYVARUy9yG8
+	 sniob/gnQBkkS60JP8StY6V6DyyXIzsR40OaqoGN9BgUaFD1G3pAOepWppgppoAOeMQr2
+	 shChs2IwzeJEX/nxrAxmQV9gUSuaVZyLCS5QsnSIP85dt7eyNIBUeY4YmO79AgNX6tmqg
+	 6Csv6bEWtCt03LokwSB+/2xBpNfjBGsvuyVUyMwgxIfbpC/Su0LfI9DDx8ufyKgxXm3La
+	 VAHJ4EO9jPDJimTPZGw5cuhyEDY2caiEH3ZfhgBWW0wjm6aujwac3L9bL+aXTkaqfRg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=Bn1maMdu;
-	arc=none smtp.remote-ip=210.118.77.12
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=laAE45Bs;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B64606A604
-	for <linux-tegra@vger.kernel.org>; Fri, 30 Oct 2026 10:36:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47B64606A604
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA63606A32F;
+	Fri, 30 Oct 2026 11:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=Bn1maMdu
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261030103654euoutp02ffa2bfe3a3c83087d4de9bf658268d73~jSFbXviD12735027350euoutp02Y
-	for <linux-tegra@vger.kernel.org>; Fri, 30 Oct 2026 10:36:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261030103654euoutp02ffa2bfe3a3c83087d4de9bf658268d73~jSFbXviD12735027350euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793356614;
-	bh=oXQ15hDbnS1B2Y9Ac6zuPUxaceab5plrwxGQ/lap8W4=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Bn1maMduqupHB2mk79itTPg2YYb2s2eoTiTiCAQr3tKsoCqkIdjJg9ZyToXDicMeu
-	 QC/eykVusT+mvuqbMsJw99fOxSE4H3ZMEbhvSQNamO2BFBa89xl0LTJMLRvfqWADIe
-	 2qDnY/yqLt8qf51Cl8m0sEfa5siJiL4tsWYBI/pg=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261030103653eucas1p1e35145674aa26e829f4cde451eda2411~jSFa8BzoE1749317493eucas1p10;
-	Fri, 30 Oct 2026 10:36:53 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261030103652eusmtip25965ad5bbe769c2f2f82e49aa71e8d98~jSFZq8wI72310123101eusmtip2j;
-	Fri, 30 Oct 2026 10:36:52 +0000 (GMT)
-Message-ID: <6fb3327c-766c-433c-b49d-dc62470d7102@samsung.com>
-Date: Fri, 30 Oct 2026 11:36:52 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=laAE45Bs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1151F1F000C1;
+	Fri, 30 Oct 2026 11:42:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793360538;
+	bh=fp1gqCJQWC7Z4+tB0dKDQQvYxRSMJQy+4mMu2dwz1JM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=laAE45BsmSfb80cLZfdhIGxTP2x4cXkZw1y4TRQztRbLzC55Z4sSAOLExNKyIZoaQ
+	 k39I/1hpoG+7gJtN3jTSeWu4GjDVXUqcQKOKk77vvxpKZ38btbbWck+8k6HUk+G9fh
+	 QXIyMqIoJ4QTz9F9VDNr17MaBKNPKBW1y7+s/ZmmtpHr0SurB8QJPJLW7b4zMV7VBy
+	 IXLDPJ0xr5PsMrd02XKhF8dEOtFJaSU7eXaDxNNqWOT3GDoFgUenoGuXfp+L01bVuN
+	 CFfmLGRCED3kNZDq6QLPrcJlXHn2CZnE6AqjMsalkg9ejfmxzkawyD0HEj0JIGk0zd
+	 GB1DVvMq2b7pQ==
+Date: Fri, 30 Oct 2026 12:42:10 +0100
+From: Bartosz Golaszewski <brgl@kernel.org>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/6] PCI/pwrctrl: Enable pwrctrl for devices powered by a
+ power domain
+Message-ID: <wsdh7j6cevksxn4vd3uoat2f77dcyyhqlixr4lssrmadw5dlob@omoc2jryarjx>
+References: <20261029-b4-t264-igpu-pci-v1-0-4d843dda0b02@nvidia.com>
+ <20261029-b4-t264-igpu-pci-v1-2-4d843dda0b02@nvidia.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -64,153 +62,16 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v3 00/10] Make the 32-bit ARM DMA API work with normal
- IOMMU DMA default domains (+ Tegra PoC)
-To: Mikko Perttunen <mperttunen@nvidia.com>, Robin Murphy
-	<robin.murphy@arm.com>, "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon
-	<will@kernel.org>, Russell King <linux@armlinux.org.uk>, Heiko Stuebner
-	<heiko@sntech.de>, Thierry Reding <thierry.reding@kernel.org>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Yong Wu
-	<yong.wu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob
-	Clark <robin.clark@oss.qualcomm.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20261026-b4-arm32-iommu-dma-cookie-v3-0-3901d74b1ff2@nvidia.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261030103653eucas1p1e35145674aa26e829f4cde451eda2411
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261026092047eucas1p2686ac1a0ce893a16711cf7a137d081ce
-X-EPHeader: CA
-X-CMS-RootMailID: 20261026092047eucas1p2686ac1a0ce893a16711cf7a137d081ce
-References: <CGME20261026092047eucas1p2686ac1a0ce893a16711cf7a137d081ce@eucas1p2.samsung.com>
-	<20261026-b4-arm32-iommu-dma-cookie-v3-0-3901d74b1ff2@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261029-b4-t264-igpu-pci-v1-2-4d843dda0b02@nvidia.com>
 
-On 26.10.2026 10:19, Mikko Perttunen wrote:
-> Depending on the probe ordering, TegraDRM does not currently probe on
-> kernels with CONFIG_ARM_DMA_USE_IOMMU enabled, such as with
-> multi_v7_defconfig. The Tegra SMMU puts several display and 2D/3D
-> clients into one IOMMU group, and the legacy 32-bit ARM DMA API path
-> creates one UNMANAGED domain per device and attaches it with
-> iommu_attach_device(). That only works for one device per group, so
-> every client after the first fails to attach,
-> iommu_device_use_default_domain() rejects the group with -EBUSY, and the
-> driver goes down with it. tegra_defconfig is currently working by virtue
-> of not enabling CONFIG_ARM_DMA_USE_IOMMU.
->
-> Robin suggested [1] that instead of teaching the legacy path about
-> groups, we should explore modernizing the 32-bit ARM DMA code a bit by
-> making it use domain cookies and have the core code own the domains, as
-> is the case on other architectures. Still, ARM's own DMA code is kept to
-> support existing drivers and APIs that expect it, and because dma-iommu
-> is considered too big and unnecessary for 32-bit ARM.
->
-> The series is in four parts:
->
-> - Patches 1-2 are preparation in the IOMMU core:
->   1. Add iommu_teardown_dma_ops, counterpart to iommu_setup_dma_ops.
->   2. Add cookie type for ARM's DMA domains.
-> - Patches 3-6 implement the DMA API side on 32-bit ARM:
->   3. Split up mapping alloc and init (bitmap alloc) code to separate
->      functions.
->   4. Implement parallel dma_ops / cookie APIs on ARM side.
->   5. Avoid domain allocation when IOMMU core does it.
->   6. Check upper DMA range limit during IOVA allocation.
-> - Patch 7 removes the forced IDENTITY default domain in core IOMMU
->   code and adds explicit IDENTITY defaults to a few individual IOMMU
->   drivers.
-> - Patches 8-10 convert Tegra:
->   8. Fixes device parameter in calls to dma_get_sgtable.
->   9. Allows deferring translation enable until driver handshake for
->      selected devices.
->   10. Switches to DMA default domain for selected Tegra devices.
->
-> This moves 32-bit ARM devices from the unmanaged IOMMU DMA domain to the
-> core-owned default DMA domain except for mtk_iommu_v1, ipmmu-vmsa,
-> omap-iommu, and msm_iommu. (tegra-smmu also stays on the legacy path
-> until the last patch in the series.) See commit 7 for further
-> information. Existing drivers are intended to continue working without
-> changes.
->
-> Patches 8-10 are provided for demonstration; we can deal with them 
-> separately if the rest of the series is accepted.
->
-> Patches 1,2,3,6 are applicable independently.
-> Patches 4,5 depend on the previous patches.
-> Patch 7 requires the prior patches to be in place.
->
-> Patches 1-7 only touch drivers/iommu/ and arch/arm/mm/ and associated 
-> headers.
+On Thu, Oct 29, 2026 at 12:32:04PM +0900, Mikko Perttunen wrote:
+> Update pci_pwrctrl_is_required to return true for devices that require a
+> power domain specified by the power-domains property, such as the
+> integrated GPU on Tegra264.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
 
-
-I've tested this patchset on ARM 32bit based Exynos boards and it works
-fine, although I get the following warnings during boot:
-
-platform 13400000.codec: Adding to iommu group 0
-iommu: Failed to allocate default IOMMU domain of type 0 for group (null) - Falling back to IOMMU_DOMAIN_DMA
-platform 11840000.jpeg-codec: Adding to iommu group 1
-iommu: Failed to allocate default IOMMU domain of type 0 for group (null) - Falling back to IOMMU_DOMAIN_DMA
-
-This looks like an issue in iommu core, which doesn't expect devices with
-iommu to come up so early.
-
-
-LLM proposes the following fix for it:
-
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 197a8f70c6de..612933306684 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -225,10 +225,8 @@ static const char *iommu_domain_type_str(unsigned int t)
-        }
- }
-
--static int __init iommu_subsys_init(void)
-+static void __init iommu_init_def_domain_type(void)
- {
--       struct notifier_block *nb;
--
-        if (!(iommu_cmd_line & IOMMU_CMD_LINE_DMA_API)) {
-                if (IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH))
-                        iommu_set_default_passthrough(false);
-@@ -254,6 +252,11 @@ static int __init iommu_subsys_init(void)
-                        iommu_dma_strict ? "strict" : "lazy",
-                        (iommu_cmd_line & IOMMU_CMD_LINE_STRICT) ?
-                                " (set via kernel command line)" : "");
-+}
-+
-+static int __init iommu_subsys_init(void)
-+{
-+       struct notifier_block *nb;
-
-        nb = kzalloc_objs(*nb, ARRAY_SIZE(iommu_buses));
-        if (!nb)
-@@ -2939,6 +2942,12 @@ EXPORT_SYMBOL_GPL(report_iommu_fault);
-
- static int __init iommu_init(void)
- {
-+       /*
-+        * Select the default domain type before any IOMMU driver can register
-+        * and create groups, which may happen before subsys_initcall.
-+        */
-+       iommu_init_def_domain_type();
-+
-        iommu_group_kset = kset_create_and_add("iommu_groups",
-                                               NULL, kernel_kobj);
-        BUG_ON(!iommu_group_kset);
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
