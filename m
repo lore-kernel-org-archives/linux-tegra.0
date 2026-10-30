@@ -1,133 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793364962;
-	b=k8ZWmN1kYQzGOE0i4yfaFEVQDmr4I3y8TzfTcrMPfelCVKAuSEYFNwBru83svC1xnR5Z
-	 aE1hFNCNiC/w7IWkAfHclfull1xqLNTCnoV7UhT8b1sf387IBzbTNg5i6zuS0MA5AmANQ
-	 l3KVSLoOvr6UQcefZdB/zuLQoojVz+GK2xD9WeiP4UIhnkFei86/jQMAMxeYpIWozySgi
-	 7TU+40teNMZlTvO9Mhq/yedhqfYTZz0MepNis4LNoBh1pItQEY+pDRB8hFQzXAnK2AvJ5
-	 mNXI14OEIMYYhCCNx0RCoxnt48oQo5kgOS9VghPnhyZSpqCJ9tFiBXPknrOkOiJa1Vw==
+	t=1793369474;
+	b=Xgcyk4aNz4b02IZarOpwRsmeyGUSywXLXg7IOXVtim1Dc7FAE4tLsdiIGG0fxydm40AU
+	 3UUIw6TYnp0JxYjPn/y8JSahUSpnNNV6drHWH2Jkpr9SLlaVLmPYBIaRNqVVsVgJH/wfb
+	 eyrQtVByvTbmeh+NvWVouWZQy0eo6fCiUokiDw+n8d/ocseTmAfvlLxwIB1RfIepqsT8N
+	 dMrCcRGHLGL+XFasSK7nibWoKkTVYV07XOrfWuM+/Kvgkm57WOKaChqwG2jLdk7JGoqtB
+	 svd7HUTWfv6JTds7kF/UOo3eETFk1Fp8qNRStzPSHrncYCSZL8SWQBy0oFl0NiR0GmA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793364962;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793369474;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=QEN1UqSia/bSOQapCp3EkqxCvOcE8KsRJXMohGlQcDQ=;
-	b=N6xX8ZQOrj/2W3XiLEo7nuhB5+1+sbwB3eC+lfCUXq+gyiyj39EJ2wPHhsmymie/+Ts4
-	 umHGOcWpIjNLc6yQSWaNZP3Q8lu6J/yqc//EUHDm6vNf+dzZ29Ew+m89cDGEA6yx62TZw
-	 XXc2L/nz8O7PRNPlcNdBz7/IVVywCklU/1oJFXe9Ax2i+g9Fp9CzDBbP/NLfcxZkOVB9f
-	 s+fn/3eLDGI1ibUSv2ePoLsZWp6oQwcGWUq8uNE5eY4DrsFyXoeTZMwJlRYt9rOB3PWoM
-	 NflW/2CbP7pebkg2s70Uwy4xQXplxdLmV9nJYR1ABfV9WafbcAewYwux521TTz2z6sg==
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=NxR/awAg8Lbmvyx8ZkJ/r/NDRgHyQoxm+nUAvFr33xU=;
+	b=OKHW+ZU9a4S70tPQh8M/+XxyIUYb3sYBXLhPgIUZ2M+w7tqtnZ9318FsoBPaKSkkr2uV
+	 5bEvtFQVCUc5Cp3/zuzv9lHaELXtXasZF9aUMiaB7BizA3n+h1FAvRvLkAGjY3y6eYrKI
+	 SIMopts9MPGrVvzcRsaGMf89h+BCZb3dA5cEds4eXjlgpQt37SZu1D26/dexkKFETGY/I
+	 ITTO64auqXid9IlSTxc2aQ+sARY0QGgQ8CfP63nGXJ/AB+7N07xB3FCOoEaaAOoLWKudK
+	 FDxi0uEc1/I4Ohh79JgX3bx0XTp0pJBHbU3cyJLML2PtKB6MdChxjcO/0NkxO6UCGDQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DbvVbneF;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HLn8e5eO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC497606A31C;
-	Fri, 30 Oct 2026 12:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F35606A31A;
+	Fri, 30 Oct 2026 14:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DbvVbneF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840761F000C1;
-	Fri, 30 Oct 2026 12:56:00 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HLn8e5eO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A77FD1F000C1;
+	Fri, 30 Oct 2026 14:11:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793364961;
-	bh=QEN1UqSia/bSOQapCp3EkqxCvOcE8KsRJXMohGlQcDQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=DbvVbneFlRcReg135ryJEYVhhtWakAOVNath1hcKIIXE0a0XxAPDDvNN6T7Uf6+oe
-	 8w5jtD2yqrswAxXmfPTHEdkD7AvDqLamYaTsnJnneKspcbfXmYHU3OGl89jWEz8/U/
-	 /ww4ODFnAJ7tLbMPad8NuI/UAu0PK8s28Ey4jTtat4X8zzsm4uIT7x105xj2SQfJbe
-	 wzxdFTqJOrrKiP1LRPFbbaswMYtV6X09XW80Okkv+fqOYtPGsvIPYCiSGFVMsrui5k
-	 MrMYZoVyeIy+hz3rgx3Z3HJJdqyKirPMRBric5eDJy0W8pHIi0gyTDHmZJorASfuP1
-	 +FvfPpgyOt/TA==
-From: Maxime Ripard <mripard@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Ruben Wauters <rubenru09@aol.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-sunxi@lists.linux.dev,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Joel Stanley <joel@jms.id.au>,
-	Dave Airlie <airlied@redhat.com>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	Alison Wang <alison.wang@nxp.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Tian Tao <tiantao6@hisilicon.com>,
-	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-	Yongbang Shi <shiyongbang@huawei.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
-	Jianmin Lv <lvjianmin@loongson.cn>,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Qianhai Wu <wuqianhai@loongson.cn>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	spice-devel@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Iker Pedrosa <ikerpedrosam@gmail.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Hans de Goede <hansg@kernel.org>,
-	LiangCheng Wang <zaq14760@gmail.com>,
-	Alex Lanzano <lanzano.alex@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Louis Chauvet <louis.chauvet@bootlin.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Lyude Paul <lyude@redhat.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: (subset) [PATCH v2 00/59] drm/connector: Convert all drivers to atomic_create_state and remove reset
-Date: Fri, 30 Oct 2026 13:55:55 +0100
-Message-ID: <179336494956.280337.14142889938692228617.b4-ty@kernel.org>
+	s=k20260515; t=1793369473;
+	bh=NxR/awAg8Lbmvyx8ZkJ/r/NDRgHyQoxm+nUAvFr33xU=;
+	h=From:To:Cc:Subject:Date;
+	b=HLn8e5eOYRbHzGJJlWZ2vCuXa/5W1gk0WdcIyIl7pGxDrysyQUT8Cl8obMhUG74A6
+	 xJQz9lewjS3J6z3MYL0YBb8bjl9YyO5y1uqkSVuHfLGd1R8dfp0B+XR9fqrp5QflcX
+	 QlJKkB+z/wmBhtsLrwFcDHazfNTPceDqVAeiESWYqlCes5F5WckvvqihTil6sKBp0E
+	 N7OvMD0+w4YlAjhlYkC4gchmflS0jjrjkeV/2Fecx1YyWqQxFx9x5A1x7VoyfMBpn2
+	 S9pbfAwZxDneF4fluYW9SCQqLd5QmltDs836sI2pKzeM8gvJB1XYMFLUcven/xd6Er
+	 fqw5nZ6s73heg==
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Sumit Gupta <sumitg@nvidia.com>,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 1/3] arm64: tegra: Fix address translation on Tegra264
+Date: Fri, 30 Oct 2026 15:10:59 +0100
+Message-ID: <20261030141101.845044-1-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
-References: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -137,67 +59,52 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 22 Oct 2026 14:30:59 +0200, Maxime Ripard wrote:
-> This is a follow-up to the plane and CRTC reset removal series, and
-> part of a larger effort to remove the reset hook from all KMS objects.
-> 
-> The connector reset hook is overloaded: it is called both at probe
-> time to create the initial software state and during suspend/resume to
-> reset hardware and software state. These two roles have different
-> requirements, and the reset hook is not fallible, making error
-> handling difficult for the initial state allocation path.
-> 
-> [...]
+From: Thierry Reding <treding@nvidia.com>
 
-Applied to misc/kernel.git (drm-misc-next)
+The TOP chiplet has a region of memory at the local offset 0x20000000.
+This region is currently unused, so remapping the non-prefetchable, 32
+bit PCI region through that region works fine. However, subsequent
+changes will need to make the actual hardware within this region
+available, which then causes an address translation conflict.
 
-[01/59] drm/hdmi: Change __drm_atomic_helper_connector_hdmi_state_init parameter order
-        commit: e8698caa41f659739861f3c5b19070ea973f58ab
-[02/59] drm/atomic-state-helper: Rename connector_tv_margins_reset to state_init
-        commit: 39e8c69f41882b12ffd1cbea39b07923dc430de6
-[03/59] drm/atomic-state-helper: Rename connector_tv_reset to state_init
-        commit: 27411554b73b2de2e230df3fefc6821485b3d509
-[04/59] drm/panel: Add atomic_create_state support
-        commit: a8684a05336c1115172bd5fce9a942d830e11d13
-[06/59] drm/aspeed: Switch to drm_atomic_helper_connector_create_state
-        commit: f88d567860da9e5a5ba0f05424ea4c8321af0467
-[07/59] drm/ast: Switch to drm_atomic_helper_connector_create_state
-        commit: 42572c272e61af9c53162f307c81bb48a0977e5d
-[19/59] drm/hisilicon: hibmc: Switch to drm_atomic_helper_connector_create_state
-        commit: 800edc28eb000fbcb2229d6799ffa5c3831def15
-[20/59] drm/logicvc: Switch to drm_atomic_helper_connector_create_state
-        commit: ec2e19c6518ca8959ca009491e62913ea53be450
-[22/59] drm/mgag200: Switch to drm_atomic_helper_connector_create_state
-        commit: f15c3a86f606c7dd8e057dc7a3d762d634b8fa20
-[24/59] drm/qxl: Switch to drm_atomic_helper_connector_create_state
-        commit: e439361203a610cebd725e068dc1694d585d6ecf
-[27/59] drm/sitronix: st7920: Switch to drm_atomic_helper_connector_create_state
-        commit: 382b5915baae6d289cf550b70e325cd162d140c5
-[33/59] drm/tiny: bochs: Switch to drm_atomic_helper_connector_create_state
-        commit: 6b1c795028b1552f25bc4b707673e0d848786dcb
-[34/59] drm/tiny: cirrus: Switch to drm_atomic_helper_connector_create_state
-        commit: 777642458977878a2e81399adf16b1e23ab57b17
-[35/59] drm/tiny: gm12u320: Switch to drm_atomic_helper_connector_create_state
-        commit: 379d9ab55e5d0453ab744892981f122f8e5614fc
-[36/59] drm/tiny: pixpaper: Switch to drm_atomic_helper_connector_create_state
-        commit: 417ff0dc9d68de04248361c3db10c902e33b87c6
-[37/59] drm/tiny: repaper: Switch to drm_atomic_helper_connector_create_state
-        commit: 7fdf84a3913597bb662a1d1aa37f798576dbd2ed
-[39/59] drm/udl: Switch to drm_atomic_helper_connector_create_state
-        commit: 9b9731aea4920327ec8fb757bcc9fa88c7c8fa45
-[40/59] drm/vboxvideo: Switch to drm_atomic_helper_connector_create_state
-        commit: 8c0c25d8724aa3a0850efac1f117444485ce899c
-[46/59] drm/gud: Convert to atomic_create_state
-        commit: 79363b9b53e285a5f98b95d75e32f889ef3431f3
-[50/59] drm/vc4: hdmi: Convert to atomic_create_state
-        commit: 946c74390c2fe7cc9acedf2d333ca1f924b7eba3
-[51/59] drm/vc4: vec: Convert to atomic_create_state
-        commit: 76000c76a4784e8bc4ea957dcebc93449f762bd7
-[54/59] drm/ast: Convert to atomic_create_state
-        commit: a1e63ab695ad76850ab9787b9eb6aab695dc2965
+Fix this by moving the interim translation address (note that this is
+purely used for address translation in the operating system and never
+used by the driver code) to an unused region of the chiplet's address
+space.
 
-Thanks!
-Maxime
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+index 5ab34cd09a3d..ddcc6d3ac9f0 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+@@ -3420,9 +3420,9 @@ bus@8100000000 {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+ 
+-		ranges = <0x00 0x00000000 0x81 0x00000000 0x00 0x20000000>, /* MMIO (512 MiB) */
+-			 <0x00 0x20000000 0x00 0x20000000 0x00 0x20000000>, /* non-prefetchable memory (32-bit, 512 MiB) */
+-			 <0x00 0x40000000 0x81 0x40000000 0x00 0x20000000>, /* MMIO (512 MiB) */
++		ranges = <0x00 0x00000000 0x81 0x00000000 0x00 0x18000000>, /* MMIO (384 MiB) */
++			 <0x00 0x18000000 0x00 0x20000000 0x00 0x08000000>, /* non-prefetchable memory (32-bit, 128 MiB) */
++			 <0x00 0x20000000 0x81 0x20000000 0x00 0x30000000>, /* MMIO (768 MiB) */
+ 			 <0xa8 0x80000000 0xa8 0x80000000 0x57 0x80000000>; /* I/O, ECAM, prefetchable memory (64-bit) */
+ 
+ 		smmu1: iommu@5000000 {
+@@ -3582,7 +3582,7 @@ pci@c000000 {
+ 			dma-coherent;
+ 
+ 			ranges = <0x81000000 0x00 0x84000000 0xd0 0x84000000 0x00 0x00200000>, /* I/O */
+-				 <0x82000000 0x00 0x20000000 0x00 0x20000000 0x00 0x08000000>, /* non-prefetchable memory (128 MiB) */
++				 <0x82000000 0x00 0x20000000 0x00 0x18000000 0x00 0x08000000>, /* non-prefetchable memory (128 MiB) */
+ 				 <0xc3000000 0xd0 0xc0000000 0xd0 0xc0000000 0x07 0xc0000000>; /* prefetchable memory */
+ 			bus-range = <0x0 0xff>;
+ 
+-- 
+2.55.0
+
