@@ -1,55 +1,116 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793381662;
-	b=ppngQYhv7TxymIsDrGTgUzsHCdkzykxfFFjR1zb4VsQzh2cYgB9nmdE1pfQlZuIGOfnd
-	 E42m6IcW7ugMV7b6McBF4aiTh4gWdKiZb4sztBu3c4Cm1pOFLfd5gfUblsSb7XKYDARD/
-	 fo8kxCDNIG/ONwIVIldkG8gyC9OoZOfy1LMAALcieSoQlH6vjEmojfXXxoIxxgmJgQS2C
-	 7O1T3uvEKLEkE26lIFZmlZTz4vhkJs35G9y2EKA6+BuJhEKV3Cq5UzJ6VEBHPr7923WDh
-	 niSAf2A8JTLXxSwfBXwsxb+E3YUTSdVJO/YJ8sLgo6F33D2+OQif0QysibxbgcmUJ0A==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793381662;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
-	bh=VICXlRZ14rhhanz6CJeMesIouFUKGkvUkT9t7FZfz4Q=;
-	b=qWgnB37B0UbK26lxJVxHudxhDctXqVt3ZmfsjmeAJKu7QsYNM7mnE3iIiZCRnKrR5Mp3
-	 HQMJOZeCO9IPZG1lKwhDMTVrsHVfqI8DMMcPN84iYvQRzxaM1OeWt/aylPfvRQs3XQd9v
-	 +b9MIP60VmoOeoC6a8+kfnP8UlyrwZOOem8RZNBPGBTm3+D9DR/pdU5RheQNRhjOBII4A
-	 GaHg6vzG3hXrlwfom28dIb9w46AW2vuMuyLo13qRpJsPpBDPVRZwm4EDfE2vx9ZglcrOf
-	 X1i7Jb+w+HDPg+967G/ekCVtEAklfRfbKUSsjH+YnTvnbpm5+qJwQgB3h62evFWbRyA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=epCP46ok;
-	arc=none smtp.remote-ip=185.171.202.116
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.39
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793382544;
+	b=tGGIHZo40mi/shHtARVQLWR1PTa8fh9Lu79M5XGRxPRwVKDifCqG56zykW6g0C0gSntJ
+	 15HQBEpSyTHtbcshalUTA+uq3ZfeABmcXRIkGnzVzN4TRpeUEBjs43AE1tVz8jiL20I3T
+	 lYHp9q1PZSCtiNZnsFGJ1Nkb++7ryetHJKnUhmcXwM8APqwPKfq6UIi01C6hjONKOWHNz
+	 kT7hZM2mXrXY/c3Rfu5/E2nIpYM//9bezK8of9B45ofCEHLigwMHAr4FvIKbK6UaRUdb7
+	 FftQOXQeePHlQ33lSykAF9xJcdFunrGTHG7L3G4Br6y2jd1nJ9wEWxoG7hNv/woXT/w==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793382544;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:
+	 X-NV-OnPremToCloud:X-EOPAttributedMessage:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=oEUkhLQ9hiwnAz7jBimcklLa0OaqWnfTgyZa3o1XbJ4=;
+	b=5fQeLz/OMOxj1wXl/tr8qXTjeMDrTkQmrAv626cpx8F9suHZSlkJ7NTfFlsO5px/ZUyh
+	 RzukdvAeTisRiAGGj+nMaQZgn0ssSnlw8LAFA9JeOJSYd8r2OHYwSC3Boz5DYf/+cI+HC
+	 qVtICuvEqMdfkYntWGG6O4ryflmwl+TX+UwKufP8kXhtfWxGGi0SfNmlLiEcMdVik5OU2
+	 gxBFaeryy2CV9S8cij/+tn1eLVAH45SyTgvlMzeV8tbzsp976tgRy7MJT7RvTldHsx21d
+	 NV4zJpsWpdkzOsCiiQlBn4wE+btRc3u65zQLvi6RSvXwJeu240hzrHfySD3bffUQjtA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=flNDkKyH;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.39
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011039.outbound.protection.outlook.com [40.107.208.39])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C855B606A31C;
-	Fri, 30 Oct 2026 17:34:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C855B606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B15606A31C;
+	Fri, 30 Oct 2026 17:49:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7B15606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=epCP46ok
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 5D2B7C49F71;
-	Fri, 30 Oct 2026 17:35:23 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7394A603C2;
-	Fri, 30 Oct 2026 17:34:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A00FB10328D09;
-	Fri, 30 Oct 2026 18:33:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1793381649; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=VICXlRZ14rhhanz6CJeMesIouFUKGkvUkT9t7FZfz4Q=;
-	b=epCP46okpn+q9I/oAstY23ZTzc6zvOUk2WFw9lJqfdty423a8pNpW/0aljG/xZlBCNmILB
-	cyxUtC4Wfa+XvawZp3CtmRabDu9CVIVe9kN0ajZf91nWEi3ETAzROUbH8oYfvgSeXOrBML
-	kSFJubPKKVq4nsZfCM3ZQT0wjG1r8Klktwxywq8lJRUWthbTR+NTCH5bJ063MRv2DHiXr/
-	0VWkfSga6rWzqV0u1TpnoAmluCt0c44RsZshdtlqmUeqrBjGHZjKOHkU8N+JNLHP94NoAr
-	JFyqeVp6OfbFsAyZ32AOvAJUvx9z6Gm5Bjv2rjQgetml1BE+johyjpnx6gtY1g==
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=flNDkKyH
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DWu6VpoiQh72N+ZUwMI+0nC/JSVyC+PSVYEkGSIjq0F9rJFyRue65ev2mfPBNzjQWibFze1zqCIgr+LdBiObK5CmJ0MpRcncRMRkdeTG+FQXqczpU6QXz/n2rJFoSYlKH4o3xVG6QV7VPMJOmnQPyXCRhZ1mao/UddJj7r3qq58sdGdsUQ0NXQYkj/0X/Q1CwDqKVnqlWTmuSjROfN2kYNgdrSnweABy4hKNDeY+D9YR7+juLbV1u2TzRlPkvZjYjoAKqftW69B7q2ng3f6OrX+dHGPrqr1RWzYJ2Jzkqx/1sCgRTI66FCZwSf7HKxAf4YQHlu4xIaF+yvbYRRDo5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oEUkhLQ9hiwnAz7jBimcklLa0OaqWnfTgyZa3o1XbJ4=;
+ b=cjPMA2Sl5a7G0DjpbJLxVmpCwQe6UCcNYnzoiWvrcLctr94J4wMejGaGoiUxyAHVTJMAd1HUWzZrJzwJF4YiL8iV2C7TM32z01/NQiZI62afNETNiEJIGlJfyUTkZWO4Zs7nfidcC0zLtDSwuM0DxJyUHVTqCTKYuncZUPSnc/KWbsPGw336601jRmlbyO9EqBXZUgTLNOHP31U5eCPaNjcm70EXwPGG55iBgHXThBUyY2gOKLjCkXID64Vo2Gz0HvQmWbGAhr3Xb2+C5x+FIrn+l0eXAvJaD74Q8+4jM8Ce5QoeHlhz159AKjZWYK4WoX4bGDWd689TSUigOLFCRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oEUkhLQ9hiwnAz7jBimcklLa0OaqWnfTgyZa3o1XbJ4=;
+ b=flNDkKyHuOBlX8wunqTPjcflGW8QkJSopoYt6/T/GaBTn7wdyBbdTZ/VFi7j1EKym1IjdbalQRS4YcvhMZvZ1uYxVlroqfOJaC/yh/yhNjALh/4HSd2xExP57/f0IfTQ68nYN2eKrNgyNYyApHlZReBD0bE+u1mzYpywYPZzOg9pspfYvvxNaXzXfmDvQJ0UC5EcCim4TSCykPZJ2jivpIFQdF2l9/YYLm5rOrbUteRMwOEEhEd0w0GDEBRvFoddeAM8YFu7n8btMInYwbXO2T0jX09gdEB9V9MXhlmygots1zzPCpE1S0pVOz68MmonC2sRkIjPliXcx6as6xFOfA==
+Received: from BN0PR04CA0057.namprd04.prod.outlook.com (2603:10b6:408:e8::32)
+ by DS0PR12MB7780.namprd12.prod.outlook.com (2603:10b6:8:152::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.10; Fri, 30 Oct
+ 2026 17:48:50 +0000
+Received: from IA0PEPF00000045.namprd04.prod.outlook.com
+ (2603:10b6:408:e8:cafe::7a) by BN0PR04CA0057.outlook.office365.com
+ (2603:10b6:408:e8::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.569.9 via Frontend Transport; Fri, 30
+ Oct 2026 17:48:50 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.118.232) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ IA0PEPF00000045.mail.protection.outlook.com (10.167.249.169) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.592.5 via Frontend Transport; Fri, 30 Oct 2026 17:48:50 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Fri, 30 Oct
+ 2026 10:48:25 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Fri, 30 Oct 2026 10:48:25 -0700
+Received: from build-bwicaksono-noble-20260804.internal (10.127.8.11) by
+ mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.56
+ via Frontend Transport; Fri, 30 Oct 2026 10:48:25 -0700
+From: Besar Wicaksono <bwicaksono@nvidia.com>
+To: <acme@kernel.org>, <namhyung@kernel.org>, <irogers@google.com>,
+	<ctshao@google.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <skelley@nvidia.com>,
+	<mochs@nvidia.com>, <rajjoshi@nvidia.com>, <treding@nvidia.com>,
+	<jonathanh@nvidia.com>, <john.garry@linux.dev>, <will@kernel.org>,
+	<james.clark@linaro.org>, <mike.leach@arm.com>, <leo.yan@linux.dev>,
+	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+	<jolsa@kernel.org>, <adrian.hunter@intel.com>, Besar Wicaksono
+	<bwicaksono@nvidia.com>
+Subject: [PATCH v2 0/9] perf: Add NVIDIA Tegra410 uncore PMU events and metrics
+Date: Fri, 30 Oct 2026 17:48:07 +0000
+Message-ID: <20261030174816.1544471-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,103 +120,120 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 13/35] drm/panel: remove the _typed() panel bridge
- functions
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Douglas Anderson <dianders@chromium.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jesszhan0024@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jyri Sarha <jyri.sarha@iki.fi>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, 
- Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
- Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- Randy Dunlap <rdunlap@infradead.org>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Alison Wang <alison.wang@nxp.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, 
- Yannick Fertre <yannick.fertre@foss.st.com>, 
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
- Philippe Cornu <philippe.cornu@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Igor Reznichenko <igor@reznichenko.net>, Michael Walle <mwalle@kernel.org>, 
- Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
- Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
- Purism Kernel Team <kernel@puri.sm>, 
- Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
- Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
- Michael Trimarchi <michael@amarulasolutions.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Casey Connolly <casey.connolly@linaro.org>, 
- Michael Tretter <m.tretter@pengutronix.de>, 
- Cristian Cozzolino <cristian_ci@protonmail.com>, 
- Junjie Cao <junjie.cao@linux.dev>, Ryan Brue <ryanbrue.dev@gmail.com>, 
- Nickolay Goppen <setotau@mainlining.org>, 
- Stefan Mavrodiev <stefan@olimex.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Robert Chiras <robert.chiras@nxp.com>, 
- Alexander Koskovich <akoskovich@pm.me>, 
- Markuss Broks <markuss.broks@gmail.com>, 
- Artur Weber <aweber.kernel@gmail.com>, David Heidelberg <david@ixit.cz>, 
- Dzmitry Sankouski <dsankouski@gmail.com>, 
- Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
- linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
-In-Reply-To: <20261026-drm-panel-funcs-v1-13-5e3070a3478f@oss.qualcomm.com>
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
- <20261026-drm-panel-funcs-v1-13-5e3070a3478f@oss.qualcomm.com>
-Date: Fri, 30 Oct 2026 18:28:25 +0100
-Message-Id: <179338130524.3009485.17598085708064235352.b4-review@b4>
-X-Mailer: b4 0.16.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PEPF00000045:EE_|DS0PR12MB7780:EE_
+X-MS-Office365-Filtering-Correlation-Id: 898c4bba-39e3-4a93-9843-08df36ae0e5e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700016|23010399003|7416014|376014|1800799024|6133799003|18002099003|3023799007|56012099006|11063799006|5023799004|261026140227099003|261026121527099003|261028144727099003|261021123027099003|10067099003|261021121427099003|261022105027099003|261009223027099003;
+X-Microsoft-Antispam-Message-Info:
+	fqrKS87C3uko3V2qhx4sdRbGZLOjREOwyrIcCjmn/ONS5Qg2Q3XiHKtwm21DuOP9hn+3f2jzryPcn0/pYv9MNbLOsomGaNM8Nzk/CD4XpJ/L88q0o5hDezm3qU3P7u1tzTmv2wKEvD/HMYo3+KsFwGXkPdIDzCoguwrvJlW9Evo9fzZAbKY8aC+jKizdzrJTkw/jGoK/1mtk+MwDvzDP1+u2+rkRYxLDKe4gFkJFr0EeM9vwqhqjajGZBeaBK3c+5aGcwZaCJxg2OW6/4D76Mq9geGoiXEeQOT976hayYELO83/bTs2DGgx3+CoRnpyw24mISGPDn85v6T4IjrZopmpnleyMZxkw5Q/sMo6t3NyMXOsM/WJJbI6rZ+NIoL2k1oXhCQ5UmOmlRpZRA0BZgThX52S5l8KwHZvBsOenzoLEnV5X7lAoKjQLAHbpdWmwjq7LMh7mjFxkeD9N/tvJUmD/CsCqGMuPVGWgwB76aV+QY/cGCJVA5p8mOQw6aFrz72Bguj5brp+KEuYvX4U2KAMaXtR8LiIWCjQRhGoht6O1/3n1AbTir9f7xz7elDsZ/tT0+sm+rtpntuUJ8rEVwXcEEGvtmuev1eLO7oPtTciocXeMiA+M80Zq3rDIR2+8EqV8sjkPFKGpgPrAL6+jZMzhlqh8/ursFSUxmpWnGHNw0Zoja9kuSG6lW5gxdZGuLLg7K9Kr5+bUvXzZon6QKQ==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(23010399003)(7416014)(376014)(1800799024)(6133799003)(18002099003)(3023799007)(56012099006)(11063799006)(5023799004)(261026140227099003)(261026121527099003)(261028144727099003)(261021123027099003)(10067099003)(261021121427099003)(261022105027099003)(261009223027099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	NOzfKPdrYR8C0OTUbsCPGZ2oaVToUxW/P4+O4GYLiWRug6WxJRLeZknswAmkbWhG3AZL4bNCaYGNcfdFI5zP/PdoZzl5mlkmgybzsrsiwakZ+5/ems7Jts54JET0OsF24GqCpKQWIs4aWL53l1vgusBoo9p8jZGmDovTC5Alj25ufpi6zvYbtH/497veUJHkTLC0/Bi2Tch/3v5M66q+ddsuIDj95Ye+ee9HzkBkoY7xXs7JOjl2bLcMSiGv7xoYitloF4tMX21tp4Qz6egQgac7sxB6TfxGedj4bDPVVuqhKJCv0y2xBDFvwyEhMuMDYcqw5GddLmOe2+ClQuqkm807Ud7sUeaOjca4XtXXXeSQEQlQB4Wk/7g8wHLYwkpK3BV9s7rVLHws6mVyJAQzmCcs/7DD1tY2zFxndRm5dB5/Jea36KDLcYciYAgLndhE
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2026 17:48:50.1338
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 898c4bba-39e3-4a93-9843-08df36ae0e5e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	IA0PEPF00000045.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7780
 
-On Mon, 26 Oct 2026 13:10:02 +0200, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> The connector type argument of drm_panel_bridge_add_typed() and
-> devm_drm_panel_bridge_add_typed() has been ignored since commit
-> b7797081ccfe ("drm/panel: embed a drm_bridge into every drm_panel"),
-> and they have no users left.
+Add event aliases and derived metrics for the NVIDIA Tegra410 uncore
+PMUs, and fix perf's aggregation of PMU instances that are numbered in
+more than one parts in their name.
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+The series covers the UCF, PCIe, PCIe target, CPU memory latency, and
+chip-to-chip interconnect PMUs. It provides symbolic names for the raw
+event encodings and metrics for bandwidth, frequency, and average read
+latency.
+
+The PCIe and PCIe target PMUs are named nvidia_pcie_pmu_<socket>_rc_<rc>
+and nvidia_pcie_tgt_pmu_<socket>_rc_<rc>. Their json Unit uses the
+existing comma-separated form ("nvidia_pcie_pmu_,rc_"), but perf only
+merged instances that differ in the trailing number, so these events and
+metrics gave one result per socket and were reported incorrectly (e.g.
+with --metric-only), as discussed in v1. Patches 6-9 fix this:
+
+- Patch 6 adds a check of the cpumasks of all merged PMU instances to the
+  zero-count skip in perf stat, so a socket that counts nothing shows 0
+  instead of having its row hidden.
+- Patch 7 merges PMU instances that match the same comma-separated json
+  Unit. This also applies to the HiSilicon hisi_sccl PMUs, which use the
+  same json form; not tested on HiSilicon hardware.
+- Patch 8 labels a merged uncore counter after all of its PMUs, e.g.
+  nvidia_pcie_pmu_*_rc_*/cycles/ or nvidia_ucf_pmu/cycles/, instead of
+  after the first instance, such as nvidia_pcie_pmu_0_rc_0/cycles/.
+  Output with --no-aggr is unchanged.
+- Patch 9 describes these PMU names in the ABI document.
+
+Changes in v2:
+- Move the uncore JSON out of the sys directory and remove the
+  "Compat" fields. Thanks to Ian Rogers for the feedback.
+- Drop "perf jevents: Process model files before sys subdirectories",
+  which this series no longer needs.
+- Add UCF SLC and memory bandwidth metrics from all sources to local
+  CMEM (read, write and read+write) and from local sources to local
+  CMEM and to remote memory, PCIe bandwidth metrics to local
+  destinations, and read+write bandwidth metrics for UCF SLC, UCF
+  memory and PCIe. Thanks to Chun-Tse Shao for the suggestion.
+- Add patches 6-9 to fix the PCIe instance aggregation. Thanks to Ian
+  Rogers and Chun-Tse Shao for the pointers.
+
+v1: https://lore.kernel.org/all/20261019164241.403644-1-bwicaksono@nvidia.com/
+
+Besar Wicaksono (9):
+  perf jevents: Add support for NVIDIA Tegra410 UCF PMU aliasing
+  perf jevents: Add support for NVIDIA Tegra410 PCIE PMU aliasing
+  perf jevents: Add support for NVIDIA Tegra410 PCIE-TGT PMU aliasing
+  perf jevents: Add support for NVIDIA Tegra410 CPU Memory Latency PMU
+    aliasing
+  perf jevents: Add support for NVIDIA Tegra410 C2C PMU aliasing
+  perf stat: Check merged PMU instance's cpumasks when skipping zero
+    counts
+  perf pmu: Merge PMU instances that match the same comma-separated json
+    Unit
+  perf evsel: Name a merged uncore counter after all of its PMUs
+  perf Documentation: Describe PMU names numbered in more than one place
+
+ .../testing/sysfs-bus-event_source-devices    |  14 +
+ .../arm64/nvidia/t410/uncore-cpu_mem.json     |  43 +
+ .../arm64/nvidia/t410/uncore-nvclink.json     |  67 ++
+ .../arm64/nvidia/t410/uncore-nvdlink.json     |  43 +
+ .../arm64/nvidia/t410/uncore-nvlink_c2c.json  | 115 +++
+ .../arch/arm64/nvidia/t410/uncore-pcie.json   | 249 ++++++
+ .../arm64/nvidia/t410/uncore-pcie_tgt.json    |  83 ++
+ .../arch/arm64/nvidia/t410/uncore-ucf.json    | 764 ++++++++++++++++++
+ tools/perf/tests/pmu.c                        | 134 +++
+ tools/perf/util/evlist.c                      |   2 +-
+ tools/perf/util/evsel.c                       |  83 +-
+ tools/perf/util/evsel.h                       |   2 +-
+ tools/perf/util/parse-events.c                |   2 +-
+ tools/perf/util/pmu.c                         |  65 ++
+ tools/perf/util/pmu.h                         |   9 +
+ tools/perf/util/pmus.c                        |  47 ++
+ tools/perf/util/pmus.h                        |   1 +
+ tools/perf/util/stat-display.c                |  20 +
+ 18 files changed, 1737 insertions(+), 6 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/uncore-cpu_mem.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/uncore-nvclink.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/uncore-nvdlink.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/uncore-nvlink_c2c.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/uncore-pcie.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/uncore-pcie_tgt.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/nvidia/t410/uncore-ucf.json
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.43.0
 
