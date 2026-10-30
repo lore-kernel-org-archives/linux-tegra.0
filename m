@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793369479;
-	b=ObkLC7apK5SQcU5jDohfEzEDWTXmXUe7C9qU2F4uj7DIAfkJawiXR7Pg9EzUhlQiQJgP
-	 BtP8xmpqmrzANBV3w91N0evby2I+h97haP2ukdv9xd9Xdfrb8E64VGl7uK2wRrJYD1zh7
-	 WvoYYJDDuyG6ENMFlXl0uoouaW1lhaWFnvD974jo++J+yVcojLTgmlIffNMi/k2hjnaYg
-	 /lcJU/gSBgb08Cwxf6qIMp2yjVVhqFv+6ypq9P0wF9Wd6GjMh0XOrVjoKYui4aNaDV81r
-	 a4MZGZnrqm/ajRu/c8Y3OfudxkGNASwf7UhgcxzvizZoe3KHWNotSeRyY6tN5R8yVMA==
+	t=1793369476;
+	b=d8vR9EywA8DzTJql9+/Al0qf+KWjuDlI5tLO/T3Fr9bVzx8oyQc9eIWmtmeEucxlbipC
+	 rVpPlZpQ+yB3APRvIcwT8p8mbW8CHX1s1mh43rpx3SEL17GLul015w05yiIrMHOzuzJ6s
+	 5TlbKLVfwlerMUYa4+2DdsjwJeOFTsbP4i4G5iq9aK7YT1tBwCCND57FaaGbSeDaH7w1F
+	 3sCOkUWSNmJvEssHxSGnPx6jBCHa7rK15ZdkpAMOHX1fCDoyvlQwPbbwcHBS1KVAVe3bF
+	 FkWWDuknKyBt/+BY4NGjpbTcpLnOolPowsnOSPl2wBYUc6EpuozLGzk3keuSikSXRfg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793369479;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793369476;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=QuaHbrVd9CbB207gj15tc3d6NjOME7QCc3OB1+QzGho=;
-	b=aaQ2UGBrRVqIgVXRe17zAasryrMmOtE2JkKGlKNsFYnqEY//yXRWNqbiJ/HqQWwCobW/
-	 xnvAOt+2R7MiXexuTVGDjk8nk2alEvmhZkNCnPK0n39vNf1PZcDk+SUEQMnncG6POef39
-	 xUY5hJBlqWrscxkZqs5BLw06KBEMWAxYTY/xV+bAZFCilS7lUUxvmH77+hc8S1/43YXwF
-	 zfaTlDmjFjA+YFLjc+KRdvvfXTo4SNI+iHzXs6M6mTVaMnIfqZOB2shKuSEadK5gh5jZv
-	 fMVChM2RoP5praD2GFZah6H+FO8Xoy6iPc9TiRdI50zELwZvYdgtfC8Ky7kwXgmVGnA==
+	bh=S8xAdX1gEursIdaMSBYXTSBc0BUi00s7A+k824xIgcM=;
+	b=hmrJVliLNmnR5y/YYhM7PfwxQkJjhknEJkDrjdX2EvjF62PHRXeOc6mIfRWKCI1YUq9u
+	 rdgszygc0tajlq0U5umm2ZzIMqBovqrPmx3spBBgelOgGdnl20PCDcTGoh8OKqdX2xCk6
+	 y/jel7+IZdqnb3f5D4Tdr3IxJYfh4Lol6ZlutsOcV1ARH/2pelXIVPCnq1kIZkAayDN1F
+	 Q1iowi42eiS2c2vEMbkGlGmsnkww2EQp2ApGBd6kKKFGlnCfyLrOmpHnUeNFiSV8yOEgw
+	 ArnxMpjMgsuntrPhB3sbiX3DETu44a4B22pd/iTMtkNPSiAP5pGhU/1zIoV3XWmmMhQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="W4QA/IXz";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l2C1Fyc9;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4949B606A321;
-	Fri, 30 Oct 2026 14:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D875606A31A;
+	Fri, 30 Oct 2026 14:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W4QA/IXz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566A61F0093A;
-	Fri, 30 Oct 2026 14:11:18 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l2C1Fyc9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880351F000C1;
+	Fri, 30 Oct 2026 14:11:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793369478;
-	bh=QuaHbrVd9CbB207gj15tc3d6NjOME7QCc3OB1+QzGho=;
+	s=k20260515; t=1793369476;
+	bh=S8xAdX1gEursIdaMSBYXTSBc0BUi00s7A+k824xIgcM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=W4QA/IXzZDc4EXBdcpCsyOlY6QVwXykp3NcVlnh+a97JDRcNTGqLxJ8m3i6HIb09i
-	 g9EPP2dxYOIY1+EfXr+0r8k5FH5zF7K+pyhbhxSEmjUQ5WKIYt2fBX/bk4GCAKnyeM
-	 zed4udjfGGIWXYSAVXQGtx0HXWTxva29eKoo9/5H7aHoDfzV1iWIPcGmwDZYG2uwt7
-	 v1fsY6mDpz3wVJ786GgHMBOKoZrvh3IU+aw50KgRomwpk2dNpC3ZiVg4kzIPyoc4sl
-	 XentXf6d/bmMhNV7OsgHq2pMYaV0YUy6iElGXR6OyJ5YN4UMcBZX7+gxlMRiAUPe9v
-	 AuXmdMsXgAJOA==
+	b=l2C1Fyc9K9Tihi71R+tSFPkHEmMTBomEdi3ZJaUG0o/TYLBGMg9TRpg3rOKbkOpHO
+	 G/jr7SGpWwkEXZEcB9LtEUmJCWmfiCM9KCoBrXHo5scpyNRHtOswVGujee+4i9WX3I
+	 KoE1KPV7qO9h5LnESjg6w0aTHPG7aXduRBYns972V3cFnkjcATEHvYPtZNKRRjVa07
+	 16Ss1MmJxO7bC7WgYLaWSPmhsd6iEm5nnvjYY8dTdwM/vHL6j3gV4TFBdjvveyvu0B
+	 M69jsbYCmC/KnmdDdxlRem79EiyeiPunDaSOuLYhA29kY/4zDs7G6xgZoRIWSCU98s
+	 Kw9iZg4WfcK9A==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	Jon Hunter <jonathanh@nvidia.com>,
@@ -46,9 +46,9 @@ To: Thierry Reding <thierry.reding@kernel.org>,
 Cc: Sumit Gupta <sumitg@nvidia.com>,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH 3/3] arm64: tegra: Remove PCI ranges from VISION chiplet
-Date: Fri, 30 Oct 2026 15:11:01 +0100
-Message-ID: <20261030141101.845044-3-thierry.reding@kernel.org>
+Subject: [PATCH 2/3] arm64: tegra: Fix memory size unit in comment
+Date: Fri, 30 Oct 2026 15:11:00 +0100
+Message-ID: <20261030141101.845044-2-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261030141101.845044-1-thierry.reding@kernel.org>
 References: <20261030141101.845044-1-thierry.reding@kernel.org>
@@ -65,29 +65,27 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-The VISION chiplet doesn't have any PCI controllers and therefore
-doesn't need PCI related ranges for address translation.
+The non-prefetchable, 32-bit region of PCI addresses in the UPHY chiplet
+is not actually 1536 GiB. This is a typo and it should say 1536 MiB.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra264.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-index ea2e9adff6d9..b7f6b649baab 100644
+index ddcc6d3ac9f0..ea2e9adff6d9 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-@@ -3996,9 +3996,7 @@ bus@8180000000 {
- 		#address-cells = <2>;
+@@ -4105,7 +4105,7 @@ bus@a800000000 {
  		#size-cells = <2>;
  
--		ranges = <0x000 0x00000000 0x81 0x80000000 0x00 0x10000000>, /* MMIO (256 MiB) */
--			 <0x100 0x00000000 0x00 0x20000000 0x00 0x40000000>, /* non-prefetchable memory (32-bit) */
--			 <0x200 0x00000000 0xa8 0x80000000 0x57 0x80000000>; /* I/O, ECAM, prefetchable memory (64-bit) */
-+		ranges = <0x000 0x00000000 0x81 0x80000000 0x00 0x10000000>; /* MMIO (256 MiB) */
+ 		ranges = <0x00 0x00000000 0xa8 0x00000000 0x00 0x20000000>, /* MMIO (512 MiB) */
+-			 <0x00 0x20000000 0x00 0x20000000 0x00 0x60000000>, /* non-prefetchable memory (32-bit, 1536 GiB) */
++			 <0x00 0x20000000 0x00 0x20000000 0x00 0x60000000>, /* non-prefetchable memory (32-bit, 1536 MiB) */
+ 			 <0xa8 0x80000000 0xa8 0x80000000 0x57 0x80000000>; /* I/O, ECAM, prefetchable memory (64-bit) */
  
- 		host1x@1200000 {
- 			compatible = "nvidia,tegra264-host1x";
+ 		pinmux_uphy: pinmux@82e0000 {
 -- 
 2.55.0
 
