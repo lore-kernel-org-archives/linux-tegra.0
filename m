@@ -1,63 +1,122 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.219.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793373574;
-	b=pZ67A+JfXxAggcbRrC9UwHaVY7lVqJ7WPsXpZcZZpZfuII8G9/r2CBF9txnBksXF4HjI
-	 7nLdz1Kt3J952O0cvX1bBMRUrB1Li3hVVr+jOxJEOmxqbzYgjmk8fUo8khoTmk/u/sUAY
-	 vBHSHSqXasMsizd2vaVf7GqQC95OnFHNQ3JA74NaOdvQQU4+L2Bu5ocLZbVh6VG+fpjJ6
-	 5fmdrBwWVHSEIdmi6Yjzx/1xwmxTYhMiMegzSRSF6fj/imrhRtsrwGS+DMe0rhGQOwt1Q
-	 6DxGT9xYh/eHg9M1PjoBWr1GYA1KlOwi7nfdD0DiwSC/tuNhBYvVwc30qFULPCs0ncg==
+	t=1793379518;
+	b=rbSsmwcsWu/pkjnm1BAH90gX9DyvyyWdV0wD1w1qZrZjXotfSSlL0N8KgZsW+kZpdVr1
+	 qH4fECYgald88G0Sw/70HlWrOVJMUsPRc0iY2O4cl1AL1qwXDCgfEExUqYrdT+vGOFack
+	 h0WBrrHP4wVBz0/Rrkj46s5GJ0u0og66K4di2V4VDHM6m1H1O77sRva0uatZWPs2h+pYf
+	 /0wg/EV+nPdK6DJzTBQExgErmI4y0nJ3FbzPyAxdotHbs9EHU3zAd7TlcWz6E/HtZsCFU
+	 wzPAQAGksIaceiJaejsLbDBjT/6thE4SpfHd4+MgEHEF1yHUd6D1mgLIeXJHwbO/9Yg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793373574;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=PsVKPZVc44PCZoORE4idM922fiRfq5VdfwUd07YqWDk=;
-	b=Pwu5Pi4kTirJPmbVNeN6Uy/ttvyWx3J9hqIM/6nBw5vdSpixvPYt9IYZL1P6KHcGiWUP
-	 8nuRnuQMFi/2v1Aab4JJiFpNssI1PxfUxj2hSfH+ZPqLiz5SJVBnwW99CYCDBB4J8yxZ2
-	 gZqj/C4tN5gXlHYZIFl/i18KW0uWVt/jbNaCoAd0B69BdhznQf2+liB5aOhZ/LMdyyeqy
-	 VYIjpVmbCtSXOfacF1AIDFn5/qLB1AkcQtUOTpE8m1Zsh+beyycTd7/jKKia+BX/oM4Z+
-	 k7d2vADJDRCDcJH2jIwf/msnJLhZSBjXt5yJN4SWgzDpegKtx+zoorgYfyiYSsL7TeA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793379518;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=Of8qcGhrASNngOAxz8m59rDteGhCMKDYRjobFeTSxhE=;
+	b=uE9BxyMdr6SIIy6xHLzStK6E14Xb6AkwcgCgZpRQX6vKubf+1hLF8LPJaqLY5aV06cNx
+	 cHB392BqaVmpL4PdtBry2iu1Lytg6WsVRtImKEQmdziTLS8desODqoCN2SbP/6B0grJHc
+	 q182PGlYHQe1ZNGUtbINJ0WJrLromujChWV7zUiUp7jP7kMx5hr55dYCBmxOPUOPdaXlS
+	 hdp7x6n8qazQvUnGNZq3UBzxePsATnzO3/NxilP25icBQqUlbDpKxnWipPgsiXO5m0UoG
+	 7n/hhBU9y2/aMk+nUYNSAwYBDJ0UxZX3+bX2kwt9RvqJfsMzgdbL7/fD64FStbtOjkA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Bte/lvtN";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=ziepe.ca;
+	spf=pass smtp.mailfrom=ziepe.ca;
+	arc=none smtp.remote-ip=209.85.219.47
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F798606A32D;
-	Fri, 30 Oct 2026 15:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bte/lvtN
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 766AD1F0093A;
-	Fri, 30 Oct 2026 15:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793373574;
-	bh=PsVKPZVc44PCZoORE4idM922fiRfq5VdfwUd07YqWDk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Bte/lvtNF6Us/1b7jCHDJ/mv+bBnE8JPEMoq1dA4UWpcc+qRawb68Z+G8S3A39QsS
-	 hDYiMpIgUeJ1tiT655OIgVe9SVckgg5bg4XqkX/WFVJY+tz8OPLhAwkav9InmUJ8xs
-	 d5qnMYvYPFuMl6XteASq47T7pAhec2QeXsuCXEqFKd648i3Y9eC8KQkKJ53rEG8qxX
-	 vHHjDvdba3GaMtISZl7JYMqV5vZycgGg6jwSitKz2VPbYvPqOlkkMkWG3RZQkNqhvc
-	 uMKk4+deh0FkRktOmsQmwq7Q9jGto1HncEET+BVuGljgUAYRBbxUnCKSFlQJep9bbj
-	 FG0BsOBOS+dUA==
-Date: Fri, 30 Oct 2026 16:19:30 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v5 01/11] drm: Add MIPI DBI bus support
-Message-ID: <auS1aG5y3nmnDkVu@houat>
-References: <20261029152909.234584-1-clamor95@gmail.com>
- <20261029152909.234584-2-clamor95@gmail.com>
- <auRjGM7briuvXDEg@houat>
- <CAPVz0n2=sgbzBfvhGOoRFXeOzKDvs9en7QD0pHc31r5GzgCsKA@mail.gmail.com>
- <auRoaHUqMO4BRQlk@houat>
- <CAPVz0n3K74CZemDzVVymmjU_5GUGE9FsEKk555-AJfG0jek_hg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2B3606A31D
+	for <linux-tegra@vger.kernel.org>; Fri, 30 Oct 2026 16:58:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AF2B3606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-91c11468b5fso10138466d6.0
+        for <linux-tegra@vger.kernel.org>; Fri, 30 Oct 2026 09:58:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1793379506; x=1793984306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Of8qcGhrASNngOAxz8m59rDteGhCMKDYRjobFeTSxhE=;
+        b=bhjVVBdqP0p5ncqFTagx6Bs8saftcLn5bietHySzPVy+OkEz6ZQ9M/fOli6KxslP2k
+         EkGkkKWXOROR+xZ5Y66zJosRACFVLr3t/huYutlqxtRTvemmBSyY8XCDaB4+AHAme/cE
+         TUzJOIx69n/1h++BVedB8bNC+bSirPirKyjQj4ta1JNOyf0n7xCiBi3Sgqnppr3n74jW
+         MRXn8TAOSdTG77kw9kIjE6+ApVorj0R20JMOvkgwCfupAdhbz9Ne3709GxfyCy0J6QCA
+         hcNNS7dNywL5KAaD63ZlJ3I9EzgudyhIHPI13g7bUNcUrkZTtmh9+K8wnpmq1kIruP9q
+         kJ9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793379506; x=1793984306;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Of8qcGhrASNngOAxz8m59rDteGhCMKDYRjobFeTSxhE=;
+        b=ShRfVxjvLPmx2WtQC5F2zdiJ0J/+8RSUqJ6N8vSNWCzOzosOqVOsNl+XUmOblnY283
+         Phu9StdkExsIwqJdAoTk2mUy3z2W5SbIHGEiQ02vPP9k/Jyg5wy2mHFsV/tSeD/XpBMz
+         jbI/XHhv0eb0dUMZimcaqtVt9aCjshOqY6C7Q3O0mim5MVsNSzW3MMOzsdeGmj5B+8H/
+         d4fn2TeNzII8q0/RaKeqYF5Tz9EDzXu9mKJNuunvUXqUyaqD4cezyNQexiLzJqlrJ85D
+         TmPu/9Ou4avu59DL1yPJXjl7vaMzi7ZcF5uaqlqg88FapWBMMpkJZUAMUk5B1ZfP5X0D
+         yNyw==
+X-Forwarded-Encrypted: i=1; AKwUvBw0mdZZ4JuWdG17CpRSwb7AdCyc7bnXFL28BIR922hq4cR+wfntCe76X+wpfBfiEEg+EOR9x+yTSN9vwQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ8cj0Gg/5yRO8h3BxWGwTgmbOFdSZP2eKnGBeEa5N3nG3QUOPv
+	id8qbL5SzDX9AShQtLfHqXA9CYiuagio+KoqKVbOZzFyU/05X0h5fVC0fVt1k1O7AZE=
+X-Gm-Gg: AYBFou0uS7Ew+9OoXM+jt7zdA4oA2klRz1lJGtoupEQkn816AtCxa0iG4RCT2I27zzd
+	wvdAqQgSaKD8QPAJcje20bKtO5TH/IKJ23jUQEA0kOVuKY75BMc08PbBVcCCtX/3d+SVuT4vhVI
+	BAUGhTp+gIwVU4dRqOUkvTNioKm8kpcwZDTyjVmBGFBghJgV7VJFO2eYnLwW3CBioLaAj9RbirB
+	nVFVjurRo1DFxoKz4IKbMNzpIWOgB2oQGCvhpmqGTL3CSfvn1+UE1ERm2/Y0IBumVMLtCV1QT9K
+	wVyDuSoETxsd8AOLNY7S77jrdDOwQdykdMkdUyZar854JIW0iVpbqv2tB4Dnidi4MWJymgJjJoc
+	y/ZnXngVe40zXrUN6Ejj8PW3srTkeR25hPUS5YyOwkupzyONWk1dr5O8zBjEyGpBXvLt91EZz3P
+	IQARu1GzTHxme5hUG2XtHgw/m+hjtC3KujhqjZPAmSJTPOrML5Is5BzwBQT68bvfpirYmQiff0Y
+	ENDnySSWR3mWzU7bYM8ML6N4Ki2ZCBrWzF/MlEe+CiT2qImvS1NzZIINFZPBI3HOe3wym8tKfCO
+	x8MMxxLiWH0sEXUyS52xklM9EYTWBGe1+w4t3jWC7R3U44VIGZcPnnx5hT9VPiL2v6RjRcKucFG
+	H0Tc5Qjp/Sg4=
+X-Received: by 2002:a05:6214:226b:b0:91b:ec0b:9671 with SMTP id 6a1803df08f44-91ca4b9a540mr46456036d6.52.1793379506439;
+        Fri, 30 Oct 2026 09:58:26 -0700 (PDT)
+Received: from ziepe.ca (hlfxns010zw-159-2-239-150.pppoe-dynamic.high-speed.ns.bellaliant.net. [159.2.239.150])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91ca80700b5sm19825486d6.38.2026.10.30.09.58.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 09:58:25 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1xMpvt-000000019rO-0nKn;
+	Fri, 30 Oct 2026 13:58:25 -0300
+Date: Fri, 30 Oct 2026 13:58:25 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Jacob Pan <jacob.pan@linux.microsoft.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Alex Williamson <alex@shazbot.org>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Jonathan Cameron <jic23@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Lukas Wunner <lukas@wunner.de>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Steven Price <steven.price@arm.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Vasant Hegde <vasant.hegde@amd.com>, Will Deacon <will@kernel.org>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v7 08/16] iommufd/viommu: Keep a reference to the KVM file
+Message-ID: <20261030165825.GE3889730@ziepe.ca>
+References: <20261008055955.4014342-1-aneesh.kumar@kernel.org>
+ <20261008055955.4014342-9-aneesh.kumar@kernel.org>
+ <20261014105913.00001217@linux.microsoft.com>
+ <yq5aecd9aupx.fsf@kernel.org>
+ <CO1PR11MB48351C4BD0BAD3BF6AFB2E0C8C6D2@CO1PR11MB4835.namprd11.prod.outlook.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -67,78 +126,19 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="omsmhv7zumr2gj46"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPVz0n3K74CZemDzVVymmjU_5GUGE9FsEKk555-AJfG0jek_hg@mail.gmail.com>
+In-Reply-To: <CO1PR11MB48351C4BD0BAD3BF6AFB2E0C8C6D2@CO1PR11MB4835.namprd11.prod.outlook.com>
 
+On Fri, Oct 30, 2026 at 07:54:04AM +0000, Tian, Kevin wrote:
 
---omsmhv7zumr2gj46
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 01/11] drm: Add MIPI DBI bus support
-MIME-Version: 1.0
+> Besides, it might be a good idea to return an error if idev->kvm_file is
+> NULL in iommufd_viommu_alloc_ioctl(). I don't think the viommu logic
+> is designed for native application...
 
-On Fri, Oct 30, 2026 at 12:02:52PM +0200, Svyatoslav Ryhel wrote:
-> =D0=BF=D1=82, 30 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 11=
-:51 Maxime Ripard <mripard@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Fri, Oct 30, 2026 at 11:42:12AM +0200, Svyatoslav Ryhel wrote:
-> > > =D0=BF=D1=82, 30 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=
-=BE 11:29 Maxime Ripard <mripard@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > >
-> > > > On Thu, Oct 29, 2026 at 05:28:59PM +0200, Svyatoslav Ryhel wrote:
-> > > > > From: Mikko Perttunen <mperttunen@nvidia.com>
-> > > > >
-> > > > > The MIPI DBI bus allows modeling DBI hosts and peripherals using =
-the Linux
-> > > > > driver model. DBI hosts are registered by their respective driver=
-s. During
-> > > > > registration, DBI peripherals are created from the device tree no=
-des
-> > > > > provided by the host.
-> > > > >
-> > > > > DBI hosts expose operations that can be used by peripheral driver=
-s to
-> > > > > access associated devices.
-> > > > >
-> > > > > The original code was authored by Mikko Perttunen; I have aligned=
- it with
-> > > > > the existing MIPI DSI implementation.
-> > > > >
-> > > > > Co-developed-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > >
-> > > > The SoB situation isn't right here. The author is allegedly Mikko
-> > > > Perttunen, but you don't have their SoB, and yours isn't there eith=
-er.
-> > >
-> > > This is up to Mikko to decide what to do.
-> >
-> > Not only, no. When you're sending a patch you must add yours too.
-> >
->=20
-> > > > > Co-developed-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->=20
-> My CO dev and SoB are both present. Mikko will say their word and I
-> will update accordingly in v6
+That's probably going too far..
 
-Oh, right... I'm sorry.
+It should be possible to fully test most of the viommu stuff without
+an actual kvm, for example.
 
-Maxime
-
---omsmhv7zumr2gj46
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCauS1gQAKCRAnX84Zoj2+
-dimXAYD/kqhnWNp/fGtGmf02koLLAQSBfFjU7YQFTgtxn7ZE1915cNwji0VZhZ5U
-PUt5uAYBf1EDORnUBqbBxbSSuSfnz1QobM7lQT6wiW+bZhw6bAea7gPY0866McMg
-o1D52FAX9g==
-=A4YB
------END PGP SIGNATURE-----
-
---omsmhv7zumr2gj46--
+Jason
