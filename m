@@ -1,108 +1,133 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.70
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793362094;
-	b=ThrZaL0VnD8/L6sPVKxXKRH9OKjJLWJpqKMcmFSBFvg0ZXpNXvVZEhDmpYgRE3WP7Ext
-	 O0mNmINo6Wp+m/ray9t4rSdiHgZiBmoJPM5moabQn8FCzJshwdKXViUHjC0S5L/uNDUcR
-	 QSAi0CFSf2hwPxQOCTPuIAl2UlEh/cppS5OqeXHJBy+LHBAAt8UctVPaO2gYWgr/CsII6
-	 BMrThCLHW2/OEyyZwRVDGVK3gnPuXjvg8VDXYnMUJOyCtlKA3Z9vvhNigaDT/GpMn/53u
-	 SAMALqaujeUce3lygHyJwf4BRgbUdYhr6Iy4N6hNKtmhYS+15oCCDROwJF0MtMeqoZQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793362094;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=lW0wLcheEeoD6ntTT61Iywuyf5+FHGoJ+vP2SUi06bQ=;
-	b=Sy7NuvoVtL2rVRWrVz7daP9ZSLx00pIa+KoAHvHlU++R+Ia6tQkXym8JViqMQjPweNlK
-	 HF2bDzQiux6jLvsGT4adwRN5CtKtRYF44Z6/A0n8OjinI7wS1HuE2Q9++YhUeQY4itFMe
-	 2+UJoMJ5Vurkwu2EWwmijDEvdDaLGdsq/kleXDnZPYPKssvyS0dhuRb/BkIqxcp3g9Bly
-	 It4zpEiFle6rONrVi3lTG61rw7/+Tz9kol0DBfAFcWGhAtQC3aydQUCqh66oNHpqQZ1E8
-	 a7CU6YF+V15OpSd7mb2DzH8nf3EOd9hlHB7BcJUIYjzHCANLndMKBLMlkcPooCzdhSg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=cqPThT8f;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.70
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013070.outbound.protection.outlook.com [52.101.83.70])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793364962;
+	b=k8ZWmN1kYQzGOE0i4yfaFEVQDmr4I3y8TzfTcrMPfelCVKAuSEYFNwBru83svC1xnR5Z
+	 aE1hFNCNiC/w7IWkAfHclfull1xqLNTCnoV7UhT8b1sf387IBzbTNg5i6zuS0MA5AmANQ
+	 l3KVSLoOvr6UQcefZdB/zuLQoojVz+GK2xD9WeiP4UIhnkFei86/jQMAMxeYpIWozySgi
+	 7TU+40teNMZlTvO9Mhq/yedhqfYTZz0MepNis4LNoBh1pItQEY+pDRB8hFQzXAnK2AvJ5
+	 mNXI14OEIMYYhCCNx0RCoxnt48oQo5kgOS9VghPnhyZSpqCJ9tFiBXPknrOkOiJa1Vw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793364962;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=QEN1UqSia/bSOQapCp3EkqxCvOcE8KsRJXMohGlQcDQ=;
+	b=N6xX8ZQOrj/2W3XiLEo7nuhB5+1+sbwB3eC+lfCUXq+gyiyj39EJ2wPHhsmymie/+Ts4
+	 umHGOcWpIjNLc6yQSWaNZP3Q8lu6J/yqc//EUHDm6vNf+dzZ29Ew+m89cDGEA6yx62TZw
+	 XXc2L/nz8O7PRNPlcNdBz7/IVVywCklU/1oJFXe9Ax2i+g9Fp9CzDBbP/NLfcxZkOVB9f
+	 s+fn/3eLDGI1ibUSv2ePoLsZWp6oQwcGWUq8uNE5eY4DrsFyXoeTZMwJlRYt9rOB3PWoM
+	 NflW/2CbP7pebkg2s70Uwy4xQXplxdLmV9nJYR1ABfV9WafbcAewYwux521TTz2z6sg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DbvVbneF;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7C8606A324;
-	Fri, 30 Oct 2026 12:08:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F7C8606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC497606A31C;
+	Fri, 30 Oct 2026 12:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=cqPThT8f
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TK4D6jW22ODYdYWyn3WZd6HTaODxSoVkQ/CefcQ1aiRPOb9V0HYg/860QdQM942KJ4M9iJuyZFFG7orOy0FPc58UJDrG2jaLjjvJQaYp1Gcy9OZmghf1RQSnGMayMa5vH/bA1DV3/nX2B308ndygAEKpiXJmfPwmVR9lPVr6CZIh10KoNFBmevqwf6AeK3JuP8pBNiKYT+2t8dBB6QSOxCekJ4zhvMxeEVbcSe14i+woAHcnQl0XtyxEnS7hf6yVQYlnBCE0VSwQ1j2lE0FKiIlgxmMtvogWeQ2uw4/UCVeIPR4Ad/itmVv6XM4S5opyM7iXBKi0JxHP4JJvLkAMFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lW0wLcheEeoD6ntTT61Iywuyf5+FHGoJ+vP2SUi06bQ=;
- b=L7TZLTw7QSzTTTEULjC6jOBJ5Ku0Qh+AXWIWqlc6c4a5D/ALHyu0hsJCUOkCzFHpIpzwGidYnGQPtKhYamrNt2ej5tgQo0ETP1vifWPEqa+lKXXAv9G/ULsTWdAzctoL9X+VfVTo1y/A748/Sz3jjfvn8Fxm4zloTqrL7+8via6NkZOFVrZJf1cJwppynvoVEmywC7bjWuDYa9Ch5WhVGWpASGkoasSsGByQf8eaZsoGAkrSl24jO2/jNKxUjfZukk9N+LKU+EPDMcTp8vThtvxgTFo7iCwl3M3P655D4i6pkkSYMWF38IP6NxCsarFTgkYQHgAtzr2SOVDSEqryBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lW0wLcheEeoD6ntTT61Iywuyf5+FHGoJ+vP2SUi06bQ=;
- b=cqPThT8fCdA3jNfy7OzTs5mnPzYQ249/d7eDwVNCOPmjB6RmsdJoaIpzXhvDZ1/9k/hdusT7Sv3TiCbUVr52WbXJt6HS0oIQC6b0pP37i/ep/u75pk+VOWHDOHgvO7oJivpa6paNGtbNtx/Qf704igl9DxeW6hgPVIzfKp75YTeIem5A4qfKZq89IuUyOHDDD9oLf9AkGQVXCn9WPPCw26L+QxFnB6uHoLC7SpUxi1HZoCRjOoBy1ct+RGjEJjm6v6977YAREaQFuqzKOz7GcffwUWAnARbMd4d5BvkBYOW9k/aAo1rFz4lp+Rwn5t3pQPSfvnuSEve675Bn0K7tKA==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
- by PA3PPFBB9BDA27D.eurprd04.prod.outlook.com (2603:10a6:108:1::b0) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Fri, 30 Oct
- 2026 12:08:09 +0000
-Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
- ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
- ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0569.009; Fri, 30 Oct 2026
- 12:08:09 +0000
-Date: Fri, 30 Oct 2026 20:12:54 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Will Deacon <will@kernel.org>,
-	"Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Jean-Philippe Brucker <jpb@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Krishna Reddy <vdumpa@nvidia.com>,
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DbvVbneF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840761F000C1;
+	Fri, 30 Oct 2026 12:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793364961;
+	bh=QEN1UqSia/bSOQapCp3EkqxCvOcE8KsRJXMohGlQcDQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=DbvVbneFlRcReg135ryJEYVhhtWakAOVNath1hcKIIXE0a0XxAPDDvNN6T7Uf6+oe
+	 8w5jtD2yqrswAxXmfPTHEdkD7AvDqLamYaTsnJnneKspcbfXmYHU3OGl89jWEz8/U/
+	 /ww4ODFnAJ7tLbMPad8NuI/UAu0PK8s28Ey4jTtat4X8zzsm4uIT7x105xj2SQfJbe
+	 wzxdFTqJOrrKiP1LRPFbbaswMYtV6X09XW80Okkv+fqOYtPGsvIPYCiSGFVMsrui5k
+	 MrMYZoVyeIy+hz3rgx3Z3HJJdqyKirPMRBric5eDJy0W8pHIi0gyTDHmZJorASfuP1
+	 +FvfPpgyOt/TA==
+From: Maxime Ripard <mripard@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Ruben Wauters <rubenru09@aol.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-sunxi@lists.linux.dev,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>,
+	Dave Airlie <airlied@redhat.com>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Alison Wang <alison.wang@nxp.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Tian Tao <tiantao6@hisilicon.com>,
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+	Yongbang Shi <shiyongbang@huawei.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Jianmin Lv <lvjianmin@loongson.cn>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Qianhai Wu <wuqianhai@loongson.cn>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	spice-devel@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Iker Pedrosa <ikerpedrosam@gmail.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH RFC v6 5/5] iommu/arm-smmu-v3: Wire up shared-SID STE
- ordering and feature gating
-Message-ID: <auSJxoCvrdMg/rZN@shlinux89>
-References: <20261011-smmu-shared-sid-v6-0-cb76b89dc612@nxp.com>
- <20261011-smmu-shared-sid-v6-5-cb76b89dc612@nxp.com>
- <aszfVNP6DGzWYdK0@shlinux89>
- <as1zR1wc7ERxvR1F@nvidia.com>
- <e8c22eb2-ed1f-47c7-b2ac-c56ead1cba8b@arm.com>
- <20261013124400.GI14213@ziepe.ca>
- <4d2a05c3-f7f6-4348-a3b4-c8f3ffa79b6c@arm.com>
- <as6HfzpcalIh6SMs@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <as6HfzpcalIh6SMs@nvidia.com>
-X-ClientProxiedBy: SI2PR02CA0016.apcprd02.prod.outlook.com
- (2603:1096:4:194::9) To AM8PR04MB7874.eurprd04.prod.outlook.com
- (2603:10a6:20b:24d::9)
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Hans de Goede <hansg@kernel.org>,
+	LiangCheng Wang <zaq14760@gmail.com>,
+	Alex Lanzano <lanzano.alex@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <siqueira@igalia.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	nouveau@lists.freedesktop.org
+Subject: Re: (subset) [PATCH v2 00/59] drm/connector: Convert all drivers to atomic_create_state and remove reset
+Date: Fri, 30 Oct 2026 13:55:55 +0100
+Message-ID: <179336494956.280337.14142889938692228617.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
+References: <20261022-drm-no-more-connector-reset-v2-0-0b7e4e85b1e8@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -112,108 +137,67 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|PA3PPFBB9BDA27D:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7f1e643-a0cf-4934-a0c8-08df367e7630
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|23010399003|376014|19092799006|1800799024|366016|261026121527099003|11063799006|4143699003|56012099006|261021135927099003|10067099003|261021121427099003|261022105027099003|18002099003|22082099003|261026140227099003|261028144727099003;
-X-Microsoft-Antispam-Message-Info:
-	RerJWSTW7qqmZ3JqtDhR40OqbsnD9uoidILJIHCPNoUi3tvDyP0TOHshYL6iDFkFCDLToSvLvCTtNRA6Jee8YNzm+g/R7PKjob9SES7y8Ob5tibTQK1d3VsglMUVLkJ34uV5jOCWYa4b2hEKOT42IP0MUnWsqQ7lgwyzV7SUZJldTn/YvoiCi8l9HKJXERt/bmjsXA0aQmaXjdDsi960z7My949WIVBkU1jPc694wcdjqvHSbUhf8Temwu9uooAZ+fSXWWGySnsU0llkhpU0KA8oMK5Vpxq1+vSpDgRlz0+H4F9t4Km/NETNLJHAWvXpDffDq4ax6la+uvoDe5leWj/S2jQKeW017vVhzQTJOdc9ECb+YnecSWCDTQJfCEQ7W8mUEL/sqaPJSxEVN07lrTSNxfkFv9Bxpcq2uGWNURiuJ+hqVw5GaPXOio8HfMWGrbc/M2o0xvjqfEphZI6S6hZv005PjYOHus80rQ5lge//VCn6dDvIufDqBPIP1BjguhC4JReZxJgaBOZIE82PnGWeNU6BPTZvNMB3vVDDvZvTUCSrGgl4h8w2dStTRJFtHDjKHnsrTFswnNNnzGrahbtRNl5KSuaB+5yb5SBdZWzcT0pTMbVCspgldNXWCcT/MiGkipLlT+SAZ3BDjkiRctKm2pU29akmm4lv7Zm0b88=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(23010399003)(376014)(19092799006)(1800799024)(366016)(261026121527099003)(11063799006)(4143699003)(56012099006)(261021135927099003)(10067099003)(261021121427099003)(261022105027099003)(18002099003)(22082099003)(261026140227099003)(261028144727099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nvJCRGF5gpfADybxkaJu3fC5ldWsPcM7BcfIs/4JsUaewY4KXk3InsNAjN38?=
- =?us-ascii?Q?Dcj7+xPgJk0CB42A1I8VYuxh4wPw8PmNfw9G8bU9Y7A+4FpX6oQOcjJS5Yq+?=
- =?us-ascii?Q?39xVBMrxk4l5f8vkc6rpZSwbsEPyXSI/+XiLuvkQYPQsQUYJqB+y/fy4UF+K?=
- =?us-ascii?Q?4DwBe6mbmE+POtsrwZfScY9g2Fo6aPcn83YqJLXHGsq58AW16Zvpp3H1hpF8?=
- =?us-ascii?Q?FdCzJcRzdXR8fz7YXLOCXfjJEPmrIFLKK+Cq09A3/lCrPz++bDo8xaTpOxqf?=
- =?us-ascii?Q?pSC28E2kyTYpW4MapZKtfIGkTpRtsFtpdau8R1tll6iGuoj1NsxA0xf5bpBE?=
- =?us-ascii?Q?80D2vKlLvM4C2eJJHijlYliiugpuwNxFOk/q6PGgfJotPwcT+nIKBYE9As1H?=
- =?us-ascii?Q?QTMaGb10sdl9+jfEDEVRbElJ+uRUvI5i1rRKXjc2LToFpaE33NCFw4fp5y6e?=
- =?us-ascii?Q?NBBeCOmlGnDVnfAY/pqY+5n0QiiGKvIwx7/sEp9K9ks8tPDs80SZVDTWgVvO?=
- =?us-ascii?Q?0h1S6y9k/KVSrqmxUHc2cDxJcMeh9YHMWxJeKi3bqI7GVjGi77z8H49p++O7?=
- =?us-ascii?Q?gqXc6HSsc1ytv1HhtzjwXYz7CB0DoMqC8qmh7z6eODPUUmhpSsclRkquoQhB?=
- =?us-ascii?Q?9tPgKJugi2vNZeorEo3nZKqo6f62MlDFPG64wSQJmT66yijRdSWBfZOEySBT?=
- =?us-ascii?Q?9V4nj24xMA2K4wdxUhgbv4TsFcSQ5Ran+TdQ1ZVg+TAJWHagjmsTTp2mqHEo?=
- =?us-ascii?Q?Y8AKW8SgJeWxnPDnwaCkPZ72gpOrRkN6g5hBv+L8N2hq5OlrJwaiIfxwZA2i?=
- =?us-ascii?Q?nGCMEnfV43OvqWDR3gA4Hk7U/OVDdr7IwWyCESrWdVYwHxgwGamCuL05Adrj?=
- =?us-ascii?Q?x5VPQQkz2g4KPtaDu2ZrSsFfL+CMQKHtNvT6uPutut4kvMkBJHQlLzdE8kpx?=
- =?us-ascii?Q?j9sCXyX4GIxZgLgFIOifRtkhpZTuouQoO1rhKMQMPz9CPcBBJLHE+U4D195P?=
- =?us-ascii?Q?/Tmz9mFfML5oDEB90bymZDXd8gx1LVy6LvU0rBFvJBsjmqN89fz0S0NJugCM?=
- =?us-ascii?Q?48vJ62pzMqeyn0Cjhjqzexd2e0nbLzOmi3jA5h+ZnL7wQcaj0z684c9qkSb/?=
- =?us-ascii?Q?k0VTE4yunkMQMgPJ1aD0zdHjIzxOaodjfcKtJOMRnGzKU5lVKcLYg96XdK5k?=
- =?us-ascii?Q?BrAZBrRgcG/am5J7UdPNkS9tJlsNFvVgbvqFruBapR27ovXENxU0FYHx4/kf?=
- =?us-ascii?Q?9znYpobP5LXssTuIeDl20qr02hpB59TrkCNYv0Nf17RkVnhCsd8vY23Um3Y6?=
- =?us-ascii?Q?rGy+FyhgLKufXxYFpakGbC0CVzhJ4mTwdYCeCg6LYMrcTjJ5Wveck13WfBox?=
- =?us-ascii?Q?O7I3PbIPpNNedLUwTewKWsoLcBwWN2/CrcBvXgIlihbUPcnOQ/zytQAYJejl?=
- =?us-ascii?Q?wP77+l/KmdkQgk5JWNO3mDguskBG4qLvn6naPsnxI8bNnYCjtCAw8Bxq6IhY?=
- =?us-ascii?Q?bMy7OPEKZdsKBjloSV3zgq6rDmq4wPDITjPOK6813f97q7r+szkzP1nXtkM6?=
- =?us-ascii?Q?hbbJiYVLtJJ4iJeiWIiA7BKdipjuwUPadij0+FZ1Pego7nAIJRtp4whvU/GO?=
- =?us-ascii?Q?knS4q5VwWrnbo6wH5sEGNJu34mAA+ZvZORcq4KMAphSB1e9WbF0oVWyVh2FX?=
- =?us-ascii?Q?QxDKUWpFRnTxLFiFBoDz8NJhNzzVuPqhB7dhMAEdb+UEeudYJdauXIs2yCSW?=
- =?us-ascii?Q?IgalWBrfLZU1n5QwHAc+WB5XLD8n0/MSD1gzS10SYMETnaSaIVve?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7f1e643-a0cf-4934-a0c8-08df367e7630
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2026 12:08:09.0122
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OMlCPgSjtfw4VZzmMBjhkvr/FeFtC5aOuw0tARJnO8G1eLFnQHt9yc8y3KTNUmsZNSOYIuxGkp224o2n5eAXWaT1/Tk1t0A/0EAd9axWa9f3YE0q8ZLYF0Tik7i13AoQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA3PPFBB9BDA27D
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Nicolin, Robin, Jason
+On Thu, 22 Oct 2026 14:30:59 +0200, Maxime Ripard wrote:
+> This is a follow-up to the plane and CRTC reset removal series, and
+> part of a larger effort to remove the reset hook from all KMS objects.
+> 
+> The connector reset hook is overloaded: it is called both at probe
+> time to create the initial software state and during suspend/resume to
+> reset hardware and software state. These two roles have different
+> requirements, and the reset hook is not fallible, making error
+> handling difficult for the initial state allocation path.
+> 
+> [...]
 
-On Tue, Oct 13, 2026 at 12:33:19PM -0700, Nicolin Chen wrote:
->On Tue, Oct 13, 2026 at 05:23:21PM +0100, Robin Murphy wrote:
->> On 13/10/2026 1:44 pm, Jason Gunthorpe wrote:
->> > On Tue, Oct 13, 2026 at 12:22:06PM +0100, Robin Murphy wrote:
->> > > If we're not going to support PASID for shared streams (which I suggest we
->> > > don't...) than we shouldn't strictly need to worry about CD tables anyway.
->> > > So rather than having to special-case CD table sharing for shared streams,
->> > > perhaps it might make sense to generalise back to a "default" per-domain CD
->> > > for non-PASID use, which can then get switched for the private per-stream
->> > > cd_table if and when a device does enable PASID?
->> > 
->> > If we have stared STEs then the group becomes the per-STE data
->> > structure not the master.. We don't have any way right now to do that,
->> > but it would make some sense for the group to store the shared CD
->> 
->> That would be precisely the aforementioned special case that I'd hope to
->> avoid. My point is that the CD represents the domain context, so we really
->> shouldn't have to have multiple copies of that per-device _or_ per-group,
->> _unless_ it is attached via a PASID, since in that case it does need to be
->> copied into a per-device CD table (since the per-domain CD table was indeed
->> the wrong move in hindsight).
->> 
->> So what I'm saying is that if we're going to make anything share CDs, then
->> ideally we should just make all non-PASID devices always directly share the
->> domain's own CD, then if we just enforce that any devices sharing StreamIDs
->> must be non-PASID devices, it should all work out, we save some memory in
->> the normal case, and never have to be concerned with rewriting any STE with
->> a different S1ContextPtr for the _same_ domain except when enabling or
->> disabling PASID for the (single) device owning that STE.
->
->FWIW, master->ats_always_on would be a special case here: it is
->non-PASID but needs s1cdmax to be non zero.
->
->But yea, that sounds like a good approach, though requires a big
->refactor.
+Applied to misc/kernel.git (drm-misc-next)
 
-I just post out RFC V7 version with sharing CD table. But I not
-have the hardware to test the advanced features (:
-only tested i.MX95, Qemu, KUNIT.
+[01/59] drm/hdmi: Change __drm_atomic_helper_connector_hdmi_state_init parameter order
+        commit: e8698caa41f659739861f3c5b19070ea973f58ab
+[02/59] drm/atomic-state-helper: Rename connector_tv_margins_reset to state_init
+        commit: 39e8c69f41882b12ffd1cbea39b07923dc430de6
+[03/59] drm/atomic-state-helper: Rename connector_tv_reset to state_init
+        commit: 27411554b73b2de2e230df3fefc6821485b3d509
+[04/59] drm/panel: Add atomic_create_state support
+        commit: a8684a05336c1115172bd5fce9a942d830e11d13
+[06/59] drm/aspeed: Switch to drm_atomic_helper_connector_create_state
+        commit: f88d567860da9e5a5ba0f05424ea4c8321af0467
+[07/59] drm/ast: Switch to drm_atomic_helper_connector_create_state
+        commit: 42572c272e61af9c53162f307c81bb48a0977e5d
+[19/59] drm/hisilicon: hibmc: Switch to drm_atomic_helper_connector_create_state
+        commit: 800edc28eb000fbcb2229d6799ffa5c3831def15
+[20/59] drm/logicvc: Switch to drm_atomic_helper_connector_create_state
+        commit: ec2e19c6518ca8959ca009491e62913ea53be450
+[22/59] drm/mgag200: Switch to drm_atomic_helper_connector_create_state
+        commit: f15c3a86f606c7dd8e057dc7a3d762d634b8fa20
+[24/59] drm/qxl: Switch to drm_atomic_helper_connector_create_state
+        commit: e439361203a610cebd725e068dc1694d585d6ecf
+[27/59] drm/sitronix: st7920: Switch to drm_atomic_helper_connector_create_state
+        commit: 382b5915baae6d289cf550b70e325cd162d140c5
+[33/59] drm/tiny: bochs: Switch to drm_atomic_helper_connector_create_state
+        commit: 6b1c795028b1552f25bc4b707673e0d848786dcb
+[34/59] drm/tiny: cirrus: Switch to drm_atomic_helper_connector_create_state
+        commit: 777642458977878a2e81399adf16b1e23ab57b17
+[35/59] drm/tiny: gm12u320: Switch to drm_atomic_helper_connector_create_state
+        commit: 379d9ab55e5d0453ab744892981f122f8e5614fc
+[36/59] drm/tiny: pixpaper: Switch to drm_atomic_helper_connector_create_state
+        commit: 417ff0dc9d68de04248361c3db10c902e33b87c6
+[37/59] drm/tiny: repaper: Switch to drm_atomic_helper_connector_create_state
+        commit: 7fdf84a3913597bb662a1d1aa37f798576dbd2ed
+[39/59] drm/udl: Switch to drm_atomic_helper_connector_create_state
+        commit: 9b9731aea4920327ec8fb757bcc9fa88c7c8fa45
+[40/59] drm/vboxvideo: Switch to drm_atomic_helper_connector_create_state
+        commit: 8c0c25d8724aa3a0850efac1f117444485ce899c
+[46/59] drm/gud: Convert to atomic_create_state
+        commit: 79363b9b53e285a5f98b95d75e32f889ef3431f3
+[50/59] drm/vc4: hdmi: Convert to atomic_create_state
+        commit: 946c74390c2fe7cc9acedf2d333ca1f924b7eba3
+[51/59] drm/vc4: vec: Convert to atomic_create_state
+        commit: 76000c76a4784e8bc4ea957dcebc93449f762bd7
+[54/59] drm/ast: Convert to atomic_create_state
+        commit: a1e63ab695ad76850ab9787b9eb6aab695dc2965
 
-Thanks
-Peng
-
->
->Thanks
->Nicolin
->
->
+Thanks!
+Maxime
