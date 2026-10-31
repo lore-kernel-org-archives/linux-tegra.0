@@ -1,108 +1,116 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.179
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793407662;
-	b=1gE6xm9HFapYg9fNvXMrDcO0hj5AECRbgvRmFnNIb+SXOat9dj1wBLoVXXyK3JyBIi/6
-	 Qo58qAyGFo3PMrqllWDEk7gt3ECU0MKAEsP5+IGItDm8ZiG5do3kSMfgZXT+59MvMp0dT
-	 pxR5LfxjvlgkJIn98nzwGM1CIz6A8b0p+5Z+l5d92IDth0+l3HV0iTjSWakQ3PCKZihDz
-	 +QIu0odyVpHwNCawSiBX02wQ0A/qO0ATkYWwAQJqfEfBKfqB+789RTD79IFyZJWEEgfyN
-	 zyqW6TEIx5B1Eg5gRuS8+M4KCVIVPfL2zIoBKnPNzb0bIXFMHgXz6CIQjjUBlcP3nZw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793407662;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=268LSzP9pfFwdbgVDxMqdS0o6I6QpSICZ5YPTlGbOXk=;
-	b=BJzm+RlAEEncT3J7e9osw0fDA4NNYju9v3D0v5ZSPfx7TZjR2rNbXMlMgWdwFOtpcpBR
-	 mjyiZN+U1PRSp0lDxo97GwZqkvFitnRprknslky7MUR+mISXVRg67ZswN7AS9vhJAP+b1
-	 XI0ITcNCE3C8sCkERjdapTjOoHdfqTe5DoQUuhGw6fci0lv1myXniZWFwro8xO7EeVP+h
-	 fQAEXrfWClvED+5eL5+zSahppwJ3Rmz+TjRHBFYFGahhHJ+lkjtP2OFN/N5uAH+hXWPrG
-	 VeNOyShPLnBZMUIk8Pue2434Fib1evYNv5Y0H3WnOkbCt0AN1EfCv6wXoDmfwEYqy4A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IJRDK+mR;
-	arc=none smtp.remote-ip=74.125.82.179
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.15
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793408865;
+	b=ZYCN8giHtnN5ptiFgDKIFijLoBvqxvguLpxCtW3L3lmRa9gZFzckb879VdekXUrPE4IZ
+	 Uu9gsQePTe53ZraYSl/00JvQovbPNE8RAAFdSyBH4upuuhHHHLTsPxznp0+P3ARhUnBt9
+	 A/g+MOTIdMRqyVIymQBbb8QCjTkNVFGt/FDB61MbS66e7LmojIRCY6ie8a2F/7EYUt8dV
+	 n2xj/24V4q+C1BBCxJ4Sx45LjrL021Xcgr9i/4ykmSW9ue7vpkfk1VDn1yPSUxNMwozWO
+	 PstfZxACteDW+O6eoIfgn/R0iELzMScd1A3z4Cbu582J/riU0o5zBwCf6ciTgaNJE8w==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793408865;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Received:Date:From:To:CC:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-NV-OnPremToCloud:X-EOPAttributedMessage:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=RwzR5McN88CII9Iz/WY42q8HfyvrScWxXGYHM1MqfO8=;
+	b=0TMEBOjRyaHcKXjWM25WNzgVM32WLHq8ItidWM3Hk4vFvvbemzPQtt51sBgx2q5WAcFk
+	 jnOHr/RLqduYFDKlta/CGV0YQE160HlexM+sCeCyumXUzshkecdDO5svAfuyZcEt8K1yw
+	 58rFJx84b1EnMe69yKDkgjot7BKw5hhbXDRWfgVkJnuv6HUu0lfS8/dj0e9JqbpIAcTdJ
+	 4x32NBOUWAhZP+fzRxihvQX86dDvUcojTKMi71a2H0NuTU4aRzQinkBTndgMDFkO2xj5H
+	 qoEi/BZQBYxHW/T0/8QaniKGbCAhvvRAqEGrTAFrJGJ+X4kPQI/WxMHUUJ3nx89BK/w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b="Bsg76F/n";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.15
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010015.outbound.protection.outlook.com [52.101.46.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1AF606A31C
-	for <linux-tegra@vger.kernel.org>; Sat, 31 Oct 2026 00:47:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7B1AF606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F191606A31A;
+	Sat, 31 Oct 2026 01:07:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9F191606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IJRDK+mR
-Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-36a0f27c9f4so2195554eec.1
-        for <linux-tegra@vger.kernel.org>; Fri, 30 Oct 2026 17:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793407662; x=1794012462; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=268LSzP9pfFwdbgVDxMqdS0o6I6QpSICZ5YPTlGbOXk=;
-        b=IJRDK+mRMeVNqm4z8zkrrkm0GNNjwiXPX2+viPyOK8zgiaefP8s19h7cOcU2VEcWoU
-         PqS1XRCbjdYh8/g0znLNQU0essI/+qfLqU2xlyBU4DHp3tNzHFcvrLS2+rOiIVaJCWem
-         kEaYuHo6CAuPnj+kPUfjxxsg/uCUZVeAq6n1gCrgRG2swHABFX5Ao65TGHmfT1wmdlg8
-         x1WzbkGgr50xX0yR2P3DEtnPnCv35Knv63DNLVKWeUKLGcj6G31LaDCsMW5PoGfP+lrS
-         6/DtObogIU9qrRnwiZhPWD0X3MwiZ+ZazfKSBeAVBoGiXe3giW9oRw/gjKDHqMDTKgir
-         udqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793407662; x=1794012462;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=268LSzP9pfFwdbgVDxMqdS0o6I6QpSICZ5YPTlGbOXk=;
-        b=wd/xLk7umjQ/5x6NHQwMARJI2zjIMQazLE80vNhHbIn0wYIvfG54nf89E5bVNe4DSW
-         7D2gswkEav8+o9uiPpwUgMH2Ax/J+K0viHsMWb1BTM4cFIL2C9UCCinht84jk+Y8/lm5
-         vJ4RxKGG+NkN+8yIK4mhYuT/oCDv68Su1vdyjem1L0IL6UD2IQt5Su/PDWRgc19BKr7Z
-         P9WCD8XSuU9AOTY56HPfMFZuiEPz7zgTHMp4FvSzNO0c6aJaJV7NmIXoZuZ/Q7REWk2w
-         VvJkm31HjsGPcj5fO2OOIMMvGu136th9Wsn8g6AP6I1OzUtdNIQWYFDQ1NLpWoUk5uCV
-         yQag==
-X-Forwarded-Encrypted: i=1; AKwUvBw8MIcf7csDYY/KqlQjaPzCYJc19zh5OVatbuthoD2xluYrsrCPuoPLfu+d7Nds5LaB5Gnyq3gQdoTDJA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLDlNCFCEEEEjPpYEVBwjJxAn24Cwi1iw6XcjXjGjXNYzhPIhjq
-	HhWQQP4eWx3977XfCE1l5bNgV3Uy6IV0+QTxfbbm8SCMkwB8/OR0IbJ1ebDTkBpFanA=
-X-Gm-Gg: AYBFou1S4YPziogZ48Y6LOJ/BwoVgQT46cn9mQunZUprBSzIb0tUNXykCHO2N7PRfOR
-	Zj4BFlzcoictpiOO+HzgpAXahxsrvWzly4uz2N/M0Gt3FAaGNB68W159xVSzvt7cXeIkXXjnlMK
-	sjTPwRzj+qO9rIV3JZCsyzb8zgSj60/36H8E/fLj2etP2xbKmMhuumtpy5NbSDWGYgxLqSzeQtp
-	E8lqSz2hgqrkPx5WSAZA5v+07lFsrN277Z4k6S3Rdrfam6/bnuIKSFw+dv7x24eLkhTf09nzZ4j
-	KkFXa6YFHAgW1IyhjCiRcT4s8Mx/X8ScT/ZIhLP7a5EWtd0kuJxYR+A3v/i7/jabBhjwWKJev5L
-	GZAPUPcT1sJf5GLkznBOe0o+S5JCUPOZddTecX+DVrkwB5jlLXiTjkzRFo8OsmtOOlUAid4cUao
-	l8b8jK4bEkJmkyQLMpSKZATFWbwSP7ufapFkbbCNN35geLPHddPpkaFl0U6vl+zOt9ZN3p/N8OG
-	CXo6K0G3/+NPKWZcsNpkY2T+bTqcl6gGaVHZMYPKxaJOHmdmsr8H17h+uIgLyBWMWpsavtqWTRM
-	wtegcta4fQZR4SEqIqBXg2XgZUg0LwjAsOSwxUHjabbGaUad7YFfCjObCVzBN6f+2e//fo5qpyt
-	WW7b8/ompTnkh50W78smQCKDb/U0FQC9QBNXE1s6ZwhgSVMl/FQYoREodRKhhIQJFm23hJqT9HJ
-	g4qLsFcc1+CowLgww=
-X-Received: by 2002:a05:7301:e105:b0:36a:15cb:30bf with SMTP id 5a478bee46e88-36a42345851mr5374853eec.13.1793407661421;
-        Fri, 30 Oct 2026 17:47:41 -0700 (PDT)
-Received: from brev-9gdpyq8lp.ap-south-1.compute.internal (ec2-3-110-210-194.ap-south-1.compute.amazonaws.com. [3.110.210.194])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a42a77c0dsm12703100eec.26.2026.10.30.17.47.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 17:47:41 -0700 (PDT)
-From: Samarth Narang <samarth.colleges@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Samarth Narang <samarth.colleges@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-serial@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [BUG] serial: TX kfifo underflow when TCOFLUSH races with TX DMA (samsung, sprd, msm, pch_uart, tegra)
-Date: Sat, 31 Oct 2026 00:47:33 +0000
-Message-Id: <20261031004733.3345841-1-samarth.colleges@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Bsg76F/n
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N86BOCGUwN4F4H0p69RkZ1miysvIdGZWPc2bS2IvftDT/oaN4yhNiA8k+Xj42HrvXHQ2H4PxmCPjRUODRZmLjQQutdousg2Yow70Gh8KqmefPt8e+4pnJEGcH6U/KSbByUmPFv5lW4qvGGntEDITuTJXGIhfbm/RU8il8PKBRwgYRLu1usFv5mB1ipSdCrDuab+WyUfiw7WwTq78UO+ik4sxDIWTUpkRA6ao86r8JvW4TEeE53TavgV7T2rzmY1lfuVGAvtgjn+/bOWyL7yAgp8RbvoZFYnkhK2EAILtGZ7Yq5ek/v+4Q0TOw6y/6RXFQgjBvy/cqkkresNdJI1tGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RwzR5McN88CII9Iz/WY42q8HfyvrScWxXGYHM1MqfO8=;
+ b=h/vvGY5mPy3JPm4Zyo7+CkFxzK7KS/Jdt7AZnxq+J6y9bIgQ+1TxobFp5/fTL60sThHN9KfGznzDUmFnusrN5u+VjlJctm8BUC6F/WCJ+GEwQF0gXlBXIXds50stX9Q7LF/dehsBY6OvCFUvLsk912wrgS79OirAUavOQQmCn0LAQllmrzYQVmUn1OO2TwvCBOqAQ+aUzB54AiZrKz8webpLesur9Ovzqra05VD7ToduyNZPSwAfssDn8DhuCksJYloIiTqf7I8zIHC3s+E1bjcTO4oLaxx4GwRVuAvB6V2WK3mPrjHUOCqeHkC0ajHKaBshlWumyBwlEvOGngXjWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RwzR5McN88CII9Iz/WY42q8HfyvrScWxXGYHM1MqfO8=;
+ b=Bsg76F/nMdoU3zBjQWD2dMdUcGaaBVizU0I44uZKhM4h6VqrndsWXdxC1BmKlWxlpjp/d/M6oY+CAoRhHdn1EWZCHnksiFymJvnXTMAdqXIhbJKDE4yJTEi5N8Img69+dIKHUwKlBrcobzi7c/L91G2yfTIy5iBuKelD+ktH7f0YeY9G574dCaQjWtSD/2uQHe06Fheo4OzzEJlwWpuU2VwkmMNvGNvjKKbLXFJAXYxVcQxi192FWJJoB5OGFe+vb2EMqYSYGpLhek+DYzLLTG50ZF3Qym7mBXUWEmMKUXiv6FOS1owaXtNPhAuwu7q0/x0Jjfs/yuv43eky8ko6mQ==
+Received: from PH8PR05CA0015.namprd05.prod.outlook.com (2603:10b6:510:2cc::16)
+ by MW6PR12MB8998.namprd12.prod.outlook.com (2603:10b6:303:249::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Sat, 31 Oct
+ 2026 01:07:38 +0000
+Received: from CY8PEPF0000005D.namprd21.prod.outlook.com
+ (2603:10b6:510:2cc:cafe::a2) by PH8PR05CA0015.outlook.office365.com
+ (2603:10b6:510:2cc::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.5 via Frontend Transport; Sat, 31
+ Oct 2026 01:07:38 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.118.232) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CY8PEPF0000005D.mail.protection.outlook.com (10.167.247.27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.592.0 via Frontend Transport; Sat, 31 Oct 2026 01:07:38 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Fri, 30 Oct
+ 2026 18:07:20 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Fri, 30 Oct 2026 18:07:19 -0700
+Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56 via Frontend
+ Transport; Fri, 30 Oct 2026 18:07:18 -0700
+Date: Fri, 30 Oct 2026 18:07:16 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, "Joerg Roedel (AMD)" <joro@8bytes.org>, "Thierry
+ Reding" <thierry.reding@kernel.org>, Krishna Reddy <vdumpa@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Jean-Philippe Brucker
+	<jpb@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH RFC v7 4/7] iommu/arm-smmu-v3: Use a per-domain CD table
+ for non-PASID streams
+Message-ID: <auU/RARTx8dv5mAE@nvidia.com>
+References: <20261030-smmu-shared-sid-ver7-2026-10-26-v7-0-961726ebd6ab@Example.Com>
+ <20261030-smmu-shared-sid-ver7-2026-10-26-v7-4-961726ebd6ab@Example.Com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -112,76 +120,209 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20261030-smmu-shared-sid-ver7-2026-10-26-v7-4-961726ebd6ab@Example.Com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PEPF0000005D:EE_|MW6PR12MB8998:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a1c31c8-3467-4479-43bc-08df36eb5afa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|82310400026|36860700016|376014|7416014|1800799024|261026121527099003|22082099003|18002099003|11063799006|56012099006|10067099003|261021121427099003|261009223027099003|4143699003|261022105027099003|261021135927099003|261021123027099003|261022075727099003|261028144727099003|261026140227099003;
+X-Microsoft-Antispam-Message-Info:
+	Zb9yuu5owqPP2lIDfDRlAgYvIUpbKlutBND6as10j05PncDTZLgZhhK68F/Yz+BXk4cwCfm8FeZkj8bg4dOlUSMognfGsodbUgEVoGfWv25pUMeO8k3USYs/WYaZarYrOu//sjmpcCjoVpA7xVldukHJF5pxFUPa+HhfIfQ5TOe7HmsRZqEa1CuN4uM6V8tz0qBMnsRQNVCl/DXHdp+BlaeRlgglMT4P0t97IgLDITqmwqEliZJhiY4TzkdHnjVjgynIDb9E75VGx2gLxl4Y1VDELBYSk97D7zpwhaNuKLqsHUMjBL5d3RbuoFPWTweH49UOIZFbBJoMP4CCH7RbnzPCRjuAQilQj8GXyLxavq7SsyWNun+BTGf2Vyk0auiIl9g/1NlbQYXCqbYQb1HnJhwq8Stubk8vNJ+6uK56ZFilcAPsoHVIduoX/ISoxg3n6sth1FEXzuKfibf/yi6vGv0pPpMMwDk+vc9vvFtEg5nAxZUMTTI2HdOLS0GP4J5rk7R5lQCKUr05rhkgMSfGM44Qnv94id4LpjY+v+tW+yRzPyorPk3XXgIMWslQYNoX0PHsgyPVx5p9UYAf7Yn59UGx/I3NTVK06mjswpTWa8345KtZKAI2HG1EzS0bwLZtWiQ8aie7QhRGVtaizsamXcZNyTFGEaiU7UgsLZVoNnL3VNHP17wzhA2gL9u8GtMtrd1NA+GhYtKcsf0kzJulCA==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(36860700016)(376014)(7416014)(1800799024)(261026121527099003)(22082099003)(18002099003)(11063799006)(56012099006)(10067099003)(261021121427099003)(261009223027099003)(4143699003)(261022105027099003)(261021135927099003)(261021123027099003)(261022075727099003)(261028144727099003)(261026140227099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	FgjFSVz9lRxr30ZTlocSCY6ky7ElCQqY7YgrkTyAWMz2K8DBZOtb8+MTIc++3kFDgciLKIodE4Jf5as63tJkhW1iuoH1S5ZS1Ap5odu1NsxpFQjlxe+iePMHZxtlJ1caimEUKSKQNNEw2ccpxz/Yy/mfHABSCQp46qTZFysGyHI9vQeu+2kEmi1E332LvMHrbUYddmJtYLq3p1Wm55HVBKYBMPez911Pak3HIEzF4+3liX73e1NSc/d6vKUMxu3aaMQHM4hpsy0m8ouFFAgMi1mILg7p5wUeG3EG0tF6ia+BrZYL6ZbHsIEad5kho2O24P+MjqdoZFT+PaWycw0hG2g0A7xzGNVpEChQrNwK/erGWGjzsB84+5g2WuV2BwCzN0G4UHXDvuF8ut7VkpKfSdnvq0TLMYx/Fyw9tFQ078c4zRBKQU6kXbuhwQPuYf1f
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2026 01:07:38.0720
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a1c31c8-3467-4479-43bc-08df36eb5afa
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY8PEPF0000005D.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8998
 
-Hi,
+On Fri, Oct 30, 2026 at 08:09:36PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> The CD describes the domain context, so non-PASID devices attached to the
+> same S1 domain do not need private copies of it. Store a CD table in
+> struct arm_smmu_domain and make non-PASID streams point their STE at that
+> table.
 
-The TX FIFO underflow previously fixed in 8250 by 9e512eaaf8f4 ("serial:
-8250: Fix fifo underflow on flush") and in qcom-geni by 452d6fa37ae9,
-7ea38c49e717, and e3c04834ae1a appears to affect five other serial
-drivers. The line numbers below refer to mainline at 83f32c773255.
+> @@ -3044,6 +3055,9 @@ static void arm_smmu_domain_free_paging(struct iommu_domain *domain)
+>  		mutex_lock(&arm_smmu_asid_lock);
+>  		xa_erase(&arm_smmu_asid_xa, smmu_domain->cd.asid);
+>  		mutex_unlock(&arm_smmu_asid_lock);
+> +
+> +		if (arm_smmu_cdtab_allocated(&smmu_domain->cd_table))
+> +			arm_smmu_free_domain_cd_tables(smmu_domain);
 
-uart_flush_buffer() resets the transmit kfifo under the port lock before
-calling the driver's flush_buffer() callback. If a TX DMA transfer is
-still active and the driver does not account for it during the flush,
-its completion callback may subsequently call uart_xmit_advance() using
-the byte count from the old transfer. This can advance kfifo->out past
-kfifo->in, causing kfifo_len() to wrap and the driver to transmit stale
-buffer contents. As shown in the 8250 fix, a subsequent close can then
-wait in tty_wait_until_sent() until it times out. The issue may arise
-when a large write is followed by TCFLSH(TCOFLUSH), or when the port is
-closed while TX DMA is active.
+Same comments as previous: fold arm_smmu_cdtab_allocated in.
 
-Four drivers have no flush_buffer() callback and therefore do not stop
-or account for outstanding TX DMA when the kfifo is reset:
+> @@ -3854,11 +3879,27 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev,
+>  		return -EINVAL;
+>  
+>  	if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1) {
+> -		cdptr = arm_smmu_alloc_cd_ptr(master, IOMMU_NO_PASID);
+> +		/*
+> +		 * Non-PASID devices use the domain's shared CD table. The
+> +		 * private table is needed for substreams (PASID), for
+> +		 * ATS-always-on (S1DSS), and for the stall model: CD.S is a
+> +		 * per-CD property and cannot be shared by devices that
+> +		 * terminate faults.
+> +		 */
+> +		if (master->ats_always_on ||
+> +		    master->stall_enabled ||
 
-1. samsung_tty: Neither s3c64xx_serial_ops (line 1679) nor
-   apple_s5l_serial_ops (line 1700) implements flush_buffer(), while
-   s3c24xx_serial_tx_dma_complete() advances the kfifo by
-   tx_bytes_requested - residue (line 342) without checking whether a
-   flush occurred.
+For readability, let's add a helper:
 
-2. sprd_serial: serial_sprd_ops (line 944) has no flush_buffer()
-   callback, and sprd_complete_tx_dma() advances the kfifo by
-   tx_dma.trans_len (line 276).
+static bool arm_smmu_master_needs_private_cdtab(struct arm_smmu_master *master)
+{
+	/* Reason 1 */
+	if (master->ats_always_on)
+		return true;
+	/* Reason 2 */
+	if (master->stall_enabled)
+		return true;
+	return false;
+}
 
-3. msm_serial: msm_uart_pops (line 1547) does not implement
-   flush_buffer(), while msm_complete_tx_dma() advances by
-   sg_dma_len(&dma->tx_sg) - residue (line 482). Its check for an
-   already stopped transfer relies on tx_sg, which is not cleared by a
-   flush.
+> @@ -3978,10 +4022,17 @@ int arm_smmu_set_pasid(struct arm_smmu_master *master,
+>  	    sid_domain->type != IOMMU_DOMAIN_BLOCKED)
+>  		return -EINVAL;
+>  
+> +	first = !arm_smmu_ssids_in_use(&master->cd_table);
+>  	cdptr = arm_smmu_alloc_cd_ptr(master, pasid);
+>  	if (!cdptr)
+>  		return -ENOMEM;
+>  
+> +	if (first) {
+> +		cd0ptr = arm_smmu_alloc_cd_ptr(master, IOMMU_NO_PASID);
+> +		if (!cd0ptr)
+> +			return -ENOMEM;
+> +	}
 
-4. pch_uart: pch_uart_ops (line 1518) has no flush_buffer() callback,
-   and pch_dma_tx_complete() advances the kfifo using each scatterlist
-   entry's sg_dma_len() (line 756) without holding the port lock.
+Maybe allocate cd0ptr in arm_smmu_alloc_cd_tables()?
 
-The fifth driver, serial-tegra, implements tegra_uart_flush_buffer()
-(lines 1272-1279), but only clears tx_bytes and calls
-dmaengine_terminate_all(). Its completion callback calculates the
-transferred byte count from tx_bytes_requested - residue (line 537)
-before acquiring the port lock and advances the kfifo afterward (line
-540), while tx_bytes_requested is left unchanged by the flush. Although
-terminated descriptors do not invoke their callbacks, a completion
-already running when the flush occurs, particularly one waiting to
-acquire the port lock held by uart_flush_buffer(), may still advance the
-reset kfifo. This is the same race addressed by 452d6fa37ae9.
+We can also have a helper to share with arm_smmu_alloc_cd_ptr().
 
-The existing 8250 and qcom-geni fixes provide possible approaches, with
-the former clearing the outstanding DMA byte count under the port lock
-and the latter marking completions as stale during a flush. As discussed
-in 7ea38c49e717, comparing the completion count against kfifo_len()
-alone is insufficient.
+static int arm_smmu_alloc_cd_ptr_l2(struct arm_smmu_master *master, u32 ssid)
+{
+	[...]
+	*l2ptr = dma_alloc_coherent(master->smmu->dev, sizeof(**l2ptr),
+				    &l2ptr_dma, GFP_KERNEL);
+	if (!*l2ptr)
+		return -ENOMEM;
 
-These findings came from a research static analyzer that checks whether
-uart_ops implementations using TX DMA provide flush handling that
-accounts for outstanding transfers, followed by manual inspection of the
-reported paths. None has been reproduced on hardware. The same analysis
-found flush handling in the 8250 core, atmel, fsl_lpuart, imx, sh-sci,
-and qcom-geni, while amba-pl011 is not affected because it advances the
-kfifo when preparing a transfer rather than on completion.
+	arm_smmu_write_cd_l1_desc(&cd_table->l2.l1tab[idx], l2ptr_dma);
+	return 0;
+}
 
-I would be happy to prepare separate patches for the affected drivers if
-the maintainers agree with the analysis.
+> @@ -3997,8 +4048,39 @@ int arm_smmu_set_pasid(struct arm_smmu_master *master,
+>  	cd->data[0] |= cpu_to_le64(
+>  		FIELD_PREP(CTXDESC_CD_0_ASID, smmu_domain->cd.asid));
+>  
+> +	/*
+> +	 * The private CD table is taking over the STE now. Make sure its
+> +	 * default substream matches the RID domain before the STE points at
+> +	 * it, since non-PASID traffic follows CD[0].
+> +	 */
+> +	if (first) {
+> +		if ((sid_domain->type & __IOMMU_DOMAIN_PAGING) &&
+> +		    to_smmu_domain(sid_domain)->stage == ARM_SMMU_DOMAIN_S1) {
+> +			struct arm_smmu_cd cd0;
+> +
+> +			arm_smmu_make_s1_cd(&cd0, master,
+> +					    to_smmu_domain(sid_domain));
+> +			arm_smmu_write_cd_entry(master, IOMMU_NO_PASID,
+> +						cd0ptr, &cd0);
+> +		} else if (sid_domain->type == IOMMU_DOMAIN_IDENTITY ||
+> +			   sid_domain->type == IOMMU_DOMAIN_BLOCKED) {
+> +			arm_smmu_clear_cd(master, IOMMU_NO_PASID);
+> +		} else {
+> +			WARN_ON(1);
+> +		}
+> +	}
+> +
+>  	arm_smmu_write_cd_entry(master, pasid, cdptr, cd);
+> -	arm_smmu_update_ste(master, sid_domain, state.ats_enabled);
+> +
+> +	/*
+> +	 * A repeat PASID attach leaves the STE on the private table with the
+> +	 * same S1DSS/EATS. Only the first attach (or an ATS change) needs to
+> +	 * rewrite it; arm_smmu_write_ste() would otherwise issue a redundant
+> +	 * CMD_PREFETCH_CFG for every stream.
+> +	 */
+> +	if (first || !master->cd_table.in_ste ||
+> +	    master->ste_ats_enabled != state.ats_enabled)
+> +		arm_smmu_update_ste(master, sid_domain, state.ats_enabled);
 
-Thanks,
-Samarth
+master->cd_table.in_ste could be set when STE walks master's CD
+table. Then, you don't need to check "first". And move the guard
+back into arm_smmu_update_ste.
+
+> @@ -4017,35 +4099,48 @@ static int arm_smmu_blocking_set_dev_pasid(struct iommu_domain *new_domain,
+>  		.old_domain = old_domain,
+>  		.ssid = pasid,
+>  	};
+> +	int ret = 0;
+>  
+>  	mutex_lock(&arm_smmu_asid_lock);
+>  	arm_smmu_attach_prepare_invs(&state, NULL);
+> +	/*
+> +	 * Unlink the PASID from the domain before invalidating its CD.
+> +	 * arm_smmu_mm_release() walks this list with only devices_lock held
+> +	 * and writes a valid, faulting CD; unlinking first prevents it from
+> +	 * resurrecting used_ssids after the last PASID is detached.
+> +	 */
+> +	state.old_master_domain = arm_smmu_remove_master_domain(
+> +		master, &smmu_domain->domain, pasid);
+>  	arm_smmu_clear_cd(master, pasid);
+
+Sashiko pointed out that it needs devices_lock here.
+
+>  	/*
+> -	 * When the last user of the CD table goes away downgrade the STE back
+> -	 * to a non-cd_table one, by re-attaching its sid_domain.
+> +	 * When the last user of the CD table goes away, switch the STE back to
+> +	 * the domain's shared CD table (S1) or to the native bypass/abort STE
+> +	 * (identity/blocked), by re-attaching its sid_domain. The private CD
+> +	 * table is kept allocated for reuse and freed when the device goes
+> +	 * away.
+>  	 */
+>  	if (!arm_smmu_ssids_in_use(&master->cd_table)) {
+>  		struct iommu_domain *sid_domain =
+>  			iommu_driver_get_domain_for_dev(master->dev);
+>  		bool ats_always_on = master->ats_always_on &&
+>  				     sid_domain->type != IOMMU_DOMAIN_BLOCKED;
+> -		bool downgrade = sid_domain->type == IOMMU_DOMAIN_IDENTITY ||
+> -				 sid_domain->type == IOMMU_DOMAIN_BLOCKED;
+> +		bool s1 = (sid_domain->type & __IOMMU_DOMAIN_PAGING) &&
+> +			  to_smmu_domain(sid_domain)->stage ==
+> +				  ARM_SMMU_DOMAIN_S1;
+>  
+> -		if (!ats_always_on && downgrade)
+> -			sid_domain->ops->attach_dev(sid_domain, dev,
+> -						    sid_domain);
+> +		if (!ats_always_on &&
+> +		    (s1 || sid_domain->type == IOMMU_DOMAIN_IDENTITY ||
+> +		     sid_domain->type == IOMMU_DOMAIN_BLOCKED))
+> +			ret = sid_domain->ops->attach_dev(sid_domain, dev,
+> +							  sid_domain);
+
+This covers almost all the possible domain types here. So, just
+drop that downgrade, and it should cover the other cases:
+
+		if (!ats_always_on)
+
+Nicolin
