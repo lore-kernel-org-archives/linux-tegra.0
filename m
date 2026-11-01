@@ -1,100 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.48
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793548754;
-	b=OQqAsCj/9DN3VGzNGMV5/+o5gGrc+9xYVx8oi5chUEiVIyL1UOoC7+6GaUQFMwlNif5W
-	 ULL2a7XuUvkG/H/Qwpxceso+Wek25k2WNZrnYuUfbVmlFYeJNGEIF2wP8rdl59UOEp/+S
-	 CCxmFgwJ1hMlIivWc7y7XTj9946U/3x21ue8+qNXXuZoNVRu3ittErnkCvS4uiBmqDjKA
-	 fGcwzGglod/WnGQtLFGRU3B9Fo26cev1NEKAJQGAnt8ZVxjRQ6qrzPGnp9KS37zOt5DIy
-	 aCd+3DrfnGVhqtbGSzAUCqyKs8JpQ//PxAnMe6A70h8/3O1NzRYbEbtxevhn8KGJ83A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793548754;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=OaBbso/nWA2Q4yJF5+SbtI8vmJ4zVrnNgMLlXI5ZDPE=;
-	b=EIikvvWR3hcZS4Sxob4DB8QG7n7dUy3E3guatixPnqKMtQvtduUlTpDMANnLX2U8uzhy
-	 uTP649SyYexRxHd9BTTRNDgxyXgUwlTBi+P0I2vIXIUyng6zDqq/qrRRM8j3vsAHNxaPs
-	 acUD0ikYbEW7dd872CAmwBvFaZT3xk8Auc/18uizH/KChbp/MB27uYNOTVzbNFU8D39Fs
-	 rvITKJZoC2eWFL0QnC6Dlrbde7T0vaJPwhqZP+9TNVdgY/JKHMXgfbhojCLeEPzN+aR2t
-	 rlhm8wl+2qWFqS7vPozCAlH1LCsE6LaM4OVtzE7tPoKWT0N3iUSCJFtIKKDbRBLrC/Q==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vyOmQU+G;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.48
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793555302;
+	b=Xkd+C7MhaiEEFg7BL2spbOk84hpo7nJyWmqslLXHZhyveskNqziTRrO2q/C2IoH1AQyI
+	 jUPZtxl/TnDhqk6n9+6us7U8Z5wpDrWfW04U19vErQ9A84aQoPl6cbMncf+b3gUWnB/xa
+	 5BpsXkeMsz5Wk8pci8F+AFtu41zYYPiblHCEXK1wjxjUsjTAEG6as78XvqC9riaiHZXsr
+	 fH1D6U/oLeKcDmiQNcTRanlq02bIox3NgLNyu2VjRIdZwo70gvQ+WwDBZjeb5PSWfiWQa
+	 w0fY4JowYfMf7JdkyyR6geSvfqnVBjNW7KP/Aaqr7VHTRTPlOyIAknM5LEfb2ecrD7A==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793555302;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=UBm1kiri62EaTC8wl1H2p7PsuwOTdHeeIjuWlRIq8zk=;
+	b=eqD2c6uXqM4yr+d3H2Q8avriDOu0lvpHs/h/4aiEwiCO88biay2h8RO7P5CXRmGM2vbw
+	 GixdmEhC4aLanvzjSlLQPpgPtT52Yrm7AWczkUY9VU64d5QLfWVCl5r6z4Dyww9o14gby
+	 W54pW+twrtuWjHM20b9lBqyc0ZxWtrV8c+qclXTAN01R8oPTr/hVe7L0D/0V8T/anivgE
+	 AQYRzjNouPHrh92KHim9iR2ICAedDwund3dU4mgzsRBIIkpKZ9lmHOp0jDbFzwsTxCHeJ
+	 teB4yMFYhKT2gJKj8eR82SvO46gxSaMQ20NxyVPt6PdGJVF8LXxcsX9/rw+WlkkDvcw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KT0m98k3;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACEA606A325
-	for <linux-tegra@vger.kernel.org>; Sun,  1 Nov 2026 15:59:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5ACEA606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EC4606A324;
+	Sun,  1 Nov 2026 17:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vyOmQU+G
-Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-15ea896ddc8so3836875c88.0
-        for <linux-tegra@vger.kernel.org>; Sun, 01 Nov 2026 07:59:13 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793548752; cv=none;
-        d=google.com; s=arc-20260327;
-        b=dLHI+O15WrD2Qxx/ncy8EC3EQXqFvGHbR2GCd6SGAsA99LF3UvxWD0TWq18plL/oxD
-         YXpY9ORkTg7iZMHF+X7+pCEYeFzqsXGzTiNjBdT1EAgMEvtZKQSF04uOSy9RhP3VaHuJ
-         1xvYugRLWKbMz/TRn1UU2RmxrWVeWlTKNslOlzTmQdMZeYSrXaHj+d++ykka2PIQI06I
-         PrSf1ajodqCzkjddYqlQYtTcp1KArQlx+aMwg06MADKzPG8r0Qecah752lEgp+4d5dUu
-         yST9Lq185YdQZ3V4p9vjA1LdE6S1dWdlhTQQqUc7qGfK8rdDD5FxyDuyNT1Hsivwgh6a
-         KXXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=OaBbso/nWA2Q4yJF5+SbtI8vmJ4zVrnNgMLlXI5ZDPE=;
-        fh=AOOk4z+BHcXjFwjA9ask2nHRW9YHc698u576jKmjvP8=;
-        b=TVePH6pDm+iaM+N+LRyCklYTLQTM/GelEZFeJibcM05KG9TvslcR2Qq4E9oThtDaA2
-         ZW516ebeWtlbag4HsWS/wTDvaZqKKcTvH3g/CcaQHuiexpM3sV/0ybd5h5jTLY/X/IKv
-         8kT3EZNqRWT0T+5X3BQ5n1120j+e+VmoQi2Y5suSI905IeemM/V+zF15ZiKlF5+y8Bla
-         SXZ0telnFRBac3Eu/TuQ5/Z+yxAnBjsCuq9LYLnu1a112dVlyLh4X1CzQeywoO9Ee8zZ
-         YGE6t+j/g87MiyeVnHSk/ayOUTBq9g/hotruUlhzdUKX0mxGoop9eq5vqvDZWf/FPtOo
-         W1WQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793548752; x=1794153552; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=OaBbso/nWA2Q4yJF5+SbtI8vmJ4zVrnNgMLlXI5ZDPE=;
-        b=vyOmQU+GIUzXlWzuISIAqmcM+65J78pwMqPSy/SmvKYrqsO5olf638kBeiXOM3v7fD
-         7Gjz2ZgbU+Y14eCQ/WSShxwfOn/HC5FFJPn+gZia6EiAo7w+pYIMU2t2Ia0UWj+TUBPg
-         PJDZOD7lvjlbUhpVweHCokLOA6EG5D8SVEorKg9Age6da+KPUy0x3ZqNQOIZ3sdcYOsI
-         lf0khruygB9gKpxiaUoEzlksGd02/37GJ7qNZFPu2SNZAil98x/HUwjVANp1Xlcy+UWg
-         056SSxMwD8fwFs3wlSDLNpmICXNxGhgJxtkxBA08Ee/r62MC2T6Qxlcy6FnEvqnVfVsh
-         DI8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793548752; x=1794153552;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=OaBbso/nWA2Q4yJF5+SbtI8vmJ4zVrnNgMLlXI5ZDPE=;
-        b=C/WNM18Wlg/QojvI54dJZdFFmbxJ0y/9mdJ4+oOeH/tiMK1G6Vqq5lP1z5q5DqjS+o
-         09yScOkjURN5Yq5peI3SIUViz2QGHz+q9Swb0/CyqSjk/mIvOq2cBsXHdlhSSKy9De9J
-         sXWVcuknI66ZNcPRNg7et+QzcAd+zXbc/7ANa2m8aIGhVAdrNTutuxZrYhk7EXaihYR1
-         AkBlsW9sVdAqe83I4iCaRg/5hmYLYT+VFKSQrTdhg/geo90LN5ahaQ6tqbu76NO2wbRh
-         EFQvI5NtWKQiqrTpDosvACFPLG+ZyNw/tBRhx4Zp3XHnYUaY18MFeottWnZb0WE20XZI
-         /NYw==
-X-Forwarded-Encrypted: i=1; AKwUvBzJ5yETjXjX2slZTBMSj7bEnAwLin5jg3YD6qVgLt9En8bUpsVVosnWW/Nn8MveHW1w2UpVv3lV0/QAIg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+mjcDuDNG5sK62XtcIaxocwIutqG8onDnMLv7IVaUa7rrDz26P
-	byWyk5nu3Wx9BF+pfXKvAjpfg7feRgz134+8wy4/jGszH3P3bT0lq2XEca7Rx5QO3OOssoyD8u3
-	3353SkLHqwryYP/3Od97KXad9c5MwK1o=
-X-Gm-Gg: AYBFou3jO44b4Tl21MX44F3cX42mAZHOHWvcNo0dKl4rgpCKCl4fiw3SjDqDd/NXwXT
-	w/g8zuhOB7cQlanhYqnCFcmq584OLiBXSEjj9cVADGZoAKc1Dl1xpUk5mpVjXY/Hg1hxObSfTOD
-	SvG4FOOtmdKFb0PcBXWNBw6ak7W0c97wAV+MicmyQLk5QBiBUi3ZdkM3MEqkTlpheDt9ZXPJuZx
-	ucO1iAv1CdXXJ0tt/9imnh90tinTDBXoHRIOoQimdrEemTHm0zPfKIhS4lnea6YAEp5tYIBrCta
-	Az2QHYHtk8mxxmYo0CRgxaBtNMhrMv5shvlXa+G0T+LIbkEmS0k6+b0/KCswUKgsHb2ywB0wtUW
-	3+uEisl9hMPThzs0059FucfE5E2RPATZ7yXUsePLWAVND+cfqCnkIeFCS+NaeB5jERwAN/hA=
-X-Received: by 2002:a05:7301:6198:b0:36a:1e9e:ae61 with SMTP id
- 5a478bee46e88-36a42602aa1mr11000618eec.38.1793548752284; Sun, 01 Nov 2026
- 07:59:12 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KT0m98k3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E11141F000C1;
+	Sun,  1 Nov 2026 17:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793555301;
+	bh=UBm1kiri62EaTC8wl1H2p7PsuwOTdHeeIjuWlRIq8zk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=KT0m98k3UOR0hY2Y+WT+ZObsDmEhEMolcBLNHvMhwchKY5dLNlekLEFg38RjMmkzw
+	 DCA4V5Cwc63T1GXyTtwdCnnJSBRuI7lR5R3OgexiyPw+WwbREeVzyE0OFSHYKy0m9w
+	 I6yqJPVWmzG9rm839BPgzort49dF90MwsNpqjnlTFiM8KYITEEYSZMbNT4OiHY4mCt
+	 P3hq6I6JDHHUZf+Q0NM8z4EmLvLIhJwYDN2VPEUS3k0oFHh1hL1kveANOQFUoAN60j
+	 xVMknE0mwOBWqfd9+O9j6+Kv6zlgiS5l+6bi5P5wVVKYHTEAL5kusm2s86vg9l6l35
+	 YVRK/0ZAbtCjA==
+Date: Sun, 1 Nov 2026 17:48:18 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Patrick Fischer via B4 Relay
+ <devnull+admin.tsv-stahl-riesa.de@kernel.org>
+Cc: admin@tsv-stahl-riesa.de, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, David
+ Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Kevin Tsai
+ <ktsai@capellamicro.com>, Svyatoslav Ryhel <clamor95@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: iio: light: Add Capella CM3217
+Message-ID: <20261101174818.2aada52e@jic23-hlaptop>
+In-Reply-To: <20261101-upstream-iio-cm3217-v1-1-5e1724cae7b7@tsv-stahl-riesa.de>
+References: <20261101-upstream-iio-cm3217-v1-0-5e1724cae7b7@tsv-stahl-riesa.de>
+	<20261101-upstream-iio-cm3217-v1-1-5e1724cae7b7@tsv-stahl-riesa.de>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -104,63 +66,88 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261101-upstream-iio-cm3217-v1-0-5e1724cae7b7@tsv-stahl-riesa.de>
- <20261101-upstream-iio-cm3217-v1-2-5e1724cae7b7@tsv-stahl-riesa.de>
-In-Reply-To: <20261101-upstream-iio-cm3217-v1-2-5e1724cae7b7@tsv-stahl-riesa.de>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Sun, 1 Nov 2026 17:59:01 +0200
-X-Gm-Features: AclHuK8C4vxEYccTnlJFTZvavpWf-GCXw0Ej68N8q_v5q9HytmNW0NUmwJ3LSVo
-Message-ID: <CAPVz0n2YSjPsmhYHnm9UfNtU5gg-pWcxe0Rybpf12jrXUKn1aw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] iio: light: Add Capella CM3217 ambient light sensor driver
-To: admin@tsv-stahl-riesa.de
-Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Kevin Tsai <ktsai@capellamicro.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-=D0=BD=D0=B4, 1 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 16:46=
- Patrick Fischer via B4 Relay
-<devnull+admin.tsv-stahl-riesa.de@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
+On Sun, 01 Nov 2026 15:46:06 +0100
+Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org> wrote:
+
 > From: Patrick Fischer <admin@tsv-stahl-riesa.de>
->
-> The CM3217 has no registers and no ID. Writing a byte to address 0x10
-> or 0x11 sets command byte 1 or 2, reading a byte from 0x10 or 0x11
-> returns the high or low byte of the 16-bit light count.
->
-> Command byte 1 holds the shutdown bit and the IT_T field (1/2 T, 1 T,
-> 2 T or 4 T), command byte 2 the FD_IT field (800 ms down to 66 ms). The
-> count scales linearly with both. The driver exposes FD_IT as the
-> integration time and IT_T through the scale, so the scale list offers
-> four ranges for each integration time.
->
-> The datasheet is not public. The bit fields, the reserved bits that are
-> written as 1 and the startup setting of 2 T and 100 ms come from NVIDIA's
-> downstream drivers for the Tegra Note 7 (drivers/staging/iio/light/
-> cm3217.c in the 3.4 and 3.10 kernels). For the resolution, Capella
-> gives a range of 0.01875 to 119156 lux. The driver takes 0.01875 lux
-> per count at 4 T and 800 ms. This matches both the upper end (65535
-> counts at 1/2 T and 66 ms) and the 0.3 lux per count that the NVIDIA
-> 3.4 driver uses at 2 T and 100 ms.
->
-> The sensor has no data-ready flag, and a new setting only takes effect
-> when the conversion in progress ends. A conversion takes IT_T times
-> FD_IT, up to 3.2 s. Leaving shutdown starts a new one at once, so the
-> driver passes through shutdown on every change and waits one conversion
-> period plus a margin before it reads the count. The timing was measured
-> on a Tegra Note 7.
->
+> 
+> The Capella CM3217 is an ambient light sensor with an I2C interface but
+> without registers and without an interrupt line. It always answers on
+> the two addresses 0x10 and 0x11. The node describes the first address;
+> the second one is fixed and claimed by the driver.
+> 
+> The sensor is used in the NVIDIA Tegra Note 7 and the NVIDIA Shield
+> Tablet.
+> 
 > Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
-> ---
->  drivers/iio/light/Kconfig  |  10 ++
->  drivers/iio/light/Makefile |   1 +
->  drivers/iio/light/cm3217.c | 383 +++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 394 insertions(+)
->
 
-Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab P1988
+Hi Patrick
+
+One small thing inline. 
+
+> ---
+>  .../bindings/iio/light/capella,cm3217.yaml         | 45 ++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/light/capella,cm3217.yaml b/Documentation/devicetree/bindings/iio/light/capella,cm3217.yaml
+> new file mode 100644
+> index 000000000000..b2ddb14d657b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/light/capella,cm3217.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/light/capella,cm3217.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Capella CM3217 ambient light sensor
+> +
+> +maintainers:
+> +  - Patrick Fischer <admin@tsv-stahl-riesa.de>
+> +
+> +description:
+> +  The CM3217 is an I2C ambient light sensor without registers or interrupt
+> +  line. It always occupies the two I2C addresses 0x10 and 0x11; the node
+> +  describes the first one.
+> +
+> +properties:
+> +  compatible:
+> +    const: capella,cm3217
+> +
+> +  reg:
+> +    const: 0x10
+
+Put the documentation about using who I2C bus addresses here rather than
+in the introduction. This is where anyone wondering about allowed reg for
+a device that sits on two addresses would look.  Maybe add a little
+on what goes to each address.
+
+> +
+> +  vdd-supply: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        light-sensor@10 {
+> +            compatible = "capella,cm3217";
+> +            reg = <0x10>;
+> +            vdd-supply = <&vdd_2v85_sen>;
+> +        };
+> +    };
+> +...
+> 
+
