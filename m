@@ -1,46 +1,46 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793555302;
-	b=Xkd+C7MhaiEEFg7BL2spbOk84hpo7nJyWmqslLXHZhyveskNqziTRrO2q/C2IoH1AQyI
-	 jUPZtxl/TnDhqk6n9+6us7U8Z5wpDrWfW04U19vErQ9A84aQoPl6cbMncf+b3gUWnB/xa
-	 5BpsXkeMsz5Wk8pci8F+AFtu41zYYPiblHCEXK1wjxjUsjTAEG6as78XvqC9riaiHZXsr
-	 fH1D6U/oLeKcDmiQNcTRanlq02bIox3NgLNyu2VjRIdZwo70gvQ+WwDBZjeb5PSWfiWQa
-	 w0fY4JowYfMf7JdkyyR6geSvfqnVBjNW7KP/Aaqr7VHTRTPlOyIAknM5LEfb2ecrD7A==
+	t=1793556408;
+	b=htwGCe7DuwwObu47lEpNVPjj71XagpLDepDhVCF7GasdlcXa6OxsGhps4MGX8JGlAHg8
+	 cbNzCAlYCZF0wRtgk6w+eBvckqfoR5LqjUwRAhJOupL+Rjc5ZtEXZOb4o28gjBQ8Lh5sv
+	 nvRvWpRUG8euadbloFjA5P9nlqOCgqDynSIvdC/SdjHqM+2NL6FwcGeIzIvPuHJw2IJM4
+	 1YABsz06bP8PlSJ0shtcspRR1Lbe9UH9kXKdJvHomeKCDAONATLeor9STlngov9dGgzCK
+	 /NRvBxZ8FAlITV+ONaL74gxm0+qpugr891gneyqrfHABeHmZghf/xANTvIu+K8S75gg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793555302;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793556408;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=UBm1kiri62EaTC8wl1H2p7PsuwOTdHeeIjuWlRIq8zk=;
-	b=eqD2c6uXqM4yr+d3H2Q8avriDOu0lvpHs/h/4aiEwiCO88biay2h8RO7P5CXRmGM2vbw
-	 GixdmEhC4aLanvzjSlLQPpgPtT52Yrm7AWczkUY9VU64d5QLfWVCl5r6z4Dyww9o14gby
-	 W54pW+twrtuWjHM20b9lBqyc0ZxWtrV8c+qclXTAN01R8oPTr/hVe7L0D/0V8T/anivgE
-	 AQYRzjNouPHrh92KHim9iR2ICAedDwund3dU4mgzsRBIIkpKZ9lmHOp0jDbFzwsTxCHeJ
-	 teB4yMFYhKT2gJKj8eR82SvO46gxSaMQ20NxyVPt6PdGJVF8LXxcsX9/rw+WlkkDvcw==
+	bh=HxzxY68LFgsEqhESPA9sAtt7IItE63uFTt9H+9KAsqY=;
+	b=z0SdfiVaX5TqPtThS8hSddjruqfypxizo8g8rnPm/6D5DxoM9A6Ws6B5oTwkBphQlN9Y
+	 0EosLe2Ql9qcCuPrvjWtx3/7/Yo6XslyMT+Fhe4141FvWy+BavA68rCB5GXzyApHy7tOj
+	 Xejqdbw0xCIGEi2tmbDpiurj+bQ8ydd+dm78yFICHVA1AXOWujHaoFDQVJEFJArM/lqS4
+	 RItGBtP+g/0GVRgI8Zp7BryvHOeXSOg7CH+WZHJdGIYIUVJSRyqvQ/S7yolXIqeDNSEDr
+	 2ZTXqkwjELhzyQDVgxatyfOanTrIQWElmm8XwLaCKrxzIO/htgHH+59w4BKHEhDsU7Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KT0m98k3;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P87YTrAl;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EC4606A324;
-	Sun,  1 Nov 2026 17:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9F2606A324;
+	Sun,  1 Nov 2026 18:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KT0m98k3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E11141F000C1;
-	Sun,  1 Nov 2026 17:48:20 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P87YTrAl
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 114FE1F00919;
+	Sun,  1 Nov 2026 18:06:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793555301;
-	bh=UBm1kiri62EaTC8wl1H2p7PsuwOTdHeeIjuWlRIq8zk=;
+	s=k20260515; t=1793556407;
+	bh=HxzxY68LFgsEqhESPA9sAtt7IItE63uFTt9H+9KAsqY=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=KT0m98k3UOR0hY2Y+WT+ZObsDmEhEMolcBLNHvMhwchKY5dLNlekLEFg38RjMmkzw
-	 DCA4V5Cwc63T1GXyTtwdCnnJSBRuI7lR5R3OgexiyPw+WwbREeVzyE0OFSHYKy0m9w
-	 I6yqJPVWmzG9rm839BPgzort49dF90MwsNpqjnlTFiM8KYITEEYSZMbNT4OiHY4mCt
-	 P3hq6I6JDHHUZf+Q0NM8z4EmLvLIhJwYDN2VPEUS3k0oFHh1hL1kveANOQFUoAN60j
-	 xVMknE0mwOBWqfd9+O9j6+Kv6zlgiS5l+6bi5P5wVVKYHTEAL5kusm2s86vg9l6l35
-	 YVRK/0ZAbtCjA==
-Date: Sun, 1 Nov 2026 17:48:18 +0000
+	b=P87YTrAlXtY6yTL6IVaei3/kaOV+qmy3YbWBNzzuWpy6WjTbgurONXks1pqV4mNXE
+	 sjx+eMH2lRrqVYZ3Qey6G/C2wLfO0ioCJT1AB6p9lfed1xj8TuR5exgKhAS34ch0DQ
+	 7ZeOyfroZovcW2qm7NL284hQ0fA9Dk8ZvfaThRbuetPVLL47299bI/PRTcyp+YpRXy
+	 hoDmoM1ZYfLiuJxS2JLxvOWieRcYZd8nDP3siIJvITvLQm1HSbHbFEJwIQOUei5CtQ
+	 iJ6LnvDsJn7n/zsjHQBQALkhshFdyERjBQEZgyz+yHA3R82UEVDQx6BGLRd64Bd/qP
+	 mQpNUJyNXD1eA==
+Date: Sun, 1 Nov 2026 18:06:42 +0000
 From: Jonathan Cameron <jic23@kernel.org>
 To: Patrick Fischer via B4 Relay
  <devnull+admin.tsv-stahl-riesa.de@kernel.org>
@@ -51,11 +51,12 @@ Cc: admin@tsv-stahl-riesa.de, Rob Herring <robh@kernel.org>, Krzysztof
  <ktsai@capellamicro.com>, Svyatoslav Ryhel <clamor95@gmail.com>,
  linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: iio: light: Add Capella CM3217
-Message-ID: <20261101174818.2aada52e@jic23-hlaptop>
-In-Reply-To: <20261101-upstream-iio-cm3217-v1-1-5e1724cae7b7@tsv-stahl-riesa.de>
+Subject: Re: [PATCH 2/2] iio: light: Add Capella CM3217 ambient light sensor
+ driver
+Message-ID: <20261101180642.1768c3f2@jic23-hlaptop>
+In-Reply-To: <20261101-upstream-iio-cm3217-v1-2-5e1724cae7b7@tsv-stahl-riesa.de>
 References: <20261101-upstream-iio-cm3217-v1-0-5e1724cae7b7@tsv-stahl-riesa.de>
-	<20261101-upstream-iio-cm3217-v1-1-5e1724cae7b7@tsv-stahl-riesa.de>
+	<20261101-upstream-iio-cm3217-v1-2-5e1724cae7b7@tsv-stahl-riesa.de>
 X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -69,85 +70,182 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sun, 01 Nov 2026 15:46:06 +0100
+On Sun, 01 Nov 2026 15:46:07 +0100
 Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org> wrote:
 
 > From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 > 
-> The Capella CM3217 is an ambient light sensor with an I2C interface but
-> without registers and without an interrupt line. It always answers on
-> the two addresses 0x10 and 0x11. The node describes the first address;
-> the second one is fixed and claimed by the driver.
+> The CM3217 has no registers and no ID. Writing a byte to address 0x10
+> or 0x11 sets command byte 1 or 2, reading a byte from 0x10 or 0x11
+> returns the high or low byte of the 16-bit light count.
 > 
-> The sensor is used in the NVIDIA Tegra Note 7 and the NVIDIA Shield
-> Tablet.
+> Command byte 1 holds the shutdown bit and the IT_T field (1/2 T, 1 T,
+> 2 T or 4 T), command byte 2 the FD_IT field (800 ms down to 66 ms). The
+> count scales linearly with both. The driver exposes FD_IT as the
+> integration time and IT_T through the scale, so the scale list offers
+> four ranges for each integration time.
+> 
+> The datasheet is not public. The bit fields, the reserved bits that are
+> written as 1 and the startup setting of 2 T and 100 ms come from NVIDIA's
+> downstream drivers for the Tegra Note 7 (drivers/staging/iio/light/
+> cm3217.c in the 3.4 and 3.10 kernels). For the resolution, Capella
+> gives a range of 0.01875 to 119156 lux. The driver takes 0.01875 lux
+> per count at 4 T and 800 ms. This matches both the upper end (65535
+> counts at 1/2 T and 66 ms) and the 0.3 lux per count that the NVIDIA
+> 3.4 driver uses at 2 T and 100 ms.
+> 
+> The sensor has no data-ready flag, and a new setting only takes effect
+> when the conversion in progress ends. A conversion takes IT_T times
+> FD_IT, up to 3.2 s. Leaving shutdown starts a new one at once, so the
+> driver passes through shutdown on every change and waits one conversion
+> period plus a margin before it reads the count. The timing was measured
+> on a Tegra Note 7.
+
+I don't think we have a current active Capella Micro developer on the
+list as it's been a while since I heard from Kevin Tsai who contributed
+drivers for them, so your approach of using the vendor driver as a
+guide is probably the best we can do.
+
 > 
 > Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+A few comments inline.
 
-Hi Patrick
+If it is really hard to precompute all the available values, then
+we can probably get away with not doing so.  I don't think it is
+though and picking between precomputed sets is both cleaner and avoids
+a race if we ever get light driver inkernel consumers.
 
-One small thing inline. 
+Thanks
 
-> ---
->  .../bindings/iio/light/capella,cm3217.yaml         | 45 ++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/light/capella,cm3217.yaml b/Documentation/devicetree/bindings/iio/light/capella,cm3217.yaml
+Jonathan
+
+> diff --git a/drivers/iio/light/cm3217.c b/drivers/iio/light/cm3217.c
 > new file mode 100644
-> index 000000000000..b2ddb14d657b
+> index 000000000000..9e0e9afee092
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/light/capella,cm3217.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/light/capella,cm3217.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/drivers/iio/light/cm3217.c
+> @@ -0,0 +1,383 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Capella CM3217 ambient light sensor driver
+> + *
+> + * The CM3217 has no registers. It answers on two fixed I2C addresses:
+> + * writing a byte to 0x10 or 0x11 sets command byte 1 or 2, reading a byte
+> + * from 0x10 or 0x11 returns the MSB or LSB of the 16-bit light count.
+> + *
+> + * Copyright (C) 2026 Patrick Fischer <admin@tsv-stahl-riesa.de>
+> + */
 > +
-> +title: Capella CM3217 ambient light sensor
+> +#include <linux/array_size.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/cleanup.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/ktime.h>
+> +#include <linux/math64.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pm.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/types.h>
+> +#include <linux/units.h>
 > +
-> +maintainers:
-> +  - Patrick Fischer <admin@tsv-stahl-riesa.de>
+> +#include <linux/iio/iio.h>
 > +
-> +description:
-> +  The CM3217 is an I2C ambient light sensor without registers or interrupt
-> +  line. It always occupies the two I2C addresses 0x10 and 0x11; the node
-> +  describes the first one.
+> +#define CM3217_ADDR_CMD2_LSB	0x11
 > +
-> +properties:
-> +  compatible:
-> +    const: capella,cm3217
+> +#define CM3217_CMD1_RSVD	BIT(5)		/* reserved, set to 1 */
+> +#define CM3217_CMD1_IT_T	GENMASK(3, 2)	/* 1/2 T, 1 T, 2 T, 4 T */
+> +#define CM3217_CMD1_WDM		BIT(1)		/* set to 1 like the vendor driver */
+> +#define CM3217_CMD1_SD		BIT(0)		/* shutdown when set */
 > +
-> +  reg:
-> +    const: 0x10
+> +#define CM3217_CMD2_FD_IT	GENMASK(7, 5)
+> +
+> +#define CM3217_IT_T_2T		2
+> +#define CM3217_FD_IT_100MS	5
+> +
+> +/* 0.01875 lux per count at 4 T and 800 ms, the finest resolution */
+> +#define CM3217_NLUX_MS		15000000000ULL
 
-Put the documentation about using who I2C bus addresses here rather than
-in the introduction. This is where anyone wondering about allowed reg for
-a device that sits on two addresses would look.  Maybe add a little
-on what goes to each address.
+Use a muiltiplier for that definition. Various ones in units.h.
+I haven't figured out what makes sense, but that is too many 
+zeros to eyeball!
 
 > +
-> +  vdd-supply: true
+> +#define CM3217_MARGIN_MS	10
+
+
 > +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
+> +static unsigned int cm3217_conv_ms(struct cm3217_data *data)
+> +	__must_hold(&data->lock)
+> +{
+> +	unsigned int fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
+> +	unsigned int it_t = FIELD_GET(CM3217_CMD1_IT_T, data->cmd1);
 > +
-> +additionalProperties: false
+> +	return (cm3217_fd_it_ms[fd_it] << it_t) / 2;
+> +}
 > +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
+> +static void cm3217_update_scale_avail(struct cm3217_data *data)
+There are some unfortunately complex race conditions around
+read_avail where a consumer driver (iio/inkern.c) can hold a pointer to the
+array and there is no visibility in the consumer of the fact the
+data might be changing under it. The concern isn't so much getting
+wrong values as getting torn ones as the writes are occuring. 
+There have been a few goes at solving the race generically but none
+have landed yet.  Generally avoiding that sort of handoff of
+dynamic data is a nice to have and often easy enough to do.
+
+I'm not that concerned for a light sensor as we have no consumers
+in upstream anyway, but how bad would it be to precompute all possible
+tables at probe time or even at compile time, and then just pick between them?
+
+> +	__must_hold(&data->lock)
+> +{
+> +	unsigned int fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
+> +	unsigned int i;
+> +	u32 rem;
+> +	u64 nlux;
 > +
-> +        light-sensor@10 {
-> +            compatible = "capella,cm3217";
-> +            reg = <0x10>;
-> +            vdd-supply = <&vdd_2v85_sen>;
-> +        };
-> +    };
-> +...
+> +	for (i = 0; i < ARRAY_SIZE(data->scale_avail); i++) {
+Might as well do
+
+	for (unsigned int i = 0; .. {
+	
+
+> +		nlux = div_u64(CM3217_NLUX_MS << (3 - i), cm3217_fd_it_ms[fd_it]);
+> +		data->scale_avail[i][0] = div_u64_rem(nlux, NANO, &rem);
+> +		data->scale_avail[i][1] = rem;
+> +	}
+> +}
+
+
+
+> +
+> +static int cm3217_suspend(struct device *dev)
+> +{
+> +	struct cm3217_data *data = iio_priv(dev_get_drvdata(dev));
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	return i2c_smbus_write_byte(data->client, data->cmd1 | CM3217_CMD1_SD);
+
+Given this lines up with the power off callback above and the start of
+the write_cmd() sequence, maybe have a little helper to put this write
+command in just one place?
+
+> +}
+> +
+> +static int cm3217_resume(struct device *dev)
+> +{
+> +	struct cm3217_data *data = iio_priv(dev_get_drvdata(dev));
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	return cm3217_write_cmd(data, data->cmd1, data->cmd2);
+> +}
+
 > 
 
