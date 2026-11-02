@@ -1,168 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.52.51
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.172
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793660880;
-	b=s8xtAJwbvsY+A7tq+e+8JgqRGa53fxY2WvXDUZyHBhaWrV/TvxFvs8+i2dRmSha9gwz4
-	 o8CFBOca4ieBbHGUoIqfWPjql9DE0BsNJFliexFYVAGqPNi+3zPXq9kq07NZeaT9QAA5J
-	 pHPvmAA8LLHhajGG2UO1qK9u0D9cSdY7N4s6nM39oe3gt5/7vXycEXEUhIZI7kLyyerYg
-	 gyntOxIGgXgYj1dTA+E2aXuU9I7A9OWXCx8Q6KWUkfCSpeP7AO7sx7yF2+GH/gILp/o+7
-	 0ApNQxvduolVPCYjlHjqqgxWP5rSXzrgQYQD0I6KO1NmnOZ+th4wXkeb5/LS6/GNiGg==
+	t=1793663602;
+	b=42VGsgCMhHQwR01hTuOFC8U/rPphzYoc/ZHBh9LvIWMpwbxfUHO+BTTwJgmeeFY6ar/2
+	 Dmv4rl7q73GmMmZgClZ73dXS/Y5hNTV7tpAZO9oC6Dz7KsGypWHM50T8sSQ5u6YazuMb3
+	 Pl41nWpjO3gWT6J5SyMLscZXch6UBCobCWflVprA3s5dxWpO3/9USassYG0qDcJ1l+M+9
+	 E3r1vvLF5suIeOyvuXlzyCCUpiCJfEabigSfqO5v5eEBR1O5M+0+pNjRy1tjxkTm7rRRj
+	 Ey8Fc51wj1XmH+nLlaxzcu8qu0Nw00zYhMrCO5D3F6GW1AcX8t9NwJK4rzmSFDem2HQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793660880;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:CC:Subject:
-	 Thread-Topic:Thread-Index:Date:Message-ID:References:In-Reply-To:
-	 Accept-Language:Content-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
-	 x-ms-publictraffictype:x-ms-traffictypediagnostic:
-	 x-ms-office365-filtering-correlation-id:x-ms-exchange-senderadcheck:
-	 x-ms-exchange-antispam-relay:x-microsoft-antispam:
-	 x-microsoft-antispam-message-info:x-forefront-antispam-report:
-	 x-ms-exchange-antispam-messagedata-chunkcount:
-	 x-ms-exchange-antispam-messagedata-0:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-originalarrivaltime:
-	 X-MS-Exchange-CrossTenant-fromentityheader:
-	 X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-	 X-MS-Exchange-CrossTenant-userprincipalname:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=8taulI6/dnJX2Kxp9fyhhrfT7fPkkcS9mtQPJrEltec=;
-	b=yzCfnDS5dMl3QkmO7wCsaLj2HH+8njpOeck3Y6521l8Fsnw0BYikAjf4mU+qk3Qut8ka
-	 994SiaWJrs6IeE+ELV4516snFcnSpUW4d2cP/091jb59Yjrv2AcyKmaYz0lSzF8NqDdHR
-	 B6HVpiIZDUXO7yMmPe94wAQNe51fPavK9FlioIqKxGM/1hIJAOFbKh1z9wtAer+Gkb2MJ
-	 bG258UHI0GylpgReoIlB64BdLkqQ/M34Ldf5CtRQCPojshYqvAXuVyhXqlht4AgjgLnrI
-	 DY/Z5eHqN7IeFjicnD93E11j9HcWrvLoyOvlOwl1W9cG91H5mq5sOqngtjwELAXGqew==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793663602;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=y6R/7JiyY+QNpdkHpLxoucL3TEKilfqNsAl22fI4rCc=;
+	b=Pavv8PZ9HnRLckxPGGgkXZwfFD5xsIvQZBwkdNCXVXSJmAh0+kA4KIX1vyCeFzOvtYIC
+	 eHG63VUpJS4P9lirl+fSr5NgjTfydvW/Bxk1uW435Er9lzVUGw18fTxnr11FTdc6CayS8
+	 WfF/qETv804EgilIegbRKnaGJ9mdWFq07m84yVv1WPAJZtPOP/HC4DIsyQbf0y+e4SFlV
+	 rFUXNlEEoMenJr4EEf5FiuJ8jpuyS1bXROhbaZstB6HAa+uVF9EDIgXzIJdiqdhB95XwV
+	 2ZUd33iojop6qUjmXxPADX0+bCtrdmhJFrs2MXQF9/ChVCJsx2bmzxx3ovUUxug8fpQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=fji1uKBZ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.52.51
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011051.outbound.protection.outlook.com [52.101.52.51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=LWInwadQ;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.172
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2046D606A327;
-	Mon,  2 Nov 2026 23:07:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2046D606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F09606A329
+	for <linux-tegra@vger.kernel.org>; Mon,  2 Nov 2026 23:53:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 41F09606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=fji1uKBZ
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wvAMmYGA0NQSCh5ONsi8bSUmSsskA18SvUOcVHf0GaLBD1yUAr31Fd3n8G8u+kklH/Wdysdwhfe3vHRvmkoetE/ldn+f9EuBV0Wu7KF+HuY/lIpxl6xoi07DbCzsOP4yjreDFUQiLimeFx3CRjlC8JJDogTlV+TSnCzTR4/umQSNnQ4krdFYbVRMGADbGPdnZN8nF+NiqNRgVQAuk1lF4BEu7J7Yz0b3z8BxvWHNpWL8Fx6f0XRwSm+oEinXwusFtSS5xIub3yC12M+6YwhKX1+KP5k5AQqQSww8RAwF6GArzgflrEshNGIxXBy/xtTKwwvN1T7EZjTRaBKtBxENrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8taulI6/dnJX2Kxp9fyhhrfT7fPkkcS9mtQPJrEltec=;
- b=cbinj+5vLXyInxVA5YwJFCTQzHN9OpYvFeOwy6eT4MPVWeHdjxWruC96eMX5BZ/mLhE/7Q8OT597RYCzFLWndKOqJ+e1KNgilKKxvioXSLJ++nlZ+/BmciVydTuIxTBbiuLVebThIPQOcA5ULRMaBJv5ZfXhKFs7OxiBFbn6fG79TkSFwr2gpldoWHy6IWN+3g9oR+4AmO9RdupROMuh6rLmF3thPuHq8OoKRhb99HYTYrVd39pnOGUzMFmH/Pq8JkcQxWa87BRAxVU3RjcSDyPCZEu2N2Y8sLqwaVVnRcA0avS4Sp+V3VDDDY8DyWc/jCmAT4JcjPQJrOpxQTNIOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8taulI6/dnJX2Kxp9fyhhrfT7fPkkcS9mtQPJrEltec=;
- b=fji1uKBZ6aN3ndkv2daG9LL+Af9Cm6LEYUfQ0p034U9cBHQdxYMiGvIzHFy/VH2fC9t5ybe+c34EqVmFEK+8C3bQgzuSBxzAGAd3bRD+vYJlbtfDqDy2R2/bVi2n3V3lL7WlqMtad9TWlXLqrz6CjxO8fhXc/BI5BYi6SbxCGzTRn69+9Dhm9Fxqz+kBTVs5Z3BtY1K4C46FL1lPluds8xSTGhB028HOzlJuXRMwiODWPVTBIAp+cVH7hhG7T4xApLK9ZcwVIyiFfURI8/GCoOVg3IQ/NpOmzkpJx0C90hfShzLJQI1roqe0APwnoJDYfNsH4F9+bFiBAl7HFCNSog==
-Received: from SA1PR12MB6773.namprd12.prod.outlook.com (2603:10b6:806:258::16)
- by SJ0PR12MB8091.namprd12.prod.outlook.com (2603:10b6:a03:4d5::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.12; Mon, 2 Nov
- 2026 23:07:56 +0000
-Received: from SA1PR12MB6773.namprd12.prod.outlook.com
- ([fe80::ba62:69e8:261f:1cdf]) by SA1PR12MB6773.namprd12.prod.outlook.com
- ([fe80::ba62:69e8:261f:1cdf%5]) with mapi id 15.21.0569.010; Mon, 2 Nov 2026
- 23:07:55 +0000
-From: Besar Wicaksono <bwicaksono@nvidia.com>
-To: Ian Rogers <irogers@google.com>
-CC: Will Deacon <will@kernel.org>, "acme@kernel.org" <acme@kernel.org>,
-	"namhyung@kernel.org" <namhyung@kernel.org>, "ctshao@google.com"
-	<ctshao@google.com>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Vikram Sethi <vsethi@nvidia.com>, Rich Wiley
-	<rwiley@nvidia.com>, Sean Kelley <skelley@nvidia.com>, Matt Ochs
-	<mochs@nvidia.com>, Raj Joshi <rajjoshi@nvidia.com>, Thierry Reding
-	<treding@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
-	"john.garry@linux.dev" <john.garry@linux.dev>, "james.clark@linaro.org"
-	<james.clark@linaro.org>, "mike.leach@arm.com" <mike.leach@arm.com>,
-	"leo.yan@linux.dev" <leo.yan@linux.dev>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "alexander.shishkin@linux.intel.com"
-	<alexander.shishkin@linux.intel.com>, "jolsa@kernel.org" <jolsa@kernel.org>,
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>
-Subject: RE: [PATCH v2 0/9] perf: Add NVIDIA Tegra410 uncore PMU events and
- metrics
-Thread-Topic: [PATCH v2 0/9] perf: Add NVIDIA Tegra410 uncore PMU events and
- metrics
-Thread-Index: AQHdaJbu7bxc3v7n20O69F3+XMrNxrcWYcCAgABCJFCAAGiKAIAEUl7g
-Date: Mon, 2 Nov 2026 23:07:55 +0000
-Message-ID:
- <SA1PR12MB6773A9E13CCFD7322501EE0BA06A2@SA1PR12MB6773.namprd12.prod.outlook.com>
-References: <20261030174816.1544471-1-bwicaksono@nvidia.com>
- <CAP-5=fUEmNrREh-ipxYMiStr5xCakGDBZW8OmAj1rhACs8qaZw@mail.gmail.com>
- <SA1PR12MB6773B13BD3EB2B60FBED6013A06D2@SA1PR12MB6773.namprd12.prod.outlook.com>
- <CAP-5=fWJn=Fws6ew_HCsxVo6Bcqvvgn-8g=21+nvoEHA5GhLKA@mail.gmail.com>
-In-Reply-To:
- <CAP-5=fWJn=Fws6ew_HCsxVo6Bcqvvgn-8g=21+nvoEHA5GhLKA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR12MB6773:EE_|SJ0PR12MB8091:EE_
-x-ms-office365-filtering-correlation-id: 524f5e8f-ebfa-45d7-f537-08df39362138
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|23010399003|3023799007|6133799003|10067099003|18002099003|261102123227099003|22082099003|13003099007|56012099006|38070700021|11063799006|5023799004|4143699003|261026121527099003|261022105027099003|261022075727099003|261026140227099003|261009223027099003|261028144727099003|261021121427099003|261021123027099003;
-x-microsoft-antispam-message-info:
- 0WgWisebA/FtWbIu5U6RPFmK6BFCOFhTrBiWMqxCPpNNk9z5+eTQUnVrwbklIbw4Cy2ulUf/iYzLw3HK/evF7O0bNFK0si2WkKq31/jU1o7UOuFyMto7fp7fqTGAad124vuoixBUgvJv/ULy/KwRvj8i0xyhHC98oqkjScSXD3Zo6AKe4NH/Oig+SowVPrTZjBOwFP3pl0oOWohYsZSWPzZdOrAIiCQ1CtCYFV1u5K8MdJVK8O+69ncvD5tfoKa8WxGMhOPEtA9SatRbp6c7RBienMYk7qKijr5eknOPXB3CP+ZsKsDlphIuIJxJ6Jt7om/leEsEPaup6e2yXvXmKVFR0Oh5f1YnS09lVSFCDwRyffK07MhLM5Y7uQZIrYXGKpYiHudOuVn9wvZrBg7aATXBno9aaJj6t/5QlS1TGQTPFI9QlYp2R5u/8+SVxBcnQwspr+GCcsE8MncmznSQqi0jdwr/59tI6jJTbEsD3ZkF6jg7XEE5f3VusHto3/dXO7o4ZHYFwRooxAPBhlxYFJxQznTulmWixIYfle6UdZFaIFLpw4D4idpNIpZ7YloOgcalLs7sfUxEYHUAaOJsHrphG4oIMSkLy+cYa8n1a1zngadi0m/c4T9tGABUByUdTO5hd9uwn00LsE7z6jthaW4hhpEdNsmqKSBCTd7gSlW//opaVVUfql/5yYmiR5nzx0WAmbXPWsmnu7eYNfMPfHX2pf3i6q+KZD+dUE6J2Bo=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB6773.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(23010399003)(3023799007)(6133799003)(10067099003)(18002099003)(261102123227099003)(22082099003)(13003099007)(56012099006)(38070700021)(11063799006)(5023799004)(4143699003)(261026121527099003)(261022105027099003)(261022075727099003)(261026140227099003)(261009223027099003)(261028144727099003)(261021121427099003)(261021123027099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SHZPUUtzTDFaczEzSHJValAzUVRwczArL3ZpeU8xbUJOTFpscFhobTJmQ1JT?=
- =?utf-8?B?Z2lNQUxpZ3ZVRm5kam5yTVJ1NEhDVEliRHErTDdFcVlnVThKMm1ZNGdrQXZm?=
- =?utf-8?B?R0ZCYzhPdFNNTGZ5Z0hJQllIRWpvQ3hVd3BZZjVmSzdDZHltUGRRb2lOVkMy?=
- =?utf-8?B?M1VLbGp3V1U0bkZiaG9jTkNIVE1venJSUTFGV1JxWExHa2dZRXhtcVRPYm0y?=
- =?utf-8?B?elBQYmlyUmwrWFp3MklwNDh4eHYxQm9nWWtDSnlJUndQZDZxZ2ZYTWV3WVJD?=
- =?utf-8?B?QU9xMi9mdmJBMUZxbDBmOHI0Tk1oUHF4eDdsMkdIRzEzb0xXYU1CZ1dKMnpr?=
- =?utf-8?B?eVc3dHIrNW9JcmdqeWFFWEtzUTcrR0Z3TEEzdmJOU00xY01SbW5la1dsaitI?=
- =?utf-8?B?OGdBbHphalBGYnF5aDhiTHd0dnp0VG0wbEgyS0hMODRGVDFrSTFYbHVCbTlZ?=
- =?utf-8?B?YXZPRDM5bVlwMFRPeEpoZDZyZ0pZdzkwNVFiL2VJaVdnMm1XZEhPYmdVcUdU?=
- =?utf-8?B?TCtLL1lPUDFVZjdyL2kyYU92b2VaZGhIeEJNUTFob1BCN2lHOGJ6bXdIbTJ0?=
- =?utf-8?B?cGl4NXZjcVpTcStDcFl3U1FDc3AxTTBvKzhPbitaY0k3bllBN29iMXRPQ2w4?=
- =?utf-8?B?cE1CdHBXbHlNczhjVXlKQkRncUYyTzgwbW8wclBOZzRyZHI4YmMreWJxME9v?=
- =?utf-8?B?MW4wcWdnMkEyQitkbkZVdjR0R3pQVDBNdmZpVlJOVUVpMmpwUVJ4R0EyRDhK?=
- =?utf-8?B?Wk5SOEdYei9uc0dLLy9PcTBiMmhjeTIxWTZvVzZabWFUdWs3dHZzZXJhVFQy?=
- =?utf-8?B?NTlTTGxwSjRLcG95aWNOdDZWekRDUlVUa053L29UWnJKVDc3ZXJ0cHYxRFph?=
- =?utf-8?B?b3RkbVVFSHJ0Ui9iakNWWXo5T1dvUUNDYW12RnNpL2xWdmhpUXFWVy82dDl1?=
- =?utf-8?B?YjVWNnZpT2VCWmJBWnp1S2NPZFJhczRUQUlVeDh6RldvZzJXNjFVbGZ0ZnZl?=
- =?utf-8?B?VEZrdVBWSEsyQUhLMjRCVEpRN0Vsc0xud3gyZ2I3OG1rUHZwdFdYRWpSRFFV?=
- =?utf-8?B?REFZaDBLbzR0ZXZ1cW1kdUppSjBQazQrK2s2RVpaNnNVaVVPWHgrRFY0aXA5?=
- =?utf-8?B?Mkh6UUtZKzRPaENzSE9aTXZpbURnZ21XR3k0RVg4VFFEVnNkRy9rR0IrYk5M?=
- =?utf-8?B?MTNidHF5aFgzOHpDL2VrQjIvM0Z6N0ZaY0xrQUwvQXlqZGlNME5RUk5sTEFy?=
- =?utf-8?B?ZGxuZlNHSkZ1L2ZJenNtbWFKUVRyajdWbnlZV0xmVzVSVEFIL0o2Nk5RVmVV?=
- =?utf-8?B?VmwzR0FuaHZmM1R3SFdxbGhzellRZy9LWmFlcVFiSE9DbHRiSnF0NnVvTUFx?=
- =?utf-8?B?Rmt5YXhUaE9HZU9HYTlhRGdQcEIzUjdKT2FYRjdVYUlhb2hBVnBKRnh6c0g5?=
- =?utf-8?B?VnBwSkRMcXhzNmlURERoS3JhM2JodGw1MDJhRkVyNHNBOURmVllXWlhLSW94?=
- =?utf-8?B?L0VkM3BtaWpKS1d2RUhmYWJIaGRKeUtkL3U0YXVyYnYyQ3VBZVNnbS9YcHp6?=
- =?utf-8?B?dktRQ1VSNmdvZXQ1VkM2R0VCYnlqa29KWW1tVUhaWWkrNEpycjdGREdGL1Jj?=
- =?utf-8?B?YU9jR09TK1VDbE54YXVJSmpIQTR3US9SNW9OeVZtQ3NuSmI3ek9nZFdsSmlM?=
- =?utf-8?B?NUJnY0tJd0NMTnVQb3Q0RFltOERUYUZ6MkZtRjdsbFpwWk9WeG5UUVU4cDE2?=
- =?utf-8?B?UFRrUVE0VndvUnNuUzQ0R2Vac0tpU2x3UHJnZnJtSk5mdllJU0trY0RKem0r?=
- =?utf-8?B?TmFPQnh2N0hWMHdXM2JFRUpiRExLZU9QaWhOWm42S1BmSURCY3lra3IwTzRK?=
- =?utf-8?B?MDRWZW5yMjZoNjU3L0YzSTlodkhxdi9WbjVBREZzVG1LM1dINXMybi9kaU44?=
- =?utf-8?B?aGludVJ1UFMwajVxQkthY09GdGcwMWFXMFFScm4ya1dYZUI4dElZVVlrSEFy?=
- =?utf-8?B?UDdBanFSZXBkWWhlR1NFQ3VaY0hYcWJNTXhsNmsyMFpZYzdYa2ZlOXZLNnI2?=
- =?utf-8?B?ZG5Udjd2Sm9KWTZYd0tCQklCZGwwSXFlMHgwRXlpanQ0UElyUm9ZZFFEdDdT?=
- =?utf-8?B?Q3dzeG5UZCtDNUJOeVZWVy9sREFUTU9NcEt2YWRhMEpka0paQzFQMkxBZEMv?=
- =?utf-8?B?SjQxbUkxSXB1ZEg4TUdQVXY2RG1mYkYvWGoycnBpWnFUcmgrZERiVVBQSW9S?=
- =?utf-8?B?T0hUaVdnWm93VzN3MFNuNnM2dkNjTnVreHhIMW5ROXcrU3NpT013WjhFTlNS?=
- =?utf-8?B?S3FSWEhJR0JvT2RxemN4QnFHY1FVTHZBQ3FNRnZhdlJsbWl6YmdwQT09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=LWInwadQ
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-54492d8a988so98411cf.0
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Nov 2026 15:53:21 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793663600; cv=none;
+        d=google.com; s=arc-20260327;
+        b=nUm8yqO2Wpp4dtIMalTQp0VxgS0csDwBgQJbcqv6H67HuFpPOMHbY/YElL56XIzslG
+         NZiqmj4WNLfiIQiLBsoBxl9yJA8lbZBV4oyuQKNgOMKOTs5nUuB4Inut2RKAfOB7jNlg
+         t1ohQ1ah54gydflg9f/c/pwVP0tiR9V4qs2h/GQXaehnS7nkVDDpWO/Vjj8OcRDRVAj7
+         OTkmn9XZmNTKYY1IqItSfYqpfZLVTZKwX0TCzJZwI81Xu85vf25VWCRzB9kcPt6gXz1m
+         ZEk7n4/blZlxR0s5jN8Iskzxb25L+d2NBhAX5t5ABxF5FfcGlAFqngkuLS+BhV2eK+A3
+         wA5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=y6R/7JiyY+QNpdkHpLxoucL3TEKilfqNsAl22fI4rCc=;
+        fh=Y1oU2cV8CkFgNbDzulLofZ6IalOEN7o7ES6oCJtVDtI=;
+        b=khXB+NwKKwH1puo85wj6xhL7OHWnP6iR14ujaSXorRLueSjObnJh+554efTObMQoyb
+         cAcHkEAOHeZPRLrhhJf8VRks0AChpjCq3Jbs21O5+974/sclYnY57KyD9EBwGbHxHctx
+         FLLDGcrVdrq6hsLLobIMpHnvUdP4RX5Zw4e9rQZODd0iuekazEIWES9KXf9YTTWb/Jbq
+         km6g9X/nFrQKnkNbBKfsOFQAXS93fGbcwEtSkPAlwIM5xuMhxKLsvfAokht3IbjI/SZP
+         TSnhMnIaE21IGvhqxkkK+WwrPAKL1ysJSkedcPTTvJ86zhnXSJr8Sl1HvFL2ngpCdFkQ
+         VqEw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1793663600; x=1794268400; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=y6R/7JiyY+QNpdkHpLxoucL3TEKilfqNsAl22fI4rCc=;
+        b=LWInwadQSl92S4+jocVul9v4ws1MfhzZfGmblCxS1OopQQQjACkzJA6lAnQJDRwDTy
+         nDt7MxK7yKAtE5gjcSoDr/hJ3CPopHj1yV0lgw8XVXJQoeW2pp9UdvvCSLpKiGnZCFk1
+         FyHEXbbHMBuPZIkenZryEFDvECc/G5oqKYMvC3nV6qjEenC+80xSQplwvfKbNrL53sdH
+         Dcj6txqU6D7uzRClo+/IoADkCX6FiKW/mWXzXACUQuSAMvcP5a0DbhUyHGWFALaa7dCZ
+         b8TaIdFkkT3561AgTAIr58r9mJ3j3ULpnmuf035cfn0OEmnP1OoY1Y8XYMEcpWMSrnty
+         z8TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793663600; x=1794268400;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=y6R/7JiyY+QNpdkHpLxoucL3TEKilfqNsAl22fI4rCc=;
+        b=ka5AZi0X7yWYAaZzQVKSzHiQG2zeGgk75n9HCb61i3nnVOA37n3S9c18AHwJA1t7sI
+         H5GnpNu9m0XHFQ3anr8wvVeVfJNq+FbK/QolYzIdajOSgTBoYSoscjHv324hqBn4buaQ
+         U+kdEgjFlHiwl7VJpEvRwcCXiH11vBA35ZFEBUzY5aJJiuEKNQmiPClUZDPP+hMinFvV
+         mgB4uQbMfy6/5S2wg28ed1fm1KS4BLvlD5RufzYI/lRXh2crEe+qwcxFNTWIgDUmLbBL
+         BFNwmQS6az9SQ0iZefEraiH6YJnJtqZAaHlHBYvDqopFzhET43ScuSMu3x04q0oM615X
+         2pfw==
+X-Forwarded-Encrypted: i=1; AKwUvBzR+Doev094SdsyW6tkl2bMuvJ93s3bGxLcB7PFmPDovTSMXpP9DFySnanjZbcSgdxYHt0qo2+bbmLzng==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJHj5p6ovdJsZQ46HPePcCsPRVwc8rRplfhKCbkpPmTjVbhywY6
+	s+XKESCxRczH6+rVnVCSPGnlTU1WeFpM10mVT9OZAx9YGkcBBDyK3wb9Ex4cfVf4VHLoHvpTnTs
+	dx7S0tlDZjcpiVpsJy62JAJVHGa+eLaSTciZgdEU8
+X-Gm-Gg: AYBFou1ovbUIy8K891YNOB/YHyBzABf6CmulJ/2Jx+EZbstlym+MnGtwATMQMepE2+O
+	LKIcWnvpN2nBFPmErf9HVkAfVPZX+eOvHZ2rIlOKA5vbQJVY7yR3KRSj6ScGzRVxL+kft8/kAnU
+	DM8CWlFv5RH2l2SUMii+toQChJoh6VhrDgQCiu3vXAzpY26/LjxPw4RK+ncOHVmZhAbulPaXKp1
+	cEwUUmQKvACkEGaGspRNPH1bxizwU0JUatlDdxMSgBc+q+KY5JJIChLgjeDMbPXGBjFLgZOjyI8
+	N0n/fbC3vlUOlWa56KkVP2pXVKRwQNpbDSAkbiWlzw51rsBb/T4fl+DcnklyqhxnX2cB6oWmk+y
+	EARVpYPgTwo1AYLXZ/Y1kBoMiNBoJGvz1bvLdEA==
+X-Received: by 2002:a05:622a:1c11:b0:52f:8389:29e0 with SMTP id
+ d75a77b69052e-549b675d2f3mr2787571cf.0.1793663599242; Mon, 02 Nov 2026
+ 15:53:19 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -172,236 +104,371 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB6773.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 524f5e8f-ebfa-45d7-f537-08df39362138
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Nov 2026 23:07:55.7841
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zQmSuqh5Ctt9HUZ9lC57NL7VxUNXOkut0owjiP4E5Yh8nReIeGC0Hu7oEdfBY5YXJrdSbcXxbyrMQEvXstmZxg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8091
+References: <20261030174816.1544471-1-bwicaksono@nvidia.com>
+ <CAP-5=fUEmNrREh-ipxYMiStr5xCakGDBZW8OmAj1rhACs8qaZw@mail.gmail.com>
+ <SA1PR12MB6773B13BD3EB2B60FBED6013A06D2@SA1PR12MB6773.namprd12.prod.outlook.com>
+ <CAP-5=fWJn=Fws6ew_HCsxVo6Bcqvvgn-8g=21+nvoEHA5GhLKA@mail.gmail.com> <SA1PR12MB6773A9E13CCFD7322501EE0BA06A2@SA1PR12MB6773.namprd12.prod.outlook.com>
+In-Reply-To: <SA1PR12MB6773A9E13CCFD7322501EE0BA06A2@SA1PR12MB6773.namprd12.prod.outlook.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 2 Nov 2026 15:53:07 -0800
+X-Gm-Features: AclHuK9AmugvMqLXDCOPc8pKZIzILBtJSEV_O6t_Xr6tdxsqP1qTjRrJzqawtBs
+Message-ID: <CAP-5=fWKC7GD43BebLd_nP+TM87aS0fBKg2o=q-C156tAgCLGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] perf: Add NVIDIA Tegra410 uncore PMU events and metrics
+To: Besar Wicaksono <bwicaksono@nvidia.com>
+Cc: Will Deacon <will@kernel.org>, "acme@kernel.org" <acme@kernel.org>, 
+	"namhyung@kernel.org" <namhyung@kernel.org>, "ctshao@google.com" <ctshao@google.com>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vikram Sethi <vsethi@nvidia.com>, 
+	Rich Wiley <rwiley@nvidia.com>, Sean Kelley <skelley@nvidia.com>, Matt Ochs <mochs@nvidia.com>, 
+	Raj Joshi <rajjoshi@nvidia.com>, Thierry Reding <treding@nvidia.com>, 
+	Jon Hunter <jonathanh@nvidia.com>, "john.garry@linux.dev" <john.garry@linux.dev>, 
+	"james.clark@linaro.org" <james.clark@linaro.org>, "mike.leach@arm.com" <mike.leach@arm.com>, 
+	"leo.yan@linux.dev" <leo.yan@linux.dev>, "mark.rutland@arm.com" <mark.rutland@arm.com>, 
+	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, "jolsa@kernel.org" <jolsa@kernel.org>, 
+	"adrian.hunter@intel.com" <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSWFuIFJvZ2VycyA8aXJv
-Z2Vyc0Bnb29nbGUuY29tPg0KPiBTZW50OiBTYXR1cmRheSwgT2N0b2JlciAzMSwgMjAyNiA0OjE4
-IEFNDQo+IFRvOiBCZXNhciBXaWNha3Nvbm8gPGJ3aWNha3Nvbm9AbnZpZGlhLmNvbT4NCj4gQ2M6
-IFdpbGwgRGVhY29uIDx3aWxsQGtlcm5lbC5vcmc+OyBhY21lQGtlcm5lbC5vcmc7DQo+IG5hbWh5
-dW5nQGtlcm5lbC5vcmc7IGN0c2hhb0Bnb29nbGUuY29tOyBsaW51eC10ZWdyYUB2Z2VyLmtlcm5l
-bC5vcmc7DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtcGVy
-Zi11c2Vyc0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-IFZpa3JhbSBTZXRoaSA8dnNldGhpQG52aWRpYS5jb20+OyBSaWNoIFdpbGV5DQo+IDxyd2lsZXlA
-bnZpZGlhLmNvbT47IFNlYW4gS2VsbGV5IDxza2VsbGV5QG52aWRpYS5jb20+OyBNYXR0IE9jaHMN
-Cj4gPG1vY2hzQG52aWRpYS5jb20+OyBSYWogSm9zaGkgPHJhampvc2hpQG52aWRpYS5jb20+OyBU
-aGllcnJ5IFJlZGluZw0KPiA8dHJlZGluZ0BudmlkaWEuY29tPjsgSm9uIEh1bnRlciA8am9uYXRo
-YW5oQG52aWRpYS5jb20+Ow0KPiBqb2huLmdhcnJ5QGxpbnV4LmRldjsgamFtZXMuY2xhcmtAbGlu
-YXJvLm9yZzsgbWlrZS5sZWFjaEBhcm0uY29tOw0KPiBsZW8ueWFuQGxpbnV4LmRldjsgbWFyay5y
-dXRsYW5kQGFybS5jb207DQo+IGFsZXhhbmRlci5zaGlzaGtpbkBsaW51eC5pbnRlbC5jb207IGpv
-bHNhQGtlcm5lbC5vcmc7DQo+IGFkcmlhbi5odW50ZXJAaW50ZWwuY29tDQo+IFN1YmplY3Q6IFJl
-OiBbUEFUQ0ggdjIgMC85XSBwZXJmOiBBZGQgTlZJRElBIFRlZ3JhNDEwIHVuY29yZSBQTVUgZXZl
-bnRzDQo+IGFuZCBtZXRyaWNzDQo+IA0KPiBFeHRlcm5hbCBlbWFpbDogVXNlIGNhdXRpb24gb3Bl
-bmluZyBsaW5rcyBvciBhdHRhY2htZW50cw0KPiANCj4gDQo+IE9uIEZyaSwgT2N0IDMwLCAyMDI2
-IGF0IDM6MTnigK9QTSBCZXNhciBXaWNha3Nvbm8NCj4gPGJ3aWNha3Nvbm9AbnZpZGlhLmNvbT4g
-d3JvdGU6DQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gPiBGcm9t
-OiBJYW4gUm9nZXJzIDxpcm9nZXJzQGdvb2dsZS5jb20+DQo+ID4gPiBTZW50OiBGcmlkYXksIE9j
-dG9iZXIgMzAsIDIwMjYgNjowNyBQTQ0KPiA+ID4gVG86IEJlc2FyIFdpY2Frc29ubyA8YndpY2Fr
-c29ub0BudmlkaWEuY29tPg0KPiA+ID4gQ2M6IGFjbWVAa2VybmVsLm9yZzsgbmFtaHl1bmdAa2Vy
-bmVsLm9yZzsgY3RzaGFvQGdvb2dsZS5jb207DQo+IGxpbnV4LQ0KPiA+ID4gdGVncmFAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LXBl
-cmYtDQo+ID4gPiB1c2Vyc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmc7IFZpa3JhbSBTZXRoaQ0KPiA+ID4gPHZzZXRoaUBudmlkaWEuY29tPjsgUmljaCBXaWxl
-eSA8cndpbGV5QG52aWRpYS5jb20+OyBTZWFuIEtlbGxleQ0KPiA+ID4gPHNrZWxsZXlAbnZpZGlh
-LmNvbT47IE1hdHQgT2NocyA8bW9jaHNAbnZpZGlhLmNvbT47IFJhaiBKb3NoaQ0KPiA+ID4gPHJh
-ampvc2hpQG52aWRpYS5jb20+OyBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPjsg
-Sm9uDQo+IEh1bnRlcg0KPiA+ID4gPGpvbmF0aGFuaEBudmlkaWEuY29tPjsgam9obi5nYXJyeUBs
-aW51eC5kZXY7IHdpbGxAa2VybmVsLm9yZzsNCj4gPiA+IGphbWVzLmNsYXJrQGxpbmFyby5vcmc7
-IG1pa2UubGVhY2hAYXJtLmNvbTsgbGVvLnlhbkBsaW51eC5kZXY7DQo+ID4gPiBtYXJrLnJ1dGxh
-bmRAYXJtLmNvbTsgYWxleGFuZGVyLnNoaXNoa2luQGxpbnV4LmludGVsLmNvbTsNCj4gPiA+IGpv
-bHNhQGtlcm5lbC5vcmc7IGFkcmlhbi5odW50ZXJAaW50ZWwuY29tDQo+ID4gPiBTdWJqZWN0OiBS
-ZTogW1BBVENIIHYyIDAvOV0gcGVyZjogQWRkIE5WSURJQSBUZWdyYTQxMCB1bmNvcmUgUE1VDQo+
-IGV2ZW50cw0KPiA+ID4gYW5kIG1ldHJpY3MNCj4gPiA+DQo+ID4gPiBFeHRlcm5hbCBlbWFpbDog
-VXNlIGNhdXRpb24gb3BlbmluZyBsaW5rcyBvciBhdHRhY2htZW50cw0KPiA+ID4NCj4gPiA+DQo+
-ID4gPiBPbiBGcmksIE9jdCAzMCwgMjAyNiBhdCAxMDo0OeKAr0FNIEJlc2FyIFdpY2Frc29ubw0K
-PiA+ID4gPGJ3aWNha3Nvbm9AbnZpZGlhLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+IEFk
-ZCBldmVudCBhbGlhc2VzIGFuZCBkZXJpdmVkIG1ldHJpY3MgZm9yIHRoZSBOVklESUEgVGVncmE0
-MTAgdW5jb3JlDQo+ID4gPiA+IFBNVXMsIGFuZCBmaXggcGVyZidzIGFnZ3JlZ2F0aW9uIG9mIFBN
-VSBpbnN0YW5jZXMgdGhhdCBhcmUgbnVtYmVyZWQNCj4gaW4NCj4gPiA+ID4gbW9yZSB0aGFuIG9u
-ZSBwYXJ0cyBpbiB0aGVpciBuYW1lLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGUgc2VyaWVzIGNvdmVy
-cyB0aGUgVUNGLCBQQ0llLCBQQ0llIHRhcmdldCwgQ1BVIG1lbW9yeSBsYXRlbmN5LCBhbmQNCj4g
-PiA+ID4gY2hpcC10by1jaGlwIGludGVyY29ubmVjdCBQTVVzLiBJdCBwcm92aWRlcyBzeW1ib2xp
-YyBuYW1lcyBmb3IgdGhlDQo+IHJhdw0KPiA+ID4gPiBldmVudCBlbmNvZGluZ3MgYW5kIG1ldHJp
-Y3MgZm9yIGJhbmR3aWR0aCwgZnJlcXVlbmN5LCBhbmQgYXZlcmFnZQ0KPiByZWFkDQo+ID4gPiA+
-IGxhdGVuY3kuDQo+ID4gPiA+DQo+ID4gPiA+IFRoZSBQQ0llIGFuZCBQQ0llIHRhcmdldCBQTVVz
-IGFyZSBuYW1lZA0KPiA+ID4gbnZpZGlhX3BjaWVfcG11Xzxzb2NrZXQ+X3JjXzxyYz4NCj4gPiA+
-ID4gYW5kIG52aWRpYV9wY2llX3RndF9wbXVfPHNvY2tldD5fcmNfPHJjPi4gVGhlaXIganNvbiBV
-bml0IHVzZXMgdGhlDQo+ID4gPiA+IGV4aXN0aW5nIGNvbW1hLXNlcGFyYXRlZCBmb3JtICgibnZp
-ZGlhX3BjaWVfcG11XyxyY18iKSwgYnV0IHBlcmYNCj4gb25seQ0KPiA+ID4gPiBtZXJnZWQgaW5z
-dGFuY2VzIHRoYXQgZGlmZmVyIGluIHRoZSB0cmFpbGluZyBudW1iZXIsIHNvIHRoZXNlIGV2ZW50
-cyBhbmQNCj4gPiA+ID4gbWV0cmljcyBnYXZlIG9uZSByZXN1bHQgcGVyIHNvY2tldCBhbmQgd2Vy
-ZSByZXBvcnRlZCBpbmNvcnJlY3RseSAoZS5nLg0KPiA+ID4gPiB3aXRoIC0tbWV0cmljLW9ubHkp
-LCBhcyBkaXNjdXNzZWQgaW4gdjEuIFBhdGNoZXMgNi05IGZpeCB0aGlzOg0KPiA+ID4gPg0KPiA+
-ID4gPiAtIFBhdGNoIDYgYWRkcyBhIGNoZWNrIG9mIHRoZSBjcHVtYXNrcyBvZiBhbGwgbWVyZ2Vk
-IFBNVSBpbnN0YW5jZXMgdG8NCj4gdGhlDQo+ID4gPiA+ICAgemVyby1jb3VudCBza2lwIGluIHBl
-cmYgc3RhdCwgc28gYSBzb2NrZXQgdGhhdCBjb3VudHMgbm90aGluZyBzaG93cyAwDQo+ID4gPiA+
-ICAgaW5zdGVhZCBvZiBoYXZpbmcgaXRzIHJvdyBoaWRkZW4uDQo+ID4gPiA+IC0gUGF0Y2ggNyBt
-ZXJnZXMgUE1VIGluc3RhbmNlcyB0aGF0IG1hdGNoIHRoZSBzYW1lIGNvbW1hLQ0KPiBzZXBhcmF0
-ZWQNCj4gPiA+IGpzb24NCj4gPiA+ID4gICBVbml0LiBUaGlzIGFsc28gYXBwbGllcyB0byB0aGUg
-SGlTaWxpY29uIGhpc2lfc2NjbCBQTVVzLCB3aGljaCB1c2UgdGhlDQo+ID4gPiA+ICAgc2FtZSBq
-c29uIGZvcm07IG5vdCB0ZXN0ZWQgb24gSGlTaWxpY29uIGhhcmR3YXJlLg0KPiA+ID4gPiAtIFBh
-dGNoIDggbGFiZWxzIGEgbWVyZ2VkIHVuY29yZSBjb3VudGVyIGFmdGVyIGFsbCBvZiBpdHMgUE1V
-cywgZS5nLg0KPiA+ID4gPiAgIG52aWRpYV9wY2llX3BtdV8qX3JjXyovY3ljbGVzLyBvciBudmlk
-aWFfdWNmX3BtdS9jeWNsZXMvLCBpbnN0ZWFkDQo+IG9mDQo+ID4gPiA+ICAgYWZ0ZXIgdGhlIGZp
-cnN0IGluc3RhbmNlLCBzdWNoIGFzIG52aWRpYV9wY2llX3BtdV8wX3JjXzAvY3ljbGVzLy4NCj4g
-PiA+ID4gICBPdXRwdXQgd2l0aCAtLW5vLWFnZ3IgaXMgdW5jaGFuZ2VkLg0KPiA+ID4gPiAtIFBh
-dGNoIDkgZGVzY3JpYmVzIHRoZXNlIFBNVSBuYW1lcyBpbiB0aGUgQUJJIGRvY3VtZW50Lg0KPiA+
-ID4gPg0KPiA+ID4gPiBDaGFuZ2VzIGluIHYyOg0KPiA+ID4gPiAtIE1vdmUgdGhlIHVuY29yZSBK
-U09OIG91dCBvZiB0aGUgc3lzIGRpcmVjdG9yeSBhbmQgcmVtb3ZlIHRoZQ0KPiA+ID4gPiAgICJD
-b21wYXQiIGZpZWxkcy4gVGhhbmtzIHRvIElhbiBSb2dlcnMgZm9yIHRoZSBmZWVkYmFjay4NCj4g
-PiA+ID4gLSBEcm9wICJwZXJmIGpldmVudHM6IFByb2Nlc3MgbW9kZWwgZmlsZXMgYmVmb3JlIHN5
-cyBzdWJkaXJlY3RvcmllcyIsDQo+ID4gPiA+ICAgd2hpY2ggdGhpcyBzZXJpZXMgbm8gbG9uZ2Vy
-IG5lZWRzLg0KPiA+ID4gPiAtIEFkZCBVQ0YgU0xDIGFuZCBtZW1vcnkgYmFuZHdpZHRoIG1ldHJp
-Y3MgZnJvbSBhbGwgc291cmNlcyB0byBsb2NhbA0KPiA+ID4gPiAgIENNRU0gKHJlYWQsIHdyaXRl
-IGFuZCByZWFkK3dyaXRlKSBhbmQgZnJvbSBsb2NhbCBzb3VyY2VzIHRvIGxvY2FsDQo+ID4gPiA+
-ICAgQ01FTSBhbmQgdG8gcmVtb3RlIG1lbW9yeSwgUENJZSBiYW5kd2lkdGggbWV0cmljcyB0byBs
-b2NhbA0KPiA+ID4gPiAgIGRlc3RpbmF0aW9ucywgYW5kIHJlYWQrd3JpdGUgYmFuZHdpZHRoIG1l
-dHJpY3MgZm9yIFVDRiBTTEMsIFVDRg0KPiA+ID4gPiAgIG1lbW9yeSBhbmQgUENJZS4gVGhhbmtz
-IHRvIENodW4tVHNlIFNoYW8gZm9yIHRoZSBzdWdnZXN0aW9uLg0KPiA+ID4gPiAtIEFkZCBwYXRj
-aGVzIDYtOSB0byBmaXggdGhlIFBDSWUgaW5zdGFuY2UgYWdncmVnYXRpb24uIFRoYW5rcyB0byBJ
-YW4NCj4gPiA+ID4gICBSb2dlcnMgYW5kIENodW4tVHNlIFNoYW8gZm9yIHRoZSBwb2ludGVycy4N
-Cj4gPiA+ID4NCj4gPiA+ID4gdjE6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI2MTAx
-OTE2NDI0MS40MDM2NDQtMS0NCj4gPiA+IGJ3aWNha3Nvbm9AbnZpZGlhLmNvbS8NCj4gPiA+DQo+
-ID4gPiBXaHkgZG9uJ3Qgd2UgbG9vayB0byBmaXggY29kZSBpbiBkcml2ZXJzL3BlcmY/IFRoaXMg
-c2VyaWVzIGludHJvZHVjZXMNCj4gPiA+IFBNVSBpbnN0YW5jZXMsIG92ZXJsb2FkcyB0aGUgbWVh
-bmluZyBvZiBhbGlhc2VzLCBhbmQgYSBidW5jaCBvZiBvdGhlcg0KPiA+ID4gc2lsbHkgY29tcGxl
-eGl0eSBkdWUgdG8gcG9vciByZXZpZXdzIGFuZCBtYWludGVuYW5jZSBvZiBkcml2ZXJzL3BlcmYg
-LQ0KPiA+ID4gc3BlY2lmaWNhbGx5IGJ5IG5vdCBwb2ludGluZyBvdXQgdGhlIEFCSSBpc3N1ZXMu
-IElzbid0IHRoaXMgYQ0KPiA+ID4gc3RyYWlnaHRmb3J3YXJkLCB3aG9vcHMgd2UgZGlkIGEgYmFk
-IHN1ZmZpeCBhbmQgaGVyZSdzIHRoZSBwYXRjaCB0bw0KPiA+ID4gcmVuYW1lIG91ciBQTVUgaW4g
-dGhlIGRyaXZlcj8gVGhyb3dpbmcgbW9yZSBjb21wbGV4aXR5IGF0IHRoZQ0KPiBwcm9ibGVtDQo+
-ID4gPiBkb2Vzbid0IGZlZWwgbGlrZSB0aGUgcmlnaHQgZml4Lg0KPiA+DQo+ID4gSGkgSWFuLA0K
-PiA+DQo+ID4gTXkgYXBvbG9naWVzIGZvciB0aGUgbmFtZXMgbm90IGZvbGxvd2luZyBwZXJmJ3Mg
-UE1VIG5hbWluZyBjb252ZW50aW9uLg0KPiA+IEkgd2lsbCBiZSBtb3JlIGNhcmVmdWwgYWJvdXQg
-dGhpcyBpbiBmdXR1cmUuDQo+ID4NCj4gPiBUaGVzZSBuYW1lcyAobnZpZGlhX3BjaWVfcG11Xzxz
-b2NrZXQ+X3JjXzxyb290IGNvbXBsZXg+IGFuZA0KPiA+IG52aWRpYV9wY2llX3RndF9wbXVfPHNv
-Y2tldD5fcmNfPHJvb3QgY29tcGxleD4pIGhhdmUgYmVlbiB1cHN0cmVhbQ0KPiA+IHNpbmNlIHY3
-LjEsIGFuZCBzZXZlcmFsIGN1c3RvbWVycyBhbHJlYWR5IHJlbHkgb24gdGhlbS4gUmVuYW1pbmcg
-dGhlbSBpbg0KPiA+IHRoZSBkcml2ZXIgd291bGQgYnJlYWsgdGhlaXIgdXNlIGNhc2UuDQo+IA0K
-PiBJdCBvbmx5IGJyZWFrcyB0aGVpciB1c2UgY2FzZSBpZiB0aGV5IG5hbWUgdGhlIFBNVSB3aXRo
-IGFuIGV2ZW50LiBZb3UNCj4gaGF2ZSBtdWx0aXBsZSBuYW1pbmcgY29udmVudGlvbnMgZm9yIHRo
-ZSBQTVUgYW5kIG9ubHkgdGhvc2UgaW52b2x2aW5nDQo+IG11bHRpcGxlIHNvY2tldHMgaGF2ZSBh
-IGJyb2tlbiBzdWZmaXguDQo+IA0KDQpOYW1pbmcgdGhlIFBNVSBpbiB0aGUgZXZlbnQgaXMgY3Vy
-cmVudGx5IHRoZSBtYWluIHdheSB0byB1c2UgdGhlIFBDSUUgUE1VcywNCndoaWNoIHdlIGNhbid0
-IGJyZWFrLg0KDQo+ID4gR2l2ZW4gdGhhdCwgd2hhdCB3b3VsZCB5b3Ugc3VnZ2VzdCBhcyB0aGUg
-bmV4dCBzdGVwPyBXb3VsZCBoYW5kbGluZw0KPiB0aGVzZQ0KPiA+IG5hbWVzIGluIHBlcmYsIGFz
-IGluIHBhdGNoIDcgYW5kIDgsIGJlIHJlYXNvbmFibGUsIG9yIGRvIHlvdSBoYXZlIGFub3RoZXIN
-Cj4gPiBhcHByb2FjaCBpbiBtaW5kPw0KPiANCj4gU28gd2UgZG9uJ3QgbmVlZCBhIG5ldyBhYnN0
-cmFjdGlvbiwgSSd2ZSBiZWVuIHJlZHVjaW5nIGFnZ3JlZ2F0aW9uDQo+IGFic3RyYWN0aW9ucyBp
-biB0aGUgcGVyZiB0b29sLiBBcyBJIHBvaW50ZWQgdG8gcHJldmlvdXNseSwgdGhlIHN1ZmZpeA0K
-PiBpcyBjb21wdXRlZCB3aXRoIHBtdV9uYW1lX2xlbl9ub19zdWZmaXg6DQo+IGh0dHBzOi8vd2Vi
-LmdpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9wZXJmL3BlcmYtdG9vbHMt
-DQo+IG5leHQuZ2l0L3RyZWUvdG9vbHMvcGVyZi91dGlsL3BtdXMuYz9oPXBlcmYtdG9vbHMtbmV4
-dCNuNjYNCj4gU28geW91IGNhbiBkbyBzb21ldGhpbmcgbGlrZSAodW50ZXN0ZWQpOg0KPiBgYGAN
-Cj4gc2l6ZV90IHBtdV9uYW1lX2xlbl9ub19zdWZmaXgoY29uc3QgY2hhciAqc3RyKQ0KPiB7DQo+
-ICAgaWYgKHN0cnN0YXJ0cyhzdHIsICJudmlkaWFfIikgJiYgc3Ryc3RyKHN0ciwgIl9yY18iKSkg
-ew0KPiAgICAgLy8gbnZpZGlhIFBNVSB3aXRoIGEgbm9uLUFCSSBzdWZmaXggb2YgbnZpZGlhXy4u
-Ll9bMC05XStfcmNfWzAtOV0rDQo+ICAgICBjb25zdCBjaGFyICpwID0gc3RyICsgc3RybGVuKHN0
-cik7DQo+ICAgICBpbnQgbiA9IDM7DQo+ICAgICB3aGlsZShwID4gc3RyICYmIG4gPiAwKSB7DQo+
-ICAgICAgICBpZiAoKnAtLSA9PSAnXycpDQo+ICAgICAgICAgICBuLS0NCj4gICAgICB9DQo+ICAg
-ICAgcmV0dXJuIHAgLSBzdHI7DQo+ICAgfQ0KPiAgIC8vIFRoZSByZXN0IG9mIHRoZSBleGlzdGlu
-ZyBwbXVfbmFtZV9sZW5fbm9fc3VmZml4IGNvZGUuDQo+ICAgLi4uDQo+IH0NCj4gYGBgDQoNClRo
-YW5rcyBmb3IgdGhlIHN1Z2dlc3Rpb24uIEkgY2FuIHJlcGxhY2UgdGhlIGNoYW5nZXMgaW4gcGF0
-Y2ggNyBhbmQgOA0Kd2l0aCBOVklESUEgUENJRSBSQyBzcGVjaWZpYyBjaGVjayBpbiBwbXVfbmFt
-ZV9sZW5fbm9fc3VmZml4KCkuDQoNCldoaWxlIHRyeWluZyBpdCwgSSBub3RpY2VkIHR3byBzaWRl
-IGVmZmVjdHM6DQoxLiBwZXJmIGxpc3Qgbm93IGNvbWJpbmVzIHRoZSBudmlkaWFfcGNpZV9wbXVf
-PHNvY2tldD5fcmNfPHJjPiBQTVVzIGFuZA0KICAgc2hvd3MgdGhlaXIgZXZlbnRzIGFzIG52aWRp
-YV9wY2llX3BtdS88ZXZlbnQ+LywgYnV0ICJwZXJmIHN0YXQiIGRvZXNuJ3QNCiAgIGFjY2VwdCBq
-dXN0ICJudmlkaWFfcGNpZV9wbXUiIG9uIHRoZSBjb21tYW5kIGxpbmUsIGUuZy4NCiAgICJwZXJm
-IHN0YXQgLWUgbnZpZGlhX3BjaWVfcG11L3JkX3JlcS8iIGNhbid0IGZpbmQgdGhlIFBNVS4NCjIu
-IEFmdGVyIGZpeGluZyBuby4xLCAicGVyZiBzdGF0IC1BIC1hICAtZSBudmlkaWFfcGNpZV9wbXUv
-cmRfcmVxLyINCiAgIGxpc3RzIHRoZSByZXN1bHQgaW4gc3lzZnMgZGlyZWN0b3J5IG9yZGVyLiBP
-biBteSBzeXN0ZW0sIGl0IGdpdmVzIHRoZQ0KICAgcmVzdWx0IGZvciBSQyAwLCA1LCAzLCAxLCA0
-LCAyLg0KDQpCb3RoIGxvb2sgbGlrZSB0aGV5IGNhbiBiZSBoYW5kbGVkIHdpdGggYSBzaW1pbGFy
-IE5WSURJQSBzcGVjaWZpYyBjaGVjaw0KaW4gcGVyZl9wbXVfX21hdGNoX3dpbGRjYXJkKCkgYW5k
-IHBtdV9uYW1lX2NtcCgpOg0KDQovKiBwZXJmX3BtdV9fbWF0Y2hfd2lsZGNhcmQoKSAqLw0KaWYg
-KHN0cnN0YXJ0cyhwbXVfbmFtZSwgIm52aWRpYSIpICYmIHN0cnN0cihwbXVfbmFtZSwgIl9yY18i
-KSkgew0KCS8qIE5WSURJQSBQTVUgd2l0aCBhIG5vbi1BQkkgc3VmZml4IG9mIG52aWRpYV8uLi5f
-WzAtOV0rX3JjX1swLTldKy4gKi8NCglpZiAodG9rX2xlbiA9PSBwbXVfbmFtZV9sZW5fbm9fc3Vm
-Zml4KHBtdV9uYW1lKSAmJiAhc3RybmNtcChwbXVfbmFtZSwgdG9rLCB0b2tfbGVuKSkNCgkJcmV0
-dXJuIHRydWU7DQp9DQoNCi8qIHBtdV9uYW1lX2NtcCgpKi8NCmlmIChsaHNfbnVtID09IHJoc19u
-dW0gJiYgc3Ryc3RhcnRzKGxoc19wbXVfbmFtZSwgIm52aWRpYSIpKSB7DQoJLyoNCgkgKiBOVklE
-SUEgUE1VIHdpdGggYSBub24tQUJJIHN1ZmZpeCBvZiBudmlkaWFfLi4uX1swLTldK19yY19bMC05
-XSs6DQoJICogY29tcGFyZSB0aGUgUkMgdG9vLg0KCSAqLw0KCWNvbnN0IGNoYXIgKmxoc19yYyA9
-IHN0cnN0cihsaHNfcG11X25hbWUsICJfcmNfIik7DQoJY29uc3QgY2hhciAqcmhzX3JjID0gc3Ry
-c3RyKHJoc19wbXVfbmFtZSwgIl9yY18iKTsNCglpZiAobGhzX3JjICYmIHJoc19yYykgew0KCQls
-aHNfbnVtID0gc3RydG91bGwobGhzX3JjICsgNCwgTlVMTCwgMTApOw0KCQlyaHNfbnVtID0gc3Ry
-dG91bGwocmhzX3JjICsgNCwgTlVMTCwgMTApOw0KCX0NCn0NCg0KV2hhdCBkbyB5b3UgdGhpbmsg
-YWJvdXQgdGhlc2UgYWRkaXRpb25hbCBjaGFuZ2VzPw0KDQpSZWdhcmRzLA0KQmVzYXINCg0KPiBJ
-J2QgbXVjaCByYXRoZXIgd2UgZGlkbid0IGFkZCBiZXNwb2tlIGJlaGF2aW9yIHRvIHRoZSB0b29s
-IGZvciBldmVyeQ0KPiBuZXcgUE1VLiBUaGlzIGhhcHBlbmVkIHByZXZpb3VzbHkgd2hlbiBQTVVz
-IHdlcmUgbWVyZ2VkIGluDQo+IGRyaXZlcnMvcGVyZiB3aXRoIGhleCBpbnN0ZWFkIG9mIG51bWVy
-aWMgc3VmZml4ZXMuIFdlIGFscmVhZHkgaGFuZGxlDQo+IGNlcnRhaW4gUE1VcyBzcGVjaWFsbHkg
-ZHVlIHRvIHRoZWlyIGxhY2sgb2YgaG90cGx1ZyBzdXBwb3J0Og0KPiBodHRwczovL3dlYi5naXQu
-a2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvcGVyZi9wZXJmLXRvb2xzLQ0KPiBu
-ZXh0LmdpdC90cmVlL3Rvb2xzL3BlcmYvYXJjaC9hcm0vdXRpbC9wbXUuYz9oPXBlcmYtdG9vbHMt
-bmV4dCNuNDENCj4gQW5kIGR1ZSB0byBldmVudCBuYW1lIGZpYXNjb3M6DQo+IGh0dHBzOi8vd2Vi
-LmdpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9wZXJmL3BlcmYtdG9vbHMt
-DQo+IG5leHQuZ2l0L3RyZWUvdG9vbHMvcGVyZi9idWlsdGluLXJlY29yZC5jP2g9cGVyZi10b29s
-cy1uZXh0I24xMzk1DQo+IEF0IHNvbWUgcG9pbnQsIHBlcmYncyBpbnRlcm5hbHMgYmVjb21lIHNv
-IGZvcmtlZCBkdWUgdG8gbWlzbWF0Y2hlZA0KPiBjb252ZW50aW9ucyB0aGF0IGV2ZXJ5IGNvZGUg
-cGF0aCB3aWxsIGhhdmUgYSB2YXJpYW50LiBUaGlzIHNhZGRlbnMgbWUNCj4gYXMgc29tZXRoaW5n
-IHRoYXQgd2UndmUgbXVjaCBpbXByb3ZlZCB0aGlzIHllYXIgaXMgYmVpbmcgYWJsZSB0byBzYXkN
-Cj4gYHBlcmYgc3RhdCByZWNvcmRgIG9uIG9uZSBtYWNoaW5lIHR5cGUgYW5kIHRoZW4gYHBlcmYg
-c3RhdCByZXBvcnRgIG9uDQo+IGFub3RoZXIuDQo+IA0KPiBUaGFua3MsDQo+IElhbg0KPiANCj4g
-PiBXaWxsLCBkbyB5b3UgaGF2ZSBhbnkgY29tbWVudCBvbiB0aGlzPw0KPiA+DQo+ID4gVGhhbmtz
-LA0KPiA+IEJlc2FyDQo+ID4NCj4gPiA+DQo+ID4gPiBUaGFua3MsDQo+ID4gPiBJYW4NCj4gPiA+
-DQo+ID4gPiA+IEJlc2FyIFdpY2Frc29ubyAoOSk6DQo+ID4gPiA+ICAgcGVyZiBqZXZlbnRzOiBB
-ZGQgc3VwcG9ydCBmb3IgTlZJRElBIFRlZ3JhNDEwIFVDRiBQTVUgYWxpYXNpbmcNCj4gPiA+ID4g
-ICBwZXJmIGpldmVudHM6IEFkZCBzdXBwb3J0IGZvciBOVklESUEgVGVncmE0MTAgUENJRSBQTVUg
-YWxpYXNpbmcNCj4gPiA+ID4gICBwZXJmIGpldmVudHM6IEFkZCBzdXBwb3J0IGZvciBOVklESUEg
-VGVncmE0MTAgUENJRS1UR1QgUE1VIGFsaWFzaW5nDQo+ID4gPiA+ICAgcGVyZiBqZXZlbnRzOiBB
-ZGQgc3VwcG9ydCBmb3IgTlZJRElBIFRlZ3JhNDEwIENQVSBNZW1vcnkgTGF0ZW5jeQ0KPiA+ID4g
-UE1VDQo+ID4gPiA+ICAgICBhbGlhc2luZw0KPiA+ID4gPiAgIHBlcmYgamV2ZW50czogQWRkIHN1
-cHBvcnQgZm9yIE5WSURJQSBUZWdyYTQxMCBDMkMgUE1VIGFsaWFzaW5nDQo+ID4gPiA+ICAgcGVy
-ZiBzdGF0OiBDaGVjayBtZXJnZWQgUE1VIGluc3RhbmNlJ3MgY3B1bWFza3Mgd2hlbiBza2lwcGlu
-ZyB6ZXJvDQo+ID4gPiA+ICAgICBjb3VudHMNCj4gPiA+ID4gICBwZXJmIHBtdTogTWVyZ2UgUE1V
-IGluc3RhbmNlcyB0aGF0IG1hdGNoIHRoZSBzYW1lIGNvbW1hLQ0KPiBzZXBhcmF0ZWQNCj4gPiA+
-IGpzb24NCj4gPiA+ID4gICAgIFVuaXQNCj4gPiA+ID4gICBwZXJmIGV2c2VsOiBOYW1lIGEgbWVy
-Z2VkIHVuY29yZSBjb3VudGVyIGFmdGVyIGFsbCBvZiBpdHMgUE1Vcw0KPiA+ID4gPiAgIHBlcmYg
-RG9jdW1lbnRhdGlvbjogRGVzY3JpYmUgUE1VIG5hbWVzIG51bWJlcmVkIGluIG1vcmUgdGhhbg0K
-PiBvbmUNCj4gPiA+IHBsYWNlDQo+ID4gPiA+DQo+ID4gPiA+ICAuLi4vdGVzdGluZy9zeXNmcy1i
-dXMtZXZlbnRfc291cmNlLWRldmljZXMgICAgfCAgMTQgKw0KPiA+ID4gPiAgLi4uL2FybTY0L252
-aWRpYS90NDEwL3VuY29yZS1jcHVfbWVtLmpzb24gICAgIHwgIDQzICsNCj4gPiA+ID4gIC4uLi9h
-cm02NC9udmlkaWEvdDQxMC91bmNvcmUtbnZjbGluay5qc29uICAgICB8ICA2NyArKw0KPiA+ID4g
-PiAgLi4uL2FybTY0L252aWRpYS90NDEwL3VuY29yZS1udmRsaW5rLmpzb24gICAgIHwgIDQzICsN
-Cj4gPiA+ID4gIC4uLi9hcm02NC9udmlkaWEvdDQxMC91bmNvcmUtbnZsaW5rX2MyYy5qc29uICB8
-IDExNSArKysNCj4gPiA+ID4gIC4uLi9hcmNoL2FybTY0L252aWRpYS90NDEwL3VuY29yZS1wY2ll
-Lmpzb24gICB8IDI0OSArKysrKysNCj4gPiA+ID4gIC4uLi9hcm02NC9udmlkaWEvdDQxMC91bmNv
-cmUtcGNpZV90Z3QuanNvbiAgICB8ICA4MyArKw0KPiA+ID4gPiAgLi4uL2FyY2gvYXJtNjQvbnZp
-ZGlhL3Q0MTAvdW5jb3JlLXVjZi5qc29uICAgIHwgNzY0DQo+ID4gPiArKysrKysrKysrKysrKysr
-KysNCj4gPiA+ID4gIHRvb2xzL3BlcmYvdGVzdHMvcG11LmMgICAgICAgICAgICAgICAgICAgICAg
-ICB8IDEzNCArKysNCj4gPiA+ID4gIHRvb2xzL3BlcmYvdXRpbC9ldmxpc3QuYyAgICAgICAgICAg
-ICAgICAgICAgICB8ICAgMiArLQ0KPiA+ID4gPiAgdG9vbHMvcGVyZi91dGlsL2V2c2VsLmMgICAg
-ICAgICAgICAgICAgICAgICAgIHwgIDgzICstDQo+ID4gPiA+ICB0b29scy9wZXJmL3V0aWwvZXZz
-ZWwuaCAgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0NCj4gPiA+ID4gIHRvb2xzL3BlcmYv
-dXRpbC9wYXJzZS1ldmVudHMuYyAgICAgICAgICAgICAgICB8ICAgMiArLQ0KPiA+ID4gPiAgdG9v
-bHMvcGVyZi91dGlsL3BtdS5jICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDY1ICsrDQo+ID4g
-PiA+ICB0b29scy9wZXJmL3V0aWwvcG11LmggICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDkg
-Kw0KPiA+ID4gPiAgdG9vbHMvcGVyZi91dGlsL3BtdXMuYyAgICAgICAgICAgICAgICAgICAgICAg
-IHwgIDQ3ICsrDQo+ID4gPiA+ICB0b29scy9wZXJmL3V0aWwvcG11cy5oICAgICAgICAgICAgICAg
-ICAgICAgICAgfCAgIDEgKw0KPiA+ID4gPiAgdG9vbHMvcGVyZi91dGlsL3N0YXQtZGlzcGxheS5j
-ICAgICAgICAgICAgICAgIHwgIDIwICsNCj4gPiA+ID4gIDE4IGZpbGVzIGNoYW5nZWQsIDE3Mzcg
-aW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4gPiA+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0
-NCB0b29scy9wZXJmL3BtdS0NCj4gPiA+IGV2ZW50cy9hcmNoL2FybTY0L252aWRpYS90NDEwL3Vu
-Y29yZS1jcHVfbWVtLmpzb24NCj4gPiA+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCB0b29scy9wZXJm
-L3BtdS0NCj4gPiA+IGV2ZW50cy9hcmNoL2FybTY0L252aWRpYS90NDEwL3VuY29yZS1udmNsaW5r
-Lmpzb24NCj4gPiA+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCB0b29scy9wZXJmL3BtdS0NCj4gPiA+
-IGV2ZW50cy9hcmNoL2FybTY0L252aWRpYS90NDEwL3VuY29yZS1udmRsaW5rLmpzb24NCj4gPiA+
-ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCB0b29scy9wZXJmL3BtdS0NCj4gPiA+IGV2ZW50cy9hcmNo
-L2FybTY0L252aWRpYS90NDEwL3VuY29yZS1udmxpbmtfYzJjLmpzb24NCj4gPiA+ID4gIGNyZWF0
-ZSBtb2RlIDEwMDY0NCB0b29scy9wZXJmL3BtdS0NCj4gPiA+IGV2ZW50cy9hcmNoL2FybTY0L252
-aWRpYS90NDEwL3VuY29yZS1wY2llLmpzb24NCj4gPiA+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCB0
-b29scy9wZXJmL3BtdS0NCj4gPiA+IGV2ZW50cy9hcmNoL2FybTY0L252aWRpYS90NDEwL3VuY29y
-ZS1wY2llX3RndC5qc29uDQo+ID4gPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgdG9vbHMvcGVyZi9w
-bXUtDQo+ID4gPiBldmVudHMvYXJjaC9hcm02NC9udmlkaWEvdDQxMC91bmNvcmUtdWNmLmpzb24N
-Cj4gPiA+ID4NCj4gPiA+ID4gLS0NCj4gPiA+ID4gMi40My4wDQo+ID4gPiA+DQo=
+On Mon, Nov 2, 2026 at 3:08=E2=80=AFPM Besar Wicaksono <bwicaksono@nvidia.c=
+om> wrote:
+>
+> > -----Original Message-----
+> > From: Ian Rogers <irogers@google.com>
+> > Sent: Saturday, October 31, 2026 4:18 AM
+> > To: Besar Wicaksono <bwicaksono@nvidia.com>
+> > Cc: Will Deacon <will@kernel.org>; acme@kernel.org;
+> > namhyung@kernel.org; ctshao@google.com; linux-tegra@vger.kernel.org;
+> > linux-arm-kernel@lists.infradead.org; linux-perf-users@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; Vikram Sethi <vsethi@nvidia.com>; Rich Wi=
+ley
+> > <rwiley@nvidia.com>; Sean Kelley <skelley@nvidia.com>; Matt Ochs
+> > <mochs@nvidia.com>; Raj Joshi <rajjoshi@nvidia.com>; Thierry Reding
+> > <treding@nvidia.com>; Jon Hunter <jonathanh@nvidia.com>;
+> > john.garry@linux.dev; james.clark@linaro.org; mike.leach@arm.com;
+> > leo.yan@linux.dev; mark.rutland@arm.com;
+> > alexander.shishkin@linux.intel.com; jolsa@kernel.org;
+> > adrian.hunter@intel.com
+> > Subject: Re: [PATCH v2 0/9] perf: Add NVIDIA Tegra410 uncore PMU events
+> > and metrics
+> >
+> > External email: Use caution opening links or attachments
+> >
+> >
+> > On Fri, Oct 30, 2026 at 3:19=E2=80=AFPM Besar Wicaksono
+> > <bwicaksono@nvidia.com> wrote:
+> > >
+> > > > -----Original Message-----
+> > > > From: Ian Rogers <irogers@google.com>
+> > > > Sent: Friday, October 30, 2026 6:07 PM
+> > > > To: Besar Wicaksono <bwicaksono@nvidia.com>
+> > > > Cc: acme@kernel.org; namhyung@kernel.org; ctshao@google.com;
+> > linux-
+> > > > tegra@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-=
+perf-
+> > > > users@vger.kernel.org; linux-kernel@vger.kernel.org; Vikram Sethi
+> > > > <vsethi@nvidia.com>; Rich Wiley <rwiley@nvidia.com>; Sean Kelley
+> > > > <skelley@nvidia.com>; Matt Ochs <mochs@nvidia.com>; Raj Joshi
+> > > > <rajjoshi@nvidia.com>; Thierry Reding <treding@nvidia.com>; Jon
+> > Hunter
+> > > > <jonathanh@nvidia.com>; john.garry@linux.dev; will@kernel.org;
+> > > > james.clark@linaro.org; mike.leach@arm.com; leo.yan@linux.dev;
+> > > > mark.rutland@arm.com; alexander.shishkin@linux.intel.com;
+> > > > jolsa@kernel.org; adrian.hunter@intel.com
+> > > > Subject: Re: [PATCH v2 0/9] perf: Add NVIDIA Tegra410 uncore PMU
+> > events
+> > > > and metrics
+> > > >
+> > > > External email: Use caution opening links or attachments
+> > > >
+> > > >
+> > > > On Fri, Oct 30, 2026 at 10:49=E2=80=AFAM Besar Wicaksono
+> > > > <bwicaksono@nvidia.com> wrote:
+> > > > >
+> > > > > Add event aliases and derived metrics for the NVIDIA Tegra410 unc=
+ore
+> > > > > PMUs, and fix perf's aggregation of PMU instances that are number=
+ed
+> > in
+> > > > > more than one parts in their name.
+> > > > >
+> > > > > The series covers the UCF, PCIe, PCIe target, CPU memory latency,=
+ and
+> > > > > chip-to-chip interconnect PMUs. It provides symbolic names for th=
+e
+> > raw
+> > > > > event encodings and metrics for bandwidth, frequency, and average
+> > read
+> > > > > latency.
+> > > > >
+> > > > > The PCIe and PCIe target PMUs are named
+> > > > nvidia_pcie_pmu_<socket>_rc_<rc>
+> > > > > and nvidia_pcie_tgt_pmu_<socket>_rc_<rc>. Their json Unit uses th=
+e
+> > > > > existing comma-separated form ("nvidia_pcie_pmu_,rc_"), but perf
+> > only
+> > > > > merged instances that differ in the trailing number, so these eve=
+nts and
+> > > > > metrics gave one result per socket and were reported incorrectly =
+(e.g.
+> > > > > with --metric-only), as discussed in v1. Patches 6-9 fix this:
+> > > > >
+> > > > > - Patch 6 adds a check of the cpumasks of all merged PMU instance=
+s to
+> > the
+> > > > >   zero-count skip in perf stat, so a socket that counts nothing s=
+hows 0
+> > > > >   instead of having its row hidden.
+> > > > > - Patch 7 merges PMU instances that match the same comma-
+> > separated
+> > > > json
+> > > > >   Unit. This also applies to the HiSilicon hisi_sccl PMUs, which =
+use the
+> > > > >   same json form; not tested on HiSilicon hardware.
+> > > > > - Patch 8 labels a merged uncore counter after all of its PMUs, e=
+.g.
+> > > > >   nvidia_pcie_pmu_*_rc_*/cycles/ or nvidia_ucf_pmu/cycles/, inste=
+ad
+> > of
+> > > > >   after the first instance, such as nvidia_pcie_pmu_0_rc_0/cycles=
+/.
+> > > > >   Output with --no-aggr is unchanged.
+> > > > > - Patch 9 describes these PMU names in the ABI document.
+> > > > >
+> > > > > Changes in v2:
+> > > > > - Move the uncore JSON out of the sys directory and remove the
+> > > > >   "Compat" fields. Thanks to Ian Rogers for the feedback.
+> > > > > - Drop "perf jevents: Process model files before sys subdirectori=
+es",
+> > > > >   which this series no longer needs.
+> > > > > - Add UCF SLC and memory bandwidth metrics from all sources to lo=
+cal
+> > > > >   CMEM (read, write and read+write) and from local sources to loc=
+al
+> > > > >   CMEM and to remote memory, PCIe bandwidth metrics to local
+> > > > >   destinations, and read+write bandwidth metrics for UCF SLC, UCF
+> > > > >   memory and PCIe. Thanks to Chun-Tse Shao for the suggestion.
+> > > > > - Add patches 6-9 to fix the PCIe instance aggregation. Thanks to=
+ Ian
+> > > > >   Rogers and Chun-Tse Shao for the pointers.
+> > > > >
+> > > > > v1: https://lore.kernel.org/all/20261019164241.403644-1-
+> > > > bwicaksono@nvidia.com/
+> > > >
+> > > > Why don't we look to fix code in drivers/perf? This series introduc=
+es
+> > > > PMU instances, overloads the meaning of aliases, and a bunch of oth=
+er
+> > > > silly complexity due to poor reviews and maintenance of drivers/per=
+f -
+> > > > specifically by not pointing out the ABI issues. Isn't this a
+> > > > straightforward, whoops we did a bad suffix and here's the patch to
+> > > > rename our PMU in the driver? Throwing more complexity at the
+> > problem
+> > > > doesn't feel like the right fix.
+> > >
+> > > Hi Ian,
+> > >
+> > > My apologies for the names not following perf's PMU naming convention=
+.
+> > > I will be more careful about this in future.
+> > >
+> > > These names (nvidia_pcie_pmu_<socket>_rc_<root complex> and
+> > > nvidia_pcie_tgt_pmu_<socket>_rc_<root complex>) have been upstream
+> > > since v7.1, and several customers already rely on them. Renaming them=
+ in
+> > > the driver would break their use case.
+> >
+> > It only breaks their use case if they name the PMU with an event. You
+> > have multiple naming conventions for the PMU and only those involving
+> > multiple sockets have a broken suffix.
+> >
+>
+> Naming the PMU in the event is currently the main way to use the PCIE PMU=
+s,
+> which we can't break.
+>
+> > > Given that, what would you suggest as the next step? Would handling
+> > these
+> > > names in perf, as in patch 7 and 8, be reasonable, or do you have ano=
+ther
+> > > approach in mind?
+> >
+> > So we don't need a new abstraction, I've been reducing aggregation
+> > abstractions in the perf tool. As I pointed to previously, the suffix
+> > is computed with pmu_name_len_no_suffix:
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-
+> > next.git/tree/tools/perf/util/pmus.c?h=3Dperf-tools-next#n66
+> > So you can do something like (untested):
+> > ```
+> > size_t pmu_name_len_no_suffix(const char *str)
+> > {
+> >   if (strstarts(str, "nvidia_") && strstr(str, "_rc_")) {
+> >     // nvidia PMU with a non-ABI suffix of nvidia_..._[0-9]+_rc_[0-9]+
+> >     const char *p =3D str + strlen(str);
+> >     int n =3D 3;
+> >     while(p > str && n > 0) {
+> >        if (*p-- =3D=3D '_')
+> >           n--
+> >      }
+> >      return p - str;
+> >   }
+> >   // The rest of the existing pmu_name_len_no_suffix code.
+> >   ...
+> > }
+> > ```
+>
+> Thanks for the suggestion. I can replace the changes in patch 7 and 8
+> with NVIDIA PCIE RC specific check in pmu_name_len_no_suffix().
+>
+> While trying it, I noticed two side effects:
+> 1. perf list now combines the nvidia_pcie_pmu_<socket>_rc_<rc> PMUs and
+>    shows their events as nvidia_pcie_pmu/<event>/, but "perf stat" doesn'=
+t
+>    accept just "nvidia_pcie_pmu" on the command line, e.g.
+>    "perf stat -e nvidia_pcie_pmu/rd_req/" can't find the PMU.
+> 2. After fixing no.1, "perf stat -A -a  -e nvidia_pcie_pmu/rd_req/"
+>    lists the result in sysfs directory order. On my system, it gives the
+>    result for RC 0, 5, 3, 1, 4, 2.
+>
+> Both look like they can be handled with a similar NVIDIA specific check
+> in perf_pmu__match_wildcard() and pmu_name_cmp():
+>
+> /* perf_pmu__match_wildcard() */
+> if (strstarts(pmu_name, "nvidia") && strstr(pmu_name, "_rc_")) {
+>         /* NVIDIA PMU with a non-ABI suffix of nvidia_..._[0-9]+_rc_[0-9]=
++. */
+>         if (tok_len =3D=3D pmu_name_len_no_suffix(pmu_name) && !strncmp(p=
+mu_name, tok, tok_len))
+>                 return true;
+> }
+>
+> /* pmu_name_cmp()*/
+> if (lhs_num =3D=3D rhs_num && strstarts(lhs_pmu_name, "nvidia")) {
+>         /*
+>          * NVIDIA PMU with a non-ABI suffix of nvidia_..._[0-9]+_rc_[0-9]=
++:
+>          * compare the RC too.
+>          */
+>         const char *lhs_rc =3D strstr(lhs_pmu_name, "_rc_");
+>         const char *rhs_rc =3D strstr(rhs_pmu_name, "_rc_");
+>         if (lhs_rc && rhs_rc) {
+>                 lhs_num =3D strtoull(lhs_rc + 4, NULL, 10);
+>                 rhs_num =3D strtoull(rhs_rc + 4, NULL, 10);
+>         }
+> }
+>
+> What do you think about these additional changes?
+
+Sounds good to me. I really hate we didn't fix cycles -> cpu_cycles
+and instead have to carry:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/builtin-record.c?id=3Dc5a244bf17caf2de22f9e100832b75f72b3=
+1d3e6#n1389
+given the other event is called bus_cycles and the documentation
+literally calls the event CPU cycles (and Linus wants `perf record -e
+cycles` not to complain).
+
+Things in Linux do get fixed over time. For example, PMU devices in
+/sys/devices/ will one day disappear and only be accessible under
+/sys/bus/event_source/devices . Given the PMU name only appeared in
+January IIRC, it hasn't appeared in an LTS Linux release yet. So, yes,
+someone running a non-LTS kernel on a dual socket machine and using
+the PMU name in the event name would be impacted by renaming the PMU.
+The pain I feel about that will be momentary, while carrying around
+NVIDIA non-ABI specific PMU suffix code will be long lasting.
+
+Thanks,
+Ian
+
+> Regards,
+> Besar
+>
+> > I'd much rather we didn't add bespoke behavior to the tool for every
+> > new PMU. This happened previously when PMUs were merged in
+> > drivers/perf with hex instead of numeric suffixes. We already handle
+> > certain PMUs specially due to their lack of hotplug support:
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-
+> > next.git/tree/tools/perf/arch/arm/util/pmu.c?h=3Dperf-tools-next#n41
+> > And due to event name fiascos:
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-
+> > next.git/tree/tools/perf/builtin-record.c?h=3Dperf-tools-next#n1395
+> > At some point, perf's internals become so forked due to mismatched
+> > conventions that every code path will have a variant. This saddens me
+> > as something that we've much improved this year is being able to say
+> > `perf stat record` on one machine type and then `perf stat report` on
+> > another.
+> >
+> > Thanks,
+> > Ian
+> >
+> > > Will, do you have any comment on this?
+> > >
+> > > Thanks,
+> > > Besar
+> > >
+> > > >
+> > > > Thanks,
+> > > > Ian
+> > > >
+> > > > > Besar Wicaksono (9):
+> > > > >   perf jevents: Add support for NVIDIA Tegra410 UCF PMU aliasing
+> > > > >   perf jevents: Add support for NVIDIA Tegra410 PCIE PMU aliasing
+> > > > >   perf jevents: Add support for NVIDIA Tegra410 PCIE-TGT PMU alia=
+sing
+> > > > >   perf jevents: Add support for NVIDIA Tegra410 CPU Memory Latenc=
+y
+> > > > PMU
+> > > > >     aliasing
+> > > > >   perf jevents: Add support for NVIDIA Tegra410 C2C PMU aliasing
+> > > > >   perf stat: Check merged PMU instance's cpumasks when skipping z=
+ero
+> > > > >     counts
+> > > > >   perf pmu: Merge PMU instances that match the same comma-
+> > separated
+> > > > json
+> > > > >     Unit
+> > > > >   perf evsel: Name a merged uncore counter after all of its PMUs
+> > > > >   perf Documentation: Describe PMU names numbered in more than
+> > one
+> > > > place
+> > > > >
+> > > > >  .../testing/sysfs-bus-event_source-devices    |  14 +
+> > > > >  .../arm64/nvidia/t410/uncore-cpu_mem.json     |  43 +
+> > > > >  .../arm64/nvidia/t410/uncore-nvclink.json     |  67 ++
+> > > > >  .../arm64/nvidia/t410/uncore-nvdlink.json     |  43 +
+> > > > >  .../arm64/nvidia/t410/uncore-nvlink_c2c.json  | 115 +++
+> > > > >  .../arch/arm64/nvidia/t410/uncore-pcie.json   | 249 ++++++
+> > > > >  .../arm64/nvidia/t410/uncore-pcie_tgt.json    |  83 ++
+> > > > >  .../arch/arm64/nvidia/t410/uncore-ucf.json    | 764
+> > > > ++++++++++++++++++
+> > > > >  tools/perf/tests/pmu.c                        | 134 +++
+> > > > >  tools/perf/util/evlist.c                      |   2 +-
+> > > > >  tools/perf/util/evsel.c                       |  83 +-
+> > > > >  tools/perf/util/evsel.h                       |   2 +-
+> > > > >  tools/perf/util/parse-events.c                |   2 +-
+> > > > >  tools/perf/util/pmu.c                         |  65 ++
+> > > > >  tools/perf/util/pmu.h                         |   9 +
+> > > > >  tools/perf/util/pmus.c                        |  47 ++
+> > > > >  tools/perf/util/pmus.h                        |   1 +
+> > > > >  tools/perf/util/stat-display.c                |  20 +
+> > > > >  18 files changed, 1737 insertions(+), 6 deletions(-)
+> > > > >  create mode 100644 tools/perf/pmu-
+> > > > events/arch/arm64/nvidia/t410/uncore-cpu_mem.json
+> > > > >  create mode 100644 tools/perf/pmu-
+> > > > events/arch/arm64/nvidia/t410/uncore-nvclink.json
+> > > > >  create mode 100644 tools/perf/pmu-
+> > > > events/arch/arm64/nvidia/t410/uncore-nvdlink.json
+> > > > >  create mode 100644 tools/perf/pmu-
+> > > > events/arch/arm64/nvidia/t410/uncore-nvlink_c2c.json
+> > > > >  create mode 100644 tools/perf/pmu-
+> > > > events/arch/arm64/nvidia/t410/uncore-pcie.json
+> > > > >  create mode 100644 tools/perf/pmu-
+> > > > events/arch/arm64/nvidia/t410/uncore-pcie_tgt.json
+> > > > >  create mode 100644 tools/perf/pmu-
+> > > > events/arch/arm64/nvidia/t410/uncore-ucf.json
+> > > > >
+> > > > > --
+> > > > > 2.43.0
+> > > > >
