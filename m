@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793632342;
-	b=yvQIZn0vzxqMKiAFJUsvtS0FkIKpxT5fmtEs+wAlRLinI5VTuA9GAAz6sO9S4HqkpkE9
-	 q91iNGzFtpi7fel64kCdfUfOyNvUv4DYeXonJrUqEtTtANNBOvgYqjbjTsPiXJnUFn08F
-	 IEPt/WaWMzCUlvp1Dm54bq6Wnz3ZdO0ODnXJum7Nc23FDVtw+RiyN+p6s/1Bg4Y0/wgXe
-	 7Z6/n/O297YCM1n2yKsWGAQFDM6IUc991b6jB2p1CAAwmoQJIMTyor0f58BR8YaomOiaB
-	 JNDZLnVeNfEIM3vZmF7KSzMbigHIIw38siFb/i09fsr4MUwXDIAKKueqjvgMM4l3jKw==
+	t=1793632845;
+	b=sdxoA12aCWp2G1oOGV42yAsJehawnBApmuXt4/yOcNOcDUnL8WefZ+4hiRgvsYhJIrNv
+	 cTOrlWzfGfDxfDS0ZtlqElu/wBA+nq+8TBCt8A+oKo+JM2bzBdT+3YtcwW/ScIC7jVL3H
+	 jIdP7JTuvRBSBO502J9YxPU46scAXJQXKQrbr+XS7HoMYTi0Hwu2673tCQ2FGiRkxySrH
+	 um+GGNp5nvKnKPZX7Nx19jOw9phUV52r/cUstp4kLcCQhOwYog6KFlPB+9dUIMdG6B+0i
+	 Yv7eQ/46iSLYoXMaX4ESMTig+4R2I9nER0LjWqDWdPbYmTS6OvovkgKAC5HpW/YdsMA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793632342;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793632845;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=nl4XdaZz2uL0DXOtmdE1FRqZ6AJVOjmG7j1+imya4cY=;
-	b=rmBE1Yqj3ZZN/4HBW9+7uPfdRMnL18RwS/JKQK0SBBGmTc4GG54YhNMMa5476yAgJeD2
-	 IRv9jMBRe82FKKj0dI4vojWv6DnBn2KS2OEYNYDRJod/FTb3DIySQ+y9OZUERLy8yY6he
-	 YRlieFjrUjeSl3bgJj4tfpiUQyH6ZvvgFKO6KN5zhlW/6KCCYCygyN6qGLoaxxZwAmD4h
-	 rTXpjIrjrzcNMRYDVCaKx8M54Crqw38dwJMVCwWwmL9adMjAKYFq/v9RT9s870qKFoFjc
-	 TIqdlxbGjlOznPz3HUsWy7zTEnjEL5GvuqnxWrhFMLiR3o/bPIj3g6gidkqHzL2exyg==
+	bh=/xOLEWd4CVZtheZ0aeUPwLLg+DYfGKXSOQaolIBDtBY=;
+	b=RX04JwxjD/FTwnha99RwG07qp6mT9Zw9lkcpLtYuaRtjll9ybG/jiFwwNHvFR/2aa2TZ
+	 +fGe7A7ydldRncOzPvMs5Ex49OCP4U0mMPJYx5bD8aM82gF8hN7h5t0SBg9Ky4Ny07oT2
+	 1KYIPSugjsbZ4GCh8iNK5eHccmFHkPdMt3uvffZFNvl2wYDisDtZ4PxSmK31fN96SyKVH
+	 m/zTHRy5ouoh9BUL4ohBgdiuK1nA6lk+w1Ho3BHBILXEmcLRmE6xzMeANlEIHSDjdO2Hv
+	 04ameylHqwTaCPrGcp9+WUVv55Eg9PosPsHXJN6ywgGQqAd3V3L3mtJmEqZ/9Oh/a+g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qdv6+IgD;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HDhz1eGY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741F5606DEBB;
-	Mon,  2 Nov 2026 15:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910BC607F10B;
+	Mon,  2 Nov 2026 15:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qdv6+IgD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E721F00A17;
-	Mon,  2 Nov 2026 15:12:19 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HDhz1eGY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8646F1F00A17;
+	Mon,  2 Nov 2026 15:20:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793632342;
-	bh=nl4XdaZz2uL0DXOtmdE1FRqZ6AJVOjmG7j1+imya4cY=;
+	s=k20260515; t=1793632845;
+	bh=/xOLEWd4CVZtheZ0aeUPwLLg+DYfGKXSOQaolIBDtBY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Qdv6+IgDTuLTKP5nlxYiLM/rxYc6GJivp87oY9791L+gMKqtT35mwm66E6piqq7w6
-	 xe67kAm5esOSKFvQOGRv6oL0roIbYOjbHNYquK2Rw7AMdHom7rhHekuJJLyco9lZxY
-	 Uk7Zj45DIq9BnsoW+5ULnYB81c1wjITcnb4erxgXTn5WuK7A6U36P4DSPi41PG9rUD
-	 sC1l6TbS9cMJVyXmr0Z4CvvlHRs39JjIVUXQrlvV8Gh9Kf04OdgobM0g2Zv8jbeHdr
-	 PiNSSl1/NKel7/2xSyk7Pyc1bk7FtdmqZ2ty3gufwO4Fe5DH3vkg6j5Y+pcos6AQ2z
-	 Q5rZU4oAkCm8A==
-Date: Mon, 2 Nov 2026 16:12:17 +0100
+	b=HDhz1eGYAbkOSwXaqmB0Apa2Ta1tDfDIh1exfQ1WYiqbowaXTZdsECLK5nUiOjyGa
+	 YmLYcXi8jdqvM+HldTm0DGSHvaMhfj7imNFbazByGaOZ1Vg4Wa9eBljdeROA010/ND
+	 gNXU8EPwPWMAWSzLGBgDUMvAF/6p+9V2k7ELiml5KN0H4Ut80uvFJtVJFlJmChCUtA
+	 SrEKPxRVUV4SKlMtgIX4erNRVc4fZ9nZheMm5IGBliLdDygM+KQjhntZlP9koTxgvi
+	 zYxbbMrboW4LqKtoh+KMylSI28HXjbDXXxEKQktGRc/NS+AVZ62ZI2Ooialjb5zbS/
+	 nbrxO79Rk9aKw==
+Date: Mon, 2 Nov 2026 16:20:40 +0100
 From: Niklas Cassel <cassel@kernel.org>
 To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: mani@kernel.org, kwilczynski@kernel.org, linux-pci@vger.kernel.org,
-	kishon@kernel.org, Frank.Li@kernel.org, bhelgaas@google.com,
-	den@valinux.co.jp, thierry.reding@kernel.org, jonathanh@nvidia.com,
-	vidyas@nvidia.com, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] PCI: endpoint: Skip upper halves of 64-bit BARs
- during search
-Message-ID: <auioURK_nCpmrgcn@ryzen>
-References: <20261102112306.4018464-1-mmaddireddy@nvidia.com>
- <20261102112306.4018464-2-mmaddireddy@nvidia.com>
+Cc: jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, bhelgaas@google.com,
+	linux-pci@vger.kernel.org, robh@kernel.org,
+	thierry.reding@kernel.org, jonathanh@nvidia.com, vidyas@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 4/4] PCI: tegra194: Add PCI_ENDPOINT dependency
+Message-ID: <auiqSIKbGilCYxDT@ryzen>
+References: <20261102111450.4010818-1-mmaddireddy@nvidia.com>
+ <20261102111450.4010818-5-mmaddireddy@nvidia.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -63,25 +63,78 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261102112306.4018464-2-mmaddireddy@nvidia.com>
+In-Reply-To: <20261102111450.4010818-5-mmaddireddy@nvidia.com>
 
-On Mon, Nov 02, 2026 at 04:53:05PM +0530, Manikanta Maddireddy wrote:
-> pci_epc_get_next_free_bar() skips the upper half of a 64-bit BAR only
-> when it is the starting BAR. If the search subsequently passes a
-> reserved or disabled 64-bit BAR, it can return its upper half as an
-> independent BAR because that slot has a default programmable descriptor.
+Hello Manikanta,
+
+On Mon, Nov 02, 2026 at 04:44:50PM +0530, Manikanta Maddireddy wrote:
+> The PERST# assertion handler now calls pci_epc_linkdown() to notify
+> Endpoint functions before powering down the controller. This function
+> is only declared when CONFIG_PCI_ENDPOINT is enabled and has no stub
+> when endpoint support is disabled.
 > 
-> For example, Tegra exposes a programmable 64-bit BAR0 and reserved
-> 64-bit BAR2 and BAR4. A search starting at BAR1 skips BAR1 and BAR2,
-> then incorrectly returns BAR3. The next search can similarly return
-> BAR5, causing the EPF test driver to allocate and program BARs that
-> belong to the reserved hardware windows.
+> Add a PCI_ENDPOINT dependency to ensure that the endpoint framework is
+> available whenever the Tegra194 PCIe driver is built.
 > 
-> Check each candidate's preceding descriptor inside the search loop so
-> upper halves are skipped throughout the search. With the Tegra layout,
-> BAR0 is the only available BAR and subsequent searches return NO_BAR.
-> 
-> Fixes: 27ce1d8ecb9b ("PCI: endpoint: Allow only_64bit on BAR_RESERVED")
+> Fixes: bf644226574e ("PCI: tegra194: Notify Endpoint functions on PERST# assert")
+
+Where is this SHA1? I can't seem to find it in the PCI tree.
+
+
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202610230923.2lf3BsLs-lkp@intel.com/
 > Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> ---
+> Changes V2 -> V3:
+> - New patch in v3: require PCI_ENDPOINT for pci_epc_linkdown(), added to
+>   the PERST# assertion handler, to be declared when the driver is built.
+> 
+>  drivers/pci/controller/dwc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 0a0d56fcf0ac..704134684900 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -245,6 +245,7 @@ config PCIE_TEGRA194_HOST
+>  	tristate "NVIDIA Tegra194 (and later) PCIe controller (host mode)"
+>  	depends on (ARCH_TEGRA && ARM64) || COMPILE_TEST
+>  	depends on PCI_MSI
+> +	depends on PCI_ENDPOINT
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+This looks wrong to me.
+
+If you look at:
+include/linux/pci-epc.h
+
+you can see that there are stubs already for e.g.:
+pci_epc_init_notify() and pci_epc_deinit_notify().
+
+$ git grep pci_epc_init_notify
+drivers/pci/controller/cadence/pcie-cadence-ep.c:       pci_epc_init_notify(epc);
+drivers/pci/controller/dwc/pci-dra7xx.c:        pci_epc_init_notify(ep->epc);
+drivers/pci/controller/dwc/pci-imx6.c:  pci_epc_init_notify(ep->epc);
+drivers/pci/controller/dwc/pci-keystone.c:              pci_epc_init_notify(pci->ep.epc);
+drivers/pci/controller/dwc/pci-layerscape-ep.c: pci_epc_init_notify(pci->ep.epc);
+drivers/pci/controller/dwc/pcie-artpec6.c:              pci_epc_init_notify(pci->ep.epc);
+drivers/pci/controller/dwc/pcie-designware-plat.c:              pci_epc_init_notify(pci->ep.epc);
+drivers/pci/controller/dwc/pcie-dw-rockchip.c:  pci_epc_init_notify(rockchip->pci.ep.epc);
+drivers/pci/controller/dwc/pcie-keembay.c:              pci_epc_init_notify(pci->ep.epc);
+drivers/pci/controller/dwc/pcie-qcom-ep.c:      pci_epc_init_notify(pcie_ep->pci.ep.epc);
+drivers/pci/controller/dwc/pcie-rcar-gen4.c:    pci_epc_init_notify(ep->epc);
+drivers/pci/controller/dwc/pcie-stm32-ep.c:     pci_epc_init_notify(ep->epc);
+drivers/pci/controller/dwc/pcie-tegra194.c:     pci_epc_init_notify(ep->epc);
+drivers/pci/controller/dwc/pcie-uniphier-ep.c:  pci_epc_init_notify(priv->pci.ep.epc);
+drivers/pci/controller/pcie-rcar-ep.c:  pci_epc_init_notify(epc);
+drivers/pci/controller/pcie-rockchip-ep.c:      pci_epc_init_notify(epc);
+drivers/pci/endpoint/pci-epc-core.c: * pci_epc_init_notify() - Notify the EPF device that EPC device initialization
+drivers/pci/endpoint/pci-epc-core.c:void pci_epc_init_notify(struct pci_epc *epc)
+drivers/pci/endpoint/pci-epc-core.c:EXPORT_SYMBOL_GPL(pci_epc_init_notify);
+include/linux/pci-epc.h:void pci_epc_init_notify(struct pci_epc *epc);
+include/linux/pci-epc.h:static inline void pci_epc_init_notify(struct pci_epc *epc)
+
+I suggest that you just add a stub for pci_epc_linkdown().
+
+
+Kind regards,
+Niklas
