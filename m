@@ -1,112 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.169
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793684837;
-	b=TvgNKHtYj6Buri/K78AQXQ0dUC8VLsmcobCIxp3JDFfKEvtECVAQa6v0wFJtEP3ko0tw
-	 Vhs3cQaIEq4GN8ceTHew+XjRX/HCJTOC4arYePcNZqwkfM86uXl6HURi6pSJsITzp8tKW
-	 KxdnlNOpuP3AvFHstA/EnLdllJQTieHdsEiBPtzZ4rVSgw6xKSJW3tdkEaVztbv/lkb0F
-	 vOerezxyZ2H74HzUSRKr+vL0cc5m4Tl5eQMHvxrrg9wn9vDVapx1DweHiobKD1qnLSUAg
-	 zUEu5MwSVv0Ro/tzhgIIZ0rUIMzEsTeFj9oWbHPTCsmm+RYGR5VFquA9iANLH3vulWg==
+	t=1793686294;
+	b=hb2vQozqxgSK3Lp5ZcLKTlToCd/WLRIX1o0v5YwGwhwfhyDPH+fQownzCYr7XX0X8YJV
+	 ow++vPljRft1ErovujmXi6D54hO8XjgMw4cPamSq6lHBWvdW5wBThpg6kFnNc+xNPAxL9
+	 LRZQElZmWKN9nZUe5CSTqr3WyfM+yEmppRGzsN4jSGaEpraLp8HV/4dgK8e2vwPl0ZE/d
+	 O2MQo1da8gTG1GUcVhxOHDl8au7DRQbCXq3+VuRFMO6x2cxZgyk3+MEHMtkufHMDpXpr/
+	 CLDCcqOjwkGOVz8EnxpWNFtc6fav8sSVhgwV0mzNwhJjEBU1T4CAbmSBaLYokL+60Yw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793684837;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Authority-Analysis:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=CAUzZfGxBOdGVKQARymZnvw9tUEu8Gk9GBeF1+1UKlY=;
-	b=dkLi6Vb0x2+FNgkQGdi8fajr9FUARYaFi0FHyEk/DJwiVUX7oJx0UvmUlQqsVJtO8MVt
-	 yPfBZ38Yna9TjKrH2bwqqnw9DqGVItv/vjVgyg0XlTlcvYPyGLLlkh8wU/twu/6Dad+O3
-	 cHzOapls6d2LOqeLE5Ll+X8tZ8sM0T+woRjnqxGhaMJypn0yNK+RoWpMxlgn1Z2UxBcxl
-	 oqjnu/PmscxmPowzg/rqKQlM2J1IpgIxcWAEsEpuutbvzCaf9Xl6wjkdO6NNQIArYNDxO
-	 H8rJsXPoCO3E2ibrgsUxEHImDBUzmjjOAAStj+/12txxW/li46An7tPgTHwN6N5LY9Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793686294;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=F0209+Z89QTPwT7tMHgAe7LOb7Q5n1UZPPZHjeaiFsU=;
+	b=eBb/8yFp7dJL5UDFgjtGo7ebIizd4bH8JaJkm3/Pb+QWMD00V7HVZdZ6/GaziO0Z2Q/m
+	 Tfe0e4l1BzOf5FcXfVotD16v0tsqECIAgFX1QAyUiviDQeLpzfzuAnFlcqkYvYYplac+I
+	 2nhb3OQ+MfzV0U8LuRUxq9kz+IK/TttaXPzOUleGc8QKEdXO+V4fvyqz1nnL2/THjTbJt
+	 ZpmJ1wI2anLChwZENIlYmRckhTpwAbmn5LN9tRwWlvQZ2Ytarr/6xWnJwkDJc4uVuprbC
+	 D8HV8gIDJ2VDfEQ4ifD0iykMLXeSDYLZzZ/w+PhzNPFqt6lJYq4q9XH0lg4RzoL5CRw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=B9WPCRoH;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=g56Tr5nY;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=a0ao3ep7;
+	arc=none smtp.remote-ip=74.125.82.169
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D72606A32D
-	for <linux-tegra@vger.kernel.org>; Tue,  3 Nov 2026 05:47:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E9D72606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30857606A32D
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Nov 2026 06:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 30857606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=B9WPCRoH;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=g56Tr5nY
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A32ojHr2609059
-	for <linux-tegra@vger.kernel.org>; Tue, 3 Nov 2026 05:47:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CAUzZfGxBOdGVKQARymZnvw9tUEu8Gk9GBeF1+1UKlY=; b=B9WPCRoHyNWKGB9D
-	L4dsvqEUClvH8NYUkX61OcAYrQ7xjNf8OsnFL8BeS8ivn8fOebHh8j2Gr53ZrKh6
-	6ctTJdl0ZoS4wmHYDLR+/08RvCfJxzW/kPXa0K7cW41jngrpCOWaIY6LQkDQwyJX
-	pc/oqb9Sfa1/hL935YqWfv8iL7ENTA5UNB6XUVuTVOZ4NG1qYy0RYXXAn+i6+JaE
-	dAtNI49uAU+gger0nd4XxtGguv6Heck9tdclAGjAIlIbqcV9UwW5+P+biYRG2YaU
-	pDVTCiB7IXKU61B9PByE9Cd8wuz4R9xucjIUAAdWtJMAiw1U+M7kvVF7/je2dwm/
-	b3H4Hg==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hq76d8j93-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Tue, 03 Nov 2026 05:47:16 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-8a01ea9e318so4815413b3a.2
-        for <linux-tegra@vger.kernel.org>; Mon, 02 Nov 2026 21:47:16 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=a0ao3ep7
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso3486599eec.0
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Nov 2026 22:11:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793684835; x=1794289635; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=CAUzZfGxBOdGVKQARymZnvw9tUEu8Gk9GBeF1+1UKlY=;
-        b=g56Tr5nYTBRguwedEcBQiCAihdNQBz0x3U8KSv4CKoD5x1qbdtDlrpaDDpbgYZ1Bd2
-         U9GWKN88ADi57o/kysshNxRjfhR7SMLlHQbngl6W2IoEhjDDPWGxfSGqd18v3gY1bMdF
-         Ro7XaCyaL5VfZcBjrnztEZhilDGytP5PC5QGT7oMSctJm5TZ0u0VK0cXsBaev2ppMVir
-         bmW/hj4+dzczrAGOcp3EI8iRoScRqtp0sET9Nofp+ZLAf0oO6qRafd93lXvd+NL8nvLr
-         1D59Fqh3ddTIPT1yQEVU9QrH3ByI4F5tq7F/Am3kjAa1jDQjqtIupr11x4T1EMqd+5D0
-         396A==
+        d=gmail.com; s=20260707; t=1793686293; x=1794291093; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=F0209+Z89QTPwT7tMHgAe7LOb7Q5n1UZPPZHjeaiFsU=;
+        b=a0ao3ep7hjhR6N9ZECtaIVo2g+0dAoCdB9AWmAt9XDSV4uWIvoQoBLtji+gMdwCKvy
+         eq/RwX0+Evgcmpf5Dp+fQuF3cLqmr+wztJ5uFuc3oq0Q0GZXkgeXGEOFNiZJAYNxqE7V
+         fcIXsjKAukxhU1KFy1kJEoXzSrVpQmMb6WH7SC7fSjtrnM/a5xCVoqVHI2jn4X5kghPp
+         eY+4TaJK2q4R9wJ3qbD62eGByLcSwIxyaJCwcTY8qj7LPmJVY6SM3CdvwBv6RPACV/wo
+         mhf9aDewF9TdOiogZv7dIAQXBJ6U126bcY408d8hxb68aeEvDfwrWEyVxf5lQD0IPC8Q
+         v39A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793684835; x=1794289635;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20260707; t=1793686293; x=1794291093;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=CAUzZfGxBOdGVKQARymZnvw9tUEu8Gk9GBeF1+1UKlY=;
-        b=kGbxj3yQhhfAKo8PVWCvwna1tc7XjqtEa/CSNt8yYXyTabQQxUcpOiEdl77dG0dQJZ
-         DIfoAFtZJwgcfyIA8tv/EWelrDKWJRjfWlm6cchYm5pLBHzVJx9oqyI6QMznL5phr2MO
-         egiknyXO49ekb+6445qs6DLk7aSyEcg19PzvP+pp8Kh4ksp+AXOmaWXH0P1AN3BLKlvx
-         HvValevtE2W4uTqIUGuM3ZqRZT6qVqN3v8tX2B/yR/1gqiwkeUErUKU6xt/YTSxwhlK7
-         +GHY7O93K5TDGHfRl/PwRR77JGKXXtDO7CcgOmh3/g7jQiWgRdLcc1W47kntqaatupuB
-         u/6A==
-X-Forwarded-Encrypted: i=1; AKwUvBygVt5M+9UuRI/Lq3c+Tn0TCFX5shB7I/qZNacHku21mb8Dv0C45K1uV+dqNmyBz083KpwZ/qN+Z2KQWQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z91eavrWQ9Dyz5VvC4rftdE1E2oVxquZMSCvoP1z6mM/aEWvYkm
-	OW16GtPhhurU14oeTAe2WU/alm6l/4+Lv/s0YNddgaXubSoxGGtQrynQD/No9h448IvHQUqkBps
-	+9sd/RTj9Q5D7XQTK0RbaqdbkVw3uyqpzb2p80K2LAvB2h2vPxvmMe2rs5UnjnhrdGQ==
-X-Gm-Gg: AYBFou2aFOXeCatW0zXEKWcCeuxwUCUe/LCXC+sKWnVTLoKl1F0TkiYS/n056OfClZ8
-	jWhpgWjbCQPVFitqBgGGpWLE2NG5DaxRygWT92gETCHjvDVLl2hacLe3gY3AtJGZSPwwva/hd5b
-	qFROs/jkANSpY7HsJ9p0IWsJ7kNivVV7Ime56C4LzuR9MCaAIKXSF8u8MEIXMPwd80AaCjI+99+
-	CngksAZRTgdm6W+s1icBGXIZcTKus2FxfXGPYteGc0s19lg1Ons5imAikh1cABIMGeYTZ4vMrf/
-	cRB5/gZej95dSWlwq2tl8f95hWkuQV5nF+CbErjtIg9KcPrd3j7wH9lmqa8GHY7EpRP4U6mi+f9
-	ntft2QuUk7U0/0rP/oG+6qmJPU5FZmASQKcYN2F6B7emQxTJXu21Bxw0m+CXpHMj0NQztlIli+m
-	9YsfCk
-X-Received: by 2002:a05:6a00:1f0b:b0:899:67fe:3c52 with SMTP id d2e1a72fcca58-8a9be1a4461mr10570084b3a.15.1793684835533;
-        Mon, 02 Nov 2026 21:47:15 -0800 (PST)
-X-Received: by 2002:a05:6a00:1f0b:b0:899:67fe:3c52 with SMTP id d2e1a72fcca58-8a9be1a4461mr10570053b3a.15.1793684835043;
-        Mon, 02 Nov 2026 21:47:15 -0800 (PST)
-Received: from [10.217.219.98] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8aad7801a53sm2896689b3a.2.2026.11.02.21.47.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Nov 2026 21:47:14 -0800 (PST)
-Message-ID: <e44d3e85-8dbf-4ca2-9c88-817f729fcdb8@oss.qualcomm.com>
-Date: Tue, 3 Nov 2026 11:17:03 +0530
+        bh=F0209+Z89QTPwT7tMHgAe7LOb7Q5n1UZPPZHjeaiFsU=;
+        b=NifgQsg5Jj5HhPzYt3FFTjhJplgLzL/43YavUJjhtnwKHN1Re4a7S3izOUoDqCvhbW
+         9RucVO/siIOVY8ndPlwOw1c5GQFT5CL2HtU1hfjbLydzPbZOmx06qaVIfyEEwJR/sQtB
+         kk2liN94nf+b3fQMSmh+sVt9pq/qFHExdqHO8hh+2XNI3SGxC8yYbnYnyZvDja7S9id4
+         nVfiykj2S3it6FCRtEyiinoEdu/EHvIK3ChLeHqlWFu6/XaBePfvJ/I0CwxrVfk8l50G
+         Mr9CJgaExVsRHentCd/f8yzT778/3JHOuHZFjAr4KlrCGvlgYp6JZa9hdq0DnTGGmOIq
+         te1A==
+X-Forwarded-Encrypted: i=1; AKwUvBxveNsEdkr7eT6xavZUp/dEgeOfR1ixvP9bWGxIc2BkVWYJbAj5kLgyuWrYGbb6+b03S3AAh9kGZsWkJg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+PtilvKESpz+E7QriaesLQij835bCnKn2F6tDaVmX/10oQfBwW
+	SGkU/6yDI2TT6VItQZtNidf1jge1k3WLFw87hcAsYjvjZRPkRhjStcIo
+X-Gm-Gg: AYBFou323tsp4zcxm3ayGdTXyiI5Trfmp7oFL/dyCWuEcyqqjCH1msSgNkMAWEDUE1O
+	Bh8t++NW7M3LuGQfgwGpQnrvaTapQsnDyT/jBA2SdqEkquUZcxF8WeC3nX9TQNkARVWW8xQqHnM
+	kpml25IH4ux7841kkEKEC0aDVmo45xZhhxOjkmNwK9u0xfWryDuwTaDCLYNh9fvDILhYLpA08A3
+	C2S32ak+jP5QHIafXLBxCJ/PyGg7cst6DrlnjMbBrWjtw04cW1W+bc4XjNrHPGTbcbSqeHNOpWN
+	UQP4tgV9V5e+NMVOOrHP0ZE8qCWSvDB+rsIMNYAn7S1pnNz0G5IBOabagCGdZU0vo8xJYY31VPp
+	imZFkjeAvdVhUTR+WV6vhJnXPSR9E+zb8L06UH5QFoCLovekwXbU4x0RyZkk4QjjSblsARCxGU2
+	XOGjUrm4xKyMv2mOqp698vh+VAqiIHjP6dWlctF75eMENZ1bjmaJo2UREWG85ROEKfGu7ViFpw5
+	xajZzaw9m6oH1dfqpIX1+p/8zd8Ev7a22dWj+0+h0Sf3PyVMOTRwfCxov/rw5ay3lVjNcNUf1gO
+	asvV4yI1PKT+f5GFow6ntrlRG6DuuFVXKa51R/IOCA9u8SNLCWRp8eL0ZAO8rjJdtUmTO14AM7b
+	1Xroj9GkQw2pOpUHJwkAhidBjH0LBktK53FQB8/ndh4V+z4/PCONArYhtuDymxw1NLOYd8yLVxd
+	G+p6s=
+X-Received: by 2002:a05:7300:c39f:b0:366:6644:2839 with SMTP id 5a478bee46e88-36a42203e90mr18824616eec.3.1793686292916;
+        Mon, 02 Nov 2026 22:11:32 -0800 (PST)
+Received: from server1868-4.tail96fc24.ts.net ([199.188.91.198])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a42a61a0csm50827480eec.22.2026.11.02.22.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Nov 2026 22:11:32 -0800 (PST)
+From: Austin Schuh <austin.linux@gmail.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Austin Schuh <austin.linux@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Aniruddha Rao <anrao@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] firmware: tegra: bpmp: populate debugfs in the background
+Date: Mon,  2 Nov 2026 22:11:23 -0800
+Message-ID: <20261103061125.3825178-1-austin.linux@gmail.com>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -116,91 +100,185 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] i2c: use dmaengine_desc_set_callback()
-To: Frank.Li@oss.nxp.com, Codrin Ciubotariu
- <codrin.ciubotariu@microchip.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Dong Aisheng <aisheng.dong@nxp.com>, Frank Li <Frank.Li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Oleksij Rempel
- <o.rempel@pengutronix.de>,
-        Viken Dadhaniya
- <viken.dadhaniya@oss.qualcomm.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "open list:MICROCHIP I2C DRIVER" <linux-i2c@vger.kernel.org>,
-        "moderated list:ARM/Microchip (AT91) SoC support"
- <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:FREESCALE IMX LPI2C DRIVER" <imx@lists.linux.dev>,
-        "open list:QUALCOMM I2C QCOM GENI DRIVER" <linux-arm-msm@vger.kernel.org>,
-        "open list:RENESAS R-CAR I2C DRIVERS" <linux-renesas-soc@vger.kernel.org>,
-        "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-Cc: vkoul@kernel.org
-References: <20261102170004.3852546-1-Frank.Li@oss.nxp.com>
-Content-Language: en-US
-From: Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>
-In-Reply-To: <20261102170004.3852546-1-Frank.Li@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=KJTPn1Fo c=1 sm=1 tr=0 ts=6ae97564 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=8AirrxEcAAAA:8 a=EUspDBNiAAAA:8 a=ibj56h0FkVxt_nO8038A:9 a=QEXdDO2ut3YA:10
- a=2VI0MkxyNR6bbpdq8BZq:22 a=ST-jHhOKWsTCqRlWije3:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTAzMDAyMiBTYWx0ZWRfX6C05EtNHf/I9
- eSleov/4GytLC0MOLCWT8dNfqSrU2/C9dTdayF0qyd4+VwOLkVKvL1KRu9IU1xTs0oDzQY7wEEz
- 6XJKCTcBMR07visO1yR0zlf3OsQVqfo=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTAzMDAyMiBTYWx0ZWRfX26UVd68ETmxr
- VJ+DDXHhykM1Qp/Xk7XuZ3zqyijXcQ81st1DL4Nk8aqwrtTJGJnFpw2YKpXdeEOHWn6sQzzfrGW
- sDGjFQgenkxUMvrZmFGGCuQr0khN1eW0tTcWZkSGSz3lEk+mf01zWJsuXKQ3tHL15jVhe//k4Au
- Ijkqb//MOFcxZH5pkg7f00gLYpT6YsV3QC8lnmHKWb7ANZRwd8ponaX6eQ5PAyHlkAI5Gzp6lXd
- BGMrVs/bVM3pkxUPnmzcp1QgdcMoQT2WRpBHuT56AbXHmBbKbjN7F7U/sxi8ICkoipg8MTWDaTJ
- Zkk1Xv1xjPuBZf9cJ5N3G122tAyc9XxGb6xPL6ZaxPtD47LQh4XWn17I0H4B9XUnpU7JqGS1Prf
- Jvli6eTgd3kQewFTY6yduMXFP1hu6ww06d5ZZepgcDounCkfSBbEUlTN+P9W09Dv4lgviNq5hDr
- 8qyxytlWjOBjS0qPAzw==
-X-Proofpoint-GUID: 0HFhPR1_IsQUtzpN490iKHXBNnIdB01X
-X-Proofpoint-ORIG-GUID: 0HFhPR1_IsQUtzpN490iKHXBNnIdB01X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-03_01,2026-11-02_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 impostorscore=0 priorityscore=1501 bulkscore=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 phishscore=0 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610300000
- definitions=main-2611030022
+Content-Transfer-Encoding: 8bit
 
+Populating the BPMP debugfs mirror takes several synchronous BPMP requests
+per directory, which on Tegra234 adds up to seconds.  The BPMP probe waits
+for it, and nearly every other device on the SoC waits for the BPMP.
 
+Nothing in the kernel uses the mirror, so populate it from the freezable
+workqueue instead, which system suspend waits for.  Create the mirror as
+.debug-populating and rename it to debug once it is complete, so that
+userspace never sees an incomplete state.  Count the users of the shared
+root, so that one BPMP failing doesn't remove it while another is still
+populating.
 
-On 11/2/2026 10:30 PM, Frank.Li@oss.nxp.com wrote:
-> From: Frank Li <Frank.Li@nxp.com>
-> 
-> Replace open-coded assignments to callback and callback_param fields
-> of struct dma_async_tx_descriptor with calls to the
-> dmaengine_desc_set_callback() helper across various I2C bus drivers.
-> 
-> No functional change intended. Prepare make to struct
-> dma_async_tx_descriptor private to the DMA engine.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-Reviewed-by: Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>
+On an Orin Nano with v7.3-rc1, the BPMP probe now takes 0.5 seconds
+instead of 2.6.
+
+Assisted-by: LLM
+Signed-off-by: Austin Schuh <austin.linux@gmail.com>
+---
+
+Notes:
+    Changes in v3:
+     - Shorten the commit message and comments.
+     - Populate several BPMPs in parallel, and count the users of the shared
+       root instead of holding its lock across the whole population.
+    
+    Changes in v2:
+     - Embed the work_struct in struct tegra_bpmp, and cancel it with
+       cancel_work_sync() from a devm action.
+     - Create the mirror as .debug-populating and rename it to debug once it
+       is complete.
+     - Queue the work on system_freezable_wq, so that system suspend waits
+       for it.
+     - Hold bpmp_debugfs_root_lock across the whole population.
+    
+    v2: https://lore.kernel.org/r/20261024055055.602558-1-austin.linux@gmail.com
+    v1: https://lore.kernel.org/r/20261017065012.3063980-1-austin.linux@gmail.com
+
+ drivers/firmware/tegra/bpmp-debugfs.c | 62 ++++++++++++++++++++++++---
+ include/soc/tegra/bpmp.h              |  2 +
+ 2 files changed, 58 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
+index 2efc48b522ac..d90ef912b66c 100644
+--- a/drivers/firmware/tegra/bpmp-debugfs.c
++++ b/drivers/firmware/tegra/bpmp-debugfs.c
+@@ -774,6 +774,7 @@ static int bpmp_populate_debugfs_shmem(struct tegra_bpmp *bpmp)
+ 
+ static DEFINE_MUTEX(bpmp_debugfs_root_lock);
+ static struct dentry *bpmp_debugfs_root;
++static unsigned int bpmp_debugfs_root_users;
+ static bool bpmp_debugfs_enabled = true;
+ 
+ module_param_named(debugfs, bpmp_debugfs_enabled, bool, 0444);
+@@ -785,19 +786,18 @@ static struct dentry *bpmp_debugfs_get_root(void)
+ 	guard(mutex)(&bpmp_debugfs_root_lock);
+ 	if (!bpmp_debugfs_root)
+ 		bpmp_debugfs_root = debugfs_create_dir("bpmp", NULL);
++	if (!IS_ERR(bpmp_debugfs_root))
++		bpmp_debugfs_root_users++;
+ 	return bpmp_debugfs_root;
+ }
+ 
+-int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
++static int tegra_bpmp_populate_debugfs(struct tegra_bpmp *bpmp)
+ {
+ 	struct dentry *root, *d;
+ 	char name[32];
+ 	bool inband;
+ 	int err;
+ 
+-	if (!bpmp_debugfs_enabled)
+-		return 0;
+-
+ 	inband = tegra_bpmp_mrq_is_supported(bpmp, MRQ_DEBUG);
+ 
+ 	if (!inband && !tegra_bpmp_mrq_is_supported(bpmp, MRQ_DEBUGFS))
+@@ -818,7 +818,11 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
+ 		}
+ 	}
+ 
+-	bpmp->debugfs_mirror = debugfs_create_dir("debug", d);
++	/*
++	 * Name the mirror "debug" only once it is complete, so that userspace
++	 * never sees an incomplete state.
++	 */
++	bpmp->debugfs_mirror = debugfs_create_dir(".debug-populating", d);
+ 	if (IS_ERR(bpmp->debugfs_mirror)) {
+ 		err = PTR_ERR(bpmp->debugfs_mirror);
+ 		goto out;
+@@ -830,15 +834,19 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
+ 	else
+ 		err = bpmp_populate_debugfs_shmem(bpmp);
+ 
++	if (!err)
++		err = debugfs_change_name(bpmp->debugfs_mirror, "debug");
++
+ out:
+ 	if (err < 0) {
+ 		if (!IS_ERR(d))
+ 			debugfs_remove_recursive(d);
+ 
+ 		guard(mutex)(&bpmp_debugfs_root_lock);
++		bpmp_debugfs_root_users--;
+ 		if (root == d) {
+ 			bpmp_debugfs_root = NULL;
+-		} else if (simple_empty(root)) {
++		} else if (!bpmp_debugfs_root_users) {
+ 			debugfs_remove(root);
+ 			bpmp_debugfs_root = NULL;
+ 		}
+@@ -846,3 +854,45 @@ int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
+ 
+ 	return err;
+ }
++
++static void tegra_bpmp_debugfs_work(struct work_struct *work)
++{
++	struct tegra_bpmp *bpmp =
++		container_of(work, struct tegra_bpmp, debugfs_work);
++	int err;
++
++	err = tegra_bpmp_populate_debugfs(bpmp);
++	if (err < 0)
++		dev_err(bpmp->dev, "debugfs initialization failed: %d\n", err);
++}
++
++static void tegra_bpmp_cancel_debugfs(void *data)
++{
++	struct tegra_bpmp *bpmp = data;
++
++	cancel_work_sync(&bpmp->debugfs_work);
++}
++
++int tegra_bpmp_init_debugfs(struct tegra_bpmp *bpmp)
++{
++	int err;
++
++	if (!bpmp_debugfs_enabled)
++		return 0;
++
++	INIT_WORK(&bpmp->debugfs_work, tegra_bpmp_debugfs_work);
++
++	err = devm_add_action_or_reset(bpmp->dev, tegra_bpmp_cancel_debugfs,
++				       bpmp);
++	if (err < 0)
++		return err;
++
++	/*
++	 * Mirroring the BPMP's debugfs tree can take several seconds, so do
++	 * it asynchronously, on the freezable workqueue so that system
++	 * suspend doesn't make its requests fail.
++	 */
++	queue_work(system_freezable_wq, &bpmp->debugfs_work);
++
++	return 0;
++}
+diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
+index f55db918ccb1..f961c265326c 100644
+--- a/include/soc/tegra/bpmp.h
++++ b/include/soc/tegra/bpmp.h
+@@ -12,6 +12,7 @@
+ #include <linux/reset-controller.h>
+ #include <linux/semaphore.h>
+ #include <linux/types.h>
++#include <linux/workqueue.h>
+ 
+ #include <soc/tegra/bpmp-abi.h>
+ 
+@@ -103,6 +104,7 @@ struct tegra_bpmp {
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry *debugfs_mirror;
++	struct work_struct debugfs_work;
+ #endif
+ 
+ 	bool suspended;
+
+base-commit: 1bbcf4a19f1495f769b69e9569d8c1e81df074f5
+-- 
+2.47.3
+
