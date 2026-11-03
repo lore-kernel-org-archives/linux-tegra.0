@@ -1,95 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793714551;
-	b=WLHEOTJRgVkh3O9vKCpkWdL2mREtZ+A2mmKwDu+fU9+Xg/6WAoRDw7lOSI3icEjs/PFP
-	 9dS006DZ/mMMBYezFBtGg76/3BoJOfmHS9jpYq1S/K95ObRV4IjwQqm3zJnkxzsW6BYeE
-	 r78FqNYovUYmN4WoGDyVTjY14D0hkjAw4vY3czgpzaShtSG64cVScoMs1KFhtba6HIjP4
-	 Be9SWy9YCG3Hw6L6RHxdw7Sl6cDlHQPI1QdO6KIp9BnTLdcxduJfhqClx9yXlPUoushIX
-	 JD+Vt0e15h7k+F5r65fIEqjm5vq02bPztxlbl3jKotCFi4Zkv7wm3K0SeDjL9tq1vtg==
+	t=1793715085;
+	b=rMEdOuDLtClkfBbtKANGo2il7gW9RmGktnh1kK+hjXqB2G4uF0HsVoAOZ1fyPupK+6OO
+	 cFiluQ8e+BBEtXk0vDbTQCha+oTDfrJQSuDIbSP0VRGP+PVA421TsfQoDruLBA1XwPXK7
+	 iYJ2wzeYdOflygru7cOmGlc+PcAYg03PMyQDqDghdL16+OX7StWV5x1mWtLnXLFdITevQ
+	 k+steoMxN741JGDLFl2uVEthH5d+pm1W6sZ7Y4SSJTFMTbYkph5O2Ysj3I9fQo/dV9w56
+	 SL5Z2k8Fno0T0Lxm9AJ2Oq8dgUfcg1T03GMn6cOsvS9MRYTRjM3OK0tGnZ9iSeQQDKA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793714551;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=U2kSEVRi2hxXG2GFOz4rcCNrV0dltOZ+Pl3QkTNM8Pc=;
-	b=G23sLFcwAS+JQxlUviwmGm/eyFl1DhOobPcy8+6Ksj3SFgyJ78+hkU3E4phKxYqsxtRy
-	 iHlTA3aRY7gLBbS4KLKYTsQq18pFSNFLCut3KreOUjse8ARTCtdpIaM3yKPQta41Ytek4
-	 49D8BPMmGL5Zmjy4gsLI2lzwXp63SugyqNzK45iDRHkG9KvyV53rDgIb2wM74r4b9+0/p
-	 ixZEfQ/AI9yN/0TbXtplecmS+Q+tXyP0btbI//VNtVGNeKIu44wRaW1puvA7jJyoeevtv
-	 bqsAnmbu3dAJqo/jSGJQmeuQP8kX5jgeyJB51rS6ldOUv5XaC1sFqgk6h1oh72lJjQg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793715085;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
+	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=7bHBNa7IZPQ1QbCFBKTfyhdykfY5GVXRYYu9fxpW6k0=;
+	b=YChtjxaiVoq5CozgGivx3+IAf5uTPoOPTavxb1r7tGfF0HhOUfJ4ee2msazFesfkWTG7
+	 +EU8ALFP3q7zHHtxn3sEvn1IlD9LEf5AuCI3vUq1i8E57U7bOKo5ZE4pID6XHqka65UY3
+	 efhvd+8wIXNKqWFSkqWfT15BIUHlP1FVMVUa1puBuc898OXbOS87E1RF9KxtSC6Osgujj
+	 AbPlHiHyaOuzxqiH02UBdcshGd/SUgwGglsgsOVKTBMfpxj/IveN78L0LETO9tyMzGfri
+	 +qeX5oEBw/0H9g7D2WREI/y45D/I9ZzdH/Wy7cABt7XymExcTLP1n/Nk/aoyYeSGKsw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dIF4YyTT;
-	arc=none smtp.remote-ip=192.198.163.8
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FB660A2600;
-	Tue,  3 Nov 2026 14:02:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E0FB660A2600
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=NkZkFeO0;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E84E606A326;
+	Tue,  3 Nov 2026 14:11:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8E84E606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dIF4YyTT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793714550; x=1825250550;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=21/dBFytCw06WfTSnztehqTIWH3fJ3UemgDQsPHVjOg=;
-  b=dIF4YyTTboUQu6daqPnfWosES/Wzgd0ka1i2WrKovstKerg+u4FtzG4W
-   ttQS8E85prPFCELWsKszsgi09I5X3USCSH0r4zMDZSHXynHAQZEFwibTy
-   EpHSa8vFjcnNJKR1I/Soj2WxKNs6XilV1IIWKgxlNIfcgHLFpac7mnggK
-   TR+eTILL25+7ql4HtU9DCZzYKL7YAzD15JC/ya1qxfLYgbsi/8d0biyRR
-   iz/l4jYyi826GrAiGW0zCimDhckuksSKdXGcQlUJN//d+Y9BiWkgUaQgV
-   zaIafSor9ZznlTRH8+w/7F4J/B65TDKNZpffhxYETYir1R88hxnywispV
-   A==;
-X-CSE-ConnectionGUID: FEUajjFKQWGnblCjvwe6UQ==
-X-CSE-MsgGUID: 4sVGRYX/RgiZYwIxPKcagQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11954"; a="2329165"
-X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="2329165"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2026 06:02:29 -0800
-X-CSE-ConnectionGUID: Y42j3A5eTQ6QKttsrzyCkA==
-X-CSE-MsgGUID: 5M+a3Yp+QLeE0Ajy1Oi1EA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,193,1787036400"; 
-   d="scan'208";a="6755557"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 03 Nov 2026 06:02:23 -0800
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xOF5g-00000000ioO-0URQ;
-	Tue, 03 Nov 2026 14:02:20 +0000
-Date: Tue, 3 Nov 2026 22:01:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Frank Li <Frank.Li@nxp.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	"Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Larisa IIeana Grigore <larisa.grigore@nxp.com>, imx@lists.linux.dev,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v3 6/7] dmaengine: fsl-edma: support per-channel DT child
- nodes
-Message-ID: <202611032138.hVbEmkem-lkp@intel.com>
-References: <20261102-edma-iommu-v3-v3-6-9d0e62a954eb@Example.Com>
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=NkZkFeO0
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EF121595;
+	Tue,  3 Nov 2026 06:11:20 -0800 (PST)
+Received: from [10.0.130.179] (e127648.arm.com [10.0.130.179])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BE533F628;
+	Tue,  3 Nov 2026 06:11:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1793715083; bh=cTUlnYaVdFBoAxYfMF7MJUgAAOnfL0oBeTH+bYjAzpo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NkZkFeO0akRyTLNwYpkc05k85/oIyVY2rwFujd390pAi7PECXbGlDwkToLNBJmCnF
+	 ewONmP+x4adwpIZSqpvC1/D6wUTZXdAYjTWi0lcfbX1tn5AxKA+qze94Qkhq4D1J/p
+	 p0F3565Dn4xqLrgUvq3gn7mJatuVqxRGiK5i6u58=
+Message-ID: <f326f2c5-9012-41bf-a8da-b2fd9698b9fa@arm.com>
+Date: Tue, 3 Nov 2026 14:11:18 +0000
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -99,34 +53,107 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261102-edma-iommu-v3-v3-6-9d0e62a954eb@Example.Com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/5] cpufreq: CPPC: Preserve OSPM-set registers across
+ hotplug and unload
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
+ zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, lenb@kernel.org,
+ ray.huang@amd.com, mario.limonciello@amd.com, perry.yuan@amd.com,
+ kprateek.nayak@amd.com, maciej.wieczor-retman@intel.com,
+ pawel.chmielewski@intel.com, linux-pm@vger.kernel.org,
+ linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+ vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
+ mochs@nvidia.com, bbasu@nvidia.com
+References: <20261030092416.1993889-1-sumitg@nvidia.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20261030092416.1993889-1-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Peng,
+On 10/30/26 09:24, Sumit Gupta wrote:
+> This series preserves the OSPM-set CPPC registers (Energy Performance
+> Preference, Autonomous Activity Window, Autonomous Selection - set via
+> sysfs) across CPU hotplug and suspend/resume. On driver unload, it puts
+> back the values they had before the driver loaded.
+> 
+> To do this, it keeps the CPPC cpufreq policy alive across CPU hotplug.
+> It also orders the performance-control writes in cppc_set_perf(), so
+> that restoring them after a platform reset never sends an invalid
+> request.
+> 
+> Without online()/offline() callbacks, the core tears a policy down when
+> its last CPU goes offline and rebuilds it on the way back, re-reading the
+> CPPC capabilities each time. The values written to these registers can
+> be lost:
+> 
+>  - Across CPU hotplug or suspend/resume: the platform may reset them
+>    while the CPU is offline or suspended.
+>  - On driver unload: the driver-written value is left in the register
+>    instead of returning to its pre-driver state.
+> 
+> Handle these with:
+> 
+>  - Patch 1: orders the Desired, MIN and MAX writes in cppc_set_perf(), so
+>    that the platform never sees an invalid request. Christian proposed
+>    it in [7], and this version adds fixes found in testing.
+>  - Patch 2: adds online()/offline() callbacks so the core keeps policy
+>    alive across CPU hotplug instead of tearing it down and rebuilding it.
+>  - Patch 3: makes the autonomous selection register helpers take a u64.
+>  - Patch 4: saves each register's firmware value at init() and each
+>    successful sysfs write as the requested value. offline() restores the
+>    firmware values, and online() reapplies the requested values.
+>  - Patch 5: extends the same restore and reapply to system
+>    suspend/resume.
+> 
+> v6[6] -> v7:
+>  - Patch 1:
+>    - clamp Desired into MIN and MAX instead of rejecting it. (Sashiko)
+>    - store_auto_select() updates its cache only on success. (Sashiko)
+>  - Patch 2:
+>    - exit() only frees the driver data. (Sashiko)
+>    - online() continues if enabling CPPC fails, as init() does.
+>  - Patch 4:
+>    - save the requested value on each successful sysfs write, instead
+>      of reading it in offline(). (Christian, Rafael [8])
+>    - init() fails if a firmware value cannot be read. (Christian)
+>    - split the auto_act_window store from perf_limited.
+>  - Patch 5:
+>    - suspend() no longer reads and saves the registers.
+> 
+> Christian Loehle (1):
+>   ACPI: CPPC: Order performance-control updates
+> 
+> Sumit Gupta (4):
+>   cpufreq: CPPC: Keep the policy across CPU hotplug
+>   ACPI: CPPC: Make autonomous selection helpers take a u64
+>   cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
+>   cpufreq: CPPC: Preserve OSPM-set registers across suspend/resume
+> 
+>  drivers/acpi/cppc_acpi.c       | 318 +++++++++++++++-----
+>  drivers/cpufreq/amd-pstate.c   |   2 +-
+>  drivers/cpufreq/cppc_cpufreq.c | 530 ++++++++++++++++++++++++++++++---
+>  include/acpi/cppc_acpi.h       |   9 +-
+>  4 files changed, 729 insertions(+), 130 deletions(-)
+> 
+> [1] v1: https://lore.kernel.org/lkml/20260623095403.3407436-1-sumitg@nvidia.com/
+> [2] v2: https://lore.kernel.org/lkml/20260716153820.2007095-1-sumitg@nvidia.com/
+> [3] v3: https://lore.kernel.org/lkml/20260724215937.3368276-1-sumitg@nvidia.com/
+> [4] v4: https://lore.kernel.org/lkml/20260806200857.601152-1-sumitg@nvidia.com/
+> [5] v5: https://lore.kernel.org/lkml/20260916103820.1760297-1-sumitg@nvidia.com/
+> [6] v6: https://lore.kernel.org/lkml/20261020121846.691218-1-sumitg@nvidia.com/
+> [7] https://lore.kernel.org/lkml/1be30b2b-e1e5-41ed-a0dc-0dd5ad3c47cd@arm.com/
+> [8] https://lore.kernel.org/linux-pm/CAJZ5v0iXip_5Ywk3EkrGL_u2w_hOcGKA1XvrubLPb3diWHx5Lw@mail.gmail.com/
+> 
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan-OSS/dmaengine-fsl-edma-unregister-channels-before-vchan-cleanup/20261102-144955
-base:   6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-patch link:    https://lore.kernel.org/r/20261102-edma-iommu-v3-v3-6-9d0e62a954eb%40Example.Com
-patch subject: [PATCH v3 6/7] dmaengine: fsl-edma: support per-channel DT child nodes
-config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20261103/202611032138.hVbEmkem-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261103/202611032138.hVbEmkem-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202611032138.hVbEmkem-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: drivers/dma/fsl-edma-main.o: in function `fsl_edma_child_to_chan_id.isra.0':
->> fsl-edma-main.c:(.text+0xa99): undefined reference to `__udivdi3'
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+My testing setup is far from perfect, but let's hope good enough:
+Tested on Orion O6, AmpereOne and Blackview Ryzen 5 7430U (for ACPI-CPPC only):
+- native and emulated CPPC hotplug, both auto-select modes
+- S3 on Blackview and s2idle on AmpereOne
+- amd-pstate active/passive/guided on Blackview.
+Didn't observe any violations in restore order with both native register and
+fake support (which silently drops requests before the register write).
+Tested-by: Christian Loehle <christian.loehle@arm.com>
