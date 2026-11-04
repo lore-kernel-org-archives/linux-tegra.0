@@ -1,47 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=13.77.154.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793833362;
-	b=TSH/p1JVJ88AB8MpHboUF0ZBdQ0dSL4HN8KDh7hjVRaIS/UqvBmHx/ZUJdQELVE5zbPw
-	 4rsu7brwfBkAMEB4UPwuIlHLd90uNItx7gQS4AatvXDz4pz4tOLR5Hl8z+nMPFEuVj2i5
-	 Jw6MnmjV7KwOSGVNoIrEigz7+A+C0XSLXA6NzalnXOllNQ/gxYT7ho8lDLIFFhqTp8AKo
-	 6WCDkdhB2JyUyPfM3gP2EBWiFPsC/OLuiuyXIjrgl3kSg9s1ETewdJRUGtFxLCbVS4Rms
-	 LWLBF+InWsX4wafs18GyUZ7UCgOEsISllxe5Z0m2wANf+0YxAna/Htyqxic2zdXgDow==
+	t=1793834649;
+	b=DjtFv2/lWQtRM8eoaXzjkGhg1JYiFtW0Po9aHAA8SXv+qsIBQX9Xs5KhwRXMCBMcVThS
+	 dT9z4YnfH82BB3M3krsS6CiMYad5UNDxI4BUR2ixSQiRBW6T76MNa31HYrPNI326lkVHG
+	 ff4kg09I4oF0S3dD95LqSmAVEK/sWeijLgnDlIfEaptROY4zc6emq3QP9EyVRB7F8pudz
+	 ydcxzoV0FzMNuz6kUaq1uyOkfB4ZI+B3bxgyk3ej0+OXW1avbvh/r4zmBvMcyhuDPwKLR
+	 vbsoDFZwLqq0Ld9W/tD4NWFKh64RXnAHycwILHhOwnkrgyC+rebuTYVnYuavYCzLfLg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793833362;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=faVYG+5p25QPZ5jO9MjUiu/Ltiks8UpOg4pXnPN3sY4=;
-	b=llFxx4Utk0W+ZNQGgogqD38jZJIdMF5Bup9tRe2aHw3PFPyJMRqEIyxJltpebMgn9OAY
-	 jTtO+L8IljRTYSeH4oqiDgl9OgMhnxNIJAlgVgwpjVxXQHd3eAFAbdO++HSZJ81BAerUn
-	 P2KxwK/Rw+L1jg+OzeNRMmf+O5H0gmt8eRCY9wo1OFXsFommLCUNBSSu0q1eUdVTD76Mm
-	 AhGnJCSq6FcroLnZ5nZJvXjRuoIoDVpwOtJ6R7xylzbm9Zi8JJmfSFGH+n0OE0VcsU9Pe
-	 U5aW/8ZOuXVnhQfTepIkF7RjpIFYPSSP+3WQ/iviym3ypJaQOV6Crxldmv4ZpqJJzMg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793834649;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Date:From:To:Cc:
+	 Subject:Message-ID:In-Reply-To:References:Organization:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Spam-Status:
+	 X-Spam-Checker-Version;
+	bh=jYeLi8tUmdcFROiq/jmTkZ4ahpzcaw03wqXaIhratXY=;
+	b=q3+kUTvPbYfdTRmoKDhyxloTHgPn899rkxlRMbyQVxcrCI5DGb11VJpZSL2Oeh9XvA/6
+	 9wkrxTpdegXsRn/Wvje9tWwi+EuwuxJC2Ann1c/ha5ATyMjco43C+Iiw/hDOcpqykyihs
+	 55eWYQSBxkypu1/wuksGB5DK5IVw1om/tG/JXolA16leg2UEUQRw5di4XZuY/NAOXyKTs
+	 XyLwltEQW8GCP9GKKbdV8uWfTEnLLBhSIlFb7CHK/1QUsLn65Y+ureaIzpyhxJE8Xi1uN
+	 zZUiLwriyzRPx/5Q+LzGYQrps//YQMRfG6RCD1CCXrRjGgjG0VaS3xemaSrotn4DAdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AffaDmK1;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA909606D831;
-	Wed,  4 Nov 2026 23:02:41 +0000 (UTC)
+	dmarc=pass header.from=linux.microsoft.com;
+	spf=pass smtp.mailfrom=linux.microsoft.com;
+	dkim=pass header.d=linux.microsoft.com header.i=@linux.microsoft.com header.a=rsa-sha256 header.s=default header.b="J6eQ9pL/";
+	arc=none smtp.remote-ip=13.77.154.182
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B317E606A31B;
+	Wed,  4 Nov 2026 23:24:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B317E606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AffaDmK1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCD91F00A18;
-	Wed,  4 Nov 2026 23:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793833361;
-	bh=faVYG+5p25QPZ5jO9MjUiu/Ltiks8UpOg4pXnPN3sY4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=AffaDmK1nAJFIZOcKFXhI7ch/PjsnP05KdrAgKQZEp0GZxvC8P8mAoNxhBYDNJjgU
-	 nCAIj5t25AYXI9KGygKBLo5baE4wkhhsoEha81JuexT/xyEi2Zr++TchPgoCymcDef
-	 r3ZZBRICCyliFRdQW/gb90PWic3BEY1oQQr7xnQqhaFHMccTlCBhFJcSbMeieg7HW9
-	 rk8I8oAhTJS7C6RFfg5PrRSiDryhmpg4zNj1rs6IbOuwVLoj/CSHbkdY+4dccrv5ti
-	 SeaN5K5vRzV5lM4KNj4VXdDQKev+Wqm+CphEC4lmHL3H+WC0SN/q5UFVSJBoIGqEPj
-	 WRW4500FxKHNg==
-Message-ID: <fbcb650d-0f60-468d-b1cc-255ea8a93db3@kernel.org>
-Date: Thu, 5 Nov 2026 00:02:21 +0100
+	dkim=pass (1024-bit key, unprotected) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.a=rsa-sha256 header.s=default header.b=J6eQ9pL/
+Received: from localhost (unknown [4.194.122.144])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6F0C820B7166;
+	Wed,  4 Nov 2026 15:23:40 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6F0C820B7166
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1793834632;
+	bh=jYeLi8tUmdcFROiq/jmTkZ4ahpzcaw03wqXaIhratXY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=J6eQ9pL/r15bH7Qh1CB8Nj21vQZAsQ49wPwIRLFaB/znP1aeZE+SgGk+3BMCorZX8
+	 qb7tbVHfG/vE6yOjWiSn1CVWqWZ2AtQU2yrQR8m++pexA+HDASvrrghR4WKGicGN/4
+	 Tg56ukofwyEtVSfUNJqMKpz4JzwcXy74SP9GRGzE=
+Date: Wed, 4 Nov 2026 15:23:51 -0800
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Cc: iommu@lists.linux.dev, Alex Williamson <alex@shazbot.org>, Alexey
+ Kardashevskiy <aik@amd.com>, Bjorn Helgaas <bhelgaas@google.com>, Catalin
+ Marinas <catalin.marinas@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Joerg
+ Roedel <joro@8bytes.org>, Jonathan Cameron <jic23@kernel.org>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Kevin Tian <kevin.tian@intel.com>, Krishna
+ Reddy <vdumpa@nvidia.com>, Lukas Wunner <lukas@wunner.de>, Nicolin Chen
+ <nicolinc@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Samuel Ortiz
+ <sameo@rivosinc.com>, Shameer Kolothum
+ <shameerali.kolothum.thodi@huawei.com>, Steven Price
+ <steven.price@arm.com>, Suravee Suthikulpanit
+ <suravee.suthikulpanit@amd.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Thierry Reding <thierry.reding@kernel.org>, Vasant Hegde
+ <vasant.hegde@amd.com>, Will Deacon <will@kernel.org>, Xu Yilun
+ <yilun.xu@linux.intel.com>, kvm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-tegra@vger.kernel.org, jacob.pan@linux.microsoft.com
+Subject: Re: [PATCH v8 12/15] iommufd/viommu: Allow PCI TSM backends to
+ provide vIOMMU operations
+Message-ID: <20261104152351.00002565@linux.microsoft.com>
+In-Reply-To: <20261104161632.3547423-13-aneesh.kumar@kernel.org>
+References: <20261104161632.3547423-1-aneesh.kumar@kernel.org>
+	<20261104161632.3547423-13-aneesh.kumar@kernel.org>
+Organization: LSG
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -51,143 +79,396 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Frank.Li@oss.nxp.com, Mark Brown <broonie@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>,
- Ryan Wanner <ryan.wanner@microchip.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean
- <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
- Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
- Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Andi Shyti <andi.shyti@kernel.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Laxman Dewangan
- <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
- "moderated list:ARM/Microchip (AT91) SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
- "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- "open list:RENESAS RZ/V2H(P) RSPI DRIVER"
- <linux-renesas-soc@vger.kernel.org>,
- "open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
- "open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
- "open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Thierry Reding <treding@nvidia.com>
-References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
- <b656861c-a087-4087-952e-91fd15fadd52@kernel.org>
- <auuZHTvr5UI9Q9Q4@ashevche-desk.local>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
- /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
- s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
- EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
- rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
- DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
- IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
- vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
- oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
- sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
- vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
- Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
- BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
- 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
- f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
- WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
- XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
- IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
- YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
- p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
- GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
- YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
- vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
- ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
- QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
- +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
- wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
- c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
- K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
- n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
- qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <auuZHTvr5UI9Q9Q4@ashevche-desk.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-On 04/11/2026 21:44, Andy Shevchenko wrote:
->> Andy,
->> These three lines look correct.
->>
->> LGTM:
->>
->> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> As
-> 
->   Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org> # atmel-quadspi
-> 
-> Note, it's in your power to ask the author to split out what you maintain
-> to a separate change. So, it's your choice what to do, Ack the full patch,
-> give a partial Rb, ask for a split, ignore reviewing (often means silent
-> agreement when maintainer just applies that kind of a patch)
+Hi Aneesh,
 
-The "# note" after the tag solves the problem partially, if people were
-actually using it. Solves people looking at the Git commit and being
-mislead by partial review applying to entire commit. Does not solve
-credits, because Rb for three lines is not the same as for 100.
+On Wed,  4 Nov 2026 21:46:29 +0530
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
 
-From v1 of this patch, four people (Alain, Lab, Troy, Kunihiko) did not
-use it even though reviewing only part. Only Wolfram, so 20% of partial
-reviews, used that syntax. Without that syntax, b4 will pick up Rb tag
-like it was for entire commit.
+> In confidential-computing configurations, a vIOMMU may be implemented
+> by a TEE Security Manager rather than by the physical IOMMU driver.
+> Such an implementation also needs the TSM identity when creating and
+> validating vdevices.
+>=20
+> Allow VIOMMU_ALLOC to first query the TSM associated with the target
+> PCI device for vIOMMU operations. Fall back to the physical IOMMU
+> driver when the TSM does not provide operations for the requested
+> vIOMMU type.
+>=20
+> Resolve the PCI TSM association under pci_tsm_rwsem, pin the module
+> providing the operations, and take a TSM device reference. Store the
+> TSM device in the vIOMMU and release both references on allocation
+> failure, fallback to the physical IOMMU driver, or vIOMMU
+> destruction. Keep the module pinned until after dropping the device
+> reference, since the final put may release the TSM device.
+>=20
+> The device reference preserves the TSM allocation. Backends providing
+> vIOMMU operations must not unregister their TSM while the module is
+> pinned, since the reference does not prevent backend resource
+> teardown.
+>=20
+> This enables the Realm vIOMMU implementation to provide its operations
+> through the PCI TSM backend and retain the TSM identity needed by its
+> vdevices.
+>=20
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: iommu@lists.linux.dev
+> Cc: linux-pci@vger.kernel.org
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+>  drivers/iommu/iommufd/viommu.c | 35 +++++++++++++++++++++++++++-----
+>  drivers/pci/tsm/core.c         | 22 ++++++++++++++++++++
+>  drivers/virt/coco/tsm-core.c   | 37
+> ++++++++++++++++++++++++++++++++++ include/linux/iommufd.h        |
+> 2 ++ include/linux/pci-tsm.h        | 24 ++++++++++++++++++++++
+>  include/linux/tsm.h            | 25 +++++++++++++++++++++++
+>  6 files changed, 140 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/iommu/iommufd/viommu.c
+> b/drivers/iommu/iommufd/viommu.c index 16e8b6421f1f..1686f19c5060
+> 100644 --- a/drivers/iommu/iommufd/viommu.c
+> +++ b/drivers/iommu/iommufd/viommu.c
+> @@ -15,6 +15,8 @@ void iommufd_viommu_destroy(struct iommufd_object
+> *obj)=20
+>  	if (viommu->ops && viommu->ops->destroy)
+>  		viommu->ops->destroy(viommu);
+> +	if (viommu->tsm_dev)
+> +		tsm_put_device(viommu->tsm_dev);
+>  	refcount_dec(&viommu->hwpt->common.obj.users);
+>  	if (viommu->kvm_file)
+>  		fput(viommu->kvm_file);
+> @@ -30,6 +32,7 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd
+> *ucmd) .len =3D cmd->data_len,
+>  	};
+>  	struct iommufd_hwpt_paging *hwpt_paging;
+> +	struct tsm_dev *tsm_dev =3D NULL;
+>  	struct iommufd_viommu *viommu;
+>  	struct iommufd_device *idev;
+>  	struct iommu_device *iommu_dev;
+> @@ -49,15 +52,33 @@ int iommufd_viommu_alloc_ioctl(struct
+> iommufd_ucmd *ucmd) rc =3D -EOPNOTSUPP;
+>  		goto out_put_idev;
+>  	}
+> -	if (!iommu_dev->ops->get_viommu_ops) {
+> -		rc =3D -EOPNOTSUPP;
+> +	tsm_dev =3D tsm_get_device(idev->dev);
+So I want to reuse this flow for MSHV since tsm already does module
+pinning and locking for backend providers. Once MSHV supports TDISP, it
+could register a link TSM similarly to the CCA =A0cca_link_pci_ops.
 
-So I do repeat - if one does not want to use that syntax, then just Ack,
-instead of creating false impression of reviewing everything.
+However, we also want to use the same viommu/vdevice flow to support
+non-confidential device assignment with Hypervisor managed S2 mapping.
+I belive pKVM has the same need.[1]
 
-Best regards,
-Krzysztof
+I am thinking MSHV/pKVM can register an assignment-only tsm_dev to
+leverage this? Could PCI/TSM support this role without device-security?
+
+Something like:
+@@ -48,7 +41,13 @@ struct pci_tsm_ops {
+        struct module *owner;
+        const struct iommufd_viommu_ops *(*viommu_get_ops)(
+                struct device *dev, enum iommu_viommu_type type);
++
++       struct pci_tsm_assignment_ops {
++               bool (*match)(struct pci_dev *pdev);
++               struct pci_tsm *(*probe)(struct tsm_dev *tsm_dev,
++                                        struct pci_dev *pdev);
++               void (*remove)(struct pci_tsm *tsm);
++       } assignment_ops;
+
+[1] https://lore.kernel.org/linux-iommu/atiaKG86qcifKzBT@google.com/
+> +	if (IS_ERR(tsm_dev)) {
+> +		rc =3D PTR_ERR(tsm_dev);
+> +		tsm_dev =3D NULL;
+>  		goto out_put_idev;
+>  	}
+> -	ops =3D iommu_dev->ops->get_viommu_ops(idev->dev, cmd->type);
+> -	if (!ops) {
+> -		rc =3D -EOPNOTSUPP;
+> +	ops =3D tsm_dev ? tsm_viommu_get_ops(tsm_dev, idev->dev,
+> cmd->type) : NULL;
+> +	if (IS_ERR(ops)) {
+> +		rc =3D PTR_ERR(ops);
+>  		goto out_put_idev;
+>  	}
+> +	if (!ops) {
+> +		if (tsm_dev) {
+> +			tsm_put_device(tsm_dev);
+> +			tsm_dev =3D NULL;
+> +		}
+> +		if (!iommu_dev->ops->get_viommu_ops) {
+> +			rc =3D -EOPNOTSUPP;
+> +			goto out_put_idev;
+> +		}
+> +		ops =3D iommu_dev->ops->get_viommu_ops(idev->dev,
+> cmd->type);
+> +		if (!ops) {
+> +			rc =3D -EOPNOTSUPP;
+> +			goto out_put_idev;
+> +		}
+> +	}
+> +
+>  	/*
+>  	 * It is a driver bug to omit the required operations or
+> provide a size
+>  	 * smaller than the core vIOMMU structure.
+> @@ -95,6 +116,8 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd
+> *ucmd) viommu->kvm_file =3D get_file(idev->kvm_file);
+>  	viommu->type =3D cmd->type;
+>  	viommu->ictx =3D ucmd->ictx;
+> +	viommu->tsm_dev =3D tsm_dev;
+> +	tsm_dev =3D NULL;
+>  	viommu->hwpt =3D hwpt_paging;
+>  	refcount_inc(&viommu->hwpt->common.obj.users);
+>  	INIT_LIST_HEAD(&viommu->veventqs);
+> @@ -119,6 +142,8 @@ int iommufd_viommu_alloc_ioctl(struct
+> iommufd_ucmd *ucmd) out_put_hwpt:
+>  	iommufd_put_object(ucmd->ictx, &hwpt_paging->common.obj);
+>  out_put_idev:
+> +	if (tsm_dev)
+> +		tsm_put_device(tsm_dev);
+>  	iommufd_put_object(ucmd->ictx, &idev->obj);
+>  	return rc;
+>  }
+> diff --git a/drivers/pci/tsm/core.c b/drivers/pci/tsm/core.c
+> index 96ba5a8be8af..5ded1a5a4f7e 100644
+> --- a/drivers/pci/tsm/core.c
+> +++ b/drivers/pci/tsm/core.c
+> @@ -9,6 +9,8 @@
+>  #define dev_fmt(fmt) "PCI/TSM: " fmt
+> =20
+>  #include <linux/bitfield.h>
+> +#include <linux/iommufd.h>
+> +#include <linux/module.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci-doe.h>
+>  #include <linux/pci-tsm.h>
+> @@ -36,6 +38,26 @@ static const struct pci_tsm_ops
+> *to_pci_tsm_ops(struct pci_tsm *tsm) return tsm->tsm_dev->pci_ops;
+>  }
+> =20
+> +struct tsm_dev *pci_tsm_get_device(struct pci_dev *pdev)
+> +{
+> +	const struct pci_tsm_ops *ops;
+> +	struct tsm_dev *tsm_dev;
+> +
+> +	guard(rwsem_read)(&pci_tsm_rwsem);
+> +	if (!pdev->tsm)
+> +		return NULL;
+> +
+> +	tsm_dev =3D pdev->tsm->tsm_dev;
+> +	ops =3D tsm_dev->pci_ops;
+> +	if (!ops->viommu_get_ops)
+> +		return NULL;
+> +	if (!try_module_get(ops->owner))
+> +		return ERR_PTR(-ENODEV);
+> +	get_device(&tsm_dev->dev);
+> +	return tsm_dev;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_tsm_get_device);
+> +
+>  static inline bool is_dsm(struct pci_dev *pdev)
+>  {
+>  	return pdev->tsm && pdev->tsm->dsm_dev =3D=3D pdev;
+> diff --git a/drivers/virt/coco/tsm-core.c
+> b/drivers/virt/coco/tsm-core.c index e7807dc94807..92ce3337f1ea 100644
+> --- a/drivers/virt/coco/tsm-core.c
+> +++ b/drivers/virt/coco/tsm-core.c
+> @@ -9,6 +9,16 @@
+>  #include <linux/cleanup.h>
+>  #include <linux/pci-tsm.h>
+> =20
+> +/* The caller must hold a tsm_get_device() reference for the entire
+> use. */ +const struct iommufd_viommu_ops *tsm_viommu_get_ops(struct
+> tsm_dev *tsm_dev,
+> +		struct device *dev, enum iommu_viommu_type type)
+> +{
+> +	if (!tsm_dev->pci_ops->viommu_get_ops)
+> +		return NULL;
+> +	return tsm_dev->pci_ops->viommu_get_ops(dev, type);
+> +}
+> +EXPORT_SYMBOL_GPL(tsm_viommu_get_ops);
+> +
+>  static void tsm_release(struct device *);
+>  static const struct class tsm_class =3D {
+>  	.name		=3D "tsm",
+> @@ -16,6 +26,33 @@ static const struct class tsm_class =3D {
+>  };
+>  static DEFINE_IDA(tsm_ida);
+> =20
+> +/**
+> + * tsm_get_device() - Pin the TSM attached to a device
+> + * @dev: device whose TSM is to be pinned
+> + *
+> + * A successful lookup takes a TSM device reference and pins the
+> backend
+> + * module. Release both with tsm_put_device(). Backends providing
+> vIOMMU
+> + * operations must not unregister their TSM independently of module
+> unload.
+> + * Return: NULL if no vIOMMU-capable TSM is attached, an error if
+> the module
+> + * cannot be pinned, or the TSM device associated with the pinned
+> backend.
+> + */
+> +struct tsm_dev *tsm_get_device(struct device *dev)
+> +{
+> +	if (!dev_is_pci(dev))
+> +		return NULL;
+> +	return pci_tsm_get_device(to_pci_dev(dev));
+> +}
+> +EXPORT_SYMBOL_GPL(tsm_get_device);
+> +
+> +void tsm_put_device(struct tsm_dev *tsm_dev)
+> +{
+> +	struct module *owner =3D tsm_dev->pci_ops->owner;
+> +
+> +	put_device(&tsm_dev->dev);
+> +	module_put(owner);
+> +}
+> +EXPORT_SYMBOL_GPL(tsm_put_device);
+> +
+>  static int match_id(struct device *dev, const void *data)
+>  {
+>  	struct tsm_dev *tsm_dev =3D container_of(dev, struct tsm_dev,
+> dev); diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
+> index 5f5c67b24134..a4b29915d0ca 100644
+> --- a/include/linux/iommufd.h
+> +++ b/include/linux/iommufd.h
+> @@ -23,6 +23,7 @@ struct iommufd_access;
+>  struct iommufd_ctx;
+>  struct iommufd_device;
+>  struct iommufd_viommu_ops;
+> +struct tsm_dev;
+>  struct page;
+> =20
+>  enum iommufd_object_type {
+> @@ -104,6 +105,7 @@ struct iommufd_viommu {
+>  	struct iommu_device *iommu_dev;
+>  	struct iommufd_hwpt_paging *hwpt;
+>  	struct file *kvm_file;
+> +	struct tsm_dev *tsm_dev;
+> =20
+>  	const struct iommufd_viommu_ops *ops;
+> =20
+> diff --git a/include/linux/pci-tsm.h b/include/linux/pci-tsm.h
+> index eaf0199d01f7..19e9e0ef3bbb 100644
+> --- a/include/linux/pci-tsm.h
+> +++ b/include/linux/pci-tsm.h
+> @@ -3,7 +3,10 @@
+>  #define __PCI_TSM_H
+>  #include <linux/mutex.h>
+>  #include <linux/pci.h>
+> +#include <uapi/linux/iommufd.h>
+> =20
+> +struct iommufd_viommu_ops;
+> +struct module;
+>  struct pci_tsm;
+>  struct pci_tsm_context;
+>  struct tsm_dev;
+> @@ -16,12 +19,27 @@ struct tsm_dev;
+>   * @devsec_ops: Lock, unlock, and interrogate the security state of
+> the
+>   *		function via the platform TSM (typically virtual
+> function
+>   *		operations).
+> + * @viommu_get_ops: Return operations for a supported TSM-owned
+> vIOMMU type,
+> + *		  or NULL if unsupported
+> + * @owner: Module providing the vIOMMU operations, if built as a
+> module
+> + *
+> + * The vIOMMU owner holds a TSM device reference and pins the
+> backend module
+> + * before querying @viommu_get_ops, releasing both after vIOMMU
+> destruction.
+> + * A backend providing this callback must not unregister its TSM
+> while the
+> + * module is pinned.
+>   *
+>   * This operations are mutually exclusive either a tsm_dev instance
+>   * manages physical link properties or it manages function security
+>   * states like TDISP lock/unlock.
+> + *
+> + * @viommu_get_ops runs with the backend module pinned. The PCI/TSM
+> + * association is checked during acquisition under pci_tsm_rwsem.
+>   */
+>  struct pci_tsm_ops {
+> +	struct module *owner;
+> +	const struct iommufd_viommu_ops *(*viommu_get_ops)(
+> +		struct device *dev, enum iommu_viommu_type type);
+> +
+>  	/*
+>  	 * struct pci_tsm_link_ops - Manage physical link and the
+> TSM/DSM session
+>  	 * @probe: establish context with the TSM (allocate / wrap
+> 'struct @@ -151,6 +169,7 @@ struct pci_tsm_pf0
+> *pci_tsm_context_pf0(struct pci_tsm_context *context); struct pci_dev
+> *pci_tsm_context_dsm_dev(struct pci_tsm_context *context); bool
+> pci_tsm_context_match_device(struct pci_tsm_context *context, struct
+> pci_dev *pdev); +struct tsm_dev *pci_tsm_get_device(struct pci_dev
+> *pdev); #else
+>  static inline int pci_tsm_register(struct tsm_dev *tsm_dev)
+>  {
+> @@ -165,6 +184,11 @@ static inline bool pci_tsm_is_configured(struct
+> pci_dev *pdev) return false;
+>  }
+> =20
+> +static inline struct tsm_dev *pci_tsm_get_device(struct pci_dev
+> *pdev) +{
+> +	return NULL;
+> +}
+> +
+>  static inline struct pci_tsm_context *
+>  pci_tsm_context_get(struct pci_dev *pdev, struct tsm_dev
+> *viommu_tsm_dev) {
+> diff --git a/include/linux/tsm.h b/include/linux/tsm.h
+> index 19dedf971f14..3d5286aeaa42 100644
+> --- a/include/linux/tsm.h
+> +++ b/include/linux/tsm.h
+> @@ -110,6 +110,8 @@ struct tsm_report_ops {
+>  };
+> =20
+>  struct pci_tsm_ops;
+> +struct iommufd_viommu_ops;
+> +
+>  struct tsm_dev {
+>  	struct device dev;
+>  	int id;
+> @@ -124,4 +126,27 @@ int tsm_report_unregister(const struct
+> tsm_report_ops *ops); struct tsm_dev *tsm_register(struct device
+> *parent, struct pci_tsm_ops *ops); void tsm_unregister(struct tsm_dev
+> *tsm_dev); struct tsm_dev *find_tsm_dev(int id);
+> +
+> +#ifdef CONFIG_TSM
+> +struct tsm_dev *tsm_get_device(struct device *dev);
+> +void tsm_put_device(struct tsm_dev *tsm_dev);
+> +const struct iommufd_viommu_ops *tsm_viommu_get_ops(struct tsm_dev
+> *tsm_dev,
+> +		struct device *dev, enum iommu_viommu_type type);
+> +#else
+> +static inline struct tsm_dev *tsm_get_device(struct device *dev)
+> +{
+> +	return NULL;
+> +}
+> +
+> +static inline void tsm_put_device(struct tsm_dev *tsm_dev)
+> +{
+> +}
+> +
+> +static inline const struct iommufd_viommu_ops *
+> +tsm_viommu_get_ops(struct tsm_dev *tsm_dev, struct device *dev,
+> +		enum iommu_viommu_type type)
+> +{
+> +	return NULL;
+> +}
+> +#endif
+>  #endif /* __TSM_H */
+
