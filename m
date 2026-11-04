@@ -1,107 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793796085;
-	b=KsURKAiuyReBOcFvBhJIuCu9Ua7eUWFanQdFg026+p0aySh6vSj/qKofzs6EWhzcXF6/
-	 y3fBrgf4PiBsXjtf76TvfRe3u00RPPzgvM/hvBVVQvQkJYWdxNK9sr6ZMVi0HWPuGVeb3
-	 8cGGxc36Y7MHvWcjWYrdjY1Ck3gCSjussW25ez4tg3O6m0Wgm4VXCdLNR5gl5Zm4ze9Jg
-	 keP/5K56z2gcKtdkg/7y4oTwrDD3lHhn5OKVK7xMYYnsIAH4JNQWNeZo0xvSC0DDhvWY0
-	 gCPyAktxjDBT53+mPHCcXQygqlENJSS+zlqVA34c8EuqbQozb0JQ1wSWx1UjI31F2bQ==
+	t=1793796178;
+	b=Sroztb0v8pponZQ1lVelYybA1Zd01PNPIJomdaTF6X+NflHWTHYUcPTxgCW6s46V8OFo
+	 kixhs9Zowa6XzMQxw8Cfrq/38CfPE3tdAWCayaorwWOYRgXDstfgNLTLAU1+rNszdHaXB
+	 glE2AgqzhUYTvKCy7ZUemucT1z4nDPNmeCemqWuvsYumV7YA/Itd5jhUwXEnDXCR6MYkQ
+	 NLTnE0begdTNWUPzyeULYVBD5CyYnr+izbBdO6zSAxfoUyFa/sz0F0Dni7+LPUT0aetOi
+	 SmRLMb3UYtpGgNVVudVN/3f13RipyAD2RAnaZQElLW89dfzefiB6Pni26L2aAIUhAnQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793796085;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=L7Qs5HGELo2q692xBpNFNDpHNpDtILl/fMMlm1q9CCM=;
-	b=EG7YykJHIBOjyrR0Fzr38R44GdXNry8yra4NJnngvm+i3shNBQy7IA7+Odr4v1HTc1f8
-	 5HF4PQ7znmg9+MZ6jtXAdGyb3TVLBI2Gga9PSq7Y+J0msG4ST3L2vkGCqF5zy8C8S0VEl
-	 zVvaIGnBlonfOK/4hrwaMGyReS/LiUpFzQplqhkhuCot4l822vZ/SOCni4OkV2dqJHOm/
-	 v9eE0D+lX7XvgqnIuvbAzbuqjRkqADxaDjXRx+BcK6J1KzzQqcR7gtD5inQAFEWQ2nPKL
-	 pNxATkYMMTKQos27clFR2tOGi+xrKjY35SPo5gMFhNOn6FA99wPuFXH75DC2wfk51kA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793796178;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=xWW+RZ1i7Gz5sUX0u5imDbgLhpH14BPmgHxPKJ8Q1HE=;
+	b=arIycrirD6Fv3joCQ/G8PWZCyp10ELzQFdlajVk1sOchWAvey8MZ2+zYvI3Lxd1NtI/2
+	 c9b1DiI6h6DHP1yTfgF6YajX/DQecWr7Hz3dnooSz1MjbBXKV8G0y2kB7DX+Vl2MnQX1O
+	 yxNNb+seb//bcQYpadrLSR54fHvp3ufBpl9EJfw+W7qBnCcsKC742qR2WhjNtdt4wuFsN
+	 f7BHvk6Arv8OJv8KjWieXekcC9wdBLarIDf+BmD0HQX7NYYHaoQU+lkUiUxJLBlJZUfHu
+	 uR22k4tHXWsYvoY2HI8p2SB5pQucDtzSSlwM/2yhMZTvfv38WimBPiRNj910KarQWlg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=S2L77hlY;
-	arc=none smtp.remote-ip=209.85.128.49
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MaiF7fXW;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DED606A330
-	for <linux-tegra@vger.kernel.org>; Wed,  4 Nov 2026 12:41:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 12DED606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C9B606A326;
+	Wed,  4 Nov 2026 12:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=S2L77hlY
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4b467581b98so4444855e9.0
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2026 04:41:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793796078; x=1794400878; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=L7Qs5HGELo2q692xBpNFNDpHNpDtILl/fMMlm1q9CCM=;
-        b=S2L77hlY3JFmZzFsMAsKB/5Efv9vC9OzccoH9cJ7Ezw2jZ0jFCFaXti/iQHmqhbrcW
-         nwAbU3Z6Cajg92RSkOV9yVzNpWY7QjttNPQjhLfeYb9XmRWyI8o9rWoAfoqV7Ky3qT5j
-         +L5QuHt5sijyOSKLYfjfCJaRJwL/a5oKRZT9vvpJgTrfSU9A8gaQHB1KMezWl2jFd6KG
-         TxKMIM9S5L+b1lVdRcoiJ+yllC2IzK5JdCnngoGsRHLK+CJeBE2Pq9XCipPJ9oF1KlQH
-         2lgc9lVTswJs+yPhXLyxyTTy/YfvbXh3EEpU2o6SFewPxwqAoWY61yFGHDIFLvHz+r2n
-         /jhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793796078; x=1794400878;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=L7Qs5HGELo2q692xBpNFNDpHNpDtILl/fMMlm1q9CCM=;
-        b=bHpDPtfa6Js0xy+NoOuH2rUbB7PCxLxt2lYGkvb25ppF099qjT0HfrMH3JLoOzUeaI
-         l3zzFWuVqgfajUzmcduAL8oLuMrn1X76yucobnEcqpKEgmtmmH4Pwt32NE0pJL+dYyq4
-         yfvFzRYCF2TSu60tAJGGJXcEUD2+2wtug9HXOJ7LsLJDvUN4XSE5cMHF9fJ1mlI8J2hJ
-         aVi7nriKRXpHzk9ZjM7wJTajoYYrWHlJqptlPpCaa1ChWfCi539fAUjPNFhpKlEmcHA8
-         IJcjjI2g4uCsQNn0LFBcnNrljv3q22k/X2vpVmpFDwY36wpboCR1bJcYDxk5lUKjjsOf
-         ZxXA==
-X-Forwarded-Encrypted: i=1; AKwUvByZRwQMixynFUqsrMqMWT/oaNQKxhRnZxBCGSd0PQls0uVnc/lXNvZSaV5D4b1BFa7mynuz8Hf5a/pzbg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/LYIOiteTQHhDJSRh8tgd/p2WlU5CQbQQUmhU4OYgMr9JRj8P2
-	twiQbyaP15M6GZxk4kVkggaOLdH67TAtPK/chbIsNw3SsXq8I9hN5eMT
-X-Gm-Gg: AYBFou2uHEPqUiM9X2hf7a30AGDGoOEKzAzk5F4/ZQDQ3QmZUj4WBcrtX/TASvCG3bb
-	+V3aKgHFHxC3nQqM8fBawOm8jBsjwVNDklIFF1zcD12hWSZTAJyNSuKrFfZdH9DTgDp/gfK/CKv
-	k7eih2jAFtN3yqg4qOksa5qGIR5sz1qFygC5d73zXFMfhsvOhn+DCF5h2lKJkjicZDNg3BrZf30
-	av99vDLFUW7IcK6A4QCCD1KHPpx7miVv9XkQUELk3WVD0TnFsqRtNI+CnjURV1HW8x5Ew3ZXpG0
-	Xis/E8J93ao8yZ72FmSIXGh7IoAWXrW2PqWFosfljbLVD2cvcdDGjkfVo9rBKw7ocw5BIbqjXxt
-	Wtd/1PAiH2gJzDdttquJ5ZkO9fpdZoK/pHvj2YMIC+HlBci41N4udpLku/5p0qxvSRUG1HXXzAo
-	2VUY1vRrU4b97thwXiTlL0AG9aZOWvkxR/lg+C/v+42xfL3qcOlu1ICXB/A1M+Xjnae0DhnheCQ
-	OsgclHeeA+A3QzVIBWa2pN3e7LYpfhd0My/kbhJa0RemTgo8mEU1zjlPwTTkYy5IS2hQ9Jv905D
-	34Y/5IeMbqctYdUdiIyZOw5isvPloKy4YdLEtrG2X2bJuioxbQ==
-X-Received: by 2002:a05:600c:5246:b0:4a1:d459:db4b with SMTP id 5b1f17b1804b1-4ac1889c7bdmr363754215e9.24.1793796078321;
-        Wed, 04 Nov 2026 04:41:18 -0800 (PST)
-Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b433ebd278sm46347145e9.3.2026.11.04.04.41.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 04:41:17 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: patches@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 5/7] ASoC: dt-bindings: wlf,wm8994: Update #sound-dai-cells property
-Date: Wed,  4 Nov 2026 14:40:55 +0200
-Message-ID: <20261104124057.240288-6-clamor95@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261104124057.240288-1-clamor95@gmail.com>
-References: <20261104124057.240288-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MaiF7fXW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70B91F000C1;
+	Wed,  4 Nov 2026 12:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793796177;
+	bh=xWW+RZ1i7Gz5sUX0u5imDbgLhpH14BPmgHxPKJ8Q1HE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=MaiF7fXWObA/6xAqdQsJoV9E3vM2plOLlCs30bg5Qh3mmdsCjEAhAvMJdIsvMwTCI
+	 Y3KwH2S/3zExIBE2nn3VJ1O/9y3QQuRs20zaVC7RTNdwmbosV9Mda1wclTq8wQs9wp
+	 uFSaF6NJnFO/QAexZbkixfaAohby0mfbtqIoALa9Nme82Ky+3SgR4nx8w0i5VXnDWd
+	 hv9YqblL0cO9I0raZi8T4XPBzbyUGGCElTU4bN3S0acTrAC1OsjV/t2eQvD7D6OeMW
+	 sNZDz8VBcNzA6oNpdtgjyHvBxC7TcxiVcBtigy75piT/k2d05FG6eZ4Y8X+om0oVfc
+	 y2n0bLc/kpJEA==
+Date: Wed, 4 Nov 2026 13:42:54 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm <arm@kernel.org>, soc@kernel.org, 
+	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
+Message-ID: <auslF5pwDHtcNoCy@orome>
+References: <20261003095924.1370238-1-thierry.reding@kernel.org>
+ <20261003095924.1370238-4-thierry.reding@kernel.org>
+ <928b3eaf-32da-43a9-9ca5-d59ef8a3b330@app.fastmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -111,28 +60,95 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ywpbcavosvrfo2jf"
+Content-Disposition: inline
+In-Reply-To: <928b3eaf-32da-43a9-9ca5-d59ef8a3b330@app.fastmail.com>
 
-The Wolfson Microelectronics WM8994 codec provides three DAI cells.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- Documentation/devicetree/bindings/sound/wlf,wm8994.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--ywpbcavosvrfo2jf
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
+MIME-Version: 1.0
 
-diff --git a/Documentation/devicetree/bindings/sound/wlf,wm8994.yaml b/Documentation/devicetree/bindings/sound/wlf,wm8994.yaml
-index 0db04a90ac6b3..f367c1ee0a947 100644
---- a/Documentation/devicetree/bindings/sound/wlf,wm8994.yaml
-+++ b/Documentation/devicetree/bindings/sound/wlf,wm8994.yaml
-@@ -69,7 +69,7 @@ properties:
-   SPKVDD2-supply: true
- 
-   '#sound-dai-cells':
--    const: 0
-+    enum: [0, 1]
- 
-   wlf,gpio-cfg:
-     $ref: /schemas/types.yaml#/definitions/uint32-array
--- 
-2.53.0
+On Tue, Oct 13, 2026 at 07:22:23PM +0200, Arnd Bergmann wrote:
+> On Sat, Oct 3, 2026, at 11:59, Thierry Reding wrote:
+> > ----------------------------------------------------------------
+> > firmware/tegra: Changes for v7.4-rc1
+> >
+> > The bulk of this adds ACPI support to BPMP as well as a mechanism to
+> > throttle bandwidth for various high speed interconnects. Some smaller
+> > cleanup and typofixes are also included.
+> >
+> > ----------------------------------------------------------------
+> > Aniruddha Rao (6):
+> >       firmware: tegra: bpmp: Move channel initialization to helper
+> >       firmware: tegra: bpmp: Add ACPI support
+>=20
+> [adding ACPI maintainers to Cc]
+>=20
+> I'd like some clarification about the process here, as I see that the
+> ACPI support patch ee98ea41ee3f ("firmware: tegra: bpmp: Add ACPI support=
+")
+> only has a signoff from both of you and no other review tag.
+>=20
+> Where is the ACPI binding documentation for this driver, and who is
+> responsible for reviewing it?
 
+Hi Arnd, Rafael, Len,
+
+Sorry for the late reply, this fell through the cracks.
+
+Admittedly there's not much of a formal process here at all. Anything
+I've received up to now seemed to be fairly straightforward support
+extensions like this where the ACPI tables basically provide the same
+information as the DT via standard resources like register ranges.
+
+I suppose for anything beyond this, we'll want better documentation and
+broader review.
+
+Is there anything in particular that you're looking for? Should I guide
+people internally to always Cc linux-acpi for anything that concerns
+ACPI?
+
+I'm not very familiar with ACPI, so I'm probably not the best reviewer,
+but I'm sure I'll get the hang of it over time. Generally I think the
+same principles that we use elsewhere apply: use ACPI standards where we
+can (standard interfaces, resources, etc.) and if device-specific
+configuration is needed, use _DSD key-value pairs to mirror what we've
+done for DT (and also mirror back any new properties needed by ACPI to
+DT schemas). For anything that isn't (and can't be) documented as part
+of DT schemas and still custom descriptions are needed, we probably
+should have some documentation in Documentation/firmware-guide/acpi.
+
+One problem that I see with ACPI, and which we successfully side-stepped
+with DT, is that we usually get "baked-in" ACPI tables, meaning we don't
+have much of a choice but to accept whatever is provided. In a way that
+is a step back for Linux, so hopefully we can get better practices in
+place and avoid this turning into a big mess down the road.
+
+Thierry
+
+--ywpbcavosvrfo2jf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrrKEwACgkQ3SOs138+
+s6EoNw//Z3JCD7PMPM4eOff6qluInd2zKkI9P8RjeiaKDIibyyqXuAisI9KtRwE2
+Gh2a4xgIOSubE+Tyr1CYZIsqwYrkUE9h1vd8jw3R4olClae24j6lsFv0x8ntHVFO
+mcFUKjcK2tQVYzhRwWvxZgUGkb+cFyjrRpqHiMpBEBG8AoGZsUqtMOVoRVq2PZIj
+Ukh9EHtqS45JNSxEm5fRXHGc/vVo/YlrPrfog4c+7E6ud5nqEEC0cDy0RY4MHDW3
+C2uKn5w7yFc9E24Hqa/yMrBtX4Xed7H3yZXaTgPGpA7Z9gEcomsoeH4Nrq84o0Rr
+pXf+Jro9akKt1NCm+i3YFc5zqz//jUv4n8HTZNKf1r6Sk2h6jc1MFqqErtQcqy7E
+0qzza1cSowDeS0f8kpI95Ys9+/6F/KqmFz0kNEIVmMyUw0iW2VyxPdpcaFe/f/q1
+U7F0rdyd0iuQuVL0I+MtDsqySsudcTjqnGR+ME9QGiGsiFRiKzmXNiVyx0NQ0yLH
+ukde186iAF2io+USU3EnLsL3ZYGmu4a2aqsECuFjC0jYmV026t5eXuLdinLtjBw+
+6azyDVGoU55Ms4rIE36nLwkmoorAQZaeTKU0o9fXoieu0rqhDRB99xAEda9GBJ/w
+wM5SAQJw7ZuscndxnHYahJanAjnBNyLA+Ae47HghI/KOg/DcuBw=
+=7HM/
+-----END PGP SIGNATURE-----
+
+--ywpbcavosvrfo2jf--
