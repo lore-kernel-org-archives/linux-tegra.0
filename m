@@ -1,122 +1,129 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.17
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793820702;
-	b=4osEeMIniNx2WjbEvsUDOyCFnryIW4cN3A2fT2n9MTuIS22U25JilmYeB1P57Gv9S5RT
-	 pV+FomookZ/NqhBqFbQazSkvovTo96+Yh8nNMaDA091wHlgLHUietOk05OtM3FZD+LP7L
-	 nb5ShvlUzy3rRvKJ32IEv/0m8D0/q8PvR6c4+LNt8X3WXmCSLce7U5BVw7KLjAINN5C5U
-	 fMl91bcbtgJUjuDwEJSZOSkxXIwcF9aLCZ2+cuT8nABF2uUhyy50wx1DnWNoDZcHOgYzV
-	 yv14wpaBflSvKcWbm9K78wR0XSYGsw3A0h1qECQFLJmWKgaLhTfDsTWvutaFlupQpbw==
+	t=1793824204;
+	b=nKbFJosFItIOxKS1Kjv2VcU7IlW3G3/kmB4D8y76M/5HLHBCUO83MAmEpG9tmL7fqEbc
+	 fxGLpUXbDtyIJ2MJgu9PZ+lZKUHGXzKyuTvfrr6Cz/A725WOwmSTmGdHFaTNCEJft/zRL
+	 0Tej3Qs8SwSn+HZBTbLCL1xYhoRvqShwYMrX7Dvhu+HW9tGgNX3vWhHdAOB7K0EXcujVi
+	 zmQV8vJpbi8vW+qp/VEIxmKUlKtJtSqEzEfONL/dgeyajqdkyVAwRyxaLTQgrbvNsRSFC
+	 d2Fd/zzkqSM6gZDHr9UhOqUNi+z2CdRRNjModJ01prEi8IDbPqTMlBjd/DLrL0B38/w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793820702;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=U6VmJzWY8/ktSu1tEfSH85YFZcsMq7VS8KWsZUWMCkc=;
-	b=KfcC1XdVglyF0Q6noj+9qBRu64sqQ+eJCgS41jX7jHSEWghRHccHgV0jI854tfPTgSmP
-	 cQz8dPqkRYmWeHiZSAYpNJGJyD6nRlDqgvyS0LPLV533HcvAhFpAfissqKEoRUJQGpMWI
-	 CCvGCpycg+Qi+rIBCO2DYEzDIkCL/CiCtgRJt9piflv9bZLgZ3sTTTMpeeKarPZbzHFvx
-	 CcbyZAb3oayq5RfXfnamKIXG+Ol7sjVZbFXlxw6T3Ns0k+5Ob0IC4nnorYZVMwf8wxNaK
-	 n8d1EWZlGXlSwD0Haqaj8BoNkJz4sq4IFuyjpGIE3L+VXsKIiEXmQXIb/ABrX9BrC3w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793824204;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=Eecn0Ygaf7mft5z9aYz9Ro3xQK3/iLvYEIUNIgo48NA=;
+	b=BFrucB80/IRC799zMYZ5VnkycmqAnjqCHXUpdfsFTW110BoTV0lQDVdwLk3PyyA6xALt
+	 iIAgL6ZJu/Njl78V8/XatX0z0qVsNl2U3KXN+dTrptW+owS6cpr/dRkDTrhhffp5S2k0X
+	 3V3EeGmJf5TuhmvZJW7m+QGRMLPUpvoBBoHpuXrggxX3Y8OBQaHRQuOJxBwR1lVJJTEwY
+	 5IyNaa+doo1rtmOHD/A+IbannhOTaLgjPkxo7ed9KwW1ZBzwgQKJKKKm6mEkRWKu1LdV4
+	 WH8SdfrfGW5Je+BuK6B4mC7/fPb5ga5w5qn8PJ59IDdWH1yT+9M9+nm72tYWAs2OzgQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=ziepe.ca;
-	spf=pass smtp.mailfrom=ziepe.ca;
-	dkim=pass header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=EZcf2wTk;
-	arc=none smtp.remote-ip=209.85.222.180
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ervWPU05;
+	arc=none smtp.remote-ip=192.198.163.17
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C556078173
-	for <linux-tegra@vger.kernel.org>; Wed,  4 Nov 2026 19:31:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 66C556078173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62483606A85B;
+	Wed,  4 Nov 2026 20:30:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 62483606A85B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=EZcf2wTk
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-93f3c895a0eso102632385a.2
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2026 11:31:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1793820700; x=1794425500; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=U6VmJzWY8/ktSu1tEfSH85YFZcsMq7VS8KWsZUWMCkc=;
-        b=EZcf2wTkD+DUBFkK4Kf7IDSujj65CxJ1zv9d2f8p3SG06gtvsT0t+m2FBEKwTaLbdx
-         FjlAU/gzIVFzN48oCK0JegUU3l6CcBvJYreTY8FfKEqN+7xSbQMxUyxTzpJuRNInWtNX
-         bU34dNFsk1Hz4MbrSLbWANgqJFVMh3fjtT+PhutTYP31XcpWwodufBHzJysUUvDTjzjm
-         z2wlWgpMF/QNFWFWE7mx8gDC6FV//vyjLuAhsthVQBtJiTVxhVJTyMJrETbYVwJRAVJH
-         vpeGwkg4fYdDVWnxGdeXV6ybzqiM6icctzpK30WFh0sYTH5osJ07n+0FWdDxwzHibYfd
-         YaqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793820700; x=1794425500;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=U6VmJzWY8/ktSu1tEfSH85YFZcsMq7VS8KWsZUWMCkc=;
-        b=blb9/igi2CrnuwiXfw3Wr6D6GkZWi3EedfkzjiPHG7pg1o5qwcjQi+RrcKh5J/q87R
-         sJwS9vbneNSh5rUalAkYNywlNbo22E9ZGyri5O5QMdMfQbhDDEo8g+vhyjdBkWIQ6wA/
-         d2vRQMXmzkEsEP49Xqd2L6RdOQb/A89+kb8O+tH5yCzk93xNSpdZbniE2gEk3/3fK3RK
-         Jm2TXwfhYLITUbWPMEDXCTj67DNQ4jxfr9JSmYr09JE7ySOA682VgLZ80UvxrW2zlomb
-         O2MS/ZUyhxBwrkKC26VGlP4zy+lv8QAOXAzDiH0mOggpnRxUZpCUMI9efQoumRVUjRgd
-         FJuw==
-X-Forwarded-Encrypted: i=1; AKwUvBz/ZTjyTQfx9ccZzJjfCWbFET0nCX+iCZaoVfVMilsMBFsKYt7+aB2nriWiDzXNLinicFhiYCWuVoiopg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/Xy1+9eAHqdYot/pSYPWOhl60SYI6dwK+zcUvBHQoJTpgicOQc
-	XYl0og+vHm4/GuX2/PpI6IVZQRD56D2OXDnC26eI7isHruBDHmF+pQVZIjUfGBSMi/4=
-X-Gm-Gg: AYBFou1CUEMs/Muotc9Qs/yf/cjl4GAOWldS+d5j3O/gYP6W4f6GxziIQlZkvkHuYNh
-	ek7D/vtN7Qm0/Zf8hPf9vtEFbGAKIOuhs6LJHb76T7CzkIPrQt88D7Z9ysole7u2sWj3kP+8ULT
-	cg/T+ggVRMRQxjdFDee9BkyW/ASdlApM9642zrzo92MK+zw5CE0X7gVQd9Vv2VCRZP4KwN5TE0z
-	+NhZDKJ6mkprbbMHp47YBeKfUHFpduWZwbGrqSOANhjl+i+z8nWZ0RUyqbsFcTDs7od5liYyC79
-	l3rfNZPjHh3dgKMmuNVjCA8jYj8fvzT78mM8XTKCKQxAzoyeOeTsu1p+IfdnqmCxxZKOyIr71du
-	5bEGi2iKQdAmaLs+VjT/wrkFE2W/FF7ICLVrMUobof5UxT6jUF+jHyiGVEbGrI5nN23NSVruQ/5
-	vieJZgiLV9szavTLtaLFJm+VNINzuOSUlZhEr2m9iXySe/EHBiY+OzPnTTZX0/q8ff+PHQzx/kM
-	Lh2SRdR0uXMgS/rdFAvrK+DYyZW2FyyIYNn2AYaAA4LnuCEKHVzHcse9OFOS8hQr03Hf30/NREF
-	kcYL36TBkX/KMZ///wTT7cnd45bVY10zcAw7bKehzfsSVlW2HanXFeLwjr5LRVRuzCz1dPQLBh4
-	9U/GaDvTo6w==
-X-Received: by 2002:a05:620a:1a24:b0:93c:6534:d04d with SMTP id af79cd13be357-9442167725emr2767779185a.35.1793820700269;
-        Wed, 04 Nov 2026 11:31:40 -0800 (PST)
-Received: from ziepe.ca (hlfxns010zw-159-2-239-150.pppoe-dynamic.high-speed.ns.bellaliant.net. [159.2.239.150])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-945d4844991sm278199585a.28.2026.11.04.11.31.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 11:31:39 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1xOghv-0000000HG9b-0zIw;
-	Wed, 04 Nov 2026 15:31:39 -0400
-Date: Wed, 4 Nov 2026 15:31:39 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	iommu@lists.linux.dev, Alex Williamson <alex@shazbot.org>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jacob Pan <jacob.pan@linux.microsoft.com>,
-	Joerg Roedel <joro@8bytes.org>, Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Lukas Wunner <lukas@wunner.de>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Steven Price <steven.price@arm.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ervWPU05
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793824204; x=1825360204;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h9DF1vrSe2ymxSVWOc4qaehYKUBrcFML5wxNEDR44VM=;
+  b=ervWPU054MxM3yD7NhPWqzKv2KHLA1wIuk4zpWzWXYUKEbbIzygd/UYe
+   iY+Mer79NV7PEcw8u86DwK79JroTgXOMuJa2mt468Umda/r1cZ2p3Jmdw
+   9hxal88IPd0UFKyE9GZKVlSxq+9bfAM3QMbv1VdJxB/BxV569I+YPD5kb
+   UjqSts3mV9XvgqMX/tjuOzvY496br1GHApZOdYNBsAT+vmk11QsIp6KRj
+   KLQTEOuttfWgoziMrKP1hRCZT8UUm9Hm/osC0Fy6tIKaHyEBy3Avfzb0o
+   +1jr+3gfLJ2pB3EcZW+A5F97q4l/JYPQMyIjPzqJ43FBwulbV/quyegt6
+   g==;
+X-CSE-ConnectionGUID: pEu2zE5RTBSgUgsFbdSrmA==
+X-CSE-MsgGUID: MdG0BsAoR9GYaL3kmgGE+A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2602484"
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="2602484"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 12:30:02 -0800
+X-CSE-ConnectionGUID: 4s+PIBaTRcCfJB/9Fu/CBQ==
+X-CSE-MsgGUID: W8xphM45RZOPK4ny68SHrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
+   d="scan'208";a="6825384"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.24])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 12:29:49 -0800
+Date: Wed, 4 Nov 2026 22:29:46 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Frank.Li@oss.nxp.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
 	Thierry Reding <thierry.reding@kernel.org>,
-	Vasant Hegde <vasant.hegde@amd.com>, Will Deacon <will@kernel.org>,
-	Xu Yilun <yilun.xu@linux.intel.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v8 13/15] iommufd/viommu: Allow vIOMMUs without a parent
- HWPT
-Message-ID: <20261104193139.GB3889730@ziepe.ca>
-References: <20261104161632.3547423-1-aneesh.kumar@kernel.org>
- <20261104161632.3547423-14-aneesh.kumar@kernel.org>
- <auuBjRjQwXl7UvvO@nvidia.com>
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>,
+	Yenchia Chen <yenchia.chen@mediatek.com>,
+	Zhiyong Tao <zhiyong.tao@mediatek.com>,
+	Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>,
+	Kendall Willis <k-willis@ti.com>,
+	Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
+	Nicolai Buchwitz <nb@tipi-net.de>,
+	Karl Mehltretter <kmehltretter@gmail.com>,
+	Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>,
+	Shitalkumar Gandhi <shital.gandhi45@gmail.com>,
+	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>,
+	Robin Gong <yibin.gong@nxp.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Zhaoyang Yu <2426767509@qq.com>,
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Myeonghun Pak <mhun512@gmail.com>,
+	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>,
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
+	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>,
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
+	vkoul@kernel.org
+Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
+Message-ID: <auuVum_cd7MgGDUq@ashevche-desk.local>
+References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
+ <a2d5ea00-bfa1-4883-923d-0a6a7eaa556d@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -128,28 +135,61 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <auuBjRjQwXl7UvvO@nvidia.com>
+In-Reply-To: <a2d5ea00-bfa1-4883-923d-0a6a7eaa556d@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Nov 04, 2026 at 11:03:41AM -0800, Nicolin Chen wrote:
-> On Wed, Nov 04, 2026 at 09:46:30PM +0530, Aneesh Kumar K.V (Arm) wrote:
-> > VIOMMU_ALLOC currently requires a nesting parent HWPT_PAGING even when
-> > the selected vIOMMU implementation has no use for one. This would force
-> > implementations such as the following Arm Realm vIOMMU to create an
-> > unused parent.
+On Wed, Nov 04, 2026 at 06:41:08PM +0100, Krzysztof Kozlowski wrote:
+> On 02/11/2026 18:54, Frank.Li@oss.nxp.com wrote:
+> > 
+> > Replace open-coded assignments to callback and callback_param fields
+> > of struct dma_async_tx_descriptor with calls to the
+> > dmaengine_desc_set_callback() helper across serial drivers.
+> > 
+> > No functional change intended. Prepare to make struct
+> > dma_async_tx_descriptor private to the DMA engine.
+
+...
+
+> I did not look at this code at all...
 > 
-> IIRC, MSI on ARM still goes through the NS pathway. So, it wouldn't
-> be "unused" if the device attaches to it (or its nested hwpts)?
+> > index 640f85e2d636b..3f82a83998e1c 100644
+> > --- a/drivers/tty/serial/samsung_tty.c
+> > +++ b/drivers/tty/serial/samsung_tty.c
+> > @@ -447,8 +447,7 @@ static int s3c24xx_serial_start_tx_dma(struct s3c24xx_uart_port *ourport,
+> >  		return -EIO;
+> >  	}
+> >  
+> > -	dma->tx_desc->callback = s3c24xx_serial_tx_dma_complete;
+> > -	dma->tx_desc->callback_param = ourport;
+> > +	dmaengine_desc_set_callback(dma->tx_desc, s3c24xx_serial_tx_dma_complete, NULL, ourport);
+> >  	dma->tx_bytes_requested = dma->tx_size;
+> >  
+> >  	ourport->tx_in_progress = S3C24XX_TX_DMA;
+> > @@ -642,8 +641,7 @@ static void s3c64xx_start_rx_dma(struct s3c24xx_uart_port *ourport)
+> >  		return;
+> >  	}
+> >  
+> > -	dma->rx_desc->callback = s3c24xx_serial_rx_dma_complete;
+> > -	dma->rx_desc->callback_param = ourport;
+> > +	dmaengine_desc_set_callback(dma->rx_desc, s3c24xx_serial_rx_dma_complete, NULL, ourport);
+> >  	dma->rx_bytes_requested = dma->rx_size;
 
-It is unused by the RMM VIOMMU. I think that is what is Aneesh is
-explaining.
+> ... but apparently reviewing only a few lines out of 400 is still reviewing:
+> 
+> https://lore.kernel.org/all/9e39502a-dd17-4fa2-98a3-9019523cb5e8@kernel.org/
+> 
+> Therefore:
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> By dropping the nesting parent from VIOMMU, it just simplifies the
-> attachment to an S1 paging hwpt, right?
+That's why I have added a trail to it to show what exactly I has reviewed,
+this is a common practice, no?
 
-Yes.
+Does this ring a bell 34d1e754155b ("dt-bindings: iio: drop unneeded quotes")?
 
-The VMM must always maintain a S1 paging attachment that is the
-identity map of the VM on all devices, same action as when there is no
-viommu.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Jason
+
