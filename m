@@ -1,49 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793813976;
-	b=05tIe2rZcqnqG0AL85Ps+DKIMCYGI+RJ740xsf9vsEbbRRs1GpD3t/QAif2dFFzxrpcj
-	 7FhlYbyfIKfyeFEYKCHFaFVLjNhACRPuCbDFoJGqiO70xrO/oiF8zDlhPR8B5twJZYEUc
-	 /la2nfGh8yDg1JD7vTw9PCCDrn8Tu5QfZbsuBbWqkVPrm4vk5ReXR+0MF8wCEfnJb065X
-	 81Vo26FnvYT3wTuPOgewLKXOjJL5oNC6lDvsyK8OB1+aLiG2HSMuooNX3vyGsFPlmv1wm
-	 O6lxCMA8NUNqFwv0AxaZNga4+zYh+k6cgG58hTLjQSpoA3WTcNUhDm0+rEiA34Ju5sQ==
+	t=1793814090;
+	b=s3KJ/HLX/ZhJwaI/B5Ifalpd+M/JuKhzhWJbO7gJoCJPGx4LhiczACqzFdWkkpeeZL5J
+	 oKdpxSi9eqXOjF8HET/4pMX60n82sVsKEr/ZhLVP4RCoWkux6RofCeO3EqFnd8UsrDlUi
+	 T5ehZIlltmbfTASqVZ52Ckp9PGY+CvaXArLdCzA+Z7UkSV27b8Z/CnPrbaXanQ5Hgtlf4
+	 Df6ZF12nr7DRSeYd20vmU8xg/X6IlqKffxS2FBmiNCUML7XN7vOsAaQfL0LtPhsPESmYO
+	 W4utj0CrKJl5WdhoM5ufNNIbw9lCxMLR8WaNg0NQ91eqC4ltdAxd3o4SUMfW6bmcdOg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793813976;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=ZRKlMChbObdDIR4yRgSAznCCf8n/+N94KMVWhJg4P/c=;
-	b=EQzYpjRLYraIBdSQLa01QJ+jUVde7nnPgCkWeLAgB3g/m7XKBejOiCjau/T9TGz3Ndy8
-	 yLXmmAVPn7kWjlSlQhOcTu7VsP6HdAfvlNkdkZAZKyoETNQmF6Zf9aI/u9yL5rwx3lcOD
-	 UHKO7XBu88OQlJouB+agYJ97Xu36H+VXaFTwQ2x8Mp+wZumSwQ2BWx1JAFeRZrBzY/2DJ
-	 By2kCrDy7gTTb4h1v0oii0kyO3b1qqVnDk+ZSLnLYw5dzokuE9tPhzx5PkRhhIVsKoHaN
-	 LtfWZvAGqLci6MgSuHXgArhe/IGpknbETzu0siGzH5lSFgu03jfSSjLlX444vrEf0cw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793814090;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=vAcmQL9E5wHFBIFgN/rx51LVAyFInnPlCaXD1KnpG7M=;
+	b=sHvZJZ1EpTGm5JkxVw+YKwYAjWI4LkGLaaroLMG7b5cv5204c21KqdNCumbaaVficxS3
+	 /lCrbWZ/DLg7dWl9he0kYJQV5CDeqUFU1ukb6Dq6zoydqd3n4KYMjVQ825Fj14aqlNYM0
+	 hCF7P4LhZ/bZiTBykDFztwysyuwLdnXsbRNX9AYygkz//PuV6xLlYERIRA+/rZWjW2g2Z
+	 z5RxZC6ny3uj5+jhRjC1/T11dpRxvD2wUA/0BTUIOJ38ZMYolHR/QzZMi16WzEr4A2qn+
+	 4sX97JnKb2Y8fJ0CPkCMpo3UTiCDrAmrbUuIgkZqMFO71gsZlmsenJ0HljcB786lkAA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=qT5ZPMUW;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D657D606A32C;
-	Wed,  4 Nov 2026 17:39:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D657D606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ajz4ZozR;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91993606A32E;
+	Wed,  4 Nov 2026 17:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=qT5ZPMUW
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 334831BB0;
-	Wed,  4 Nov 2026 09:39:32 -0800 (PST)
-Received: from [10.0.130.179] (e127648.arm.com [10.0.130.179])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CCDB3F673;
-	Wed,  4 Nov 2026 09:39:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1793813975; bh=PyfAlFhsPQ8iAO3hNEf2+zQIfdM2JyqpLxshBsMkr8M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qT5ZPMUW+6XHss/1mzVLtw3ZoufepZXQsy7i6cOLqZ+ZAIJjG5CaRxYGxXLaTrvdV
-	 H5iitWPD/U6DLy5A9Bj7hJIrQTsFl2YAE+P7mG5WQcLIpLsAW/DN6AfxywqTalNo7C
-	 eU0uCkbVjzF4o52wsTfxlRUTlCaWGG3m4Agzj6v0=
-Message-ID: <8be9a4f7-1b9a-4372-9751-6e5074305a5c@arm.com>
-Date: Wed, 4 Nov 2026 17:39:29 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ajz4ZozR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E14CE1F000C1;
+	Wed,  4 Nov 2026 17:41:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793814090;
+	bh=vAcmQL9E5wHFBIFgN/rx51LVAyFInnPlCaXD1KnpG7M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Ajz4ZozRnrFd2AX4APN0O8qxmiVZEXiSBBBCjR9fGe9GI8Y4kblS2iVKdDhsWyYXH
+	 1dVMopXagUrbyxQK2RtyhpUlod2bfepH3YC9/4P1/E9Ai9iLZgqBbN7YSYTIFnzl4O
+	 Y4hqXzWvMlQ/HtjH2T8Q4a2WZaGkOKGE/Bpg8UrpLOULGYYvXciKTnnlmMPbFVsZNw
+	 Q80Ele6GM6AJl4I9SsLlIfT/Ndlynth4ZHN8wn+caMxWS8lB0YeedN08w/YodZFUFC
+	 IHuGLtnJf2T7MrjhPmIABtU7Gx9m2UNJ6y9Ogsoc11d/hsR7HvY588sinHOhCJd9FJ
+	 diAj7uXzbZalA==
+Message-ID: <a2d5ea00-bfa1-4883-923d-0a6a7eaa556d@kernel.org>
+Date: Wed, 4 Nov 2026 18:41:08 +0100
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -54,256 +52,178 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/3] cpufreq: CPPC: Add ospm_nominal_freq attribute
-To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
- viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
- zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, lenb@kernel.org,
- mario.limonciello@amd.com, maciej.wieczor-retman@intel.com,
- pawel.chmielewski@intel.com, linux-pm@vger.kernel.org,
- linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
- vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
- mochs@nvidia.com, bbasu@nvidia.com
-References: <20261030172745.2045743-1-sumitg@nvidia.com>
- <20261030172745.2045743-3-sumitg@nvidia.com>
+Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
+To: Frank.Li@oss.nxp.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Richard Genoud <richard.genoud@bootlin.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Peter Griffin
+ <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>,
+ Yenchia Chen <yenchia.chen@mediatek.com>,
+ Zhiyong Tao <zhiyong.tao@mediatek.com>, Carlo Caione <ccaione@baylibre.com>,
+ Moteen Shah <m-shah@ti.com>, Kendall Willis <k-willis@ti.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
+ Nicolai Buchwitz <nb@tipi-net.de>, Karl Mehltretter
+ <kmehltretter@gmail.com>, =?UTF-8?Q?Stefan_D=C3=B6singer?=
+ <stefandoesinger@gmail.com>, Shitalkumar Gandhi <shital.gandhi45@gmail.com>,
+ Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
+ John Ogness <john.ogness@linutronix.de>, Pan Chuang <panchuang@vivo.com>,
+ Petr Mladek <pmladek@suse.com>, Robin Gong <yibin.gong@nxp.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Stephan Gerhold <stephan.gerhold@linaro.org>, Zhaoyang Yu
+ <2426767509@qq.com>, "Nikola Z. Ivanov" <zlatistiv@gmail.com>,
+ Haoxiang Li <haoxiang_li2024@163.com>,
+ "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Myeonghun Pak <mhun512@gmail.com>, Wenhua Lin <Wenhua.Lin@unisoc.com>,
+ Cixi Geng <cixi.geng@linux.dev>,
+ "open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
+ "open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-mediatek@lists.infradead.org>,
+ "open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..."
+ <imx@lists.linux.dev>,
+ "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+ "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-samsung-soc@vger.kernel.org>,
+ "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+ "moderated list:ARM/STM32 ARCHITECTURE"
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: vkoul@kernel.org
+References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20261030172745.2045743-3-sumitg@nvidia.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/30/26 17:27, Sumit Gupta wrote:
-> OSPM Nominal Performance (ACPI 6.6, Section 8.4.6.1.2.6) lets the OS
-> request a nominal performance level below the platform-reported one. The
-> platform treats performance above that level as boosted and below it as
-> throttled. A lower value moves that boundary down, so more levels count
-> as boost.
+On 02/11/2026 18:54, Frank.Li@oss.nxp.com wrote:
+> From: Frank Li <Frank.Li@nxp.com>
 > 
-> Expose it as a per-policy cpufreq attribute in kHz, matching the unit
-> convention of the other frequency attributes:
+> Replace open-coded assignments to callback and callback_param fields
+> of struct dma_async_tx_descriptor with calls to the
+> dmaengine_desc_set_callback() helper across serial drivers.
 > 
->   /sys/devices/system/cpu/cpuX/cpufreq/ospm_nominal_freq
+> No functional change intended. Prepare to make struct
+> dma_async_tx_descriptor private to the DMA engine.
 > 
-> Writes are converted with cppc_khz_to_perf() and rejected unless they
-> fall in [Lowest Performance, Nominal Performance]. The register cannot
-> be read back, so a read returns the last value written, or "<unset>"
-> before the first write.
-> 
-> Also track the register in the OSPM-set save/restore table, so a
-> requested value survives CPU hotplug and suspend/resume. The store
-> handler records the request rather than init() capturing a firmware
-> value, so the driver writes the register only once the OS has set it.
-> CPU offline and driver unload write the platform-reported Nominal
-> Performance to the register.
-> 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
-
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  .../ABI/testing/sysfs-devices-system-cpu      |  27 +++++
->  drivers/cpufreq/cppc_cpufreq.c                | 101 ++++++++++++++++--
->  2 files changed, 121 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> index 545687ebadcc..6af7fa86e44c 100644
-> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-> @@ -350,6 +350,33 @@ Description:	Performance Limited
+>  drivers/tty/serial/8250/8250_dma.c  | 6 ++----
+>  drivers/tty/serial/8250/8250_mtk.c  | 3 +--
+>  drivers/tty/serial/8250/8250_omap.c | 6 ++----
+>  drivers/tty/serial/amba-pl011.c     | 6 ++----
+>  drivers/tty/serial/atmel_serial.c   | 6 ++----
+>  drivers/tty/serial/fsl_lpuart.c     | 6 ++----
+>  drivers/tty/serial/imx.c            | 6 ++----
+>  drivers/tty/serial/msm_serial.c     | 6 ++----
+>  drivers/tty/serial/mxs-auart.c      | 6 ++----
+>  drivers/tty/serial/pch_uart.c       | 6 ++----
+>  drivers/tty/serial/samsung_tty.c    | 6 ++----
+>  drivers/tty/serial/serial-tegra.c   | 6 ++----
+>  drivers/tty/serial/sh-sci.c         | 9 +++------
+>  drivers/tty/serial/sprd_serial.c    | 3 +--
+>  drivers/tty/serial/stm32-usart.c    | 6 ++----
+>  15 files changed, 29 insertions(+), 58 deletions(-)
+
+...
+I did not look at this code at all...
+
+> index 640f85e2d636b..3f82a83998e1c 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -447,8 +447,7 @@ static int s3c24xx_serial_start_tx_dma(struct s3c24xx_uart_port *ourport,
+>  		return -EIO;
+>  	}
 >  
->  		This file is only present if the cppc-cpufreq driver is in use.
+> -	dma->tx_desc->callback = s3c24xx_serial_tx_dma_complete;
+> -	dma->tx_desc->callback_param = ourport;
+> +	dmaengine_desc_set_callback(dma->tx_desc, s3c24xx_serial_tx_dma_complete, NULL, ourport);
+>  	dma->tx_bytes_requested = dma->tx_size;
 >  
-> +What:		/sys/devices/system/cpu/cpuX/cpufreq/ospm_nominal_freq
-> +Date:		October 2026
-> +Contact:	linux-pm@vger.kernel.org
-> +Description:	OSPM Nominal Performance (kHz)
-> +
-> +		OSPM uses this attribute to request a nominal performance level
-> +		lower than the platform-reported nominal. The platform treats
-> +		performance above this level as boost and below as throttle.
-> +
-> +		Write a value in kHz, between the frequencies corresponding to
-> +		Lowest Performance and Nominal Performance.
-> +
-> +		The register cannot be read back, so a read returns the last
-> +		value written, rounded to a performance level. It returns
-> +		"<unset>" before the first write. Reads and writes fail with
-> +		-EOPNOTSUPP if the platform does not implement the register.
-> +
-> +		Note that tasks may be migrated from one CPU to another by the
-> +		scheduler's load-balancing algorithm, and if different OSPM
-> +		Nominal Performance values are set for those CPUs (through
-> +		different cpufreq policies), that may lead to undesirable
-> +		outcomes. To avoid such issues it is better to set the same
-> +		value across all policies, or to pin every task potentially
-> +		sensitive to it to a specific CPU.
-> +
-> +		This file is only present if the cppc-cpufreq driver is in use.
-> +
->  What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
->  Date:		August 2008
->  KernelVersion:	2.6.27
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index 76cb803617f5..662397526433 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -34,11 +34,13 @@ static struct cpufreq_driver cppc_cpufreq_driver;
->   * reapplied from online() across CPU hotplug, and the firmware value is
->   * restored from offline().
->   *
-> - * Autonomous Selection (auto_sel) is kept first, as the registers after it
-> - * only have meaning while it is enabled.
-> + * Autonomous Selection (auto_sel) splits the list: the registers before it are
-> + * independent of it, and those after it have meaning only while autonomous
-> + * selection is enabled. Place a new register on the matching side.
->   */
->  enum cppc_saved_reg_id {
-> -	CPPC_SAVED_AUTO_SEL,
-> +	CPPC_SAVED_OSPM_NOMINAL_PERF,
-> +	CPPC_SAVED_AUTO_SEL,	/* Entries below need auto_sel enabled. */
->  	CPPC_SAVED_EPP,
->  	CPPC_SAVED_AUTO_ACT_WINDOW,
->  	CPPC_NR_SAVED_REGS,
-> @@ -51,6 +53,11 @@ struct cppc_saved_reg {
->  };
+>  	ourport->tx_in_progress = S3C24XX_TX_DMA;
+> @@ -642,8 +641,7 @@ static void s3c64xx_start_rx_dma(struct s3c24xx_uart_port *ourport)
+>  		return;
+>  	}
 >  
->  static const struct cppc_saved_reg cppc_saved_regs[CPPC_NR_SAVED_REGS] = {
-> +	/* The register is write-only, so the driver tracks the requested value. */
-> +	[CPPC_SAVED_OSPM_NOMINAL_PERF] = {
-> +		.name = "ospm_nominal_perf",
-> +		.set = cppc_set_ospm_nominal_perf,
-> +	},
->  	[CPPC_SAVED_AUTO_SEL] = {
->  		.name = "auto_sel",
->  		.get = cppc_get_auto_sel,
-> @@ -83,6 +90,9 @@ enum cppc_saved_type {
->   *   CPPC_SAVED_REQUESTED - value the OS asked for, reapplied at online().
->   *                          It starts as the firmware value and changes only
->   *                          when a write from the OS succeeds.
-> + *
-> + * A write-only register cannot be read back. init() leaves both values unset,
-> + * and its store handler sets them.
->   */
->  struct cppc_policy_state {
->  	u64 regs[CPPC_NR_SAVED_REGS][CPPC_NR_SAVED_TYPES];
-> @@ -135,11 +145,19 @@ static int cppc_cpufreq_save_firmware_regs(struct cpufreq_policy *policy)
->  	int i, ret;
->  
->  	for (i = 0; i < CPPC_NR_SAVED_REGS; i++) {
-> -		ret = cppc_saved_regs[i].get(cpu, &val);
-> -		if (ret == -EOPNOTSUPP)
-> +		const struct cppc_saved_reg *reg = &cppc_saved_regs[i];
-> +
-> +		if (!reg->get) {
-> +			/* A write-only register has no value to read. */
->  			val = U64_MAX;
-> -		else if (ret)
-> -			return ret;
-> +		} else {
-> +			ret = reg->get(cpu, &val);
-> +			/* Leave a register the platform does not implement unset. */
-> +			if (ret == -EOPNOTSUPP)
-> +				val = U64_MAX;
-> +			else if (ret)
-> +				return ret;
-> +		}
->  
->  		st->regs[i][CPPC_SAVED_FIRMWARE] = val;
->  		st->regs[i][CPPC_SAVED_REQUESTED] = val;
-> @@ -198,6 +216,12 @@ static void cppc_cpufreq_apply_saved_regs(struct cpufreq_policy *policy,
->  	u64 auto_sel, val;
->  	int i;
->  
-> +	/* Registers before auto_sel do not depend on it. */
-> +	for (i = 0; i < CPPC_SAVED_AUTO_SEL; i++) {
-> +		val = st->regs[i][saved_type];
-> +		cppc_cpufreq_write_saved_reg(cpu, i, val, saved_type);
-> +	}
-> +
->  	auto_sel = st->regs[CPPC_SAVED_AUTO_SEL][saved_type];
->  
->  	if (auto_sel)
-> @@ -1470,11 +1494,73 @@ static int cppc_get_perf_limited_filtered(int cpu, u64 *perf_limited)
->  CPPC_CPUFREQ_ATTR_RW_U64(perf_limited, cppc_get_perf_limited_filtered,
->  			 cppc_set_perf_limited)
->  
-> +static ssize_t show_ospm_nominal_freq(struct cpufreq_policy *policy, char *buf)
-> +{
-> +	const struct cppc_policy_state *st = cppc_cpufreq_policy_state(policy);
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	u64 perf;
-> +
-> +	if (!cppc_ospm_nominal_perf_supported(policy->cpu))
-> +		return -EOPNOTSUPP;
-> +
-> +	/* The register cannot be read back, so report the tracked request. */
-> +	perf = st->regs[CPPC_SAVED_OSPM_NOMINAL_PERF][CPPC_SAVED_REQUESTED];
-> +	if (perf == U64_MAX)
-> +		return sysfs_emit(buf, "<unset>\n");
-> +
-> +	return sysfs_emit(buf, "%u\n",
-> +			  cppc_perf_to_khz(&cpu_data->perf_caps, perf));
-> +}
-> +
-> +static ssize_t store_ospm_nominal_freq(struct cpufreq_policy *policy,
-> +				       const char *buf, size_t count)
-> +{
-> +	struct cppc_cpudata *cpu_data = policy->driver_data;
-> +	struct cppc_policy_state *st;
-> +	unsigned int freq_khz;
-> +	u32 perf;
-> +	int ret;
-> +
-> +	ret = kstrtouint(buf, 0, &freq_khz);
-> +	if (ret)
-> +		return ret;
-> +
-> +	perf = cppc_khz_to_perf(&cpu_data->perf_caps, freq_khz);
-> +	if (perf < cpu_data->perf_caps.lowest_perf ||
-> +	    perf > cpu_data->perf_caps.nominal_perf)
-> +		return -EINVAL;
-> +
-> +	ret = cppc_set_ospm_nominal_perf(policy->cpu, perf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * The OS can write this register but cannot read it back.
-> +	 *
-> +	 * The register lets the OS ask for a nominal level below the platform
-> +	 * Nominal Performance. offline() and driver unload write the platform
-> +	 * Nominal in place of the requested value. This removes the lower
-> +	 * level the OS asked for. The value from before the first OS write
-> +	 * cannot be read, so the driver cannot restore it. online() writes
-> +	 * the requested value again.
-> +	 *
-> +	 * Set both values here and not at init(). The driver then writes the
-> +	 * register only after the OS has set it.
-> +	 */
-> +	st = cppc_cpufreq_policy_state(policy);
-> +	st->regs[CPPC_SAVED_OSPM_NOMINAL_PERF][CPPC_SAVED_REQUESTED] = perf;
-> +	st->regs[CPPC_SAVED_OSPM_NOMINAL_PERF][CPPC_SAVED_FIRMWARE] =
-> +		cpu_data->perf_caps.nominal_perf;
-> +
-> +	return count;
-> +}
-> +
->  cpufreq_freq_attr_ro(freqdomain_cpus);
->  cpufreq_freq_attr_rw(auto_select);
->  cpufreq_freq_attr_rw(auto_act_window);
->  cpufreq_freq_attr_rw(energy_performance_preference_val);
->  cpufreq_freq_attr_rw(perf_limited);
-> +cpufreq_freq_attr_rw(ospm_nominal_freq);
->  
->  static struct freq_attr *cppc_cpufreq_attr[] = {
->  	&freqdomain_cpus,
-> @@ -1482,6 +1568,7 @@ static struct freq_attr *cppc_cpufreq_attr[] = {
->  	&auto_act_window,
->  	&energy_performance_preference_val,
->  	&perf_limited,
-> +	&ospm_nominal_freq,
->  	NULL,
->  };
+> -	dma->rx_desc->callback = s3c24xx_serial_rx_dma_complete;
+> -	dma->rx_desc->callback_param = ourport;
+> +	dmaengine_desc_set_callback(dma->rx_desc, s3c24xx_serial_rx_dma_complete, NULL, ourport);
+>  	dma->rx_bytes_requested = dma->rx_size;
 >  
 
+
+... but apparently reviewing only a few lines out of 400 is still reviewing:
+
+https://lore.kernel.org/all/9e39502a-dd17-4fa2-98a3-9019523cb5e8@kernel.org/
+
+Therefore:
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+
+Best regards,
+Krzysztof
