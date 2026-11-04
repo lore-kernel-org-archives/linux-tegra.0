@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793812062;
-	b=ql4uhzrPOnpMYqPuwDHl0dcxhu1U9Pq6EXMVGbkwKFbKLAlU6aY0lcHegBL1QblEnBdY
-	 GsX5craf7wWX38RcxAHmF874esuCCtINXKOGtgLf0SMO/IoF6/X2Abx9sc1BryjBMlnjO
-	 5dx1zUmn7nmllSamjLxUp3SOytYvtM/3uoGzJrqFTD9WBbuKzKzP1ReA71MBcbPv7Cke9
-	 OheBJqrRdUmBuQEOI0dtAEuP4AagES9iViFTaOl9h9KPdIZaHXzQ/h9cskg99O5eREw0s
-	 ame9tNk6yxDIiQm5NSaok/km3ZXKPqpObCIcYNTG1iECwImPH6V+RHjioszIPgo0gTw==
+	t=1793812071;
+	b=AMsMC9PgZ9NQ6CW3oPRL6a6oapTzVfLfdhZgeBt5f7BSu0fhCI9fWYRGH5HeGfQbb4ip
+	 RVITUb6nBM78y4+i1AQggQeRy0N7Bn4k5l5UJYdAxhyWgpjMfBua37eNbpT5rEP2ayAsy
+	 xlwf19ELVKlmcqT6QFxvnVgAaC4MQxzX4k3EQd/EAxD6ph21OneAfIqXy00aMI08/bWIa
+	 m/kFgqJps3ac5ImLOBvg9CI3zM/AJdXrrGysDOKUPupk6vS80l740MHpjsKsM4u0r/W3P
+	 EkdYsgQLYGJJWfRzp4X2ZQcpE6YbdIDadSyIllzoyXigLC1gEvmIkOIV5GBfxZ8xhsQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793812062;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793812071;
 	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Mime-Version:
-	 Content-Transfer-Encoding:Content-Type:Date:Message-Id:Cc:To:From:
-	 Subject:X-Mailer:References:In-Reply-To:X-Last-TLS-Session-Version;
-	bh=Gj2WQ8NnsNfuifm6yJXA5XyiBIk7IIIT4t++b10Mocw=;
-	b=EtBL0PMyfETnAo092sDwRzjCxw6nn90xuK9hS0uKvOYjV5zb4zEgZkP+Tu3YR9sUtEjH
-	 Wa2iGzdS61lw2bSCpVIFRXi62mSO9+rWPEF69VM50/h+ex24baE3Wk3WXv6W4/y1qp/yL
-	 xin1JtHs7QEuNLS3LKo6q8bJIgoB5RHMfIqf7y89FoKZPi0w1goc3+jHMdzff2yg3vDOP
-	 zfT+rrD+nGZMHWow6fK1DaRr+i8UoY67pQpvoWMNHYPxoF4j1wgFl7EP4oXQXfNPuv3jp
-	 Z8DxYbTvGQjlCt3kR26FMorXpCbMDuIVz4uWrOJWqIRq7hHcMtK1dNByMzBym3Z9arA==
+	 Content-Transfer-Encoding:Content-Type:Date:Message-Id:To:From:
+	 Subject:Cc:X-Mailer:References:In-Reply-To:
+	 X-Last-TLS-Session-Version;
+	bh=XGTKa+A0EJ4L1pLNTThftimEUnixWjJ49siVoGkapLY=;
+	b=i3D+Uni+LG7fOdoYaAQvk6cOU4LpU0y5akaBCQVm4kuum4TmYsUxCFeFJo5QrrNQ2dEY
+	 5J5dE8OawECdv1rNMFGmlLo2Yv+RpBsCrVVoFAuvkOjD9o5zk9I/SrILyjSq74Tw7xoP9
+	 vyuB6uuta/u2hOYc/zTtQ0D4Ly9yYWqQ8bwrP++PIQ8kYy2VKViED722V2zJ2IHzDY7ZI
+	 S7AoNQ+nJIbpHrWPAt2Z/IRGcoqYwxNLXwfjYlKbTb0maCP8kW54HZWhU9KsuO9sLNUYg
+	 2AR6FRIg/tvzeTqV1nZ6x0vti6AGv+wiMqB654O46LtzMiSu7FKHUGtFqsl8LLyvqrw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=bootlin.com;
 	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=JGQFhDwj;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=kpW9EzxD;
 	arc=none smtp.remote-ip=185.171.202.116
 Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4892606A329
-	for <linux-tegra@vger.kernel.org>; Wed,  4 Nov 2026 17:07:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C4892606A329
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A8E606A33A;
+	Wed,  4 Nov 2026 17:07:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 94A8E606A33A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=JGQFhDwj
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=kpW9EzxD
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 3B2B4C8F475;
-	Wed,  4 Nov 2026 17:08:45 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 34CE3C8F476;
+	Wed,  4 Nov 2026 17:08:54 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0211660770;
-	Wed,  4 Nov 2026 17:07:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4795710329205;
-	Wed,  4 Nov 2026 18:06:59 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1EBE760772;
+	Wed,  4 Nov 2026 17:07:49 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 82B7610329251;
+	Wed,  4 Nov 2026 18:07:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1793812049; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1793812059; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=Gj2WQ8NnsNfuifm6yJXA5XyiBIk7IIIT4t++b10Mocw=;
-	b=JGQFhDwjX+meJ/Dn2svPu460X/fvDR01Kpw5BjfX1u4YZ6q/TSyCWUPldBFWEw2j6Ni9Wo
-	h7t/EdaV6hZ0xJGZFWiX6zhkRGzz4Bf5thJJwe5K5j5GpELm1isD864rPIV0SsRMYirrY7
-	wfGAtbiVg9rlKnJECQoRSAb+dmnDlJCjswWd4zp1eeH7JIzcqnFMt3eHRmGDuYUWBb8M3z
-	nGWl0ZxlTisiHe1hPwo8CPN09w2/F4EpbNABdIQMs67NZt3I7WUFWwbF9QVlF6evZScO3v
-	KQE6YRw2u7wAMpH0cGiUEbP0/jhZnjRTbxFLqwKmU5fmGfTKutWBhE5EQfYLfw==
+	bh=XGTKa+A0EJ4L1pLNTThftimEUnixWjJ49siVoGkapLY=;
+	b=kpW9EzxDmdwtKwJxISj/gutIXqyN7MmDRignbWZN1ektWTrrUIPrzso7gUlAIzRlYfmlqW
+	wBKlXNUQhCfopQRniPYcBz+T3i6olaSdwJWoGYq/d1bCvLPhFP25igvjueEGcFOAbK2C+g
+	lOlAG7F4VENL7Shxg3rR1VCK0QcwJEj51ZVM4g87fG/ThwFB2lU6YrCm+VpFntbpEluzhB
+	BIvWkeRvI9t8CN65COyeHnV708XPaCXT8itYVl+McadgV2i2dutDVKHVPTlYkR75obUlkZ
+	aOVlJuGAspv0NyRdMHKWaxq4ALVvic2JukDp9T7B6la1y8qyGG6ZYjuBUnDOVA==
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -61,8 +62,12 @@ Precedence: list
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 04 Nov 2026 18:06:58 +0100
-Message-Id: <DMMLAH2PBZHV.EUBGX45HPWQ6@bootlin.com>
+Date: Wed, 04 Nov 2026 18:07:11 +0100
+Message-Id: <DMMLAMPXDLC2.3SN65B5N7R4M5@bootlin.com>
+To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH 02/35] drm/panel: remove the unused struct panel_bridge
 Cc: "Douglas Anderson" <dianders@chromium.org>, "Neil Armstrong"
  <neil.armstrong@linaro.org>, "Jessica Zhang" <jesszhan0024@gmail.com>,
  "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
@@ -125,23 +130,18 @@ Cc: "Douglas Anderson" <dianders@chromium.org>, "Neil Armstrong"
  <linux-doc@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
  <linux-stm32@st-md-mailman.stormreply.com>, <linux-sunxi@lists.linux.dev>,
  <linux-tegra@vger.kernel.org>, <linux-rpi-kernel@lists.infradead.org>
-To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 01/35] drm/panel: remove the get_timings() callback
 X-Mailer: aerc 0.22.0
 References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
- <20261026-drm-panel-funcs-v1-1-5e3070a3478f@oss.qualcomm.com>
- <179338130509.3009485.3123201175903177487.b4-review@b4>
-In-Reply-To: <179338130509.3009485.3123201175903177487.b4-review@b4>
+ <20261026-drm-panel-funcs-v1-2-5e3070a3478f@oss.qualcomm.com>
+ <179338130510.3009485.7743956655769667889.b4-review@b4>
+In-Reply-To: <179338130510.3009485.7743956655769667889.b4-review@b4>
 X-Last-TLS-Session-Version: TLSv1.3
 
 On Fri Oct 30, 2026 at 6:28 PM CET, Luca Ceresoli wrote:
->> Nothing has ever called get_timings() since it was introduced in commit
->> 2938931f3732 ("drm/panel: Add display timing support"). Remove it
->> together with its three implementations.
->
-> Ah, interesting!
+> On Mon, 26 Oct 2026 13:09:51 +0200, Dmitry Baryshkov <dmitry.baryshkov@os=
+s.qualcomm.com> wrote:
+>> The bridge is embedded into struct drm_panel now, nothing uses the
+>> separate wrapper struct any more.
 >
 > Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
