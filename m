@@ -1,127 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.161
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793825069;
-	b=scpSYFXW/e3u7V/pNu/MrLtL040fUtgPJpkVuQdes6aJM7qc2z+fKp0A9RURXNVKTyCp
-	 maMXfwJd3v7sPWnWiJedMoa7z/XCXwLrLutbyThZpqiAdUhXJHhh+hk+tQRze4YC/qJ4f
-	 Ttco910N9P6thpDcYNYEPo0+R9HgBbwlJfzLI/d0dXYUpSSXHz47hpZmDUFmGerceZ+x2
-	 qT/AHSH2WWuNB5f1fX+ov2yVI3X+LIaBTDSrr/PFqfbKqb5n8FjMCCUbq3V0rlPkK+qGm
-	 IodLBNRRLA8llMNq1JVWNE8A9Ir+6ScWEE+fUjS3nfsgF2Vbg84eroWDZPNRQRS25rg==
+	t=1793829345;
+	b=rLRsRyvOfm3iFqy8hL9s1TCFPbNZQl3Ae/CiyeFU3j8TpNS79lAgn0GJIwDFFXigoZK4
+	 WnN+sok2z9K9aZOdHXuJzndQ0GNojsBcTgp+bstUL7mLKPrNt973KBHSE+dWjKv0+4Z4j
+	 JiBDymzkrVuKCpd+ATRttmRmsJmPuObuc/nUoNyO75n21gCgKYWTo2vEIooZ3VuNNPsJy
+	 Qtl1jalxJQt/WydMhyRYnDf3A8oHPdAoGadvo306FcfGkRFzj5Aar6Sm3kR1MeZ+jN8sw
+	 yHGepP/ttWUrPucShtZ+GBsQNGxdIylpV5rQPVkabpFZWb9/gbaugblNutUX7TD4xKQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793825069;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=Fu3Aq2hefSzjwRV+KYEz/CG5s0UvrmJ9SoczCNw172g=;
-	b=jUMwUB2pGNRGBvlmSSZ2sej7IWE45CheTjA22oYEvpZWTmaZjV04W+Egw3ahyQl/TKIu
-	 wqkF4B6tJOghhyfmZ8Sqp7oGQSNTlLnxIDaYGdg1cw9iUx/SOjCaZn+FFYKRl+QZIeRxD
-	 mrwnsl7Mpb4u6JPujvmOJKI1RobZknERfG0xu7vvRcGLhjwxIqZhoEBGNTQ7rrti1f74s
-	 xhWOD4xQZ7Y5lPGyefUjk8gf7i91pfJpvpWinSWL9jn+8KGMLGVRpdrYI3rUQGCzxVJCU
-	 NPw8gppHp9vsMgJjzhMk63jTm6u/dz7Oq1+rP4eZXZqihzloi1UDCqff6crJS3aa+3w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793829345;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To:X-MBO-RS-ID:X-MBO-RS-META;
+	bh=1KM15pS674xkwzoKzXbfoGMlVw+mkKvC51O5xmcBcQ4=;
+	b=t0hlo8Su6lomWJQzGd5Nqf93NnCFkZGN/E4qEFYkYo58I5M1xYL/Q0GmuGDY7G/kXQta
+	 CMneGgDo2QQn5xGf+UEVPpZ4248MSEhr4/8wn6iOyGyV8MNPgckEOn5mT67SeecdpXZQq
+	 BLnondLiFeJKxjVaxRxOA6JIJ4+xuHYTyee7Ar69cAoZna+/7aPudC/yw85sA8NHWI1QV
+	 V2cTDK7LazoKN70nLEvnry9peKwrKCS789KT6NjushurHNEcEll0TtDw92/7GV4eq2+5H
+	 Pt2RP4LaQ7ffmtHIEf2uithoCC/I/4zR1aH+x05FJ2m2udkKB3rnl5RJ/GTSEUj9mdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NRcZ9DVE;
-	arc=none smtp.remote-ip=192.198.163.18
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=h6Zhmgkl;
+	arc=none smtp.remote-ip=80.241.56.161
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871FB606C474;
-	Wed,  4 Nov 2026 20:44:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 871FB606C474
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3E560A5BD2;
+	Wed,  4 Nov 2026 21:55:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EC3E560A5BD2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=NRcZ9DVE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793825069; x=1825361069;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5sRT5I+m6KfQYFE3k27dO5MxaZynzJhyPdFPDxcOiE4=;
-  b=NRcZ9DVEyB+z8PNUWWN1k1TwNJsHkHLB0RkIhXNi8OPPaumAbXwdBusb
-   XJ0tRswIwk/HAI3U08NCdw8gSsd3fdHfsZGvIoakFFNjw3AMbhwBsxdvZ
-   MF+IFI3N8G6s1cU9TZ6nu2D7Quh3Bd9w77S64rw1QFG76PE3tzcAH+cza
-   JCV/7ImeaR645m5dp2GIWnI4RcctcQ0zYSIyQaI33Sl40LNLVHUHPcJ9D
-   cTDOV5DlxtAWFgmxbMxz9PHoa3W0Xhp07+B1RPDbNL/WVi6i07ag3i3h7
-   qw4i8gPp7H9DXoutExRukI4yyUua1UoY5hgyDVfZhouA34dOrNySljHLr
-   A==;
-X-CSE-ConnectionGUID: cgj6GuddQxikonAe3XzAzw==
-X-CSE-MsgGUID: QaA/9LqTSF+vPlF64EPJbA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2635160"
-X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="2635160"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 12:44:28 -0800
-X-CSE-ConnectionGUID: EZ1+q8OlT/uYk59yq1HNAg==
-X-CSE-MsgGUID: icBbDpEQTOuZLO4D8LrQjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,195,1787036400"; 
-   d="scan'208";a="7215296"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.24])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2026 12:44:16 -0800
-Date: Wed, 4 Nov 2026 22:44:13 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Frank.Li@oss.nxp.com, Mark Brown <broonie@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Radu Pirea <radu_nicolae.pirea@upb.ro>,
-	CL Wang <cl634@andestech.com>,
-	Ryan Wanner <ryan.wanner@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
-	Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
-	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>,
-	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
-	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
-Message-ID: <auuZHTvr5UI9Q9Q4@ashevche-desk.local>
-References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
- <b656861c-a087-4087-952e-91fd15fadd52@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=h6Zhmgkl
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4jKfQ45tJbzKmTr;
+	Wed, 04 Nov 2026 22:55:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1793829340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1KM15pS674xkwzoKzXbfoGMlVw+mkKvC51O5xmcBcQ4=;
+	b=h6ZhmgklkVRwYt1n9X/n8y/F+89/7eFCzwSd2uXk55wsQ90Ro6crnRQRb1W+/3wBdTgGDs
+	rCgkbMrz+lPdFeq24VLUNk86fQWkG/Qmp6KRJki29gFw+aDzt0BI8/eGO4DfWF53mgQ00F
+	Vvtx/YuT8JfVPVJ335jZeVFTJMhxMS42kLvwZcgTlLMKk0LyIdGepefjq/dY3M4DDG5hHI
+	ls+7WPGd5m0yNMYTHmVUO2Wherq54OuGJFTmtAuOPtrmGN2wy+kpaCmxF3cjZ8PU9+jfvm
+	S2Z82043mZWjhHxFE2StoOuBkYEgjH39Nnh2b8Y0RWgBlymNfCmoHckwWGJ6/g==
+Date: Wed, 4 Nov 2026 22:55:35 +0100
+From: Anthony Ruhier <aruhier@mailbox.org>
+To: Pragnesh Papaniya <pragnesh.papaniya@oss.qualcomm.com>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rajendra Nayak <rajendra.nayak@oss.qualcomm.com>, 
+	Pankaj Patil <pankaj.patil@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	Amir Vajid <amir.vajid@oss.qualcomm.com>, 
+	Ramakrishna Gottimukkula <ramakrishna.gottimukkula@oss.qualcomm.com>
+Subject: Re: [PATCH RFC 07/10] PM / devfreq: Introduce the QCOM SCMI Memlat
+ devfreq driver
+Message-ID: <auukrIsbbd3q-qh-@tour-anthony.aruhier.fr>
+References: <20260724-rfc_v8_scmi_memlat-v1-0-cb732bcff1f4@oss.qualcomm.com>
+ <20260724-rfc_v8_scmi_memlat-v1-7-cb732bcff1f4@oss.qualcomm.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -133,45 +82,54 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b656861c-a087-4087-952e-91fd15fadd52@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20260724-rfc_v8_scmi_memlat-v1-7-cb732bcff1f4@oss.qualcomm.com>
+X-MBO-RS-ID: bdc02223a3e50c9f112
+X-MBO-RS-META: 5mbzo6rkf8d9aucpqd6mxur6iz7r7xd3
 
-On Wed, Nov 04, 2026 at 06:25:32PM +0100, Krzysztof Kozlowski wrote:
-> On 04/11/2026 16:22, Frank.Li@oss.nxp.com wrote:
+Hi,
 
-...
+On Fri, Jul 24, 2026 at 12:48:12PM +0530, Pragnesh Papaniya wrote:
+> From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> +	for (i = 0; i < info->memory_cnt; i++) {
+> +		struct scmi_qcom_memory_info *memory = info->memory[i];
+> +		const struct scmi_qcom_memory_range *range = &memory->cfg->memory_range;
+> +		struct devfreq_dev_profile *profile = &memory->profile;
+> +
+> +		/*
+> +		 * CPUCP re-evaluates and re-votes at most once per cpucp_sample_ms,
+> +		 * so a new operating point can appear only that often. Polling at half
+> +		 * that period guarantees each distinct vote is observed in trans_stat
+> +		 * before it can change again.
+> +		 */
+> +		profile->polling_ms = max(1U, info->cfg_data->cpucp_sample_ms / 2);
+> +		profile->get_cur_freq = scmi_qcom_devfreq_get_cur_freq;
+> +		profile->initial_freq = range->max_freq_khz > 1 ?
+> +					(unsigned long)((u64)range->min_freq_khz * HZ_PER_KHZ) :
+> +					range->min_freq_khz;
+> +
+> +		faux_device_set_drvdata(memory->fdev, memory);
+> +
+> +		memory->devfreq = devfreq_add_device(&memory->fdev->dev, profile,
+> +						     DEVFREQ_GOV_REMOTE, NULL);
+> +		if (IS_ERR(memory->devfreq)) {
+> +			ret = PTR_ERR(memory->devfreq);
+> +			memory->devfreq = NULL;
+> +			ops->stop_activity(ph, NULL, 0, MEMLAT_ALGO_STR, MEMLAT_STOP_TIMER);
+> +			return dev_err_probe(&sdev->dev, ret, "failed to add devfreq device\n");
+> +		}
+> +	}
 
-> > diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-> > index 762a3fb0fca81..de205e04a8600 100644
-> > --- a/drivers/spi/atmel-quadspi.c
-> > +++ b/drivers/spi/atmel-quadspi.c
-> > @@ -790,8 +790,7 @@ static int atmel_qspi_dma_xfer(struct atmel_qspi *aq, struct dma_chan *chan,
-> >  	}
-> >  
-> >  	reinit_completion(&aq->dma_completion);
-> > -	tx->callback = atmel_qspi_dma_callback;
-> > -	tx->callback_param = aq;
-> > +	dmaengine_desc_set_callback(tx, atmel_qspi_dma_callback, NULL, aq);
-> 
-> Andy,
-> These three lines look correct.
-> 
-> LGTM:
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+I tried it on Hamoa (Yoga Slim 7x, x1e80100), loaded scmi_qcom_memlat_devfreq,
+and I see the apss_cpucp_mbox IRQ firing 3100 times per second. It raised the
+power consumption while idle, screen off, from 0.9W to 1.4W.
 
-As
+The polling seems to be the issue, as I didn't see hectic changes of frequency.
+Raising the polling from 2ms (default) to 20ms makes the power usage goes back
+to around 0.95W, with ~150 interrupts/s from apss_cpucp_mbox. It's still higher
+than with memlat off, but it seems to be a better trade-off for now.
 
-  Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org> # atmel-quadspi
+Can you check on similar platforms (hamoa, glymor) if you see the same issue?
 
-Note, it's in your power to ask the author to split out what you maintain
-to a separate change. So, it's your choice what to do, Ack the full patch,
-give a partial Rb, ask for a split, ignore reviewing (often means silent
-agreement when maintainer just applies that kind of a patch)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+--
+Anthony Ruhier
