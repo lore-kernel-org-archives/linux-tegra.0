@@ -1,47 +1,91 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793813281;
-	b=ODqOQjPoC/zWF19i9RDNirXMaFDe1EY02Pbm0Qjj8dNsY8ccu63dVRoL8fRvnNCNBobN
-	 YXogTedwjN3po93nPD+gmWHEslmCTmBfdbFMttv4y+BNG/kjfHRuK5yF6/hLPEVJDvHwG
-	 5LOFJai1QcXaPOqt9HzwIrFv+nUXZf7MUCrKf1py0Blw3U/dyrXsUphP0BwjrZsnmax3T
-	 s8wDSnhgxleBv69t2u1VnZbUfPfxcZoYNMwyBSVLO9HakMPoE/bo2cZimlFh19Fev3yB0
-	 3Ke1jTgPZfugDouubCfgs5i7YGXkdbzFNYUYFGyEWikdacY8Q53lS/C+Zl0hdAaVfZg==
+	t=1793813567;
+	b=OG4FThYxbcgKrcTUs/6t6I66RSL4wlgKQvdy1FX43Kc833hDGEyRKyQd2jRTW3DVxT8D
+	 Hvbnns89kZD7z0kKcUg2DARTZgH8lomNuqld5wROpLQ2YqnLbBvx+BuX/WwoOdirgVwZg
+	 A8ZTzoOMT6H/7A6+fUKBRyaxTrlhnqVroQnNSuhdpwLdO3492e1DeCM0PB7gpXuHfLHnx
+	 +1yJzsCyettmnRaOE4JzLYk2GAHRQaMUS+tjHEGR24FWU0lXicnM/WbSmGEO2vwcOGizp
+	 4QMDVQGyo5c8R5bPVxvqtJp+VC9a6fafeGdXrpe4T1QnmxdOOcBpuxkdDVCcHrfzoHQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793813281;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=l/mNIUYbMxLCGw0NLoaMA4f3zkyRJADVSFkdtq4toFM=;
-	b=rUCePuE0UiS/d07nAbXAC2M8Xqn37X1d1XoOeIK39afWc75G0wBdZ6j55GYwfMsX6wa/
-	 nOCsZPxc8BGBKpEkvbBShm6a2e7c46EaX0QcgHTK7za0JAKH66++XtF8IBSO0qxFawB4D
-	 5Zc0ZTlJfNBakD5ij9XJ4Xa1RMFDMXjVydEsJNXlqleZAXdMexdo4GOjHRX2dbm3Wbffr
-	 ne5xpbN8OvStem0x8mDaM3XZe6xtYQlPR3ku2TG4IxYtowX4JTx+p81yU5ifHFR0LOHf6
-	 EBK9b1fhL7cCjXid5WJl4LCsvWLJ7zuq5CCpmSHN88GYR4zIE334J4t7PcsFo3aWMUg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793813567;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=4KWh+pCjEY3BH9ZXJBW3B3/Mt0CuTTrjLcItJI+O2b0=;
+	b=LGKzGTAo4SGnH3OPaA6NQ/5xryuvPIiKTcAJrx3bP+3N30nqjZt6NPIqXKmLV9+mK6tj
+	 tYM70qVb2sXiGN8fmEnRNCYBy30yIva6Sw1OQrgHTMSGau+YKiBqhH55Qd9NhGzKO+vL9
+	 XLfPs09dY/eD9r5nTEOSubC67yDIGWIiHDL8rtfIsAPf/TDAorHSemmk52wqK5XzpuVoG
+	 f0JC4dpV/SRj7XjrqsEFqOed90Y1EQpbj+tcRYyfko1q5zskmnYU0GwTMwXpvQ18/EdHO
+	 Y7hIrnbEC6GK5m7y7oVus3eg6v0P5OQnSLmNAqcpmaLWoZVp7mXQDqwT+eWdKmE7bnw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LkqsVoPl;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EmoIkpga;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EA8606A31B;
-	Wed,  4 Nov 2026 17:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649A0606B903;
+	Wed,  4 Nov 2026 17:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LkqsVoPl
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8A521F000C1;
-	Wed,  4 Nov 2026 17:27:42 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EmoIkpga
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBDFF1F000C1;
+	Wed,  4 Nov 2026 17:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793813280;
-	bh=l/mNIUYbMxLCGw0NLoaMA4f3zkyRJADVSFkdtq4toFM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=LkqsVoPlMxnL8hn5zvggg6Mk5g6BwJ3Yt83USTc/eHUB9qseTp86cnNuAormA9cIA
-	 GXPp0lI/PgoNLT/nN5QL7Pv9RsKf/estDLFbDCpOMawQ8gaL3Ft580F5yejIrzOo7P
-	 SIPiLSFSqdfhyg7upul+KIwH2t0K0EIBBhv+t1G//73EioWqslBR14ukkjlsHruOIm
-	 n3fnEGZZ5tEigyUflMnKa617NRYomjanPVWDmiJ23OQHfhZohjiynMee+IuwZnXEca
-	 1bNASyC2jRHnlc6OLAIoywhCH4Txi/AupoYn2hDywxkjNkonXjXYJ4qw1faKAwMZsF
-	 zslmXuwVosIMg==
-Message-ID: <9e39502a-dd17-4fa2-98a3-9019523cb5e8@kernel.org>
-Date: Wed, 4 Nov 2026 18:27:40 +0100
+	s=k20260515; t=1793813567;
+	bh=4KWh+pCjEY3BH9ZXJBW3B3/Mt0CuTTrjLcItJI+O2b0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=EmoIkpga02mtSmXYZVQn9du3LHYfYYz+585s/PS+UgjsXg/FCvOmrZxU5rFUHZ4Kc
+	 RW4rhqpS4n3dFfRKO8x+a/rqSXZeMNtqoJk/PAMvtTPHidldiR0RNWuPhkUl5Udryh
+	 K0OZRedSeEqK4PfWHQTrv308SVTAoSNO8pALhkzOLoGRqIxAXKmzlYLtjaaWK21Afk
+	 g9ZdhfQJD7HMHHghQ3kYgQdyrMOv9/7V31ENvoFGNFW4fLM8UomjBlAwSX6CbB6Whr
+	 eQxEIfy92LUpsJv+hK5fIokNxiCsnOkTzS6xufVPBmdQ1YFlhlqo+6SIaWZWwTuraz
+	 PbT3jpG2TrNIg==
+Date: Wed, 4 Nov 2026 18:32:43 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, Ivan Vecera <ivecera@redhat.com>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Olivier Moysan <olivier.moysan@foss.st.com>, Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
+	Lee Jones <lee@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Chanh Nguyen <chanh@os.amperecomputing.com>, Alistair Francis <alistair@alistair23.me>, 
+	Julius Werner <jwerner@chromium.org>, Paul Cercueil <paul@crapouillou.net>, 
+	Dmitry Osipenko <digetx@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Ray Jui <ray.jui@broadcom.com>, 
+	Scott Branden <scott.branden@broadcom.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sound@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, mfd@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
+Message-ID: <20261104-vigorous-flat-dingo-3e5bd2@quoll>
+References: <20261102135330.2493332-1-robh@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -51,180 +95,59 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Frank.Li@oss.nxp.com, Mark Brown <broonie@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>,
- Ryan Wanner <ryan.wanner@microchip.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean
- <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
- Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
- Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Andi Shyti <andi.shyti@kernel.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Laxman Dewangan
- <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
- "moderated list:ARM/Microchip (AT91) SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
- "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- "open list:RENESAS RZ/V2H(P) RSPI DRIVER"
- <linux-renesas-soc@vger.kernel.org>,
- "open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
- "open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
- "open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Thierry Reding <treding@nvidia.com>
-References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
- <autj6pr_bPaul3w0@ashevche-desk.local>
- <7f96599b-681d-4963-bdda-1274371ac84f@kernel.org>
- <f1fa853d-1703-411d-b2d2-0fb0b176c2fa@kernel.org>
- <autqC143h7Qf1R9H@ashevche-desk.local>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <autqC143h7Qf1R9H@ashevche-desk.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261102135330.2493332-1-robh@kernel.org>
 
-On 04/11/2026 18:23, Andy Shevchenko wrote:
-> On Wed, Nov 04, 2026 at 06:08:39PM +0100, Krzysztof Kozlowski wrote:
->> On 04/11/2026 18:02, Krzysztof Kozlowski wrote:
->>> On 04/11/2026 17:57, Andy Shevchenko wrote:
->>>> On Wed, Nov 04, 2026 at 10:22:45AM -0500, Frank.Li@oss.nxp.com wrote:
->>>>>
->>>>> Replace open-coded assignments to callback and callback_param fields
->>>>> of struct dma_async_tx_descriptor with calls to the
->>>>> dmaengine_desc_set_callback() helper across SPI bus drivers.
->>>>>
->>>>> No functional change intended. Prepare make to struct
->>>>> dma_async_tx_descriptor private to the DMA engine.
->>>>
->>>> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com> # dw, pxa2xx, topcliff-pch
->>>>
->>>> (Note, you forgot to add the list of the drivers to the Rb trailers of other reviewers)
->>>
->>> These should be acks. RB creates false impression entire commit was
->>> reviewed. Our docs also clearly state entire commit:
->>>
->>> "Reviewed-by:, instead, indicates that the patch has been reviewed and
->>> found acceptable according to the Reviewer's Statemen"
->>>
->>> (not patch or part of patch)
->>>
->>> "By offering my Reviewed-by: tag, I state that
->>> I have carried out a technical review of this patch to
->>> "
->>>
->>> (not patch or part of patch)
->>>
->>> When you accept only part of this code, you basically Ack. I really
->>> dislike these half-done reviews, which later appear in logs and tell you
->>> nothing. You could have clear security bug here, but 10 review tags. How
->>> useful tags...
->>
->> And let me even bring a better example. Imagine a patch, doing massive
->> refactoring of core SPI stuff, 1000 lines of code, complex locking and
->> also simultaneously updates drivers to new API changed in this core.
->>
->> Reviewing that 1000 lines of code in core SPI with complex locking takes
->> someone 30 minutes. He gives Rb tag, gets credit.
->>
->> Now you come, look at SINGLE line in a driver and give Rb tag. For 10
->> seconds job of looking at one changed call in one driver.
->>
->> You just Acked, you did not review "the patch" (quoting submitting patches).
+On Mon, Nov 02, 2026 at 07:53:22AM -0600, Rob Herring (Arm) wrote:
+> Unit-addresses by default (and most commonly) are hexadecimal. There's a
+> number of cases using decimal patterns. Fix all of them, limiting the
+> pattern to match the 'reg' limits if there are any.
 > 
-> Your example is doubtful because the patch is combined from independent pieces.
-> The Rb fits very well the listed drivers. The problem is that some of the
-> people combine changes into a bundle (and not proper per-driver series).
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/display/xylon,logicvc-display.yaml      |  2 +-
+>  .../devicetree/bindings/dpll/dpll-device.yaml        |  2 +-
+>  .../bindings/embedded-controller/google,cros-ec.yaml |  4 ++--
+>  .../intel,ixp4xx-network-processing-engine.yaml      |  2 +-
+>  Documentation/devicetree/bindings/gpio/gpio-mxs.yaml |  4 ++--
+>  .../devicetree/bindings/hwmon/maxim,max31790.yaml    |  2 +-
+>  .../devicetree/bindings/iio/adc/st,stm32-adc.yaml    |  2 +-
+>  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml         |  6 +++---
+>  .../bindings/input/touchscreen/cypress,tt21000.yaml  |  2 +-
+>  .../memory-controllers/ddr/jedec,sdram-channel.yaml  | 12 ++++++------
+>  .../bindings/memory-controllers/ingenic,nemc.yaml    |  2 +-
+>  .../memory-controllers/nvidia,tegra20-emc.yaml       |  4 ++--
+>  .../devicetree/bindings/mfd/st,stm32-lptimer.yaml    |  2 +-
+>  .../devicetree/bindings/mfd/st,stm32-timers.yaml     |  2 +-
+>  .../devicetree/bindings/misc/qcom,fastrpc.yaml       |  2 +-
+>  .../bindings/mmc/mmc-controller-common.yaml          |  2 +-
+>  .../bindings/net/cortina,gemini-ethernet.yaml        |  2 +-
+>  .../bindings/phy/brcm,cygnus-pcie-phy.yaml           |  2 +-
+>  .../devicetree/bindings/phy/brcm,sata-phy.yaml       |  2 +-
+>  .../bindings/phy/socionext,uniphier-usb2-phy.yaml    |  2 +-
+>  .../devicetree/bindings/sound/qcom,q6asm-dais.yaml   |  2 +-
+>  .../bindings/sound/qcom,q6dsp-lpass-ports.yaml       |  2 +-
+>  .../devicetree/bindings/thermal/sprd-thermal.yaml    |  2 +-
+>  23 files changed, 33 insertions(+), 33 deletions(-)
 > 
+> diff --git a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+> index 76b804b7c880..3dd54636d23d 100644
+> --- a/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+> +++ b/Documentation/devicetree/bindings/display/xylon,logicvc-display.yaml
+> @@ -123,7 +123,7 @@ properties:
+>          const: 0
+>  
+>      patternProperties:
+> -      "^layer@[0-9]+$":
+> +      "^layer@[0-9a-f]+$":
 
-The example is actually real. There are many patches changing some core
-subsystem API stuff + many drivers, and they are done correct as one patch.
+These two lines are looking good.
 
-Looking at two lines out of 50, 100 or 1000 (here is 740!!!) is not
-reviewing "this patch". Is acking it.
+Andy, it's okay if I give Rb tag?
 
-All of the Rbs here are half baked, meaning they did not review "this
-patch" (quoting submitting patches document).
-
-But sure, if we want to play such numbers game, I will be sending
-reviews for single lines.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
+
