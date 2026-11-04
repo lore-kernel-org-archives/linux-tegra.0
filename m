@@ -1,58 +1,115 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793803259;
-	b=MyubcnXJ1YJdO1QObkspgOlmW9L8WbietW0taQQZjqiq7kOzN/SMTmHb8Z2QgwqqKw3Z
-	 AS6mhWEn53+hm0v8tBF5CUw5mQYQ7EYFfjHWkJyo9lZNaKCwAQKZJsKAtsbVpQKamqGhc
-	 ojjHtcjN+lXxDmxS042oElINCn/NMCA5J0VPeMUsMdUnz/Ptrf18cmstjyYJ1o7lYNJtG
-	 ndOx5SlXvg1wST+OhdXtp+i9blvsrymXek/qfVcc7+QDmCPGl3hlYdX/3PXHwN2B33ydr
-	 YOFc7siukef4soUaGCCP0VCEKLu7adXyc0aAM1NiY3tDkMlHb0O1O1Gcx6xJV5xRAWw==
+	t=1793803346;
+	b=37yf3OerNLwa0ynK7ucjsxDycUcrSa3AT2/w/0HLqPFVsiZqX493sjXhem6iDbqqnoVi
+	 THioEar5jmnn6794PFK6WgLQCHHGlM4TbxGFwUPbT3byspEPds7v8RFzXBbkQVDDBD71v
+	 Ye2V30KkgEUNDsQDYGboi5OQuGDY1Bg9EovuoZWVjbKJxzkPPuBtdPkVJrgDcFobtvnVi
+	 l/9nyw6swb5lH/kbGMyQJ/9L8kMhMhyW2F4E0OInpBr+fXopDgE0PjZAR6k3INs30EbBd
+	 +gX8cOvcK9yISqtOV/sxcR5xFCFlPigY5X75E3KbOANWLrW7Q0oUvt3C3Lq0h+R/YiQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793803259;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=CyvjTTUdEpdGCSMavau95YAskLlm8/fyjgWRzSYqkgY=;
-	b=j15ekm0XnJWI2xlbsXDI3xyHifCVo2XG4eYfK8gQlCOoZNIc65oFaK5G7W9WSid+tQzM
-	 gBILhExFaDqs3Ra8q++Z2NzADigmX4R2oNr/YCfZl452rmk7MZTzSqXzEUVtxpvIUAtXi
-	 bPJgO+nEneWhHs5NfiN/vszpRlzm8BstYYNXE/H2Ilww7sVSbuV+atz0qkaThaxyv8dM1
-	 MgcEp6R0Zdeb6076aXRlf1c+eOk3rY4sFOFWr1G7ZVOA2NI1PAD/3q1RHvRfnS5JAFs/4
-	 6ShNpLXTEUAp8s0qlAP9qhSuX6nDDGPMevbYA2ZZ1LOktiaRB8H5CrHj1cw9FJ4KtFw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793803346;
+	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
+	 DKIM-Signature:Received:Received:Date:Message-ID:From:To:Cc:Subject:
+	 In-Reply-To:References:User-Agent:MIME-Version:Content-Type:
+	 X-Spam-Flag:X-Spam-Level:X-Spamd-Result:X-Spam-Score;
+	bh=8ARMFZxNNi/buQN4eiuPsPm4c2kwN+KPdTFFG4SxMNo=;
+	b=YwACSPw2pZO6pgd8KVp7QhKKGSi1k3rmMuOPrfPQBnTobb9AOvJMTObLv9cAwZsgqXoD
+	 q2JKq/Uk+UIi5E6M+IZPSieTv82dLcDjSrTJWORkBx70VZrAqGQGJBnebiDa+e20zq37/
+	 scpovIjll/7NZHwxEdK3w3tPtGwNmyEHxUpnjGffRrZP0SZvSh14jPjybHawO8H6TVzV+
+	 q08mQvunkIQrQVpCL/MzTPotwLYKlQWQ6MCowoA8siYOdV6jO4JBYLLkgwAgDT0VuODPA
+	 EmFnBL3yiPH6W1pwPrz55Rl8b25Q5ZeK10VjPKeHDhDWz8lyuzgFERZ2TDTjyYI3P/A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PGa51tuI;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=suse.de;
+	spf=pass smtp.mailfrom=suse.de;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=pLADRu9y;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=KG8y44Va;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=pLADRu9y;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=KG8y44Va;
+	arc=none smtp.remote-ip=195.135.223.131
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC1E606A328;
-	Wed,  4 Nov 2026 14:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C8F606A31B;
+	Wed,  4 Nov 2026 14:42:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 28C8F606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PGa51tuI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F267A1F000C1;
-	Wed,  4 Nov 2026 14:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793803258;
-	bh=CyvjTTUdEpdGCSMavau95YAskLlm8/fyjgWRzSYqkgY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PGa51tuIaKq1GcyLufKRg/mLTl/jrwLHi8XH6sN3WnWvDEPCHKXU8odd0K4/BsRzc
-	 kP664CmQnDy5qMekxIjXzdHp/4aFio2MqM3Z0qo1cgxE1UU5EvcQ/8W/G/sLUT8t1q
-	 +tEz4biO53s/bcHAcufkfGVRX3ml1F7R5gWKjRfNeYWpO+x9aK7tPLofllcMD+ocN7
-	 Zt3AGvT6NeLVchSAZvQYrDNseW/UphlmdckBh+CkVYh0wBB8hr3HFyW1i/UMFZS6Ki
-	 M72fqefvdG9KcXnV5WS2ZQlGgV6cUUoBxZP4dmXJA4heJysb1/XXn9HhYVvuDKWDtp
-	 1BwxehhoqlKWw==
-Date: Wed, 4 Nov 2026 15:40:56 +0100
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: arm <arm@kernel.org>, soc@kernel.org, 
-	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
-Message-ID: <autADOKsSVVMn6r9@orome>
-References: <20261003095924.1370238-1-thierry.reding@kernel.org>
- <20261003095924.1370238-4-thierry.reding@kernel.org>
- <928b3eaf-32da-43a9-9ca5-d59ef8a3b330@app.fastmail.com>
- <auslF5pwDHtcNoCy@orome>
- <bcad1d7e-387d-4251-8974-7f0dcd2f9734@app.fastmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=pLADRu9y;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=KG8y44Va;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=pLADRu9y;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=KG8y44Va
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5D7011F790;
+	Wed,  4 Nov 2026 14:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1793803344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ARMFZxNNi/buQN4eiuPsPm4c2kwN+KPdTFFG4SxMNo=;
+	b=pLADRu9y5XZHglg7L1gBYy0heMvqKWsKruEjleINHaxZ+jKVxqIlHnR/QbGm5bV44raBoo
+	PKnK3JQ4c/IrTaEK05yww8V30a6Yt4olT8ejHln9Zfat0XC1jThUQPKSqn6lJ4i7rc8Sg3
+	+30XxotSarPlqDOyRFnhzyRch3quB4A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1793803344;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ARMFZxNNi/buQN4eiuPsPm4c2kwN+KPdTFFG4SxMNo=;
+	b=KG8y44VaXrJYQKLC/qdOhIppADF02iI2eitqj2Byb4ncHpF38bHAQ5DU5KPT+vdmOPKGsR
+	npjKVXmAk1xi4tDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1793803344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ARMFZxNNi/buQN4eiuPsPm4c2kwN+KPdTFFG4SxMNo=;
+	b=pLADRu9y5XZHglg7L1gBYy0heMvqKWsKruEjleINHaxZ+jKVxqIlHnR/QbGm5bV44raBoo
+	PKnK3JQ4c/IrTaEK05yww8V30a6Yt4olT8ejHln9Zfat0XC1jThUQPKSqn6lJ4i7rc8Sg3
+	+30XxotSarPlqDOyRFnhzyRch3quB4A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1793803344;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ARMFZxNNi/buQN4eiuPsPm4c2kwN+KPdTFFG4SxMNo=;
+	b=KG8y44VaXrJYQKLC/qdOhIppADF02iI2eitqj2Byb4ncHpF38bHAQ5DU5KPT+vdmOPKGsR
+	npjKVXmAk1xi4tDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DDC62134F0;
+	Wed,  4 Nov 2026 14:42:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FmnmLE9E62oifAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 04 Nov 2026 14:42:23 +0000
+Date: Wed, 04 Nov 2026 15:42:23 +0100
+Message-ID: <87y0b8u08g.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Sheetal <sheetal@nvidia.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter
+	<jonathanh@nvidia.com>,
+	Mohan Kumar <mkumard@nvidia.com>,
+	Sameer Pujar
+	<spujar@nvidia.com>,
+	<linux-sound@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	"Anupama Kunkulagunta" <akunkulagunt@nvidia.com>
+Subject: Re: [PATCH] ALSA: hda/tegra: Add Tegra268 HDMI/DP codec ID
+In-Reply-To: <20261104102955.1089991-1-sheetal@nvidia.com>
+References: <20261104102955.1089991-1-sheetal@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.2 Mule/6.0
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -61,131 +118,48 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oq4coqgkbfbzxn3z"
-Content-Disposition: inline
-In-Reply-To: <bcad1d7e-387d-4251-8974-7f0dcd2f9734@app.fastmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spamd-Result: default: False [-12.30 / 50.00];
+	SUSE_INTERNAL_BYPASS(-9.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,nvidia.com:email]
+X-Spam-Score: -12.30
+
+On Wed, 04 Nov 2026 11:29:55 +0100,
+Sheetal wrote:
+> 
+> From: Anupama Kunkulagunta <akunkulagunt@nvidia.com>
+> 
+> The Tegra268 HDMI/DP HDA codec reports codec ID 0x10de0037, which is
+> not present in the Tegra HDMI codec driver's device table. Add this
+> ID so the driver can bind to the Tegra268 codec.
+> 
+> Tegra268 uses the same HDMI/DP codec programming model as Tegra234.
+> Reuse MODEL_TEGRA234 to enable DP MST, dynamic pin output assignment
+> and HDMI interrupt trigger control for Tegra268.
+> 
+> Signed-off-by: Anupama Kunkulagunta <akunkulagunt@nvidia.com>
+> Signed-off-by: Sheetal <sheetal@nvidia.com>
+
+Applied now.  Thanks.
 
 
---oq4coqgkbfbzxn3z
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
-MIME-Version: 1.0
-
-On Wed, Nov 04, 2026 at 03:11:09PM +0100, Arnd Bergmann wrote:
-> On Wed, Nov 4, 2026, at 13:42, Thierry Reding wrote:
-> > On Tue, Oct 13, 2026 at 07:22:23PM +0200, Arnd Bergmann wrote:
-> >> On Sat, Oct 3, 2026, at 11:59, Thierry Reding wrote:
-> >>=20
-> >> Where is the ACPI binding documentation for this driver, and who is
-> >> responsible for reviewing it?
-> >
-> > Hi Arnd, Rafael, Len,
-> >
-> > Sorry for the late reply, this fell through the cracks.
-> >
-> > Admittedly there's not much of a formal process here at all. Anything
-> > I've received up to now seemed to be fairly straightforward support
-> > extensions like this where the ACPI tables basically provide the same
-> > information as the DT via standard resources like register ranges.
-> >
-> > I suppose for anything beyond this, we'll want better documentation and
-> > broader review.
-> >
-> > Is there anything in particular that you're looking for? Should I guide
-> > people internally to always Cc linux-acpi for anything that concerns
-> > ACPI?
->=20
-> I don't know, I'm also still learning about how this is done, I
-> was hoping that there was already an established way.
-
-Yeah, me too. Maybe Rafael and Len can provide some guidance here. I
-don't know how ACPI on more traditional platforms works, but I imagine
-that it's a lot of the same anyway, except perhaps that people have more
-experience with the spec and today might be doing a good job already.
-
-> Having a review done by the ACPI maintainers would definitely
-> help from my point of view, but I'm not sure whether they are
-> set up for that, in case there are a lot of new drivers.
-
-I think platform maintainers need to be a first line of defense here
-since they sit at the intersection of a lot of this. At least that's the
-case for me. Also, I'm eager to learn how to do this right, but I'm
-often at a loss of where to start. The spec is a bit daunting, and then
-there's various extensions, too. Maybe the AI genies can help me ramp
-up.
-
-> I assume there is a knowledge gap in both subsystem maintainers
-> regarding ACPI (certainly this is the case for me for drivers/bus,
-> drivers/firmware, drivers/soc, etc) and ACPI maintainers regarding
-> many of the subsystems that we support with DT.
-
-Agreed. I've seen some patches where the ACPI support was as simple as
-just adding an ID table entry and the rest was all standard, but I think
-once we move beyond standard resources things might get a bit more
-complicated. I imagine that ACPI may not even have specs for certain
-aspects that we currently handle in DT...
-
-> > I'm not very familiar with ACPI, so I'm probably not the best reviewer,
-> > but I'm sure I'll get the hang of it over time. Generally I think the
-> > same principles that we use elsewhere apply: use ACPI standards where we
-> > can (standard interfaces, resources, etc.) and if device-specific
-> > configuration is needed, use _DSD key-value pairs to mirror what we've
-> > done for DT (and also mirror back any new properties needed by ACPI to
-> > DT schemas). For anything that isn't (and can't be) documented as part
-> > of DT schemas and still custom descriptions are needed, we probably
-> > should have some documentation in Documentation/firmware-guide/acpi.
-> >
-> > One problem that I see with ACPI, and which we successfully side-stepped
-> > with DT, is that we usually get "baked-in" ACPI tables, meaning we don't
-> > have much of a choice but to accept whatever is provided. In a way that
-> > is a step back for Linux, so hopefully we can get better practices in
-> > place and avoid this turning into a big mess down the road.
->=20
-> Hopefully there is a process in place to amend bindings in a backward
-> compatible way. I would always expect issues to come up during driver
-> review that lead to firmware binding changes. Since in this case
-> both the firmware and the driver are provided by NVIDIA, I don't
-> think we should treat the firmware as an opaque blob that can't
-> be changed as we might for other machines.
-
-If we follow best practices that we've learned during the DT transition,
-backwards-compatibility shouldn't be all that much of an issue, I think.
-But maybe I'm a bit optimistic...
-
-=46rom my perspective, these kinds of processes need to be injected as
-early into the chip development cycle as possible, which comes with its
-own set of challenges (secrecy, timelines, ...). Even if you submit
-patches for upstream relatively quickly, which we often do these days,
-it's usually at a point where hardware is relatively fix already and it
-becomes increasingly harder to update ACPI tables after that point.
-
-I'll see if we can adjust some of our internal processes to get this
-sort of feedback into the loop earlier on.
-
-Thierry
-
---oq4coqgkbfbzxn3z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrrQ/MACgkQ3SOs138+
-s6GmYxAAqm8oI57PJDACg+xpKzJC801NDGREvpjHqUE6y4QEGHBWNPx3FFjURmwt
-yFBc/WTPLH373hjaBo+gUUsZRukXEzoPdHq2k2UFWtWPTJ28kiPdM1NN4WImOK0b
-h3uHd9At17ThB866U9l/hM7Mbkmh6X6wOz6fDePReSrbzuzIQBD3bRGRad0Sb5xq
-5AhbqWQfXxQwldi26oI38mHu+qRMVmQR2hzF62eGXrD466Q1xpjM/v6XUV0BFLjD
-4ksbs96Cq5amGlMHlAScQOaWFkt7bO/RKnjYWgLOLmWrnVQNJQYN6EnEJhwbfS/C
-xJx/s+WMDDbWqO5v32Il80i6e5jI2y55reqTCKEaR0cwM3wRsGWuhBygYwFVWCMj
-enQJ49OdShNlfBj2pTTOVdMJE57I2PTfvJNZVuuqkU0A69YVNftpPLDLGn8iexEp
-5rVjfpRRu8RZs4wlVhnCoieaMfxjaErfv0vsvkOgyufn6lBDNSDHFNl/0rJxp8qV
-+YvFWxX+A5bpi5GchNLZyrTDJwUT5DXqraZMpEokwDWxcD4TnxuvADlVAg9TyFaT
-j68p5nuZqFn62QpV6JUAkU5L1QSMkKJ3h9Ms8mHwyd8FQp1Zr+86hGAjJEQ1vg+L
-sc0a36xXAojiLp9fFLlFVuEiB9VLCYSm1KT+ppDVjUD2RkCPeGo=
-=fUR7
------END PGP SIGNATURE-----
-
---oq4coqgkbfbzxn3z--
+Takashi
