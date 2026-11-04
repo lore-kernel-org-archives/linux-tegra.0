@@ -1,56 +1,83 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793796178;
-	b=Sroztb0v8pponZQ1lVelYybA1Zd01PNPIJomdaTF6X+NflHWTHYUcPTxgCW6s46V8OFo
-	 kixhs9Zowa6XzMQxw8Cfrq/38CfPE3tdAWCayaorwWOYRgXDstfgNLTLAU1+rNszdHaXB
-	 glE2AgqzhUYTvKCy7ZUemucT1z4nDPNmeCemqWuvsYumV7YA/Itd5jhUwXEnDXCR6MYkQ
-	 NLTnE0begdTNWUPzyeULYVBD5CyYnr+izbBdO6zSAxfoUyFa/sz0F0Dni7+LPUT0aetOi
-	 SmRLMb3UYtpGgNVVudVN/3f13RipyAD2RAnaZQElLW89dfzefiB6Pni26L2aAIUhAnQ==
+	t=1793797571;
+	b=BnPwAwjvcKhx6s/OeoKwyPZLWQxDndcDvvdr1hrTlOW5OhwhQD5od5ODr+bpqR5eJqy5
+	 4QBfwRKDosh5xb4KZqdgs0t0ebSukEW4vjwwgc5neaAgtNlSf1b+pIJuhA/eqk8/BtNZs
+	 8W6EQ0u6IEY/YGBEeQR4+rYFCSyWkOrxvLn0lSu6AphC1shqqZsleKjLE2W08ApGPNwyH
+	 ho726LySkimRkjVewjml2E23CT2ZP+IE8fE4RJjk5jcofHN1/4c72nueR9bU+uecmFSwC
+	 7u7cmCExh2nhE/3rPqVZW71XIP+bDauCUDWFrC214NqjBkIuFMuwSLSkh/Jh2PnCvMA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793796178;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793797571;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=xWW+RZ1i7Gz5sUX0u5imDbgLhpH14BPmgHxPKJ8Q1HE=;
-	b=arIycrirD6Fv3joCQ/G8PWZCyp10ELzQFdlajVk1sOchWAvey8MZ2+zYvI3Lxd1NtI/2
-	 c9b1DiI6h6DHP1yTfgF6YajX/DQecWr7Hz3dnooSz1MjbBXKV8G0y2kB7DX+Vl2MnQX1O
-	 yxNNb+seb//bcQYpadrLSR54fHvp3ufBpl9EJfw+W7qBnCcsKC742qR2WhjNtdt4wuFsN
-	 f7BHvk6Arv8OJv8KjWieXekcC9wdBLarIDf+BmD0HQX7NYYHaoQU+lkUiUxJLBlJZUfHu
-	 uR22k4tHXWsYvoY2HI8p2SB5pQucDtzSSlwM/2yhMZTvfv38WimBPiRNj910KarQWlg==
+	bh=ZzMEbYA4V1ijTINuiBxo7UEs4HRgu3cpEmg+6Wx8grI=;
+	b=p/RMHJKP5mEPRDu1YipnouBXB40NLw+d2qiZAe4IuCegpTXNUlfEaA/redo5JrJG5410
+	 rntZSWeRMZNyD5uH2jV/EKAa6LZltWeMKOC1M/PhyiE2dmwfH8fdfzvlZpJm5Zgi2pXFh
+	 86arIxBn1O3GoZ1JuG5bKV1BtNP5I25SyJ1dC5ji2ud9V217n9QWvb2SIGFokrgeEXdtI
+	 K241hU7aEqGCpW2EFokNhltmyr1BXAeh+UykaRle2vkzrF910OE8a2bCJpEjmd51zfks1
+	 +07Iq4AOfOwz/Y+ZeZiJ5T/WA529ZPdH8TyxeDRMQZnXPFdxjGJyceDcXSe8iawySYg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MaiF7fXW;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="VzgC/Mj6";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C9B606A326;
-	Wed,  4 Nov 2026 12:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1253A606A31B;
+	Wed,  4 Nov 2026 13:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MaiF7fXW
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70B91F000C1;
-	Wed,  4 Nov 2026 12:42:56 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VzgC/Mj6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B6D01F000C1;
+	Wed,  4 Nov 2026 13:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793796177;
-	bh=xWW+RZ1i7Gz5sUX0u5imDbgLhpH14BPmgHxPKJ8Q1HE=;
+	s=k20260515; t=1793797570;
+	bh=ZzMEbYA4V1ijTINuiBxo7UEs4HRgu3cpEmg+6Wx8grI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=MaiF7fXWObA/6xAqdQsJoV9E3vM2plOLlCs30bg5Qh3mmdsCjEAhAvMJdIsvMwTCI
-	 Y3KwH2S/3zExIBE2nn3VJ1O/9y3QQuRs20zaVC7RTNdwmbosV9Mda1wclTq8wQs9wp
-	 uFSaF6NJnFO/QAexZbkixfaAohby0mfbtqIoALa9Nme82Ky+3SgR4nx8w0i5VXnDWd
-	 hv9YqblL0cO9I0raZi8T4XPBzbyUGGCElTU4bN3S0acTrAC1OsjV/t2eQvD7D6OeMW
-	 sNZDz8VBcNzA6oNpdtgjyHvBxC7TcxiVcBtigy75piT/k2d05FG6eZ4Y8X+om0oVfc
-	 y2n0bLc/kpJEA==
-Date: Wed, 4 Nov 2026 13:42:54 +0100
+	b=VzgC/Mj6YIWJ0AxGwvOLSwRfM1RU5vzmYnEGDOF8pLHyZ3jGCnImJI4c+DdSGVmTm
+	 uknm6xCaRZYeTPni+axDTJ1Zw52DIRZeNQ+SHcAdAoWtuv9VZW1uCRt/acpNoKtaLB
+	 qzZBje0sw7VHEs3bi+19VrwWDio0bQSVWQEr0pqx9mssqBK/xj0C3oJmACmarrFAfF
+	 KGdVnUe8n5xmRmUrqIUT/2QBbSBYOsqVPCmfVe7QMivCA6N5OMhEFa6MigPM99eHr4
+	 fZfh1y7rNvyNVW3AJSRPNdbj8UnSxnpa6AzzJLC2tKJS4Am01ekEgmm79nj4DvQ3zk
+	 XuX1HtX8+Hp6A==
+Date: Wed, 4 Nov 2026 14:06:08 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: arm <arm@kernel.org>, soc@kernel.org, 
-	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
-Message-ID: <auslF5pwDHtcNoCy@orome>
-References: <20261003095924.1370238-1-thierry.reding@kernel.org>
- <20261003095924.1370238-4-thierry.reding@kernel.org>
- <928b3eaf-32da-43a9-9ca5-d59ef8a3b330@app.fastmail.com>
+To: Frank.Li@oss.nxp.com
+Cc: Mark Brown <broonie@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Radu Pirea <radu_nicolae.pirea@upb.ro>, 
+	CL Wang <cl634@andestech.com>, Ryan Wanner <ryan.wanner@microchip.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>, Haibo Chen <haibo.chen@nxp.com>, 
+	Linus Walleij <linusw@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Yixun Lan <dlan@kernel.org>, Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, 
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, "open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>, 
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>, 
+	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>, 
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>, 
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, vkoul@kernel.org
+Subject: Re: [PATCH 1/1] spi: use dmaengine_desc_set_callback()
+Message-ID: <austohDT6sVqXjmi@orome>
+References: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -61,94 +88,55 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ywpbcavosvrfo2jf"
+	protocol="application/pgp-signature"; boundary="r47ioco2lojtqtsf"
 Content-Disposition: inline
-In-Reply-To: <928b3eaf-32da-43a9-9ca5-d59ef8a3b330@app.fastmail.com>
+In-Reply-To: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
 
 
---ywpbcavosvrfo2jf
+--r47ioco2lojtqtsf
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
+Subject: Re: [PATCH 1/1] spi: use dmaengine_desc_set_callback()
 MIME-Version: 1.0
 
-On Tue, Oct 13, 2026 at 07:22:23PM +0200, Arnd Bergmann wrote:
-> On Sat, Oct 3, 2026, at 11:59, Thierry Reding wrote:
-> > ----------------------------------------------------------------
-> > firmware/tegra: Changes for v7.4-rc1
-> >
-> > The bulk of this adds ACPI support to BPMP as well as a mechanism to
-> > throttle bandwidth for various high speed interconnects. Some smaller
-> > cleanup and typofixes are also included.
-> >
-> > ----------------------------------------------------------------
-> > Aniruddha Rao (6):
-> >       firmware: tegra: bpmp: Move channel initialization to helper
-> >       firmware: tegra: bpmp: Add ACPI support
+On Mon, Nov 02, 2026 at 12:39:58PM -0500, Frank.Li@oss.nxp.com wrote:
+> From: Frank Li <Frank.Li@nxp.com>
 >=20
-> [adding ACPI maintainers to Cc]
+> Replace open-coded assignments to callback and callback_param fields
+> of struct dma_async_tx_descriptor with calls to the
+> dmaengine_desc_set_callback() helper across SPI bus drivers.
 >=20
-> I'd like some clarification about the process here, as I see that the
-> ACPI support patch ee98ea41ee3f ("firmware: tegra: bpmp: Add ACPI support=
-")
-> only has a signoff from both of you and no other review tag.
+> No functional change intended. Prepare make to struct
+> dma_async_tx_descriptor private to the DMA engine.
 >=20
-> Where is the ACPI binding documentation for this driver, and who is
-> responsible for reviewing it?
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+[...]
+>  drivers/spi/spi-tegra114.c        | 6 ++----
+>  drivers/spi/spi-tegra20-slink.c   | 6 ++----
+>  drivers/spi/spi-tegra210-quad.c   | 6 ++----
 
-Hi Arnd, Rafael, Len,
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Sorry for the late reply, this fell through the cracks.
-
-Admittedly there's not much of a formal process here at all. Anything
-I've received up to now seemed to be fairly straightforward support
-extensions like this where the ACPI tables basically provide the same
-information as the DT via standard resources like register ranges.
-
-I suppose for anything beyond this, we'll want better documentation and
-broader review.
-
-Is there anything in particular that you're looking for? Should I guide
-people internally to always Cc linux-acpi for anything that concerns
-ACPI?
-
-I'm not very familiar with ACPI, so I'm probably not the best reviewer,
-but I'm sure I'll get the hang of it over time. Generally I think the
-same principles that we use elsewhere apply: use ACPI standards where we
-can (standard interfaces, resources, etc.) and if device-specific
-configuration is needed, use _DSD key-value pairs to mirror what we've
-done for DT (and also mirror back any new properties needed by ACPI to
-DT schemas). For anything that isn't (and can't be) documented as part
-of DT schemas and still custom descriptions are needed, we probably
-should have some documentation in Documentation/firmware-guide/acpi.
-
-One problem that I see with ACPI, and which we successfully side-stepped
-with DT, is that we usually get "baked-in" ACPI tables, meaning we don't
-have much of a choice but to accept whatever is provided. In a way that
-is a step back for Linux, so hopefully we can get better practices in
-place and avoid this turning into a big mess down the road.
-
-Thierry
-
---ywpbcavosvrfo2jf
+--r47ioco2lojtqtsf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrrKEwACgkQ3SOs138+
-s6EoNw//Z3JCD7PMPM4eOff6qluInd2zKkI9P8RjeiaKDIibyyqXuAisI9KtRwE2
-Gh2a4xgIOSubE+Tyr1CYZIsqwYrkUE9h1vd8jw3R4olClae24j6lsFv0x8ntHVFO
-mcFUKjcK2tQVYzhRwWvxZgUGkb+cFyjrRpqHiMpBEBG8AoGZsUqtMOVoRVq2PZIj
-Ukh9EHtqS45JNSxEm5fRXHGc/vVo/YlrPrfog4c+7E6ud5nqEEC0cDy0RY4MHDW3
-C2uKn5w7yFc9E24Hqa/yMrBtX4Xed7H3yZXaTgPGpA7Z9gEcomsoeH4Nrq84o0Rr
-pXf+Jro9akKt1NCm+i3YFc5zqz//jUv4n8HTZNKf1r6Sk2h6jc1MFqqErtQcqy7E
-0qzza1cSowDeS0f8kpI95Ys9+/6F/KqmFz0kNEIVmMyUw0iW2VyxPdpcaFe/f/q1
-U7F0rdyd0iuQuVL0I+MtDsqySsudcTjqnGR+ME9QGiGsiFRiKzmXNiVyx0NQ0yLH
-ukde186iAF2io+USU3EnLsL3ZYGmu4a2aqsECuFjC0jYmV026t5eXuLdinLtjBw+
-6azyDVGoU55Ms4rIE36nLwkmoorAQZaeTKU0o9fXoieu0rqhDRB99xAEda9GBJ/w
-wM5SAQJw7ZuscndxnHYahJanAjnBNyLA+Ae47HghI/KOg/DcuBw=
-=7HM/
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrrLb0ACgkQ3SOs138+
+s6Fh4BAArZ9G0J40Sc0WR4narKlfZF1usKqwyjAubLvxVVm1ABcW7HLQy6ojuZU9
+2s3UgBP9rFk8ZULpe+cax4/U3dlMXS8SxfonI4imx86Xn1zGzt4Ge9Ho42p41YyV
+UaGejA2LtHz30dxEMI5SDt5yVg7k7oZLUIoZ7ssr0TAjuP6WPEuw+lx7UZy6OJ95
+VXqb/jpz1fW6OEa1TsacFqqEXIw+JLxeD2WQGm33OMH5tfv53MTgfWHoSP7KF71m
+xbANUfc2+OYcymeBLRMoCVIzv3WVyb5PSMrXrXY6U/mMfUUkC/IMILsDZvQ8wsua
+VWUsj7hLVZlZUjVr2vvSfaiY9tZ6JiocaEs/BiUTGFpPg7GPzgIOvmn9SDgwLN/w
+6nub3ObAvkU2ycqFWDypAOT43Yzqg17PR9L6LUyIB3hs8y8a8Uz74cpV7iMtg13o
+VQ2tjXMJ00/kk45niYAlW18EBsgm4K4OBgplzlHHRQyG8+6PSZi+MJsF2jvy83oI
+as7pTI6gPpNS0hB64ty/bSsQc6wZ1iOK1liQOAkpmV8pBuJzprxI+WCKmlBupJas
+PDZY349C/AVPrK1zF6kum20SrlNPq5fKu45sigiciRrq5bBglX3qLh4Si4/hDIKJ
+DIuO3rNQS6zjLAz1yotoAHOo1xNsr4igGGWmmmn5RGNxY0ZpgnU=
+=N9j3
 -----END PGP SIGNATURE-----
 
---ywpbcavosvrfo2jf--
+--r47ioco2lojtqtsf--
