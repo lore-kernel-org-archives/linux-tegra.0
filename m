@@ -1,98 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.44
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793804959;
-	b=f1h5Fzpmg0oWcmVU+dPOf8nU/pTrum2bB4qce6R23PTbXKoEyGhggs7Zzhf7t8Z7m1so
-	 wc+RLibj8haNOnEa2tjhHh7gC7T4YwGBtcKaHOV8/Ab7pEs/dwzlVnRnchepV3AWZoBJ/
-	 qLLkNMLojuXOk0kU5W9rKYH74Q8zbEYaNfIBTQQWCH+ywvRWpHDfJN4DnAcNMb+UneyvX
-	 JPJ4oFX2HgHhNs+XgXKauHx5ZKA9wKUF/A3yvUW/iAM0jv+JHHm5aU8JIEc4yhhjcR7oS
-	 Lig8/npeDfCkZC3Sy4jcX5tf+7lCyfZ/SLi9KVoqGeS4CPz5UnUeK7ScWwr6cjnXehQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793804959;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:
-	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=WOQNTpxZrzq5kJ3JlG17fHMELaH4+veU1ow7zAuNzSI=;
-	b=4Bogr1kwLrRjOLN+7blzf830npOVLOS1KHKdkrJu80fTVIA7RlbkY1uCYL+mWtPIYIqZ
-	 2gRTtRw3HnsQFZy6qqhb+VhGDlufQsGJgrkKKAnYLDVlo0oEa3pweZMhBUB+3lMMhbZTT
-	 78DbfUquIDtj3VArP1Hgfei+moUV804ecGE4cbszKFafZpwVg7yfYHxQSk/TmI/IJd4Fk
-	 AvhCnFG5dn5yGbcRIaC6jAVzA2N5C7h7OBP+NL/nsc7qbDJLNJXiDJfXKTqklDDUFx61K
-	 QQ4Nj3/RiGqnjm30+ayjWRG3cSui1M7pPGc26UYFQAL9B5W80Q2I1apd4GeH1ZZcpgQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=OFABWbWf;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.208.44
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011044.outbound.protection.outlook.com [40.107.208.44])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B6B606A31B;
-	Wed,  4 Nov 2026 15:09:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 84B6B606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793805371;
+	b=KnnIScQMnxFc6mi65hkPvDfwx7ifvAxRXVRMtRCE0OUPFCbSUNZAOemSKyDPlp9JOjtc
+	 2V8rWC00WY2QKDkK0zmSbAy+ofMyuMBkngI6iitscSBe3Ba59so2gTVwiLcxUosGEQBIN
+	 cHRV0ZyKhrxZn6XmkxFb3cSc/1bqeKJgBEHLo0Wv3x1RHdEa7Ye9riFS0k8EMYWTNk856
+	 dei7PE9JderYiC5b5//U/KxNguJlRHut8zr6nJO5zTnl6NvWNaKb8hOLoMJyXiwriw7J3
+	 Y3NUFHf6wCHoFoCkGLfdmHEGTlsH249GRIpSuzcEcX5Ch2WbYI/CMlIbXaxvN42gBOg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793805371;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
+	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=6BzJTf+9zOj6b1DI2tW45vlOMvFFlfpqxjqXrxOY85Q=;
+	b=RPdaGs6hf237UiFI5b55rY+rFlHHi84FoEAsbLub1MMOGdUUA3aPUgoo69mvhxzLWofm
+	 amC40KRp/t99Kkegwf2k735GYilCePCnwsLj0iuN2IeHkuLZi/gymi7NVqTMMGhPtUpyQ
+	 cL+FEeE+d3dcBscGclxEjGCWXqEFuz66LzzXxGeglfrcivNs9rHCEwdFm9aMJHCJDM9oM
+	 mJ6uscfZSEqEUqByX5wuNUNednfuUQuYXKQm/noqA6TNiOqTQTPikfVTNO4YMkrK/fEOG
+	 QDgta259uSoEo4JydRicnQ1+b/DgqZXMn4l8VRJEYQCQXX1mpyqd0sy5KxuemmjrtLw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=e0fUJcYt;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653B86082BE9;
+	Wed,  4 Nov 2026 15:16:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 653B86082BE9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=OFABWbWf
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R3mtKNkvsJpM/v5uUlREyFwAVUisd/3nHtqtaIHsmRiw06/f2zxRZAMNYCkbGAqMu/R0FHHSAzN1DZ1IGnnAKZSI7qQOpd/d4biYMt0XocZuW97W1orRVQaD1ztKRlsj2Bdpg3hH9P6rUhskfbV1XqQL6M0swUo0vd7YqqYXXDAs+JE53bfIIAhgYYtihRWAdYiSDVXGJv6E3e3FtMOUMFYEj4a/YuxSmbo4qkac8aDT46Zs1x02Uk12yxKWLYHR0FU4/qSxxtn6++iLCJVYoN1lCSCBktQ6ZAOfPpfSamJVphF884PEKDKWwFQu8GLUIWxZcftePKMqouu2DJkhww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WOQNTpxZrzq5kJ3JlG17fHMELaH4+veU1ow7zAuNzSI=;
- b=bWwq5MjZAUA+liTEpo5VcSuLmv1595wDqUnnhT9v++Vd053sBq/cz5esMBE64OFv9AVIMoYdZcdgvlfhHY4LOe47nCHzlsdHIY8mgegqOTUfR5b83MDcq+7gBt6Ty2T8GRVV3l+CnSpqQM4Nemo0nJNbfvPoERfZCtFtf1Tv8nmVoBGH5V1qnNa/UA3KJcVNGiFMmsa5VGqfgVklKHug7mtbiRNsYF9GKNlin7NbrfCO4zPoA+JaeE6btX1uL9WjV3TkhQ8/tq7xv0UOqkt1Y8oGGytLJoDqib0mQHg6I9CAx2VeyxnXEFjSrReCmjmgY76nEvHHIfLtHQe0Ib62rQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WOQNTpxZrzq5kJ3JlG17fHMELaH4+veU1ow7zAuNzSI=;
- b=OFABWbWf1Z8czjBbTfRN5RMPgzBtEiF9oC3JlxPzlrFJ5GSZrvaL7R65kaK6TaSc+kVd9ozx6vTZQgDjgdLHlsUTlYaqcXOtpfJY6NoFsqT4q1icqyNSLb5LoHK0CforPUoewVxlt8LhrfpYJBxfoEAz4S/kacm6n05Nv07225TRPSJxLPf6yuHZQxm9EJI43ESmTimFBWDabRpXuamizep2AEL8ubnWYmcpXGQrOIR1AwR2YbW6NThqzXx8oOPApwTexL133BlYfQQQROoZUs4Qb6CiK5KVhIz1K6HszOQ07jyiI6JO66IwJBF19pQhnt76WZT5pviRSw4//V7iFw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7110.namprd12.prod.outlook.com (2603:10b6:510:22e::11)
- by SA5PPF9176ED2F1.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Wed, 4 Nov 2026
- 15:09:12 +0000
-Received: from PH8PR12MB7110.namprd12.prod.outlook.com
- ([fe80::736a:e1be:ec64:5740]) by PH8PR12MB7110.namprd12.prod.outlook.com
- ([fe80::736a:e1be:ec64:5740%6]) with mapi id 15.21.0569.011; Wed, 4 Nov 2026
- 15:09:12 +0000
-Message-ID: <1f7a7e79-1539-4303-9d73-e6195b9e470f@nvidia.com>
-Date: Wed, 4 Nov 2026 15:09:06 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/2] ASoC: tegra: ASRC ratio control updates
-To: Sheetal <sheetal@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Thierry Reding <thierry.reding@kernel.org>, Sameer Pujar
- <spujar@nvidia.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Mohan Kumar <mkumard@nvidia.com>, linux-sound@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261005085227.2133834-1-sheetal@nvidia.com>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20261005085227.2133834-1-sheetal@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0227.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e9::8) To PH8PR12MB7110.namprd12.prod.outlook.com
- (2603:10b6:510:22e::11)
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=e0fUJcYt
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63D131576;
+	Wed,  4 Nov 2026 07:16:06 -0800 (PST)
+Received: from [10.0.130.179] (e127648.arm.com [10.0.130.179])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4722F3F632;
+	Wed,  4 Nov 2026 07:16:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1793805369; bh=R3BE3Js5qTxa0hvvmDnseDfPGZ0ejh2HVouUW0zy5/c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e0fUJcYt12inwf8RZGmraI6jvQ2p7fdaOI9jFqHE181GTnyzQdb7oO9dLU0znMeZO
+	 ZzkX5lVQC4u7kbxEBBMtIDtGV0RkGwbP/yrcLNB4yirnvz1CueIrDPnvIFYOO2s80n
+	 Wvk2JrbqAYwCRNLIsaiOC2Zc4NRwbv60Xmt2Vqck=
+Message-ID: <79700c48-e031-422a-a6b6-8c4118131e98@arm.com>
+Date: Wed, 4 Nov 2026 15:16:02 +0000
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -102,114 +53,83 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7110:EE_|SA5PPF9176ED2F1:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c1dbd3c-aa64-4eaf-bcaa-08df3a859588
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|23010399003|10070799003|1800799024|366016|3023799007|6133799003|10067099003|22082099003|18002099003|56012099006|261022105027099003|11063799006|261026140227099003|261028144727099003|261102123227099003|261021121427099003;
-X-Microsoft-Antispam-Message-Info:
-	VCRt3bQTruB1FxKM2TaegvLbTIgxdEsgKhxlGo6LS2vfeYfwQ6DusQc+MFAi9Z9OPeijnTvTBeFVD23tIAN8VBZNE/agDJ/WwlFXDaqkh7u+gkfXnEb73NifMLZGN4xUGJpZ4+wugbgGDsfg6wvutAgr7YrGxlXHtXwuUeo7fxFqO8eIEJpbHtMlTsbaEtPtc4Mlrt7SLvOYgPjZfDzZ6iM3hdf5e0IRrnbtXXLiDb2MTiezDctBGkio4l1+d4InRjsnpq6gDR+6sPUsEbjwC6KCOZBIrox2GCBaR/krnQqLfPQwejkV7nEYdqNNG2smfgKXlz67tttfBlK/d6ei1vdIGVZXCLHDe+P8VQ/y20hrQeOu+p6s+wvK9wIDbmSzHy/hwPxonflkBppp3uEcyymIKt24jOASu28FMyKc448PA/eLGeYDNH8vz/W/knjmDsvjnJwG0PBBIJIy4feQLZ5pQqBxQ+i6T+TG+SSoGvC69ICJdO+AWGKtAW7q4fUegtU5IkLvLfyRy16WS2ZlxlCwhs7JBbZ6teJOrDiHMBVmeLSwbIAMB2dwUttGRqIVR9kfqFcJDaD8QSXtmVoE7Qo+E+CPzAM+AnGeWQzzBRggw+x0xS3l9MMbizlZ3pzhqSAA3fNfIQVgEtzGtnEOzmN0X74djnjMNwcwR5P3dIc=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7110.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(10070799003)(1800799024)(366016)(3023799007)(6133799003)(10067099003)(22082099003)(18002099003)(56012099006)(261022105027099003)(11063799006)(261026140227099003)(261028144727099003)(261102123227099003)(261021121427099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?elc0TEJWNVBTQ01rbDVBcERwVThVZUphRmhYa2w2Z1pGNGF6c0FUOWtLaWFB?=
- =?utf-8?B?WWVra2JFbWxLM3B1eWZBNXVPM0tHSWZnOXhmRW1URnJjcTVWY1RoUnBtWUdp?=
- =?utf-8?B?cHdRVE5VVW9kSlhaeHVvMmdqUUVkMFpxZE40Sm1BWWRTd2xST3VkUm1lSGNO?=
- =?utf-8?B?eU9VZzNuYzU5NDA4cVJzWGlkbUhEb1BrNmxrOS9PeStNOEdzZ01LOVIvSzdw?=
- =?utf-8?B?UXgyZHJhNmszNDdCandzMnYvM0JzL2hRQ0QyWFFETDJZOXZkaWtubVArWTJt?=
- =?utf-8?B?UERqUGt4V0MrTnFQMjIxV3RLZ1JDTm9pZ2VhSGZzRXAyVWJKaVlhVkErVlJZ?=
- =?utf-8?B?YlRSV2R4a3hsRkNLZ3c2YWw2dnBZTE1PLzRlc2ljUldGakZSOFZiSVRlOXdD?=
- =?utf-8?B?UXg3c3QwcndUZFo3UlRobWFoeUNZL2RaT2VyWmdJcGRjR0lEWWFQNXJhdWh2?=
- =?utf-8?B?NHIrMG9DUHlQb201YXdIZUs4NlR1clVUS3hDVWplRkVSOUtWUjRLWk1XSEQx?=
- =?utf-8?B?TndnbklmdksxMTFGVGRHYkZIT1NxcXMzZUVYNkwzN3l0c3I3MkZzMjZXazZW?=
- =?utf-8?B?b0docDlFZVJMR1g4anQ3THR5YWZNWmRlSlNnODdjQ0lMYngvRitSZUI3UEFa?=
- =?utf-8?B?RnRPZGp1MGJ2OGxVN2N2OUN5MUpXT25sZDhEOHRQbVpyWkt4YU5zS1ZRSW5D?=
- =?utf-8?B?Zk5CSlhwdnJSMithdFAzTHNYUjEvMnJ1SHdKd1BKZnRremJ6OTJGeUxOWFdm?=
- =?utf-8?B?M3B3VXpJMHBqM0VsVlppbkV3ZlV4aG92WWNZZ3lJNlIxMHB0OFd5RHlZOUJm?=
- =?utf-8?B?QlFiR1BObWVEL0FWZ1ZxRXJpU21nN2lMQWJkUi94ck5nWk11c2R4RURSbnpC?=
- =?utf-8?B?ZXkvaWJXK1N5WXhVdlMzS3FPamp1T0QzUjFVdXdDUWhXMHRhOE81UHRCdkZ2?=
- =?utf-8?B?RFkvQ1FodXJzTkVWSjZkT3ZXOWFRRkhBTFJqYTJNVTNFdTR6blR4WFVNRVlw?=
- =?utf-8?B?eHNlTURYY054N0I1ZTdSZkpOQXVQUnFEaGdNVEtWYWNHN2R6UXRJVVFza0to?=
- =?utf-8?B?Z2l1ck1WaUNsQi9QRnVhWE41NlZvMk9wdE9MUG1sR2pWWG8zYm1iOUIyUW5l?=
- =?utf-8?B?TUN0a2Q2MHB1MTFnOUFNZnozTVBGMVg0YmZlUzVtV05oNENJbXVVTDlEdzhj?=
- =?utf-8?B?aUFVWWkyLys4MlYyUW5QUWdUdlBMU2pKa2RKck9tVFJZUzhSVk9XQ2dWSmls?=
- =?utf-8?B?WDg5SUJZeEZnT1pwLzc4VlRsZ1lGYjFIYjZzK095SkU5WjZOYi9idXlDVGZn?=
- =?utf-8?B?ajV2RGtkc3dXazdHUHFvM2ZXaVR1QmFqaWtIRDJEcFgvVFRQNzBNbVFlTG1X?=
- =?utf-8?B?REV3WWFtTEM2MSt3YXcrQ3pFenM2bE9BSVZ5dzlmTU9NRG1tR2k5dk5uR2RV?=
- =?utf-8?B?OFF3ZHBRVlh5aUd3dy91RGo4OGt4NHJ3SEhUNVowOG1JL1oyNUpNQkh1ZjVj?=
- =?utf-8?B?S2xNTURyQUdHcktYWnRmbFN5RkdnWGZMOVlkYVJvMnJKZDQ0WU4wdDRtYndo?=
- =?utf-8?B?eWI5SGduQVZMZEtSQWRLN0NVU1ZqcEQ4K0E5STRuelMyQVNVYmMwUU9mem9v?=
- =?utf-8?B?ZUk0M1dSV05xbXhKazUrdWZzQ3ZYUUhqekNwdHVXUEVnZmtSRnBYVlRIVFhy?=
- =?utf-8?B?OVd3N28zZzJGUmViL1pHWFEzeGlpV1NQK0FZbkxCZFZUTStrKzYvc1F1cjcr?=
- =?utf-8?B?TVZQTUQ1OGxyVlloNDVvRnQwQUpjeXVTZklCeHJhdklxSzRuZldsQkdRS1Bq?=
- =?utf-8?B?OUJ3T3VOZ3NKekt5Um1ORTV3WmJ5NG43TTV3MjFCTXlnWEVLaGtwV0NLOW5E?=
- =?utf-8?B?YW1Jeklqc09KNnJsdkE2ZXdiVmpuZXZiR1VBQ3FIOSswUEVBL3BhSDF5NnNq?=
- =?utf-8?B?a0EzOTR1VWdheUkxbU54U2FuTjJKa2pSU3dCMThzU2k1U2FFeEQrTy80QnBy?=
- =?utf-8?B?VDFDTEkvbnJCSm5GRTBkUlNNQWNhcGZmd2FxS2VZWGkzM0lSRE12bkk3b214?=
- =?utf-8?B?NzVkQXZPM0Z2UTA1eXpEWlBFdGtWUy9MRDRUY3hWUUlzNzJQSmdkMm9xVkdV?=
- =?utf-8?B?RTZ6VERpTS9JWVZqWmg5WmRzYUp0aVhRTXFEUFJnZjBGME1tdjQyZE5pZmlq?=
- =?utf-8?B?cncwbWhFUzZaOGEwQ1hpNm5FeDVvNDdZZlk4SnQzNHlRdlNuY2wxTCthalEy?=
- =?utf-8?B?ZXg5UlNFaHV6aFVkTWFXR2l2eXlxTDZvSmpYUnFBOFZIZUZxTHZNV0pqYjNC?=
- =?utf-8?B?ZSt2NkZhNjJZSXhxQmZOa3JJRDNtVmluUHpJT2dCbXRHZzRzanV4eHUyMWpm?=
- =?utf-8?Q?yIbERfrc012Ue4O/m5U8gQpCkTF+F3hKkKpe2fEGowHaM?=
-X-MS-Exchange-AntiSpam-MessageData-1: kcms+izg/4PfyA==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c1dbd3c-aa64-4eaf-bcaa-08df3a859588
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7110.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 15:09:12.5096
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rEpT4g9YSv13wfJ+0uDYC5QdhJCUNgyPWCIi53QjKcPRhNalH/fmwo5mNlcI9DcQqvaCsI0uIdkBQIJxuLubmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF9176ED2F1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/3] cpufreq: CPPC: Reflect the OSPM nominal in boost
+ and limits
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
+ zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, lenb@kernel.org,
+ mario.limonciello@amd.com, maciej.wieczor-retman@intel.com,
+ pawel.chmielewski@intel.com, linux-pm@vger.kernel.org,
+ linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+ vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
+ mochs@nvidia.com, bbasu@nvidia.com
+References: <20261030172745.2045743-1-sumitg@nvidia.com>
+ <20261030172745.2045743-4-sumitg@nvidia.com>
+ <6392b2cb-0cbf-455a-8c05-c273535b2c10@arm.com>
+ <4d9aa879-316c-4188-bc5a-71e3b65e8a3b@nvidia.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <4d9aa879-316c-4188-bc5a-71e3b65e8a3b@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 11/4/26 15:08, Sumit Gupta wrote:
+> Hi Christian,
+> 
+> 
+> On 03/11/26 22:42, Christian Loehle wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 10/30/26 17:27, Sumit Gupta wrote:
+>>> Boost is the performance range above nominal, so lowering the OSPM
+>>> Nominal Performance enlarges the boost range and drops the non-boost
+>>> ceiling. Keep the policy limits consistent with the register.
+>>>
+>>> Add cppc_cpufreq_effective_nominal(), which returns the OSPM Nominal
+>>> Performance when set and the platform nominal otherwise. Use it for the
+>>> non-boost ceiling in set_boost(), and to update the policy limits when
+>>> ospm_nominal_freq is written.
+>>>
+>>> The cpufreq core caps scaling_max_freq with a per-policy QoS request,
+>>> boost_freq_req, that it sets to cpuinfo.max_freq and refreshes only when
+>>> boost is toggled. A write to ospm_nominal_freq changes cpuinfo.max_freq
+>>> without toggling boost, so cppc_cpufreq_update_nominal_limits() updates
+>>> the request itself, rather than leaving scaling_max_freq at the old
+>>> nominal.
+>>>
+>>> When boost is enabled the ceiling is highest_perf, not the nominal, so
+>>> the update is skipped. set_boost() applies the new nominal when boost is
+>>> turned off.
+>>>
+>>> A platform with highest_perf == nominal_perf has no boost range at boot.
+>>> Lowering the OSPM nominal from sysfs can create one. The core, however,
+>>> adds its boost FREQ_QOS_MAX request only at policy setup, and only if
+>>> boost_supported is already set. Set boost_supported in init() when the
+>>> OSPM register is supported and highest_perf > lowest_perf. Boost can
+>>> then be enabled after the nominal is lowered.
+>>>
+>>> Suggested-by: Pierre Gondois <pierre.gondois@arm.com>
+>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>
+>> Thinking out loud here:
+>> I'm curious if there's actually a use-case for this, presumably once we
+>> let userspace effectively dictate boost allocation, we practically expect
+>> userspace to sort out scheduling, too (e.g. by pinning?) and therefore this
+>> becomes largely irrelevant?
+>>
+> 
+> I think it is still needed. Lowering the OSPM nominal puts the levels
+> between it and the platform nominal into the boost range.
+> Without this patch, boost=0 still allows those levels. Userspace would
+> then need an extra frequency cap to stay out of boost. This patch makes
+> boost=0 cap the policy at the OSPM nominal.
 
-On 05/10/2026 09:52, Sheetal wrote:
-> This RFC updates the Tegra ASRC software ratio controls so userspace
-> programs the integer and fractional ratio parts through one paired ALSA
-> mixer control.
-> 
-> This is a userspace-visible ALSA mixer control ABI change. Existing
-> userspace that programs the ratio with separate controls must switch from
-> the legacy commands:
-> 
->   amixer -c APE cset name="ASRC1 Ratio<N> Integer Part" \
->     <integer part>
->   amixer -c APE cset name="ASRC1 Ratio<N> Fractional Part" \
->     <fractional part>
-> 
-> to the paired control:
-> 
->   amixer -c APE cset name="ASRC1 Ratio<N>" \
->     "<integer part>,<fractional part>"
-> 
-> For example:
-> 
->   amixer -c APE cset name="ASRC1 Ratio1" "0,715827882"
-> 
-> The ABI change is needed because the previous separate controls can expose
-> hardware to a transient mixed ratio when one part has been updated but the
-> other still contains the old value. The paired control lets the driver
-> validate and program the full ratio together.
-> 
-> For active streams, the driver only unlocks and re-locks the stream when
-> the new software ratio differs from the cached ratio by more than 20%.
-> Hardware allows direct updates for smaller ratio changes, while larger
-> jumps require the stream lock to be refreshed.
+Duh of course, I was somehow too focused on the cpufreq capacity pressure
+to not see the obvious one, nevermind and sorry for the noise.
 
-This still applies fine on -next and I am fine with the above ABI
-change. With that, for the series ...
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks!
-Jon
-
--- 
-nvpublic
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
