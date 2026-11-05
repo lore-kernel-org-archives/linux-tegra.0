@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793893564;
-	b=mKzWdag4HqI3WR+iFaqFWykdYajuDMmlwNbu4nYO44M375dPWmz4Ajn7TmMogO4IIQp3
-	 yAToeOETFlVcshRsAzJb8s3o+4MoT39QeJVrrOYWbiJZTFURqVLptgWAsUVOU9Espq4oP
-	 mffFep++DPxy5H07oBVlUtYwwSD4moaWT5M4yNBwoyHf5Mq/wdCU3tl+iysZSoU8JP2rz
-	 fEUgStQ4lkXiaPA6RoOsXdZuPC0KyfNcL3JH3xBMU2m0dcA6dwL0jMT11/6GUM5lzTgEf
-	 dtR1uJj4KpX/wsF+KHLXDHjAEbUEuD9r/mMWqSQHUJPUcK23rHDP9hUPOLUxRkEvoqw==
+	t=1793893909;
+	b=KQX1H39JZLJtFgCg76ixsNcOofdTMd3+bazaNbuMCauV6nXJ7cePkkYRN/00IfE3Nt9l
+	 bNzbVppqB6KFDmupht54Pu5uxW63qxij3NoB/xMBlAyPAGwCz3jfiBYCLuncy83cUcVhB
+	 A6bqkzbnpc/fIGuwGoOPkrHSMrTYJmRVfiWkSbVgpnA9dB17TDeBelI/5RayCEmQJMuaQ
+	 oznofv0BSKxxSfapRyxoiiXb5HK6bZwiw8jDTNbXxADKd7xBGxQmhVda+kfTb+UjaIPxl
+	 T5oJZUaRbhq0sfaNwI/YbLl32OG1u4qJzXIC+KfHhwvFGte4FIqlUkvLfIrdiZK7tOw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793893564;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793893909;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=TEExI0wyKCh5UrhCecRJ7HynlA0hRxBVTphCMFuZjBM=;
-	b=LgHDdG2OFfxTULNCnC9hKro0Wbaoslb7+0dAZW7UnngSYJKG7PYPC8h1cG3ioqH50e9K
-	 rYfZnH6WU5tiGf15cky3yhJICeXeHtqn0V1w/uVgB9tSTpbNMsdcUbWAMPq4IC6vx20J2
-	 U6dxzauleYlhlOeAYXa9PzRx4a3aL7Zh4ENNOACGbL0ddCDEnmiH0z0UN6bLcwq5sPGBc
-	 dkCqqATs6MZkvKh8yTMfzK89pvqd+gawzijoUrqsMSrHg8/Zqq2pkVAVx5cJCyy5sZwTl
-	 EQ5H2eH8fkwLgyrY8R47cQU4pDu0En0mYLpz5SkWyGgu++xAzaN3zkfZQRgma2KXI1A==
+	bh=yW5Rri0/xouoNsLJNVbYSyO17syEQzUkfzWZkS+25ls=;
+	b=WB7y+kVO4fhukuRlzg02J0T0ojc52qiwq6q2nabDCI0EYOyQCeBDLcQLX+i/iAPpaxi5
+	 N+MIRUPXMe6X38I49dQjp8MOlZFOx6br7k3o3/TlidjY3+I5cXaGfE2RmgNLLQceMWy0D
+	 VhiDaoH+Y4byDMQ+Ga71GU/pChtvSitKAHGRZF+NGj47+rYhp1DNgzdkK/5DIWbNKYL2K
+	 5n45yeHd36i/LUsz/a63ZO7BDJH4rVqSKY41De9Cb6Uq6Xrdv/MXxaGuCIYX0DW+x53P7
+	 p1JpjtNZ3MRqiBy3UbVOrjnn3U4PTN+iOAJ3fbMk4zSUgSsCSy8HkjijCTgjA6SZMag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ifdAfxYL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RCiFUSzS;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 7977E606D834;
-	Thu,  5 Nov 2026 15:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CBB606D80B
+	for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2026 15:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ifdAfxYL
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7876F1F000C1;
-	Thu,  5 Nov 2026 15:46:03 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RCiFUSzS
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CA3D1F0093A;
+	Thu,  5 Nov 2026 15:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793893564;
-	bh=TEExI0wyKCh5UrhCecRJ7HynlA0hRxBVTphCMFuZjBM=;
+	s=k20260515; t=1793893908;
+	bh=yW5Rri0/xouoNsLJNVbYSyO17syEQzUkfzWZkS+25ls=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ifdAfxYLh+GoaGTXqEC0N5Mc1S6FzqY7oRvV92Sqpk8TeKMYsVG6WafXtr5AjcBJq
-	 DBgFHcvhnnkSM9mwN2MDAkMhLRy+q/MzKfSSu0Hfg1+OPWYGUlEZAIGRpAijE5pwKS
-	 GKtckZy/si3vrf4i4MGr/FUdNXbRBTmJlL/G+M1uo06PWLGLVF8EF48TDzGObepLD/
-	 R+eGMaXX23EqNY06AslovgPYTziSDewOH88X2Vm1bbyjB8PiNpKWf5Mt48ka2y/liA
-	 iG1NAkENvzvygZl9inlAsrRGNXz/GsqmEe2EDGOzl/z4/H5iDBsii7vKgnFIPnhVhH
-	 r3RrWIhUVqMeA==
-Date: Thu, 5 Nov 2026 16:46:01 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>, 
+	b=RCiFUSzSSfyP+gIvp4+OW8TUa1kz0fktak6quFU6YBruJn8wlGpdRZUcwQrB+lndk
+	 kn9xSO866242JswpZmGavaL1nA3fK6AUhEZqSAUiOJ+PtspZJDczIATnMSAeFDoR2P
+	 d3UZq/CZHbbSHy5XwuHAwZ2IAj1hpEYwDy9mT1M2pfrK99CVTmSK0b/FRXz7qhyAVy
+	 eUSLnTw3ALqhyEfI5ATlw9XsK1vmK9OwlEJUHutRNwB3K0a5MGwiM4UPbiqovuYqRm
+	 y9xLwI/+X++ogg+dYFYqKfQ87FfYR0yTwePtiCFNfBUHuVOb2VTPSctUFGtDvwNVQL
+	 N2TLiXkKNtwoA==
+Date: Thu, 5 Nov 2026 16:51:46 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Simona Vetter <simona@ffwll.ch>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
 	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Sandipan Patra <spatra@nvidia.com>, linux-pwm@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/8] pwm: tegra: Prevent 32-bit period truncation and
- division by zero
-Message-ID: <auykeNit2S4e7axg@monoceros>
-References: <20261105143847.2559586-1-lee@kernel.org>
- <20261105143847.2559586-2-lee@kernel.org>
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH RESEND 53/83] drm/tegra: Switch to
+ drm_mode_config_create_initial_state
+Message-ID: <auyjMrCi8trUahdB@orome>
+References: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
+ <20261105-drm-no-more-config-reset-v1-53-1f58d1e33380@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -61,60 +62,70 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5nxrbirnwnmd4xu2"
+	protocol="application/pgp-signature"; boundary="7zxtqfr7iy6ea5vf"
 Content-Disposition: inline
-In-Reply-To: <20261105143847.2559586-2-lee@kernel.org>
+In-Reply-To: <20261105-drm-no-more-config-reset-v1-53-1f58d1e33380@kernel.org>
 
 
---5nxrbirnwnmd4xu2
+--7zxtqfr7iy6ea5vf
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/8] pwm: tegra: Prevent 32-bit period truncation and
- division by zero
+Subject: Re: [PATCH RESEND 53/83] drm/tegra: Switch to
+ drm_mode_config_create_initial_state
 MIME-Version: 1.0
 
-Hello Lee,
-
-On Thu, Nov 05, 2026 at 02:38:03PM +0000, Lee Jones wrote:
-> tegra_pwm_apply() passes the 64-bit state->duty_cycle and state->period
-> values into tegra_pwm_config(), which accepts signed 32-bit int
-> parameters and performs DIV_ROUND_CLOSEST_ULL(c, period_ns) before
-> validating period_ns against pc->min_period_ns.  If a consumer requests
-> a period that is a non-zero multiple of 2^32 nanoseconds, period_ns
-> truncates to zero and triggers a divide-by-zero panic.
+On Thu, Nov 05, 2026 at 04:30:02PM +0100, Maxime Ripard wrote:
+> drm_mode_config_reset() has a dual role: it creates the initial KMS
+> state at probe time, and resets hardware and software state during
+> suspend/resume cycles.
 >=20
-> Widen duty_ns and period_ns to u64 and validate that period_ns lies
-> within [pc->min_period_ns, U32_MAX] prior to dividing by period_ns.
+> Since the two roles need different behaviors (notably for objects like
+> drm_private_obj that must persist across suspend/resume),
+> drm_mode_config_create_initial_state() was introduced to handle only
+> the initial state creation at probe time.
 >=20
-> Fixes: 1d7796bdb63a ("pwm: tegra: Support dynamic clock frequency configu=
-ration")
-> Fixes: fd3ddd4355c0 ("pwm: tegra: Implement .apply() callback")
-> Closes: https://sashiko.dev/#/bug/linux-5c5b97d6-4da6-4d06-9dc7-957419dcd=
-832
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lee Jones <lee@kernel.org>
+> Switch to drm_mode_config_create_initial_state().
+>=20
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: Thierry Reding <thierry.reding@kernel.org>
+> Cc: linux-tegra@vger.kernel.org
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-This is already addressed in
-9ad5602d4943 ("pwm: tegra: Fix value discarding for duty and period")
-which is next-20261102 and later.
+I'd have to check more closely since it's been a while, but I think we
+might depend on the reset hooks getting called during probe.
 
-Best regards
-Uwe
+Looking at the implementation of drm_mode_config_create_initial_state(),
+it ends up calling drm_mode_config_connector_create_state(), which
+silently exists if the connector doesn't implement atomic_create_state,
+which none of the Tegra connectors do, so wouldn't that lead to a NULL
+pointer dereference at some point?
 
---5nxrbirnwnmd4xu2
+Thierry
+
+--7zxtqfr7iy6ea5vf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrspLcACgkQj4D7WH0S
-/k7IZAgAgTxBFVmi5VNODULNSO0AzIE/XByrLnv9QPXpoGtE3u0fxn0SqZ8wdLaO
-zboASSjsv6LW2VhdvVNNouW6XmjvAVtBXq073REQWGEEWjqbkZ805Hc9CRqgKbS8
-RimnYb03FQPAOnXbH3zgXI7WOxw5+4Q42FHW7MKWR/65rq8sPRfklO77fm7oSDn5
-jjSz5NN2ES6hvDHjGAdp4/dOC7X+7ZKFguO0eOYolk7E5mmPJ1MiIKBx3AgcDkh7
-YHw/xMpIWcaQk1mvbkPIcyUIDdW7jA+l9hpwq/6hnhBAuEpkOkxNcNlRQfq9XHOn
-DPYJUkv/NkCqUKrSSQg/yc07PydLug==
-=3cdS
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrspg8ACgkQ3SOs138+
+s6Edjg//T5Q+3ZilA1THhY9qcdUxRBdfbBoYoWC89LpYiTfrOtkFud2oA78ftqLL
+vG01Xwma6JVVZNdnn44IZL73JRsUWJ+PVrDkHbbL/rwIZQgdPFWNms/klhES6Rzz
+J/sXBXrWf6I81TftZh8YT9kwt4bi0sdH5+vuEakuUGRjf5IYiKduF0w0NIpDzGMi
+bOuQMFYC0V4aSj7H8mysU0T7RWokPF5hhx8OMXxc7f/j9DqG31Y2Q9zxTTHTyKtp
+LLSRtSPhEsaASIPSMddsoqACPuQZbfp/tXr1nrrOwAG/2mFqZJ4DqKssOlVXxRBV
+vJe8DQnEQ5LmNaL1TrFYj/ARG3shuY1FuIkT+vnNyILkiwbml8d/sujqnia0yIvW
+yQRD4LZjrLkR97vSrJyjhuGol+MkcSEyctvlSw2SGOMseDPlVE3+HCGSRzx5M1sf
+1+F1F+QYzMZ/PTivO4s0VH9ObxNlEnwnhjCIK5pa4xguLnsiKmoxxWMpYtCjTT5r
+VaszbpKkg7N9XoPHCgNy18wREn6NPlONLAi723bSqvYkk9XjdIb/qlKRwDHCshQM
+o/5D8Y3/S0kfEop4OtmrKR7q7CwcPWiRx0jKsfj1KpV0xdVLrHtJhsl5+W/JtpZx
++kISRoLODNn2AbHnNyxVtTl559iJh2K+X5gOyReOnnetot8ZWns=
+=d0BZ
 -----END PGP SIGNATURE-----
 
---5nxrbirnwnmd4xu2--
+--7zxtqfr7iy6ea5vf--
