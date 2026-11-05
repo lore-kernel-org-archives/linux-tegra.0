@@ -1,76 +1,131 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.19
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793870913;
-	b=DVJzhKm97CBA2Namiyv71PRA+DavltcQv5cQU2Onr/qlbwkhchfW1BtQ/ojVZChcScAZ
-	 cB3m1+9kH5lYwYA2N6fW0g+WuJJ1GuStyoNDm/6oQoqt1Zs5rPoDsmIH2ivkQTBbrwRr/
-	 jYoRo0h66+I/+SMGiE19Gvev0OBhs4938aJYndBQN8WlUxo8dwsSzzybF3Fz1SQbRSrzb
-	 /ZcPNHDhaB+kRXNH9aDNGj0dHwrY85LJLFiD/0yiiuxV8wBZQnomM8JU5pEtAUDC+dQk5
-	 eaqedR2zOXZ4x+XICl/K/IyAxnSkMxMlUjFeeNRsVSThUkk8jmUf1jV6WvZT30ool9A==
+	t=1793871002;
+	b=IXSRMaLKvn2xs8N4X0jnGWxTR1EQeC3Vrpnx7mjiE8KKhENFZGo7TVG7Gsfl7uJGF444
+	 8jA+Mg81KC6FSbndKBcrjiQe7jdWzoWFj+MZsxTMAFeOXgYQsA30BtdFFAV8OXP3bClpF
+	 lu8VyYb03xhfKCx7LMhRQXLYIiH7Hm5P41ZqOgVJS3Dt88LoSPPHX93tWlI+kyDE/xxKi
+	 jEiCN94xs+CIINlNDHZnHmIWBE1M59CnuX1kw+oiucnnZdS8f+EQbSyjGBTyJ7RgmdZmB
+	 KCc2qIkQ06SmRbSgHIbHzdeZQ/DudsXQX9/uOe+WgnWCCkQv2CLr6zyKbKjk5gsWp4Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793870913;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type;
-	bh=9pg1eAqFe+iTfmNTfa/GRPtY3M6bs2CHPsTRd5ndQTA=;
-	b=I0hybhcoPcxqNhihKe8pfShDV6ntSD5tRpzjDhCiMkWljlnD2/ANysJD7AsZFpRs1DEi
-	 YSS+Gp+v/VbBf/UazJebSzNQLWAmfwudAfc7W/A6V2092i/RtWSh2eyoD1Vx+oR9OBk/s
-	 PkQhp5vGO0eqZthroH/EuGoJrHLk23Ll84j+/0nQrwNKgpvdy0p0TRdwFInio9zimRt3k
-	 xxqEG7IslreG02oNuMfP71VgxRi8FA9AvpFaTkx3TqJWxXGjI8It75BdMlcqJykE5V7f3
-	 6r4qgBnf/TbjxGadTmd4vKjOHrNt4V63rNX/Uq9CADWK10OA+PeMfyfoBtG6pf27bYQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793871002;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=MzcP0ZVuar/2J0GdckfWIQkp5OrAXfjPJwzDsLW7Oeg=;
+	b=KoQgdG1jxWs9yG5J45+JgrnRHvQHnLvz8md0v2dXyKUYkRjuJ39shdsSlNIJKJpBapwu
+	 AUHGqdK9JtTZ5CYOqxfNSoY7DBXfcld5XwafO8lznwHZAR5OwCy6Y0NJ2WLDkWJb0qoKD
+	 EOMfVvFk1FO8ER9+NUAJgyrUxNTzx2WG7fmwtZ6/VZ9Jv+oIpECcXsRM4X9HQwFZPhgTa
+	 Alyu0tNcWqxJ0pk6AwpZo6mq0LzmVsZFgJisRSqLDjXJZzYY45KGyhCsokr1X8MTlgudW
+	 ksLutQVDOOjuzCPnDYQ/ugkOzcbCbtV+A7P72xheIOnWjklvp/p0Yfrg2Cx5gzt7oLQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.160.177
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eEFjrbpv;
+	arc=none smtp.remote-ip=198.175.65.19
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F93B606A32E
-	for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2026 09:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4F93B606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-53665358476so17333671cf.2
-        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2026 01:28:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793870912; x=1794475712;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=9pg1eAqFe+iTfmNTfa/GRPtY3M6bs2CHPsTRd5ndQTA=;
-        b=Mavi/jhi1dMcmeTgIOzv7Ks9e6dgTzov39aAep7BxSR63ETDxEGcwXgcVs88ZHgI+I
-         vCnO8PGl5kDcjHGSkWl1FyQy74pZNnKN2bkl1sdo1Q6tvn6X+064gzEdsS3nsoYr9sOn
-         1YwUgL0tw+Ti5Vyw2ktwhlOQAo6RrQIL4MqyJ4+Qca9cgPxy3JyZR02gDhc7o3sJmsT0
-         QI94VuvHouQF29PybINQchMlhl0Ei/dpyejyq7ugiWloJehIAMY8zNXZ52FIPFftmeua
-         kjzgImEFytuP/Rxd3CJs0ZxMz6r11DXrgFhU7lDgCyJVcaRD1YJQSBPOuYaVetHmyvuh
-         psfg==
-X-Forwarded-Encrypted: i=1; AKwUvBwvTqpBBthbv+o/i5TFYxI3j4KzbZHIp3BvxWV/pAGM7ed4Z5pAO7dLUa52c9Zd/qQQKsPWiV4VVrMJig==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8UTCNCnPzIskgz8XaROf9cos47EoAxgFzNdZA1hPHsmWYYy7P9
-	qg2FWRlTNpEjw+YWiu0z6DP6OYFBtKEVSFrMRcE1xUiR3pkQjHHTNHVSxOplMmP4+44=
-X-Gm-Gg: AYBFou0EYH4gRlXuE2aVgUJZx90hS7NPJd/8ZCgPCN13OEKf0U2kkn5g796bMhoB69s
-	mR3Z6dKStk+Z8YDFtXn1pryKEjPFf/qoWvM7ZchfDUSQ/znurty65i3r/nMlCwG1NLStWcz+9N6
-	1/EQWfVZNZGqbGkCC8TxI6A7zP2A1+UUyY2Xg4flFy52Rop9zWHr4KIq4ulpJsOcFf9hTeF5F3b
-	71/95QV1lWFG6bvVqSn7tWilcnr56zxNJyHhBkSIwKPFId0ABVqNE7eYxZ/qA96Unh5nagSu89A
-	qxxQt5BZT4W3oV1pBDvBwbgniURdbn09VlyPAiZ0Q0Mu+MiFC4trIGr/jhmsRGbRZAjR9V3yt5D
-	gyPYtoUvR+rZpJ7GAapGZ+RKdjJkojgFhFCxoTQjycdg6MnlVbj7xWayV9wvXyrVi2RbYonu9K2
-	wk88+Xc8gVDylCYkK1PkajK4rN+OTqfsFKGyKvbu8CsMsnMXLOKI+hQJ5fQ4CHVnG6Ja4L+yVmA
-	HF15qdyIUv6c5S6eCgBqTDZXKHc4lynvGm5BsN9j4uera0zGvlNMtpCLBXBFpNF+TE6ZKnqQljx
-	VwnM7uWFUm5rYynK/PeoW5ghRMfFs5CrG9BjoamxnVN7jvK6CZUof9U4ygAIb7al4A==
-X-Received: by 2002:a05:622a:53c4:b0:534:d386:fa67 with SMTP id d75a77b69052e-542b71417c8mr294696911cf.40.1793870912159;
-        Thu, 05 Nov 2026 01:28:32 -0800 (PST)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com. [209.85.219.50])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91e896f09e3sm32681036d6.25.2026.11.05.01.28.31
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Nov 2026 01:28:31 -0800 (PST)
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-91ea16d8072so111266d6.2
-        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2026 01:28:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBxgDB65U27JNzU0LretPx6yvHqq0SDPv9CEsOR4Q1u7Bn0AqfD4WQmFc9llimNZlQrzTPFd5hWqQX8wzQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:e0b:b0:7cc:1045:610 with SMTP id
- ada2fe7eead31-7d072cc4a42mr6604019137.27.1793870415083; Thu, 05 Nov 2026
- 01:20:15 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197E1606A326;
+	Thu,  5 Nov 2026 09:30:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 197E1606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eEFjrbpv
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793871002; x=1825407002;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aVv8RvjToXdNBQ+AxPn75WGDPj4D3O1pHLFNRPhnfCQ=;
+  b=eEFjrbpvUsXeoeEy6uDeHX63okzZdJPDcpHnD0lJHQxucQ2UfxtVkbRf
+   DuAej4v1JiCKIF5Rl30OXvUPqyGu6L60ttgbEzPSLFHBcBmWwYoRzr7Cv
+   oXTGeA2eM/GL1z+V0fuPw5Lf9Jop/CvcAs8QmL2418DPr/X5kipxwuDca
+   Px5RTB0cTIPwIbq3vztkeKhBeSMB/5rDV7HnRo2C0gFdlO6/GUfC3/ghr
+   dVI1nubUGXTtQmshyUgnQf5iRvJIR2MYQKcXmtTHhX+UslKnP03a8xARZ
+   WjpZGvlLdN53973WMxny2XR9ToK6l9TQz/ahySSsAq8vONeN7wGWaabME
+   g==;
+X-CSE-ConnectionGUID: 7ITx+mjuQtWdcJ7r4lyUjw==
+X-CSE-MsgGUID: Wo2TClO/SaKV30K8uo/4jA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2683858"
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="2683858"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:30:01 -0800
+X-CSE-ConnectionGUID: VUQbl1y6Q3yfJ7t5HK8oRw==
+X-CSE-MsgGUID: SqY+yNktRvCMlE1VenPXPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="7269063"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:29:47 -0800
+Date: Thu, 5 Nov 2026 11:29:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Frank.Li@oss.nxp.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>,
+	Yenchia Chen <yenchia.chen@mediatek.com>,
+	Zhiyong Tao <zhiyong.tao@mediatek.com>,
+	Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>,
+	Kendall Willis <k-willis@ti.com>,
+	Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
+	Nicolai Buchwitz <nb@tipi-net.de>,
+	Karl Mehltretter <kmehltretter@gmail.com>,
+	Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>,
+	Shitalkumar Gandhi <shital.gandhi45@gmail.com>,
+	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>,
+	Robin Gong <yibin.gong@nxp.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Zhaoyang Yu <2426767509@qq.com>,
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Myeonghun Pak <mhun512@gmail.com>,
+	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>,
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
+	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>,
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
+	vkoul@kernel.org
+Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
+Message-ID: <auxMiQ-DvmBc2vu2@ashevche-desk.local>
+References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
+ <a2d5ea00-bfa1-4883-923d-0a6a7eaa556d@kernel.org>
+ <CAMuHMdUHf14DpLfk16qZ6YWtJKm8VDWEFA0Wqk22ysqnUFHoHQ@mail.gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -80,95 +135,32 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
-In-Reply-To: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 5 Nov 2026 10:20:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUfYZmbf6ADFFoKSod6yhu7jQVt5CBNuQpmRUUWR3OZGw@mail.gmail.com>
-X-Gm-Features: AclHuK-9tAw2bAtaZucYUxK8rDds9GR808jJtyoj1R1Fxu-dNuDK-M2tP9yoLrk
-Message-ID: <CAMuHMdUfYZmbf6ADFFoKSod6yhu7jQVt5CBNuQpmRUUWR3OZGw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
-To: Frank.Li@oss.nxp.com
-Cc: Mark Brown <broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>, 
-	Ryan Wanner <ryan.wanner@microchip.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean <olteanv@gmail.com>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>, 
-	Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Mack <daniel@zonque.org>, 
-	Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Heiko Stuebner <heiko@sntech.de>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>, 
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, 
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>, 
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
-	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>, 
-	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>, 
-	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>, 
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>, 
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
-	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
-	Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Thierry Reding <treding@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUHf14DpLfk16qZ6YWtJKm8VDWEFA0Wqk22ysqnUFHoHQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Frank,
+On Thu, Nov 05, 2026 at 10:06:06AM +0100, Geert Uytterhoeven wrote:
+> On Wed, 4 Nov 2026 at 18:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > On 02/11/2026 18:54, Frank.Li@oss.nxp.com wrote:
 
-On Wed, 4 Nov 2026 at 16:30, <Frank.Li@oss.nxp.com> wrote:
-> From: Frank Li <Frank.Li@nxp.com>
->
-> Replace open-coded assignments to callback and callback_param fields
-> of struct dma_async_tx_descriptor with calls to the
-> dmaengine_desc_set_callback() helper across SPI bus drivers.
->
-> No functional change intended. Prepare make to struct
-> dma_async_tx_descriptor private to the DMA engine.
->
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Reviewed-by: Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>
-> Acked-by: Alain Volmat <alain.volmat@foss.st.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> Reviewed-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change in v2
-> - add missed set_callback in rspi_dma_transfer() (sashiko
-> - collect review by tags
-> - drop void *
+> > I did not look at this code at all...
 
-You have lost the "# Renesas related drivers" part from Wolfram's
-review?
-https://lore.kernel.org/all/auoQiuIm9FxdOrYl@shikoro/
+[...]
+
+> > Therefore:
+> >
+> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> Then please add "# samsung", to make it clear and obvious.
+
++1
+
+See also 20261105082729.19622-2-krzysztof.kozlowski@oss.qualcomm.com
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
