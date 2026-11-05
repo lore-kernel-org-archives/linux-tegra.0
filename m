@@ -1,64 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793846398;
-	b=qUinBswzdhSet64N6bgX1jYd37H/cuLZyWokjm7fCgdLMLu5lQFFK62hUxEmUBgJNqbG
-	 QnIrMwAaVX0MI4aIfk8CE3NneYTKKqmkm1LBmWz6XmUbfZaY5Peb3ut9wiH0Q5fGF+RXU
-	 SWa2r/KdAIMn6FiFzgjqgAGt4mSwBL0DfeDYMZAekn/mGQJoqzMAdOfFqAh7xg3XXKV9Z
-	 q7A7OgYMw9K/JeQ1Eq/KyjbFs3Jhr/vhFriDXxQxhndxsemQBShaS+MstsPH7sypeR2kN
-	 yEhuBbfLhaSHgDfaW3mhOKg7q2LlzVxwJgwTFMwgeBRYipbjS1JEC/gjaeTrNsQwmoQ==
+	t=1793856498;
+	b=cZmR/JHxcaSfZw3zs+7DG5BPH3lrWdeZwrtQYacTMY3RoKZYNzqJzXXeWzZhr56GPC/E
+	 SaEWTv2bSdSSGXz+sZYDVGiy7/bO8dY6cD5iIsoDi0qOOI9MLsSLmNSQIBbi5lkWzWsun
+	 oeGKs7Pja7pabg8+q2ptSG4GbJf0Pc2TYvqazMfNwP3qXu/qc+MFeIfx2BWk4WuGXGZYn
+	 hOR2jMHunDCedo/0lg5mZcmmoD3EnUNot5HrdrdykpbEs4RG9PIV659rv6i3448MZ92UQ
+	 AnqVncRTpH/GPmEDbnmLUGx7JYZuJA0mCC8aOcV4zOkqBiiCvFznEheBIOPQERoqlVA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793846398;
-	h=DMARC-Filter:DKIM-Signature:X-QQ-mid:X-QQ-Originating-IP:Received:
-	 X-QQ-SSF:X-QQ-GoodBg:X-BIZMAIL-ID:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:
-	 X-QQ-XMRINFO:X-QQ-RECHKSPAM;
-	bh=8nHg2KK9YdUFsDyCN5OyhUk3RMp8EQBW/fDZ8x8OirA=;
-	b=H2xyoSAjrD3INE2QxE5iptHrmw6gRWWPm9Cv3uZPpBNBYNbX7262043wfM6t0MRxFsbn
-	 VioYBVRC0GtrqUJFBRjLww1HO4n6q3pORE9CtaVJv2+99y0KQxz+vdFsgrv7BcDq6Rueh
-	 +iqXJ4o4FRiPwa7yv9ouwdjq3PnbLHNhBE2zb/IsdCittE86uoX7ExA7RLAtPwtxSHwIp
-	 3V43uewnj0Ex230NoX3+1H2zlJf4zTZfs7PxA17LWig8gxVAKBKIAlGZLAwIABfyEi9JP
-	 RiOcit+NAIgKlgee+RIvcCLjPqkY3wEaKoLijqOyKtdOsq40it37rADvBvGnFMW84zQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793856498;
+	h=Received:DKIM-Signature:X-Mailer:From:To:Cc:Subject:In-Reply-To:
+	 References:Date:Message-ID:MIME-Version:Content-Type;
+	bh=HcoU1mf7kO9fvwMNLAx61kTpoNrJasMlL0pCTHLa1Co=;
+	b=YaWgLZX/r5skNzx9BX1NJPi5J0UZh6zIRGi1v7RPrUwWFGaAT23Y1nReVxc2P1+z76eQ
+	 GEp3iwAQYx3Yo6WiSmbLh60LAb2fysXwH23zsJIikwCtr+tevoAuIlmWrd9qqMiUl8Azf
+	 2CG7QykqWOI/6wmGYsCi5fu0ar7Z8wmL+/emrslZgk2ilDcMgDxtFuTZjHhzk56W2dX6j
+	 h2cL0prtvbFM7koJbSYaG6blZMEz3o8HZZZNIvRgA0tx4zHMPgpQ77JwLdp5UcVRq+ZWO
+	 y+Kq89Q0Gr4fwzkR3BBssz6vSreAruUOXanloDJEq+AWjeh7iAF4SvSze9WD2r0JOYA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux.spacemit.com;
-	spf=none smtp.mailfrom=linux.spacemit.com;
-	dkim=pass header.d=linux.spacemit.com header.i=@linux.spacemit.com header.a=rsa-sha256 header.s=mxsw2412 header.b=Nqz4+xih;
-	arc=none smtp.remote-ip=54.207.22.56
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="KBrD/Ngd";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44CC606D80F
-	for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2026 02:39:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A44CC606D80F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27111606A31B;
+	Thu,  5 Nov 2026 05:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.a=rsa-sha256 header.s=mxsw2412 header.b=Nqz4+xih
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1793846386;
-	bh=8nHg2KK9YdUFsDyCN5OyhUk3RMp8EQBW/fDZ8x8OirA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=Nqz4+xihSRA/SOazc9ytMPaaon6hM2Zpa/k876GDLA/rAvSdmROK7bgusiNH5yJRm
-	 MxDa4YviOx4vP5CKZmEuJc3kfvwqLKu/L2OohyPYk21mJnJpm1Y7KU5OpOGkVf3+ti
-	 zev+B3KBBNrXf3bQvlO8tLbPTEvcdSoXebx80EGI=
-X-QQ-mid: esmtpsz21t1793846385t9086c288
-X-QQ-Originating-IP: GzN6VmvtTqCGNs0V4yiis8fYCMjxRJUo3RwbxpC7uTM=
-Received: from mail-pj1-f46.google.com ( [209.85.216.46])
-	by bizesmtp.qq.com (ESMTP) with SMTP id 0
-	for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2026 10:39:43 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15456548900643452153
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3ac6794fe45so1102396a91.0
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2026 18:39:44 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBya6XcUmWUu03KEklwZLtKJ/5l49CaUNW31q0EEgXUEd3TXcJpGYJxmoZt+NS+MbssnoXdZwgdq+jU7og==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/tU0jbiAVU8UhYkuC7ATOdT5A9apRNB+bz+3sUb3SikcoBNk+E
-	WG1AwaLawsjAoNQ7qy7tEmmOwRPim8CylMMlaSHZAi4u72xK9+rYl7COR6nvuV1/vdBnaqNg4UM
-	2gbV059Pp54AjNTlpXYUvTy+JmzRdAhw=
-X-Received: by 2002:a17:90b:562d:b0:3ad:a462:f07f with SMTP id
- 98e67ed59e1d1-3ae8982c1ffmr16206466a91.45.1793846382617; Wed, 04 Nov 2026
- 18:39:42 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KBrD/Ngd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ADF31F000C1;
+	Thu,  5 Nov 2026 05:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793856497;
+	bh=HcoU1mf7kO9fvwMNLAx61kTpoNrJasMlL0pCTHLa1Co=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=KBrD/Ngds9bqLOcBa7RpvNd4iMkexWpa+DzC6+ffKh1NhLEcaCBmEuvd0SpOEEPHV
+	 8jL17aLET5sVc1/TAi2tTazVETSBSX1k5gdhp8dNc51yhlt825KrAfTsm/PLVPQfs1
+	 9DrfPotW/M5CJ7LWNRkY9NQVWMQL33DBsrkDB24mg07HUa2Aj8OlTXilnd46qOgQEv
+	 k3CuSvDbuwDNqcLyuF0M2036cdvl79e8QDDblmq3o0qYsa+f6X05yCvSN7xzjURY4I
+	 9npdc1/J6QCtCKe6MDyezbs+VUY/TM6+1/uf5gFICQVmA2vkwcCTCg1cwzx5WXcGu5
+	 d6UQgbCzYGvFg==
+X-Mailer: emacs 31.1 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>,
+	Nicolin Chen <nicolinc@nvidia.com>
+Cc: iommu@lists.linux.dev, Alex Williamson <alex@shazbot.org>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jacob Pan <jacob.pan@linux.microsoft.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Krishna Reddy <vdumpa@nvidia.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Steven Price <steven.price@arm.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Will Deacon <will@kernel.org>,
+	Xu Yilun <yilun.xu@linux.intel.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v8 13/15] iommufd/viommu: Allow vIOMMUs without a parent
+ HWPT
+In-Reply-To: <20261104193139.GB3889730@ziepe.ca>
+References: <20261104161632.3547423-1-aneesh.kumar@kernel.org>
+ <20261104161632.3547423-14-aneesh.kumar@kernel.org>
+ <auuBjRjQwXl7UvvO@nvidia.com> <20261104193139.GB3889730@ziepe.ca>
+Date: Thu, 05 Nov 2026 10:58:06 +0530
+Message-ID: <yq5afqxf97a1.fsf@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -68,104 +86,63 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261102135330.2493332-1-robh@kernel.org>
-In-Reply-To: <20261102135330.2493332-1-robh@kernel.org>
-From: Chunyan Zhang <chunyan.zhang@linux.spacemit.com>
-Date: Thu, 5 Nov 2026 10:39:06 +0800
-X-Gmail-Original-Message-ID: <872B2B4EAE847E62+CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com>
-X-Gm-Features: AclHuK-lEE7dv-iC1Lsio6aPGOufL5hgelB1hFojisk2-zoMsjC0hhsp9HraOXA
-Message-ID: <CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Ivan Vecera <ivecera@redhat.com>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Lee Jones <lee@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, 
-	Ulf Hansson <ulfh@kernel.org>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Chanh Nguyen <chanh@os.amperecomputing.com>, Alistair Francis <alistair@alistair23.me>, 
-	Julius Werner <jwerner@chromium.org>, Paul Cercueil <paul@crapouillou.net>, 
-	Dmitry Osipenko <digetx@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Ray Jui <ray.jui@broadcom.com>, 
-	Scott Branden <scott.branden@broadcom.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, linux-gpio@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-sound@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, mfd@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NAtJFUxAdU16G6+nGQsqeCSVcCediUmyyEi2V0ShjBAX472EWIUNkjoi
-	JW5HxLu6mQRw1ChrwoohULSlGk9O62nQV2BJmtP7ZYwsHzmKdMzC4yBfeLLCca+R82071Eb
-	Z4PUbb47OLbUEgvv6gCMdyOG0tDs/+EtpbthYHYyNK1AH1CmIlXb7ZX4ko8XdTw06U02+/q
-	LCg1ynIHKJH9/7j6dQ1K6ifbUP5MTC2yk4/0j+fkufq+JBjvYTnyudWUxOQH1ryhWbwjGfu
-	oWpzKajhW1CGywo1Hx4GRB7bnzdUnPs8TmBE5hGCax408r+spHWiZ4qsSZAemdxNhlKMGTe
-	94LecN3/z3mVI1u23lfw/45M++gKn1TocNXMYjprieLeIVgyINiCzEFO2NktngcmavlE8nh
-	sMHBOD1SXhDMp86Z6jM7t5OhQXhJrGgJKTG5O328eeR1rWb7KSknGVrmUKIpGE18oYq084p
-	yviNhGyCUmSU9AoD5NA8nbUGOkfk2IV799hjHDo9o+IdttisL41+3fJf+VISPL5FvNh8Yov
-	k3NXZkzPjJhL4sstjlEbGm6YXDrh34VYhZWiIRrco4JRB1bPehg+TavyqtdLhgh2Gn1r5z1
-	Y0RTNJqoKLnrOkIoE5+aqD/has5U39ulrAaNICXL+HkmVcLCykFub8blHd4hGONmbYfbNa/
-	BvNKlBQ+h8LZ6Z98vDcDciIwk6TQ0USQOoBxGAv41/6gv/xR7R6JUOTkJp64vDqhshqz+Kb
-	f6l4jo6fbvMF1A/LpOItI6J+vL37MQP8nrjUbkm6hWG/zcCbxxWW+ZdpHgv2sxPbGS32WNI
-	1lwaYpvRFToaCyqISx6ENZ2UXRC4UZqmKS0ykAMefmXLgYdRpTx3iTM2eilKeEFoYu8d+aX
-	FKTQUX7a49bF05A33ZIHY3OVxCm1LW6MA5cYXoF5uak1L6D8gU73DvRJjeNp2oKMPYKouew
-	Mqdz0LrOlvC+BzOcHG9aTLqDu/p6yfroYAADFgJI64JUzPRJo3HoFwLSLt0hrtAzy7SFKKp
-	i7icNnpaGrloumjoVNROWrBzISzt9rjA8V8tqBOw==
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
 
-On Mon, 2 Nov 2026 at 21:53, Rob Herring (Arm) <robh@kernel.org> wrote:
+Jason Gunthorpe <jgg@ziepe.ca> writes:
+
+> On Wed, Nov 04, 2026 at 11:03:41AM -0800, Nicolin Chen wrote:
+>> On Wed, Nov 04, 2026 at 09:46:30PM +0530, Aneesh Kumar K.V (Arm) wrote:
+>> > VIOMMU_ALLOC currently requires a nesting parent HWPT_PAGING even when
+>> > the selected vIOMMU implementation has no use for one. This would force
+>> > implementations such as the following Arm Realm vIOMMU to create an
+>> > unused parent.
+>> 
+>> IIRC, MSI on ARM still goes through the NS pathway. So, it wouldn't
+>> be "unused" if the device attaches to it (or its nested hwpts)?
 >
-> Unit-addresses by default (and most commonly) are hexadecimal. There's a
-> number of cases using decimal patterns. Fix all of them, limiting the
-> pattern to match the 'reg' limits if there are any.
+> It is unused by the RMM VIOMMU. I think that is what is Aneesh is
+> explaining.
 >
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
 
-[snip]
+We create an IOMMU_HWPT_ALLOC_NEST_PARENT HWPT outside the vIOMMU and
+attach it before allocating the vIOMMU. This HWPT is used for untrusted
+devices and MSI-X.
 
-> diff --git a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
-> index afa551f6185f..222d70baef1e 100644
-> --- a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
-> @@ -47,7 +47,7 @@ properties:
->      const: 0
+The sequence is:
+	ret = __iommufd_configure_device(kvm, vdev);
+	ret = iommufd_get_hwpt(vdev, hwpt_flags, &hwpt_id);
+	ret = iommufd_attach_hwpt(vdev, hwpt_id);
+	ret = iommufd_create_vdevice(kvm, vdev);
+        	viommu = iommufd_alloc_viommu(kvm, vdev, vdev->link_tsm_name);
+		if (ioctl(iommu_fd, IOMMU_VDEVICE_ALLOC, &alloc_vdev)) {
+
+
+Alloc viommu does the below:
+	viommu->_viommu.size = sizeof(struct iommu_viommu_alloc);
+	viommu->_viommu.flags =  0;
+	viommu->_viommu.type = kvm__arch_get_viommu_type(kvm);
+	viommu->_viommu.dev_id = vdev->bound_devid;
+	viommu->_viommu.hwpt_id = 0;
+
+	if (ioctl(iommu_fd, IOMMU_VIOMMU_ALLOC, &viommu->_viommu)) {
+		vfio_dev_err(vdev, "failed to allocate VIOMMU %d", -errno);
+		free(viommu);
+		return NULL;
+	}
+
 >
->  patternProperties:
-> -  "^([a-z]*-)?sensor(-section)?@[0-9]+$":
-> +  "^([a-z]*-)?sensor(-section)?@[0-9a-f]+$":
+>> By dropping the nesting parent from VIOMMU, it just simplifies the
+>> attachment to an S1 paging hwpt, right?
+>
+> Yes.
+>
+> The VMM must always maintain a S1 paging attachment that is the
+> identity map of the VM on all devices, same action as when there is no
+> viommu.
+>
 
-Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
+I am currently creating an S2 paging attachment. This results in a
+configuration with S1 disabled and S2 enabled, which is used by all
+untrusted devices.
 
-Thanks,
-Chunyan
+-aneesh
