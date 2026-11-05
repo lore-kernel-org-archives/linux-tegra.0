@@ -1,74 +1,126 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793874209;
-	b=mDw7r5uAuoGEreZk3ZFJqHNbTqkMh1bZRqtxDYnemWl1Wm8OA2WlfLX/X24un3Ul61f7
-	 6T6gocpN05/gMEt89PJ6OlVNrSgse3M0Wt5R1FY2Y8/mumg8RxMcXyVEPXERHawYmq6d2
-	 nqtYsnW3iSsRKYhb9kaggNfTT8skrqGisIiJWabPVmiscKrKbltRRq8GLhuo0XnOkftLt
-	 s2Ri5s5+ZmXmt9JZ4gNupwtce/TdOsy2quS+je9IAE81eNkFFZ1nZXMWD6sUOIK/pGhrr
-	 EASuzsLThYIrtkNua0zKRcRsIpaTPokcG4jp9QBkdZUU/my+O1zrE96EbEE34vFh6XQ==
+	t=1793875087;
+	b=ZJDq1HRefb8fV0S07iyL2n098fUnCBqagm0nMshFub3zMae5kvgXQ4htzQMauGKQ2wAt
+	 WoWhowP4GMv4Ur0/GkaRmxL49qLq7RFTAbXEZS76pMseUrXQ8a29lRodiLiqIKegFA6Hb
+	 wr7triD3vlZCMG/U4DBTytsnmztThK4u0al6Rsap1Om2ED48Yi6SDoHuT/0OXmbPkShox
+	 ZDSDwK6qrNqO4sDp/+KsWrDZpjZjgdtHswIOS7bqyiDwX9qlmfcMXcfTirNDQzObDW3FT
+	 Y99z7gu4JVV9TcNzh8E1xvZ/lIz8u7WmrxIixYIlWCPzLbdeXNKg2DMeSVfuuWTWrZw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793874209;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=EdnV/i4B0S0fh3g81bf4RkgqVZQyJPUIZHVCvawFMIg=;
-	b=0sd/CoBQYR9g9DfeZpPgUFZYzW/c1ZJji+LqZ/V/acJjfl5mmUpXWf7hVc7+SaovNUmH
-	 9JfCREupTcHlHVfePR+/yNmkxHq/IEEx5aATv2iAg8xCDKUIuUCm8p3FXprhdZhlxfbyA
-	 XYpLkKKN4+CR9HCDHsAL1oT5Vvj0tNs9MNUNvlK9A4Ev9e3JxkCMWc8kqZxn1T2l9jUY8
-	 lutRphg8HzP0UNPX/wpnNvHOVpu1s62QEP5aEwytUq7cbfSZ7qPS7btwgn2UV1jB0oJL6
-	 D5FY+IZyVQTnqIsIrl5KQXJZEoM7W7pzA2TqIsNr00wEBw+FVmRrdceivDCR5cVIRTQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793875087;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 Organization;
+	bh=Kb0CzJzsHsZ+UWHQAp2uA/S+bpBIx9myNk0nvO3EvbQ=;
+	b=SiziMTp/xXZFAqLWyYjoKVeKiLPBcOc1RgBmDqxqUJMmt+wFXQ4ENiFUc8xV2AA5p/hV
+	 5ZbuqVeHlNM+Fz9p2f89OvJ3QyNXxsdPhyjLUKyEYZQNhkCb2mWrsFYblx+DNJBTkBtwv
+	 aGUVK3LeScZ1gQGgB9KuTmO+4cb2M6kuvua9zp5kxJQ+RgvoV/wP4m0YC+M/OIT0P8LEa
+	 /EEUSqS5fCImEtjObR+0eg/7sLOPDFxTNJbs2GC1tweqcnzjPgsYiSGQ229YWvrxhDsbc
+	 qeA/1zwJ5CyyzACFK4XsunPvvfTfqJcXjZYZOStgNibJ9OENk/KLygvVG2OoNnDOvxw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WrMJ9jdV;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=A4rKjlRB;
+	arc=none smtp.remote-ip=192.198.163.12
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A0D606A326;
-	Thu,  5 Nov 2026 10:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77B4606A326;
+	Thu,  5 Nov 2026 10:38:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D77B4606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WrMJ9jdV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369CA1F00A1B;
-	Thu,  5 Nov 2026 10:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793874209;
-	bh=EdnV/i4B0S0fh3g81bf4RkgqVZQyJPUIZHVCvawFMIg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WrMJ9jdVqMB/+klFKPsxQ8m9Q2qKNJQ3adCE8vFYfbB8tr1I9sCMmjMeKiFsoDP+c
-	 jkyGE/XGllGI0hhhPsCFf6PSiNCRk9M5As0SNQ2S7wBUSGFM00ff+nLkrkOamSzw2z
-	 A0NB72DU/XhVarz+wvVRKfXEwmHB+jcb8ey0j22y7WuAkaqnl20plErLAq1WgDfbII
-	 ph1KfxNXJkWN3ksj9oLixwTKgoMhvXgAoEWk3c6uqqwjm3oP6FHvGCp0/te1/DTr4b
-	 YaiIzx73dGgXfcTyuZamxewcAmxUAubZMNUIgaLp6xenLUpyOVAR8ySV1IJyijRCFT
-	 Y9SUG0gPpE4mQ==
-Date: Thu, 5 Nov 2026 10:23:24 +0000
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>, arm <arm@kernel.org>,
-	soc@kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Mika Westerberg <westeri@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	James Morse <james.morse@arm.com>, Ben Horgan <ben.horgan@arm.com>,
-	Sizhe Liu <liusizhe5@huawei.com>
-Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
-Message-ID: <20261105-quizzical-wine-oryx-e6f91a@sudeepholla>
-References: <20261003095924.1370238-4-thierry.reding@kernel.org>
- <928b3eaf-32da-43a9-9ca5-d59ef8a3b330@app.fastmail.com>
- <auslF5pwDHtcNoCy@orome>
- <bcad1d7e-387d-4251-8974-7f0dcd2f9734@app.fastmail.com>
- <autADOKsSVVMn6r9@orome>
- <CAJZ5v0iyaHGj2b7H8g0nqrxvz8GpXiE6hkVp9RM7KF+KDckjrA@mail.gmail.com>
- <autmcaraWcXIoRfZ@ashevche-desk.local>
- <20261104161125.00000523@oss.qualcomm.com>
- <20261105-inventive-partridge-of-maturity-793a2e@sudeepholla>
- <8f45711b-d415-4694-a47a-12d4b7427e0f@app.fastmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=A4rKjlRB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793875087; x=1825411087;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=eqO4A+ClsqjEqfXPQ0TFlIOZ+1UsCC9oIYRbbnK4e7s=;
+  b=A4rKjlRBVFVKIEQC4EavgCR17/xSyjTrOEB2Tb84HNkL6B9y4XJRT1QM
+   iUwkaAxPJL3QUyzkBOA2luwvYVxfQEtYxAZEW+GgljOK2viemRDECySII
+   WP7y3aEe+2a85svsfCglP2dbIrcCrEpO3+UJsHfe9yqiygMRa6YlwWPEW
+   SH/E8Be2sTsitocPTdbj6RjtMQXjuD7nznitbEIfRXlPNJPABOF93RqS8
+   OPhcFvq5cMM3UjilmzE5ltY/OlPLJqNBytdS6Dli+9Pk356d8cgqYZwW5
+   whsC1IhkOREAn7phf37f1DlJwQbvCLs1O+8Yiwt+HbJIKiDSNPAN1i8lB
+   g==;
+X-CSE-ConnectionGUID: B8xcpbARSGSwQZmhBQ2uSA==
+X-CSE-MsgGUID: WkGLZSL4SyOFx13P6djZZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2560338"
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="2560338"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 02:38:06 -0800
+X-CSE-ConnectionGUID: xIegnpX+Sr+k5gjNuD4pbQ==
+X-CSE-MsgGUID: Wcy7neyfQa2lUKLW6Cyinw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="7281977"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 02:37:54 -0800
+Date: Thu, 5 Nov 2026 12:37:51 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Mark Brown <broonie@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Radu Pirea <radu_nicolae.pirea@upb.ro>,
+	CL Wang <cl634@andestech.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
+	Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>,
+	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	Frank.Li@oss.nxp.com, vkoul@kernel.org
+Subject: Re: [PATCH 1/1] spi: use dmaengine_desc_set_callback()
+Message-ID: <auxcf206A1yMnHkX@ashevche-desk.local>
+References: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
+ <2154003.0S5aU1g85B@diego>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -78,92 +130,58 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8f45711b-d415-4694-a47a-12d4b7427e0f@app.fastmail.com>
+In-Reply-To: <2154003.0S5aU1g85B@diego>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Nov 05, 2026 at 10:54:42AM +0100, Arnd Bergmann wrote:
-> On Thu, Nov 5, 2026, at 10:30, Sudeep Holla wrote:
-> > On Wed, Nov 04, 2026 at 04:11:25PM -0800, Jonathan Cameron wrote:
-> 
-> >> 1) Basic stand alone driver stuff.  Mostly that's all pretty standard
-> >>    and follow the specs where possible.  If there are gaps start asking
-> >>    questions. Linux definitely  doesn't support all the stuff that has been
-> >>    added to the spec in recent years.  So this covers things like register
-> >>    addresses, interrupts etc.  All fine, hopefully a subsystem maintainer
-> >>    can take a look and will have enough of any idea.  If not ping the folk
-> >>    on this thread for help.  Things are a bit flexible for consumer type
-> >>    devices where fixed and bodges are common, generally less so if it is
-> >>    server grade hardware.
-> >> 
-> >> 2) Stuff that is an ACPI spec gap or place where we'd expect generalization.
-> >>    There are several examples of this on list this week and a few more in
-> >>    my inbox.  The particular series here might fall into this category.
-> >>    I've not figured out enough of the details yet to say definitively.
-> >> 
-> >
-> > Nicely summarised or categorised Jonathan. Nothing much to add.
-> 
-> +1
-> 
-> >> I'd also expect a driver using AML as the target interface to either
-> >> point at a published spec doc, or to include some snippets
-> >> of the AML - that can be a lot easier to read than the driver code
-> >> (imagine reading DT by only looking at how drivers parse it).
-> >> 
-> >
-> > Ideally, it should be just HID that any vendor needs to publish unless
-> > they make use of any custom methods or something device specific like
-> > DSD/DSM. I would expect most of the devices to use standard methods and
-> > properties that are already well defined in the ACPI spec.
-> 
-> >> Given that has new ABI etc, I'd expect that to have gotten broader review
-> >> as well.  Probably keeping it to linux-tegra and lkml alone wasn't
-> >> going to result in anyone noticing!
-> >> 
-> >> https://lore.kernel.org/all/?q=20260929095915.2215685-1-anrao@nvidia.com
-> >> 
-> >
-> > Agreed, it shouldn't hurt to cc linux-acpi for such driver ACPI enablement
-> > patches.
-> 
-> Is the "BMRQ" in
-> https://lore.kernel.org/all/20260929095915.2215685-3-anrao@nvidia.com/
-> a custom method then? 
-> 
+On Thu, Nov 05, 2026 at 10:52:38AM +0100, Heiko Stübner wrote:
+> Am Montag, 2. November 2026, 18:39:58 Mitteleuropäische Normalzeit schrieb Frank.Li@oss.nxp.com:
+> > 
+> > Replace open-coded assignments to callback and callback_param fields
+> > of struct dma_async_tx_descriptor with calls to the
+> > dmaengine_desc_set_callback() helper across SPI bus drivers.
+> > 
+> > No functional change intended. Prepare make to struct
+> > dma_async_tx_descriptor private to the DMA engine.
 
-Iâ€™ve quickly reviewed the patch; it does implements a custom method BMRQ
-rather than a standard or out-of-the-box solution. More details on this is
-used based on my understanding below.
+[...]
 
-> How does this relate to the EC and PCC interfaces in ACPI systems?
+> > diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+> > index 1a81fd94b4396..f8d6cea2f3dad 100644
+> > --- a/drivers/spi/spi-rockchip.c
+> > +++ b/drivers/spi/spi-rockchip.c
+> > @@ -475,8 +475,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+> >  		if (!rxdesc)
+> >  			return -EINVAL;
+> >  
+> > -		rxdesc->callback = rockchip_spi_dma_rxcb;
+> > -		rxdesc->callback_param = ctlr;
+> > +		dmaengine_desc_set_callback(rxdesc, rockchip_spi_dma_rxcb, NULL, ctlr);
+> >  	}
+> >  
+> >  	txdesc = NULL;
+> > @@ -500,8 +499,7 @@ static int rockchip_spi_prepare_dma(struct rockchip_spi *rs,
+> >  			return -EINVAL;
+> >  		}
+> >  
+> > -		txdesc->callback = rockchip_spi_dma_txcb;
+> > -		txdesc->callback_param = ctlr;
+> > +		dmaengine_desc_set_callback(txdesc, rockchip_spi_dma_txcb, NULL, ctlr);
+> >  	}
+> >  
+> >  	/* rx must be started before tx due to spi instinct */
 > 
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-I am still evaluating how the BPMP driver is intended to operate on ACPI
-systems. In the meantime, I share the same questions noted above. The current
-commit message lists several driver features that may not be required for
-ACPI, which has introduced some clarity issues regarding the intended design.
+Please, use "# subpart(s)" syntax with this tag
 
-> In current mainline, I see that the bpmp driver is used on DT systems
-> by the tegra specific cpufreq, memory and pci drivers, but I would
-> expect that on ACPI those all use shared drivers. Are there any other
-> users that are not already covered on ACPI?
-> 
-
-For ACPI systems, CPUFreq operates through CPPC via PCC, MEMIO, or
-supported backends.
-
-My understanding is that the BMRQ method is called by tegra_bpmp_transfer(),
-which supports Tegra-specific drivers for power domains, clocks, resets,
-I2C, PCIe, and memory. On ACPI, these can be abstracted through PCC
-OpRegions as part of standard methods like _ON/_OFF or other device state
-methods. Although device/memory DVFS is trickier since the ACPI
-specification lacks standard methods for it today, the commit message
-implies these components are largely unused on ACPI systems.
-
-I have raised a query on the thread to clarify this.
+   Reviewed-by: Heiko Stuebner <heiko@sntech.de> # rockchip
 
 -- 
-Regards,
-Sudeep
+With Best Regards,
+Andy Shevchenko
+
+
