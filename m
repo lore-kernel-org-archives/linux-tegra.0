@@ -1,104 +1,132 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.32
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793895185;
-	b=N7Xx87PhMUDT03/5FEmF3ScJYUlSi6gUk3/wa6cmn/y4Yh/9yZiP1OWSk4nW1Apq0Er+
-	 HFnSHq3EdOfQNL5MwGellUr3suEIRj6rnu9sM+4WmbFHXlC3KRjCtA84gbF1snUtip/a5
-	 Vo3HBdaYkHDt4GVTn+QHIwHW225Czj4MGyA0tjMSxt38TiJ81tl5stUtpU/4h1s58A7mG
-	 gHnnB/ik1q21QZW+DJ5AMaAIqRXr8/7QRqhN0YKc6xKeod0Z6CxXahWo+xINRDz2KlNJK
-	 /Fgmj+pBoAs7f/6J+d5dLtbgt6dN1gAQqTry+dC1xynWKEe1iMM7s2EFWtivny8oP7A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793895185;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=JoKz9JZSflI15yAAbzZ6tJBCrkw4uTC3Mv76en8hlbs=;
-	b=ourJwIzeKALP2NfMTdPLoedG8V6Cvk0189h3d2VsFZgn+0OknXsHG1HiF3QnhS9ubSFx
-	 naSjE0t32rq5oBiV3B59dKOgufEEUqYhvqQMLTVEIzUCG/aeqB4w1+GsQaLCItfnKKf3e
-	 N+jTK4EqG6udXq0qGtgKhdVsEHjMEQUn8DOGLwT1TbX22lnY/lc/hssmEQFhUm39mIYXi
-	 SZtCPLBLfJU1xYJ9yrhYTjkGXIKdDfnOAb5omdJZXNiLoq4Z1B0qZhe+yWeV7ix2Iagpo
-	 vRLPo6tXpJ7unPVCA6DQWzTnGhuu79M4SEEAFjB1G1cOGlqGQjGs1SZSapc6Zm36B5w==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=gGu9hUbN;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.209.32
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012032.outbound.protection.outlook.com [40.107.209.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.9
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793895403;
+	b=g7IGqxhSyfevf55VxZzWDlIb+bKmU04Q2t/NtpR6hqYtXiyil2ewmymQCzDtF2WJxD0z
+	 3D/PiCiMXgKRHVYgY5lXXY5+qjRFrtDnN+mTvVws6njQcAWDh82uPE4Kf1eMLpw3kczQ2
+	 43fIXMlHgGYz6E/AnPyASnWhI8/DlMDB1tVu1RYc/jqnItq2rAWbnSiMNUsBeOBVwnDw2
+	 UxifwRjajqzjkcSX5aTrmbIH+KvC+vYh5intIRsYsR2xo7JGLHJ+UZsG4QD6PGPVIn++x
+	 A3KufAQ7zrv4LTXvfOtD1CriKFJ+cvCYtg5r0nHcaoTS818fmnBxoZ7OZFQLho8LBxQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793895403;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=glWYFJWJY1bRMuBsdlN40Etai5OWB/ptNyzICpjIyVw=;
+	b=YcRyK/qFBbla7e4g3JMhMvmyw6SAQA5jLK4tsyNm3pfU8A15r2lWmNd806G1QRQsBUxq
+	 VJhHy/GWqqX5roSlw8mT49z8+VLzUAap5t+JhuPFgJc1JY+T6m0dmIHUMN358wviKhE6d
+	 qZYL2M9R+oKGvWhkmqVHqvxUelStloFdiJSNG8Xv81lnFr5SAWmPrTtgk8tA/n7cUXfOE
+	 0ev8twGk74lDZdaVMmwMywDf9Yl/sk5i0qQE1Hd6pJogknAF3EBQKGCQ6bselMUwqO4oS
+	 QbehC7zu8PolO2BCwqkABV7t+0voMbvwFgYMakU4H+xlv+5MJr814f+Q+ixvtkfJZqQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=XPgBRsel;
+	arc=none smtp.remote-ip=192.198.163.9
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC777606A329;
-	Thu,  5 Nov 2026 16:13:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AC777606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B33606A31B;
+	Thu,  5 Nov 2026 16:16:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 90B33606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=gGu9hUbN
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VZITaCIP8++2O4RCNssqNOdnkl5T1w+CU2y1W96qRs4Gss7brPVY5PGxeVKsEiu7BF/n3pKk1k2lYEFJjRUFf014T3wHICHlJsqbZDM17dcEJSuJN+J8h3O9SjYu3gM/hP78i6nTLDDJlQ2V6Fyw0zp49t5OASLC6K/lUVWj/X2ZRcO9d/4hMzLTNiYFq3YB6g0PpyXK7IGmAfBSxTKkIZhaeH30L+hpBtujnUyrnLEFDjSVGG4L/q/d/0+Pxy2r8DT5+j714zjRhTf8Q4UvPam/UtwraHE65It6uCeI9vn5RlMoR2K2LaBMHgM5unPCFPWjBpeB2y2buJhrYLFATA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JoKz9JZSflI15yAAbzZ6tJBCrkw4uTC3Mv76en8hlbs=;
- b=ySg+Zt+yX0Kc1T5mKQvQKWwSC0qfpSVY39gLWaXmDbB4H4ZqzltjiHcTRXUDX/8IqNnviNSg3BQGlS3x8upDUdanGr7JYqNjI2GBtHxbTA4y0J/o5qZOQUwHXsD4MNXPjMlXB0XYJzEZmXpBfhC5E9U418t1iq6bVNcxX8kJ/v5FSXR8G0i/W8bmxACuY8nnyw1Gp+q9kkTzLysoilmMVtb8j/mlOoxTMLMeXyQLzHg4T9IZsvyNcIG7yxyIN4iz2PEuNHPu2CCie4eYZjFjiXySjGgBr2xeEmey9T8zodI3nRFN5J7V4G5aKw1+H4HEOzEnUl0uwiOqimI9hLLKKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JoKz9JZSflI15yAAbzZ6tJBCrkw4uTC3Mv76en8hlbs=;
- b=gGu9hUbNAjGEhTTS7ehtmsF0WO1tA7uEfv5/E1zcfJwaOFbUuK/ZfJud3lFKdQrYy/Mrq2p6t/n2+NoskEgJC7JZGc2LJTqS7nfWo7c8X+UYD27xaMBXNoEKlMhQOqyHRp4i+u92EFCaTCfZ2RVNsB+yp1D3/SKdjfvi4GbmeHvfUhZSc4D3ln1xXI7PH0KZcrNoBgh4yDLvDSzud7CK3unVaZmx5/WF/QQvIT/Bo0tWFfUDjigkyk57XV87Mu00QGUoPC3IJD+HLvO+uKX+yEjAjNKiSFU0Qdl/x61i3Y+LIw8tAehHjwd12XQ5Q2JPCshRrTcc2IsO6vrQ6H8NIw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LY0PR12MB727857.namprd12.prod.outlook.com
- (2603:10b6:408:3ba::5) by CH3PR12MB8910.namprd12.prod.outlook.com
- (2603:10b6:610:179::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Thu, 5 Nov
- 2026 16:12:53 +0000
-Received: from LY0PR12MB727857.namprd12.prod.outlook.com
- ([fe80::843e:82cd:41ca:f522]) by LY0PR12MB727857.namprd12.prod.outlook.com
- ([fe80::843e:82cd:41ca:f522%5]) with mapi id 15.21.0592.009; Thu, 5 Nov 2026
- 16:12:52 +0000
-Message-ID: <854b1377-9521-4a24-91fe-ea1d213403d4@nvidia.com>
-Date: Thu, 5 Nov 2026 08:12:47 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 12/18] PCI/CXL: Add CXL Device Reset sequencing
-To: Richard Cheng <icheng@nvidia.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Dave Jiang <dave.jiang@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>,
- Jonathan Cameron <jic23@kernel.org>, Vishal Verma
- <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Li Ming <ming.li@zohomail.com>, Alex Williamson
- <alex.williamson@redhat.com>, vsethi@nvidia.com, alwilliamson@nvidia.com,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, linux-tegra@vger.kernel.org
-References: <20261029145703.2185231-1-smadhavan@nvidia.com>
- <20261029145703.2185231-13-smadhavan@nvidia.com>
- <auQC2UECQ8vaelPz@MWDK4CY14F>
-Content-Language: en-US
-From: Srirangan Madhavan <smadhavan@nvidia.com>
-In-Reply-To: <auQC2UECQ8vaelPz@MWDK4CY14F>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0220.namprd04.prod.outlook.com
- (2603:10b6:303:87::15) To LY0PR12MB727857.namprd12.prod.outlook.com
- (2603:10b6:408:3ba::5)
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=XPgBRsel
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793895403; x=1825431403;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BkaWXWS96NrFgGNkwhoCJWLY7qJ4X8CCDmsOslperL0=;
+  b=XPgBRseljxXSs2BBm9hhud4jXCu4lyCDyBczvEg5bm+iqJaZg3IlnvBt
+   KsfVSjLQtETzQbWTYSxbZoUBFSNePco+pLruUUnsvza05zrf23vkGGDOn
+   7UUr1wKKpB8UTqwc/lrB1rpj+FCyFofs03RIT/jmHwPHFBOzOelNeJH+z
+   TYMI4CajnAlg/v6c7zphnc242JRW8t2bM9+1pfzFNXIx3Y2TK0M1DdIQq
+   pblLYAYytrAEi27T7MxMnxvKGwy97gtUCp84rfcGpvQQakQ/5kD2jbKcr
+   KF+n122Ya5T4nsm7nO9ppwi63ibTEUrO7Y91X7jbB5DAcYzkhK8PIkpQh
+   A==;
+X-CSE-ConnectionGUID: EVwiwgsXQkShmLQQAh2Oig==
+X-CSE-MsgGUID: fTgBKD3aR5mXa6dn5xPj3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2568133"
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="2568133"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 08:16:41 -0800
+X-CSE-ConnectionGUID: leBebQCuSFeL56NOhLkwvg==
+X-CSE-MsgGUID: YHmuBu+/RLGamxnWF5zYow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="7358773"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 08:16:28 -0800
+Date: Thu, 5 Nov 2026 18:16:26 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Frank.Li@oss.nxp.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>,
+	Yenchia Chen <yenchia.chen@mediatek.com>,
+	Zhiyong Tao <zhiyong.tao@mediatek.com>,
+	Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>,
+	Kendall Willis <k-willis@ti.com>,
+	Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
+	Nicolai Buchwitz <nb@tipi-net.de>,
+	Karl Mehltretter <kmehltretter@gmail.com>,
+	Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>,
+	Shitalkumar Gandhi <shital.gandhi45@gmail.com>,
+	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>,
+	Robin Gong <yibin.gong@nxp.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Zhaoyang Yu <2426767509@qq.com>,
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Myeonghun Pak <mhun512@gmail.com>,
+	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>,
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
+	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>,
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
+	vkoul@kernel.org
+Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
+Message-ID: <auyr2lqlSegIXFnc@ashevche-desk.local>
+References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
+ <aux2VKHnVLwq_wzi@orome>
+ <auyQEVmA2KeGu9DL@ashevche-desk.local>
+ <2e12316d-d079-471f-9c29-ef5fb765216a@kernel.org>
+ <auygwakavp_Uk52V@orome>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -108,102 +136,74 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LY0PR12MB727857:EE_|CH3PR12MB8910:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43888932-a74d-4385-423d-08df3b57a492
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|23010399003|1800799024|10067099003|22082099003|18002099003|56012099006|4143699003|11063799006|261028144727099003|261022105027099003|261022075727099003|261009223027099003|261026140227099003;
-X-Microsoft-Antispam-Message-Info:
-	Rhb7LogYsChvVEhQ5Th8E1zZwuaW4mM3DQjCx6JYz18pHrzlccZAELQws4to5nOacn4Z29YIQcCw1Sk16xFw9clzA8AftQPnc2Fuo2DNyJ/6iBtLIZEo5KIPAb2Sha4yUJe8Y8epNnJlcTti9kEOs8eUiX87qOwXybQLPo+AarrFn3RZbFtdqnSCpjHtIRo8b2MPapeqyMUqWMHSZ3dFAi96bdqZVKm3ygcZQE5rfWwEszHRVrXVr0ivR53XVBXzBIOtzECiOQT9qniIjwwKzGjnWNQVhqvRwpEim6IvWDfVq3BYNJHeJvsB+s/r3OsHacZRMah3MLcFaQyF7AsnTqFFvWKinsgrq51fmMMACWUt9bugoTMYN0F1i+dT8+1vZh2zQgvVLxTUZ9qEHVLVkztuSW8PgiAG1cgp92DgNww5stfl1X49/E86wonpzcXcIclW4RNgHCGu0wKVkyzPWVZ3Kz0hGc019bx47QE09igShc4JO3gBPB5Qets1HTAuRHlvD10z8psMmiruAtlrmJVjRsMtKAoR+E+ogmPCyXwn7kM+A9ZCsPEP5VnB67OkbxGtFuA9Dc0YIYkcsWGXjVEBzA6H2fMXrRrT81iqyIk4slbPVGaRKtHUqkYVvBIinboxVlbeSe2hpv09fFC5RESG9+w77ApRhKxC/n5F2Y4=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LY0PR12MB727857.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(23010399003)(1800799024)(10067099003)(22082099003)(18002099003)(56012099006)(4143699003)(11063799006)(261028144727099003)(261022105027099003)(261022075727099003)(261009223027099003)(261026140227099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V3Npd2hOMUJNTHBwK2RxK1ZhVTBQbWtGbWFrTHpVcUFvdWNLcXlGbDBhRXlh?=
- =?utf-8?B?WlhzQ0cvREVqUGIxM2xmd1RJUS8yUFJpNmM3UlAvWnpiSE9WSU1hRkNZemFr?=
- =?utf-8?B?cEZnM25VQnNZZjkzRlUzWEJnV1pUNENWTVIxbnlqOUJrV2ExMEFGWVVBclBr?=
- =?utf-8?B?dTU4Y1lPdVlNSFBZdnFlYkhLQWR4U0QxaFlEaStvakUycWh3YTZSRmZUczlp?=
- =?utf-8?B?cmF6Wk9GeVBuNjQ0RCtEVU5jUHFZOGxjckFYbkhVU0NXbVdrZ1Y4VWN3TUVX?=
- =?utf-8?B?aTVsZXVCT2p0Sk1nQllsanBBWjZSKzd4TlBZQmViNmF3bVI5eC9HcDZaVDl3?=
- =?utf-8?B?a2kxbWFwZFpCNytsbDdjZzZEeklxdTZlc2czMTBrU3IySnhIK0dsZDhIOVAx?=
- =?utf-8?B?NSs4Q3FGNDIyM0dJS3lNclpsK01Qajlza2VKTHFmdnJYeXNOb3RKMW9oR0J2?=
- =?utf-8?B?UCtoL2dweWZYQjVyNUR4cWJ4bEtpZzVHZVp3Yyt2ckt2MU00UTN3MFc5Nngv?=
- =?utf-8?B?UjBqSERSQnljakNHQzRlSzYxQkNZVTVJUUx6VmFpSlo2Q2szbzYwd2ZYb0d5?=
- =?utf-8?B?aCtJNTM3V3poYkwwNTg2MElZUDJGV2RRMkxwcTFxWm1XbkhUTEFnUkdWL29J?=
- =?utf-8?B?U21RT3E5VmR3MDNXYVhrY1RVK0w0VGt5WVlGaFJ0MGdZcHd6cDV5VkpPd2Zz?=
- =?utf-8?B?VVVDRnc2TWlUbnZpaU5qeUc1V2x2OWV5cnVKamVibWd4N3VTa1dGZ2dFUks4?=
- =?utf-8?B?MTl6emtjQUJldGFmUHNnQkVqTTNpcTNndHYzaTR1WkFsUUQrSmRINU0zb3RW?=
- =?utf-8?B?UXpQcEVuZkVubWk2SitsNjIxSU1HRDNqL2dQUWVSUDlCY2ptaTMwdUFnb3Bl?=
- =?utf-8?B?M1gvaGxSenBtdkRFZk84TkNsZ2hnalY5SDBMZ0JhK0VIK1JoSWhsM05vbXpx?=
- =?utf-8?B?RUdVU3NMMmk5eFVvdFlZRlcrNUthK1lwRHByWkRIR25rVVh5SjM4MkRsVHBi?=
- =?utf-8?B?aVdod3BMcXZ3QkxCQkU0bmpRb0dzcGo0TjVjcDJGZE1GQWRRNzU2VkVVS1Fk?=
- =?utf-8?B?ak5BclRQZWd5QkVkY2h1R2NuREFRZ20vTnAwdWRPNThUL3FZRktWeTNtbFlJ?=
- =?utf-8?B?V1dOQUxnU0RaUEg1Nmd5MTN3S2FHeDNhTjJrTVVHOGh1aXhCVFVsS0hheDZQ?=
- =?utf-8?B?Rm13RjBGNStGQlBkQ01HVldmb2xjR0xQWW9LY2MvTkxINEJBYlhmWkh0QVRm?=
- =?utf-8?B?YjJzbHF4cjZtSmhWbk83SS9IRllHdU9SalZHMXhmUmN5N2h3Z0VPOUZxQTA5?=
- =?utf-8?B?bGEyd1ZEaEV6ZC9WdmVwVlgwcmZpRzFySmdsa1A2eS9ZWFpMd05zNXFLYUtX?=
- =?utf-8?B?REJoZTV3N2xEY1NxWjdPTzBIWnM5M21uZm1ZNGNvV2d6d2dHUVJOZ080TVJT?=
- =?utf-8?B?MUN1OCtxM2kyZUU2NGJpTVFyWWJUNndmL1dranh0MDN1Zm1tbW44aFlld2Z3?=
- =?utf-8?B?TnNGNlJmZkhCS01WM3NPUU1IS1JGV2x1ME9zeXlvZFlYTXNOemRBa25wZHp2?=
- =?utf-8?B?UWtBQWw3NURZWjIzM0l4ckVmdnJDNmc3cTdTUmtKNlVkMmZaaExZRktuZzFR?=
- =?utf-8?B?UUY1OGJFTEE2NDdiL09jcVpvcFI0T0NOMEN3N3RNNnJmV1daL0NWZktxRDZx?=
- =?utf-8?B?NFBwWHdmTmF6SkJQZ0Fpc01URWJXNjFMMHFQU3VxcnhraytjZDVYdWhyN0x1?=
- =?utf-8?B?Q3d3V2lDSDJWU2VZRS9wVU9Mand4c0pDb3ZMUjA0S0xnRGNISXVydU1qZHI0?=
- =?utf-8?B?c0tuTDZ6SXNjZFlUdXN3RUsvb0JGUzIyWFh1a0FiQVFrMjVsaTNOUjNoNnho?=
- =?utf-8?B?QlJ1YTNHZHRkc1JhNDJxMVdoajY3MEhNRitiWDZuTDRWeFgxMk5qaitIVmdz?=
- =?utf-8?B?bW1aa0dGUnVGSktsVDAxNldhckh5bitkTEZrSEhWMXVuY1cxcE9lbjhzU3Z1?=
- =?utf-8?B?eWVyTGV3Um01T3gwcFROUlYvR1NDN24wVW5CN2NuYlZsUm9iSW1ZVTVtTmc5?=
- =?utf-8?B?Z044OTl4T2RtK3ZzSitTQWdMMEw5KzRnSjBQV2VRdkZLWGwrdmtLL3pGcWRu?=
- =?utf-8?B?ZGhpSzdJbS9NVVByK04zdC9rZUNpN2kvcklPNUFwNnN3K0RnbFVVenlPTmll?=
- =?utf-8?B?YTJLNGw0ejlZNDJFc2xQYWJUMzRhNThRRWRXOEJBdlBYM0w2ZXdydG9GTWNk?=
- =?utf-8?B?M3FvOWo5NkdJekY0b2MrdTJsMU5vM1hud3UyWHlMeGRtMlRqVlR6ZHMzMHRn?=
- =?utf-8?B?dTZ2VUR2UlNNMUh4R1dpUEZ0akN5ZHdDN2lLZlcvQXVzR2NmaERndz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43888932-a74d-4385-423d-08df3b57a492
-X-MS-Exchange-CrossTenant-AuthSource: LY0PR12MB727857.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2026 16:12:52.0357
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: e3R09Pkh+3k43smB6dmmWRCS10uM3VRprEcuSApnd5uz96vlIXvHVq/mV9gCMQx4ex+2XUkd7yhouUxyMz0oNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8910
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <auygwakavp_Uk52V@orome>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 10/29/26 8:22 PM, Richard Cheng wrote:
->> +	/* Allow one retry after the mandatory 100 ms quiet period. */
->> +	timeout_ms = clamp_t(u32, cxl_reset_timeout_ms[idx],
->> +			     CXL_RESET_RRS_WAIT_MS + CXL_RESET_STATUS_POLL_MS,
->> +			     CXL_RESET_MAX_WAIT_MS);
-> This part will make 100 sec clamps to 20s if I understand correctly.
+On Thu, Nov 05, 2026 at 04:34:15PM +0100, Thierry Reding wrote:
+> On Thu, Nov 05, 2026 at 03:35:20PM +0100, Krzysztof Kozlowski wrote:
+> > On 05/11/2026 15:17, Andy Shevchenko wrote:
+> > >>> ---
+> > >>>  drivers/tty/serial/8250/8250_dma.c  | 6 ++----
+> > >>>  drivers/tty/serial/8250/8250_mtk.c  | 3 +--
+> > >>>  drivers/tty/serial/8250/8250_omap.c | 6 ++----
+> > >>>  drivers/tty/serial/amba-pl011.c     | 6 ++----
+> > >>>  drivers/tty/serial/atmel_serial.c   | 6 ++----
+> > >>>  drivers/tty/serial/fsl_lpuart.c     | 6 ++----
+> > >>>  drivers/tty/serial/imx.c            | 6 ++----
+> > >>>  drivers/tty/serial/msm_serial.c     | 6 ++----
+> > >>>  drivers/tty/serial/mxs-auart.c      | 6 ++----
+> > >>>  drivers/tty/serial/pch_uart.c       | 6 ++----
+> > >>>  drivers/tty/serial/samsung_tty.c    | 6 ++----
+> > >>>  drivers/tty/serial/serial-tegra.c   | 6 ++----
+> > >>>  drivers/tty/serial/sh-sci.c         | 9 +++------
+> > >>>  drivers/tty/serial/sprd_serial.c    | 3 +--
+> > >>>  drivers/tty/serial/stm32-usart.c    | 6 ++----
+> > >>>  15 files changed, 29 insertions(+), 58 deletions(-)
+> > >>
+> > >> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > Krzysztof, now look at this case. I would argue that this is even less fit than
+> > > # subpart(s) case, because it might imply anything. Again the problem is the
+> > > bundle, and for such a case (when tons of independent changes are bundled in
+> > > the same stuff, *every* Rb tag has to be explained on what has been reviewed!
+> > 
+> > I think this case is obvious - Thierry reviewed this patch and gives Rb
+> > tag, according to reviewer's statement of oversight. I don't see a
+> > problem here or what is questionable.
 > 
-> However the device is still legal to advertise 100s timeout according to the
-> spec. If the reset procedure takes longer than 20s, driver can read/write to
-> "Control2" register while device is still resetting, which is prohibited
-> by the spec, software should access only "Status2" until completion, error,
-> or expiration of the advertised timeout.
+> Correct. I looked at this whole thing and approve of it.
+
+for this type of bundles it's not obvious.
+
+> If I review only parts of something at most I'll give an Acked-by.
+
+Which is strange, don't you find it? The review is not an acknowledgement.
+These are two different operations.
+
+> I don't think I've ever done partial reviews. I don't think you can reasonably do
+> that
+> because if you don't know what other parts of a patch are doing, how can
+> you say that a specific hunk does what it's supposed to.
 > 
-> I wonder what's the reason here, if we really going to disagree with the spec,
-> though I think it's not a wise choice.
+> Patches are an atomic set of changes,
 
-Hi Richard,
+Of course, not always the case. This patch is a bundle of atomic changes
+in a single drop.
 
-Thanks for highlighting. You are right. The 20 second cap came from 
-Benjamin Cheatham's v13 suggestion that a 100 second wait was too long,
-but it let the driver access Control2 while a device advertising 100
-seconds could still be resetting.
+> so I don't think it makes sense to review only parts of it. If you can't be
+> bothered to look at the entirety, that's absolutely fine of course, but in
+> that case don't provide a Reviewed-by.
+> 
+> Or, I suppose, you do and then you bear the consequences of lending
+> credibility to something that you haven't looked at or understood.
 
-I checked the spec again and in v17 I dropped the cap. The wait now uses 
-the timeout the device advertises, up to 100 seconds, and only Status2 
-is accessed until reset completion, error, or expiry. Control2 cleanup 
-runs afterwards.
-
-The cost is that the global region lock can be held for that long. The
-patch 13 commit message now says so. Unless there is others objection to 
-using the advertised timeout.
+No, I review *my* part, that I understand and I confirm.
 
 -- 
-Regards,
-Srirangan
+With Best Regards,
+Andy Shevchenko
+
+
