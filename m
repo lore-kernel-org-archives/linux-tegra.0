@@ -1,74 +1,143 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793834649;
-	b=DjtFv2/lWQtRM8eoaXzjkGhg1JYiFtW0Po9aHAA8SXv+qsIBQX9Xs5KhwRXMCBMcVThS
-	 dT9z4YnfH82BB3M3krsS6CiMYad5UNDxI4BUR2ixSQiRBW6T76MNa31HYrPNI326lkVHG
-	 ff4kg09I4oF0S3dD95LqSmAVEK/sWeijLgnDlIfEaptROY4zc6emq3QP9EyVRB7F8pudz
-	 ydcxzoV0FzMNuz6kUaq1uyOkfB4ZI+B3bxgyk3ej0+OXW1avbvh/r4zmBvMcyhuDPwKLR
-	 vbsoDFZwLqq0Ld9W/tD4NWFKh64RXnAHycwILHhOwnkrgyC+rebuTYVnYuavYCzLfLg==
+	t=1793837502;
+	b=tdS3xA0x8Pzj033DGbA8zsTCdBoYqJt3IITPDdW7r1/284buRO2BO0pzFisMno/wWAg0
+	 0QZLjGqbVryYmuacwsKjDJnJYOmWs1Z9bnnNBNYrG01h9gGfmlKA/08ghgbdlXwIemAQt
+	 /kpoSyR6P3fM8ydukJWiL6CLoiUKGGVr/xUIhAxXXdZR7JvKphX9aO5m3juiQHYH9pCFc
+	 I4eiKgkyeUOqVnp1hOtkucQSnOl9rnI3J+sv9ZTpyCQIKMjm6AnEP4G/QYQGc3PoHkE9U
+	 V9lVuEBjRdcdJonvunsbyebVSw2j7dqfJQaq4vFf4cBEBzEOeGgKdTXMQ+PN6zYp4+A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793834649;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Date:From:To:Cc:
-	 Subject:Message-ID:In-Reply-To:References:Organization:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Spam-Status:
-	 X-Spam-Checker-Version;
-	bh=jYeLi8tUmdcFROiq/jmTkZ4ahpzcaw03wqXaIhratXY=;
-	b=q3+kUTvPbYfdTRmoKDhyxloTHgPn899rkxlRMbyQVxcrCI5DGb11VJpZSL2Oeh9XvA/6
-	 9wkrxTpdegXsRn/Wvje9tWwi+EuwuxJC2Ann1c/ha5ATyMjco43C+Iiw/hDOcpqykyihs
-	 55eWYQSBxkypu1/wuksGB5DK5IVw1om/tG/JXolA16leg2UEUQRw5di4XZuY/NAOXyKTs
-	 XyLwltEQW8GCP9GKKbdV8uWfTEnLLBhSIlFb7CHK/1QUsLn65Y+ureaIzpyhxJE8Xi1uN
-	 zZUiLwriyzRPx/5Q+LzGYQrps//YQMRfG6RCD1CCXrRjGgjG0VaS3xemaSrotn4DAdA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793837502;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
+	 To:Cc:Subject:Message-ID:In-Reply-To:References:Organization:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Authority-Analysis:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=zVQeXawDrt23PfxpSVgUQcYKvrbayL+kqPTtMOiJzmo=;
+	b=r8r2caXq8AZ8u1ZWxl+ire4IAsVmnkHagKV4SdMS7eVsSdeKHdm2lTu1M0E6dwgovO8e
+	 nYo2NFKc8IYaHBI3Jtg5GsydHeaTvuP3ayo4JiLHIiAPvZrpleNScZhQe2M8FdTvo710n
+	 mGIFAFwKU9c7gikXq9u90rh5NpA+nuLi6sa1yGQWz5ERAalw+drXQaHWK6b2eVv91WeiV
+	 uO/cg9x48xtBfCf0dZVVgIKH/tcxeJPepwe9dW1J+LeiM+CIhabIRBIyG48GIcjAcNC9Z
+	 MbmWtxRi04+2Ill3X4dn9cIFN7YIArBHvnqVq3z2E7lFwiakAwMpGJ7TBRYxxeig8Xg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.microsoft.com;
-	spf=pass smtp.mailfrom=linux.microsoft.com;
-	dkim=pass header.d=linux.microsoft.com header.i=@linux.microsoft.com header.a=rsa-sha256 header.s=default header.b="J6eQ9pL/";
-	arc=none smtp.remote-ip=13.77.154.182
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B317E606A31B;
-	Wed,  4 Nov 2026 23:24:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B317E606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="d/1758ii";
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=DUXhrNpj;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DA1606A329
+	for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2026 00:11:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 87DA1606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.a=rsa-sha256 header.s=default header.b=J6eQ9pL/
-Received: from localhost (unknown [4.194.122.144])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6F0C820B7166;
-	Wed,  4 Nov 2026 15:23:40 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6F0C820B7166
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1793834632;
-	bh=jYeLi8tUmdcFROiq/jmTkZ4ahpzcaw03wqXaIhratXY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=J6eQ9pL/r15bH7Qh1CB8Nj21vQZAsQ49wPwIRLFaB/znP1aeZE+SgGk+3BMCorZX8
-	 qb7tbVHfG/vE6yOjWiSn1CVWqWZ2AtQU2yrQR8m++pexA+HDASvrrghR4WKGicGN/4
-	 Tg56ukofwyEtVSfUNJqMKpz4JzwcXy74SP9GRGzE=
-Date: Wed, 4 Nov 2026 15:23:51 -0800
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Cc: iommu@lists.linux.dev, Alex Williamson <alex@shazbot.org>, Alexey
- Kardashevskiy <aik@amd.com>, Bjorn Helgaas <bhelgaas@google.com>, Catalin
- Marinas <catalin.marinas@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Joerg
- Roedel <joro@8bytes.org>, Jonathan Cameron <jic23@kernel.org>, Jonathan
- Hunter <jonathanh@nvidia.com>, Kevin Tian <kevin.tian@intel.com>, Krishna
- Reddy <vdumpa@nvidia.com>, Lukas Wunner <lukas@wunner.de>, Nicolin Chen
- <nicolinc@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Samuel Ortiz
- <sameo@rivosinc.com>, Shameer Kolothum
- <shameerali.kolothum.thodi@huawei.com>, Steven Price
- <steven.price@arm.com>, Suravee Suthikulpanit
- <suravee.suthikulpanit@amd.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Thierry Reding <thierry.reding@kernel.org>, Vasant Hegde
- <vasant.hegde@amd.com>, Will Deacon <will@kernel.org>, Xu Yilun
- <yilun.xu@linux.intel.com>, kvm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-tegra@vger.kernel.org, jacob.pan@linux.microsoft.com
-Subject: Re: [PATCH v8 12/15] iommufd/viommu: Allow PCI TSM backends to
- provide vIOMMU operations
-Message-ID: <20261104152351.00002565@linux.microsoft.com>
-In-Reply-To: <20261104161632.3547423-13-aneesh.kumar@kernel.org>
-References: <20261104161632.3547423-1-aneesh.kumar@kernel.org>
-	<20261104161632.3547423-13-aneesh.kumar@kernel.org>
-Organization: LSG
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=d/1758ii;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=DUXhrNpj
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A4LUgsG2828756
+	for <linux-tegra@vger.kernel.org>; Thu, 5 Nov 2026 00:11:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zVQeXawDrt23PfxpSVgUQcYKvrbayL+kqPTtMOiJzmo=; b=d/1758ii96ozVzWf
+	BzzbSupEWj/IFudrwFQhlL0mxAy495leOOosbr+TuXez5+xLgMEe3AEPxL0W6b9r
+	Uj8Pf8nlU8Hg1gZWQKTep2g869qG9qoiRJR5nYSwGz8WipojGnfUTNiuOm+oa7NS
+	FZgygGxzyCOhlXNXdNNfPU0oH7nT2juze6RJ2RlTQAm3B9dcGAIPgLiSDlC+9jtB
+	I74mO2jf+pOWK/kwSF7Xc6iKzcoLHVJFFYrHp+aeVlmb05UGSvZhqzS30AJjzTW9
+	QWD3AGHJ9Qt6WVdxNu6ZCV9UwugkXsxhv1vnJG7lN7AdAkpI8Pjxayn4QYQAyWwT
+	erYWuQ==
+Received: from mail-dl1-f70.google.com (mail-dl1-f70.google.com [74.125.82.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hr284ud96-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2026 00:11:34 +0000 (GMT)
+Received: by mail-dl1-f70.google.com with SMTP id a92af1059eb24-15a84442a0bso48992c88.0
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2026 16:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793837494; x=1794442294; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:organization
+         :references:in-reply-to:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=zVQeXawDrt23PfxpSVgUQcYKvrbayL+kqPTtMOiJzmo=;
+        b=DUXhrNpjhMeYQIVFcafIL6b6ZpKJQrml9gtmsmgmN6VylwFUUDcEj4ea86bqeW6Qob
+         ru88WLPaYjFEfwI9IzTUCyafBRnCyElu/Jxr5NnP6wXReo5mgmZD7tvZztiqwfQX/z6E
+         Ip6tzk0j9Qj/bU1C4czIWzURRJrhPXSqFcJWG6ytICf+uJjKCx+XPvI+YdB6Cr+uvlPm
+         +vdNA+iWShsSq24siGcmXcFZH9jfCVd0VzvOleMangKVZLMfMZV95cdqOsQgBet34227
+         Eof2OigcIj88usZNdK3VtEjDJC5QDT1THD+4PAQYXlQrDFGbkEqybv2UOcI9P8A0NgS3
+         e3BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793837494; x=1794442294;
+        h=content-transfer-encoding:content-type:mime-version:organization
+         :references:in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=zVQeXawDrt23PfxpSVgUQcYKvrbayL+kqPTtMOiJzmo=;
+        b=Ku++e5nV1lV5xL90HwAyfGbAIM9HJ89ewZCgucEVasMcqlOIRcN/qWQKCj4ss9nxoV
+         mMl631RNifNYLl91LQnPxOhu4aFZofPBIbqBSH1unxAEjXgvdw+sxt/xIkrTi4Kl6dRj
+         Vg4LaeFJ6aPZDdKh54lMl3QSrj4mkiVPiD0N3q61Pu8DhA1sncRpg/Gwi9jdhoU+4Tom
+         c3NyUTTpVo13iyv8igSiek/lZVzERhZzJLi+Z9orChYUh8XrPUYRm16KCMm71aPp1F0f
+         3ybJBaL+gtRuDXrX2MnCjGjPT6O8+lkLITgyxc3tKiJnNZUSbu89BKB3+iiWJrINmZGk
+         qI+w==
+X-Forwarded-Encrypted: i=1; AKwUvBy7grB0f7DJSBrGdSa2be+hCsVk1fplUojqkvbtVF2OpK79Sn1slnraSJ1TQJBclIoQUZop4J9woNwS0w==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+ZFocgulsz1CPMw8kzXo9itNvFt5b7HeD51wSE5w5ZdqSunTJy
+	mnWEqyTdz6RoPirWyuxt+zBPL02IXqUy7IgCbEJrhC1pyePlNZCWdYDkXlwkOb7eXN5NLjx1Iau
+	v1NrvA71wS1cBzpxMo+xzG3H4BNT3r7sY77Ak+39o0iu1uph+15S6imdTE0pQoh1yyw==
+X-Gm-Gg: AYBFou1r+eEkS7qdWjtc2VvMMIW6ugKYmI0N4k0ePWr0g5Y+2Lpc2tgoEvh5cBKzZTr
+	rZsdETQw1EG5H0fMsha79XMdN9cY+QKzUQxhmshG9ubiFxRmfpdk7mxon13gvN6hfXDQhBypz7l
+	aZXlkW7sjJbHqXHsDOM0aIsyAqj2KczVLM9Zz/x8JwJTmNP9kAFBx7zaiRD/TjKMutsidTENixw
+	M0ZCu6GMakaqbL7GlzcCab5kBITcuSSbsVakLTm4sZLAT3+YjGfKRk+Pf9S94/faM6crhjnuPd/
+	dn9QPapvxoeuyx/lSfMhgGk45t35EsfQjtLj9e95XTVCVDIJfa0WN1ANmkvO2VIRtms2C+13H7Q
+	agcKIjBpQdcF1wBYPNcg9WWEF2NKY0KNJJBtGXGElOOPLaaPuGfJH4QwZh6UJP/cdkiMjRpGro3
+	0BVs3yvYaAy7kxrol/przW3ip6rg==
+X-Received: by 2002:a05:701b:418c:10b0:1a7:4c5f:57e9 with SMTP id a92af1059eb24-1b24f4e4cdemr1394425c88.27.1793837493643;
+        Wed, 04 Nov 2026 16:11:33 -0800 (PST)
+X-Received: by 2002:a05:701b:418c:10b0:1a7:4c5f:57e9 with SMTP id a92af1059eb24-1b24f4e4cdemr1394386c88.27.1793837492930;
+        Wed, 04 Nov 2026 16:11:32 -0800 (PST)
+Received: from localhost (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b245c1c272sm10961037c88.8.2026.11.04.16.11.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2026 16:11:32 -0800 (PST)
+Date: Wed, 4 Nov 2026 16:11:25 -0800
+From: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>,
+        Thierry Reding
+ <thierry.reding@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, arm
+ <arm@kernel.org>, soc@kernel.org,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Len
+ Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>, Hans de Goede
+ <hansg@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Mika Westerberg
+ <westeri@kernel.org>,
+        Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+        James Morse <james.morse@arm.com>, Ben
+ Horgan <ben.horgan@arm.com>,
+        Sizhe Liu <liusizhe5@huawei.com>
+Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
+Message-ID: <20261104161125.00000523@oss.qualcomm.com>
+In-Reply-To: <autmcaraWcXIoRfZ@ashevche-desk.local>
+References: <20261003095924.1370238-1-thierry.reding@kernel.org>
+	<20261003095924.1370238-4-thierry.reding@kernel.org>
+	<928b3eaf-32da-43a9-9ca5-d59ef8a3b330@app.fastmail.com>
+	<auslF5pwDHtcNoCy@orome>
+	<bcad1d7e-387d-4251-8974-7f0dcd2f9734@app.fastmail.com>
+	<autADOKsSVVMn6r9@orome>
+	<CAJZ5v0iyaHGj2b7H8g0nqrxvz8GpXiE6hkVp9RM7KF+KDckjrA@mail.gmail.com>
+	<autmcaraWcXIoRfZ@ashevche-desk.local>
+Organization: Qualcomm
 X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,396 +148,222 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Authority-Analysis: v=2.4 cv=JdQpPkKV c=1 sm=1 tr=0 ts=6aebc9b6 cx=c_pps
+ a=SvEPeNj+VMjHSW//kvnxuw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=VwQbUJbxAAAA:8 a=Ikd4Dj_1AAAA:8 a=QyXUC8HyAAAA:8 a=t4CJLuyQXvHctLNzf8QA:9
+ a=QEXdDO2ut3YA:10 a=Kq8ClHjjuc5pcCNDwlU0:22
+X-Proofpoint-ORIG-GUID: FLVWP7mNw-qrs73tVPVaK-jVwEtU60QD
+X-Proofpoint-GUID: FLVWP7mNw-qrs73tVPVaK-jVwEtU60QD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA1MDAwMCBTYWx0ZWRfX5uTyzLA7j2Rr
+ tdUIGGdMsz9kfDVLALg2drXwx9oZbuHYbSm7hmZeA7cQeQNMMnDWJ3YoT2dV4EhoOLfYRQqSdu3
+ 9ovX9PLq8kqypGsA0F6Mur/43V819gN3qs+t51+24YSdUO8hBwcfV3ytGYaYqqfpF65fm8sz7So
+ qDN7HjZFFgQpN52lh9GOpfKmKR32Usb4S1He5pEuFG3vutttmQg7/LlOg5QtZSFYE2Ghjzle2Jm
+ AaAmnzBVqKkIjf+qJKzCmkxAqd76uLoelGQyFkhoTXuP+Y2ChPSPNX7W/8P+DyLQ/KfG8k0Mz1I
+ U9I84kgsgC+Pgl4PkQvfAADkOLJzhaJZzCh9z6lWtTgTErgbZQlKL4+ZwaaEEF01aTfXC6IaJJV
+ 8ovIqgHKMRQPR+0h7OSvR+ynJ3PeVxVsp9aNeOaxESpBdu2/5Q3K9bYPFZqQkefXNCTKh7YN45e
+ YHsj9XzVIhMAEaDIhmQ==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA1MDAwMCBTYWx0ZWRfX8DKLbVpCauJ6
+ 2LjaR+WDensjK+MFc9FNZ195OylAaTJFf9uBfTDMqnz1V7/8111MHmHybFcFT1mr/fT20Br5HYe
+ LMLYf2021do8Np/CY2HCfQejNZaDcIE=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-04_05,2026-11-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 adultscore=0 clxscore=1015
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610300000
+ definitions=main-2611050000
 
-Hi Aneesh,
+On Wed, 4 Nov 2026 19:08:01 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-On Wed,  4 Nov 2026 21:46:29 +0530
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
-
-> In confidential-computing configurations, a vIOMMU may be implemented
-> by a TEE Security Manager rather than by the physical IOMMU driver.
-> Such an implementation also needs the TSM identity when creating and
-> validating vdevices.
+> On Wed, Nov 04, 2026 at 05:28:18PM +0100, Rafael J. Wysocki (Intel) wrote:
+> > On Wed, Nov 4, 2026 at 3:41=E2=80=AFPM Thierry Reding <thierry.reding@k=
+ernel.org> wrote: =20
+> > > On Wed, Nov 04, 2026 at 03:11:09PM +0100, Arnd Bergmann wrote: =20
+> > > > On Wed, Nov 4, 2026, at 13:42, Thierry Reding wrote: =20
+> > > > > On Tue, Oct 13, 2026 at 07:22:23PM +0200, Arnd Bergmann wrote: =20
+> > > > >> On Sat, Oct 3, 2026, at 11:59, Thierry Reding wrote:
+> > > > >>
+> > > > >> Where is the ACPI binding documentation for this driver, and who=
+ is
+> > > > >> responsible for reviewing it? =20
+> > > > >
+> > > > > Sorry for the late reply, this fell through the cracks.
+> > > > >
+> > > > > Admittedly there's not much of a formal process here at all. Anyt=
+hing
+> > > > > I've received up to now seemed to be fairly straightforward suppo=
+rt
+> > > > > extensions like this where the ACPI tables basically provide the =
+same
+> > > > > information as the DT via standard resources like register ranges.
+> > > > >
+> > > > > I suppose for anything beyond this, we'll want better documentati=
+on and
+> > > > > broader review.
+> > > > >
+> > > > > Is there anything in particular that you're looking for? Should I=
+ guide
+> > > > > people internally to always Cc linux-acpi for anything that conce=
+rns
+> > > > > ACPI? =20
+> > > >
+> > > > I don't know, I'm also still learning about how this is done, I
+> > > > was hoping that there was already an established way. =20
+> > >
+> > > Yeah, me too. Maybe Rafael and Len can provide some guidance here. =20
+> >=20
+> > I cannot speak for Len, and he has not been actively involved in the
+> > maintenance of ACPI support in the kernel for several years.
+> >=20
+> > As far as I'm concerned, the code maintained by me is mostly located
+> > in drivers/acpi/ (as per the relevant MAINTAINERS entries) and it is
+> > mostly generic code related to ACPI support.  I generally don't
+> > maintain device drivers using ACPI support except for the ones under
+> > drivers/acpi/ which mostly bind to devices representing interfaces
+> > defined in the ACPI specification (which is kind of a special case).
+> >=20
+> > But there is more.  There is ACPI support code in other places (like
+> > for instance gpiolib-acpi maintained by Andy and Mika, or platform-x86
+> > drivers maintained by Ilpo) and there are experienced kernel
+> > developers in the ARM ecosystem with quite a bit of ACPI-related
+> > knowledge (Hans, Jonathan, Sudeep, Lorenzo - all CCed) who can be
+> > reached out to for guidance (and arguably they have more experience
+> > with ARM platforms than I do).
+> >  =20
+> > > I don't know how ACPI on more traditional platforms works, but I imag=
+ine
+> > > that it's a lot of the same anyway, except perhaps that people have m=
+ore
+> > > experience with the spec and today might be doing a good job already.=
+ =20
+> >=20
+> > If you have any specific questions, I think I should be able to answer
+> > at least some of them, but I'm afraid I cannot give you general
+> > guidance on how to do ACPI support in device drivers that would be
+> > universally useful.  Different drivers have different needs.
+> >=20
+> > There are things in ACPI that are not present in DT and vice versa.
+> > It also depends on what bus types we're talking about (platform vs PCI
+> > vs USB etc). =20
 >=20
-> Allow VIOMMU_ALLOC to first query the TSM associated with the target
-> PCI device for vIOMMU operations. Fall back to the physical IOMMU
-> driver when the TSM does not provide operations for the requested
-> vIOMMU type.
+> And don't forget the big player(s) such as Microsoft that from time to ti=
+me
+> creates an "extension" to the ACPI (in means of additional tables or how =
+some
+> of the existing data should be interpreted if it's not clear from the ACPI
+> specification). For instance, above mentioned USB ACPI support for some c=
+ases
+> heavily relies on the MS "extensions". Or earlycon support for ACPI is ba=
+sed
+> on MS defined SPCR table. And so on...
 >=20
-> Resolve the PCI TSM association under pci_tsm_rwsem, pin the module
-> providing the operations, and take a TSM device reference. Store the
-> TSM device in the vIOMMU and release both references on allocation
-> failure, fallback to the physical IOMMU driver, or vIOMMU
-> destruction. Keep the module pinned until after dropping the device
-> reference, since the final put may release the TSM device.
->=20
-> The device reference preserves the TSM allocation. Backends providing
-> vIOMMU operations must not unregister their TSM while the module is
-> pinned, since the reference does not prevent backend resource
-> teardown.
->=20
-> This enables the Realm vIOMMU implementation to provide its operations
-> through the PCI TSM backend and retain the TSM identity needed by its
-> vdevices.
->=20
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: iommu@lists.linux.dev
-> Cc: linux-pci@vger.kernel.org
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> ---
->  drivers/iommu/iommufd/viommu.c | 35 +++++++++++++++++++++++++++-----
->  drivers/pci/tsm/core.c         | 22 ++++++++++++++++++++
->  drivers/virt/coco/tsm-core.c   | 37
-> ++++++++++++++++++++++++++++++++++ include/linux/iommufd.h        |
-> 2 ++ include/linux/pci-tsm.h        | 24 ++++++++++++++++++++++
->  include/linux/tsm.h            | 25 +++++++++++++++++++++++
->  6 files changed, 140 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/iommu/iommufd/viommu.c
-> b/drivers/iommu/iommufd/viommu.c index 16e8b6421f1f..1686f19c5060
-> 100644 --- a/drivers/iommu/iommufd/viommu.c
-> +++ b/drivers/iommu/iommufd/viommu.c
-> @@ -15,6 +15,8 @@ void iommufd_viommu_destroy(struct iommufd_object
-> *obj)=20
->  	if (viommu->ops && viommu->ops->destroy)
->  		viommu->ops->destroy(viommu);
-> +	if (viommu->tsm_dev)
-> +		tsm_put_device(viommu->tsm_dev);
->  	refcount_dec(&viommu->hwpt->common.obj.users);
->  	if (viommu->kvm_file)
->  		fput(viommu->kvm_file);
-> @@ -30,6 +32,7 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd
-> *ucmd) .len =3D cmd->data_len,
->  	};
->  	struct iommufd_hwpt_paging *hwpt_paging;
-> +	struct tsm_dev *tsm_dev =3D NULL;
->  	struct iommufd_viommu *viommu;
->  	struct iommufd_device *idev;
->  	struct iommu_device *iommu_dev;
-> @@ -49,15 +52,33 @@ int iommufd_viommu_alloc_ioctl(struct
-> iommufd_ucmd *ucmd) rc =3D -EOPNOTSUPP;
->  		goto out_put_idev;
->  	}
-> -	if (!iommu_dev->ops->get_viommu_ops) {
-> -		rc =3D -EOPNOTSUPP;
-> +	tsm_dev =3D tsm_get_device(idev->dev);
-So I want to reuse this flow for MSHV since tsm already does module
-pinning and locking for backend providers. Once MSHV supports TDISP, it
-could register a link TSM similarly to the CCA =A0cca_link_pci_ops.
+> > > > Having a review done by the ACPI maintainers would definitely =20
+> >=20
+> > So as per the above, who exactly do you mean by "ACPI maintainers"?
+> > If you mean "the people maintaining the code in drivers/acpi/", that's
+> > just me and quite frankly, I'm not sure if my review, specifically,
+> > would be super-useful for driver development (the fact that my review
+> > bandwidth is almost completely saturated nowadays aside).
+> >=20
+> > My recommendation would be to ask other people within the ARM
+> > ecosystem who have more experience with ACPI for help.
+> >  =20
+> > > > help from my point of view, but I'm not sure whether they are
+> > > > set up for that, in case there are a lot of new drivers. =20
+> >=20
+> > I am not and had I been trying to do it, it wouldn't have scaled anyway.
+> >  =20
+> > > I think platform maintainers need to be a first line of defense here
+> > > since they sit at the intersection of a lot of this. At least that's =
+the
+> > > case for me. Also, I'm eager to learn how to do this right, but I'm
+> > > often at a loss of where to start. The spec is a bit daunting, and th=
+en
+> > > there's various extensions, too. Maybe the AI genies can help me ramp
+> > > up. =20
+> >=20
+> > My advice would be to reach out to people within your ecosystem in the
+> > first place.
 
-However, we also want to use the same viommu/vdevice flow to support
-non-confidential device assignment with Hypervisor managed S2 mapping.
-I belive pKVM has the same need.[1]
+It is a bit of a guessing game to figure out who are the right people today
+when it comes to ACPI and both ARM and x86 platforms.=20
 
-I am thinking MSHV/pKVM can register an assignment-only tsm_dev to
-leverage this? Could PCI/TSM support this role without device-security?
+They fall into a few categories and it depends on what you are trying to
+do.  Starting point is push back hard on your firmware folk wrt to shipping
+something random without an upstream discussion first.  You wouldn't expect
+that to work for dt, it shouldn't work for ACPI either. Features
+will get rejected if people try to just do something that works for them
+(same as a weird custom DT binding gets rejected).
 
-Something like:
-@@ -48,7 +41,13 @@ struct pci_tsm_ops {
-        struct module *owner;
-        const struct iommufd_viommu_ops *(*viommu_get_ops)(
-                struct device *dev, enum iommu_viommu_type type);
-+
-+       struct pci_tsm_assignment_ops {
-+               bool (*match)(struct pci_dev *pdev);
-+               struct pci_tsm *(*probe)(struct tsm_dev *tsm_dev,
-+                                        struct pci_dev *pdev);
-+               void (*remove)(struct pci_tsm *tsm);
-+       } assignment_ops;
+1) Basic stand alone driver stuff.  Mostly that's all pretty standard
+   and follow the specs where possible.  If there are gaps start asking
+   questions. Linux definitely  doesn't support all the stuff that has been
+   added to the spec in recent years.  So this covers things like register
+   addresses, interrupts etc.  All fine, hopefully a subsystem maintainer
+   can take a look and will have enough of any idea.  If not ping the folk
+   on this thread for help.  Things are a bit flexible for consumer type
+   devices where fixed and bodges are common, generally less so if it is
+   server grade hardware.
 
-[1] https://lore.kernel.org/linux-iommu/atiaKG86qcifKzBT@google.com/
-> +	if (IS_ERR(tsm_dev)) {
-> +		rc =3D PTR_ERR(tsm_dev);
-> +		tsm_dev =3D NULL;
->  		goto out_put_idev;
->  	}
-> -	ops =3D iommu_dev->ops->get_viommu_ops(idev->dev, cmd->type);
-> -	if (!ops) {
-> -		rc =3D -EOPNOTSUPP;
-> +	ops =3D tsm_dev ? tsm_viommu_get_ops(tsm_dev, idev->dev,
-> cmd->type) : NULL;
-> +	if (IS_ERR(ops)) {
-> +		rc =3D PTR_ERR(ops);
->  		goto out_put_idev;
->  	}
-> +	if (!ops) {
-> +		if (tsm_dev) {
-> +			tsm_put_device(tsm_dev);
-> +			tsm_dev =3D NULL;
-> +		}
-> +		if (!iommu_dev->ops->get_viommu_ops) {
-> +			rc =3D -EOPNOTSUPP;
-> +			goto out_put_idev;
-> +		}
-> +		ops =3D iommu_dev->ops->get_viommu_ops(idev->dev,
-> cmd->type);
-> +		if (!ops) {
-> +			rc =3D -EOPNOTSUPP;
-> +			goto out_put_idev;
-> +		}
-> +	}
-> +
->  	/*
->  	 * It is a driver bug to omit the required operations or
-> provide a size
->  	 * smaller than the core vIOMMU structure.
-> @@ -95,6 +116,8 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd
-> *ucmd) viommu->kvm_file =3D get_file(idev->kvm_file);
->  	viommu->type =3D cmd->type;
->  	viommu->ictx =3D ucmd->ictx;
-> +	viommu->tsm_dev =3D tsm_dev;
-> +	tsm_dev =3D NULL;
->  	viommu->hwpt =3D hwpt_paging;
->  	refcount_inc(&viommu->hwpt->common.obj.users);
->  	INIT_LIST_HEAD(&viommu->veventqs);
-> @@ -119,6 +142,8 @@ int iommufd_viommu_alloc_ioctl(struct
-> iommufd_ucmd *ucmd) out_put_hwpt:
->  	iommufd_put_object(ucmd->ictx, &hwpt_paging->common.obj);
->  out_put_idev:
-> +	if (tsm_dev)
-> +		tsm_put_device(tsm_dev);
->  	iommufd_put_object(ucmd->ictx, &idev->obj);
->  	return rc;
->  }
-> diff --git a/drivers/pci/tsm/core.c b/drivers/pci/tsm/core.c
-> index 96ba5a8be8af..5ded1a5a4f7e 100644
-> --- a/drivers/pci/tsm/core.c
-> +++ b/drivers/pci/tsm/core.c
-> @@ -9,6 +9,8 @@
->  #define dev_fmt(fmt) "PCI/TSM: " fmt
-> =20
->  #include <linux/bitfield.h>
-> +#include <linux/iommufd.h>
-> +#include <linux/module.h>
->  #include <linux/pci.h>
->  #include <linux/pci-doe.h>
->  #include <linux/pci-tsm.h>
-> @@ -36,6 +38,26 @@ static const struct pci_tsm_ops
-> *to_pci_tsm_ops(struct pci_tsm *tsm) return tsm->tsm_dev->pci_ops;
->  }
-> =20
-> +struct tsm_dev *pci_tsm_get_device(struct pci_dev *pdev)
-> +{
-> +	const struct pci_tsm_ops *ops;
-> +	struct tsm_dev *tsm_dev;
-> +
-> +	guard(rwsem_read)(&pci_tsm_rwsem);
-> +	if (!pdev->tsm)
-> +		return NULL;
-> +
-> +	tsm_dev =3D pdev->tsm->tsm_dev;
-> +	ops =3D tsm_dev->pci_ops;
-> +	if (!ops->viommu_get_ops)
-> +		return NULL;
-> +	if (!try_module_get(ops->owner))
-> +		return ERR_PTR(-ENODEV);
-> +	get_device(&tsm_dev->dev);
-> +	return tsm_dev;
-> +}
-> +EXPORT_SYMBOL_GPL(pci_tsm_get_device);
-> +
->  static inline bool is_dsm(struct pci_dev *pdev)
->  {
->  	return pdev->tsm && pdev->tsm->dsm_dev =3D=3D pdev;
-> diff --git a/drivers/virt/coco/tsm-core.c
-> b/drivers/virt/coco/tsm-core.c index e7807dc94807..92ce3337f1ea 100644
-> --- a/drivers/virt/coco/tsm-core.c
-> +++ b/drivers/virt/coco/tsm-core.c
-> @@ -9,6 +9,16 @@
->  #include <linux/cleanup.h>
->  #include <linux/pci-tsm.h>
-> =20
-> +/* The caller must hold a tsm_get_device() reference for the entire
-> use. */ +const struct iommufd_viommu_ops *tsm_viommu_get_ops(struct
-> tsm_dev *tsm_dev,
-> +		struct device *dev, enum iommu_viommu_type type)
-> +{
-> +	if (!tsm_dev->pci_ops->viommu_get_ops)
-> +		return NULL;
-> +	return tsm_dev->pci_ops->viommu_get_ops(dev, type);
-> +}
-> +EXPORT_SYMBOL_GPL(tsm_viommu_get_ops);
-> +
->  static void tsm_release(struct device *);
->  static const struct class tsm_class =3D {
->  	.name		=3D "tsm",
-> @@ -16,6 +26,33 @@ static const struct class tsm_class =3D {
->  };
->  static DEFINE_IDA(tsm_ida);
-> =20
-> +/**
-> + * tsm_get_device() - Pin the TSM attached to a device
-> + * @dev: device whose TSM is to be pinned
-> + *
-> + * A successful lookup takes a TSM device reference and pins the
-> backend
-> + * module. Release both with tsm_put_device(). Backends providing
-> vIOMMU
-> + * operations must not unregister their TSM independently of module
-> unload.
-> + * Return: NULL if no vIOMMU-capable TSM is attached, an error if
-> the module
-> + * cannot be pinned, or the TSM device associated with the pinned
-> backend.
-> + */
-> +struct tsm_dev *tsm_get_device(struct device *dev)
-> +{
-> +	if (!dev_is_pci(dev))
-> +		return NULL;
-> +	return pci_tsm_get_device(to_pci_dev(dev));
-> +}
-> +EXPORT_SYMBOL_GPL(tsm_get_device);
-> +
-> +void tsm_put_device(struct tsm_dev *tsm_dev)
-> +{
-> +	struct module *owner =3D tsm_dev->pci_ops->owner;
-> +
-> +	put_device(&tsm_dev->dev);
-> +	module_put(owner);
-> +}
-> +EXPORT_SYMBOL_GPL(tsm_put_device);
-> +
->  static int match_id(struct device *dev, const void *data)
->  {
->  	struct tsm_dev *tsm_dev =3D container_of(dev, struct tsm_dev,
-> dev); diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
-> index 5f5c67b24134..a4b29915d0ca 100644
-> --- a/include/linux/iommufd.h
-> +++ b/include/linux/iommufd.h
-> @@ -23,6 +23,7 @@ struct iommufd_access;
->  struct iommufd_ctx;
->  struct iommufd_device;
->  struct iommufd_viommu_ops;
-> +struct tsm_dev;
->  struct page;
-> =20
->  enum iommufd_object_type {
-> @@ -104,6 +105,7 @@ struct iommufd_viommu {
->  	struct iommu_device *iommu_dev;
->  	struct iommufd_hwpt_paging *hwpt;
->  	struct file *kvm_file;
-> +	struct tsm_dev *tsm_dev;
-> =20
->  	const struct iommufd_viommu_ops *ops;
-> =20
-> diff --git a/include/linux/pci-tsm.h b/include/linux/pci-tsm.h
-> index eaf0199d01f7..19e9e0ef3bbb 100644
-> --- a/include/linux/pci-tsm.h
-> +++ b/include/linux/pci-tsm.h
-> @@ -3,7 +3,10 @@
->  #define __PCI_TSM_H
->  #include <linux/mutex.h>
->  #include <linux/pci.h>
-> +#include <uapi/linux/iommufd.h>
-> =20
-> +struct iommufd_viommu_ops;
-> +struct module;
->  struct pci_tsm;
->  struct pci_tsm_context;
->  struct tsm_dev;
-> @@ -16,12 +19,27 @@ struct tsm_dev;
->   * @devsec_ops: Lock, unlock, and interrogate the security state of
-> the
->   *		function via the platform TSM (typically virtual
-> function
->   *		operations).
-> + * @viommu_get_ops: Return operations for a supported TSM-owned
-> vIOMMU type,
-> + *		  or NULL if unsupported
-> + * @owner: Module providing the vIOMMU operations, if built as a
-> module
-> + *
-> + * The vIOMMU owner holds a TSM device reference and pins the
-> backend module
-> + * before querying @viommu_get_ops, releasing both after vIOMMU
-> destruction.
-> + * A backend providing this callback must not unregister its TSM
-> while the
-> + * module is pinned.
->   *
->   * This operations are mutually exclusive either a tsm_dev instance
->   * manages physical link properties or it manages function security
->   * states like TDISP lock/unlock.
-> + *
-> + * @viommu_get_ops runs with the backend module pinned. The PCI/TSM
-> + * association is checked during acquisition under pci_tsm_rwsem.
->   */
->  struct pci_tsm_ops {
-> +	struct module *owner;
-> +	const struct iommufd_viommu_ops *(*viommu_get_ops)(
-> +		struct device *dev, enum iommu_viommu_type type);
-> +
->  	/*
->  	 * struct pci_tsm_link_ops - Manage physical link and the
-> TSM/DSM session
->  	 * @probe: establish context with the TSM (allocate / wrap
-> 'struct @@ -151,6 +169,7 @@ struct pci_tsm_pf0
-> *pci_tsm_context_pf0(struct pci_tsm_context *context); struct pci_dev
-> *pci_tsm_context_dsm_dev(struct pci_tsm_context *context); bool
-> pci_tsm_context_match_device(struct pci_tsm_context *context, struct
-> pci_dev *pdev); +struct tsm_dev *pci_tsm_get_device(struct pci_dev
-> *pdev); #else
->  static inline int pci_tsm_register(struct tsm_dev *tsm_dev)
->  {
-> @@ -165,6 +184,11 @@ static inline bool pci_tsm_is_configured(struct
-> pci_dev *pdev) return false;
->  }
-> =20
-> +static inline struct tsm_dev *pci_tsm_get_device(struct pci_dev
-> *pdev) +{
-> +	return NULL;
-> +}
-> +
->  static inline struct pci_tsm_context *
->  pci_tsm_context_get(struct pci_dev *pdev, struct tsm_dev
-> *viommu_tsm_dev) {
-> diff --git a/include/linux/tsm.h b/include/linux/tsm.h
-> index 19dedf971f14..3d5286aeaa42 100644
-> --- a/include/linux/tsm.h
-> +++ b/include/linux/tsm.h
-> @@ -110,6 +110,8 @@ struct tsm_report_ops {
->  };
-> =20
->  struct pci_tsm_ops;
-> +struct iommufd_viommu_ops;
-> +
->  struct tsm_dev {
->  	struct device dev;
->  	int id;
-> @@ -124,4 +126,27 @@ int tsm_report_unregister(const struct
-> tsm_report_ops *ops); struct tsm_dev *tsm_register(struct device
-> *parent, struct pci_tsm_ops *ops); void tsm_unregister(struct tsm_dev
-> *tsm_dev); struct tsm_dev *find_tsm_dev(int id);
-> +
-> +#ifdef CONFIG_TSM
-> +struct tsm_dev *tsm_get_device(struct device *dev);
-> +void tsm_put_device(struct tsm_dev *tsm_dev);
-> +const struct iommufd_viommu_ops *tsm_viommu_get_ops(struct tsm_dev
-> *tsm_dev,
-> +		struct device *dev, enum iommu_viommu_type type);
-> +#else
-> +static inline struct tsm_dev *tsm_get_device(struct device *dev)
-> +{
-> +	return NULL;
-> +}
-> +
-> +static inline void tsm_put_device(struct tsm_dev *tsm_dev)
-> +{
-> +}
-> +
-> +static inline const struct iommufd_viommu_ops *
-> +tsm_viommu_get_ops(struct tsm_dev *tsm_dev, struct device *dev,
-> +		enum iommu_viommu_type type)
-> +{
-> +	return NULL;
-> +}
-> +#endif
->  #endif /* __TSM_H */
+2) Stuff that is an ACPI spec gap or place where we'd expect generalization.
+   There are several examples of this on list this week and a few more in
+   my inbox.  The particular series here might fall into this category.
+   I've not figured out enough of the details yet to say definitively.
+
+I'd also expect a driver using AML as the target interface to either
+point at a published spec doc, or to include some snippets
+of the AML - that can be a lot easier to read than the driver code
+(imagine reading DT by only looking at how drivers parse it).
+
+FWIW The driver feature in question looks like it is doing something a bit =
+similar
+to the PCI trace and tune driver Hisilicon has (though IIRC that has
+a presence as a PCI driver) https://docs.kernel.org/trace/hisi-ptt.html
+or if you squint at it differently resctrl / mpam fb.
+
+Given that has new ABI etc, I'd expect that to have gotten broader review
+as well.  Probably keeping it to linux-tegra and lkml alone wasn't
+going to result in anyone noticing!
+
+https://lore.kernel.org/all/?q=3D20260929095915.2215685-1-anrao@nvidia.com
+
+Anyhow, feel free to reach out if you want some feedback on this or
+similar. I can perhaps at least point you to someone who knows a
+specific area better than me.
+
+Jonathan
+=20
+> >  =20
+> > > > I assume there is a knowledge gap in both subsystem maintainers
+> > > > regarding ACPI (certainly this is the case for me for drivers/bus,
+> > > > drivers/firmware, drivers/soc, etc) and ACPI maintainers regarding
+> > > > many of the subsystems that we support with DT. =20
+> > >
+> > > Agreed. I've seen some patches where the ACPI support was as simple as
+> > > just adding an ID table entry and the rest was all standard, but I th=
+ink
+> > > once we move beyond standard resources things might get a bit more
+> > > complicated. I imagine that ACPI may not even have specs for certain
+> > > aspects that we currently handle in DT... =20
+> >=20
+> > That certainly is true, but the ACPI specification is under active
+> > development and pieces that are missing can be added to it.  There is
+> > a process for that in place and ARM people take part in it. =20
+>=20
+>=20
+> On top of the above in Linux we also developed some "extensions", for ins=
+tance
+> how I=C2=B2C muxes are described, or how some multi-functional devices ar=
+e being
+> enumerated. These specifics we usually document under
+> Documentation/firmware-guide/acpi/ (see i2c-muxes.rst for the mentioned c=
+ase).
+>=20
 
