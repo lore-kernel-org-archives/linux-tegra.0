@@ -1,131 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793871002;
-	b=IXSRMaLKvn2xs8N4X0jnGWxTR1EQeC3Vrpnx7mjiE8KKhENFZGo7TVG7Gsfl7uJGF444
-	 8jA+Mg81KC6FSbndKBcrjiQe7jdWzoWFj+MZsxTMAFeOXgYQsA30BtdFFAV8OXP3bClpF
-	 lu8VyYb03xhfKCx7LMhRQXLYIiH7Hm5P41ZqOgVJS3Dt88LoSPPHX93tWlI+kyDE/xxKi
-	 jEiCN94xs+CIINlNDHZnHmIWBE1M59CnuX1kw+oiucnnZdS8f+EQbSyjGBTyJ7RgmdZmB
-	 KCc2qIkQ06SmRbSgHIbHzdeZQ/DudsXQX9/uOe+WgnWCCkQv2CLr6zyKbKjk5gsWp4Q==
+	t=1793871052;
+	b=ozLGHGG+aJRi8xstMQ9OwR/v87pnsKZh3chEpbGeSYJKWIAFJI08QUJovgyCTdp4unXX
+	 oU2/B4Z26a4fpab5SqxPd5BDAnQ/79Ksv9fEgkvbeeKUZXDnWchZPHYbhjR1B/2fD9LaN
+	 oi97J42WPvTufHCWaLpxrKeQbkCRJE6V5ZoJx5GdAwJU0rgVsg4rLhXmNvGfeObArFeTQ
+	 Wg0kNBklBhZs22mJefgh7nJo18/hcAVW8MGVklFrmCJFeWzUweZ5ADukS81Za24VCZKaL
+	 MF2c+nkZXZ11l7T/pPnHRq7sPooR+7xZ+7DyVThE2fL0BqHCWfQ4ZH+MECFF+TmPVYw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793871002;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=MzcP0ZVuar/2J0GdckfWIQkp5OrAXfjPJwzDsLW7Oeg=;
-	b=KoQgdG1jxWs9yG5J45+JgrnRHvQHnLvz8md0v2dXyKUYkRjuJ39shdsSlNIJKJpBapwu
-	 AUHGqdK9JtTZ5CYOqxfNSoY7DBXfcld5XwafO8lznwHZAR5OwCy6Y0NJ2WLDkWJb0qoKD
-	 EOMfVvFk1FO8ER9+NUAJgyrUxNTzx2WG7fmwtZ6/VZ9Jv+oIpECcXsRM4X9HQwFZPhgTa
-	 Alyu0tNcWqxJ0pk6AwpZo6mq0LzmVsZFgJisRSqLDjXJZzYY45KGyhCsokr1X8MTlgudW
-	 ksLutQVDOOjuzCPnDYQ/ugkOzcbCbtV+A7P72xheIOnWjklvp/p0Yfrg2Cx5gzt7oLQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793871052;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=I9JLPS56ZZVL6fhls448ofuLD4hZA1GtuHSD/NXbcJE=;
+	b=iQH+tn69+l+CZheo46FVOKVVq9PbMVSE7fAEyfiFv3gvN0AJybicREOgNmd+uxI2CuqZ
+	 xzW0QsilhPfJaQKfAFlOUDR2vf30P3eJp8NsBsrFCxSgBIjIgJrL7Pe6BsT3BHWhKkSFf
+	 gsEDknkSVN3+fWRIZMHdrBPt04pkeDslf1G8tjEZbrKoq25/jJXD+nN7HJ1Z2h5+4Eq7y
+	 p9lDnvhJB7Q9JjBbeHZ1duUrrXAsVUg0AhJrLLFNXbam6rE0O93QnId3PdzgAejIVp2Sa
+	 PnvF9DrGPOXTHUk7mAqBMUBi9crUZiu3lOKTRBdaq/IHWqoj1ve5t3FysZdAaUWjZyg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eEFjrbpv;
-	arc=none smtp.remote-ip=198.175.65.19
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WncmyviE;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197E1606A326;
-	Thu,  5 Nov 2026 09:30:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 197E1606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1F3606A329;
+	Thu,  5 Nov 2026 09:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=eEFjrbpv
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793871002; x=1825407002;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aVv8RvjToXdNBQ+AxPn75WGDPj4D3O1pHLFNRPhnfCQ=;
-  b=eEFjrbpvUsXeoeEy6uDeHX63okzZdJPDcpHnD0lJHQxucQ2UfxtVkbRf
-   DuAej4v1JiCKIF5Rl30OXvUPqyGu6L60ttgbEzPSLFHBcBmWwYoRzr7Cv
-   oXTGeA2eM/GL1z+V0fuPw5Lf9Jop/CvcAs8QmL2418DPr/X5kipxwuDca
-   Px5RTB0cTIPwIbq3vztkeKhBeSMB/5rDV7HnRo2C0gFdlO6/GUfC3/ghr
-   dVI1nubUGXTtQmshyUgnQf5iRvJIR2MYQKcXmtTHhX+UslKnP03a8xARZ
-   WjpZGvlLdN53973WMxny2XR9ToK6l9TQz/ahySSsAq8vONeN7wGWaabME
-   g==;
-X-CSE-ConnectionGUID: 7ITx+mjuQtWdcJ7r4lyUjw==
-X-CSE-MsgGUID: Wo2TClO/SaKV30K8uo/4jA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11956"; a="2683858"
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2683858"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:30:01 -0800
-X-CSE-ConnectionGUID: VUQbl1y6Q3yfJ7t5HK8oRw==
-X-CSE-MsgGUID: SqY+yNktRvCMlE1VenPXPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7269063"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 01:29:47 -0800
-Date: Thu, 5 Nov 2026 11:29:45 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Frank.Li@oss.nxp.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WncmyviE
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C09091F00919;
+	Thu,  5 Nov 2026 09:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793871052;
+	bh=I9JLPS56ZZVL6fhls448ofuLD4hZA1GtuHSD/NXbcJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=WncmyviEWHkSPITkRDk3Drb4VW0DO0UyjP87ZDT+EOdSmmUG5x+bs9CEbmPZaGCCn
+	 yXRw2HUtqtJGj7u90yEwwvuri3b0sQkQT1Rw2Mz7ueuBBEiu18EZIKCZODIqFbEdEn
+	 tcYVCt/tFM0O9QXZyxiUaP6nDjhDCV72EJvRoFVXlfe9SvsIn0G+9UsDaP1OUwqLdB
+	 eBxNN53qEqoAFr10ExNTwMGUG2vWruo7rhgJs/sIn8+rnuhZXR//6lt/iXPbaYlEqE
+	 SBGgrI32IPtzkb/rtITzdey4eaG693LKzMZAWoRYmq0AU4+x5+ZBEtrnfsYRQQ66cz
+	 ez5d8UdT6sdxQ==
+Date: Thu, 5 Nov 2026 09:30:46 +0000
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Rafael J. Wysocki (Intel)" <rafael@kernel.org>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
 	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>,
-	Yenchia Chen <yenchia.chen@mediatek.com>,
-	Zhiyong Tao <zhiyong.tao@mediatek.com>,
-	Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>,
-	Kendall Willis <k-willis@ti.com>,
-	Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
-	Nicolai Buchwitz <nb@tipi-net.de>,
-	Karl Mehltretter <kmehltretter@gmail.com>,
-	Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>,
-	Shitalkumar Gandhi <shital.gandhi45@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>,
-	Robin Gong <yibin.gong@nxp.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Zhaoyang Yu <2426767509@qq.com>,
-	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Myeonghun Pak <mhun512@gmail.com>,
-	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>,
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
-	vkoul@kernel.org
-Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
-Message-ID: <auxMiQ-DvmBc2vu2@ashevche-desk.local>
-References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
- <a2d5ea00-bfa1-4883-923d-0a6a7eaa556d@kernel.org>
- <CAMuHMdUHf14DpLfk16qZ6YWtJKm8VDWEFA0Wqk22ysqnUFHoHQ@mail.gmail.com>
+	Arnd Bergmann <arnd@arndb.de>, arm <arm@kernel.org>, soc@kernel.org,
+	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	James Morse <james.morse@arm.com>, Ben Horgan <ben.horgan@arm.com>,
+	Sizhe Liu <liusizhe5@huawei.com>
+Subject: Re: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
+Message-ID: <20261105-inventive-partridge-of-maturity-793a2e@sudeepholla>
+References: <20261003095924.1370238-1-thierry.reding@kernel.org>
+ <20261003095924.1370238-4-thierry.reding@kernel.org>
+ <928b3eaf-32da-43a9-9ca5-d59ef8a3b330@app.fastmail.com>
+ <auslF5pwDHtcNoCy@orome>
+ <bcad1d7e-387d-4251-8974-7f0dcd2f9734@app.fastmail.com>
+ <autADOKsSVVMn6r9@orome>
+ <CAJZ5v0iyaHGj2b7H8g0nqrxvz8GpXiE6hkVp9RM7KF+KDckjrA@mail.gmail.com>
+ <autmcaraWcXIoRfZ@ashevche-desk.local>
+ <20261104161125.00000523@oss.qualcomm.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -137,30 +79,70 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUHf14DpLfk16qZ6YWtJKm8VDWEFA0Wqk22ysqnUFHoHQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20261104161125.00000523@oss.qualcomm.com>
 
-On Thu, Nov 05, 2026 at 10:06:06AM +0100, Geert Uytterhoeven wrote:
-> On Wed, 4 Nov 2026 at 18:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > On 02/11/2026 18:54, Frank.Li@oss.nxp.com wrote:
+Hi all,
 
-> > I did not look at this code at all...
-
-[...]
-
-> > Therefore:
-> >
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Wed, Nov 04, 2026 at 04:11:25PM -0800, Jonathan Cameron wrote:
 > 
-> Then please add "# samsung", to make it clear and obvious.
+> It is a bit of a guessing game to figure out who are the right people today
+> when it comes to ACPI and both ARM and x86 platforms. 
+> 
+> They fall into a few categories and it depends on what you are trying to
+> do.  Starting point is push back hard on your firmware folk wrt to shipping
+> something random without an upstream discussion first.  You wouldn't expect
+> that to work for dt, it shouldn't work for ACPI either. Features
+> will get rejected if people try to just do something that works for them
+> (same as a weird custom DT binding gets rejected).
+> 
+> 1) Basic stand alone driver stuff.  Mostly that's all pretty standard
+>    and follow the specs where possible.  If there are gaps start asking
+>    questions. Linux definitely  doesn't support all the stuff that has been
+>    added to the spec in recent years.  So this covers things like register
+>    addresses, interrupts etc.  All fine, hopefully a subsystem maintainer
+>    can take a look and will have enough of any idea.  If not ping the folk
+>    on this thread for help.  Things are a bit flexible for consumer type
+>    devices where fixed and bodges are common, generally less so if it is
+>    server grade hardware.
+> 
+> 2) Stuff that is an ACPI spec gap or place where we'd expect generalization.
+>    There are several examples of this on list this week and a few more in
+>    my inbox.  The particular series here might fall into this category.
+>    I've not figured out enough of the details yet to say definitively.
+> 
 
-+1
+Nicely summarised or categorised Jonathan. Nothing much to add.
 
-See also 20261105082729.19622-2-krzysztof.kozlowski@oss.qualcomm.com
+For most of the IP/devices/firmware associated with Arm, we are involved
+in any specification work if there are any. However that doesn't include
+3rd party IPs/devices used on Arm based platforms though.
+
+> I'd also expect a driver using AML as the target interface to either
+> point at a published spec doc, or to include some snippets
+> of the AML - that can be a lot easier to read than the driver code
+> (imagine reading DT by only looking at how drivers parse it).
+> 
+
+Ideally, it should be just HID that any vendor needs to publish unless
+they make use of any custom methods or something device specific like
+DSD/DSM. I would expect most of the devices to use standard methods and
+properties that are already well defined in the ACPI spec.
+
+> FWIW The driver feature in question looks like it is doing something a bit similar
+> to the PCI trace and tune driver Hisilicon has (though IIRC that has
+> a presence as a PCI driver) https://docs.kernel.org/trace/hisi-ptt.html
+> or if you squint at it differently resctrl / mpam fb.
+> 
+> Given that has new ABI etc, I'd expect that to have gotten broader review
+> as well.  Probably keeping it to linux-tegra and lkml alone wasn't
+> going to result in anyone noticing!
+> 
+> https://lore.kernel.org/all/?q=20260929095915.2215685-1-anrao@nvidia.com
+> 
+
+Agreed, it shouldn't hurt to cc linux-acpi for such driver ACPI enablement
+patches.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Sudeep
