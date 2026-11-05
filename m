@@ -1,129 +1,118 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.17
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793888290;
-	b=nDnqHveOsjlBZDODRCALpmTiyKTvoTC+6Z8aosDRLv3QoWaJ5QgNAu8RdtHZ4cwjejxK
-	 gV+eVfW+dpF+h9B39C+1D86M1SQexK06URcPe8GA/LWMENnfWj1PudjCZ1zItDnQFWQNQ
-	 pSTXM4eKcScK9YyyppS+ci4oF9lcOJu41q6xeguvq4w7ZwP9IGe37Mq1YMsPPpRt8V76G
-	 ROrYVPDBusjNkMS5Zfk6aCtfUiJeO1Va+yarmhzP0+S6B7/ovJHmKNBmrTo14yBMKvAQa
-	 3QkAuexYHogHbxU5UYIIaA2xZbki3WhfOOQ9/q3Mm1Fl52xBOR0wNc9E+DHjvunspZQ==
+	t=1793888580;
+	b=s8+ZRCvWDxp+KKLYKlrDMQDJh2LCJtyewGt2vQEeKP23F3MF15SKoKJsU7ZXoIF9NIIV
+	 8ZUqmKevQV7j07wCE+PXpFCDtAxFswjovZucVsRfm74p+OzJ2n+TqCbepb4KJrhfVCVUX
+	 ap/nlhVcyKDGV3ywrQas4Igy2s8RMa3Q/E+l96H8FAdsT2Rv0Z2owltCrphJIP4trFsBU
+	 MpeJq7Z+hOwK1PPwdxVEViJ8a6qKcl0vnk75s4r7hfmjDaT4hsl9q0p8FmhQ+WUEdJpN9
+	 2YF4pX1Hw5zgqU1RCSG6Z35p7qNcraj/moIg7uZgF7pqIClwjsf59YNEn+88WzI1C2g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793888290;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793888580;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=Dc/gnzAhwg9JcaLHyi5L3qyrYdSroOdQcEWvzqqzxB4=;
-	b=B+K4s+1nn2UO0izeuZ7SBhSb+77qdT5zQDjpoBwXV+ZU8PfrWp11dhr8czPy/GBOmBpc
-	 sQufj9j2bWrutxT2Fglj1GXvgOI11hAXuJsggk8lFVwqWYrmRzVHWhDsIkkQOegbubeYJ
-	 Hbbi62u8Ts+ETZ/2E9ejsSa+gQxhjahi6jnsSTp7f8IEs1pYFeaHIyDoPyvwHwsqcbpzF
-	 1oeRlbPnt6uSl6fP2EmdGQQv1Bs3HW+/iwHQ17Kup12SXW8S//BqaxZ5IuSRyOxTStQl9
-	 ORbQ+7oWd6KSAIjkQsZG49dMPkDgSq76mbJEAtb3LgFeXCWT5G/xerK+gWQ0n8z525Q==
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 Organization;
+	bh=fr/sToHFkpF9BPihxA953uG8doO1fE0lFSHPRxWhDoE=;
+	b=U7Dh5zbJaSE4+k8E3AAl7dpNXC+IqrGNusY7aXFwOLic5YlfeCYwpH/fJAQNEiwfcims
+	 Mhwo/uYdR48Anp3oqCgUfIQ/YpcSHP3pGNAc9rSYOya8NjZKi/pCkCQ3f57ivDGQzr4Ab
+	 RiyZqq2287FUKRD0lboHVBk4lTlmwOg3elQesYxsNPc0tfadcb3Djtj6i3a/InDPZQVeg
+	 BzLfPP/cQgOJv1NPlirf6m1erZZrKiZTafImpiYsle1PHSNfQcjWd8ZGGkgE8Z8pTSDZu
+	 HOnmYN+ZghZFfa6Xp7fRhWigDsO6idZBBgSvGES/7IasXIHNQ5/Da6+962OOoZXmvOg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.intel.com;
 	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=HjvAsSod;
-	arc=none smtp.remote-ip=198.175.65.11
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kqUQNpzO;
+	arc=none smtp.remote-ip=198.175.65.17
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A54606EEA8;
-	Thu,  5 Nov 2026 14:18:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C3A54606EEA8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C548606A326;
+	Thu,  5 Nov 2026 14:22:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7C548606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=HjvAsSod
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kqUQNpzO
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793888290; x=1825424290;
+  t=1793888580; x=1825424580;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jvXrPTiATIoJywZObtDdCqNKWv1neRVMfk5S5z0aV5g=;
-  b=HjvAsSodMEqWhD7xQ9duFtX/Y1TBzcUbetEUmkLaenCOulNLjZKi85mj
-   CiXkyK0aZ6cZVBaWa0sZSZYSbnL3LnJ/EYQSudIbYGK/RR4pY1BofoN3u
-   zkp7Z66Qeg6fKclSX1RTyuAXvo/8kSEwFpOp8QXWCKT0Hd8+g2t/eJFJX
-   IHtZQbxYI0Ry812C9CKwBVyiv8i135sWsqf0gtagoke9rXfhWMDJUb4hY
-   KeGgNAnddNmHq1NGOvwJkbpU17J0ffeIuGd4u4hg5nZhjTe27N7w51fL/
-   NYx3Z8D6z2iYwfSV+vm9vXxoseN8GM7mAlMs1eUnyq+ovyUk080GKj7/7
-   Q==;
-X-CSE-ConnectionGUID: 5Zpy6bAHSfKBFOkgHxTgDg==
-X-CSE-MsgGUID: YeQ0L+iMSeqizzuppIQENg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2565223"
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=8aE99+VJcMQQ2lFtFNMEVuo+WAHaGpOaIlVw0wUkjj8=;
+  b=kqUQNpzOAFCaYDSHcp8Wj4WmpoX3nJS4a+Kgf73h8jtx535iIXYYaWOe
+   K0Ea57swpZPo5j8bLuVT7bTDYB4F+f0tuwUQH4ZC99CXKTnfsFDX5TXY/
+   i6xUcn5URrVaHkYLilXDyz909mDABgqMSPSqwyt9RxltWwqH0JvaREGZX
+   Ofz5IGRm296N/vS+3rBNBIhX/rQ4IfGN4Uy7pR6YI8GSgrLaksPFXeES8
+   KU9Dr+YOg76ZZmPaFzwIFGav1dnKbeabAUU7RzNkIgXYEpEPxT85n/Ebe
+   bct31QF/JCTlCuG/1Mod9N6tbDgiVUZCYJf6T/+vjf7AaH8uVllOkmbT5
+   g==;
+X-CSE-ConnectionGUID: 1l10Jx00QbyIWqho+oNmdA==
+X-CSE-MsgGUID: dc6UTu26R/qspd0UlFgWQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2703073"
 X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2565223"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:18:09 -0800
-X-CSE-ConnectionGUID: pKCe4sF8RMqbCGGokzbkvg==
-X-CSE-MsgGUID: G6AFEUqaSR+cIDxjk7O9OA==
+   d="scan'208";a="2703073"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:22:59 -0800
+X-CSE-ConnectionGUID: /K275MsMS2iu65atWdhLvw==
+X-CSE-MsgGUID: RsKg5am+RfCPmB5pvRDPCQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7359195"
+   d="scan'208";a="7192371"
 Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:17:56 -0800
-Date: Thu, 5 Nov 2026 16:17:53 +0200
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 06:22:47 -0800
+Date: Thu, 5 Nov 2026 16:22:45 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Frank.Li@oss.nxp.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lixu Zhang <lixu.zhang@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
 	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>,
-	Yenchia Chen <yenchia.chen@mediatek.com>,
-	Zhiyong Tao <zhiyong.tao@mediatek.com>,
-	Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>,
-	Kendall Willis <k-willis@ti.com>,
-	Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
-	Nicolai Buchwitz <nb@tipi-net.de>,
-	Karl Mehltretter <kmehltretter@gmail.com>,
-	Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>,
-	Shitalkumar Gandhi <shital.gandhi45@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>,
-	Robin Gong <yibin.gong@nxp.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Zhaoyang Yu <2426767509@qq.com>,
-	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabio Estevam <festevam@gmail.com>, Imre Kaloz <kaloz@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-hwmon@vger.kernel.org,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	"Enrico Weigelt, metux IT consult" <info@metux.net>,
+	Viresh Kumar <vireshk@kernel.org>, virtualization@lists.linux.dev,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Myeonghun Pak <mhun512@gmail.com>,
-	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>,
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
-	vkoul@kernel.org
-Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
-Message-ID: <auyQEVmA2KeGu9DL@ashevche-desk.local>
-References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
- <aux2VKHnVLwq_wzi@orome>
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>, linux-aspeed@lists.ozlabs.org,
+	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	openbmc@lists.ozlabs.org, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-unisoc@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Michael Buesch <m@bues.ch>, William Breathitt Gray <wbg@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 00/23] gpio: Improvements around device-id arrays
+Message-ID: <auyRNagFOmxf_3nW@ashevche-desk.local>
+References: <cover.1793097104.git.u.kleine-koenig@baylibre.com>
+ <2hfpcbk6r56vvhkqyiex2apl3pinieybad5sd3vkvvabqs3uto@lydt3gin5kxe>
+ <auxh9PxpJScFO3i2@monoceros>
+ <le5gbua6s2mhhv32di4j77qr2we5z5ngzyzmiemhodmblvjiji@q4wf5tdgrbtv>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -133,47 +122,27 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <aux2VKHnVLwq_wzi@orome>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <le5gbua6s2mhhv32di4j77qr2we5z5ngzyzmiemhodmblvjiji@q4wf5tdgrbtv>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Nov 05, 2026 at 01:28:46PM +0100, Thierry Reding wrote:
-> On Mon, Nov 02, 2026 at 12:54:48PM -0500, Frank.Li@oss.nxp.com wrote:
+On Thu, Nov 05, 2026 at 01:25:34PM +0100, Bartosz Golaszewski wrote:
+> On Thu, Nov 05, 2026 at 12:06:33PM +0100, Uwe Kleine-König (The Capable Hub) wrote:
 > > 
-> > Replace open-coded assignments to callback and callback_param fields
-> > of struct dma_async_tx_descriptor with calls to the
-> > dmaengine_desc_set_callback() helper across serial drivers.
+> > Maybe you just need to add `-3` to your workflow? ISTR this should be
+> > the default for b4, but it seems if failed to mention the -3 in the git
+> > am cmdline.
 > > 
-> > No functional change intended. Prepare to make struct
-> > dma_async_tx_descriptor private to the DMA engine.
-> > 
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  drivers/tty/serial/8250/8250_dma.c  | 6 ++----
-> >  drivers/tty/serial/8250/8250_mtk.c  | 3 +--
-> >  drivers/tty/serial/8250/8250_omap.c | 6 ++----
-> >  drivers/tty/serial/amba-pl011.c     | 6 ++----
-> >  drivers/tty/serial/atmel_serial.c   | 6 ++----
-> >  drivers/tty/serial/fsl_lpuart.c     | 6 ++----
-> >  drivers/tty/serial/imx.c            | 6 ++----
-> >  drivers/tty/serial/msm_serial.c     | 6 ++----
-> >  drivers/tty/serial/mxs-auart.c      | 6 ++----
-> >  drivers/tty/serial/pch_uart.c       | 6 ++----
-> >  drivers/tty/serial/samsung_tty.c    | 6 ++----
-> >  drivers/tty/serial/serial-tegra.c   | 6 ++----
-> >  drivers/tty/serial/sh-sci.c         | 9 +++------
-> >  drivers/tty/serial/sprd_serial.c    | 3 +--
-> >  drivers/tty/serial/stm32-usart.c    | 6 ++----
-> >  15 files changed, 29 insertions(+), 58 deletions(-)
+> > Should I still resend?
 > 
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> No, it's alright. I would have preferred a clean b4 shazam but that
+> works too, thanks.
 
-Krzysztof, now look at this case. I would argue that this is even less fit than
-# subpart(s) case, because it might imply anything. Again the problem is the
-bundle, and for such a case (when tons of independent changes are bundled in
-the same stuff, *every* Rb tag has to be explained on what has been reviewed!
+To make that one should really have a unbiased base with the gpio/for-next,
+say v7.4-rc1. Then with --base present `b4 shazam` should follow that.
 
 -- 
 With Best Regards,
