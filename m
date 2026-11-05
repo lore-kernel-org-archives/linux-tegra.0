@@ -1,120 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.207.22.56
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793839778;
-	b=qd1xi40s1XyAvhe5KXsQtVDUfiOxKMc1ShWFpngspZyQxf2IOmwxhC+ZuRrujAcsYn8t
-	 m9uNXka/JeYx2WVUnNjzJefldaukMXrFbN5xEitrgMqzR5Is2camZ8IQOR6i9QZsnEezg
-	 v7Ea41wg0Gp7hzzKCfSxIKwqoLRHyGOD9Qy5Y8jyBLCHfKJ++OtRv7JVwaSA5V8EDxSRR
-	 vZO2fraXKuqce9xTV8WhL2z/8lhHRIHAFBFi+YNtVgtba45NHM3Sgb+dyyWE4rI0Zoskh
-	 1VmkgcdNs/iZ/U6XfqiBQLti2KfksvQkc/jym/5ig6Rwk3RQ3S3PX9JZniShEICDekw==
+	t=1793846398;
+	b=qUinBswzdhSet64N6bgX1jYd37H/cuLZyWokjm7fCgdLMLu5lQFFK62hUxEmUBgJNqbG
+	 QnIrMwAaVX0MI4aIfk8CE3NneYTKKqmkm1LBmWz6XmUbfZaY5Peb3ut9wiH0Q5fGF+RXU
+	 SWa2r/KdAIMn6FiFzgjqgAGt4mSwBL0DfeDYMZAekn/mGQJoqzMAdOfFqAh7xg3XXKV9Z
+	 q7A7OgYMw9K/JeQ1Eq/KyjbFs3Jhr/vhFriDXxQxhndxsemQBShaS+MstsPH7sypeR2kN
+	 yEhuBbfLhaSHgDfaW3mhOKg7q2LlzVxwJgwTFMwgeBRYipbjS1JEC/gjaeTrNsQwmoQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793839778;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=LRIt6wL5JukeI7CutNHrB30kNWGfRXMCU9CjLoUJZrc=;
-	b=HhlgSI8LpSxf90/z6qhp04HEOwSwMwtccCm6TbC+Ug5zXqu+Ubpy34dAazgDdWFvTAnu
-	 6xw9D5PciOGtENKnrSMvJbfFqwVdFXoBWj2UzwySzbOep8qZSWmOkD0j7xs8IfXjY7uP/
-	 4WFGrVVNKe0xenWFuEszNHs9loVRoTsS8uWrrDTmGmw0n1bDjuu8+SERhlc2sMpX0ruGB
-	 gDnTD9fDJPvftTL4wKRcLzambTags+nqJLH7NViN/N9AShSO4kAvsk75BskGLC/HviweX
-	 oucCI3Nff84hzZNGjxLaqck7Xh6rWyBPNr3g1slXgp4XLM63GfJ9OdJyBf0LI5HLWoA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793846398;
+	h=DMARC-Filter:DKIM-Signature:X-QQ-mid:X-QQ-Originating-IP:Received:
+	 X-QQ-SSF:X-QQ-GoodBg:X-BIZMAIL-ID:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:
+	 X-QQ-XMRINFO:X-QQ-RECHKSPAM;
+	bh=8nHg2KK9YdUFsDyCN5OyhUk3RMp8EQBW/fDZ8x8OirA=;
+	b=H2xyoSAjrD3INE2QxE5iptHrmw6gRWWPm9Cv3uZPpBNBYNbX7262043wfM6t0MRxFsbn
+	 VioYBVRC0GtrqUJFBRjLww1HO4n6q3pORE9CtaVJv2+99y0KQxz+vdFsgrv7BcDq6Rueh
+	 +iqXJ4o4FRiPwa7yv9ouwdjq3PnbLHNhBE2zb/IsdCittE86uoX7ExA7RLAtPwtxSHwIp
+	 3V43uewnj0Ex230NoX3+1H2zlJf4zTZfs7PxA17LWig8gxVAKBKIAlGZLAwIABfyEi9JP
+	 RiOcit+NAIgKlgee+RIvcCLjPqkY3wEaKoLijqOyKtdOsq40it37rADvBvGnFMW84zQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=ziepe.ca;
-	spf=pass smtp.mailfrom=ziepe.ca;
-	dkim=pass header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=Vrr7HJ5Z;
-	arc=none smtp.remote-ip=209.85.221.178
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=none header.from=linux.spacemit.com;
+	spf=none smtp.mailfrom=linux.spacemit.com;
+	dkim=pass header.d=linux.spacemit.com header.i=@linux.spacemit.com header.a=rsa-sha256 header.s=mxsw2412 header.b=Nqz4+xih;
+	arc=none smtp.remote-ip=54.207.22.56
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819D3606A32D
-	for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2026 00:49:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 819D3606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44CC606D80F
+	for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2026 02:39:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A44CC606D80F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=Vrr7HJ5Z
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5eadf48fb2dso527558e0c.1
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2026 16:49:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1793839776; x=1794444576; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=LRIt6wL5JukeI7CutNHrB30kNWGfRXMCU9CjLoUJZrc=;
-        b=Vrr7HJ5ZqhVHrUH4gQ1nhUYTf6eI4jAFUgOXuIroG+8vYSC8wq9FMKyRpAS0X3S8Ia
-         X1WvaOw/i4Kvigi7NNddiUqbBVXB0bl8fUKtHXcRmXnwjafymJGOic0zOT0I6oSflaLk
-         NOUATYSym2MCrlG4yos53f9Oevky9c0aEBqEq6qkq82K/dxjsJuVvv0TmlNCrPGnNsvZ
-         FAiUD7z3B7GJMVLpYW2SE1rjX1GAd8E6xXhVi7LPD3Ev25HhFl5bCAGXS/2HTyk1k0Wu
-         WdSBZyZbyw2N/RIxEj2XlnVmCNcH65D4QX9iezm0KOHSHS4RBEb3WjnO1Olgkp9XzRqW
-         1OLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793839776; x=1794444576;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=LRIt6wL5JukeI7CutNHrB30kNWGfRXMCU9CjLoUJZrc=;
-        b=GLmqrwb6Ti9/J4Bny+dv4YPoiEjuktd4SHVmHnp0iMUzCycPIJ06HnRPHC/FeEUl70
-         WYVR6ucluLEFQ7pSma7mvQ8bX09uFcv1HpPR9CDGYH2N+ToF9zaLEVgKvpnQeaWpzFAY
-         WhzgVgWPJZzB1T7N+wU2k0GV59d44nOEgj4MxRq/BmQW6ZlXbwRe5krzcGSLkrHjW2cb
-         /tJU27K40lF/hcdCD2vhSM9mGPGvIL734+SKmkfBN0zfk8CnUZevdB54yi8ommuKqumA
-         SrezeJXz8sQ/uFq3UqSpAl5uRkNIj1Wgr2TI66bHNOo+an4x4Qof7SyiuFyTS+mdQkPy
-         5ygA==
-X-Forwarded-Encrypted: i=1; AKwUvBwE8nElCwo1wh84vabrKgn+fzpk8XTm1+BftLWqPnXfeF6j85FGZg5rpzte3cnMoZJl44CL8VUoo193YA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+kXxNkZVz9XsuqGUcNgRs+7WpkPv8LwrT/m4cgKCoDwiNY71Eh
-	pNaUUx+k37rpZdKNEGWidyN+NbacuQxoR0Ho2vO4dFVA4s8YuKeNXS4872SCt+BwC3U=
-X-Gm-Gg: AYBFou1VlfrC44Gr60fkEpVsiC9tas6tQ1ysS69aaVplHTha/JIOQ6FQodoz+VdvuQf
-	dm9XzZK3k5TnQZCRDtqkr/lhBiD5R2rS1aLLH1M4LQ+/uO1OXOK+K5yxtexBzBNkEnNF/ViseJA
-	27s7VFrmC2fjKkLANjhHN2Su5eA6H4r+Khc9t706G+o3pZQQ6p/1ht+nOnuqcU9Y6f61fbwy3P6
-	S06WXulT+HAy/ErORR9rO+OgdL6OEW+ungXUEtzmHVECiJCmqXJZiqqqrWewoIYgBKoLzx9eXZw
-	zk3MaG9lJpNJOjwTElIgEZT1Ux2d4IqcSy5u73A7cuNxBbi9clHK1rGuojpk/xgqPuZuRQhAsbt
-	yljmSsFeThyffGVyVNdH+G0vMbvAGIzW+yi2j2qXPToblKeRXbZLs2I/64hPQZl+mxTCF7EEUZ3
-	GdAzZp+pbLfkF3e6XGIsM+5Zx24WWZpABaA3YO5WDFnxp3WLUSj8gmafy3wRcmSc+LaRwqnY12L
-	LIwz+S/wOrS5KH6xnW3qJMga2K9RWgL9Hh1aGtk5mq9LUxMRCvR+Q3gwT8W4q82g4YjuGBanjId
-	UqDu+cBn2oc1B3TJLidhOjjuURmnHg56lV75r2KAJ6ZdaInEpk+WZbhaQ2CaF3j4U34FqAsqdUP
-	BX+R3O5YAfMw=
-X-Received: by 2002:a05:6102:5126:b0:7cc:56a:58e0 with SMTP id ada2fe7eead31-7d0725e16d4mr6016853137.21.1793839776242;
-        Wed, 04 Nov 2026 16:49:36 -0800 (PST)
-Received: from ziepe.ca (hlfxns010zw-159-2-239-150.pppoe-dynamic.high-speed.ns.bellaliant.net. [159.2.239.150])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-998d9a9ca31sm3266318241.10.2026.11.04.16.49.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 16:49:35 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1xOlfb-00000000cqL-0257;
-	Wed, 04 Nov 2026 20:49:35 -0400
-Date: Wed, 4 Nov 2026 20:49:34 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jacob Pan <jacob.pan@linux.microsoft.com>
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	iommu@lists.linux.dev, Alex Williamson <alex@shazbot.org>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Lukas Wunner <lukas@wunner.de>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Steven Price <steven.price@arm.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Vasant Hegde <vasant.hegde@amd.com>, Will Deacon <will@kernel.org>,
-	Xu Yilun <yilun.xu@linux.intel.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v8 12/15] iommufd/viommu: Allow PCI TSM backends to
- provide vIOMMU operations
-Message-ID: <20261105004934.GE3889730@ziepe.ca>
-References: <20261104161632.3547423-1-aneesh.kumar@kernel.org>
- <20261104161632.3547423-13-aneesh.kumar@kernel.org>
- <20261104152351.00002565@linux.microsoft.com>
+	dkim=pass (1024-bit key, unprotected) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.a=rsa-sha256 header.s=mxsw2412 header.b=Nqz4+xih
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1793846386;
+	bh=8nHg2KK9YdUFsDyCN5OyhUk3RMp8EQBW/fDZ8x8OirA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=Nqz4+xihSRA/SOazc9ytMPaaon6hM2Zpa/k876GDLA/rAvSdmROK7bgusiNH5yJRm
+	 MxDa4YviOx4vP5CKZmEuJc3kfvwqLKu/L2OohyPYk21mJnJpm1Y7KU5OpOGkVf3+ti
+	 zev+B3KBBNrXf3bQvlO8tLbPTEvcdSoXebx80EGI=
+X-QQ-mid: esmtpsz21t1793846385t9086c288
+X-QQ-Originating-IP: GzN6VmvtTqCGNs0V4yiis8fYCMjxRJUo3RwbxpC7uTM=
+Received: from mail-pj1-f46.google.com ( [209.85.216.46])
+	by bizesmtp.qq.com (ESMTP) with SMTP id 0
+	for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2026 10:39:43 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 15456548900643452153
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3ac6794fe45so1102396a91.0
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Nov 2026 18:39:44 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBya6XcUmWUu03KEklwZLtKJ/5l49CaUNW31q0EEgXUEd3TXcJpGYJxmoZt+NS+MbssnoXdZwgdq+jU7og==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/tU0jbiAVU8UhYkuC7ATOdT5A9apRNB+bz+3sUb3SikcoBNk+E
+	WG1AwaLawsjAoNQ7qy7tEmmOwRPim8CylMMlaSHZAi4u72xK9+rYl7COR6nvuV1/vdBnaqNg4UM
+	2gbV059Pp54AjNTlpXYUvTy+JmzRdAhw=
+X-Received: by 2002:a17:90b:562d:b0:3ad:a462:f07f with SMTP id
+ 98e67ed59e1d1-3ae8982c1ffmr16206466a91.45.1793846382617; Wed, 04 Nov 2026
+ 18:39:42 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -124,32 +68,104 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261104152351.00002565@linux.microsoft.com>
+References: <20261102135330.2493332-1-robh@kernel.org>
+In-Reply-To: <20261102135330.2493332-1-robh@kernel.org>
+From: Chunyan Zhang <chunyan.zhang@linux.spacemit.com>
+Date: Thu, 5 Nov 2026 10:39:06 +0800
+X-Gmail-Original-Message-ID: <872B2B4EAE847E62+CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com>
+X-Gm-Features: AclHuK-lEE7dv-iC1Lsio6aPGOufL5hgelB1hFojisk2-zoMsjC0hhsp9HraOXA
+Message-ID: <CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Ivan Vecera <ivecera@redhat.com>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Lee Jones <lee@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, 
+	Ulf Hansson <ulfh@kernel.org>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Chanh Nguyen <chanh@os.amperecomputing.com>, Alistair Francis <alistair@alistair23.me>, 
+	Julius Werner <jwerner@chromium.org>, Paul Cercueil <paul@crapouillou.net>, 
+	Dmitry Osipenko <digetx@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Ray Jui <ray.jui@broadcom.com>, 
+	Scott Branden <scott.branden@broadcom.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, linux-gpio@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sound@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, mfd@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: NAtJFUxAdU16G6+nGQsqeCSVcCediUmyyEi2V0ShjBAX472EWIUNkjoi
+	JW5HxLu6mQRw1ChrwoohULSlGk9O62nQV2BJmtP7ZYwsHzmKdMzC4yBfeLLCca+R82071Eb
+	Z4PUbb47OLbUEgvv6gCMdyOG0tDs/+EtpbthYHYyNK1AH1CmIlXb7ZX4ko8XdTw06U02+/q
+	LCg1ynIHKJH9/7j6dQ1K6ifbUP5MTC2yk4/0j+fkufq+JBjvYTnyudWUxOQH1ryhWbwjGfu
+	oWpzKajhW1CGywo1Hx4GRB7bnzdUnPs8TmBE5hGCax408r+spHWiZ4qsSZAemdxNhlKMGTe
+	94LecN3/z3mVI1u23lfw/45M++gKn1TocNXMYjprieLeIVgyINiCzEFO2NktngcmavlE8nh
+	sMHBOD1SXhDMp86Z6jM7t5OhQXhJrGgJKTG5O328eeR1rWb7KSknGVrmUKIpGE18oYq084p
+	yviNhGyCUmSU9AoD5NA8nbUGOkfk2IV799hjHDo9o+IdttisL41+3fJf+VISPL5FvNh8Yov
+	k3NXZkzPjJhL4sstjlEbGm6YXDrh34VYhZWiIRrco4JRB1bPehg+TavyqtdLhgh2Gn1r5z1
+	Y0RTNJqoKLnrOkIoE5+aqD/has5U39ulrAaNICXL+HkmVcLCykFub8blHd4hGONmbYfbNa/
+	BvNKlBQ+h8LZ6Z98vDcDciIwk6TQ0USQOoBxGAv41/6gv/xR7R6JUOTkJp64vDqhshqz+Kb
+	f6l4jo6fbvMF1A/LpOItI6J+vL37MQP8nrjUbkm6hWG/zcCbxxWW+ZdpHgv2sxPbGS32WNI
+	1lwaYpvRFToaCyqISx6ENZ2UXRC4UZqmKS0ykAMefmXLgYdRpTx3iTM2eilKeEFoYu8d+aX
+	FKTQUX7a49bF05A33ZIHY3OVxCm1LW6MA5cYXoF5uak1L6D8gU73DvRJjeNp2oKMPYKouew
+	Mqdz0LrOlvC+BzOcHG9aTLqDu/p6yfroYAADFgJI64JUzPRJo3HoFwLSLt0hrtAzy7SFKKp
+	i7icNnpaGrloumjoVNROWrBzISzt9rjA8V8tqBOw==
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-RECHKSPAM: 0
 
-On Wed, Nov 04, 2026 at 03:23:51PM -0800, Jacob Pan wrote:
+On Mon, 2 Nov 2026 at 21:53, Rob Herring (Arm) <robh@kernel.org> wrote:
+>
+> Unit-addresses by default (and most commonly) are hexadecimal. There's a
+> number of cases using decimal patterns. Fix all of them, limiting the
+> pattern to match the 'reg' limits if there are any.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
 
-> I am thinking MSHV/pKVM can register an assignment-only tsm_dev to
-> leverage this? Could PCI/TSM support this role without device-security?
+[snip]
 
-It is certainly not what TSM was originally imagined for, but with our
-new arrangement, yah maybe so?
+> diff --git a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> index afa551f6185f..222d70baef1e 100644
+> --- a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> @@ -47,7 +47,7 @@ properties:
+>      const: 0
+>
+>  patternProperties:
+> -  "^([a-z]*-)?sensor(-section)?@[0-9]+$":
+> +  "^([a-z]*-)?sensor(-section)?@[0-9a-f]+$":
 
-TSM basically just becomes this weird overlay driver on the PCI device
-that does stuff. Some of the stuff it might do:
- - Register an attestation subsystem device to do SPDM
- - Register to allow iommufd to create a viommu
- - Some status sysfs ?
- - ??
+Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
 
-It all seems separable and composable to me, so if you don't want to
-launch an attestation subsystem device because there is no SPDM then I
-think that might be OK?
-
-Another option would be to somehow obtain the viommu from the kvm file
-descriptor and rely on the fd to handle the module pinning/etc. I
-don't know how to do that nicely with the way the modules work
-though..
-
-Jason
+Thanks,
+Chunyan
