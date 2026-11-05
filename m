@@ -1,90 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=50.112.246.219
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793889384;
-	b=WvqZk0xDILZx3iN0ya5KHw/nP0mt1a7UsChGZ1hczjK3gSbLpWIVYc2pDkYBjYFNIu6U
-	 oRy2XBmaNZMuIu/pgRfb0hS1rSBAqfIWGZLzjT5oOzx8TzX7B9XJLj0WfA4buAqAte8qB
-	 wv9WZnM6dBC8Aq53dNztHT4jnHy3zVQnZ0/O/6xt6U0psi1eC913ksiO0aagzY4S9wJtz
-	 mpWXLZRERIHwd/JUlmY9JEAr+PY4eARw5uknRalZgJ136o2FKtbqlUlrI4bLqBkIs+dks
-	 pM+0xm2sGSpf1mQOX+LPlWV/6pmK13Huz0hfOj9Q4Y9UeGzXhRRx9VA5Vv1Fh+83wQw==
+	t=1793889537;
+	b=wZmxoz3n5GgrBnp3f3xFCqYdHxmkTWxbVg59P3BN1Vm4OlFnjeVnP5bU5SuN61EXZSYc
+	 ECozuhcJDKYQ7Bh8Ons3d+1ATD9AVzxXK8UJEFbMZNz0XpnuZRuAaxYw6BP/G2rfby4W/
+	 QDKiuohlK/W24cluuukXwUqrfpl4Nypd1sApxrzTnAMQgFhd8cpbB/Ae+PoeOq2YzfxXq
+	 ZhpM7gc862iOPIffJWKizeKtyb4MfGY6hQdG8bgQKen3yvDFZ7mE/WIl5XwQDWGrkkUbb
+	 75UnzEw/YfwXo5lD8UpXX1dDxtiUhg1EF0kLGsfTfkcCh9nzH3I+fqlAc/H8R56hetg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793889384;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:Received:Received:X-Farcaster-Flow-ID:Received:Received:
-	 From:To:CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
-	 X-ClientProxiedBy;
-	bh=RitqX72VBywyZ/8gIe4GxDQsV9RWlpPjVkp4R7+U95o=;
-	b=0TlkTBKJCu9rF7zs60hQSVXbJIkpRk2AIku3oxAdUQLxcpWAcZnOh9wqJkT8okmnBSSt
-	 Rxnnp2z94tDoLOmVxH9Ng3xLBzZKzZr2q24Y1SMXzF2pDcfhmifQES5EW29qzbgaj9k+t
-	 JbFDNbKjwhcZPerwdYq8YvHsFVQEsp5++2pidMmdz6LekudJl7sUmtHkCQanI78APlsLU
-	 eHl6cOmquERkwNZZ+8WkQu634oi87XiZTDJ0rba2yMtF2xwoAUGe35S8TSBd+9CGtMlCO
-	 84y88Qecly39/5GrN6+M8oewSvSrbCYEXi5p0f/FNN4ttT340gmoYRKnwCMjYoLDPfg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793889537;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=6k/zLBs9xN6Ge9pUwvUR+GztcME2OchPyVZ1lJ7jdb8=;
+	b=rlbA95CMVevt1D0xCHA8cigR632ho0jlkS8h9vP7toO+KGvt3cTIo77x0fUi/vgAIirv
+	 Vnc4Lq4UwAesgyN/vFKF5P60h465Lh+kC/YMlgbXHrxhoJtqx28fziqRh77IL44VYPNBB
+	 6F/Ojq2//FmASofiW4zSmF8tzaxPAcBMU3EEkNxqz+SqnOcamicaYKwITQlhEJx6qwUnz
+	 QmOvmL9fRp11N7IsQBTivOFPkyEFjdIosnm3xDLnvE/DL7f/vBZjMOBUd6Q01c/VqjsLs
+	 HEU/0VYuu2D2MJ84FukkSx027r3ZaH2Z+JykmM6C0bPZ2riZ+lyoqfPWyq2tMbF8apg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amazon.de;
-	spf=pass smtp.mailfrom=amazon.de;
-	dkim=pass header.d=amazon.de header.i=@amazon.de header.a=rsa-sha256 header.s=amazoncorp2 header.b=U5r8Inmr;
-	arc=none smtp.remote-ip=50.112.246.219
-Received: from pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com [50.112.246.219])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KkwMvimn;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5DD606A328;
-	Thu,  5 Nov 2026 14:36:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4E5DD606A328
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC659606A31B;
+	Thu,  5 Nov 2026 14:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amazon.de header.i=@amazon.de header.a=rsa-sha256 header.s=amazoncorp2 header.b=U5r8Inmr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1793889384; x=1825425384;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RitqX72VBywyZ/8gIe4GxDQsV9RWlpPjVkp4R7+U95o=;
-  b=U5r8InmrqfFszKgPS3ipFD/vHDLI/XAWFn5FxBMU5ueUyKa3PieHXqUJ
-   5UnRkxC3v4d2dKiRloChx0i/7w92FcskqwBHXgIjKC+1uK8+d0xLEj+Rd
-   9kNLJrtAIQyitkOuTb37BGG34LNCAw/Bv7WWwa9+KJCO+L6YtK7ib6C7v
-   KIAGFLhkc/uAHRsmPZaQukBVezr8aROsDea2DNFMOZJ6jhtktu8c86duN
-   0m8eG21l5yyCWM0aWpMhSzNBgEQZmjfL2rW7aIowmENeMMbE08sNei8sK
-   66Y0Kj4paOOE178vGu0YZhPM1t0h7QN78l1LnhP+tyvsl+Wvj/l+0Nuiq
-   Q==;
-X-CSE-ConnectionGUID: oYzvpLw9QEmc4MZKTbbi6Q==
-X-CSE-MsgGUID: w/FZ20HwTzKvNmnmiaxW/g==
-X-IronPort-AV: E=Sophos;i="6.27,197,1787011200"; 
-   d="scan'208";a="32977905"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-015.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 14:36:21 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [205.251.233.104:30175]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.44.80:2525] with esmtp (Farcaster)
- id 698d68bb-711d-4975-bbc1-15ae946784b4; Thu, 5 Nov 2026 14:36:21 +0000 (UTC)
-X-Farcaster-Flow-ID: 698d68bb-711d-4975-bbc1-15ae946784b4
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56;
- Thu, 5 Nov 2026 14:36:20 +0000
-Received: from dev-dsk-machaujo-1c-d6b511e2.eu-west-1.amazon.com
- (10.253.100.8) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.56; Thu, 5 Nov 2026
- 14:36:17 +0000
-From: Joshua Machauer <machaujo@amazon.de>
-To: Srirangan Madhavan <smadhavan@nvidia.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Bjorn Helgaas
-	<bhelgaas@google.com>, Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso
-	<dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron
-	<jic23@kernel.org>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Li Ming <ming.li@zohomail.com>, "Alex
- Williamson" <alex.williamson@redhat.com>, <vsethi@nvidia.com>,
-	<alwilliamson@nvidia.com>, Sai Yashwanth Reddy Kancherla
-	<skancherla@nvidia.com>, Vishal Aslot <vaslot@nvidia.com>, Manish Honap
-	<mhonap@nvidia.com>, Jiandi An <jan@nvidia.com>, Richard Cheng
-	<icheng@nvidia.com>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v16 14/18] PCI/CXL: Reject reset with unsafe function scope
-Date: Thu, 5 Nov 2026 14:36:10 +0000
-Message-ID: <20261105143611.31563-1-machaujo@amazon.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261029145703.2185231-15-smadhavan@nvidia.com>
-References: <20261029145703.2185231-1-smadhavan@nvidia.com> <20261029145703.2185231-15-smadhavan@nvidia.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KkwMvimn
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C05B1F000C1;
+	Thu,  5 Nov 2026 14:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793889536;
+	bh=6k/zLBs9xN6Ge9pUwvUR+GztcME2OchPyVZ1lJ7jdb8=;
+	h=From:To:Cc:Subject:Date;
+	b=KkwMvimniXwBHxMOIPpjFjX71BkUM9houO3mW8OlYVoBSpXHmJeDdTBNIhe6ATyFo
+	 KGJO0Zt1W26J95hAtKMPmLIJSsoRDVJojBLf2HGIR+hWCaDAuA+B+12NyA0DTuESjX
+	 p6J38vJToekd9S8jsJg0sZ9ZeJa5Y+P1nJewO5I2+ItHhpNOm+7QAqn4zhss3ezSaH
+	 gd/4N9TJtKmfSUVq32cLIXmMWMoNOI7amNOx4LwW07YJKLvHpDefE+vXydeIM14hQU
+	 NjSBKLZ+zLh5GFG/mkUPqVAnA1hSyiIXX6JHBdt1ZVJamvn8ZuibiV6Q5b+h2/1vAo
+	 cB8Wh9J1coLpA==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	David Lechner <dlechner@baylibre.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Ezequiel Garcia <ezequiel.garcia@imgtec.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Grant Erickson <marathon96@gmail.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	imx@lists.linux.dev,
+	Joachim Eastwood <manabian@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Juxin Gao <gaojuxin@loongson.cn>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Lokesh Vutla <lokeshvutla@ti.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Naidu Tellapati <naidu.tellapati@gmail.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	NeilBrown <neil@brown.name>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	"Philip, Avinash" <avinashphilip@ti.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sai Masarapu <Sai.Masarapu@imgtec.com>,
+	Sandipan Patra <spatra@nvidia.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+	Shawn Guo <shawn.guo@linaro.org>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Vaibhav Bedia <vaibhav.bedia@ti.com>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	Xiubo Li <Li.Xiubo@freescale.com>
+Subject: [PATCH 0/8] pwm: Fix various bugs reported by Sashiko
+Date: Thu,  5 Nov 2026 14:38:02 +0000
+Message-ID: <20261105143847.2559586-1-lee@kernel.org>
+X-Mailer: git-send-email 2.56.0.398.g882cbad275-goog
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -94,48 +93,71 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWC002.ant.amazon.com (10.13.139.212) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Thu, Oct 29, 2026 at 02:56:59PM +0000, Srirangan Madhavan wrote:
-> @@ -515,6 +515,9 @@ int cxl_reset_function(struct pci_dev *pdev, bool probe)
->  	    !(ctrl & PCI_DVSEC_CXL_MEM_ENABLE))
->  		return -ENOTTY;
->
-> +	if (pdev->is_virtfn || pdev->multifunction || pci_num_vf(pdev))
-> +		return -ENOTTY;
-> +
->  	if (probe)
->  		return 0;
+These issues were reported by Sashiko.
 
-[...]
+Lee Jones (8):
+  pwm: tegra: Prevent 32-bit period truncation and division by zero
+  pwm: mxs: Return early when disabling and fix error-path clock leak
+  pwm: loongson: Fix 32-bit control register truncation in
+    pwm_loongson_set_polarity()
+  pwm: axi-pwmgen: Enable clocks before accessing hardware registers in
+    probe()
+  pwm: fsl-ftm: Enable ipg_clk around regcache_sync() during resume
+  pwm: omap-dmtimer: Handle negative error codes from get_pwm_status()
+  pwm: tiehrpwm: Enable runtime PM before registering PWM chip
+  pwm: img: Unregister PWM chip before disabling runtime PM and clocks
 
-> @@ -5026,6 +5026,9 @@ static int cxl_reset_bus_function(struct pci_dev *dev, bool probe)
->  	if (!dvsec)
->  		return -ENOTTY;
->
-> +	if (dev->is_virtfn || dev->multifunction || pci_num_vf(dev))
-> +		return -ENOTTY;
-> +
->  	if (probe)
->  		return 0;
+ drivers/pwm/pwm-axi-pwmgen.c   | 20 ++++++++++----------
+ drivers/pwm/pwm-fsl-ftm.c      |  7 +++++++
+ drivers/pwm/pwm-img.c          |  8 ++++----
+ drivers/pwm/pwm-loongson.c     |  2 +-
+ drivers/pwm/pwm-mxs.c          | 32 ++++++++++++++++++--------------
+ drivers/pwm/pwm-omap-dmtimer.c |  8 ++++++--
+ drivers/pwm/pwm-tegra.c        | 14 +++++++-------
+ drivers/pwm/pwm-tiehrpwm.c     | 15 ++++++++-------
+ 8 files changed, 61 insertions(+), 45 deletions(-)
 
-Could both checks go at the top of their functions, before the DVSEC
-lookups? None of the three conditions depends on what the lookups
-find.
-
-pci_init_reset_methods() probes every reset method for every device
-that is added, and enabling SR-IOV adds the VFs one after another.
-Where the checks are now, each VF probe walks the extended
-capabilities twice before it returns -ENOTTY: cxl_reset walks the
-VF's own list for the CXL Device DVSEC, and cxl_bus walks the
-upstream bridge's list for the CXL Port DVSEC. All VFs of a PF share
-that bridge, so its walk repeats once per VF with the same result.
-
-With the checks first, a VF returns -ENOTTY without a config read,
-and the result for every device stays the same.
-
-Thanks,
-Joshua
+Cc: Andrew Bresticker <abrestic@chromium.org>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: David Lechner <dlechner@baylibre.com>
+Cc: Drew Fustini <dfustini@baylibre.com>
+Cc: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Frank Li <Frank.Li@nxp.com>
+Cc: Grant Erickson <marathon96@gmail.com>
+Cc: Huacai Chen <chenhuacai@kernel.org>
+Cc: imx@lists.linux.dev
+Cc: Joachim Eastwood <manabian@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Juxin Gao <gaojuxin@loongson.cn>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pwm@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: Lokesh Vutla <lokeshvutla@ti.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Naidu Tellapati <naidu.tellapati@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: NeilBrown <neil@brown.name>
+Cc: "Nuno Sá" <nuno.sa@analog.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: "Philip, Avinash" <avinashphilip@ti.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Sai Masarapu <Sai.Masarapu@imgtec.com>
+Cc: Sandipan Patra <spatra@nvidia.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Cc: Shawn Guo <shawn.guo@linaro.org>
+Cc: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>
+Cc: Trevor Gamblin <tgamblin@baylibre.com>
+Cc: "Uwe Kleine-König" <ukleinek@kernel.org>
+Cc: Vaibhav Bedia <vaibhav.bedia@ti.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Xiubo Li <Li.Xiubo@freescale.com>
+-- 
+2.56.0.398.g882cbad275-goog
