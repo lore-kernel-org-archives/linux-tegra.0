@@ -1,47 +1,118 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793876787;
-	b=DLxAIZttFkFTY3rH4amWZ5llsfbZd2Qatwn4Rx1YyHtibcr4w+DskrfdDt4bSyw7L7GI
-	 zPN/jGUgm0L86wbw8L1+erPf8szdjh+p+tqPLVqlpVeUJP7C0mhjrkGBzBnmLDp4QZI/M
-	 GWZVyGuR743XjB1VUF4Q1hItvBfs0drvwc0l3is8sBGAS7r8mGsWuaXIPdVp6XTem0r0e
-	 ldbWuJB/Rey15bt+E1rQwTB8IECmGArxLrHO/ePHnbW9A4QyZ052C/wnxwRjvZ/wkGMzb
-	 5lC7wLAFueRLV+KQ1bkLUrhgssq4+Ic/2T14jLO97X6RubnOVFQuC77upsQTaB2ZbCw==
+	t=1793876803;
+	b=kJw2k0uB96pHIriQKR2Ri52A7qeHbA7lAOOdyc1kJPoToljsa94J+U/nWdoGDLsOkv3H
+	 KVZ3pfnfPUvA3ynaC62+WwYfP2+qqelLhEp7kExRP63yzRll0e2MAYyJaKTc38ELrCCPZ
+	 YPgU2QP4rtTp3Gx5G831TZ0aEI/QWmElIoiM/vdAv3lWlvaZpEa7GAceFxHFCR1tvIfX3
+	 gRY7zEfYno3qedidd2CCAeHNIP2qW+jJNzQiHRBFsSVEe0/U+JGh7J+uQE92cASLnHaoW
+	 ANiZ8vONkvlwuLdYQm6Spfy5nnNlJYMZq78Mv92sJEa9BVtChFSKyxCiZZ3STsIvnjg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793876787;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=8uFBTt6l9qrmjnlo/lzMuxG35eGIBIWy2pFI1wbTXQs=;
-	b=udTW9pfy39IphNn2stNXgcyy4WiyPbPtB/ZOIGlJMeWtLZiGg6WbW4OcqbqhJeevQ2A0
-	 qgoJIe/i5ALyX6bWNj94qEtbUjAKYWRCUBM46Ph/cCRaitdEaUHl/Uri+LQ+TP4e8+NLU
-	 Vpqd5/o963gt5FpYTbSI1G0ia39F1/CQA4zHLl1UdUBCk7NRZ2fIgXsFSuHuJza1iyMRd
-	 OpThiX3rCb2WWcpJSGv9NxLmBwpeXQXg1D4+JvJeOp/TBzwEKHrCTPyoR4UXLPHdw4jTI
-	 HzQl6Kwku6VrMKcV/ZOBq2VjA7aQUaN1OBz2/Q5hERxptxouwlkqfSJVl/+Wa4ZkNsg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793876803;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=LOaUcszBeFc4BBZTn5mnxjNejVuuHalw0DHWazewRfk=;
+	b=YVvKRjef3yrCExRNAotCmj9/6grUWF0euyTs/5vqXkKvNiIHh357fqEoxAndYPLd5D12
+	 gNkYf9paW0NTVRtYdhJk/g3P0x7KWKtJGfnUNYqjV82hgFaWmZoJr03bZWgECU33vrGkz
+	 ln6MLdV4punwSf2oZfNZBV25+AB9SS1xp4XwxeVvLZ0Y/lYo4cZTomCtfULX+0/vrVhnI
+	 yVMVvQ6jYN3oaGQFAkWLHbhvlE4+Yn7ri5HbVekZqb4cvXh6udepcqQxCmgihGj55696s
+	 KFFkubAUOWwMY789MQVmk8sf+lNkq8Q5lYYWKGkeHelttJm2n01Usbqdyg6uaKvfUbw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iuU79YlY;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=YRRtLmSi;
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71D1606A326;
-	Thu,  5 Nov 2026 11:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD4C606A33F
+	for <linux-tegra@vger.kernel.org>; Thu,  5 Nov 2026 11:06:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8FD4C606A33F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iuU79YlY
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A4E01F000C1;
-	Thu,  5 Nov 2026 11:06:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793876786;
-	bh=8uFBTt6l9qrmjnlo/lzMuxG35eGIBIWy2pFI1wbTXQs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=iuU79YlYRu9wGbacW+vpTg9ffAbYE6lICdlGoClgZT/3QE7f0GtlAIJraHprzi37T
-	 RQ4PAQLBZd3u1KCl7xeRVtQepzl4SQQ9NvXHpgexnlvKDAMtvJ59QZF50ETnxt75E9
-	 GjgYPY2+hp17tcJio44a8fUwQ435dmclkhcrR2o5FGK0EmZHTKH0mK9JcvlyMcZKwK
-	 6RZKpzdTFd3VDafCS+pfLlBFu0meixLfkDwKj+wggkqV13eDvOgaIw79oHKH7MbYzv
-	 DzYNgs1xXMYQknJ+G62HFn04h70v86LpJ8GbJ0q61/uKqyU7s3kLHZeTPeH2Nwfbt5
-	 fBr0P/B2JkWwQ==
-Message-ID: <041a6cdb-b9de-41f4-bf58-4376a280f434@kernel.org>
-Date: Thu, 5 Nov 2026 12:06:05 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=YRRtLmSi
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-49134c8509fso510425f8f.1
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Nov 2026 03:06:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1793876796; x=1794481596; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=LOaUcszBeFc4BBZTn5mnxjNejVuuHalw0DHWazewRfk=;
+        b=YRRtLmSiMfivZJM97R0EjPfSJFaKkxh73SxC1v75MA6sudRgHzTsOwKyvimrMZy3nF
+         CEXfFiAlo0+CYwI35W9OP7RYSEUXaCfi9JP+VLaMgdqh3ECkKyUy3I5FmR7Y1XYBlw8B
+         xkLbrwfRrl5r927YaBVRc9BSFtjdMh39/4cOeqPEO55i9O3tFyIR/6ACR6LAjHip6x2h
+         uuVKIi86pMpJtnB1Cxdy71V76NsTTHAB6+EXBnzYcRMy3XEzrJwzLLjSRrl/D4rK04M4
+         WGFJDlWarHUK3nCJ1W6yiXB2op0iK/nxuo3Xi2ea8ezE7iaSZXTg9cRLPpuf7ja4bkxO
+         2Rvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793876796; x=1794481596;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=LOaUcszBeFc4BBZTn5mnxjNejVuuHalw0DHWazewRfk=;
+        b=qegXFG/58TV38bY2IRfKFFwp6BxWiMVCPfgfSXPepmlFs7a9RqxgzbtEBSmeGBAfAH
+         WyLLp1MxLlu9beafauhfPOGtjP3yWSN1NJMTnO8L0Q5706oywVp5zJRqjpB+AYHGt+SK
+         MB24p/uSyjYTRDbJXP5Agx97ZlZKKIPLQ0hVl61ZrW84L4Ek/9rutjzAApk1KDo15cnd
+         5O+eZAcDmtdDBesarCKnkkFFLbf5gt6bzVUSoV/jQHEuBBZhuhpQIpa1fGofOgDNcTGT
+         5sIBhtfo3bVKoVCGgKWp5xAbSdWmPC2T5NrqhcC7yUeVQ4nI/enHxGWklLm2UPAfnQ4m
+         m3xA==
+X-Forwarded-Encrypted: i=1; AKwUvBxxcSr0b7RKE0RwvsN09yOptol0SwuQGoo/xd4QACz29JKw7Plap9tSJv90Qxpt3UuMHMdM39j+MyiZEw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z//a970nGZgRtyYqHR5yy0WuvEihIP72vvP5DUO2TWbIWgZhWoD
+	XFZOHZH+y1eflHrLqNjJQu0K/pDR/LGyH/lV7APbl8yw6XnL0mlsBoHa1gYlwkxfaeU=
+X-Gm-Gg: AYBFou0GSDJfzCvHvQaws+P1eg1/cbX3yDtZYkuhvMVWLpw72nhrRoxzPdD74kJZ4Jo
+	BoEomPIiZNghfWkfCAH30117QGWULhUKVT3l+bE+XUJMAfDk+kqa83oiEBGgnaNTtSen3H3Rqhz
+	S75gZue+M5M7cHfpZ9nNEAgxxkfJIS5IYJT6C5MepUtWd0lXG+LH5sj5hknunCVTiHU9oqNssZc
+	SbOEsft68IU6fNiW+FjQxQ/j0Epbc0kZH1pCb2gYF/+SOjDZ+hx7oWwiqoEuy4ebGDmY1/MyDT8
+	DsScr4vv/Pr4sK8DqkKqhiGToB0MYjkpp1yBc4LfmTd5UO5MU9mi47G3nO+vbAQLw80Cuc0WuP9
+	z46SoGO+ZgBqDmONMgxYAKc4/E5vQmGx4QR+E5KoZCDZcwwy6FwMAEKj0kqPYcA66V5ubHmCTKL
+	eDj7JXJ9CNtg/aCRfImZCoG4zF4T9h70y3aGckDWuc8RCfoQcpuJh7xVXznbhKEr1GaNuORWeQZ
+	yyA7bVivmnQOYjkMYfuYPH6HrJUdscW/VacsuFoCmKSC4YQGgtHWP6af9h5ZaD4sOwAqPPLaRj0
+	0DcYWKSiJY/UfpbtSzAgzvBfdXYSDh0Rv3cuM9emEKC+wsBcMTbCjm3QVYu5fXSZsIuh4lN7cc1
+	JT+gp2jUeehh/vFJm
+X-Received: by 2002:a05:6000:40e0:b0:48f:bb86:cc03 with SMTP id ffacd0b85a97d-48fbb86d828mr15698548f8f.11.1793876795617;
+        Thu, 05 Nov 2026 03:06:35 -0800 (PST)
+Received: from localhost (p200300f65f19a904ae40ca5165ccacb8.dip0.t-ipconnect.de. [2003:f6:5f19:a904:ae40:ca51:65cc:acb8])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48fece998absm10176189f8f.22.2026.11.05.03.06.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2026 03:06:34 -0800 (PST)
+Date: Thu, 5 Nov 2026 12:06:33 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Lixu Zhang <lixu.zhang@intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Imre Kaloz <kaloz@kernel.org>, 
+	Conor Dooley <conor.dooley@microchip.com>, Valentina Fernandez <valentina.fernandezalanis@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Daniel Palmer <daniel@thingy.jp>, 
+	Romain Perier <romain.perier@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>, 
+	Mika Westerberg <westeri@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, linux-hwmon@vger.kernel.org, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, "Enrico Weigelt, metux IT consult" <info@metux.net>, 
+	Viresh Kumar <vireshk@kernel.org>, virtualization@lists.linux.dev, Yinbo Zhu <zhuyinbo@loongson.cn>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-tegra@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Srinivas Neeli <srinivas.neeli@amd.com>, 
+	Michal Simek <michal.simek@amd.com>, linux-aspeed@lists.ozlabs.org, asahi@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-unisoc@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
+	Michael Buesch <m@bues.ch>, William Breathitt Gray <wbg@kernel.org>, 
+	Robert Richter <rric@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 00/23] gpio: Improvements around device-id arrays
+Message-ID: <auxh9PxpJScFO3i2@monoceros>
+References: <cover.1793097104.git.u.kleine-koenig@baylibre.com>
+ <2hfpcbk6r56vvhkqyiex2apl3pinieybad5sd3vkvvabqs3uto@lydt3gin5kxe>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -51,127 +122,107 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] spi: use dmaengine_desc_set_callback()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Mark Brown <broonie@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>,
- Ryan Wanner <ryan.wanner@microchip.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean
- <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
- Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
- Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Andi Shyti <andi.shyti@kernel.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Laxman Dewangan
- <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
- "moderated list:ARM/Microchip (AT91) SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
- "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- "open list:RENESAS RZ/V2H(P) RSPI DRIVER"
- <linux-renesas-soc@vger.kernel.org>,
- "open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
- "open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
- "open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- Frank.Li@oss.nxp.com, vkoul@kernel.org
-References: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
- <2154003.0S5aU1g85B@diego> <auxcf206A1yMnHkX@ashevche-desk.local>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <auxcf206A1yMnHkX@ashevche-desk.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qsdpu7ny4ekdton4"
+Content-Disposition: inline
+In-Reply-To: <2hfpcbk6r56vvhkqyiex2apl3pinieybad5sd3vkvvabqs3uto@lydt3gin5kxe>
 
-On 05/11/2026 11:37, Andy Shevchenko wrote:
-> On Thu, Nov 05, 2026 at 10:52:38AM +0100, Heiko Stübner wrote:
->>>  	/* rx must be started before tx due to spi instinct */
->>
->> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> Please, use "# subpart(s)" syntax with this tag
-> 
->    Reviewed-by: Heiko Stuebner <heiko@sntech.de> # rockchip
 
-That's a lot of work for you, Andy :)
+--qsdpu7ny4ekdton4
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 00/23] gpio: Improvements around device-id arrays
+MIME-Version: 1.0
 
-But I keep counting here, one person of Rb's did it right, and there was
-one more correct Ack (for parts). Five persons here and one more at v2
-gave blanket tag, while reviewing only parts. :)
+On Thu, Nov 05, 2026 at 09:47:39AM +0100, Bartosz Golaszewski wrote:
+> On Tue, Oct 27, 2026 at 11:48:37AM +0100, Uwe Kleine-K=C3=B6nig (The Capa=
+ble Hub) wrote:
+> > Hello,
+> >=20
+> > the original motivation for this series are the patches that convert the
+> > arrays to use named initializers, see
+> > https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylib=
+re.com/
+> > for the idea behind it. Looking left and right a bit while implementing
+> > that, the series grew a bit.
+> >=20
+>=20
+> Hi Uwe!
+>=20
+> This no longer applies, can you rebase it on top of gpio/for-next and
+> resend? I'll apply it right away before any additional conflicts.
 
-Best regards,
-Krzysztof
+Hmm:
+
+	$ git fetch https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git=
+ gpio/for-next
+	From https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux
+	 * branch                      gpio/for-next -> FETCH_HEAD
+
+	$ git checkout FETCH_HEAD
+	HEAD is now at d66b6b86d5a6 gpio: 74x164: add support for 74lv164 shift re=
+gister variant
+
+	$ b4 am -3 2hfpcbk6r56vvhkqyiex2apl3pinieybad5sd3vkvvabqs3uto@lydt3gin5kxe
+	Looking up 2hfpcbk6r56vvhkqyiex2apl3pinieybad5sd3vkvvabqs3uto@lydt3gin5kxe
+	Analyzing 33 messages in the thread
+	Looking for additional code-review trailers on lore.kernel.org
+	Analyzing 99 code-review messages
+	Checking attestation on all messages, may take a moment...
+	---
+	  =E2=9C=93 [PATCH v4 1/23] gpio: Remove __maybe_unused annotations from a=
+cpi_device_id arrays
+	    + Acked-by: Frank Li <Frank.Li@nxp.com> (=E2=9C=97 DKIM/nxp1.onmicroso=
+ft.com)
+	    + Acked-by: Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com> (=
+=E2=9C=93 DKIM/intel.com)
+	  =E2=9C=93 [PATCH v4 2/23] gpio: fxl6408: Remove __maybe_unused annotatio=
+ns from of_device_id array
+	[...]
+	 Link: https://patch.msgid.link/cover.1793097104.git.u.kleine-koenig@bayli=
+bre.com
+	       git checkout -b v4_20261027_u_kleine_koenig_baylibre_com 20a33c6b6c=
+be7e4805dfb6cd68816937443aa148
+	       git am -3 ./v4_20261027_u_kleine_koenig_gpio_improvements_around_de=
+vice_id_arrays.mbx
+
+	$ git am -3 ./v4_20261027_u_kleine_koenig_gpio_improvements_around_device_=
+id_arrays.mbx
+	Applying: gpio: Remove __maybe_unused annotations from acpi_device_id arra=
+ys
+	Applying: gpio: fxl6408: Remove __maybe_unused annotations from of_device_=
+id array
+	Applying: gpio: Drop unused assignment of acpi_device_id driver data
+	...
+	Applying: gpio: Unify style of pci_device_id arrays
+	Applying: gpio: Unify style of various *_device_id arrays
+
+	$ echo $?
+	0
+
+Maybe you just need to add `-3` to your workflow? ISTR this should be
+the default for b4, but it seems if failed to mention the -3 in the git
+am cmdline.
+
+Should I still resend?
+
+Best regards
+Uwe
+
+--qsdpu7ny4ekdton4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrsYzcACgkQj4D7WH0S
+/k6COAf+I352qHa+kMUOH9ETW9KNHC8dWhUfB6E/IB+8yoRbH4tQy5C0mLg76J11
+sJdUuJGD2XjvAv2tgSWACC8Cq1A+CnMvgQXXDsLtC7JuQ0aQYwSFMTIEphdECYue
+42itRdsMlxubgjyK4Ku9YeDItioMv2A2EX+InXlNcO6MoK9ty5ZgCfsCY3OyHGVT
+OwfU948a3DowaasJORDv1w6dhDNg/sCysegJvjnBoz2vhmoeYeyxxNHTGIzcjxt/
+CWYJqu4/QDxJQ9FDuS6d2VhmXYOGL2Dl/wntyyQZjatVXHe6I2wwFBNQoOWJvPaA
+BRQb0uNoTqeBvO/Bc5+AYD34/xDKkg==
+=tsLa
+-----END PGP SIGNATURE-----
+
+--qsdpu7ny4ekdton4--
