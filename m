@@ -1,90 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793976969;
-	b=TUzhy6lm5B9aMeSMT7u5J4mr331toK42ghSUwTNsmJiKvC93qKOJ75ZApxn/wLx49GPD
-	 yWY6NtEe/TNfktamPNgtPoErpSwFOuwAIRT9dfwPrdBSphBx5ks8vYpU0L4w3io8QKeZ2
-	 hw6qvKYMlD05j01IyDfc66lI8GQXSXbjtj54YTlEsZ+QctzpLyAJIY3hG7vgmuR9RTnuP
-	 c4TkS6jRvaDRDgxORbjbMvLWyINaZRfrQHeuXxHvx662sXVxRUIU4tJ5C2oNqdUBjLRmz
-	 8IumtMEj+FVrkuPnOi0Fjkoxdefo2OANrGzEKg1nkGlZ1bF0aaYm7djj7HTXsNBkybw==
+	t=1793978380;
+	b=IwH1rPiUSAHxX8IDN2aTTLNyc2BzHXKGFr6J40JtnIaaBRFe94BaR5PPYi+etlFoxs5u
+	 /0PYfX7j/NIbRVX0hxI18wsFv7RsJF5UBAa4ABLGlEGBTaeREiZ2DfPyFIJkJL+9+GC3v
+	 PPpaJ+5zd7nHJYdxZgrJiNzJ+JT50PmqdGv9ZwI9QGGUDYYDPWglqd9iRPz9AlQhL8ysg
+	 EEO/Yn47pqeQtAXBcOPA3Cyx3dB0ZCTxzQhD9hNVAtMWP57sgfiA2zKpur5PBQDga/5Rg
+	 0RRdC/kZmvqpz+veIT2LhPXuP+m3dD9IYbSizQQCydzkiFMJfZrN9NDKp2SAC1k2XSQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793976969;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793978380;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=OZO2+7G4k6RkoglmAS6YzLo/PJ0QFmsDlFGqO/wIKqU=;
-	b=nSY7RnORv1S3MfATLwSd7G3bsYMDebSwS07morBbn9ksgO5oOUFNkk3QUY1cXHIMIi/s
-	 pPQm0lCPkcQdhOGQmSqJqWi5IJUC4X3/FkQqEkxXF4PxFUpjUw3+PobmWHHoTcII8rc91
-	 U+LCHAirf4FuxFe2tuDlSurwsY8ZckARoLJB8M+CKQvKPTJUM5gBlgP+K4d3A9NGTT/Mr
-	 J/5kd21H9Nd1iDsoV0IFqcml7IjdHeRyShvzcESk0RkTiGfIszPRl5dktXc/xAfsyA7f8
-	 vUxKic+mleax+mQSX8fySHURmmVIKZ0UlptOh1DnZuWRxVtpP5TfnqDN/fE/Q3n7xkQ==
+	bh=TjKm4iQuA3o4uEU1I1bQg4XGGc1wJZI3d+s7EI8o888=;
+	b=b4SdoGFY8Qj3fxd4dK2aWPnKFSPJA9cduRqTPEzhpawfOzVnzenAh41Y243P+384Uf1F
+	 vL/+Xif0DYZDuWYYg9dsTcXtcIx/pGVw6QLqS9gV3j3TsvkRP1G6BMzEDFBmQz+sbfXxp
+	 ak7xJnbYYpTnf/xLVNJigWZIK1VMdLGLcdg28Uu748Mg1ILZ12tr3JhiAB/KariNUun+A
+	 Mr5RVVp3d7GMZlJ3HAWd7WaR9p0+/wDNxP0too5kQAdlEsFQKx7r0XB7JbHo7/L+h0x5b
+	 nhsltT2oi+p4AcSElaTngygXrn6AcOkc73+XTVF1biLEObEFFrBATSmwRt5el1RAY3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FL3b2pjP;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UxqvMYR8;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96DC606A32E;
-	Fri,  6 Nov 2026 14:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B74606A333;
+	Fri,  6 Nov 2026 15:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FL3b2pjP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93AA21F0089F;
-	Fri,  6 Nov 2026 14:56:07 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UxqvMYR8
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 758E01F008A1;
+	Fri,  6 Nov 2026 15:19:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793976968;
-	bh=OZO2+7G4k6RkoglmAS6YzLo/PJ0QFmsDlFGqO/wIKqU=;
+	s=k20260515; t=1793978380;
+	bh=TjKm4iQuA3o4uEU1I1bQg4XGGc1wJZI3d+s7EI8o888=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FL3b2pjP4eHV1sse1FCUItCjs7WSyqKVQlm1eN2jCUmHu0R9vI4R5catcSy55jdyJ
-	 JOUKfCl2j58V/ngp7J5DauX+QE/lEYXrvqts2JBOm7zCiE1X3LgkaKAE4hwBf//qMh
-	 dMWv5mavfztWIVeEzCj2sM9tYiuUon4hwvojwAJ07py/MpMYaIBA5Abkkz7U6FYXMR
-	 kaIIcwxbF+YfCiXG0Us9PryUlZddR4DitWpuhShM//KfOmihsx7KrjcX2AOetsROPv
-	 9k2ftDAZJ4aZaUcuhuECQ2WHN4fMepu+0d3lVLCbAX/MLhswgxSzLpi2Pgypz/jY8z
-	 Go2SN7cDi4krA==
-Date: Fri, 6 Nov 2026 15:56:05 +0100
+	b=UxqvMYR8jFBKse3vSX1JHfmDUefXKyKFoFWGXFTOAMUEL2M1V09XvQK47Y+GKGasA
+	 oEYKxEgGtmRdZWrNvhzd98d8S6UuwI+ng1VlP4LhIm5X9lOdc/vSP0eQ2b69og5RSq
+	 LTTc/H20DTYLsX+YWmkt4X4r/aMwxhBUCTKtraLbtlX5zSWtrQd0LeOdEXzrO8DGBO
+	 wZWDGniulef5AJIFJWeCgwzEPOMlxM+pK31IV62u2Pr8LXhzaf19HmPiDJHxVWrN3O
+	 9D7hNBkNFQRqnoQowocdiz/mKYYn7lRzApjQ4bvZSxVeIL6WLqX39v6Ykrna+zHfjN
+	 oJbjTjXclIc7A==
+Date: Fri, 6 Nov 2026 16:19:37 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Frank.Li@oss.nxp.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Russell King <linux@armlinux.org.uk>, 
-	Richard Genoud <richard.genoud@bootlin.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Cunhao Lu <1579567540@qq.com>, 
-	Raul E Rangel <rrangel@chromium.org>, Yenchia Chen <yenchia.chen@mediatek.com>, 
-	Zhiyong Tao <zhiyong.tao@mediatek.com>, Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>, 
-	Kendall Willis <k-willis@ti.com>, Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>, 
-	Nicolai Buchwitz <nb@tipi-net.de>, Karl Mehltretter <kmehltretter@gmail.com>, 
-	Stefan =?utf-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>, Shitalkumar Gandhi <shital.gandhi45@gmail.com>, 
-	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>, 
-	John Ogness <john.ogness@linutronix.de>, Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>, 
-	Robin Gong <yibin.gong@nxp.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, Zhaoyang Yu <2426767509@qq.com>, 
-	"Nikola Z. Ivanov" <zlatistiv@gmail.com>, Haoxiang Li <haoxiang_li2024@163.com>, 
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Myeonghun Pak <mhun512@gmail.com>, 
-	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>, 
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>, 
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
-	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>, 
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, vkoul@kernel.org
-Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
-Message-ID: <au3nMfg8QzGtaH-i@orome>
-References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
- <aux2VKHnVLwq_wzi@orome>
- <auyQEVmA2KeGu9DL@ashevche-desk.local>
- <2e12316d-d079-471f-9c29-ef5fb765216a@kernel.org>
- <auygwakavp_Uk52V@orome>
- <auyr2lqlSegIXFnc@ashevche-desk.local>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/10] drm: Add MIPI DBI bus support for MIPI DBI Type
+ A and B
+Message-ID: <au3telUE9A43PDWv@orome>
+References: <20261105140510.165165-1-clamor95@gmail.com>
+ <20261105140510.165165-2-clamor95@gmail.com>
+ <au3NWsXz-hg2LNr_@orome>
+ <CAPVz0n3_oRz8aMr1W=8K7dnHhM=vuGpHjpq6+=80oXiFj5wfSg@mail.gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -95,141 +67,168 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hyjsm6c5ofwknahy"
+	protocol="application/pgp-signature"; boundary="n7zrqbgnjyyoeiad"
 Content-Disposition: inline
-In-Reply-To: <auyr2lqlSegIXFnc@ashevche-desk.local>
+In-Reply-To: <CAPVz0n3_oRz8aMr1W=8K7dnHhM=vuGpHjpq6+=80oXiFj5wfSg@mail.gmail.com>
 
 
---hyjsm6c5ofwknahy
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--n7zrqbgnjyyoeiad
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
+Subject: Re: [PATCH v6 01/10] drm: Add MIPI DBI bus support for MIPI DBI Type
+ A and B
 MIME-Version: 1.0
 
-On Thu, Nov 05, 2026 at 06:16:26PM +0200, Andy Shevchenko wrote:
-> On Thu, Nov 05, 2026 at 04:34:15PM +0100, Thierry Reding wrote:
-> > On Thu, Nov 05, 2026 at 03:35:20PM +0100, Krzysztof Kozlowski wrote:
-> > > On 05/11/2026 15:17, Andy Shevchenko wrote:
-> > > >>> ---
-> > > >>>  drivers/tty/serial/8250/8250_dma.c  | 6 ++----
-> > > >>>  drivers/tty/serial/8250/8250_mtk.c  | 3 +--
-> > > >>>  drivers/tty/serial/8250/8250_omap.c | 6 ++----
-> > > >>>  drivers/tty/serial/amba-pl011.c     | 6 ++----
-> > > >>>  drivers/tty/serial/atmel_serial.c   | 6 ++----
-> > > >>>  drivers/tty/serial/fsl_lpuart.c     | 6 ++----
-> > > >>>  drivers/tty/serial/imx.c            | 6 ++----
-> > > >>>  drivers/tty/serial/msm_serial.c     | 6 ++----
-> > > >>>  drivers/tty/serial/mxs-auart.c      | 6 ++----
-> > > >>>  drivers/tty/serial/pch_uart.c       | 6 ++----
-> > > >>>  drivers/tty/serial/samsung_tty.c    | 6 ++----
-> > > >>>  drivers/tty/serial/serial-tegra.c   | 6 ++----
-> > > >>>  drivers/tty/serial/sh-sci.c         | 9 +++------
-> > > >>>  drivers/tty/serial/sprd_serial.c    | 3 +--
-> > > >>>  drivers/tty/serial/stm32-usart.c    | 6 ++----
-> > > >>>  15 files changed, 29 insertions(+), 58 deletions(-)
-> > > >>
-> > > >> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> > > >=20
-> > > > Krzysztof, now look at this case. I would argue that this is even l=
-ess fit than
-> > > > # subpart(s) case, because it might imply anything. Again the probl=
-em is the
-> > > > bundle, and for such a case (when tons of independent changes are b=
-undled in
-> > > > the same stuff, *every* Rb tag has to be explained on what has been=
- reviewed!
-> > >=20
-> > > I think this case is obvious - Thierry reviewed this patch and gives =
-Rb
-> > > tag, according to reviewer's statement of oversight. I don't see a
-> > > problem here or what is questionable.
-> >=20
-> > Correct. I looked at this whole thing and approve of it.
+On Fri, Nov 06, 2026 at 03:59:05PM +0200, Svyatoslav Ryhel wrote:
+> =D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 15:=
+14 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Thu, Nov 05, 2026 at 04:05:01PM +0200, Svyatoslav Ryhel wrote:
+> > [...]
+> > > diff --git a/drivers/gpu/drm/drm_mipi_dbi_bus.c b/drivers/gpu/drm/drm=
+_mipi_dbi_bus.c
+> > [...]
+> > > +/**
+> > > + * devm_mipi_dbi_device_register() - create a managed MIPI DBI device
+> > > + * @dev: device to tie the MIPI-DBI device lifetime to
+> > > + * @host: DBI host to which this device is connected
+> > > + * @np: device tree node associated with the panel MIPI DBI device
+> > > + *
+> > > + * This function is called by DBI host driver to create panel device.
+> > > + * It automatically calls mipi_dbi_device_unregister() when @dev is
+> > > + * unbound. It does not automatically free passed device node pointe=
+r,
+> > > + * it must be put manually.
+> > > + *
+> > > + * Returns:
+> > > + * A pointer to the newly created MIPI DBI device, or, a pointer enc=
+oded
+> > > + * with an error.
+> > > + */
+> > > +struct mipi_dbi_device *
+> > > +devm_mipi_dbi_device_register(struct device *dev, struct mipi_dbi_ho=
+st *host,
+> > > +                           struct device_node *np)
+> > > +{
+> > > +     struct mipi_dbi_device *dbidev;
+> > > +     int ret;
+> > > +
+> > > +     if (!host || !host->dev || !host->dbi || !host->dbi->command ||
+> > > +         !host->ops || !host->ops->attach || !host->ops->detach || !=
+np)
+> > > +             return ERR_PTR(-EINVAL);
+> >
+> > Do we want dev->of_node to serve as a fallback for !np?
+> >
 >=20
-> for this type of bundles it's not obvious.
+> No we don't dev->of_node is hosts node, and np is panel node.
 
-I think it's obvious if you interpret the tag the way it's described in
-the process documentation. If everyone has their own interpretation of
-what it means we have a whole other set of problems.
+Fair enough. The parameter name is a bit generic, but I guess if you
+read the documentation it becomes clearer what it means.
 
-> > If I review only parts of something at most I'll give an Acked-by.
+> > > +
+> > > +     if (!of_device_is_available(np))
+> > > +             return ERR_PTR(-ENODEV);
+> > > +
+> > > +     dbidev =3D kzalloc_obj(*dbidev);
+> > > +     if (!dbidev)
+> > > +             return ERR_PTR(-ENOMEM);
+> > > +
+> > > +     if (of_node_test_and_set_flag(np, OF_POPULATED)) {
+> > > +             kfree(dbidev);
+> > > +             return ERR_PTR(-EBUSY);
+> > > +     }
+> > > +
+> > > +     dbidev->host =3D host;
+> > > +     dbidev->dbi =3D host->dbi;
+> > > +     device_initialize(&dbidev->dev);
+> > > +     dbidev->dev.parent =3D host->dev;
+> > > +     dbidev->dev.bus =3D &mipi_dbi_bus_type;
+> > > +     dbidev->dev.release =3D mipi_dbi_device_release;
+> > > +     device_set_node(&dbidev->dev, of_fwnode_handle(of_node_get(np))=
+);
+> > > +
+> > > +     ret =3D dev_set_name(&dbidev->dev, "%s:%s", dev_name(host->dev)=
+, np->full_name);
+> > > +     if (ret)
+> > > +             goto put_device;
+> > > +
+> > > +     ret =3D device_add(&dbidev->dev);
+> > > +     if (ret)
+> > > +             goto put_device;
+> > > +
+> > > +     ret =3D devm_add_action_or_reset(dev, mipi_dbi_device_unregiste=
+r,
+> > > +                                    &dbidev->dev);
+> > > +     if (ret)
+> > > +             return ERR_PTR(ret);
+> > > +
+> > > +     return dbidev;
+> > > +
+> > > +put_device:
+> > > +     of_node_clear_flag(np, OF_POPULATED);
+> > > +     put_device(&dbidev->dev);
+> > > +     return ERR_PTR(ret);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(devm_mipi_dbi_device_register);
+> >
+> > Don't we need to of_node_put() here on failure? Otherwise we're leaking
+> > the reference that we obtained inside the device_set_node() argument.
+> >
 >=20
-> Which is strange, don't you find it? The review is not an acknowledgement.
-> These are two different operations.
+> This is fully repeats device_register logic of drm_mipi_dsi.c so
+> unless DSI framework has leak, this should be correct
 
-I think review is a stronger form of acknowledgement.
+Nobody said that drm_mipi_dsi.c is correct. I'm reviewing this patch and
+it seems like it's wrong. If drm_mipi_dsi.c does the same thing it
+probably is wrong, too.
 
-> > I don't think I've ever done partial reviews. I don't think you can rea=
-sonably do
-> > that
-> > because if you don't know what other parts of a patch are doing, how can
-> > you say that a specific hunk does what it's supposed to.
-> >=20
-> > Patches are an atomic set of changes,
+> > > +static int mipi_dbi_drv_remove(struct device *dev)
+> > > +{
+> > > +     struct mipi_dbi_driver *drv =3D to_mipi_dbi_driver(dev->driver);
+> > > +     struct mipi_dbi_device *dbidev =3D to_mipi_dbi_device(dev);
+> > > +
+> > > +     drv->remove(dbidev);
+> > > +
+> > > +     return 0;
+> > > +}
+> >
+> > Might as well make drv->remove() return an error and propagate that
+> > here.
+> >
 >=20
-> Of course, not always the case. This patch is a bundle of atomic changes
-> in a single drop.
+> Have you even checked the code? remove() callback is and should be void.
 
-That seems like a slippery slope. It means we now need to interpret what
-atomic means. If a commit is not atomic, that to me is grounds for
-rejection. Maybe atomic is the wrong term here. The patch to me is still
-one logical change because it applies the same transformation to all
-these different drivers, and therefore it doesn't require to be split up
-explicitly.
+I don't know what you're trying to say here. Yes I can see that the
+remove callback returns void. My point is that device_driver.remove does
+*not* return void and since this is merely a wrapper around it for DBI
+it could also just return int for symmetry.
 
-> > so I don't think it makes sense to review only parts of it. If you can'=
-t be
-> > bothered to look at the entirety, that's absolutely fine of course, but=
- in
-> > that case don't provide a Reviewed-by.
-> >=20
-> > Or, I suppose, you do and then you bear the consequences of lending
-> > credibility to something that you haven't looked at or understood.
->=20
-> No, I review *my* part, that I understand and I confirm.
-
-I think we need to distinguish between various levels of complexity. For
-this particular case there's not much to understand, it's purely a
-transformation, so you could very well review all the patch hunks
-without needing more context as to the drivers.
-
-If there were more complexity to this, then I would also argue that it'd
-be better to have separate patches per driver. Most of the time
-submitters tend to do that all by themselves because it's almost common
-sense. But like I said, I don't think that applies here.
-
-Also, I'd like to remind everyone that this is a community project and
-if everyone is only ever going to review *their* part, it's all going to
-deteriorate over time. Again, I sympathize with people not having time
-to extensively review everything. However, for cases like this once you
-already load enough context to review *your* part, you might as well
-spend the extra minute or two reviewing the other parts, which is all
-that's necessary to make this a full review.
-
-Of course it's a bit questionable that a full review is really needed
-here, in which case an Acked-by is really all you need.
+But there's also continuous work trying to convert all driver remove
+callbacks to return void, so that's eventually going to get "fixed" here
+anyway, so might as well leave it like this.
 
 Thierry
 
---hyjsm6c5ofwknahy
+--n7zrqbgnjyyoeiad
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt6oIACgkQ3SOs138+
-s6FcVxAAv0rp5SLtEPRjUT//i58IZP/aVR/4ZYrRNo0F1Y3ECYjFQ94qa1m8tvTg
-X2/GMdlycFs5dgwdbVVhbHB8wK89n1ABMjH9gnkWFCvpDk6VJ4ux8FuzyI08tukU
-l6sfyAptqb6O97trV6Rzj1UYvvampY6H//QbmE1GAnMiujp5mx7qabeoL0dbrJjE
-WGY+IBsyqimxNJ/6A6ZcIzj53KzzqDnJQeMkiEFWjCZTjWk5CSOpKi/DFryfdatD
-O7mSJzUp0NYWzs9KPEYHxuiAlTBf4SD9tjiEGU5poqnwUqyWoinTCJJRGH5np4tM
-f1zGTtGY3XFKA9nBY3i7wODHqGdZNmn7G4+d60LV3C5uS96ooYS6T55asYun1vLO
-rpTeLmAC7ClIp2hVDTLziEFwayuQlz30TGVAPDJQr0ViyE5VIgNZQXHaYfqqMh8T
-vXBMJH6255KbTCjsv6Kc7fvGxoCOWZ6SSMWuOFakVKJkbgaDDBunkckjNJQh4lCk
-g4c8fwM+4J859WhpjGafYnSor+zhfOU6YRZWCcNOEXJqPof567IlKShI56Wt9tgr
-UzHb3L6+OzTEd+MKeNWdvD8RqSAAt1yv5Fks2TM69qH/rxD81y6ewIqQE3GryhmZ
-w5jNiIbDq4g1IsBNqnS0LXMC1pPNTZMY8IF0l//XMWnNwl0Z8Vg=
-=xdRj
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt8AYACgkQ3SOs138+
+s6HVoQ/+POh4HlRUlHe6NSx8seh6DwhH+inL91RyV3iSKS4nB3C1m4iGWUjLyp2Q
+eg+OL5F6fMfhpRPwvlUvs9ADUz8dexvUm27i4kafzixOuGcTxQ9xzMqow2RkkzHC
+l95B/VeBEmbCFoHDmalyCiVxLtgoZY22q6WxrL3BANzv+mNlWVtRxjnr7UEqfU4L
+Y9T8afI+g36yKJNgVXQIy6/FjWupJAFnBll2fk0GC62p6r6G90TJ4MXFnCIBpl85
+5Q6Nh/G7Wmz22n6coyXZGb1mDxe6Bp3OmaBOZdeMUxGsNH5+HSaCzs1NRyfrHMZV
+57d0hFItwNR6XOMMtwgXCnEMIO6BmJTtt8/PwmrLkb9QKiRdSHmWsQ/q4cW5Ceqr
+rQoEVS14Khr9MFtdMUtSPrhjDuNBBD7Oa1DEhbBXzQuyGEbW0BlxFMSwqD7fdqM7
+X6MZ6tDkiv6ry06Qa86+i5toWK8Bon3b/vayH1YWWFhcweDahZm+EMMcc5jcFFfu
+f86BVqiDBUu0iQmr+SxXHYeCgDagwS/3Wbp7Q+An51oRi10Igf418Qjj4bBcBENP
+JMJJsIiRZKQz552SKSs+D7dYKQfnmwukVJRy1Nlg7VOa3tRph9Ysj/VRMmVcrd54
+iO+BpszR90V2KnC6pFdsKEDa5xTfToAGxTlEA4/KaX0ukjGqALQ=
+=IE6M
 -----END PGP SIGNATURE-----
 
---hyjsm6c5ofwknahy--
+--n7zrqbgnjyyoeiad--
