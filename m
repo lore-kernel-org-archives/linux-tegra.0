@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793971438;
-	b=1riAvx7482LwScsn6BEpC+b5AZIgwx9FIg5fBWrCAobQTp6qbebebdATv0YaZ2OoCBvO
-	 NlbrWNPls+jxkwdEnN1z2EU1THwRF3TCJVlJNZ0SQ8O430z+HnlhN0qd/XUZeXB4AJUSy
-	 VDp5kWeeWjXGbCrKTVHYbkHc2qvxGDFXZwNUkn7LXxaqepde3HdFlc4fVLNVMP4QT6BRP
-	 rjcK6skAOQx9NFC97i3BJcD0axrWHJS8TXg+HnObyOAaaE3W+V60rhOuTmDGASt4aYs80
-	 vcu2hd50KGTQpZ0UXYToPqij1Ym/GEV6WL/3+K/XqwC9qkBEzYgXB2uPzhRlZ4nMv+Q==
+	t=1793973382;
+	b=z0lN3seiw5n7ECIze/ISTYqXqIjNFxfFTmVbCk2OfS8Wkp0NPxYyVODDaqm8pr+KSVXU
+	 ucMw/hW83/FnTTZKwBky1qbGex1nK6sqrgAb7I3gFR3aUzyEnMVWUnh8omvAK0OuJ8Ou/
+	 VNd55lYf7dH1QOBCMM3xMA3azLnY8tkSSHvhSrWnxr1Xi91xcTb+qjier5i8fmV6brK2O
+	 unLA/eRRKHDItTNkqRTsRgXXzXKxjn3cCuBnGdpXOvD2Rq1rELcriayguuqQhhtSSUROV
+	 afZP8Wl25Zsfk59PtfKikLP5e9Dep4h3L8oaCURLBIhxF/vOad12Ucsg25F8hS+y3pA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793971438;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793973382;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=/kodSX96ujDziaB7lGvbVTnU34UOPakkV0ayfzL5L94=;
-	b=P+RSeAQg9gYKCN9pR9ChiviOXFq2woj7/8yabHwSagWVY1VzPcwMPiwS3Mtq3Kn9v1S+
-	 sW1Rd+V+RWqYqeIzycEA6muFfEQ7hnmCNvgHqQn7tShdG5HbX7vNqoN29BGahQu3VQR7T
-	 oMiOsOFt2N+zvIVaYz8rkPRXNr9rgBUxYZTuGXkp7Rn5XcEqlH/1v3KTXEwvD4Q2fbcUS
-	 dKniHUNMJmA1nLFPRswqoUsXUWMhemcR/knnmRNhJhp684rUgSCFs6bw/4Tcagks0tZeO
-	 CZB83cpIHjdxPVLh6YLMTnvGLj3fvPc9zpqTxWrk6+6oW1o28k8w2i1k03MJjRvSwnw==
+	bh=0tuVHt6IugmTLSqrR8kmpMpjcLPQlDkTodDmg4T/FfU=;
+	b=dAFR17BuhTxoUpucVB7g969/NMBAgG5L4ICzwtSd1K/aC2aXV17GYJW6v/5lfE8wUT38
+	 CQYJbvewJg0YbDW4iq6v4ZrwLNna3gjoN1gOnnGGGMMwYzJ7HVy0EXLFFMbTJBUACRvvt
+	 joLaWWiPmLgai/V9o7lfrdEaHcB07viAjvqG16QYi540JazOP9mz/c/7SiScUUM3kdLnp
+	 kH2ySaEsMpI95zTuE7dSPoOlwY8Xe2EK8rNjpyR5WO9hUaBF2FNJZDtuDk4KFkkXe9fCS
+	 8ZjuZ595WIBtu0IgKVjRUmrhxgGTxrBVNkwL1mM8WjwPJHJ3mjoZP2MIALleiGIJ5ng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ho07j9cZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KAl0WPlB;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67629606D80A;
-	Fri,  6 Nov 2026 13:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E06606D817;
+	Fri,  6 Nov 2026 13:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ho07j9cZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812661F008BC;
-	Fri,  6 Nov 2026 13:23:57 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KAl0WPlB
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65B481F008A3;
+	Fri,  6 Nov 2026 13:56:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793971438;
-	bh=/kodSX96ujDziaB7lGvbVTnU34UOPakkV0ayfzL5L94=;
+	s=k20260515; t=1793973382;
+	bh=0tuVHt6IugmTLSqrR8kmpMpjcLPQlDkTodDmg4T/FfU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Ho07j9cZPpIFko6+b33h7hgp49r0Jv5esWt04CGV55mDgMi4ztV5nlxeGDNtFvvHQ
-	 wNc84qttMZ6c1HH0Wz4zic72EazVEMi7rlYABUchxcFNmNlQvH7Pe93nq06YKijeXa
-	 JuaaH1BWG2w29Cz++yEB9wUtMPOYRli8YR1S2nu990V/l5jAiJ5HyoyZD630l1AVlt
-	 +V4LQSJpTCgWlI1CinOeTcKa5E1CPyUPbkZBG7zn0f8FXYph3Nl+zBcFP9F2KgVc/t
-	 9c/ieaiLntkWOx4jCKTRFbe3IDSn947+zyciyMZFoz3hqn+Nllc4b/4zxOJPBGB/eq
-	 Mrquu4m3cIfcg==
-Date: Fri, 6 Nov 2026 14:23:55 +0100
+	b=KAl0WPlBy7cje0tmYGjsxbd12WOsqAnJXQOTdvqYgYKjh0KE85IvzLMK8INqKOOwQ
+	 0yywHJM421i0ZuS/kzPrI9ecYNnsnuH+jYeFsEZS8HDhCCybITn7MNStoNR+2COG1j
+	 ZdocQhxqSXK+jeVy4b0614NE18Zuu/ukFs5gBdATrrrFREGzfN7bJAgr4/d8VSXnN8
+	 cE8NxhXU2xY/C5Y4o0j8gTat9VfcvQ4WweXmrWbANNVXQ5mqawWiFThhj13qBmtkjQ
+	 w/0ipwuyGh5/LXNSJWPHq4FYMxY/hMrGK1q51sqqhm5RXgzGKYXzYJQia6Tg78yk6O
+	 Y+leCF1sfCpow==
+Date: Fri, 6 Nov 2026 14:56:19 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -50,11 +50,10 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Jessica Zhang <jesszhan0024@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
 	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 03/10] drm/panel: Convert LG LH400WV3-SD04 to use MIPI
- DBI bus
-Message-ID: <au3UDDpLUmeIOwEH@orome>
+Subject: Re: [PATCH v6 04/10] drm/tegra: dc: Refactor and expand header
+Message-ID: <au3X8tpU9KWas9ZM@orome>
 References: <20261105140510.165165-1-clamor95@gmail.com>
- <20261105140510.165165-4-clamor95@gmail.com>
+ <20261105140510.165165-5-clamor95@gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -65,84 +64,231 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qkzlestmbzyulvpc"
+	protocol="application/pgp-signature"; boundary="rc2hc4wbfwun3tgx"
 Content-Disposition: inline
-In-Reply-To: <20261105140510.165165-4-clamor95@gmail.com>
+In-Reply-To: <20261105140510.165165-5-clamor95@gmail.com>
 
 
---qkzlestmbzyulvpc
+--rc2hc4wbfwun3tgx
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 03/10] drm/panel: Convert LG LH400WV3-SD04 to use MIPI
- DBI bus
+Subject: Re: [PATCH v6 04/10] drm/tegra: dc: Refactor and expand header
 MIME-Version: 1.0
 
-On Thu, Nov 05, 2026 at 04:05:03PM +0200, Svyatoslav Ryhel wrote:
-> Switch from a generic platform driver to a dedicated MIPI DBI driver.
+On Thu, Nov 05, 2026 at 04:05:04PM +0200, Svyatoslav Ryhel wrote:
+> Refactor and expand existing DC register definitions with additional
+> fields in preparation for adding the 8-bit CPU interface.
 >=20
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  drivers/gpu/drm/panel/panel-lg-lh400wv3.c | 103 ++++++++++------------
->  1 file changed, 46 insertions(+), 57 deletions(-)
+>  drivers/gpu/drm/tegra/dc.c  |  11 +-
+>  drivers/gpu/drm/tegra/dc.h  | 856 +++++++++++++++++++++---------------
+>  drivers/gpu/drm/tegra/rgb.c |   8 +-
+>  3 files changed, 514 insertions(+), 361 deletions(-)
 
-Same comments as for the previous patch.
+This is impossible to review. Please split this up into refactor and
+expand patches. Each should be a separate change.
 
-> diff --git a/drivers/gpu/drm/panel/panel-lg-lh400wv3.c b/drivers/gpu/drm/=
-panel/panel-lg-lh400wv3.c
+Also, a lot of the "refactor" is just pointless whitespace changes that
+are just not necessary. Please keep the changes to a minimum.
+
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
 [...]
-> -#define panel_dbi_command(priv, cmd, seq...) \
-> +#define panel_dbi_command(dbidev, cmd, seq...) \
+> @@ -2384,7 +2384,8 @@ static void tegra_crtc_atomic_enable(struct drm_crt=
+c *crtc,
+> =20
+>  	if (dc->rgb) {
+>  		/* XXX: parameterize? */
+> -		value =3D SC0_H_QUALIFIER_NONE | SC1_H_QUALIFIER_NONE;
+> +		value =3D SC0_H_QUALIFIER(SC_H_QUALIFIER_NONE) |
+> +			SC1_H_QUALIFIER(SC_H_QUALIFIER_NONE);
 
-This probably also applied to the previous patch, but there seems to be
-no reason for this change and the related changes below.
+This type of change seems entirely useless to me. It's neither more
+readable nor shorter.
 
->  ({ \
->  	const u8 d[] =3D { seq }; \
-> -	struct drm_panel *panel =3D &(priv)->panel; \
-> -	struct device *dev =3D panel->dev; \
-> +	struct device *dev =3D &(dbidev)->dev; \
->  	int ret; \
-> -	ret =3D mipi_dbi_command_stackbuf((priv)->dbi, cmd, d, ARRAY_SIZE(d)); \
-> +	ret =3D mipi_dbi_command_stackbuf((dbidev)->dbi, cmd, d, ARRAY_SIZE(d))=
-; \
->  	if (ret) \
->  		dev_err_ratelimited(dev, "error %d when sending command %#02x\n", ret,=
- cmd); \
->  	ret; \
 [...]
-> @@ -177,14 +166,13 @@ static int lg_lh400wv3_get_modes(struct drm_panel *=
-panel,
->  static const struct drm_panel_funcs lg_lh400wv3_panel_funcs =3D {
->  	.prepare =3D lg_lh400wv3_prepare,
->  	.enable =3D lg_lh400wv3_enable,
-> -	.disable =3D lg_lh400wv3_disable,
->  	.unprepare =3D lg_lh400wv3_unprepare,
->  	.get_modes =3D lg_lh400wv3_get_modes,
->  };
+> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+> index 0cb0515968b35..2b87bb675d4cf 100644
+> --- a/drivers/gpu/drm/tegra/dc.h
+> +++ b/drivers/gpu/drm/tegra/dc.h
+> @@ -178,9 +178,11 @@ int tegra_dc_rgb_init(struct drm_device *drm, struct=
+ tegra_dc *dc);
+>  int tegra_dc_rgb_exit(struct tegra_dc *dc);
+> =20
+>  #define DC_CMD_GENERAL_INCR_SYNCPT		0x000
+> +
+>  #define DC_CMD_GENERAL_INCR_SYNCPT_CNTRL	0x001
+> -#define  SYNCPT_CNTRL_NO_STALL   (1 << 8)
+> -#define  SYNCPT_CNTRL_SOFT_RESET (1 << 0)
+> +#define  SYNCPT_CNTRL_NO_STALL			BIT(8)
+> +#define  SYNCPT_CNTRL_SOFT_RESET		BIT(0)
 
-It's not obvious, and also not documented, why .disable is removed.
+The whitespace changes here are completely arbitrary, it's changing one
+preference for another. You're actually changing the contents in this
+case, so it's not that bad. Still unnecessary, though.
+
+> -#define DISP_CTRL_MODE_STOP (0 << 5)
+> -#define DISP_CTRL_MODE_C_DISPLAY (1 << 5)
+> -#define DISP_CTRL_MODE_NC_DISPLAY (2 << 5)
+> -#define DISP_CTRL_MODE_MASK (3 << 5)
+> +#define  DISP_CTRL_MODE_STOP			(0 << 5)
+> +#define  DISP_CTRL_MODE_C_DISPLAY		(1 << 5)
+> +#define  DISP_CTRL_MODE_NC_DISPLAY		(2 << 5)
+> +#define  DISP_CTRL_MODE_MASK			(3 << 5)
+
+These are purely whitespace changes. Please don't do that.
+
+>  #define DC_COM_CRC_CONTROL			0x300
+> -#define  DC_COM_CRC_CONTROL_ALWAYS (1 << 3)
+> -#define  DC_COM_CRC_CONTROL_FULL_FRAME  (0 << 2)
+> -#define  DC_COM_CRC_CONTROL_ACTIVE_DATA (1 << 2)
+> -#define  DC_COM_CRC_CONTROL_WAIT (1 << 1)
+> -#define  DC_COM_CRC_CONTROL_ENABLE (1 << 0)
+> +#define  DC_COM_CRC_CONTROL_ALWAYS		BIT(3)
+> +#define  DC_COM_CRC_CONTROL_FULL_FRAME		(0 << 2)
+> +#define  DC_COM_CRC_CONTROL_ACTIVE_DATA		BIT(2)
+> +#define  DC_COM_CRC_CONTROL_WAIT		BIT(1)
+> +#define  DC_COM_CRC_CONTROL_ENABLE		BIT(0)
+
+FULL_FRAME and ACTIVE_DATA were previously consistent, now it just looks
+weird. Either use proper GENMASK() definitions where applicable, along
+with modifications in the driver to use FIELD_PREP() and FIELD_GET(), or
+just don't change it at all.
+
+> +
+>  #define DC_COM_CRC_CHECKSUM			0x301
+> -#define DC_COM_PIN_OUTPUT_ENABLE(x) (0x302 + (x))
+> -#define DC_COM_PIN_OUTPUT_POLARITY(x) (0x306 + (x))
+> -#define LVS_OUTPUT_POLARITY_LOW (1 << 28)
+> -#define LHS_OUTPUT_POLARITY_LOW (1 << 30)
+> -#define DC_COM_PIN_OUTPUT_DATA(x) (0x30a + (x))
+> -#define DC_COM_PIN_INPUT_ENABLE(x) (0x30e + (x))
+> -#define DC_COM_PIN_INPUT_DATA(x) (0x312 + (x))
+> -#define DC_COM_PIN_OUTPUT_SELECT(x) (0x314 + (x))
+> +
+> +/* Defines in PIN_OUTPUT/INPUT_* describe pin position, not state */
+
+This comment is completely confusing to me. The registers themselves
+define the state and bit positions within them seem to indicate the pin
+positions.
+
+> +#define DC_COM_PIN_OUTPUT_ENABLE(x)		(0x302 + (x))
+> +#define DC_COM_PIN_OUTPUT_POLARITY(x)		(0x306 + (x))
+> +#define DC_COM_PIN_OUTPUT_DATA(x)		(0x30a + (x))
+> +#define  PIN_UNMASK(x)				BIT((x) + 1)
+
+Given that pin positions are in steps of two for all registers, does
+that PIN_UNMASK apply to all of them or just PIN_OUTPUT_DATA?
+
+> +#define DC_COM_PIN_INPUT_ENABLE(x)		(0x30e + (x))
+> +
+[...]
+> +/* DC_COM_PIN_OUTPUT/INPUT_*_3 */
+> +#define PIN_LSCK				0
+> +#define PIN_LSDA				2
+> +#define PIN_LCSN				4
+> +#define PIN_LDC					6
+> +#define PIN_LSPI				8
+> +#define PIN_LSDI				10
+> +
+> +#define DC_COM_PIN_INPUT_DATA(x)		(0x312 + (x))
+
+It's not clear that PIN_INPUT_DATA_* can take any of those PIN_*
+defines. Given that there are only two PIN_INPUT_DATA registers that's
+probably not true, so I think it'd be good to somehow specify how that
+works here.
+
+> +#define DC_COM_PIN_OUTPUT_SELECT(x)		(0x314 + (x))
+> +#define  PIN_OUTPUT_SELECT_MASK(x)		(0x7 << (x))
+> +#define  PIN_OUTPUT_SELECT_PRIM(x)		(0 << (x))
+> +#define  PIN_OUTPUT_SELECT_OUT(x)		(1 << (x))
+> +#define  PIN_OUTPUT_SELECT_F2(x)		(2 << (x))
+> +#define  PIN_OUTPUT_SELECT_F3(x)		(3 << (x))
+> +#define  PIN_OUTPUT_SELECT_F4(x)		(4 << (x))
+> +#define  PIN_OUTPUT_SELECT_F5(x)		(5 << (x))
+> +#define  PIN_OUTPUT_SELECT_F6(x)		(6 << (x))
+> +#define  PIN_OUTPUT_SELECT_F7(x)		(7 << (x))
+> +
+> +/* DC_COM_PIN_OUTPUT_SELECT0 */
+> +#define PIN_OUTPUT_SELECT_LD0			0
+> +#define PIN_OUTPUT_SELECT_LD1			4
+> +#define PIN_OUTPUT_SELECT_LD2			8
+> +#define PIN_OUTPUT_SELECT_LD3			12
+> +#define PIN_OUTPUT_SELECT_LD4			16
+> +#define PIN_OUTPUT_SELECT_LD5			20
+> +#define PIN_OUTPUT_SELECT_LD6			24
+> +#define PIN_OUTPUT_SELECT_LD7			28
+> +
+> +/* DC_COM_PIN_OUTPUT_SELECT1 */
+> +#define PIN_OUTPUT_SELECT_LD8			0
+> +#define PIN_OUTPUT_SELECT_LD9			4
+> +#define PIN_OUTPUT_SELECT_LD10			8
+> +#define PIN_OUTPUT_SELECT_LD11			12
+> +#define PIN_OUTPUT_SELECT_LD12			16
+> +#define PIN_OUTPUT_SELECT_LD13			20
+> +#define PIN_OUTPUT_SELECT_LD14			24
+> +#define PIN_OUTPUT_SELECT_LD15			28
+> +
+> +/* DC_COM_PIN_OUTPUT_SELECT2 */
+> +#define PIN_OUTPUT_SELECT_LD16			0
+> +#define PIN_OUTPUT_SELECT_LD17			4
+> +
+> +/* DC_COM_PIN_OUTPUT_SELECT3 */
+> +#define PIN_OUTPUT_SELECT_LPW0			0
+> +#define PIN_OUTPUT_SELECT_LPW1			4
+> +#define PIN_OUTPUT_SELECT_LPW2			8
+> +#define PIN_OUTPUT_SELECT_LSC0			16
+> +#define PIN_OUTPUT_SELECT_LSC1			20
+> +#define PIN_OUTPUT_SELECT_LVS			24
+> +#define PIN_OUTPUT_SELECT_LHS			28
+> +
+> +/* DC_COM_PIN_OUTPUT_SELECT4 */
+> +#define PIN_OUTPUT_SELECT_LHP0			0
+> +#define PIN_OUTPUT_SELECT_LHP1			4
+> +#define PIN_OUTPUT_SELECT_LHP2			8
+> +#define PIN_OUTPUT_SELECT_LVP0			16
+> +#define PIN_OUTPUT_SELECT_LVP1			20
+> +
+> +/* DC_COM_PIN_OUTPUT_SELECT5 */
+> +#define PIN_OUTPUT_SELECT_LM0			0
+> +#define PIN_OUTPUT_SELECT_LM1			4
+> +#define PIN_OUTPUT_SELECT_LDI			8
+> +#define PIN_OUTPUT_SELECT_LPP			12
+> +
+> +/* DC_COM_PIN_OUTPUT_SELECT6 */
+> +#define PIN_OUTPUT_SELECT_LSCK			0
+> +#define PIN_OUTPUT_SELECT_LSDA			4
+> +#define PIN_OUTPUT_SELECT_LCSN			8
+> +#define PIN_OUTPUT_SELECT_LDC			12
+> +#define PIN_OUTPUT_SELECT_LSPI			16
+> +#define PIN_OUTPUT_SELECT_LSDI			20
+> =20
+>  #define DC_COM_PIN_MISC_CONTROL			0x31b
+
+If there's only one PIN_MISC_CONTROL register, does that take these same
+PIN_* values as bit indices?
 
 Thierry
 
---qkzlestmbzyulvpc
+--rc2hc4wbfwun3tgx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt1OsACgkQ3SOs138+
-s6E7RhAAhYaqjQpfxuR0l1ZuY4dmYeegPdxooSOgCYqYp6c11Rh7fip7s4vdJYqE
-emn9EvuSsZjwV0kF3BTkroWFkJBKtFZB1KpHqJMiUfB+l9zRZJEb1w1/rovBXP9n
-XhAroklrn494LRa5A6WMuSU35U5AXCOvY2PX3euu9HJlTjwO4tKqoXLy+JvjPifE
-LNCylIWfRgampR3y8wPzpjoon3e5QnIeK9yMOyLetAd1/dl9+pCH6ROlFc8eWiim
-+6dJ5V2p2kDuauD3CVGI7oPTDV+jscsaUV+PjkB1urv9TVEGvNC2P3vDz4gTZa1s
-FwnZNQqFj84PUho4vCZZKIffM7eV20S5jBPuzgWdagZVTY6wxKwsIH/OXY7E0FU0
-dCRqGabKG4a4v8iqSdB1f1IrxVK7Ic8aQgliAVdt4SjtNu+/GbVm/FcinEbu4Psz
-LbqDxv/T8HGc9YVhyqQdY7ni09OuEaTez7FdmmHZL1nzSaf0OjAHhqgCVyH+HDZo
-nIeWl1MxRe1q0cuwHeYMQj0uQ6JSenhDHEILix2i6AFt6w3pspErjxkb3Xo7Dm4G
-r+R9/oZPi/zcZ5oH0aCWQRTkK9a6WgVscbNh7K7dwQfPMMFZ51CWG1riVluLRxGf
-+rdrQlldQVhAEJrgw3lwjVerdbSRz76nVMwadaXh+lhcbeR+3tU=
-=TgBu
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt3H8ACgkQ3SOs138+
+s6Eawg//fb7MsJNQ3AzGo0VwehFF5urNwd+gNHtrrFdGXhYJuGdWiYytyrZ5W6qX
+GMLLJmAdrv+iez6rDoG6vAbxYDB8gRqx7miJ4aUW/JNAwk8ym5z/EXx25LH09vcm
+9UKu3rmSuY0UIw02b+dsMUYYIPNspLRmUzBp9XIOqaUWH5gTKTLVbdiaU+UHGOux
+w+xkrNwan+GiEYAats9zFPrElJUBDp4hYPCPsdQd++XKb4n0wQtYnEQl8hkB5NgA
+8FrPLufBvP5k2xQ/wxk8DJ+3hcSPj5V6Sx3WVoTGpL6S5pHGTwiR1KZQAvD51jzp
+TX5C96MiPqqDVOE0NIgn3p8mtpL9zFxHfGZVGDT6fyxbPAo829DJKS8PgyOeeu7n
+sV1432QC3/Hz/GwzKQKdcVfvZ0PQ62C8tw6tHBhEnNVqAjhw5SniTer6ptAgNBqo
+jVxiTinPOY7rCMYmYgfInL7eccaUv5F1cMcfrbXyWhpkJia5kLvXjvQKnjaCdx2g
+bkwJlZdYV8zeP4GjhOtL2F0h00EpSPBOIi4oFLgJU57Mlz+cqHx9KIE3gduXc4oK
+oMnbVnI65ej9s4BwLmzsSf5IRqFC3g1sFUAC1ZZIQYGxUKMEFMt0e9WkIN81VA01
+gRv+vUpafvirRbhUJ+oFFaK9JwwU1CjiGXs5CT8JkwKJUj5uq0c=
+=ogZo
 -----END PGP SIGNATURE-----
 
---qkzlestmbzyulvpc--
+--rc2hc4wbfwun3tgx--
