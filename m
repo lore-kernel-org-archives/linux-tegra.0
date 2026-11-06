@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793949657;
-	b=5lfroE6E7YPHsmLre9NCQxZffmGUCH1C6tmquw3UM049ARQ6xdEHK/saFQRFFaYy1rGP
-	 6PDH9RmAvUdlxbn2BPGef3+M7wV+yI2SPOTWSLSWfTFcT3DfvsF1SSed1tO4zVb6B1b96
-	 VjiDZlLKiJcapkrFDaX2l4StZiMgoI5OnmMMtm8UZdZpOqsHq+z8XDS53nlKNWNJdK7pe
-	 1sUW0ThxlEFPQMUJWOaOEdt1fl8GZ3Nx9tKr1Dcjv+cCqM0zBMabYt6wAz6x1sFH26DYY
-	 526r1GbjZdyRhfg6A3gSRnjm/lpv9g7VMEkRnj3cVfv0yIKaupMJFiRcCymayK3JpdA==
+	t=1793949808;
+	b=wAIgicZBXTZIe2PiA4nQBcyBOL7Hqyw9peysIxSbIaSwMySYRlycUnOq2e2TX8949lWg
+	 t3G6cazWVEvoJRdfDRBaqJsPjdf9TU236Pdkcm3decA74KUqPDSwwkiaMV62Xr1cWSqos
+	 R++wB2HMWKBuWr8eBM8VSYe6MrASpsZS91r4hdBaNcc1b0zPn5rMQaif7/CgGe3YpQtEv
+	 HHkJ7HM44/yvXtw3MOxAwuZhjF3UhFYP1USC/CSsF9smQlYXM1wXENy2fDdSwdOB2CW5a
+	 SLPWLjX0StO7bGaXH5Vl3wjlHtvrsMn2ShAPrdLixDK4frOb+0BS1LI29Hb8cv72Htw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793949657;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793949808;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=TLxQ030grPqVQKle1I3f5ZVMbm7DkmL6NggJPeFwZYM=;
-	b=xxyAXaRa7kcWUMjQ8EcbAdeurJ4ZqJeCQM7otjot1ZL4x/LUDcfkdnbSwq1viY8PrkWS
-	 Of2aum2CUzxIx2W6JO0u3Tddz3eyBofqWnlykme4qKV8K3MAnZ0htLYyEN4gyr9UUhQol
-	 X01iLYqyX0ELR1uZbyHqlcmzHKvromwOIIcHQb7F13ptuTG1Y/0Zi/Tdy3ACs/Q5s4wqc
-	 FFhTy/7l4EyaUdDviK9R64Wzrhshvv+jTI1XK8zKpolCnBE4zJoNMjyFtW+mMuzAom1HC
-	 JGoNeDl1bX9Lf/xtes8lz2OtZUt8K9eUj/s8GoqDgeVJFwE408nRxufFxaM5lBdosoQ==
+	bh=AsDZKqqDajMBUIC7cMkctVE7Ylj5bg3zvbe3cPAhv1Y=;
+	b=wKRhbskBFQPrwv31VCsWJtC8O4Jp6LOUspm/T44WxV7qSU2VTFjNWO3QjBZ17LJycJpZ
+	 IKFh5RKxM9cvVJAJqzDZJ3rD5VyIKwXxJ0vXXjeC+9tSkYVZfsCcQHiQcNJ9f5vEt5j+e
+	 XAlE0q+aYmV3i8K4alhm1IcPf6auzKMhub6+OhfBuFf8/Ijb+4OvBsWIPVbSk48UpMnOc
+	 2P3V6eR+BTTUM3y2ADEgrCKcWwr9W3dZe358algSTPCawxFS2eLhIGBsGTN4NOnyQx4s9
+	 luGEwCkPG8+HTylrWVE0Ddx5JTAvxmx9/aWM3dKSvsFj0brlGDowUDCOI61RvrH92Aw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HnKlm1fk;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kgJBzU0N;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E37606A326;
-	Fri,  6 Nov 2026 07:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73825606A326;
+	Fri,  6 Nov 2026 07:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HnKlm1fk
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1602D1F008A2;
-	Fri,  6 Nov 2026 07:20:35 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kgJBzU0N
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CB01F0089F;
+	Fri,  6 Nov 2026 07:23:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793949656;
-	bh=TLxQ030grPqVQKle1I3f5ZVMbm7DkmL6NggJPeFwZYM=;
+	s=k20260515; t=1793949808;
+	bh=AsDZKqqDajMBUIC7cMkctVE7Ylj5bg3zvbe3cPAhv1Y=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=HnKlm1fkWjrAd2obKBMx53zoZMhRB3reJtxSd9V8FiZ/qDbdBzew2qjqngXJWZodg
-	 ZrxL8hStLfApH9H911w7FToDUA1GpmMVoJkSsONj2M5bbysX+NtQIgHJzHcmaJAb9X
-	 g1AUmg/C5Qef9/gyECHRfnnZmqsa5alBldf4udVebxyN6XSFeWyQWwwSKBVFk9ezLU
-	 KYRd3em7KfwseIV6ZRtKI+zbb2t+4xk5CqnB2gFndThakx0XYJem3QIalRRGq2ziHl
-	 YTKDZLh6nQm00mY5EiNKU+gleL4bQZnec55Jt3mBu+cYrc+ImpggHYwgOOpIC2k5xG
-	 LMIFjqElzryXg==
-Message-ID: <3dc7277e-2f6b-44a6-9085-2e33d989c1c9@kernel.org>
-Date: Fri, 6 Nov 2026 08:20:33 +0100
+	b=kgJBzU0N1n5nt2hHMVInzjEkXlwGE6VDOyj1Kv2Wbr8H7oSFuLDXVEVt+UnrReaRP
+	 K+dR5cN2F2vuH+ZGr0wq29U05XpPWMIKBkujPMbrU3GboHvPTdLsN4Xh7GGh8bch1G
+	 1QlngknOWDBzQxm1/nB+l6SNB8ndDegWthwes9LVigF+Vg8eU9xjI+FYqlRHN7t/VI
+	 LYS8uWMP7UzAs4VANdjyMy6/SJ65AdiRt6H1/hbMSO9mAoh/Z/L63BxDEyV6C40Iih
+	 m9q8W2sK7lZi4s7mmdEy+rg4NrcxbKPa+1ocf/betMbpiQMCdfnFLhaifzKFo/HWAY
+	 0aPZMgVdHBL3A==
+Message-ID: <b413ede5-3b18-4743-8e4b-6f44de6bf871@kernel.org>
+Date: Fri, 6 Nov 2026 08:23:04 +0100
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -52,72 +52,68 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
+Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Frank.Li@oss.nxp.com, Mark Brown <broonie@kernel.org>,
+Cc: Thierry Reding <thierry.reding@kernel.org>, Frank.Li@oss.nxp.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Richard Genoud <richard.genoud@bootlin.com>,
  Nicolas Ferre <nicolas.ferre@microchip.com>,
  Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>,
- Ryan Wanner <ryan.wanner@microchip.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean
- <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Frank Li <Frank.Li@nxp.com>,
  Sascha Hauer <s.hauer@pengutronix.de>,
  Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
- Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
- Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Andi Shyti <andi.shyti@kernel.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+ Fabio Estevam <festevam@gmail.com>, Peter Griffin
+ <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
  Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Laxman Dewangan
- <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
- "moderated list:ARM/Microchip (AT91) SoC support"
+ Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>,
+ Yenchia Chen <yenchia.chen@mediatek.com>,
+ Zhiyong Tao <zhiyong.tao@mediatek.com>, Carlo Caione <ccaione@baylibre.com>,
+ Moteen Shah <m-shah@ti.com>, Kendall Willis <k-willis@ti.com>,
+ Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
+ Nicolai Buchwitz <nb@tipi-net.de>, Karl Mehltretter
+ <kmehltretter@gmail.com>, =?UTF-8?Q?Stefan_D=C3=B6singer?=
+ <stefandoesinger@gmail.com>, Shitalkumar Gandhi <shital.gandhi45@gmail.com>,
+ Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
+ John Ogness <john.ogness@linutronix.de>, Pan Chuang <panchuang@vivo.com>,
+ Petr Mladek <pmladek@suse.com>, Robin Gong <yibin.gong@nxp.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Stephan Gerhold <stephan.gerhold@linaro.org>, Zhaoyang Yu
+ <2426767509@qq.com>, "Nikola Z. Ivanov" <zlatistiv@gmail.com>,
+ Haoxiang Li <haoxiang_li2024@163.com>,
+ "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Myeonghun Pak <mhun512@gmail.com>, Wenhua Lin <Wenhua.Lin@unisoc.com>,
+ Cixi Geng <cixi.geng@linux.dev>,
+ "open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
+ "open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+ "moderated list:ARM/Mediatek SoC support"
  <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-mediatek@lists.infradead.org>,
+ "open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..."
+ <imx@lists.linux.dev>,
  "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- "open list:RENESAS RZ/V2H(P) RSPI DRIVER"
- <linux-renesas-soc@vger.kernel.org>,
- "open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
- "open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
- "open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
+ "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-samsung-soc@vger.kernel.org>,
  "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Thierry Reding <treding@nvidia.com>
-References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
- <autj6pr_bPaul3w0@ashevche-desk.local>
- <7f96599b-681d-4963-bdda-1274371ac84f@kernel.org>
- <f1fa853d-1703-411d-b2d2-0fb0b176c2fa@kernel.org>
- <autqC143h7Qf1R9H@ashevche-desk.local>
- <9e39502a-dd17-4fa2-98a3-9019523cb5e8@kernel.org>
- <auuYcS7-YqJKcUbE@ashevche-desk.local>
- <63c24437-4261-4a51-be7e-31ac0759a095@kernel.org>
- <auxGom0XR-Hax9b3@ashevche-desk.local>
- <00390a20-7630-4066-9779-06c8f915a176@kernel.org>
- <auxNmE8yZVP-wL2e@ashevche-desk.local>
+ "moderated list:ARM/STM32 ARCHITECTURE"
+ <linux-stm32@st-md-mailman.stormreply.com>, vkoul@kernel.org
+References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
+ <aux2VKHnVLwq_wzi@orome> <auyQEVmA2KeGu9DL@ashevche-desk.local>
+ <2e12316d-d079-471f-9c29-ef5fb765216a@kernel.org>
+ <auys4Yg-qAr4Rt5w@ashevche-desk.local>
+ <e515960d-18fb-4d61-8842-beb6a73fbc27@kernel.org>
+ <auzEEOL4vLgt4z5I@ashevche-desk.local>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -163,73 +159,85 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <auxNmE8yZVP-wL2e@ashevche-desk.local>
+In-Reply-To: <auzEEOL4vLgt4z5I@ashevche-desk.local>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/11/2026 10:34, Andy Shevchenko wrote:
-> On Thu, Nov 05, 2026 at 10:07:30AM +0100, Krzysztof Kozlowski wrote:
->> On 05/11/2026 10:04, Andy Shevchenko wrote:
->>> On Wed, Nov 04, 2026 at 11:54:56PM +0100, Krzysztof Kozlowski wrote:
->>>> On 04/11/2026 21:41, Andy Shevchenko wrote:
+On 05/11/2026 18:59, Andy Shevchenko wrote:
+> On Thu, Nov 05, 2026 at 05:26:18PM +0100, Krzysztof Kozlowski wrote:
+>> On 05/11/2026 17:20, Andy Shevchenko wrote:
+>>> On Thu, Nov 05, 2026 at 03:35:20PM +0100, Krzysztof Kozlowski wrote:
+>>>> On 05/11/2026 15:17, Andy Shevchenko wrote:
+>>>>>>> ---
+>>>>>>>  drivers/tty/serial/8250/8250_dma.c  | 6 ++----
+>>>>>>>  drivers/tty/serial/8250/8250_mtk.c  | 3 +--
+>>>>>>>  drivers/tty/serial/8250/8250_omap.c | 6 ++----
+>>>>>>>  drivers/tty/serial/amba-pl011.c     | 6 ++----
+>>>>>>>  drivers/tty/serial/atmel_serial.c   | 6 ++----
+>>>>>>>  drivers/tty/serial/fsl_lpuart.c     | 6 ++----
+>>>>>>>  drivers/tty/serial/imx.c            | 6 ++----
+>>>>>>>  drivers/tty/serial/msm_serial.c     | 6 ++----
+>>>>>>>  drivers/tty/serial/mxs-auart.c      | 6 ++----
+>>>>>>>  drivers/tty/serial/pch_uart.c       | 6 ++----
+>>>>>>>  drivers/tty/serial/samsung_tty.c    | 6 ++----
+>>>>>>>  drivers/tty/serial/serial-tegra.c   | 6 ++----
+>>>>>>>  drivers/tty/serial/sh-sci.c         | 9 +++------
+>>>>>>>  drivers/tty/serial/sprd_serial.c    | 3 +--
+>>>>>>>  drivers/tty/serial/stm32-usart.c    | 6 ++----
+>>>>>>>  15 files changed, 29 insertions(+), 58 deletions(-)
 >>>>>>
->>>>>> But sure, if we want to play such numbers game, I will be sending
->>>>>> reviews for single lines.
+>>>>>> Reviewed-by: Thierry Reding <treding@nvidia.com>
 >>>>>
->>>>> I'm not playing anything. The problem is that the patch unites the files that
->>>>> have distinct maintainers and unrelated to each other code. That's why in the
->>>>> subsystems I maintain, I almost always require to split on per-driver basis.
->>>>> Yes, exceptions are possible, but has to be quite rare.
+>>>>> Krzysztof, now look at this case. I would argue that this is even less fit than
+>>>>> # subpart(s) case, because it might imply anything. Again the problem is the
+>>>>> bundle, and for such a case (when tons of independent changes are bundled in
+>>>>> the same stuff, *every* Rb tag has to be explained on what has been reviewed!
 >>>>
->>>> That's independent problem. Patch could be split, but it was not. Since
->>>> it was not, receiving end should act accordingly, e.g. when performing
->>>> incomplete review of only part of the patch, do not call that entire
->>>> patch was reviewed by giving the Rb tag, but give Ack tag.
+>>>> I think this case is obvious - Thierry reviewed this patch and gives Rb
+>>>> tag, according to reviewer's statement of oversight.
 >>>
->>> No, (partial) Rb != Ack.
+>>> It's unclear from a bare tag, It misses that kind of information. Documentation
+>>> is also unclear to me as it does *not* describe the case what should I do when
 >>
->> It is, because there is no partial Rb tag.
+>> Documentation is clear and I quote to you multiple times, to which you
+>> did not respond.
 >>
->> There is partial review, but not partial Rb tag, please see exactly
->> submitting patches. It repeats the same in three separate places:
->>
->> "Acked-by.... user may not have carried out a technical review of the
->> patch,yet they may be satisfied ..."
->>
->> "Reviewed-by:, instead, indicates that the patch has been reviewed and
+>> "Reviewed-by:, instead, indicates that *the patch* has been reviewed and
 >> found acceptable according to the Reviewer's Statement:"
 >>
->> Above important: "THE PATCH"
->>
->> It is not "the patch or its parts"
+>> Important: "THE PATCH"
 >>
 >> Further:
 >>
 >> "I state that:
->> (a) I have carried out a technical review of *this* patch to evaluate
+>> (a) I have carried out a technical review of *this patch* to evaluate
 >> its appropriateness and readiness for inclusion into  the mainline kernel."
 >>
 >> And further:
 >>
 >> "A Reviewed-by tag is a statement of opinion that *the patch* is an"
 >>
->> In three places it is THIS or THE patch. Complete (exhaustive) list of
->> options what can be reviewed to get the credit and give statement of
->> oversight.
+>> All of these are exhaustive (as in complete) statements leaving no
+>> interpretation whether this is part of patch or entire patch. It is THE
+>> patch, meaning entire patch.
 >>
->> Statement of oversight DOES NOT include "part of the patch".
+>> You do not drive your car, as only a wheel. You driver *the car*.
+>>
+>> You live in some apartment. *The apartment* is your home, not "piece of
+>> your apartment is your home".
 > 
-> So, it means I MUST from now on REQUIRE a split before reviewing.
-> Right?
+> And I'm trying to explain my point: "the car" in this case is actually "the cars"!
+> I drive mine, you driver yours. "The PATCH" is wrong term when it's bundled.
 
-Why "from now on"? The reviewer's statement of oversight is worded like
-that since beginning? Also nothing stops you from reviewing parts. We
-discuss the statement of oversight and its result: giving Rb tag. The Rb
-tag is not output of some review, but agreement with statement of
-oversight and performing what is stated there.
+It is still the patch being reviewed on the list, regardless how much
+you dislike bundling or how much you would like to call it. And in my
+example from the commit to workflows (not here), the patch COULD NOT be
+split. The patch was consisting of main part and drivers update, so
+skipping the main part invalidates entire review from statement of
+oversight point of view.
 
-You can review parts, but you do not provide Rb tag.
-
+Reviewer's statement of oversight does not allow you to add Rb tag for
+partial reviews.
 
 Best regards,
 Krzysztof
