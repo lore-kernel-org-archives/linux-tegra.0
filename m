@@ -1,64 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793980294;
-	b=DOrSGZV+9HtECs7HRDNNu+oqimha+stEJB38Rymb2RExl1e/r9+Y7Zlrj0J+hdA1PlgT
-	 q4liR/c6vfwBXXS/DDyWyo/lrjZ3U+mcy4DWqjDmKR8DaNYLeB7JTpsG0hfDyA+k1StFB
-	 0yTPi0sMINUJ3XzNXHtS/ZYHfUWWZGpx3W2qC9samDZp3rtYdGtkZHSaxTAw8f+NsuNcr
-	 Xlq/1v0OmqGhZvdn7zm70vcQrhRWUJPnrtaicsrD8DuPrK5xTR/65e4kXxdZUSkM2WOaz
-	 2EtM1tY740TZjv5Tg9xdKjJwNzXbvDhfzJxA4rHG4QM+xZP1tanG2UEXEK7BrOFmDTw==
+	t=1793981343;
+	b=VgowuOONZBGuXcImV6+kHMOvE4YIvTG5cO9xNBxVS+68C9NqIyz3J7Fo6E9s4zLApUbC
+	 /DzTUyZJB26AidKwNwfe2Z5J7Xbr1okBOFn2e3u3clQYNklQq9IhfZYxEsL3ayASlVJqy
+	 6o226YBkSiNpkiwZUzg68YVdJ+GnjRRf97PrzRU3g5KeJ2kWP3m8nS9TcU6mMlhTv0cru
+	 LeN8tkjnvP7cb+/wa2xHZc4ig1CGNj5vGN8GC9AU60KCiMmvlPjsT0JDVq/N2iaEmXUHo
+	 XJE3g12y0Z5BTZTeINn8llFU6xHoTQj+j/gs4n86bduYO+H+Wfjl0A6eKh7gHUQssMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793980294;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=badGVcjXYLu33rvUqhFwfV7h3p1+hHs0e3PjCdrYub4=;
-	b=FA6nL7MsWPDdgaL5yCwVzR2RA3REB0FLafQ3vrM3OWEqMNGftkl8V760mR/MLdWpAeNN
-	 65yU/VP+9RQG0GwLtqH/eRMdzPaGlZE1NGLdsKZExT9pWJitwL34lrNVG/qUf3y+MryUu
-	 kx5/wlPlJxjAmsr05z0P6fohu+HcstFdtat5FaMMN4No1wjg3zWA4I2/u7R5hUc6Yt7uE
-	 yhkOZzazxLtdYsDR5GIk747BPa9wRsDA/79I847qVbabd9Q3NbnZCJOswEO+2ge64qqWc
-	 aFM/x3JWbNtprjqedSNWOr3pbzLORxpS4yBPS1THyFx/RiQe+xm7dZQfyTGQcG0EFfA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793981343;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=QBFuPA5o7efP4jGw5Uh62IHRMOskGTud10helT98leM=;
+	b=FgFxzvZHrk3g9Bpsuakf1bIdk+7p6OKlmHhmTTgcRrIC2T/ha5KUcUJDZJr8SG4Vz94P
+	 +tYbKZ6Uka7xcYDkuFZXLZVXdE4FxEO9q15fRVCvnyQ8OMRQNYIadGi8e0w0S4heSO9nY
+	 uhJHoEiIXsWxJXsN7ewzi6eBChJxRZlgKD8ObgpQGv3e+i0ZtU1guUZfXjhJWmqQ36xW3
+	 g4+v2ae/gqS5dBzRxNJUXDzJfnHlvcRjKvLczDhBHkmrtkzgl9WEd+/cUdODJjTPNWTHS
+	 6xjnRM+cR6IhzP4w6V+A4calgK9JnjjNzjqnCzDPEeJ9LBibJyiuXlMKXFnFAXU6kjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kO97JVYX;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bnnlk1Xw;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25044606A331;
-	Fri,  6 Nov 2026 15:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A3560A5BE1
+	for <linux-tegra@vger.kernel.org>; Fri,  6 Nov 2026 16:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kO97JVYX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 268191F008A1;
-	Fri,  6 Nov 2026 15:51:32 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bnnlk1Xw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1E71F0092F
+	for <linux-tegra@vger.kernel.org>; Fri,  6 Nov 2026 16:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793980293;
-	bh=badGVcjXYLu33rvUqhFwfV7h3p1+hHs0e3PjCdrYub4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kO97JVYXV+WZdMxw3KD+/M1wnRgW06OdDxSfNtfjslKXN6rAxRn68s3RXrVWxRBnl
-	 Bx0yEVaHPK6Y6z6vI/DLUs0LfaoI4I44P+cmh7em2/CFobLMcTFzxeUKKORZmeN1d6
-	 X00MN3lr0cXcinXIY9WWI6wWXoNzTl17sXqiG2U+vMp8yhRHL+HJZQZtZtCa9y0VzK
-	 vvc6WXE7x8Cm/4edC5z0Yp7x52UccqzwswM8foO3l1wJKHh6VGDWPXu9hk7Nc1+FLn
-	 t8XNcry4KfnqBOgK11iMyj8QRaieEOZw518PtDV4mJaONNz0/WHdWGnS6rbSQ/fiCp
-	 DJ8nVwxQ17iUQ==
-Date: Fri, 6 Nov 2026 16:51:31 +0100
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 09/10] dt-bindings: display: tegra: Document 8-bit CPU
- parallel interface
-Message-ID: <au33NIR4bCAkokJH@orome>
-References: <20261105140510.165165-1-clamor95@gmail.com>
- <20261105140510.165165-10-clamor95@gmail.com>
- <au3etybQlb5CtjBL@orome>
- <CAPVz0n3o5pc62eF6gv+PYmJh1KN1a5s=qmjxpNGJfxbCC4tqzQ@mail.gmail.com>
- <au3mloMMzQFPUept@orome>
- <CAPVz0n1j0M1Zjj90pEGCYiNqUQv00N89oPcAxZbA7upuxhoF9w@mail.gmail.com>
+	s=k20260515; t=1793981343;
+	bh=QBFuPA5o7efP4jGw5Uh62IHRMOskGTud10helT98leM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=Bnnlk1XwsJhM714adLANGjs2OMsx5jXpuOo7Oli6q6eRdY7k/cqevHQ/Tx5uFAJnz
+	 PzdPTJxas6XIU8P4M9q/E2al+jaPpJjNVGoFFZeDTIjR7vimPttNIw62OrrY5SZ25x
+	 JmvgZ5vZTOySPcn2/YrNYTZKVicMXRNgMpVuQ9Kls6vCWhiDhu5Q8xLXolPqiaRirD
+	 sOWNmbLLxdT56ALxGEo+saT3ozxrPQTTMmFbH+lCrTgXJzGI1DAT9Hk3aJob+/m6Oh
+	 4gsYvgKkZpio6ITxQ5CSmoXrH0igYZs89xjAmqTpCWCVKQ2I+37mqvQTLryNybhiXX
+	 TNpdhS0/qxf6g==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5bfc32574e7so882737e87.0
+        for <linux-tegra@vger.kernel.org>; Fri, 06 Nov 2026 08:09:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErGI/FZ+NrpJW+/aeTXNiIh1Dv8CXP/q2lmh9a/o0Qj5oSpmqr0XWP8lPxuIctwxtFpAphtRmV0rtLdLDA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/6SXL5gl3SQoFC7b+9SuN/C8uDmTjFI+/hgqEAOINdRhNecryH
+	Euy0c6xw7iamfWQblr6Xy/Kt3aIbDpVko2vnCB6vtlzkZ5tm/3ylAAeTWNk3/KfJbQ0OHxcEpvc
+	CItBIrR8nJRDJKiduuIjLM/Wt9pEpWLM=
+X-Received: by 2002:a05:6512:8399:b0:5c0:62:7fe7 with SMTP id
+ 2adb3069b0e04-5c00062885emr928894e87.43.1793981341359; Fri, 06 Nov 2026
+ 08:09:01 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -68,108 +59,103 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4dphqbl3ubrnxlyn"
-Content-Disposition: inline
-In-Reply-To: <CAPVz0n1j0M1Zjj90pEGCYiNqUQv00N89oPcAxZbA7upuxhoF9w@mail.gmail.com>
-
-
---4dphqbl3ubrnxlyn
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20261030172745.2045743-1-sumitg@nvidia.com>
+In-Reply-To: <20261030172745.2045743-1-sumitg@nvidia.com>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Fri, 6 Nov 2026 17:08:48 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hDm=FMftFfxnzthRQXWzUqcm8SkAaxzVWZcsyQtNLj6g@mail.gmail.com>
+X-Gm-Features: AclHuK_TjpF2X7DtDNnULSldqJeN07Zp0bFqVqftslA3UX5WlTorGVSf-fIrR3E
+Message-ID: <CAJZ5v0hDm=FMftFfxnzthRQXWzUqcm8SkAaxzVWZcsyQtNLj6g@mail.gmail.com>
+Subject: Re: [PATCH v8 0/3] ACPI / cpufreq: CPPC: Add ospm_nominal_perf support
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, pierre.gondois@arm.com, 
+	christian.loehle@arm.com, ionela.voinescu@arm.com, zhenglifeng1@huawei.com, 
+	zhanjie9@hisilicon.com, lenb@kernel.org, mario.limonciello@amd.com, 
+	maciej.wieczor-retman@intel.com, pawel.chmielewski@intel.com, 
+	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
+	mochs@nvidia.com, bbasu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 09/10] dt-bindings: display: tegra: Document 8-bit CPU
- parallel interface
-MIME-Version: 1.0
 
-On Fri, Nov 06, 2026 at 04:48:17PM +0200, Svyatoslav Ryhel wrote:
-> =D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 16:=
-40 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Fri, Nov 06, 2026 at 04:11:12PM +0200, Svyatoslav Ryhel wrote:
-> > > =D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE=
- 16:08 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > >
-> > > > On Thu, Nov 05, 2026 at 04:05:09PM +0200, Svyatoslav Ryhel wrote:
-> > > > > Document 8-bit CPU parallel MIPI DBI Type B interface provided by
-> > > > > Tegra20/30 SoCs display controller.
-> > > > >
-> > > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > ---
-> > > > >  .../display/tegra/nvidia,tegra20-dbi.yaml     | 113 ++++++++++++=
-++++++
-> > > > >  .../display/tegra/nvidia,tegra20-dc.yaml      |  22 ++++
-> > > > >  2 files changed, 135 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/display/teg=
-ra/nvidia,tegra20-dbi.yaml
-> > > > >
-> > > > [...]
-> > > > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvid=
-ia,tegra20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia=
-,tegra20-dc.yaml
-> > > > > index 69be95afd5627..ffeb124905dbf 100644
-> > > > > --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegr=
-a20-dc.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegr=
-a20-dc.yaml
-> > > > > @@ -79,6 +79,16 @@ properties:
-> > > > >    rgb:
-> > > > >      type: object
-> > > > >
-> > > > > +  "#address-cells":
-> > > > > +    const: 1
-> > > > > +
-> > > > > +  "#size-cells":
-> > > > > +    const: 0
-> > > > > +
-> > > > > +patternProperties:
-> > > > > +  "^dbi@[0-1]$":
-> > > > > +    $ref: /schemas/display/tegra/nvidia,tegra20-dbi.yaml#
-> > > >
-> > > > I think it might be better to group these under a separate dbi node=
- at
-> > > > the top-level, making it a sibling to the "rgb" node. If you add
-> > > > #address-cells and #size-cells here, I think that means technically=
- the
-> > > > "rgb" is now in the same address space as those new dbi nodes and w=
-ould
-> > > > need its own "reg" property and such.
-> > > >
-> > >
-> > > Only 1 DBI node per DC is available. Adding address/size cells means
-> > > nothing for rgb.
-> >
-> > If only one node is available, then "reg" isn't the right property.
-> > "reg" indicates we're somehow addressing the child, which applies to all
-> > children, so I don't think that would work here. A separate property
-> > would make more sense in that case.
-> >
->=20
-> Check v5 and talk to Mikko
+Hi Sumit,
 
-I checked v5. I disagree.
+On Fri, Oct 30, 2026 at 6:28=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wro=
+te:
+>
+> This series adds support for the OSPM Nominal Performance register
+> (ACPI 6.6, Section 8.4.6.1.2.6) to the CPPC ACPI and cpufreq drivers.
+>
+> Unlike the read-only Nominal Performance register, OSPM Nominal
+> Performance is writable and lets OSPM request a nominal level below
+> the platform-reported nominal. The platform treats performance above
+> this level as boost and below as throttle.
+>
+>  - Patch 1: adds ACPI helpers to write the register and to check that
+>    the platform supports it.
+>
+>  - Patch 2: adds the per-policy ospm_nominal_freq attribute in kHz. The
+>    value is kept across CPU hotplug and suspend/resume. The register
+>    cannot be read back, so a read returns the last value written.
+>
+>  - Patch 3: uses the OSPM nominal as the maximum frequency while boost
+>    is off. Lowering the nominal creates a boost range on a platform
+>    that has none, and boost can then be enabled.
+>
+> This series applies on top of v7 of:
+>   cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
+>   https://lore.kernel.org/lkml/20261030092416.1993889-1-sumitg@nvidia.com=
+/
+>
+> v7 -> v8:
+>  - Rebase on Christian's CPPC fixes series.
+>  - Patch 1:
+>    - use cpc_is_writable() from that series and drop cpc_reg_writable().
+>    - add the register to the list of controls the driver writes.
+>    - take cpc_desc_lock in cppc_ospm_nominal_perf_supported(), so the
+>      descriptor cannot be removed during the check.
+>  - Patch 2:
+>    - make ospm_nominal_freq read-write. A read returns the last value
+>      written, or "<unset>" before the first write. (Christian, Mario)
+>    - keep saving the values in the store handler, not at init(), so
+>      the driver writes the register only after the OS sets it. (Pierre)
+>  - Patch 3:
+>    - document in the ABI file how the OSPM nominal sets cpuinfo_max_freq
+>      and caps scaling_max_freq.
+>
+> Sumit Gupta (3):
+>   ACPI: CPPC: Add ospm_nominal_perf support
+>   cpufreq: CPPC: Add ospm_nominal_freq attribute
+>   cpufreq: CPPC: Reflect the OSPM nominal in boost and limits
+>
+>  .../ABI/testing/sysfs-devices-system-cpu      |  31 ++++
+>  drivers/acpi/cppc_acpi.c                      |  44 +++++
+>  drivers/cpufreq/cppc_cpufreq.c                | 173 +++++++++++++++++-
+>  include/acpi/cppc_acpi.h                      |  10 +
+>  4 files changed, 248 insertions(+), 10 deletions(-)
+>
+> v7: https://lore.kernel.org/lkml/20260807214837.863209-1-sumitg@nvidia.co=
+m/
+> v6: https://lore.kernel.org/lkml/20260717215330.2215058-1-sumitg@nvidia.c=
+om/
+> v5: https://lore.kernel.org/lkml/20260615185934.2383514-1-sumitg@nvidia.c=
+om/
+> v4: https://lore.kernel.org/lkml/20260527194626.185286-1-sumitg@nvidia.co=
+m/
+> v3: https://lore.kernel.org/lkml/20260514194822.1841748-1-sumitg@nvidia.c=
+om/
+> v2: https://lore.kernel.org/lkml/20260430142430.755437-1-sumitg@nvidia.co=
+m/
+> v1: https://lore.kernel.org/lkml/20260427051823.280419-1-sumitg@nvidia.co=
+m/
+>
+> --
 
-Thierry
+This would be good to go except that it doesn't apply for me on top of 7.4-=
+rc1.
 
---4dphqbl3ubrnxlyn
-Content-Type: application/pgp-signature; name="signature.asc"
+Can you please rebase it and resend, with Christian's tags included?
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt94AACgkQ3SOs138+
-s6E5ChAAtfIO3/13Os0v4C8Bi+ASzT/z6pjirTsujn0WkYYLXCnMYPNDPQEXXAHp
-vIchNUxW5ZQ5ngVEYrIEAQikIcd+VXxgJNOKujiEcaN4BorI2fVDnvrpzi/oQvYm
-UN88vY7AskjjaX5++WhaXRu+PipGxZ3RmF3hEzOtB9UTHBn7HODhOF28UgUsq3Uj
-hyVWHeJmWa+Fl78CBjiZ3Kx9wKO2Bu2DM79ZueKRP2o8wvtk6acLOJjzJGVyyELi
-/M4UztX2cQW+MO8X74vVcSjjQ+OR95teYhERxenjiTnooM2Qf0SGf1kZbf89oY2t
-DNRhJ4WO7fTqG+gLPFXMNt9m6jGEsbRvK0/i4ODEdDc/p1eGzA5wSTWnt8ze2Ohb
-U2+sNN+l9scplO7svmQ0BjdqOlYpt4DDgTHSTekN1q8+ai5pODFN3l3zR/HC1eNm
-NarPdtHxhdXcsHmscsl1yTdX/KrH7cFlS6qgOAjVzIDT3WszlKG8E6/ETjdXhklp
-0of9eVwKeBsSZIYa5hkiAnoIf4KZSeG6FewFHA1VidSy5v8CzsOCSpxbAk6/Ylmv
-wYyBJL7GUEHc1OM2rE+4GuwFrSTAauvYGK1b1ypWOq4OsoEij8gI5Xkh82tndo0C
-vloQ8ZYKfmAtjv+3mjX4jTlTI8dYYxd2TZwTlbGbgv5ea+XRtl8=
-=z+S4
------END PGP SIGNATURE-----
-
---4dphqbl3ubrnxlyn--
+Thanks!
