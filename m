@@ -1,55 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793981343;
-	b=VgowuOONZBGuXcImV6+kHMOvE4YIvTG5cO9xNBxVS+68C9NqIyz3J7Fo6E9s4zLApUbC
-	 /DzTUyZJB26AidKwNwfe2Z5J7Xbr1okBOFn2e3u3clQYNklQq9IhfZYxEsL3ayASlVJqy
-	 6o226YBkSiNpkiwZUzg68YVdJ+GnjRRf97PrzRU3g5KeJ2kWP3m8nS9TcU6mMlhTv0cru
-	 LeN8tkjnvP7cb+/wa2xHZc4ig1CGNj5vGN8GC9AU60KCiMmvlPjsT0JDVq/N2iaEmXUHo
-	 XJE3g12y0Z5BTZTeINn8llFU6xHoTQj+j/gs4n86bduYO+H+Wfjl0A6eKh7gHUQssMg==
+	t=1793984380;
+	b=qlfeT0YvqSlxHqxJlvnLV3C1kMHy69LyEQZHg45Gv/QcN2gCwODOYOTdRh40DpFv86a5
+	 OTQrYUIqOmHY+LbV/o5nEP6N6Og2S95qs+QPuS7g8Kfzr5tn49mIXLiQZhunvxt/gTCHd
+	 WdwW4deFGCEt8q+1K839Qb8YvPe4M88BthBerAqXNIY7Au0hdtZx6c82gWRBgZP9STpho
+	 AFjsL3Rw7Y6LWRi7q1bLYNdGkRN3iq/EAlGpZ48Mdq8qGdZwlewj8/w70NQdklIYXik+m
+	 u088SHuSr1CBLvfr2334UgkyoDss8oTOi22gA7hVh8LaqFYbk7xwSCKIkn5/my+2idg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793981343;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=QBFuPA5o7efP4jGw5Uh62IHRMOskGTud10helT98leM=;
-	b=FgFxzvZHrk3g9Bpsuakf1bIdk+7p6OKlmHhmTTgcRrIC2T/ha5KUcUJDZJr8SG4Vz94P
-	 +tYbKZ6Uka7xcYDkuFZXLZVXdE4FxEO9q15fRVCvnyQ8OMRQNYIadGi8e0w0S4heSO9nY
-	 uhJHoEiIXsWxJXsN7ewzi6eBChJxRZlgKD8ObgpQGv3e+i0ZtU1guUZfXjhJWmqQ36xW3
-	 g4+v2ae/gqS5dBzRxNJUXDzJfnHlvcRjKvLczDhBHkmrtkzgl9WEd+/cUdODJjTPNWTHS
-	 6xjnRM+cR6IhzP4w6V+A4calgK9JnjjNzjqnCzDPEeJ9LBibJyiuXlMKXFnFAXU6kjQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793984380;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
+	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=TpTj9D+xEplpE+lH6Vyc84lnEW5VEG9Ul1qN0cpTuEU=;
+	b=tdBJDF9AKxzfuuEcg9CLYLzAycqsr507FsbhR3UvQvjSSaFcD1rBwvWUuefH9aT+cqS0
+	 hrESsech93C6uVOo5CDJPjYV5M4rMMu4cSb1GBBX89rbb2sTDMmSgAaAHjdItPxCZLWXQ
+	 Zy+qgLwLTLSHli57SsDgrqOUqaDbRtEt/py/jgGR5iNTmRsk32/noLPQyQ1DrWL0hRCAF
+	 QquX1euL8xfxK2XR3hxNmhZ3qH+SiFcg5MaSkvwgFvkI4mf6eBvbQa/xXDtZKW/cQ1sle
+	 XrYeEatH7ZQN22kbvNiRgDPaXDl5PL7hxaTvpiEAcobTquFXOLV/ZpAhsF4jHRH9lAA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bnnlk1Xw;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A3560A5BE1
-	for <linux-tegra@vger.kernel.org>; Fri,  6 Nov 2026 16:09:03 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=WJagrXmP;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C39606A329;
+	Fri,  6 Nov 2026 16:59:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A6C39606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bnnlk1Xw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1E71F0092F
-	for <linux-tegra@vger.kernel.org>; Fri,  6 Nov 2026 16:09:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793981343;
-	bh=QBFuPA5o7efP4jGw5Uh62IHRMOskGTud10helT98leM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Bnnlk1XwsJhM714adLANGjs2OMsx5jXpuOo7Oli6q6eRdY7k/cqevHQ/Tx5uFAJnz
-	 PzdPTJxas6XIU8P4M9q/E2al+jaPpJjNVGoFFZeDTIjR7vimPttNIw62OrrY5SZ25x
-	 JmvgZ5vZTOySPcn2/YrNYTZKVicMXRNgMpVuQ9Kls6vCWhiDhu5Q8xLXolPqiaRirD
-	 sOWNmbLLxdT56ALxGEo+saT3ozxrPQTTMmFbH+lCrTgXJzGI1DAT9Hk3aJob+/m6Oh
-	 4gsYvgKkZpio6ITxQ5CSmoXrH0igYZs89xjAmqTpCWCVKQ2I+37mqvQTLryNybhiXX
-	 TNpdhS0/qxf6g==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5bfc32574e7so882737e87.0
-        for <linux-tegra@vger.kernel.org>; Fri, 06 Nov 2026 08:09:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErGI/FZ+NrpJW+/aeTXNiIh1Dv8CXP/q2lmh9a/o0Qj5oSpmqr0XWP8lPxuIctwxtFpAphtRmV0rtLdLDA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/6SXL5gl3SQoFC7b+9SuN/C8uDmTjFI+/hgqEAOINdRhNecryH
-	Euy0c6xw7iamfWQblr6Xy/Kt3aIbDpVko2vnCB6vtlzkZ5tm/3ylAAeTWNk3/KfJbQ0OHxcEpvc
-	CItBIrR8nJRDJKiduuIjLM/Wt9pEpWLM=
-X-Received: by 2002:a05:6512:8399:b0:5c0:62:7fe7 with SMTP id
- 2adb3069b0e04-5c00062885emr928894e87.43.1793981341359; Fri, 06 Nov 2026
- 08:09:01 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=WJagrXmP
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F17ED15A1;
+	Fri,  6 Nov 2026 08:59:35 -0800 (PST)
+Received: from [10.57.68.162] (unknown [10.57.68.162])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B8B53F673;
+	Fri,  6 Nov 2026 08:59:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1793984379; bh=XqRyXiRR2CbxV2R4ByG9xTFNWObHB3B9bQbd9GW01Z8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WJagrXmPzK8oqVSzFewSKf4S/R0uqNaMlJXpNZfos8ganCnWU0v2vcNjxOZfACkO3
+	 AinCbJjhVeQizvpbN0JgJIch83gMuHrYHUZlM0Z3blXRzf22ZbKm2zTND2Q6N2eH0x
+	 zxji1e5KcxQCxCX0M9DrJzwyzIvAh+fJrg3MNvRM=
+Message-ID: <5089e131-c904-471e-a078-5df7cc664372@arm.com>
+Date: Fri, 6 Nov 2026 16:59:07 +0000
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,103 +53,96 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/3] ACPI / cpufreq: CPPC: Add ospm_nominal_perf
+ support
+To: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>
+Cc: viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
+ zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, lenb@kernel.org,
+ mario.limonciello@amd.com, maciej.wieczor-retman@intel.com,
+ pawel.chmielewski@intel.com, linux-pm@vger.kernel.org,
+ linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+ treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+ ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
 References: <20261030172745.2045743-1-sumitg@nvidia.com>
-In-Reply-To: <20261030172745.2045743-1-sumitg@nvidia.com>
-From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Fri, 6 Nov 2026 17:08:48 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hDm=FMftFfxnzthRQXWzUqcm8SkAaxzVWZcsyQtNLj6g@mail.gmail.com>
-X-Gm-Features: AclHuK_TjpF2X7DtDNnULSldqJeN07Zp0bFqVqftslA3UX5WlTorGVSf-fIrR3E
-Message-ID: <CAJZ5v0hDm=FMftFfxnzthRQXWzUqcm8SkAaxzVWZcsyQtNLj6g@mail.gmail.com>
-Subject: Re: [PATCH v8 0/3] ACPI / cpufreq: CPPC: Add ospm_nominal_perf support
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, pierre.gondois@arm.com, 
-	christian.loehle@arm.com, ionela.voinescu@arm.com, zhenglifeng1@huawei.com, 
-	zhanjie9@hisilicon.com, lenb@kernel.org, mario.limonciello@amd.com, 
-	maciej.wieczor-retman@intel.com, pawel.chmielewski@intel.com, 
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
-	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
-	mochs@nvidia.com, bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <CAJZ5v0hDm=FMftFfxnzthRQXWzUqcm8SkAaxzVWZcsyQtNLj6g@mail.gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAJZ5v0hDm=FMftFfxnzthRQXWzUqcm8SkAaxzVWZcsyQtNLj6g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Sumit,
+On 11/6/26 16:08, Rafael J. Wysocki (Intel) wrote:
+> Hi Sumit,
+> 
+> On Fri, Oct 30, 2026 at 6:28 PM Sumit Gupta <sumitg@nvidia.com> wrote:
+>>
+>> This series adds support for the OSPM Nominal Performance register
+>> (ACPI 6.6, Section 8.4.6.1.2.6) to the CPPC ACPI and cpufreq drivers.
+>>
+>> Unlike the read-only Nominal Performance register, OSPM Nominal
+>> Performance is writable and lets OSPM request a nominal level below
+>> the platform-reported nominal. The platform treats performance above
+>> this level as boost and below as throttle.
+>>
+>>  - Patch 1: adds ACPI helpers to write the register and to check that
+>>    the platform supports it.
+>>
+>>  - Patch 2: adds the per-policy ospm_nominal_freq attribute in kHz. The
+>>    value is kept across CPU hotplug and suspend/resume. The register
+>>    cannot be read back, so a read returns the last value written.
+>>
+>>  - Patch 3: uses the OSPM nominal as the maximum frequency while boost
+>>    is off. Lowering the nominal creates a boost range on a platform
+>>    that has none, and boost can then be enabled.
+>>
+>> This series applies on top of v7 of:
+>>   cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
+>>   https://lore.kernel.org/lkml/20261030092416.1993889-1-sumitg@nvidia.com/
+>>
+>> v7 -> v8:
+>>  - Rebase on Christian's CPPC fixes series.
+>>  - Patch 1:
+>>    - use cpc_is_writable() from that series and drop cpc_reg_writable().
+>>    - add the register to the list of controls the driver writes.
+>>    - take cpc_desc_lock in cppc_ospm_nominal_perf_supported(), so the
+>>      descriptor cannot be removed during the check.
+>>  - Patch 2:
+>>    - make ospm_nominal_freq read-write. A read returns the last value
+>>      written, or "<unset>" before the first write. (Christian, Mario)
+>>    - keep saving the values in the store handler, not at init(), so
+>>      the driver writes the register only after the OS sets it. (Pierre)
+>>  - Patch 3:
+>>    - document in the ABI file how the OSPM nominal sets cpuinfo_max_freq
+>>      and caps scaling_max_freq.
+>>
+>> Sumit Gupta (3):
+>>   ACPI: CPPC: Add ospm_nominal_perf support
+>>   cpufreq: CPPC: Add ospm_nominal_freq attribute
+>>   cpufreq: CPPC: Reflect the OSPM nominal in boost and limits
+>>
+>>  .../ABI/testing/sysfs-devices-system-cpu      |  31 ++++
+>>  drivers/acpi/cppc_acpi.c                      |  44 +++++
+>>  drivers/cpufreq/cppc_cpufreq.c                | 173 +++++++++++++++++-
+>>  include/acpi/cppc_acpi.h                      |  10 +
+>>  4 files changed, 248 insertions(+), 10 deletions(-)
+>>
+>> v7: https://lore.kernel.org/lkml/20260807214837.863209-1-sumitg@nvidia.com/
+>> v6: https://lore.kernel.org/lkml/20260717215330.2215058-1-sumitg@nvidia.com/
+>> v5: https://lore.kernel.org/lkml/20260615185934.2383514-1-sumitg@nvidia.com/
+>> v4: https://lore.kernel.org/lkml/20260527194626.185286-1-sumitg@nvidia.com/
+>> v3: https://lore.kernel.org/lkml/20260514194822.1841748-1-sumitg@nvidia.com/
+>> v2: https://lore.kernel.org/lkml/20260430142430.755437-1-sumitg@nvidia.com/
+>> v1: https://lore.kernel.org/lkml/20260427051823.280419-1-sumitg@nvidia.com/
+>>
+>> --
+> 
+> This would be good to go except that it doesn't apply for me on top of 7.4-rc1.
+> 
+> Can you please rebase it and resend, with Christian's tags included?
+> 
+> Thanks!
 
-On Fri, Oct 30, 2026 at 6:28=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wro=
-te:
->
-> This series adds support for the OSPM Nominal Performance register
-> (ACPI 6.6, Section 8.4.6.1.2.6) to the CPPC ACPI and cpufreq drivers.
->
-> Unlike the read-only Nominal Performance register, OSPM Nominal
-> Performance is writable and lets OSPM request a nominal level below
-> the platform-reported nominal. The platform treats performance above
-> this level as boost and below as throttle.
->
->  - Patch 1: adds ACPI helpers to write the register and to check that
->    the platform supports it.
->
->  - Patch 2: adds the per-policy ospm_nominal_freq attribute in kHz. The
->    value is kept across CPU hotplug and suspend/resume. The register
->    cannot be read back, so a read returns the last value written.
->
->  - Patch 3: uses the OSPM nominal as the maximum frequency while boost
->    is off. Lowering the nominal creates a boost range on a platform
->    that has none, and boost can then be enabled.
->
-> This series applies on top of v7 of:
->   cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
->   https://lore.kernel.org/lkml/20261030092416.1993889-1-sumitg@nvidia.com=
-/
->
-> v7 -> v8:
->  - Rebase on Christian's CPPC fixes series.
->  - Patch 1:
->    - use cpc_is_writable() from that series and drop cpc_reg_writable().
->    - add the register to the list of controls the driver writes.
->    - take cpc_desc_lock in cppc_ospm_nominal_perf_supported(), so the
->      descriptor cannot be removed during the check.
->  - Patch 2:
->    - make ospm_nominal_freq read-write. A read returns the last value
->      written, or "<unset>" before the first write. (Christian, Mario)
->    - keep saving the values in the store handler, not at init(), so
->      the driver writes the register only after the OS sets it. (Pierre)
->  - Patch 3:
->    - document in the ABI file how the OSPM nominal sets cpuinfo_max_freq
->      and caps scaling_max_freq.
->
-> Sumit Gupta (3):
->   ACPI: CPPC: Add ospm_nominal_perf support
->   cpufreq: CPPC: Add ospm_nominal_freq attribute
->   cpufreq: CPPC: Reflect the OSPM nominal in boost and limits
->
->  .../ABI/testing/sysfs-devices-system-cpu      |  31 ++++
->  drivers/acpi/cppc_acpi.c                      |  44 +++++
->  drivers/cpufreq/cppc_cpufreq.c                | 173 +++++++++++++++++-
->  include/acpi/cppc_acpi.h                      |  10 +
->  4 files changed, 248 insertions(+), 10 deletions(-)
->
-> v7: https://lore.kernel.org/lkml/20260807214837.863209-1-sumitg@nvidia.co=
-m/
-> v6: https://lore.kernel.org/lkml/20260717215330.2215058-1-sumitg@nvidia.c=
-om/
-> v5: https://lore.kernel.org/lkml/20260615185934.2383514-1-sumitg@nvidia.c=
-om/
-> v4: https://lore.kernel.org/lkml/20260527194626.185286-1-sumitg@nvidia.co=
-m/
-> v3: https://lore.kernel.org/lkml/20260514194822.1841748-1-sumitg@nvidia.c=
-om/
-> v2: https://lore.kernel.org/lkml/20260430142430.755437-1-sumitg@nvidia.co=
-m/
-> v1: https://lore.kernel.org/lkml/20260427051823.280419-1-sumitg@nvidia.co=
-m/
->
-> --
-
-This would be good to go except that it doesn't apply for me on top of 7.4-=
-rc1.
-
-Can you please rebase it and resend, with Christian's tags included?
-
-Thanks!
+It's based on the hotplug/resume series, I guess Sumit could post them as a combined patchset
