@@ -1,56 +1,91 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793967540;
-	b=4v0SKnRDDSBf8gOoKMJNFkiJtugDeTjMBQEzG5BcQshkrivIl3CpZEsluEnBI+HOXlTk
-	 NJF6WF07tC4WF56ZqVfQfkJApbgjOGIxgxH2I0B351K8lTA+81VNw3Jl8rHObEuHz4bCN
-	 uGd7GjZnGd2qIaNNVt7Y6YgPeiMZpytmC2waHPV2diHyW0zSTklQwTzQidemgwaRu3HjX
-	 fEWhb+7QbZkhbVDuaXUEleqB6tumna3FIqLRFytjrx2X3gLwbGmdnNcw6Z1C0/zZp7rEW
-	 w+PC2SnAzTDHo9mNssplChU/jg5m989UJLUhwDifAHgo8kpIuq/cr8f4ZFDqXVaLKoQ==
+	t=1793968818;
+	b=hIGG+3nxwXJBc9wJU34AWH+DVNU4jck7g8lKBP2ttSWaM9tqTQBsEl6yui0lxzrPkzra
+	 yRrXekml2zZ2E8Etstp1xz+dE3oU7N93JwHkesaUy6wHRnVA0bmM8nFprkwvk7fN2gSG4
+	 PZuXYfU1uvc3RsBmmCK5vzlxLZp1xcP1Q8jj6baPh4xmux7loL0foHyzPFxM+21GCcEeK
+	 AMYo8qkMd3PU2LGFtCri9Lw5JkML4BzFUKhmcLOX9ryWNnMV2B2JAReYCbdmjiFD1NqLR
+	 CmL5NSqLCcmBUIrLpUimG6FY2l3IAr5GTB117zi+6Mpkl9Z0wtqZDRUX0zAyQEJStIg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793967540;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793968818;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=3Vts4ehNV2WYkzbZel6ETHqtS+ID17Y0WMvU/pntaQQ=;
-	b=2mfqG0BdcA2dd7AvwlT1eguO1xCE9N4SMBTJdOR0g5Ys23B7IKuieYb4daMG4e8gxGJy
-	 5yXQV1KNPqESZxP84AG5QU6B96BGLbep6GpUfjH/H3jFAv0NCMRyTdpbXwr9iZUhK/z4w
-	 +I+PmKpAcHa6GHSXrG5T/gMgaa2tuQMJ3m0eD4zsemmzqmKAVXLMC2i6EwAzQKiakGjEy
-	 3otKfZ4oeWdDDIK/cCR+upghYFwX6Y31oa44OZiHJ56Y7aSy1hrmp4JMPInjyGeGNV1jR
-	 03GRXU4hnTXedFQI6YQnSDMbKyZQREWbc2qVhRnsmejUrwZVqn9HfA0x1nTXEemYyqQ==
+	bh=I7rpnBx9YoXkP8aLjecj2KvEgsGyzrkFXLzcIf+WpQs=;
+	b=tjwfW5ZjMhz/fZkH23sHOIErQBrB/TgBAoZbdfaKAlw4vblVwvw+MpKbHMnGf1jVVCsp
+	 FbJYF14oftGdvaza21jB1Yw/dYsI77zT1BBPf4rxPCje2/ELTZBrrxI+JAGXCzQUjSvkP
+	 uZtl+2Kf25J1B/YAj9/uCXZDRK2P8/Ua0he52PQCGbekJCIDfKa+PvFaDbW6W+PjIbGdg
+	 Q0xSwwaMI022i2k/VLZsQj+XrbJQIEf5yFqHbvVtoWthssq4bzt4LmaeH2NkRbPEFcEg7
+	 XALqGQ6mnu1tma7yqLEPJ0s+MtRePD28AXPiH8VJi3DKlJK6Oh36LlcUYIWm3V+B3Hg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ibWJ3Koj;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="cv0gq7//";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44015606A329;
-	Fri,  6 Nov 2026 12:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D630606A326;
+	Fri,  6 Nov 2026 12:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ibWJ3Koj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E8D1F0089F;
-	Fri,  6 Nov 2026 12:18:58 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cv0gq7//
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744301F0089F;
+	Fri,  6 Nov 2026 12:40:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793967539;
-	bh=3Vts4ehNV2WYkzbZel6ETHqtS+ID17Y0WMvU/pntaQQ=;
+	s=k20260515; t=1793968818;
+	bh=I7rpnBx9YoXkP8aLjecj2KvEgsGyzrkFXLzcIf+WpQs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ibWJ3KojUu8JIAvsm8W8+Bf+763uiVchH2mr7e7DrGaIEyqN4eicDcarsw1gAyULL
-	 aY2l7xnRwC2EfoZF5xGYYmgwzQbriUY7E/VrsR+bXjIWAD0A7OT6in3gAu6eg3UE4B
-	 DrLnbS6KuYGwXyh5/86Z+ugfUhs4GuscWsSNOMxQ/IUAIJ0nVGf9fmIk1hr4hS3Clg
-	 xMvS1W0Atp26qQqDGT9/FeTLDSm6wFKdWObTF9ZuqWfjIz0MR4l21kYW3cPWQ2WVus
-	 COBSovgMJWtAlsOGmbx0OXybEGQZ23EwHuj5zDBi6i0wz8zUS2RIl2UqEJsI0oeN0P
-	 APf5Pxo7ii7UQ==
-Date: Fri, 6 Nov 2026 13:18:56 +0100
+	b=cv0gq7//oTp0dAwoAY2P60tkzG7qOXixypboCv6somxbv4RJe5y516ibiIt9yil0y
+	 6Xus26S5S7CjxFEgzJ6hZni98dpD8Y/omMUtCqA4qji8MxkiTaYplwOOW48zZztgn9
+	 biJBA8ky84yjfhdUFX9fRCe+oS8D893fUM9AYufhLCP12MMbLUTZ8mXNG/OPBCvc1G
+	 DIevwtEp6pl4GRQg1cF62xWNKe0C2Oa7ePx8fTta9k3W+1zeQkAVQDl44kBiPO2/LG
+	 dx8EhOOPaR6wOfy/YLyX01VcjVuebpZVFEllgtNJqAQKSVIn+yFsCLndqNWCvS3rdQ
+	 Fk78GnOIw8FXg==
+Date: Fri, 6 Nov 2026 13:40:15 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Sudeep Holla <sudeep.holla@kernel.org>
-Cc: Aniruddha Rao <anrao@nvidia.com>, jonathanh@nvidia.com, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] firmware: tegra: bpmp: Add ACPI support
-Message-ID: <au3Ag3uEKhppG930@orome>
-References: <20260929095915.2215685-1-anrao@nvidia.com>
- <20260929095915.2215685-3-anrao@nvidia.com>
- <20261105-fiery-gentle-pudu-e985dd@sudeepholla>
- <aux8RS55HqzuTL3g@orome>
- <20261106-emu-of-nonconcrete-wizardry-174c3b@sudeepholla>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Frank.Li@oss.nxp.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Russell King <linux@armlinux.org.uk>, 
+	Richard Genoud <richard.genoud@bootlin.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Laxman Dewangan <ldewangan@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Cunhao Lu <1579567540@qq.com>, 
+	Raul E Rangel <rrangel@chromium.org>, Yenchia Chen <yenchia.chen@mediatek.com>, 
+	Zhiyong Tao <zhiyong.tao@mediatek.com>, Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>, 
+	Kendall Willis <k-willis@ti.com>, Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>, 
+	Nicolai Buchwitz <nb@tipi-net.de>, Karl Mehltretter <kmehltretter@gmail.com>, 
+	Stefan =?utf-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>, Shitalkumar Gandhi <shital.gandhi45@gmail.com>, 
+	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>, 
+	John Ogness <john.ogness@linutronix.de>, Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>, 
+	Robin Gong <yibin.gong@nxp.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Stephan Gerhold <stephan.gerhold@linaro.org>, Zhaoyang Yu <2426767509@qq.com>, 
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>, Haoxiang Li <haoxiang_li2024@163.com>, 
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Myeonghun Pak <mhun512@gmail.com>, 
+	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>, 
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>, 
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
+	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>, 
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, vkoul@kernel.org
+Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
+Message-ID: <au3GYOP5P7B90-bX@orome>
+References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
+ <aux2VKHnVLwq_wzi@orome>
+ <auyQEVmA2KeGu9DL@ashevche-desk.local>
+ <auyiAE3lhnFahBK2@orome>
+ <auysTnqWgz2kE7e9@ashevche-desk.local>
+ <2209947d-0b9b-417f-9ffb-1c81790af9db@kernel.org>
+ <auzEupFd_Ek2HpLG@ashevche-desk.local>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -61,130 +96,154 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y7cj5bs7ahhglui7"
+	protocol="application/pgp-signature"; boundary="bfkiplbygfje4qbi"
 Content-Disposition: inline
-In-Reply-To: <20261106-emu-of-nonconcrete-wizardry-174c3b@sudeepholla>
+In-Reply-To: <auzEupFd_Ek2HpLG@ashevche-desk.local>
 
 
---y7cj5bs7ahhglui7
+--bfkiplbygfje4qbi
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 2/5] firmware: tegra: bpmp: Add ACPI support
+Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
 MIME-Version: 1.0
 
-On Fri, Nov 06, 2026 at 09:25:56AM +0000, Sudeep Holla wrote:
-> On Thu, Nov 05, 2026 at 02:07:48PM +0100, Thierry Reding wrote:
-> > On Thu, Nov 05, 2026 at 09:50:26AM +0000, Sudeep Holla wrote:
-> > > On Tue, Sep 29, 2026 at 09:59:12AM +0000, Aniruddha Rao wrote:
-> > > > Add required changes in the Tegra BPMP driver to make it compatible=
- with
-> > > > ACPI-based platforms.
-> > > >=20
-> > > > On ACPI systems, IPC is handled through an AML method instead of the
-> > > > kernel mailbox and IVC frameworks.
-> > > >=20
-> > > > Clock, reset and power-domain providers are not controlled by the L=
-inux
-> > > > BPMP driver on ACPI-based systems, so do not initialize them there.
-> > > >=20
+On Thu, Nov 05, 2026 at 08:02:34PM +0200, Andy Shevchenko wrote:
+> On Thu, Nov 05, 2026 at 05:21:06PM +0100, Krzysztof Kozlowski wrote:
+> > On 05/11/2026 17:18, Andy Shevchenko wrote:
+> > > On Thu, Nov 05, 2026 at 04:36:38PM +0100, Thierry Reding wrote:
+> > >> On Thu, Nov 05, 2026 at 04:17:53PM +0200, Andy Shevchenko wrote:
+> > >>> On Thu, Nov 05, 2026 at 01:28:46PM +0100, Thierry Reding wrote:
+> > >>>> On Mon, Nov 02, 2026 at 12:54:48PM -0500, Frank.Li@oss.nxp.com wro=
+te:
+> > >>>>>
+> > >>>>> Replace open-coded assignments to callback and callback_param fie=
+lds
+> > >>>>> of struct dma_async_tx_descriptor with calls to the
+> > >>>>> dmaengine_desc_set_callback() helper across serial drivers.
+> > >>>>>
+> > >>>>> No functional change intended. Prepare to make struct
+> > >>>>> dma_async_tx_descriptor private to the DMA engine.
+> > >>>>>
+> > >>>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > >>>>> ---
+> > >>>>>  drivers/tty/serial/8250/8250_dma.c  | 6 ++----
+> > >>>>>  drivers/tty/serial/8250/8250_mtk.c  | 3 +--
+> > >>>>>  drivers/tty/serial/8250/8250_omap.c | 6 ++----
+> > >>>>>  drivers/tty/serial/amba-pl011.c     | 6 ++----
+> > >>>>>  drivers/tty/serial/atmel_serial.c   | 6 ++----
+> > >>>>>  drivers/tty/serial/fsl_lpuart.c     | 6 ++----
+> > >>>>>  drivers/tty/serial/imx.c            | 6 ++----
+> > >>>>>  drivers/tty/serial/msm_serial.c     | 6 ++----
+> > >>>>>  drivers/tty/serial/mxs-auart.c      | 6 ++----
+> > >>>>>  drivers/tty/serial/pch_uart.c       | 6 ++----
+> > >>>>>  drivers/tty/serial/samsung_tty.c    | 6 ++----
+> > >>>>>  drivers/tty/serial/serial-tegra.c   | 6 ++----
+> > >>>>>  drivers/tty/serial/sh-sci.c         | 9 +++------
+> > >>>>>  drivers/tty/serial/sprd_serial.c    | 3 +--
+> > >>>>>  drivers/tty/serial/stm32-usart.c    | 6 ++----
+> > >>>>>  15 files changed, 29 insertions(+), 58 deletions(-)
+> > >>>>
+> > >>>> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> > >>>
+> > >>> Krzysztof, now look at this case. I would argue that this is even l=
+ess fit than
+> > >>> # subpart(s) case, because it might imply anything. Again the probl=
+em is the
+> > >>> bundle, and for such a case (when tons of independent changes are b=
+undled in
+> > >>> the same stuff, *every* Rb tag has to be explained on what has been=
+ reviewed!
+> > >>
+> > >> It may be a bit subtle, but the placement of the tag indicates that =
+it
+> > >> applies to the entirety of the changes. I didn't crop the list of
+> > >> changed files, nor did I omit the summary.
 > > >=20
-> > > The above 2 statements are very clear and says this driver is not much
-> > > useful on ACPI systems which is good and aligns with the general
-> > > expectations.
+> > > This doesn't clarify the question. Wordless Rb tag on a bundles is an=
+ oddity.
+> >=20
+> > No, it's perfectly normal and typical. I would not expect anything else,
+> > because writing "LGTM" is pointless. We are experienced reviewers and we
+> > do understand what Reviewer's statement of oversight means, thus giving
+> > the tag is obvious, explicit and not odd.
+> >=20
 > > >=20
-> > > > Keep transport initialization in the SoC-specific init operation. U=
-se an
-> > > > optional init_providers operation for DT child and provider registr=
-ation
-> > > > after BPMP communication has been established and the firmware tag =
-has
-> > > > been read. ACPI platforms leave this operation unset.
-> > > >=20
+> > >> That bit of meta-data obviously isn't picked up into the tag line, b=
+ut
+> > >> I think the default meaning of Reviewed-by is that it applies to the
+> > >> entire thing.
 > > >=20
-> > > "ACPI platforms leave this operation unset" - I don't fully understand
-> > > what this means ? If it means we need to do something on ACPI systems,
-> > > why can't it be done by some boot firmware instead ?
+> > > And I interpret it otherwise, because this is a set of independent ch=
+anges
+> > > bundled into a single patch!
 > >=20
-> > I think it just means that the "init_providers" operation isn't needed
-> > on ACPI systems because we don't expose clocks, resets or power domains
-> > in ACPI (we do this only on DT so that we can have cross-references
-> > between device tree nodes). I don't think anything needs to be done in
-> > the ACPI case, so leaving this operation unset is exactly that.
-> >=20
+> > It's not set of independent changes, but even if it was then it would
+> > not matter. We review the code regardless how we actually judge the
+> > atomicity of a patch.
 >=20
-> Thanks for the confirmation.
->=20
-> > > > DT transports register an MRQ_PING handler for requests initiated by
-> > > > BPMP firmware. This request direction was used only by a diagnostic
-> > > > command in older firmware and is not provided by firmware on ACPI-b=
-ased
-> > > > systems. The ACPI transport therefore does not register an incoming
-> > > > handler; its init operation only sends the outgoing MRQ_PING reques=
-t used
-> > > > to verify communication with firmware.
-> > > >=20
-> > >=20
-> > > OK, I am more confused as you state more things are not needed on ACPI
-> > > systems. Why do we need to add any support for ACPI systems then? Can=
- you
-> > > make it clear as what is needed on ACPI systems and why it needs to be
-> > > done by OSPM and not any boot firmware if it is just one time initial=
-isation.
-> >=20
-> > My understanding of this is that the goal was to completely hide BPMP on
-> > ACPI systems and do all the clock, reset and power domain handling via
-> > standard ACPI operations. MBWT is a feature that's needed on ACPI
-> > systems and that can't be represented as a standard ACPI operation, as I
-> > understand it, hence the addition of ACPI support to BPMP.
-> >=20
->=20
-> OK.
->=20
-> > So some of this patch is stripping out things that don't make sense on
-> > ACPI (the ACPI support for BPMP is very minimal) just to get enough
-> > support in place to expose the MBWT caps via sysfs.
-> >=20
->=20
-> I am bit concerned as MBWT is something to do with memory bandwidth
-> throttling and resctrl provides user ABI for such things, this sysfs
-> may be duplicating part of it.
->=20
-> > The sysfs knobs exposed in patches 4 and 5 exist because the bandwidth
-> > caps may need to be adjusted dynamically at runtime. It is indeed a bit
-> > absurd to bootstrap a restricted version of BPMP like this for just this
-> > one feature, but I don't see any alternatives.
-> >=20
->=20
-> Is MPAM/resctrl path explored and you have valid reasons to not use that
-> and create your own sysfs ?
+> And I confront exactly that! When the patch may be split it has to. This =
+is
+> seems the outcome of this discussion to me. From now on I think I will NAK
+> any bundle patch until piece that I in charge to is split from the bundle.
 
-My understanding is that only monitoring is implemented for MPAM with no
-way of actually controlling bandwidth through it.
+I'd like to caution against this. There's effectively one change in this
+patch and it converts all the drivers in the same way. This was probably
+generated using a script or semantic patch. Requiring this to be split
+up is going to make the author spend a lot of time creating 15 patches
+instead of just one. They will have to write the same commit message
+with tiny variations, which they'll most likely just use a script for
+because it's tedious. Or they don't use a script and likely get at least
+one commit message wrong. And then we're not reviewing a patch for
+technical correctness anymore but waste a lot of time on nit-picking on
+a subject or commit message. Each of these commit messages is not going
+to add any new information either, so the only thing you really achieve
+is to increase the signal-to-noise ratio.
 
-I've started an internal discussion to evaluate whether we can avoid
-custom sysfs attributes in favour of exposing them through resctrl.
+That's completely absurd.
+
+Also, reviewing 15 miniature patches is going to take much more time
+that reviewing this monolithic one, so I suspect potential reviewers are
+more likely to just stay away from it to begin with.
+
+In the end you make life miserable for everyone. Well, except for
+individual driver maintainers that want a quick and easy way to slap
+their approval onto only the one driver change that they really care
+about.
+
+But there's already a way that they can do that. Acked-by can just mean
+"I maintain this driver and I agree with the direction, but I haven't
+bothered to do a full technical review". That's what most of these
+"partial" Reviewed-bys are, so why not just use that existing tool?
+
+And I'm saying all of this without judgement, because sometimes you do
+not have the time to do a full review but you still want to lend your
+support to ongoing work. I do that quite often myself.
+
+But at other times I do want to look at something in more detail, or
+just ended up looking thoroughly enough for it to count as a full review
+and when I do I'll let people know with a Reviewed-by.
 
 Thierry
 
---y7cj5bs7ahhglui7
+--bfkiplbygfje4qbi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrtxawACgkQ3SOs138+
-s6HXgBAAoQ0SDxGlvO7HD0x2l6PY/QO/PMVisOZhqcPqykQZxHwJeCrGr1sb2s3a
-u4NT+PVRRwhW3uett4BzRTvWTIhShdfqG1oEbD0n5JQYC1i3ohgys+R4uSSqPQCa
-6UNd1tLO/9qOJ5mOEksQ5DZsPfnyWZBZMFDa/OCAizL8OOWMtRLnTgR2+kMoHsw2
-LMVyt68i3bP3clkMY6yDOQjw7vruv2S2GkyZltbqlGF6Hvch7T9Ydf6xGSOPTj2J
-w6drQoP8Eh76CexBccGVKvoFc+oi277FIyaqu2QmO8L3FppXpnQEMmnuUEo8TgDi
-RS/FsU7gup5vi/VdDPBbY3Zla473K/jAT4mNMFQVfydQIUepWgxChADQIgm1JBJ1
-gordoLbKf1GmuGnPiIZeQrvUQgI0FqVBDZwCMYAqi8/VEb1VLI++Q52MVyfNtrVL
-iq7V0b+1lrGi+UiiSbqcBZzKIoKgJJFm8SSvbAkGUfG9qZ/bE4/zBilZbWEIbEbV
-JQX85NxdkbUCsiDK/i2kwjNT4XIgBEd2GaFdc3wSofXz0FpSRwCNcdmZXCWelXtl
-0mtafup+oLqQnjamr7UTQKbmuMwBMn5oGnUC597hlM7o7XzqeoXZbNId0z5eGBrx
-ou09rOUTC29P9UHbiZsMkRptxw3/mFcOd/+S6dLGPEjMCy0RH+M=
-=q7UL
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrtyq0ACgkQ3SOs138+
+s6Fr4A/9FKItEmEcI7D1clbCnePcAJeqtYQ0rYq/qZQPbKo0mPQbeN5qKa1XDgHO
+o3ylZ3Piqsnzv+NNOe6cmtCjzv4Bb82/Z9g8metI4jz4gOraKos+oVhk2EIMFv7f
+yrPVGwcvgtlSnx6MO/kFoS+1JYbWlZ9JA7jJCTcXBUF28R780a2elyHAnxamdAQZ
+TrzhhmaRmsdt2TLYxJRPlrKWjfzhl/2HKGfFTTROXgaiaj8oQeCNcBGC1TKKtGls
+g4MQJ6AZ1Ke58gd3O1sYh3QUlOUewNawK+LOsDoGjooF6zg2loLypU6twHl7cBdH
+GoFRsLUImQvYXNUYhDxGCxNZ3OvMyIM+8X3G2xIJuHY8MEbJY5ukp/rPKi/4CQyK
+VxwvkHMoAX705PtVMKdY2ddQt9ceif+v7ohWDmce8B3NOopq0itUXxcU8Z2MWw99
+qEl1IoIYVXBYiJeaIcLzjSPmJeFPAJ49cJhNeqpH190C5hIqxPK75Jyh7+Pokx+y
+yWFEIla8n0+o14XOP9M2wnrvJ34EQI4aW8Ia/nFn3b1oONvBu+q8h8wMH5hH2fvJ
+O3QCmMyze7y03zKMQL2w8jE7qniSfi+wUNb318xOlXRqBKHTSGv7IEu5try/XdKo
+L8B242zIrUhLZ8MWwNSUfjq9qIT7PSG50W3uNxTv0hduJXFO13c=
+=a1fc
 -----END PGP SIGNATURE-----
 
---y7cj5bs7ahhglui7--
+--bfkiplbygfje4qbi--
