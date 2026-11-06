@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793979247;
-	b=HTi3JoCWA9ViXhbGsCRID9xO9pxSWOEPTHlZHY8zOOK5xYbqWH/AxdgYtmwR4EeHdQKC
-	 wqVYDgWdmKOA5t6d0uR4byW/XVWSfZH8KcH4iV/4xrTag1hyl9BoLZot+myrLIT2fs1Mv
-	 JGQauDqQj16Sioww6p/GwilJSH9yBW0SPGep5NskJJKfYgxZVp8HYmVeP3E+VWdufNVj5
-	 CNo32rBjpUqER9ziacJpM72gpP+XfR6ojaeRlk9exrel6ikD3vvsQqE56tM/L2OvREiYd
-	 pVV3Ygc/kOllXW4w6pYUi0h+PkoEk/iXwQYWhQIUAf8jWiMsh2MTzCvKZB11dWE26ng==
+	t=1793980294;
+	b=DOrSGZV+9HtECs7HRDNNu+oqimha+stEJB38Rymb2RExl1e/r9+Y7Zlrj0J+hdA1PlgT
+	 q4liR/c6vfwBXXS/DDyWyo/lrjZ3U+mcy4DWqjDmKR8DaNYLeB7JTpsG0hfDyA+k1StFB
+	 0yTPi0sMINUJ3XzNXHtS/ZYHfUWWZGpx3W2qC9samDZp3rtYdGtkZHSaxTAw8f+NsuNcr
+	 Xlq/1v0OmqGhZvdn7zm70vcQrhRWUJPnrtaicsrD8DuPrK5xTR/65e4kXxdZUSkM2WOaz
+	 2EtM1tY740TZjv5Tg9xdKjJwNzXbvDhfzJxA4rHG4QM+xZP1tanG2UEXEK7BrOFmDTw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793979247;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793980294;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=II+/X/AjHk0LYdYU8qce4WUbCQR7IugTOkyE8BsCIhw=;
-	b=VaJTQy5uaQELxEdb4nBbXOLKqRjPRV5GVQRQynca4GclIiDdt7J7S9mjvhpbh/EBCXG1
-	 e5RmfyDtDkzhL5L615YHzGZ/0NlC8PTsPEhUH3o+F9xviJ3cuvjb68vBEp2MGlaP07NQx
-	 s7J7b87er3uDaGwq3js6RJbJg8WZIitp+u0Ym5lsRwwTpdZzKuXPHgDCYrVjR1kOYdKgf
-	 qpbph5BxDSZ35O3Krvb6djO4l3Y5subWTIPjvAGGHDIJ7FiYhztFLXCTdsfQf+nk1kGUU
-	 g5C1UzgMQieDGy5e3vcFpzCnAJ0fBwxQwH6dlwActp3Dmid9mkTtmdCosGpDTq7bdrQ==
+	bh=badGVcjXYLu33rvUqhFwfV7h3p1+hHs0e3PjCdrYub4=;
+	b=FA6nL7MsWPDdgaL5yCwVzR2RA3REB0FLafQ3vrM3OWEqMNGftkl8V760mR/MLdWpAeNN
+	 65yU/VP+9RQG0GwLtqH/eRMdzPaGlZE1NGLdsKZExT9pWJitwL34lrNVG/qUf3y+MryUu
+	 kx5/wlPlJxjAmsr05z0P6fohu+HcstFdtat5FaMMN4No1wjg3zWA4I2/u7R5hUc6Yt7uE
+	 yhkOZzazxLtdYsDR5GIk747BPa9wRsDA/79I847qVbabd9Q3NbnZCJOswEO+2ge64qqWc
+	 aFM/x3JWbNtprjqedSNWOr3pbzLORxpS4yBPS1THyFx/RiQe+xm7dZQfyTGQcG0EFfA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ofnNNgjs;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kO97JVYX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28F8606A326;
-	Fri,  6 Nov 2026 15:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25044606A331;
+	Fri,  6 Nov 2026 15:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ofnNNgjs
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 288121F0089F;
-	Fri,  6 Nov 2026 15:34:05 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kO97JVYX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 268191F008A1;
+	Fri,  6 Nov 2026 15:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793979246;
-	bh=II+/X/AjHk0LYdYU8qce4WUbCQR7IugTOkyE8BsCIhw=;
+	s=k20260515; t=1793980293;
+	bh=badGVcjXYLu33rvUqhFwfV7h3p1+hHs0e3PjCdrYub4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ofnNNgjskEICYvaBMQ5Hxz2bF9n4sLEzhep/feYz49X59zjApKsMY9OE9pz2qlqY8
-	 mAqOwsksfHjWbUMw0F7zZ20suWnYkKVpNrZ3IcJvWPoTDb+jjQZnejbYVXq0a5hroi
-	 t/bAdCups3F9fq2K/2vn9ARUPX5zG7sQrF94/+0pJcd9kPB1q6/IgESQu7dQGAvhVU
-	 D65A/Y9Ry8DICZsndZx0xUSMBL2ysSK9VLYzqjt1dJfpEZc9RESdrJHWV9KPH7n/XZ
-	 S0Jy+01bWKjj4NJjAEADzoeTpWedtFeBAf/CG6MdJ7pXiiRljY7yU4N/tAor/3n5Ak
-	 VEYK51K2qEKnw==
-Date: Fri, 6 Nov 2026 16:34:04 +0100
+	b=kO97JVYXV+WZdMxw3KD+/M1wnRgW06OdDxSfNtfjslKXN6rAxRn68s3RXrVWxRBnl
+	 Bx0yEVaHPK6Y6z6vI/DLUs0LfaoI4I44P+cmh7em2/CFobLMcTFzxeUKKORZmeN1d6
+	 X00MN3lr0cXcinXIY9WWI6wWXoNzTl17sXqiG2U+vMp8yhRHL+HJZQZtZtCa9y0VzK
+	 vvc6WXE7x8Cm/4edC5z0Yp7x52UccqzwswM8foO3l1wJKHh6VGDWPXu9hk7Nc1+FLn
+	 t8XNcry4KfnqBOgK11iMyj8QRaieEOZw518PtDV4mJaONNz0/WHdWGnS6rbSQ/fiCp
+	 DJ8nVwxQ17iUQ==
+Date: Fri, 6 Nov 2026 16:51:31 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -50,13 +50,15 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Jessica Zhang <jesszhan0024@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
 	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 06/10] drm/tegra: Make panel parsing by
- tegra_output_probe() optional
-Message-ID: <au3yeJQPgRNiOM_R@orome>
+Subject: Re: [PATCH v6 09/10] dt-bindings: display: tegra: Document 8-bit CPU
+ parallel interface
+Message-ID: <au33NIR4bCAkokJH@orome>
 References: <20261105140510.165165-1-clamor95@gmail.com>
- <20261105140510.165165-7-clamor95@gmail.com>
- <au3dMlmsLEOUqan9@orome>
- <CAPVz0n3=R1UhyTw1o-ZR2hMyXwKAomNkb5O-cQbG+TBFJi5=JQ@mail.gmail.com>
+ <20261105140510.165165-10-clamor95@gmail.com>
+ <au3etybQlb5CtjBL@orome>
+ <CAPVz0n3o5pc62eF6gv+PYmJh1KN1a5s=qmjxpNGJfxbCC4tqzQ@mail.gmail.com>
+ <au3mloMMzQFPUept@orome>
+ <CAPVz0n1j0M1Zjj90pEGCYiNqUQv00N89oPcAxZbA7upuxhoF9w@mail.gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -67,87 +69,107 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vsbcwdisnglh5dny"
+	protocol="application/pgp-signature"; boundary="4dphqbl3ubrnxlyn"
 Content-Disposition: inline
-In-Reply-To: <CAPVz0n3=R1UhyTw1o-ZR2hMyXwKAomNkb5O-cQbG+TBFJi5=JQ@mail.gmail.com>
+In-Reply-To: <CAPVz0n1j0M1Zjj90pEGCYiNqUQv00N89oPcAxZbA7upuxhoF9w@mail.gmail.com>
 
 
---vsbcwdisnglh5dny
+--4dphqbl3ubrnxlyn
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 06/10] drm/tegra: Make panel parsing by
- tegra_output_probe() optional
+Subject: Re: [PATCH v6 09/10] dt-bindings: display: tegra: Document 8-bit CPU
+ parallel interface
 MIME-Version: 1.0
 
-On Fri, Nov 06, 2026 at 04:09:36PM +0200, Svyatoslav Ryhel wrote:
+On Fri, Nov 06, 2026 at 04:48:17PM +0200, Svyatoslav Ryhel wrote:
 > =D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 16:=
-00 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+40 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 > >
-> > On Thu, Nov 05, 2026 at 04:05:06PM +0200, Svyatoslav Ryhel wrote:
-> > > The tegra_output_probe() performs panel parsing unconditionally, even=
- for
-> > > devices that do not require it (such as HDMI) or that handle panel pa=
-rsing
-> > > on their own (like DSI). Make panel parsing configurable.
+> > On Fri, Nov 06, 2026 at 04:11:12PM +0200, Svyatoslav Ryhel wrote:
+> > > =D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE=
+ 16:08 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > >
+> > > > On Thu, Nov 05, 2026 at 04:05:09PM +0200, Svyatoslav Ryhel wrote:
+> > > > > Document 8-bit CPU parallel MIPI DBI Type B interface provided by
+> > > > > Tegra20/30 SoCs display controller.
+> > > > >
+> > > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > ---
+> > > > >  .../display/tegra/nvidia,tegra20-dbi.yaml     | 113 ++++++++++++=
+++++++
+> > > > >  .../display/tegra/nvidia,tegra20-dc.yaml      |  22 ++++
+> > > > >  2 files changed, 135 insertions(+)
+> > > > >  create mode 100644 Documentation/devicetree/bindings/display/teg=
+ra/nvidia,tegra20-dbi.yaml
+> > > > >
+> > > > [...]
+> > > > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvid=
+ia,tegra20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia=
+,tegra20-dc.yaml
+> > > > > index 69be95afd5627..ffeb124905dbf 100644
+> > > > > --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegr=
+a20-dc.yaml
+> > > > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegr=
+a20-dc.yaml
+> > > > > @@ -79,6 +79,16 @@ properties:
+> > > > >    rgb:
+> > > > >      type: object
+> > > > >
+> > > > > +  "#address-cells":
+> > > > > +    const: 1
+> > > > > +
+> > > > > +  "#size-cells":
+> > > > > +    const: 0
+> > > > > +
+> > > > > +patternProperties:
+> > > > > +  "^dbi@[0-1]$":
+> > > > > +    $ref: /schemas/display/tegra/nvidia,tegra20-dbi.yaml#
+> > > >
+> > > > I think it might be better to group these under a separate dbi node=
+ at
+> > > > the top-level, making it a sibling to the "rgb" node. If you add
+> > > > #address-cells and #size-cells here, I think that means technically=
+ the
+> > > > "rgb" is now in the same address space as those new dbi nodes and w=
+ould
+> > > > need its own "reg" property and such.
+> > > >
 > > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  drivers/gpu/drm/tegra/drm.h    |  2 +-
-> > >  drivers/gpu/drm/tegra/dsi.c    |  2 +-
-> > >  drivers/gpu/drm/tegra/hdmi.c   |  2 +-
-> > >  drivers/gpu/drm/tegra/output.c | 52 ++++++++++++++++++--------------=
---
-> > >  drivers/gpu/drm/tegra/rgb.c    |  2 +-
-> > >  drivers/gpu/drm/tegra/sor.c    |  2 +-
-> > >  6 files changed, 32 insertions(+), 30 deletions(-)
+> > > Only 1 DBI node per DC is available. Adding address/size cells means
+> > > nothing for rgb.
 > >
-> > Does it break anything to try and parse this even when it's not needed?
-> > In all cases we error out early, so there shouldn't be a whole lot of
-> > extra overhead either.
-> >
-> > Adding this extra parameter just adds extra complexity for seemingly no
-> > benefit.
+> > If only one node is available, then "reg" isn't the right property.
+> > "reg" indicates we're somehow addressing the child, which applies to all
+> > children, so I don't think that would work here. A separate property
+> > would make more sense in that case.
 > >
 >=20
-> Dual DSI panel fail for Xiaomi Mi Pad. Maybe you should check your
-> email a bit more often?
+> Check v5 and talk to Mikko
 
-What's with the passive aggressivity?
-
-> https://lore.kernel.org/lkml/20260305161035.64548-1-clamor95@gmail.com/#t
-
-That's a thread from over half a year ago. I don't usually keep track of
-email from that long ago.
-
-Also, I asked previously if this broke anything. If it does, then the
-commit message should say so to make it obvious that this is an actual
-fix. And it should explain the problem so people can think about the
-problem and judge whether this is a proper solution or not.
-
-Your commit message doesn't mention any of this and makes it look like
-you're trying to micro-optimize for no reason.
+I checked v5. I disagree.
 
 Thierry
 
---vsbcwdisnglh5dny
+--4dphqbl3ubrnxlyn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt82wACgkQ3SOs138+
-s6Ge9RAAs0gRNuV8ajPe0zMqQ7l0nh5k5pTb0yKxufq6QJJsYFvp/fivU8sBmS2L
-qq2gjLv/OnCZOmDdDWdfwUStRuTVzI7eQbFouVvGadxjxyWY0VfV7XSXcI6aCH2u
-s+hcgNEDaHy1YT+8tyUtOYm+3uVN+tJNnjIbFMxZ8q+s460Qh58+LRe8nyokwRVJ
-fjocfQUL7A2VSJWEakyoyD9KNasvaUZ9jTi4cJbxsSM+IfS4lohDFl2VoKZE4o+H
-j4QtGAdJu1fYPH8dDiY4160+zPqyQyDms6tw5ZuVA2BFZPRFrKcPgWnKuYNQbl1m
-DTMP2XzNO0+7c6m98CCcaBq4lo+jsmlyCkgaXkpLyRFpQP/0SfFD6DQUQHi6asUr
-NblJ95fJeYCS6+hlUJi4QJj1uSoqqa7lMeozkKCZGcBseJTnvIOi2d5pErL3dwmE
-BcsQk/yBd24kdmEAwN+v9Yz8L+5MfpOJ602GJWMrZ31Sj16CLbeBu6aTa8iE4hgb
-gKTG1omK/iF8FHZFzV5xeEHCa7U3LbscouO7o7hwHb6124QfNwBTNLJKC9CFMf6I
-yYgKCj2kMyAnEtl0fZCueYvRssTGVhUmHE8GuMBOv5UjCZWEotP2UMuHt6+w258f
-K9NmJpqT3ARg6tcamiSLKwUSoTR7yGdNNmGd02C7CPGsRoMWuoA=
-=t1Ik
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt94AACgkQ3SOs138+
+s6E5ChAAtfIO3/13Os0v4C8Bi+ASzT/z6pjirTsujn0WkYYLXCnMYPNDPQEXXAHp
+vIchNUxW5ZQ5ngVEYrIEAQikIcd+VXxgJNOKujiEcaN4BorI2fVDnvrpzi/oQvYm
+UN88vY7AskjjaX5++WhaXRu+PipGxZ3RmF3hEzOtB9UTHBn7HODhOF28UgUsq3Uj
+hyVWHeJmWa+Fl78CBjiZ3Kx9wKO2Bu2DM79ZueKRP2o8wvtk6acLOJjzJGVyyELi
+/M4UztX2cQW+MO8X74vVcSjjQ+OR95teYhERxenjiTnooM2Qf0SGf1kZbf89oY2t
+DNRhJ4WO7fTqG+gLPFXMNt9m6jGEsbRvK0/i4ODEdDc/p1eGzA5wSTWnt8ze2Ohb
+U2+sNN+l9scplO7svmQ0BjdqOlYpt4DDgTHSTekN1q8+ai5pODFN3l3zR/HC1eNm
+NarPdtHxhdXcsHmscsl1yTdX/KrH7cFlS6qgOAjVzIDT3WszlKG8E6/ETjdXhklp
+0of9eVwKeBsSZIYa5hkiAnoIf4KZSeG6FewFHA1VidSy5v8CzsOCSpxbAk6/Ylmv
+wYyBJL7GUEHc1OM2rE+4GuwFrSTAauvYGK1b1ypWOq4OsoEij8gI5Xkh82tndo0C
+vloQ8ZYKfmAtjv+3mjX4jTlTI8dYYxd2TZwTlbGbgv5ea+XRtl8=
+=z+S4
 -----END PGP SIGNATURE-----
 
---vsbcwdisnglh5dny--
+--4dphqbl3ubrnxlyn--
