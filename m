@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793978380;
-	b=IwH1rPiUSAHxX8IDN2aTTLNyc2BzHXKGFr6J40JtnIaaBRFe94BaR5PPYi+etlFoxs5u
-	 /0PYfX7j/NIbRVX0hxI18wsFv7RsJF5UBAa4ABLGlEGBTaeREiZ2DfPyFIJkJL+9+GC3v
-	 PPpaJ+5zd7nHJYdxZgrJiNzJ+JT50PmqdGv9ZwI9QGGUDYYDPWglqd9iRPz9AlQhL8ysg
-	 EEO/Yn47pqeQtAXBcOPA3Cyx3dB0ZCTxzQhD9hNVAtMWP57sgfiA2zKpur5PBQDga/5Rg
-	 0RRdC/kZmvqpz+veIT2LhPXuP+m3dD9IYbSizQQCydzkiFMJfZrN9NDKp2SAC1k2XSQ==
+	t=1793978772;
+	b=qCWfrSHF7H3uuN2YaxH9W1b7hjF9Xg93Ff77omi1ceNX9zVfVj7lWY4h3Hq4yw4W18x1
+	 7635o9eY6k3Ul3nxncQNspTOhu4gW8GQzWS1JsFp9jo3ojhjpOvqbdqhMj3NgwH8nx8LJ
+	 sKgLJtnWp6ORMaxcsiL3taxkzWaKlkYZuneCYcHTZ62ZvBalkVE0b94/HObIu8rpD5tkB
+	 fZgSgLoktO1H/xs4q1Op3N3XOcKhg1D3EezP3FQqZaCerwtUeEVjI5j7CT/OPd/QcwA/N
+	 tLU10OqMIpxLCzkjD9V4ruvnqmO81o8vogr4bYAA1ALdDIrpv7p3j3QCBcNFUPm0lMA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793978380;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793978772;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=TjKm4iQuA3o4uEU1I1bQg4XGGc1wJZI3d+s7EI8o888=;
-	b=b4SdoGFY8Qj3fxd4dK2aWPnKFSPJA9cduRqTPEzhpawfOzVnzenAh41Y243P+384Uf1F
-	 vL/+Xif0DYZDuWYYg9dsTcXtcIx/pGVw6QLqS9gV3j3TsvkRP1G6BMzEDFBmQz+sbfXxp
-	 ak7xJnbYYpTnf/xLVNJigWZIK1VMdLGLcdg28Uu748Mg1ILZ12tr3JhiAB/KariNUun+A
-	 Mr5RVVp3d7GMZlJ3HAWd7WaR9p0+/wDNxP0too5kQAdlEsFQKx7r0XB7JbHo7/L+h0x5b
-	 nhsltT2oi+p4AcSElaTngygXrn6AcOkc73+XTVF1biLEObEFFrBATSmwRt5el1RAY3A==
+	bh=791jtVI/FiCvxKr+UIajb8iUBdDdnr9l0lcd66baFFc=;
+	b=tNuwGn/ozBkyMJnfRV+uqlYasfWnKrO1jEAq9/z0UeyAohQ+V4IiFPaxsRMrB+8foEGK
+	 a8MKj1fexu0KuvaODfZ29f1EiOI81AtRqrmbp1cs1/RnyTCtWiPWFmWCjcxGL1ws/XUAA
+	 /Bm9VbRGdwvJgHGztLzZR/3u+qnKf3Jy0/pUSRyQSRpAP2hwaD2y4Yg8sqeiCr2TOo4FJ
+	 QPr61qAgLm6kUgOyBLdUiv80ySCVwWsdOxZMjtOpcsgwCGx5Bj5SDcLYoSviDHccKG086
+	 eelux7159GRyKHScRNAYOIIFOkLUZRNAsT4rndvHrMvNZLq4dYvHWEUMgn07EhSwU6g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UxqvMYR8;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hI4S+TyZ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B74606A333;
-	Fri,  6 Nov 2026 15:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321F9606A326;
+	Fri,  6 Nov 2026 15:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UxqvMYR8
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 758E01F008A1;
-	Fri,  6 Nov 2026 15:19:39 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hI4S+TyZ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A0B61F0089F;
+	Fri,  6 Nov 2026 15:26:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793978380;
-	bh=TjKm4iQuA3o4uEU1I1bQg4XGGc1wJZI3d+s7EI8o888=;
+	s=k20260515; t=1793978771;
+	bh=791jtVI/FiCvxKr+UIajb8iUBdDdnr9l0lcd66baFFc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UxqvMYR8jFBKse3vSX1JHfmDUefXKyKFoFWGXFTOAMUEL2M1V09XvQK47Y+GKGasA
-	 oEYKxEgGtmRdZWrNvhzd98d8S6UuwI+ng1VlP4LhIm5X9lOdc/vSP0eQ2b69og5RSq
-	 LTTc/H20DTYLsX+YWmkt4X4r/aMwxhBUCTKtraLbtlX5zSWtrQd0LeOdEXzrO8DGBO
-	 wZWDGniulef5AJIFJWeCgwzEPOMlxM+pK31IV62u2Pr8LXhzaf19HmPiDJHxVWrN3O
-	 9D7hNBkNFQRqnoQowocdiz/mKYYn7lRzApjQ4bvZSxVeIL6WLqX39v6Ykrna+zHfjN
-	 oJbjTjXclIc7A==
-Date: Fri, 6 Nov 2026 16:19:37 +0100
+	b=hI4S+TyZD8dLdZm63gpV3tRRD5zDd9iiECcx40cwuPZ7FGkXRdpyb+XIF13nk17Up
+	 0dMl2zHRuk3iFGcJdzb7jvP1dGD/fPLV+tU+Gk+3nngsZYT7OsAAQ4FbsA1C0sUHaP
+	 TRz5J3zHRMOaSGAD/d/VCu8gAbh18O+U1YYHmkc1rAMPBUCHnP3WxHk8DTUqZcsCZS
+	 MVHhmrdu7U8NcxdQVvgzlrSLnWnB9+w6PWdLBgPPX6Q0vqZ8J1siuN15cyMkvFxyJ2
+	 rV7JPaH8IJMpZMKNFxTOra772W60OQlsdFF4BFog+RyoMPELbdRp6nXrQAiJT4BYUD
+	 LTKAVoinJOxGA==
+Date: Fri, 6 Nov 2026 16:26:09 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -50,13 +50,13 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Jessica Zhang <jesszhan0024@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
 	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 01/10] drm: Add MIPI DBI bus support for MIPI DBI Type
- A and B
-Message-ID: <au3telUE9A43PDWv@orome>
+Subject: Re: [PATCH v6 02/10] drm/panel: Convert Hitachi TX10D07VM0BAA to use
+ MIPI DBI bus
+Message-ID: <au3w5Euhy-DyY5qQ@orome>
 References: <20261105140510.165165-1-clamor95@gmail.com>
- <20261105140510.165165-2-clamor95@gmail.com>
- <au3NWsXz-hg2LNr_@orome>
- <CAPVz0n3_oRz8aMr1W=8K7dnHhM=vuGpHjpq6+=80oXiFj5wfSg@mail.gmail.com>
+ <20261105140510.165165-3-clamor95@gmail.com>
+ <au3TcHXFt5Yhs_V8@orome>
+ <CAPVz0n0ngn4nf9uTOsM6OKB9jgTnJN1FrPp0UyeHwuAwoL5_tA@mail.gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -67,168 +67,86 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="n7zrqbgnjyyoeiad"
+	protocol="application/pgp-signature"; boundary="p7lbsm6ewx54bynh"
 Content-Disposition: inline
-In-Reply-To: <CAPVz0n3_oRz8aMr1W=8K7dnHhM=vuGpHjpq6+=80oXiFj5wfSg@mail.gmail.com>
+In-Reply-To: <CAPVz0n0ngn4nf9uTOsM6OKB9jgTnJN1FrPp0UyeHwuAwoL5_tA@mail.gmail.com>
 
 
---n7zrqbgnjyyoeiad
+--p7lbsm6ewx54bynh
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 01/10] drm: Add MIPI DBI bus support for MIPI DBI Type
- A and B
+Subject: Re: [PATCH v6 02/10] drm/panel: Convert Hitachi TX10D07VM0BAA to use
+ MIPI DBI bus
 MIME-Version: 1.0
 
-On Fri, Nov 06, 2026 at 03:59:05PM +0200, Svyatoslav Ryhel wrote:
+On Fri, Nov 06, 2026 at 04:00:45PM +0200, Svyatoslav Ryhel wrote:
 > =D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 15:=
-14 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+19 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 > >
-> > On Thu, Nov 05, 2026 at 04:05:01PM +0200, Svyatoslav Ryhel wrote:
-> > [...]
-> > > diff --git a/drivers/gpu/drm/drm_mipi_dbi_bus.c b/drivers/gpu/drm/drm=
-_mipi_dbi_bus.c
-> > [...]
-> > > +/**
-> > > + * devm_mipi_dbi_device_register() - create a managed MIPI DBI device
-> > > + * @dev: device to tie the MIPI-DBI device lifetime to
-> > > + * @host: DBI host to which this device is connected
-> > > + * @np: device tree node associated with the panel MIPI DBI device
-> > > + *
-> > > + * This function is called by DBI host driver to create panel device.
-> > > + * It automatically calls mipi_dbi_device_unregister() when @dev is
-> > > + * unbound. It does not automatically free passed device node pointe=
-r,
-> > > + * it must be put manually.
-> > > + *
-> > > + * Returns:
-> > > + * A pointer to the newly created MIPI DBI device, or, a pointer enc=
-oded
-> > > + * with an error.
-> > > + */
-> > > +struct mipi_dbi_device *
-> > > +devm_mipi_dbi_device_register(struct device *dev, struct mipi_dbi_ho=
-st *host,
-> > > +                           struct device_node *np)
-> > > +{
-> > > +     struct mipi_dbi_device *dbidev;
-> > > +     int ret;
-> > > +
-> > > +     if (!host || !host->dev || !host->dbi || !host->dbi->command ||
-> > > +         !host->ops || !host->ops->attach || !host->ops->detach || !=
-np)
-> > > +             return ERR_PTR(-EINVAL);
+> > On Thu, Nov 05, 2026 at 04:05:02PM +0200, Svyatoslav Ryhel wrote:
+> > > Switch from a generic platform driver to a dedicated MIPI DBI driver.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  .../drm/panel/panel-hitachi-tx10d07vm0baa.c   | 167 ++++++++--------=
+--
+> > >  1 file changed, 78 insertions(+), 89 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c b/dr=
+ivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
+> > > index 83c2af1be9755..d5d7ba2096608 100644
+> > > --- a/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
+> > > +++ b/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
+> > > @@ -14,6 +14,7 @@
+> > >  #include <video/mipi_display.h>
+> > >
+> > >  #include <drm/drm_mipi_dbi.h>
+> > > +#include <drm/drm_mipi_dbi_bus.h>
+> > >  #include <drm/drm_modes.h>
+> > >  #include <drm/drm_of.h>
+> > >  #include <drm/drm_panel.h>
+> > > @@ -25,7 +26,7 @@ static const struct regulator_bulk_data hitachi_tx1=
+0d07vm0baa_supplies[] =3D {
+> > >
+> > >  struct hitachi_tx10d07vm0baa {
+> > >       struct drm_panel panel;
+> > > -     struct mipi_dbi *dbi;
+> > > +     struct mipi_dbi_device *dbi;
 > >
-> > Do we want dev->of_node to serve as a fallback for !np?
+> > It's somewhat difficult to exactly see the difference between mipi_dbi
+> > and mipi_dbi_device. Maybe that should be explained better in the cover
+> > letter of patch 1? Or the documentation added in patch1.
 > >
 >=20
-> No we don't dev->of_node is hosts node, and np is panel node.
+> It is already documented in detail in the drm_mipi_dbi.h
 
-Fair enough. The parameter name is a bit generic, but I guess if you
-read the documentation it becomes clearer what it means.
-
-> > > +
-> > > +     if (!of_device_is_available(np))
-> > > +             return ERR_PTR(-ENODEV);
-> > > +
-> > > +     dbidev =3D kzalloc_obj(*dbidev);
-> > > +     if (!dbidev)
-> > > +             return ERR_PTR(-ENOMEM);
-> > > +
-> > > +     if (of_node_test_and_set_flag(np, OF_POPULATED)) {
-> > > +             kfree(dbidev);
-> > > +             return ERR_PTR(-EBUSY);
-> > > +     }
-> > > +
-> > > +     dbidev->host =3D host;
-> > > +     dbidev->dbi =3D host->dbi;
-> > > +     device_initialize(&dbidev->dev);
-> > > +     dbidev->dev.parent =3D host->dev;
-> > > +     dbidev->dev.bus =3D &mipi_dbi_bus_type;
-> > > +     dbidev->dev.release =3D mipi_dbi_device_release;
-> > > +     device_set_node(&dbidev->dev, of_fwnode_handle(of_node_get(np))=
-);
-> > > +
-> > > +     ret =3D dev_set_name(&dbidev->dev, "%s:%s", dev_name(host->dev)=
-, np->full_name);
-> > > +     if (ret)
-> > > +             goto put_device;
-> > > +
-> > > +     ret =3D device_add(&dbidev->dev);
-> > > +     if (ret)
-> > > +             goto put_device;
-> > > +
-> > > +     ret =3D devm_add_action_or_reset(dev, mipi_dbi_device_unregiste=
-r,
-> > > +                                    &dbidev->dev);
-> > > +     if (ret)
-> > > +             return ERR_PTR(ret);
-> > > +
-> > > +     return dbidev;
-> > > +
-> > > +put_device:
-> > > +     of_node_clear_flag(np, OF_POPULATED);
-> > > +     put_device(&dbidev->dev);
-> > > +     return ERR_PTR(ret);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(devm_mipi_dbi_device_register);
-> >
-> > Don't we need to of_node_put() here on failure? Otherwise we're leaking
-> > the reference that we obtained inside the device_set_node() argument.
-> >
->=20
-> This is fully repeats device_register logic of drm_mipi_dsi.c so
-> unless DSI framework has leak, this should be correct
-
-Nobody said that drm_mipi_dsi.c is correct. I'm reviewing this patch and
-it seems like it's wrong. If drm_mipi_dsi.c does the same thing it
-probably is wrong, too.
-
-> > > +static int mipi_dbi_drv_remove(struct device *dev)
-> > > +{
-> > > +     struct mipi_dbi_driver *drv =3D to_mipi_dbi_driver(dev->driver);
-> > > +     struct mipi_dbi_device *dbidev =3D to_mipi_dbi_device(dev);
-> > > +
-> > > +     drv->remove(dbidev);
-> > > +
-> > > +     return 0;
-> > > +}
-> >
-> > Might as well make drv->remove() return an error and propagate that
-> > here.
-> >
->=20
-> Have you even checked the code? remove() callback is and should be void.
-
-I don't know what you're trying to say here. Yes I can see that the
-remove callback returns void. My point is that device_driver.remove does
-*not* return void and since this is merely a wrapper around it for DBI
-it could also just return int for symmetry.
-
-But there's also continuous work trying to convert all driver remove
-callbacks to return void, so that's eventually going to get "fixed" here
-anyway, so might as well leave it like this.
+That documents what the struct mipi_dbi is. I'm asking about the
+difference between mipi_dbi_device and mipi_dbi and mipi_dbi_dev. It's
+not clear to me why we have both mipi_dbi_device *and* mipi_dbi_dev,
+especially since they're very similarly named. People are going to
+easily confuse where to use which.
 
 Thierry
 
---n7zrqbgnjyyoeiad
+--p7lbsm6ewx54bynh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt8AYACgkQ3SOs138+
-s6HVoQ/+POh4HlRUlHe6NSx8seh6DwhH+inL91RyV3iSKS4nB3C1m4iGWUjLyp2Q
-eg+OL5F6fMfhpRPwvlUvs9ADUz8dexvUm27i4kafzixOuGcTxQ9xzMqow2RkkzHC
-l95B/VeBEmbCFoHDmalyCiVxLtgoZY22q6WxrL3BANzv+mNlWVtRxjnr7UEqfU4L
-Y9T8afI+g36yKJNgVXQIy6/FjWupJAFnBll2fk0GC62p6r6G90TJ4MXFnCIBpl85
-5Q6Nh/G7Wmz22n6coyXZGb1mDxe6Bp3OmaBOZdeMUxGsNH5+HSaCzs1NRyfrHMZV
-57d0hFItwNR6XOMMtwgXCnEMIO6BmJTtt8/PwmrLkb9QKiRdSHmWsQ/q4cW5Ceqr
-rQoEVS14Khr9MFtdMUtSPrhjDuNBBD7Oa1DEhbBXzQuyGEbW0BlxFMSwqD7fdqM7
-X6MZ6tDkiv6ry06Qa86+i5toWK8Bon3b/vayH1YWWFhcweDahZm+EMMcc5jcFFfu
-f86BVqiDBUu0iQmr+SxXHYeCgDagwS/3Wbp7Q+An51oRi10Igf418Qjj4bBcBENP
-JMJJsIiRZKQz552SKSs+D7dYKQfnmwukVJRy1Nlg7VOa3tRph9Ysj/VRMmVcrd54
-iO+BpszR90V2KnC6pFdsKEDa5xTfToAGxTlEA4/KaX0ukjGqALQ=
-=IE6M
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt8ZEACgkQ3SOs138+
+s6GKSQ/8CO+1lWO38xYwHMKy3he1QZi7KnwlWMuqXSlkTnr70L03IIS91e9xT7y8
+ErXIomywS8xrLKQO01zd4QHj8WccK0/98EwwhIQ5x8BuYVl78PVW/QjvgjT/75Jf
+xRPbTK3T/mWao7bW5uGAv8z5QHVBF6f+Mks1jLvv4Lg1z7DxeHo2oC0Znz3DpaE8
+r4CfqX5aIig5TguQtyZlrZf4ZPKAslewfgW2ebu09knOM1utULbEBrRH+ljVrp4u
+eGjrbJ/GoziEBB4vzn9L2qYJMEei54YmBLgaLqhTgkoK+5sX5AvmteeqKUaqWGrr
+evGwrd0R0/nJ6kzUQtNqttLijm9YgRWdHHyFQcKI2ldkvZQrJ+MWiC5q7dE2hUHn
+RHbaS1Y1oJHX5VW3yiimkOnBeywVpxKMWJ1g4JB+tCIyfMDhDNlOP0yfSCQSxa3v
+s/RZHkIQ0NUzIJjmTru80SYyWwGwzl5bAcTJrZlOgFQVvqumn8AZ2YfUzwoH11jx
+UILAmqV2CNtD1VNNCfXtQJ4AfvcugHYHcXEPhUhyJo8q32hJHVUjf5apuPWah5fc
+8yjHaty6gQzn0hr8lSa8TRED1PiZVcpVD6/mGngUATv3DpRuImwyit+knR3H5dF7
+BW9zZOM8UA02PEPTP6AIiVGEVrrBfHvoGi1i+AqnYRVhMFOxp78=
+=Nriy
 -----END PGP SIGNATURE-----
 
---n7zrqbgnjyyoeiad--
+--p7lbsm6ewx54bynh--
