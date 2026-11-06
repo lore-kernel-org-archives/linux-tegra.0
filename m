@@ -1,60 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793974089;
-	b=Tg1KQI0mNY5jZVd4l7Nbzn7NG1TGSDM1EVxgqAzLebOiGFMZvH3VGy5CN117Z1CApuYq
-	 POJYbFbIFNB81dU6EZcgtIu4Q4wpb8ky3mt2Pm8wmg90Q+/lgUM7S9F5svh7KfCBUxg92
-	 zWjID7HCszi7YjIevoIjWy23mbgs/J/3/Hz2e5cFBVfRaS6J4VXbbMnBrNkVIoBWz/kdq
-	 +CkuzoT8/y3YUzq+2JcRjQUyxWHcgSYSwiXNePkRyHL+lXvNjkOFLpgq5R3zeHhyG2qyv
-	 QrVecbQoY1mgxAwfDw/dQxIewlT2dFEh0MpU5rsEBkmAoD86Sc5KXJ1df97N4C4Bhsw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793974089;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Izey0YBOmcZkE1lp+pLrWr5YZYx/6LfMAQiArWMbf3s=;
-	b=zfsApr+6AlKeiPauhv1yiZCTHRU4pAWM4TS76ng9o5EdOFlqZ2TUKlq8h5FOFP/w6HQx
-	 wTGvr+DAC1+NtBXHJySaggbL/l29E0HUbmHZH4q7VYeTjY+xJdq/HzxRHu5JKQQtSIv6R
-	 0XFkHFxEIcF5mtbNz93YGLjsbzuh8Lomzwm70j9P8jXvniD/Sdb6dTfTplsI0kUw1hOZo
-	 WdXhz0Zcz4/Hoy6fq2NCwlRoksP1bqmfE/QLXh0/T1bUEhz8dUs1gfxzEi+OE5A2MB3E2
-	 xrUCY+7NKIJpml4QTuh9d8nxg3ksk7IC0ks6yd6k0berFolWER+JKTLBhS6TDq1eE+A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=owrlddSJ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.45
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793974205;
+	b=jgx9pmtxi83FTmRt7iLofLsStgpXQNejjckGaUPmKgNr+YyHyF5yHiWUteG8aZm9ACC3
+	 ydj33rNvr3vtuwCPfKb8TuCVmfnENc2MzVrwdtpKBc7Ms4T4eNWmRrQZAJwm50vKJZDL4
+	 soaaRJl81Gda0kbMvILgD7awEDNiTHleis+tarzOZUCqH5ymaBkd4JhseEh6KcZfW0IgK
+	 zv2vt5H1RrijqAIxHnrw00Ts4oDb6NAeOHWAp3dZlQnKnZUWNcN9EAxH5RFcooj9tU2Zs
+	 bzQgWxGFrt2+HMrRoi4qKHAs+8ITKl9MXZvddsg06iHIyjM3nHsoyDpHeCg77Hi2jvg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793974205;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=ziCxpeJuEuP3+fM2uEf4yqPzKab2VX2n4iM7IOvJP5g=;
+	b=DXDRhevmTJh56rdR50iyXBp/5QO6N0mEi6RMHxw+OPpLcK5hmBVcOeLzRT5a6XBR1m6G
+	 dk2/CDOMlF3OIdWk59rNljORTG9Ts/lAOtCelTy8bC0V1RmLCXDI2Bt0L4+yBm7Qw/YZX
+	 gPrMpBxOByV7G3LA3S1OOnH1CkqQRh3y5ku1+GlTI7OMfZWO6FjkafNb4mWGWVvp3/9R5
+	 pNaeSz3iCdIh4EjPbGHht63nDjVYMXcSwgDxlErDjfIMbCaT1rjfKwCWAs+0eNVVIDXYs
+	 p9Fqilm19aFcPL8G+AlKkOfqoRK0w62EXwuG6XV3P98l9jRQDNDLdd+v7Yd53UwuEgg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="oWxmGrI/";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.45
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EB2606A329;
-	Fri,  6 Nov 2026 14:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C64606A338
+	for <linux-tegra@vger.kernel.org>; Fri,  6 Nov 2026 14:09:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91C64606A338
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=owrlddSJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82191F008A6;
-	Fri,  6 Nov 2026 14:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793974088;
-	bh=Izey0YBOmcZkE1lp+pLrWr5YZYx/6LfMAQiArWMbf3s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=owrlddSJvI7VaXhET0+UXtEfznGpZVWBtrnnW5ZIDM+EZk5h58b58LB7pjJoRy+rw
-	 qBdsFQ3jBMEdSMNYWCtXSKpI4fQVkKuRPI+sQy25ai1y2ErK8etdaFIOlJo7/KYfxz
-	 tFeDz6jwxqO7gwtENb38BrMK/iMTPKLSsmbp1568rjoQtq7AYr5BldsnMihy/HO6U2
-	 HEfpNB7xfsZ4PvDtMrgZR6hyenTgx/jxXf9L3m6RuhbBYBl9gW5DeSBHNT+Dt//MFg
-	 JEQdVO8/4Nx0nSrgsgXnLWCadVvoELRhnAL3B/GAoICoZjf3mqQKbGvv0Mb1+RwgDn
-	 huejvWYUdFyvA==
-Date: Fri, 6 Nov 2026 15:08:05 +0100
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 09/10] dt-bindings: display: tegra: Document 8-bit CPU
- parallel interface
-Message-ID: <au3etybQlb5CtjBL@orome>
-References: <20261105140510.165165-1-clamor95@gmail.com>
- <20261105140510.165165-10-clamor95@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oWxmGrI/
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c450ab1483cso105623166b.3
+        for <linux-tegra@vger.kernel.org>; Fri, 06 Nov 2026 06:09:53 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793974192; cv=none;
+        d=google.com; s=arc-20260327;
+        b=iSuKBExswpBskscs1iABTuK8P+Fssc2AaGKyboy/eiX9OWcj0Q0atFIDd44MfYxUKC
+         3TOtzlN6E2XFwUy6B1YsdJWPOipzUliJNw6qav0XCSnzTNg8KW1RSg3NWsjIzazNj5QG
+         UARX7zYgOBPWuIyUA9SPFKnS7FoBCV17jTp2lALqN8SpoZDL3Ht4yuoh0AaMIKtJbAJ0
+         lYfB90Gb3gO/bshDJJdbaVE7ggKVStCWRGevsUu0k03lw2FMiDtPiYyVAbmMZwD4Ii/W
+         Cc5UGgwMKuhHgkVGEr9/E1qXhQ6tV5q/o8ZzudZ+03juNfm5g0ESesXAOmW3tKRnJjw9
+         tfoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ziCxpeJuEuP3+fM2uEf4yqPzKab2VX2n4iM7IOvJP5g=;
+        fh=+FTc+IO/p3DwvLYlKnGy8X8Bumaa7Dqu5/GXVmpks9U=;
+        b=ItrFDu7x3AHCqKfzuey5fRb537TP1qRj13el8SoYFJc99CkH80sHiRWLuquOBXwzpx
+         z/GqlCZ09ujAFCI8PIeXKwwbJ4zp4Xn3f0cJMaG8KG5/dCvnFPAO0q3rm57/+5uby28H
+         ppMvoop2Uq5tge1uv8ytf3zK4ry62wwV1sB87i79U3ycfM7XWCgN8eZO14dY7/dew9lx
+         SYrg/cu9HFFAr/ak0auGfgqH/Zpejk5/cfN0cyGgOyEotxN+BOAih4iv/WrWoM59W3mr
+         /p7oCP2udIRRmmoGJHpqYxSPbm5AL0ihJ//ptxmzOgmjhC5OFV8+LNhwbiYB9+gQCTJT
+         8UbA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793974192; x=1794578992; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=ziCxpeJuEuP3+fM2uEf4yqPzKab2VX2n4iM7IOvJP5g=;
+        b=oWxmGrI/VLJ1xkgXDpseuv1p5AaWUS4yXjq0c4PJZxvcDs7wn41s5xKxp/hpBp1jOb
+         rawxidujgp1ZMtTuPLlKDGJiDNUnIWuqEqlbOo1MkBoSyhw8OU9StvTCZvQ0r6o0aJZ9
+         iJ61Zxh++Llmfcvtz+7Ekdl2U6+8qrAw3X9aN/iZlqFTGFWKK8OUi/ngoRL9HXF23nnt
+         Jd9Kch5lbgQM/f/WMcdqeowB8nYYRi9kg7SMzhvwHg3Kig6nMDaph9kx+nf+o2zyyD5r
+         DFeeUlCokM7AWYjCtqhsPzR5JDFGQnzQi38/Dbvk7ZdxI4gT7eAYem2qSINnCMwwLpb7
+         Uxyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793974192; x=1794578992;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ziCxpeJuEuP3+fM2uEf4yqPzKab2VX2n4iM7IOvJP5g=;
+        b=gA+P/tyuJ9FxtrK8aXbGkG1b671G3EzriYU/jcPx8N8zCoQAj5ZCc6GvGNKojF5kLT
+         V7CGVXyOvIXpdTmrjXG/C692eQbz07gdSvVVouvM/Ms9h3gkjZ2YlwHmxGNHfhpKLcbx
+         ngzWgOKKAruxM+ZXxVYvnr5TPn54s/Nhb2VThyTdDLTct09MVWbPHwYKGEx8JKvRw2UZ
+         /yaTC6aUNKXs4Q9QG1D4Lan76ktAfUdDHeqUvbZdZZO0SyQXtlYFVlroik2qoUOWe2mm
+         e6KpLpKNQ+LmfOWJ7SggH8sZxBMazAEF9UhggFG5yAespvEHLZ1eRjyCa8K3gpIo+7Mw
+         7h2A==
+X-Forwarded-Encrypted: i=1; AKwUvBwQ2wM5iph4jF5aWtcJUar39/BRl+dZZI29MevKngonONKMv3w2vj7JSoN7Dd2mcF/QmFE//mJQdAvtSw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/GycWHyWT9fWijT/YxIxVCy7xguB/Inox4k7+0Ayu2wyEHtq5e
+	0otFEVhuvkmkD11Wbo7VBGXl0ZDg5zoX6NEqq1UT9DgvHsHMSvtYvQUv64rM7lL7xjJwYC83iUn
+	qcxYSxj2pjfwVPDya2wWyBFXZJ3/zprU=
+X-Gm-Gg: AYBFou2R85FJL/ruova/Gf4zhYeovTSAZ1XteoTbS+XWTOssbslYBVYUBag4GnMI5Bp
+	oNa6ilT1lJWdXLcqOxHfni0iV0PiTXG4l55567G8Em2zT+onGpYS91wBhIYhT/GPP5bbJazvz/m
+	NJPW1DxcDxmUsqDiOkRi5ijEUUBGCELyszGmTn+4EAmPFh4YLiLisBkNCOJb/SfXpMUVrm/u9uQ
+	vKC7XA5tULGDPCfCxA5CdQdozj8Mvxh7Oab8F5hvSHp0TJFRQuosU846kh+JXhE7UP6OjfwwC1w
+	n+oJEokNKNH7O3TbMzBwcJXlI1peUTV9dx/LWJNVRLChpqptdyYFyvt0g22VoMFiHaS2vcykFiX
+	tVZJ/M4P6jk9zGwcUNmL4k6N51DQ8GbNadyusnMCpciatQICehWJlHw/guFncEq1P2wuX3bQ4zb
+	MwxCmkSJX6/Z+lHJQ7iqFMOiMea6KLblc=
+X-Received: by 2002:a17:907:c0b:b0:c41:731c:534 with SMTP id
+ a640c23a62f3a-c4d352c83c7mr245800666b.24.1793974191437; Fri, 06 Nov 2026
+ 06:09:51 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -64,82 +105,56 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="le22g3n3ml5qqrw4"
-Content-Disposition: inline
-In-Reply-To: <20261105140510.165165-10-clamor95@gmail.com>
-
-
---le22g3n3ml5qqrw4
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20261105140510.165165-1-clamor95@gmail.com> <20261105140510.165165-7-clamor95@gmail.com>
+ <au3dMlmsLEOUqan9@orome>
+In-Reply-To: <au3dMlmsLEOUqan9@orome>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 6 Nov 2026 16:09:36 +0200
+X-Gm-Features: AclHuK_cVVXjJEkd02nCSMWJMQCoAmARR5pIv9xMRuv91xrb2JMaT2_t676ijeQ
+Message-ID: <CAPVz0n3=R1UhyTw1o-ZR2hMyXwKAomNkb5O-cQbG+TBFJi5=JQ@mail.gmail.com>
+Subject: Re: [PATCH v6 06/10] drm/tegra: Make panel parsing by
+ tegra_output_probe() optional
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 09/10] dt-bindings: display: tegra: Document 8-bit CPU
- parallel interface
-MIME-Version: 1.0
 
-On Thu, Nov 05, 2026 at 04:05:09PM +0200, Svyatoslav Ryhel wrote:
-> Document 8-bit CPU parallel MIPI DBI Type B interface provided by
-> Tegra20/30 SoCs display controller.
->=20
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../display/tegra/nvidia,tegra20-dbi.yaml     | 113 ++++++++++++++++++
->  .../display/tegra/nvidia,tegra20-dc.yaml      |  22 ++++
->  2 files changed, 135 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidi=
-a,tegra20-dbi.yaml
->=20
-[...]
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra=
-20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20=
--dc.yaml
-> index 69be95afd5627..ffeb124905dbf 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.y=
-aml
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.y=
-aml
-> @@ -79,6 +79,16 @@ properties:
->    rgb:
->      type: object
-> =20
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^dbi@[0-1]$":
-> +    $ref: /schemas/display/tegra/nvidia,tegra20-dbi.yaml#
+=D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 16:00=
+ Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thu, Nov 05, 2026 at 04:05:06PM +0200, Svyatoslav Ryhel wrote:
+> > The tegra_output_probe() performs panel parsing unconditionally, even f=
+or
+> > devices that do not require it (such as HDMI) or that handle panel pars=
+ing
+> > on their own (like DSI). Make panel parsing configurable.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  drivers/gpu/drm/tegra/drm.h    |  2 +-
+> >  drivers/gpu/drm/tegra/dsi.c    |  2 +-
+> >  drivers/gpu/drm/tegra/hdmi.c   |  2 +-
+> >  drivers/gpu/drm/tegra/output.c | 52 ++++++++++++++++++----------------
+> >  drivers/gpu/drm/tegra/rgb.c    |  2 +-
+> >  drivers/gpu/drm/tegra/sor.c    |  2 +-
+> >  6 files changed, 32 insertions(+), 30 deletions(-)
+>
+> Does it break anything to try and parse this even when it's not needed?
+> In all cases we error out early, so there shouldn't be a whole lot of
+> extra overhead either.
+>
+> Adding this extra parameter just adds extra complexity for seemingly no
+> benefit.
+>
 
-I think it might be better to group these under a separate dbi node at
-the top-level, making it a sibling to the "rgb" node. If you add
-#address-cells and #size-cells here, I think that means technically the
-"rgb" is now in the same address space as those new dbi nodes and would
-need its own "reg" property and such.
+Dual DSI panel fail for Xiaomi Mi Pad. Maybe you should check your
+email a bit more often?
+https://lore.kernel.org/lkml/20260305161035.64548-1-clamor95@gmail.com/#t
 
-Thierry
-
---le22g3n3ml5qqrw4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrt30UACgkQ3SOs138+
-s6GGVBAAubMFZSQ0mFCPlqAMqXSNCvqndsgYdUzR3UA/a03TL4Ii+ULGIqx6ux82
-uibYRjgtaTaAxeuGUvL2KWes1lkUvWGEGt9hD3BS0jHUGEiYJN0u7yx79oAho8DJ
-i+5HZ8CIpcERvEXpzczFo2vbw0ztc6sdvA+dsIo2S8pXTOCQ8GG8oTBZOMIADLBB
-mgALNPpt9nWpY+gZYo179Sr4TIPpuFXDEg/ZIv/qlV641SYuhi/Ahs1exBCAJAZ8
-CuOS1KAEVR9ZVVclHFN+24Hq+nbbX8giUue6Ii2dwL3YnBBmJaGdj0jbowdO1dQl
-VOQha1/l350eA0wgPl8q9P6xCKLDic9j40HpaLVRoH7hXbK+4ZwYy6iubx+2hKjD
-I7oPkf9BkCehmsPhPTim3yER6zV9eAnaHe+tm0TcCRw723d90dg4t8W/w22MGTr9
-YXcSd1DlDePAMyzt4KR968mvSaa1B0jzkRa2Y0oFFWJ4qyfP+I/Ovq0OrsfHtcRd
-UW0UtAE2JmFl2jLxaXsl+nIuX2bUNTBDwIfscb1n7oWr6fx4jxkL77yp8ffVxYrJ
-eVDs9GZpDInSjSO6tgMOFjSG0+sc3wfyHw95YVD+h/qb8wHmxmiEeSHL0bsBdiNT
-nK0YAYcHUjI7lGmB/uB6EWRCxs/9XX1iltQM1iAVawf4kNo1pD4=
-=F4XT
------END PGP SIGNATURE-----
-
---le22g3n3ml5qqrw4--
+> Thierry
