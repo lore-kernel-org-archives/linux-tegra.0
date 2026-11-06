@@ -1,101 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.48.28
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793966622;
-	b=guIYqMT6wLL5gDd74rJ0tZInTYr6EOOagQbY0hDjvh5WTXgz0ux6G/LQlr4QLiQ1Upht
-	 hCL01qEFMlv8j7Cg/sIPJ0jfuKlfllowF5g791fhsJwrgpq4Cm7tySzOYKUtQYu6mN3mM
-	 39KoGa3Zv8W85ubNaSamzH212ec91NeiT18jOawJW3AQUiThGaxpXMMOl2H9VBrUHxLvr
-	 nMGTlcDCklCdmPYghKAxngf7lv4ZrxJmqx8SbsizVod0jE1qNKV0wkCbgy8B/8E4qmLzz
-	 W7E0t4VWtL+CvGvlvybgLZUT97xpNZvC7QRaxHfb1TGwW+4IUqFYTXb3q4l7ZunGZig==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793966622;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:
-	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
-	 Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-ID:References:In-Reply-To:To:CC:
-	 X-Mailer:X-Originating-IP:X-ClientProxiedBy:X-EOPAttributedMessage:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=qJwap62vW4ndVUKS5iXhhuZyYnjZ+OmxpXt6rVoNp3A=;
-	b=GokbrNWmeZXV4lEAc5BCKPhSpxgU7Z/ObkpXbyMYeYkQpWa3Z3TcabhHqXdtaxerKRWw
-	 vnfQQllMl0XjAVgIL3ENq/YdfbK5lxqvNDLPoMdLWJMlV1awZ4aLXlZBksPqGE39dPECe
-	 H+eYPO0KTzBLHN/ZJDKItY/wSBnt4e7gYJ1eKSwRLEmAgxIr/QpyLqypox7vaq4p+UlpB
-	 Gmeg7f+kJGZjXh15KTLsoED8Ww5s34+Ugto0MluovbQOwvNDsn/mO9znXDhCh2GHSP89p
-	 bO8lbRDD2Lsw7rVJYrFGAPF9DunE6jqEQd4BijTCCX+lCk7b1Llm7fP3OeacUXu9WZA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b="AJgN/Kiu";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.48.28
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012028.outbound.protection.outlook.com [52.101.48.28])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793967540;
+	b=4v0SKnRDDSBf8gOoKMJNFkiJtugDeTjMBQEzG5BcQshkrivIl3CpZEsluEnBI+HOXlTk
+	 NJF6WF07tC4WF56ZqVfQfkJApbgjOGIxgxH2I0B351K8lTA+81VNw3Jl8rHObEuHz4bCN
+	 uGd7GjZnGd2qIaNNVt7Y6YgPeiMZpytmC2waHPV2diHyW0zSTklQwTzQidemgwaRu3HjX
+	 fEWhb+7QbZkhbVDuaXUEleqB6tumna3FIqLRFytjrx2X3gLwbGmdnNcw6Z1C0/zZp7rEW
+	 w+PC2SnAzTDHo9mNssplChU/jg5m989UJLUhwDifAHgo8kpIuq/cr8f4ZFDqXVaLKoQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793967540;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=3Vts4ehNV2WYkzbZel6ETHqtS+ID17Y0WMvU/pntaQQ=;
+	b=2mfqG0BdcA2dd7AvwlT1eguO1xCE9N4SMBTJdOR0g5Ys23B7IKuieYb4daMG4e8gxGJy
+	 5yXQV1KNPqESZxP84AG5QU6B96BGLbep6GpUfjH/H3jFAv0NCMRyTdpbXwr9iZUhK/z4w
+	 +I+PmKpAcHa6GHSXrG5T/gMgaa2tuQMJ3m0eD4zsemmzqmKAVXLMC2i6EwAzQKiakGjEy
+	 3otKfZ4oeWdDDIK/cCR+upghYFwX6Y31oa44OZiHJ56Y7aSy1hrmp4JMPInjyGeGNV1jR
+	 03GRXU4hnTXedFQI6YQnSDMbKyZQREWbc2qVhRnsmejUrwZVqn9HfA0x1nTXEemYyqQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ibWJ3Koj;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD16606D81F;
-	Fri,  6 Nov 2026 12:03:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BBD16606D81F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44015606A329;
+	Fri,  6 Nov 2026 12:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=AJgN/Kiu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gdbtbHtNGJf2aedn4bCySQpkrjIg2TeT/aLFDJ36KFjL4fzr8MDmSVzBowGfv/NhXxWfd33arzgs/hdoGIQn/n01GnSf0JK7wl++Wh1ERQsLKCT/Cm3e3LqGNlLaxp4xm74jXYXM9VEia97fjg7JAPC4dqgsh4oG2SAONN7AjFtbUTedCBVpnZyOF6quw2stnRJ6mDs1uonB2lJbStnDzPyIYuOIWLDUfP7Qjc5H8WoHUMVPw07n5A/TanR/MY5Wqdr+TGN9dJ4lv519CrQVyV9tkkh9/ruxuNvGkUMg9geawNKTKEKCxOOZF5uoeJtv13X83vfZKEHgfMqr3QTKhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qJwap62vW4ndVUKS5iXhhuZyYnjZ+OmxpXt6rVoNp3A=;
- b=xoPygWwkcpw25XRBHekB2wIBL6COsVWjQ3H+IXyQkbyFKM245WsnZyLca64boVUstJ/GtHny91rNQuzlDQz/HrRuycigcejw0w8rvXVUyLS/TcW4ZGVJBl+UeOqDlLYvI37W/ES7/1tn47+yBwFTBllQiASFP8071LMyjZ7Ym43J5NFbJHv7cSAv9MrIYjXA96cRZw+MHpYO0OVXpFpk4y35a1RbcJ0XJqxM22OQWWnglrDS0sC8RyjR/1wIUVErIs9lXVq/KcbSJK7AGmyQkQHz6Q3w3z+LsXq5onWQpRao+UMJ9jy63PLIE/WGXvoRwQ+MID1yhGRimsrYaQXZ/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qJwap62vW4ndVUKS5iXhhuZyYnjZ+OmxpXt6rVoNp3A=;
- b=AJgN/KiunLY/PdQJMe0SK3VzWXQU4KW/DTg747aiRC8NeKv9WSl8hHaZYPSPs+co3CrS0oGP2O+CrkkmefLkx2eOsyklPp4w3/2FCmg5/SE7ac7krMiHJJDnI94KJlFvPD7/DOA5YnRP4aOjGvIA7F0YGaJsrCnjbSwPKHVDhd25i5uQlcLh/H1H/WhFNs7BPhuAhSPcsUvlRxt2xseMGuhG2INVX3H7JlItG2Nu8XN9aTJxJC74fiunZXW/IjccXtcnrdlwBYQU4bSnzkbXA7gRdRRNF8Dk3YI//EkVwj1hBbc8qAT9QudheG2oa7FqlZFfZAEH4qAJ0N1QhfwXwQ==
-Received: from BN9PR03CA0251.namprd03.prod.outlook.com (2603:10b6:408:ff::16)
- by CHAPR12MB999247.namprd12.prod.outlook.com (2603:10b6:610:2ff::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Fri, 6 Nov
- 2026 12:03:36 +0000
-Received: from BN2PEPF000055DB.namprd21.prod.outlook.com
- (2603:10b6:408:ff:cafe::ab) by BN9PR03CA0251.outlook.office365.com
- (2603:10b6:408:ff::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.11 via Frontend Transport; Fri, 6
- Nov 2026 12:03:36 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.161) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN2PEPF000055DB.mail.protection.outlook.com (10.167.245.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.2 via Frontend Transport; Fri, 6 Nov 2026 12:03:36 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Fri, 6 Nov
- 2026 04:03:17 -0800
-Received: from [127.0.1.1] (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Fri, 6 Nov
- 2026 04:03:14 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Fri, 6 Nov 2026 12:02:59 +0000
-Subject: [PATCH 2/3] arm64: tegra: Add regulator for Jetson AGX Thor system
- EEPROM
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ibWJ3Koj
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E8D1F0089F;
+	Fri,  6 Nov 2026 12:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793967539;
+	bh=3Vts4ehNV2WYkzbZel6ETHqtS+ID17Y0WMvU/pntaQQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ibWJ3KojUu8JIAvsm8W8+Bf+763uiVchH2mr7e7DrGaIEyqN4eicDcarsw1gAyULL
+	 aY2l7xnRwC2EfoZF5xGYYmgwzQbriUY7E/VrsR+bXjIWAD0A7OT6in3gAu6eg3UE4B
+	 DrLnbS6KuYGwXyh5/86Z+ugfUhs4GuscWsSNOMxQ/IUAIJ0nVGf9fmIk1hr4hS3Clg
+	 xMvS1W0Atp26qQqDGT9/FeTLDSm6wFKdWObTF9ZuqWfjIz0MR4l21kYW3cPWQ2WVus
+	 COBSovgMJWtAlsOGmbx0OXybEGQZ23EwHuj5zDBi6i0wz8zUS2RIl2UqEJsI0oeN0P
+	 APf5Pxo7ii7UQ==
+Date: Fri, 6 Nov 2026 13:18:56 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Sudeep Holla <sudeep.holla@kernel.org>
+Cc: Aniruddha Rao <anrao@nvidia.com>, jonathanh@nvidia.com, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] firmware: tegra: bpmp: Add ACPI support
+Message-ID: <au3Ag3uEKhppG930@orome>
+References: <20260929095915.2215685-1-anrao@nvidia.com>
+ <20260929095915.2215685-3-anrao@nvidia.com>
+ <20261105-fiery-gentle-pudu-e985dd@sudeepholla>
+ <aux8RS55HqzuTL3g@orome>
+ <20261106-emu-of-nonconcrete-wizardry-174c3b@sudeepholla>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -105,86 +60,131 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20261106-tegra-for-7-3-fixes-v1-2-e62053cbda3e@nvidia.com>
-References: <20261106-tegra-for-7-3-fixes-v1-0-e62053cbda3e@nvidia.com>
-In-Reply-To: <20261106-tegra-for-7-3-fixes-v1-0-e62053cbda3e@nvidia.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding
-	<thierry.reding@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, "Jon
- Hunter" <jonathanh@nvidia.com>
-X-Mailer: b4 0.16.1-dev
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055DB:EE_|CHAPR12MB999247:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61a23cce-bb63-4641-4706-08df3bfdfd0e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|23010399003|1800799024|82310400026|36860700016|11063799006|56012099006|261022075727099003|261021121427099003|261009223027099003|261102123227099003|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	JL/HfVKU77zLDfNFfyjrfdchcIVNwkr6Zwx9CzI+DhVfhNILXu2aMC3EJVdpDhY2dlYn+FzMqaHukXY+bKna3Nduc+Afx8dqSReVpgGpJ8QT16XgUMNlq6hBW+VtJKsoxPrZ8J4gXJCPZMfN75+RYkVSWFiVBQga1u8W44wC+8YBBVOknA4erHfCeaxY0xzd01MoSn1AIRdu3j0Rw7PD3wps8vn7wmzEjbRqQpeaPJiTlKEs+N6CsH1JCfBF7dzqke/5pVxkapQnTNwyYoH0QCLHGHqaz2rD+oUlmeMXUftHsFwNutwUuum8N8NzZzYMO/8IqXq3hLxqY31GynEus5CaotCaR0UtUcKLj0GWh6csFKqt5CfZXyh6CCTSDqrWp4k7bzRFQtO20UFzOjDKQRjw4fAa9qG1/AlM9ObzqdgOnKYt/jvkvoLeoIGc9+cIiFOcuk7VFrsdqfQ1n+Kwd7wyw5MRGvxwyW/xAIxRmDlJ/BO3MN6XOBc0Ts/OLltzcVrdpbPO8UBcwiLWSLOjIV8XsuBlfSuswWWpqMtsGEmJIeNBJK4hlFJbxBp8n8pqjbIbwu+zv0RDu7klEBs6HfFMSyX5zL38bIax6Tu8G1Ai4hkW1T7xsMnIa1DMlxNP53oZnDomY4/apoPklvjHWTNFY8JezWWl6uSRHWXOIgIJ4WfLglvuBaMqRc5wA18jkmdsodsTXtgyMaCP1cNSlQ==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(23010399003)(1800799024)(82310400026)(36860700016)(11063799006)(56012099006)(261022075727099003)(261021121427099003)(261009223027099003)(261102123227099003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	uFvtWeKMGhb9EUL/Rib/DaTft9jE2yd7SsUGxZGVnrSOYQr9KzAwiuFnSkuB16oHB0HjNiqtyclFMSZx88+XsT84qjeWq55g4e1yEtMP0E16f1kSc68iE18K0XRmjPMO51ZVnQ5CSjZ/87gAnf4TX7sxwOSTt5tRO+TliZdLmigAcHWxCvTGekJTBq7f153FWfXjQly1X7Q1ZWs8OjZSDkgruGQvrYJzNw2k3DU99hrHnZv8PWUCeZOWP6dCGTK+kXYGkIqcR8EQ6jgIx15tohiompCPP39cmTIIZDSp1hcSFwYt4/+sWtLJ2g2T8KTgHcxq6tPLdEvY/CWPjEGbu03MM9ddGhF1tXNyD7wLXPPvqX8tX2gYx29SSMoXvzyKhTUnm7l59ZCFGx8SShG6R6Ygh/hPR89+d2yQ6BV7+dB2Qc4BoyVJSTQBz5QnyAVa
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2026 12:03:36.6502
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61a23cce-bb63-4641-4706-08df3bfdfd0e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000055DB.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CHAPR12MB999247
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="y7cj5bs7ahhglui7"
+Content-Disposition: inline
+In-Reply-To: <20261106-emu-of-nonconcrete-wizardry-174c3b@sudeepholla>
 
-Add the 1.8V regulator that supplies the EEPROM on the Jetson AGX Thor
-carrier board to fix the following warning:
 
- WARNING KERN at24 1-0056: supply vcc not found, using dummy regulator
+--y7cj5bs7ahhglui7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 2/5] firmware: tegra: bpmp: Add ACPI support
+MIME-Version: 1.0
 
-Fixes: 6285ff371e83 ("arm64: tegra: Add NVIDIA Jetson AGX Thor system EEPROM")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Fri, Nov 06, 2026 at 09:25:56AM +0000, Sudeep Holla wrote:
+> On Thu, Nov 05, 2026 at 02:07:48PM +0100, Thierry Reding wrote:
+> > On Thu, Nov 05, 2026 at 09:50:26AM +0000, Sudeep Holla wrote:
+> > > On Tue, Sep 29, 2026 at 09:59:12AM +0000, Aniruddha Rao wrote:
+> > > > Add required changes in the Tegra BPMP driver to make it compatible=
+ with
+> > > > ACPI-based platforms.
+> > > >=20
+> > > > On ACPI systems, IPC is handled through an AML method instead of the
+> > > > kernel mailbox and IVC frameworks.
+> > > >=20
+> > > > Clock, reset and power-domain providers are not controlled by the L=
+inux
+> > > > BPMP driver on ACPI-based systems, so do not initialize them there.
+> > > >=20
+> > >=20
+> > > The above 2 statements are very clear and says this driver is not much
+> > > useful on ACPI systems which is good and aligns with the general
+> > > expectations.
+> > >=20
+> > > > Keep transport initialization in the SoC-specific init operation. U=
+se an
+> > > > optional init_providers operation for DT child and provider registr=
+ation
+> > > > after BPMP communication has been established and the firmware tag =
+has
+> > > > been read. ACPI platforms leave this operation unset.
+> > > >=20
+> > >=20
+> > > "ACPI platforms leave this operation unset" - I don't fully understand
+> > > what this means ? If it means we need to do something on ACPI systems,
+> > > why can't it be done by some boot firmware instead ?
+> >=20
+> > I think it just means that the "init_providers" operation isn't needed
+> > on ACPI systems because we don't expose clocks, resets or power domains
+> > in ACPI (we do this only on DT so that we can have cross-references
+> > between device tree nodes). I don't think anything needs to be done in
+> > the ACPI case, so leaving this operation unset is exactly that.
+> >=20
+>=20
+> Thanks for the confirmation.
+>=20
+> > > > DT transports register an MRQ_PING handler for requests initiated by
+> > > > BPMP firmware. This request direction was used only by a diagnostic
+> > > > command in older firmware and is not provided by firmware on ACPI-b=
+ased
+> > > > systems. The ACPI transport therefore does not register an incoming
+> > > > handler; its init operation only sends the outgoing MRQ_PING reques=
+t used
+> > > > to verify communication with firmware.
+> > > >=20
+> > >=20
+> > > OK, I am more confused as you state more things are not needed on ACPI
+> > > systems. Why do we need to add any support for ACPI systems then? Can=
+ you
+> > > make it clear as what is needed on ACPI systems and why it needs to be
+> > > done by OSPM and not any boot firmware if it is just one time initial=
+isation.
+> >=20
+> > My understanding of this is that the goal was to completely hide BPMP on
+> > ACPI systems and do all the clock, reset and power domain handling via
+> > standard ACPI operations. MBWT is a feature that's needed on ACPI
+> > systems and that can't be represented as a standard ACPI operation, as I
+> > understand it, hence the addition of ACPI support to BPMP.
+> >=20
+>=20
+> OK.
+>=20
+> > So some of this patch is stripping out things that don't make sense on
+> > ACPI (the ACPI support for BPMP is very minimal) just to get enough
+> > support in place to expose the MBWT caps via sysfs.
+> >=20
+>=20
+> I am bit concerned as MBWT is something to do with memory bandwidth
+> throttling and resctrl provides user ABI for such things, this sysfs
+> may be duplicating part of it.
+>=20
+> > The sysfs knobs exposed in patches 4 and 5 exist because the bandwidth
+> > caps may need to be adjusted dynamically at runtime. It is indeed a bit
+> > absurd to bootstrap a restricted version of BPMP like this for just this
+> > one feature, but I don't see any alternatives.
+> >=20
+>=20
+> Is MPAM/resctrl path explored and you have valid reasons to not use that
+> and create your own sysfs ?
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
-index 0ed2335ea91f..8b9108634ace 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
-@@ -29,6 +29,7 @@ eeprom@56 {
- 				compatible = "atmel,24c02";
- 				reg = <0x56>;
- 				label = "system";
-+				vcc-supply = <&vdd_1v8_sys>;
- 				address-width = <8>;
- 				pagesize = <8>;
- 				size = <256>;
-@@ -64,6 +65,14 @@ key-power {
- 		};
- 	};
- 
-+	vdd_1v8_sys: regulator-vdd-1v8-sys {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD_1V8_SYS";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
- 	vdd_5v0_sys: regulator-vdd-5v0-sys {
- 		compatible = "regulator-fixed";
- 		regulator-name = "VIN_SYS_5V0";
+My understanding is that only monitoring is implemented for MPAM with no
+way of actually controlling bandwidth through it.
 
--- 
-2.43.0
+I've started an internal discussion to evaluate whether we can avoid
+custom sysfs attributes in favour of exposing them through resctrl.
 
+Thierry
+
+--y7cj5bs7ahhglui7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrtxawACgkQ3SOs138+
+s6HXgBAAoQ0SDxGlvO7HD0x2l6PY/QO/PMVisOZhqcPqykQZxHwJeCrGr1sb2s3a
+u4NT+PVRRwhW3uett4BzRTvWTIhShdfqG1oEbD0n5JQYC1i3ohgys+R4uSSqPQCa
+6UNd1tLO/9qOJ5mOEksQ5DZsPfnyWZBZMFDa/OCAizL8OOWMtRLnTgR2+kMoHsw2
+LMVyt68i3bP3clkMY6yDOQjw7vruv2S2GkyZltbqlGF6Hvch7T9Ydf6xGSOPTj2J
+w6drQoP8Eh76CexBccGVKvoFc+oi277FIyaqu2QmO8L3FppXpnQEMmnuUEo8TgDi
+RS/FsU7gup5vi/VdDPBbY3Zla473K/jAT4mNMFQVfydQIUepWgxChADQIgm1JBJ1
+gordoLbKf1GmuGnPiIZeQrvUQgI0FqVBDZwCMYAqi8/VEb1VLI++Q52MVyfNtrVL
+iq7V0b+1lrGi+UiiSbqcBZzKIoKgJJFm8SSvbAkGUfG9qZ/bE4/zBilZbWEIbEbV
+JQX85NxdkbUCsiDK/i2kwjNT4XIgBEd2GaFdc3wSofXz0FpSRwCNcdmZXCWelXtl
+0mtafup+oLqQnjamr7UTQKbmuMwBMn5oGnUC597hlM7o7XzqeoXZbNId0z5eGBrx
+ou09rOUTC29P9UHbiZsMkRptxw3/mFcOd/+S6dLGPEjMCy0RH+M=
+=q7UL
+-----END PGP SIGNATURE-----
+
+--y7cj5bs7ahhglui7--
