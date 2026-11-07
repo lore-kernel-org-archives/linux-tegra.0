@@ -1,72 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794082456;
-	b=CrMj/V8mBFdym4qr3zmjQPEHftonCP/9TUxbDLIimXPvNd6EzWPrKAtaScuXlVgRDQEN
-	 t3ZxJPLmSNCk7NKWyApEIdtL7/ESo5PYTYBdvsSbi6pZBphqZ7x0UgAz3yooPQ1nkNHa9
-	 p2jCvAL/eeg5fCmzF+KQF/rtQGtC8HDt+r6y0+CHAwhfRbMgGvbjWpZ7Mk2M52IlRYNFV
-	 TGm0jX0Vwm0aqrR/e4YzMps/TQBOKct36zdcdbUZifFdC9jVIOf5NcBefrOzPgmczRto0
-	 RyLgoTt2k7q1jfyrFrNmrOhpTYJ2r8XvkcbyEW7+3bnd0O+MC3k36J44FbhrfNKhROw==
+	t=1794082459;
+	b=TVRmZWIUK2+MkekjftwXyt4+h7XKHBLDB+Tj4SDWuzXX6LcJ3HaEuu4Ogy4avPQQQLgj
+	 6qNgZ5GpwtxPi5jIRR3zyqC7LGPnY6y6o+i9vcEkk6awf6Ot64mKCuSYtbmdgfzu3Yc3R
+	 HQ+LBq3sm6T7eLolXydu1D3Ryxdb1yMGZRnm9LvQvGsMnVG++kVV03toIttteq/rz2wlq
+	 d10cCiotmDTvEFo1IQlfZXxO3Ppcp6fK1oWznPxw7Kzv1eYylxSdiOSe0846TSpKuI5Mh
+	 jCXfxiAQJ74KFei2nq1JJdhYpTuWKn9W6bNuvnlnMaH5JvEfLRhjXCQZBItVXsWs7wQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794082456;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794082459;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer;
-	bh=Z28hpkRxNuFHQxwJ5bnvo4CTYnv30xHbFPLm6nkYYQ4=;
-	b=M2bRtFKZwjzEz17Ol9M3kibrTfRiOKbV16n7xHXq24eKIyFQ4V9YrKyYqHJEVaX9X6GF
-	 ECYQA34RQuxAvgIRNvyExiun/fvq6EMzc3w+H7e7tIRwqo5hVm0UShWvZ009A6qNgR8+8
-	 TBhuRFs0HCo6JIRCXUMMAbj4R84Ayk7wesnd8rKqG9gCXPuSUcjlfcCsI6B1kFLZjoYPR
-	 hAvWDTAWqOGyuQ4kH5aY9zMyTV08Gl/4PNJt7RLQRBAIfwE4s4g+ES4ZhWGQfGNc9UlbU
-	 /5OaBXYd+2pmgyPGyuGbVoyDea01tmGe/seF87qFvHASfPTRhr4liUHSPpMV7aD5wPQ==
+	bh=LtFKBRAqbAaZtxAu1Nw6aaS7lLmmzcUOPw2XCvAi+f0=;
+	b=N94qAA+3l+YTQnw7w/Db0MQKZ8lhyh/q46BSdNPKtGlreohOWwbKe4W04Sudf4556RC8
+	 4OtLdi6/3Ry93NTyx0yo81vxBLNqoZEGnhFVYF9wzdYtlJY6wt/XOWBZjvmgAT6C2JGo9
+	 xlPw22O4TYMO9jtYBmZDt3go8uGC2pdma+e3AXBcWfNWj4sRXY1j8CXgSCu//Wb9gffji
+	 MX0qI6L2ih6CHNi5XF0wC6rXfdDCDZi4Yl5jyvoEPi7X7CVKbJTA0VscvARPqT0N0WUoq
+	 JWN/XnkBGYaOUXjK/7FuQlm7dAWstsho9A4a1iig3PukZZS7Fr6Z7Kg/Q0/UqcWD2fw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=fail header.from=gmail.com;
 	spf=pass smtp.mailfrom=upstreamdata.ca;
-	arc=none smtp.remote-ip=209.85.160.50
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	arc=none smtp.remote-ip=209.85.160.44
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE7860A2624
-	for <linux-tegra@vger.kernel.org>; Sat,  7 Nov 2026 20:14:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9CE7860A2624
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EB46082BF1
+	for <linux-tegra@vger.kernel.org>; Sat,  7 Nov 2026 20:14:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 45EB46082BF1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=upstreamdata.ca
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-48eee44b908so4107fac.1
-        for <linux-tegra@vger.kernel.org>; Sat, 07 Nov 2026 12:14:15 -0800 (PST)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-483d290f398so4306fac.2
+        for <linux-tegra@vger.kernel.org>; Sat, 07 Nov 2026 12:14:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794082454; x=1794687254;
+        d=1e100.net; s=20260707; t=1794082457; x=1794687257;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Z28hpkRxNuFHQxwJ5bnvo4CTYnv30xHbFPLm6nkYYQ4=;
-        b=iMM+QhmjXIm6A9db3C0AKrXWDmDFrkYCuijGwZ6mqWj4BV2WNeizz8X3mWtCrUkmr/
-         F9fWaOPrV3tjacTHjyoFJX8HO6XQSbvLTUIdVo5jahItXp4Eyi+7CQ1IpFrop+MzihIf
-         929boGpSeLWGGX+X79ZNtSOlAB7zYodhfy7ZZq0mJy/0aZoSrsNM+rFxAlq6D8UagU5s
-         vhKNuyYqtuVlCl9aceC+6CXiczXl09qvlIOgF1TGqHSgkAKzSEsyy5/oU00LvQxDrm+5
-         T/awm/A1Q1Dg7cnm3fcg8u++ymKrT/0/QdxVUkm8853R00KgNL3SxtMLDuT7Zz3H1Lkk
-         2zVQ==
-X-Forwarded-Encrypted: i=1; AL+hErHDnyygZcasoWjU1hh1NbyKiNytIfYps69t4MSliWi7lsPLIM7BZpQYRdhMlEhq7KvoA/+2r9pSNAHaFw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9wZSZ2E0A/YS8RVZSobClHxlkJB4UOppsK56pbmUcf0WeYdCCa
-	agtxQgrlY4FLOegO9o3lPLcj2ujnuBN3US2vvgmRsKT7keut6xV1LAuiu8L25IFu7bw=
-X-Gm-Gg: AYBFou3GXa8aHKTmfP9ATDRXX4qJ3vh+GBVpatYBEiNT0HXTZi8R7vukFvYZspoUN1k
-	auteNBQC72P0eX3+NRI3YD2HP5e2i8Ia2D3PCq2/adxKyuUjG7T60RuA3HtTSiIZcYXIkirAjoa
-	8kYLUkY8tbI5W2yyqWrBtAq1zhYS2o2TUSytD84bO8MTMyXiQ92ZIQvOFWW4268NC+XKbKudJgf
-	BMcqcYeKtDNRioI3ICpRLoJSYMDuf2YaxbuxaUERsc7EMrjOcU/VlTjHzwlGfTF1pEDjR5uvuSN
-	LWz8SPOKOjPKxslrj/OYEP3tsutMSRPFnB34XQZagwlUwo+UgEZUn2FJITQMpKn0l1rf06lab+d
-	WQizfiDWV+Z1JvJL3ADRTwRWtJpMA6W86+H48NjsUPezq8VU+545vnMMvKvvl09TF2MDe7WbW3f
-	tzV4MikqPBk0Dgv5ca5aln+6ru+2697ImdnZICLlRDulPSElzKGSguNwQ2v6HrF4G8YqFGi3pA+
-	FWPq1QjtpT5EjfKwL27SUKmtQq1zoDBpImAppPawjskUhPmoDB7M/7VXkJadHWmABtxNwJc+WZQ
-	syqeqamMfeCatImMDsxQJkAIXdiPm1JNw5cUU1CCxTbzUXyBGGD4KJz7zZO6
-X-Received: by 2002:a05:6870:788e:b0:4a7:4cd1:6f37 with SMTP id 586e51a60fabf-4ad9880f064mr3791819fac.19.1794082454298;
-        Sat, 07 Nov 2026 12:14:14 -0800 (PST)
+        bh=LtFKBRAqbAaZtxAu1Nw6aaS7lLmmzcUOPw2XCvAi+f0=;
+        b=y7jsi4UXJ/fFitdFDwzLd5id8PMmqBR9dzkl3qrDhp08azdFSotJwXENw4N4qPGAaE
+         VPPf1r9t2jpu4ExBDiiso/LiZyYdzVc7Gf9FvB7wm6arC+wZkBBxK6JCa5X/WxAwh9oR
+         ydE/p2EDjO8MsyRmHEgHZAnT6Er6JLFU7jxM3VlmikoVAPBI5HvlFTXLDUlh6U5q4h+U
+         LuAiQ5bdor7OiyDga9EHxzLANhadJaL19u4GV67oWUBhueIW78Jb28x3ZcZ9Ejq30ocs
+         bzUTvxt7pgOUK0PCS3GSot+fyg0QDaDM6HJQBR3iFrlz14P7WUoiTyy7IqR7CcuHFVWM
+         TMhA==
+X-Forwarded-Encrypted: i=1; AL+hErFZxppM8PF7/g5vUfp28aeP8M15hvrZj59+/L9nc/3A/PZaabAkFnXbATcfHgJdBF3u3MLB4/fQTwZSng==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/rysBH+tOTRZG93apHkVOnwb7XyQundBbqkbeOtpjLSH6OTP9A
+	53iPdHSb8Ji7szEvYnk8THommhdKg86c4cLCd8z8ReZXZ22hvZR9TnXdQainTQX6JKY=
+X-Gm-Gg: AYBFou1q6Q1flR2BvOr8WIi5M/Qa7Hadw6lg/oDz8PuOHdnGqApDkfmzUsoCYEdg0Ee
+	Ue69NQYCrx86piiSaazS0V0s4zCV1pAg8nSIcRLZ49NJa7J3QJvOfGi/RO8qBUyNIpbS8XNy6n4
+	3qED96RPXOf52utz/owEPzy6o2uvIczfLeijW6oXQHJS61tXnDsuvJGnbO96gglacRPC+ViJYV5
+	9ic9sdoXfoQ6PA5g+htWaizFw73XXwqvKUV6ZW0pTOteqqY0RnZGGN+T4OKRZkNNcNP1XCBwQMr
+	h65Qo+NMtTxGddkkpZaBiWUUSnzyca8aAZpI/PwV7+LNk7xICJPaeKqGwq2kDOGUnp3qBalM66C
+	D30Y627JlHbbYH/1TQOIVpFp+dYPHrbDYmElt9sb67mjsFrCxft+QyLWdzewNa5uBiYFpmveB3R
+	AlVkNdzdpFOPYUmTYah/H10PJvik4Wf6DOvrkeFE9dEBi+Q5+/W2y7PlPgf6oeY+RMBCJaBKXC3
+	SDYf3jvpZtiK29Joql9a+QsrLxdOIjbZnSTAqBvAxwoJ1mmww3t/njaFnVuNesRrRiIMZ9yMFHn
+	Nczdf2NwbjXOghKIiloJSycZd53QN3yfw6Awt83DU/uYYAFWx/nY/8bbsWs/hbmbGLpYI557hnB
+	l+I7zug==
+X-Received: by 2002:a05:6871:438b:b0:4ad:73bd:91b3 with SMTP id 586e51a60fabf-4ad98aab859mr3931286fac.9.1794082457245;
+        Sat, 07 Nov 2026 12:14:17 -0800 (PST)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4ade68aa561sm226096fac.5.2026.11.07.12.14.11
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4ade68aa561sm226096fac.5.2026.11.07.12.14.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2026 12:14:13 -0800 (PST)
+        Sat, 07 Nov 2026 12:14:16 -0800 (PST)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Sat, 07 Nov 2026 03:16:52 -0700
-Subject: [PATCH 55/58] mtd: rawnand: r852: retain chip state across removal
+Date: Sat, 07 Nov 2026 03:16:53 -0700
+Subject: [PATCH 56/58] mtd: rawnand: nandsim: retain chip state across
+ removal
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -78,7 +80,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-55-0181ef0cc4c8@gmail.com>
+Message-Id: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-56-0181ef0cc4c8@gmail.com>
 References: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-0-0181ef0cc4c8@gmail.com>
 In-Reply-To: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-0-0181ef0cc4c8@gmail.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -136,302 +138,100 @@ Cc: Tze Yee Ng <tze.yee.ng@altera.com>, linux-mtd@lists.infradead.org,
  linux-arm-msm@vger.kernel.org, James Hilliard <james.hilliard1@gmail.com>
 X-Mailer: b4 0.15.2
 
-A removed card can still have open MTD handles. Reinitializing the same
-nand_chip for a newly inserted card lets those handles access
-replacement media, while freeing it during PCI removal leaves dangling
-references.
-
-Allocate a fresh chip for every insertion and separate SmartMedia
-scanning from publication so lifetime ownership is installed first.
-Disconnect the old chip before disabling its hardware, and retain it and
-the controller until their final MTD reference is released. Stop
-IRQ-driven card-work scheduling before destroying the workqueue during
-PCI removal.
+MTD device references can outlive device unregistration even when no
+open file pins the simulator module. Disconnect before freeing the
+simulated media, and retain the chip metadata until the final MTD put.
+The lifetime core waits for remaining device references during module
+unload.
 
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- drivers/mtd/nand/raw/r852.c      | 111 ++++++++++++++++++++++++---------------
- drivers/mtd/nand/raw/r852.h      |   1 +
- drivers/mtd/nand/raw/sm_common.c |  15 ++----
- drivers/mtd/nand/raw/sm_common.h |   2 +-
- 4 files changed, 75 insertions(+), 54 deletions(-)
+ drivers/mtd/nand/raw/nandsim.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/r852.c b/drivers/mtd/nand/raw/r852.c
-index 92c47d351c27..0fb320cd7b77 100644
---- a/drivers/mtd/nand/raw/r852.c
-+++ b/drivers/mtd/nand/raw/r852.c
-@@ -625,16 +625,34 @@ static void r852_update_media_status(struct r852_device *dev)
- 	spin_unlock_irqrestore(&dev->irqlock, flags);
- }
+diff --git a/drivers/mtd/nand/raw/nandsim.c b/drivers/mtd/nand/raw/nandsim.c
+index fe968037f75a..39fefd83cd85 100644
+--- a/drivers/mtd/nand/raw/nandsim.c
++++ b/drivers/mtd/nand/raw/nandsim.c
+@@ -2253,6 +2253,11 @@ static const struct nand_controller_ops ns_controller_ops = {
+ 	.exec_op = ns_exec_op,
+ };
  
--/*
-- * Register the nand device
-- * Called when the card is detected
-- */
-+static void r852_chip_release(struct nand_chip *chip)
++static void ns_chip_release(struct nand_chip *chip)
 +{
-+	kfree(chip);
++	kfree(nand_get_controller_data(chip));
 +}
 +
-+/* Register a new chip instance for each inserted card. */
- static int r852_register_nand_device(struct r852_device *dev)
- {
--	struct mtd_info *mtd = nand_to_mtd(dev->chip);
-+	struct nand_chip *chip;
-+	struct mtd_info *mtd;
-+	int ret;
+ /*
+  * Module initialization function
+  */
+@@ -2262,6 +2267,7 @@ static int __init ns_init_module(void)
+ 	struct nand_chip *chip;
+ 	struct nandsim *ns;
+ 	int ret;
++	bool retained = false;
  
- 	WARN_ON(dev->card_registered);
- 
-+	chip = kzalloc_obj(*chip);
-+	if (!chip)
-+		goto error1;
-+
-+	chip->legacy.cmd_ctrl = r852_cmdctl;
-+	chip->legacy.waitfunc = r852_wait;
-+	chip->legacy.dev_ready = r852_ready;
-+	chip->legacy.read_byte = r852_read_byte;
-+	chip->legacy.read_buf = r852_read_buf;
-+	chip->legacy.write_buf = r852_write_buf;
-+	chip->controller = &dev->controller;
-+	nand_set_controller_data(chip, dev);
-+	dev->chip = chip;
-+	mtd = nand_to_mtd(chip);
- 	mtd->dev.parent = &dev->pci_dev->dev;
- 
- 	if (dev->readonly)
-@@ -642,8 +660,17 @@ static int r852_register_nand_device(struct r852_device *dev)
- 
- 	r852_engine_enable(dev);
- 
--	if (sm_register_device(mtd, dev->sm))
--		goto error1;
-+	ret = sm_scan_device(mtd, dev->sm);
+ 	if (bus_width != 8 && bus_width != 16) {
+ 		NS_ERR("wrong bus width (%d), use only 8 or 16\n", bus_width);
+@@ -2376,6 +2382,10 @@ static int __init ns_init_module(void)
+ 	ret = ns_parse_badblocks(ns, nsmtd);
+ 	if (ret)
+ 		goto free_ns_object;
++	ret = nand_set_release(chip, ns_chip_release);
 +	if (ret)
-+		goto free_chip;
-+	ret = nand_set_release(chip, r852_chip_release);
-+	if (ret) {
++		goto free_ns_object;
++	retained = true;
+ 
+ 	/* Register NAND partitions */
+ 	ret = mtd_device_register(nsmtd, &ns->partitions[0], ns->nbparts);
+@@ -2391,11 +2401,16 @@ static int __init ns_init_module(void)
+ unregister_mtd:
+ 	WARN_ON(mtd_device_unregister(nsmtd));
+ free_ns_object:
++	if (retained)
++		nand_disconnect(chip);
+ 	ns_free(ns);
+ free_ebw:
+ 	kfree(erase_block_wear);
+ cleanup_nand:
+-	nand_cleanup(chip);
++	if (retained)
++		mtd_put_master(nsmtd);
++	else
 +		nand_cleanup(chip);
-+		goto free_chip;
-+	}
-+	ret = mtd_device_register(mtd, NULL, 0);
-+	if (ret)
-+		goto put_chip;
+ free_gp_list:
+ 	list_for_each_safe(pos, n, &grave_pages) {
+ 		list_del(pos);
+@@ -2412,7 +2427,8 @@ static int __init ns_init_module(void)
+ 		kfree(list_entry(pos, struct weak_block, list));
+ 	}
+ free_ns_struct:
+-	kfree(ns);
++	if (!retained)
++		kfree(ns);
  
- 	if (device_create_file(&mtd->dev, &dev_attr_media_type)) {
- 		message("can't create media type sysfs attribute");
-@@ -653,8 +680,17 @@ static int r852_register_nand_device(struct r852_device *dev)
- 	dev->card_registered = 1;
- 	return 0;
- error3:
--	WARN_ON(mtd_device_unregister(nand_to_mtd(dev->chip)));
--	nand_cleanup(dev->chip);
-+	WARN_ON(mtd_device_unregister(mtd));
-+put_chip:
+ 	return ret;
+ }
+@@ -2430,9 +2446,9 @@ static void __exit ns_cleanup_module(void)
+ 
+ 	ns_debugfs_remove(ns);
+ 	WARN_ON(mtd_device_unregister(nsmtd));
 +	nand_disconnect(chip);
-+	r852_engine_disable(dev);
-+	dev->chip = NULL;
-+	mtd_put_master(mtd);
-+	goto error1;
-+free_chip:
-+	r852_engine_disable(dev);
-+	dev->chip = NULL;
-+	kfree(chip);
- error1:
- 	/* Force card redetect */
- 	dev->card_detected = 0;
-@@ -667,16 +703,19 @@ static int r852_register_nand_device(struct r852_device *dev)
+ 	ns_free(ns);
+ 	kfree(erase_block_wear);
+-	nand_cleanup(chip);
  
- static void r852_unregister_nand_device(struct r852_device *dev)
- {
--	struct mtd_info *mtd = nand_to_mtd(dev->chip);
-+	struct mtd_info *mtd;
+ 	list_for_each_safe(pos, n, &grave_pages) {
+ 		list_del(pos);
+@@ -2449,7 +2465,7 @@ static void __exit ns_cleanup_module(void)
+ 		kfree(list_entry(pos, struct weak_block, list));
+ 	}
  
- 	if (!dev->card_registered)
- 		return;
-+	mtd = nand_to_mtd(dev->chip);
- 
- 	device_remove_file(&mtd->dev, &dev_attr_media_type);
- 	WARN_ON(mtd_device_unregister(mtd));
--	nand_cleanup(dev->chip);
-+	nand_disconnect(dev->chip);
- 	r852_engine_disable(dev);
-+	dev->chip = NULL;
- 	dev->card_registered = 0;
-+	mtd_put_master(mtd);
+-	kfree(ns);
++	mtd_put_master(nsmtd);
  }
  
- /* Card state updater */
-@@ -734,7 +773,8 @@ static irqreturn_t r852_irq(int irq, void *data)
- 	card_status = r852_read_reg(dev, R852_CARD_IRQ_STA);
- 	r852_write_reg(dev, R852_CARD_IRQ_STA, card_status);
- 
--	if (card_status & (R852_CARD_IRQ_INSERT|R852_CARD_IRQ_REMOVE)) {
-+	if (!dev->removing &&
-+	    (card_status & (R852_CARD_IRQ_INSERT | R852_CARD_IRQ_REMOVE))) {
- 
- 		ret = IRQ_HANDLED;
- 		dev->card_detected = !!(card_status & R852_CARD_IRQ_INSERT);
-@@ -841,10 +881,14 @@ static const struct nand_controller_ops r852_ops = {
- 	.attach_chip = r852_attach_chip,
- };
- 
-+static void r852_controller_release(struct nand_controller *controller)
-+{
-+	kfree(container_of(controller, struct r852_device, controller));
-+}
-+
- static int  r852_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
- {
- 	int error;
--	struct nand_chip *chip;
- 	struct r852_device *dev;
- 
- 	/* pci initialization */
-@@ -866,42 +910,28 @@ static int  r852_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
- 
- 	error = -ENOMEM;
- 
--	/* init nand chip, but register it only on card insert */
--	chip = kzalloc_obj(struct nand_chip);
--
--	if (!chip)
--		goto error4;
--
--	/* commands */
--	chip->legacy.cmd_ctrl = r852_cmdctl;
--	chip->legacy.waitfunc = r852_wait;
--	chip->legacy.dev_ready = r852_ready;
--
--	/* I/O */
--	chip->legacy.read_byte = r852_read_byte;
--	chip->legacy.read_buf = r852_read_buf;
--	chip->legacy.write_buf = r852_write_buf;
--
- 	/* init our device structure */
- 	dev = kzalloc_obj(struct r852_device);
- 
- 	if (!dev)
--		goto error5;
-+		goto error4;
-+	error = devm_nand_controller_init(&pci_dev->dev, &dev->controller,
-+					  r852_controller_release);
-+	if (error)
-+		goto error4;
- 
--	nand_set_controller_data(chip, dev);
--	dev->chip = chip;
- 	dev->pci_dev = pci_dev;
- 	pci_set_drvdata(pci_dev, dev);
- 
--	nand_controller_init(&dev->controller);
- 	dev->controller.ops = &r852_ops;
--	chip->controller = &dev->controller;
- 
- 	dev->bounce_buffer = dma_alloc_coherent(&pci_dev->dev, R852_DMA_LEN,
- 		&dev->phys_bounce_buffer, GFP_KERNEL);
- 
--	if (!dev->bounce_buffer)
-+	if (!dev->bounce_buffer) {
-+		error = -ENOMEM;
- 		goto error6;
-+	}
- 
- 
- 	error = -ENODEV;
-@@ -961,9 +991,6 @@ static int  r852_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
- 	dma_free_coherent(&pci_dev->dev, R852_DMA_LEN, dev->bounce_buffer,
- 			  dev->phys_bounce_buffer);
- error6:
--	kfree(dev);
--error5:
--	kfree(chip);
- error4:
- 	pci_release_regions(pci_dev);
- error3:
-@@ -976,6 +1003,11 @@ static int  r852_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
- static void r852_remove(struct pci_dev *pci_dev)
- {
- 	struct r852_device *dev = pci_get_drvdata(pci_dev);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&dev->irqlock, flags);
-+	dev->removing = true;
-+	spin_unlock_irqrestore(&dev->irqlock, flags);
- 
- 	/* Stop detect workqueue -
- 		we are going to unregister the device anyway*/
-@@ -995,9 +1027,6 @@ static void r852_remove(struct pci_dev *pci_dev)
- 	dma_free_coherent(&pci_dev->dev, R852_DMA_LEN, dev->bounce_buffer,
- 			  dev->phys_bounce_buffer);
- 
--	kfree(dev->chip);
--	kfree(dev);
--
- 	/* Shutdown the PCI device */
- 	pci_release_regions(pci_dev);
- 	pci_disable_device(pci_dev);
-diff --git a/drivers/mtd/nand/raw/r852.h b/drivers/mtd/nand/raw/r852.h
-index 96fe301d15da..a89ab61ea51e 100644
---- a/drivers/mtd/nand/raw/r852.h
-+++ b/drivers/mtd/nand/raw/r852.h
-@@ -128,6 +128,7 @@ struct r852_device {
- 	struct delayed_work card_detect_work;
- 	struct workqueue_struct *card_workqueue;
- 	int card_registered;		/* card registered with mtd */
-+	bool removing;			/* stop card work during PCI removal */
- 	int card_detected;		/* card detected in slot */
- 	int card_unstable;		/* whenever the card is inserted,
- 					   is not known yet */
-diff --git a/drivers/mtd/nand/raw/sm_common.c b/drivers/mtd/nand/raw/sm_common.c
-index e238784c8c3e..a79e3c3c77d1 100644
---- a/drivers/mtd/nand/raw/sm_common.c
-+++ b/drivers/mtd/nand/raw/sm_common.c
-@@ -182,28 +182,19 @@ static const struct nand_controller_ops sm_controller_ops = {
- 	.attach_chip = sm_attach_chip,
- };
- 
--int sm_register_device(struct mtd_info *mtd, int smartmedia)
-+int sm_scan_device(struct mtd_info *mtd, int smartmedia)
- {
- 	struct nand_chip *chip = mtd_to_nand(mtd);
- 	struct nand_flash_dev *flash_ids;
--	int ret;
- 
- 	chip->options |= NAND_SKIP_BBTSCAN;
- 
- 	/* Scan for card properties */
- 	chip->legacy.dummy_controller.ops = &sm_controller_ops;
- 	flash_ids = smartmedia ? nand_smartmedia_flash_ids : nand_xd_flash_ids;
--	ret = nand_scan_with_ids(chip, 1, flash_ids);
--	if (ret)
--		return ret;
--
--	ret = mtd_device_register(mtd, NULL, 0);
--	if (ret)
--		nand_cleanup(chip);
--
--	return ret;
-+	return nand_scan_with_ids(chip, 1, flash_ids);
- }
--EXPORT_SYMBOL_GPL(sm_register_device);
-+EXPORT_SYMBOL_GPL(sm_scan_device);
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Maxim Levitsky <maximlevitsky@gmail.com>");
-diff --git a/drivers/mtd/nand/raw/sm_common.h b/drivers/mtd/nand/raw/sm_common.h
-index 57fc9f86f9ee..d8a330d6b730 100644
---- a/drivers/mtd/nand/raw/sm_common.h
-+++ b/drivers/mtd/nand/raw/sm_common.h
-@@ -33,7 +33,7 @@ struct sm_oob {
- #define SM_SMALL_OOB_SIZE	8
- 
- 
--int sm_register_device(struct mtd_info *mtd, int smartmedia);
-+int sm_scan_device(struct mtd_info *mtd, int smartmedia);
- 
- 
- static inline int sm_sector_valid(struct sm_oob *oob)
+ module_exit(ns_cleanup_module);
 
 -- 
 2.53.0
