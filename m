@@ -1,91 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.44
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794046654;
-	b=oZmpaSkvOueIR1k7uX+Io0ADFVlRr++B88oiN2yh3TrdbdJ7ScY12SAkiU5YRYGA1dHk
-	 d1xjD3QqnP54GjvtvCXvnQ1oN8btqT8MSmCFPlsSwMmCBrkwBQJHgTC3IdcyMyd8tSCJD
-	 ffnGkkrf1n1OxTaQRPQ6Ph5QVgnPBKUvgP7XxbD0nw+jk/WpL3Xt+80rRjRP/urzQ2ELj
-	 +3oeSltsXsHjAynAzmXalLKedo0w24QjWh6gvyNF2ySlpcpVW9Cygdf0xc5FGLrGqaFUA
-	 fkXb7cLOfUiKXcffHwOHxfDejzUUAllluVuB0fhi1oign2wFCSTQqAgQHcVNXj4IjEg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794046654;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.171
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794046690;
+	b=PlOUEaFYxiqSiWZDJGaK+KGo5z736YiTkNDnySM9ssY2KsAvL7SD0OfxhyoHRFKHXxzI
+	 GosPYHrW41sKCJcGaav8KpwSLmA16odEXx4nPHQflUIUAYJ10Qot2MgAW9ZmI0E0yT5JH
+	 n7OgnZ/VNYECGd17dpNBckl2qhpXvepcjcNVsP8aQItlUq5lOVj1Mvh9zvfAhm9CT3fbE
+	 nxo5ojb4aLda2roNicWjiYSd83VpwKqFwJMLXj7KL2m8k7vSDqgD3XMBhTlr3urb8kAun
+	 0tJ7Ssy0MWtgmcLXRrfNIufBMhpmCJ2tyHLze5Smh2VobBtwgI3Z9iaLMg2DASH9wzQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794046690;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=PzgbI8X4Voq5iI6HG1dOPbCOfJ17p492ut7p3i4sm7o=;
-	b=ahfd8py5mWT4OkrMg9ope28ZiBuy7nKsl6r+jIz/w39uTvv5ANuNk4kgfZX1exp1hmI6
-	 PApe1nuJebrpK5QDaTrQHY/W1TC0hu2PnBzfDmaNRTgH0eRKsGG/amrnk52lVm3/BU+fv
-	 0vjgVBe/jmmwknlgeH13O7CNf/XEsavE4I1OBwHOZKxprQ/s8xJNkobSmB6PE93SWqBgy
-	 QRVXaUSxmYQx0ETEl6hel2ZZomsdfxUnqg9c7HzwMWtWzmT48B1ynK/x5M86DCPSLGO/P
-	 zRBEkIiR0LX6yvoeET52z4IBCr4fA1Xo6Vb9Ve0pINpSz5ByWvDylawpXSlcxlBK+Ug==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=LlYZSnhhBhztP5IWsnPRPqtaO1fn+3H5U4xPBBTTlKI=;
+	b=HTSer8clMM1umqlmQ4TbumamaxZdAWe0pjtAauR7ksGZQYgB9naU4cXEhhPPzs7k7HUK
+	 sVQ3ZPpHdyk2W/ue5jkRjAIRGIh4HRjuUeWw79cMlm9hu3jUcZc713EwctdMXrbgDd5Gj
+	 EO/T3Zl22zX8VoBeEIAscXrQAgWhYjoqRQv63gb+9wjNkjt+Xg5tKd0Npu12vqZFLi9ck
+	 F+GhOYLlT8ZVcddchwBpRKp973W2AI95XttyQt9jub6NEa8ZoNvFuh4TTvqxNGS3BdibM
+	 +9hwepfs/XwsJd9dWV8peh+m2g5I10zlTAlW5TBVhd7sOVahVPCzVXt+pWwqKReehsQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=N+2Pngc6;
-	arc=none smtp.remote-ip=209.85.210.44
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lP7jVZlF;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.171
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BDC606A8E3
-	for <linux-tegra@vger.kernel.org>; Sat,  7 Nov 2026 10:17:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 77BDC606A8E3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C77606A330
+	for <linux-tegra@vger.kernel.org>; Sat,  7 Nov 2026 10:18:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A5C77606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=N+2Pngc6
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-85d363fb73cso858911a34.1
-        for <linux-tegra@vger.kernel.org>; Sat, 07 Nov 2026 02:17:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lP7jVZlF
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-3645f0f3fcdso2377688eec.0
+        for <linux-tegra@vger.kernel.org>; Sat, 07 Nov 2026 02:18:09 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794046689; cv=none;
+        d=google.com; s=arc-20260327;
+        b=d5dz9AKz1WCMv380zG77x0Gr54o9i9wUuIWfK2CJZ3LjmRyguMBbDXVuruJijmq57E
+         aeKiCvp9fu4rlPXDR3DMz1Hkm8fGG4T56mI4HKoabV4KCA8XTokH/c85scuHvcPGovAA
+         LeMOdhpVlZfsOXCeqcPYgdA4gglWb+UAICehFVFHQblhjPljm0dKwNMJwOpLknygf9f1
+         KKB0ktNexXSZ+i3e76W9wcMje+Xk1AsdrV0CFu6/+77u97EULPhy04imcZb0ndsDZ7ry
+         7/ToU4s7tAg98UCN4GM2LGoqg8eaHESBbXkv7T7CHfywWErmA5iwX4Dzzhbsp6qz3gsp
+         JtvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=LlYZSnhhBhztP5IWsnPRPqtaO1fn+3H5U4xPBBTTlKI=;
+        fh=jeNM6b0KU5epbVxnffGzVD5IVbcyWzJOIVAj2dSnsr4=;
+        b=SFQTWZ00zVwZzaR+6rchaC8KuEd6MeCY2o3fO/fw7owy1DUiYnWH7aGvfzKmngaTcM
+         EodJTwcCKkeSYgEMFmfbqSjSYFL5gZn36FwozzEmwT/U17k7pFGxl853U4qphuQGrXqw
+         8KLTIAWq9TUnfNI5K+6OuU1uR3J8wRx/hK1V5P/SLpsX/ADVtXmZ9Xzw143iUiIBIQmE
+         MNklR3JqDCCXQMLXdjqT3RSb2VJI6y6EmN+C9Bj2sY/Yfp3CGUkiPLF1L+P6zTEcx0gu
+         lyBhCjPh8sZZfRRJLKfdXE/Wm4ZXigq1FJ+GRlvzd81BGc3Wph/I2vwAxbeIvRy9zCKi
+         +8Qg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794046653; x=1794651453; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=PzgbI8X4Voq5iI6HG1dOPbCOfJ17p492ut7p3i4sm7o=;
-        b=N+2Pngc64OPWMAkTL0wtY+HdVSNWRS5ssOjU6wjCQWiMlvQ/y58voNZv1HDc2ucjeu
-         nC5VhBH+gOC4ECeYBmyNZrNgyoomfvMfPRZZZNLK6M5XPtAzOc4/XK6yATGwkgYoLetO
-         KqB1HSk1eZ+gvMyXhwLqMGaiCR2eVl4qPl1AYLxFYYuFrSCzDBaatVqFK+bCyIgai8Lq
-         72I4EUedZiWAfyzN9WgeHZNNIXcSV17EkU37ODCwHs/DXHO4YqdebPTON9srLa6MW7ZT
-         zmzWs+VxVSzc2estggAdIJWlnPQoYKQJZxgINd1VmT9HCeZ2d/154RofmBbRjIU1a9VT
-         FCow==
+        d=gmail.com; s=20260707; t=1794046689; x=1794651489; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=LlYZSnhhBhztP5IWsnPRPqtaO1fn+3H5U4xPBBTTlKI=;
+        b=lP7jVZlFvy1fTCONhPWDyL4pzmVoRjpo0Cd87RZmlWWt6Q7QRDEuDQkoFslzqtaodt
+         1RI7cSRBMHm6M1e25Wg6HMmzjbbdiCgJvEBCN4ODyKT1RR34cQTfuxMTfsvSj5tsrWfi
+         weR+zF8KcKUVMUaux8r4g/yNS5S0dOdnTM0HwsT4IgS829GvcVsdfjNkq1J9aCiDAof0
+         iLntN44/aK+yT3bzsqtUFByFKhH6mt/ZProSDKGMNziLedQKVy6IuOtecDmcI3rHN+Gi
+         PhakD0y9GvzTlClIc+8VbgPe9Gw+fWJfCW5NVAopvJqHPKCtinthbNzdF/WnMxqdFeQV
+         zYSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794046653; x=1794651453;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1794046689; x=1794651489;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=PzgbI8X4Voq5iI6HG1dOPbCOfJ17p492ut7p3i4sm7o=;
-        b=Au0wk8IGFTAaEcKkJcumlZL4MpOE0e4nYnbaJZTcOFHslqzpeZQJxXqzRs7FiCKnvo
-         Hinh38x9htvRfm2JIU1/jVg5oDjCWP8Y4XBtrnqULGy1J2zCd8Wl+yvT1AWxVIScWyee
-         b9JLVJU3KyBweT8VqF7HC7H8VYbI8wwarg311LeGbFwozVItgCaXtNukmjECeImUrmiG
-         SKwJVYzKddagCcKYfWHptgrCe98trWEpbXl+gvjkBD0BWJiLnIhGEnk5rob3KEa3zSMG
-         tWmA9qv/9G4HzAPBXfcrNJPdhi/ntP0AXeuTt2TigfqCTbSA3NVwl5rITISNfGc9kfOt
-         cUxQ==
-X-Forwarded-Encrypted: i=1; AKwUvBygLe1wFb2Pa1uUi3QzQjSyAkDUKZbt/rfUL1g+7WLY5jw2AottwxjTcfY0BT1J9C+1ZN1+0rdSEiOJbw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8hFizoHouWiUeKm9Sq6IoULIzijBSCRv1y5KweTHE1Gh6nNSW+
-	fDb7VtzMnLc7eEg/mhdSlUgXAqPkhABu7+Zu1L0wtyPEZPA5qi2otTNQ
-X-Gm-Gg: AYBFou2ZRUxd+u5cW2JrjC1VV4xEnEvCgOdQr5QC91yUNQI0vN3wTeS6zxrohTVV2YD
-	hAAn1TeAka38P4ESZvpfuNeYQSd6a3HRMrzsDeMYfhhOrvJbeWdB0MA8N0YgCK1D3Oa4dISXbBz
-	Oodv0JHjRowp2YjkUR1IWMY2P3sM2jkyPNkvCaGAd9OUDfd1owIaqCklUS1I8WkNE+ITanBP4W6
-	/pFIoFQPP2QwNYy0vGAXUqLrSgp9KnzpU5NAyw3qMFskH/vubplFlQshZ0ye23KvoU2j5YHhmyL
-	9RHVnHxtMYIzZJd/v5rD/znGpDZb5/04LSoRMNu4jGj47CZPyaru3ZYhO3vR2i6XPcxc1FVJgwb
-	n7NMr82XWUWu3kYoM2TTxUHdZRVatlpUhgsSh0H2h7/d40285QsYEabozmz+wAwIFVoNRaFlpDg
-	u9wXpIbVlHszUtFhqDmh4vjetD1ZsmprwaqR1NYl8yKt4cSfyPE2hH9p2OaPN43jnhOBk3BJGJs
-	/vo4pj35Drg2xRnmVU2jFXa/Z+1YKgHgelrALeyG103kCXX+Qs7M4VbegE+o6JPdpHHvNVQP5VY
-	xCJ7B9o5SwoZpXvWFS9C3SYZCNilQIhwkidwCaoeAQCWkJYqJWlQSiTI2Dv9S4mWCeGkikzCt05
-	k8lCyAaftrftwLHOelUYrE+6ZX+puRSxF2xTI9KO8Bwi1nLMOKO+uBe0R1duOmJul45wFaUfvW1
-	+bUWjQTHQ7fzapZOuPKbB8jsIMKi39scQ7kTsxlQShQcsbbrVWJ3aht1DkO83VUqkPo+f7bteo1
-	g==
-X-Received: by 2002:a05:6830:2306:b0:81c:5aac:798a with SMTP id 46e09a7af769-85f1d000dcamr4738701a34.13.1794046653358;
-        Sat, 07 Nov 2026 02:17:33 -0800 (PST)
-Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-85f1dbef224sm3990269a34.12.2026.11.07.02.17.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2026 02:17:32 -0800 (PST)
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Sat, 07 Nov 2026 03:16:21 -0700
-Subject: [PATCH 24/58] mtd: rawnand: xway: retain open-handle state on
- removal
+        bh=LlYZSnhhBhztP5IWsnPRPqtaO1fn+3H5U4xPBBTTlKI=;
+        b=y5nUSvvMFgkoSRVqasRr6d5zcv2zSioVAGHG+blHXiwJ5o5WYxjiWKC70XFF91s3+y
+         HG6XZyaqz1QzuM8lGOdC1ndYSvARQWYJu54ZUU3TKc51m2qSewVk0Us1YerOvpcfknID
+         4XQ9+nvrsuEieULJdR3kvoytWcdBss2YK0EXuNUmavcddF11j1FQGPR2zwgEH4WHJE6V
+         3KC63pPiEiZxWklWp6QhUSKp4a02pqeVOY/KmlXWdudaK7j1DojW53TyczdjFC4e5Idc
+         opjm9dWmUoJhI+QVaEmw8dmODTfWl+fo80zitN6b05UtUC8LsuZqY7jCI0pW/o0wk8Kd
+         vo7g==
+X-Forwarded-Encrypted: i=1; AL+hErEcLjqQpDLgdV96bYsrzjpNEB13YR/zax2CCuJZPzC4e4blUI9q/6LoKbThVdhdwFc7lVECHBh7V2wKMA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8pdhje5a8zSdwUtIIvgaFPJoy8UjFBVTCbRewLptQmt0nUwX1I
+	JhiP/tHo7/iD1lFlUZzYEG8IIcWOgAHY3hyENsNIma2i4JkRzoNwC/eYpUXCZD7H/w4Vg2rFgXV
+	JL545fpgdnn/q3yqc89FDMW+G1rwTJuY=
+X-Gm-Gg: AYBFou1lW/xiJakal5ypTOKIljdUH0OVcLkxlf96APxSI9wqyNqEo6Z3XveNbQlTZpX
+	qt2u+DNqyR9mTrVURIit+josfIgurT2tGI5oz5O44/GDaqqE6tkK7e927iLns9E0e95uJ1RWvFg
+	6y2wllK6jH1jVKwoCux7MvPAGSarcrECdP1lN4txrT4OBSD+tfuoZMp6FmGlBRttZwDDkj/j21P
+	yOx2fIVARRD6+nfOyTnoxWx2lHQB0+X54RHsjRT3a+60etSpDdWvBiOe+JG2jJ6+u2sGqCqFvzp
+	zpWfYnEVn4UQibNG76Eu9m+n0EE1VqxZkwb2253H5LOZn1Ulkzyl2ytA1EFPvIde+fj1u1qrJm6
+	oCcqTBpH93Uv9D+lrn5CnGFlh6rvNabmTTqX0dDUK3+aF9d5G+kaqd1jGWQXYKoz7a6a/5nuKre
+	kPCvAMGa380rh3MHZ7UT8ryL/kf6M7lg==
+X-Received: by 2002:a05:7300:de07:b0:36a:1294:59e0 with SMTP id
+ 5a478bee46e88-36f75f2622fmr6160193eec.24.1794046688723; Sat, 07 Nov 2026
+ 02:18:08 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -95,155 +105,98 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-24-0181ef0cc4c8@gmail.com>
-References: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-0-0181ef0cc4c8@gmail.com>
-In-Reply-To: <20261107-submit-rawnand-retained-handle-lifetime-v1-v1-0-0181ef0cc4c8@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Brian Norris <computersforpeace@gmail.com>, 
- Boris Brezillon <bbrezillon@kernel.org>, 
- Arseniy Krasnov <AVKrasnov@sberdevices.ru>, Chen-Yu Tsai <wens@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Thomas Gleixner <tglx@kernel.org>, 
- Vitaly Wool <vitalywool@gmail.com>, David Woodhouse <dwmw2@infradead.org>, 
- Russell King <rmk+kernel@arm.linux.org.uk>, 
- David Woodhouse <David.Woodhouse@intel.com>, 
- Mike Rapoport <rppt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Christophe Kerello <christophe.kerello@st.com>, 
- Jason Roberts <jason.e.roberts@intel.com>, 
- Michal Simek <michal.simek@amd.com>, 
- Boris Brezillon <boris.brezillon@collabora.com>, 
- Mason Yang <masonccyang@mxic.com.tw>, 
- Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>, 
- Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>, 
- Heiko Stuebner <heiko@sntech.de>, Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Keguang Zhang <keguang.zhang@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>, 
- Shan-Chun Hung <schung@nuvoton.com>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>, 
- Liang Yang <liang.yang@amlogic.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Kamal Dasu <kamal.dasu@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Vladimir Zapolskiy <vz@mleia.com>, 
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Harvey Hunt <harveyhuntnexus@gmail.com>, 
- Maxim Levitsky <maximlevitsky@gmail.com>, Michael Walle <michael@walle.cc>, 
- Srinivas Kandagatla <srini@kernel.org>
-Cc: Tze Yee Ng <tze.yee.ng@altera.com>, linux-mtd@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-mips@vger.kernel.org, imx@lists.linux.dev, 
- linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, James Hilliard <james.hilliard1@gmail.com>
-X-Mailer: b4 0.15.2
+References: <20261106-upstream-soctherm-t114-v1-0-c875d1921084@tsv-stahl-riesa.de>
+ <20261106-upstream-soctherm-t114-v1-2-c875d1921084@tsv-stahl-riesa.de>
+In-Reply-To: <20261106-upstream-soctherm-t114-v1-2-c875d1921084@tsv-stahl-riesa.de>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Sat, 7 Nov 2026 12:17:55 +0200
+X-Gm-Features: AclHuK_jIEdyr-up9S7mHl7KTEoo-13Z2jwrbx6ifXQMV0tTi0jUUh7MBAiai48
+Message-ID: <CAPVz0n2jFCxCa=t=XaxE7S9YxbYyF3WGbwXqBvkkQHjmiErqdA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] thermal/drivers/tegra: Avoid SOC_THERM calculation
+ overflow on Tegra114
+To: admin@tsv-stahl-riesa.de
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, linux-pm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Keep chip metadata and controller storage alive until the final MTD
-reference is released. Unregister and disconnect each published chip
-before releasing the resources used by its hardware operations.
+=D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 22:32=
+ Patrick Fischer via B4 Relay
+<devnull+admin.tsv-stahl-riesa.de@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+>
+> SOC_THERM calculates each sensor temperature in units of 0.5 C as
+> THERMA * capture / 2^13 + THERMB. On Tegra114 the intermediate product
+> THERMA * capture has to stay below 2^24. Above that the hardware sets
+> TCALC_OVER in SENSOR_CONFIG0, clears TEMP_VALID in SENSOR_STATUS1 and
+> the sensor drops out of its group. On a Tegra Note 7, 80 out of 80
+> samples matched this rule: TEMP_VALID was set exactly when
+> THERMA * capture < 2^24 (largest valid product 16747731, smallest
+> invalid one 16877718).
+>
+> The fuse calibration itself is fine. As Mikko pointed out in the review
+> of the Tegra114 series, the fuse corrections are in 0.5 C units on
+> Tegra114 just as on Tegra124 and Tegra210, and
+> 2 * NOMINAL_CALIB_XX + shifted_xx is correct. This patch keeps it that
+> way. The problem is the range: with T in C,
+> THERMA * capture =3D (2 * T - THERMB) * 2^13, so a sensor only gives a
+> valid result for T < (2048 + THERMB) / 2. On Tegra114 THERMB is close
+> to -2000 (between -2117 and -1812 on the chip tested), which leaves
+> almost no headroom. On that chip the sensors were valid only up to
+> 45 C (cpu2), 53 C (pllx) and 32 C (gpu), and cpu0, cpu1 and cpu3 not
+> even at room temperature. The gpu zone therefore always reads 0 C, the
+> cpu zone stops following the CPU at about 45 C, and neither the
+> throttle levels nor thermtrip ever see the temperatures they are
+> programmed for.
+>
+> NVIDIA's downstream driver runs Tegra114 in "lower precision" mode for
+> this reason (tegra11_soctherm.c: "We must use lower precision (0) due
+> to cp_fuse corrections"): the sensors count in 1 C units, the readback
+> is scaled by two and all thresholds are in 2 C steps.
+>
+> Do the same with a lower_precision flag in the SoC data:
+>
+> - keep the fuse calibration in 0.5 C units and halve THERMA and THERMB
+>   only in the final rounding step, so THERMA * capture stays around
+>   2^23 and the sensors report the same temperatures at half the
+>   resolution,
+> - double the readback in translate_temp(),
+> - use a threshold grain of 2000 so that thermtrip, the throttle levels
+>   and the trip interrupts are programmed in 2 C steps.
+>
+> The use_lower_precision option in v3 of the Tegra114 series and the
+> downstream driver halve the calibration temperatures before the
+> calculation instead, which applies fuse_corr_beta at twice its weight.
+> Here the result is exactly the current calibration divided by two. The
+> PLLX hotspot offsets are left as they are, as in the downstream driver.
+> Tegra124, Tegra132 and Tegra210 are unchanged.
+>
+> Tested on an NVIDIA Tegra Note 7 (P1640) together with the shifted_cp
+> fix: THERMA * capture now stays between 7.7 and 9.2 million, and all
+> eight sensors report TEMP_VALID in idle and after 60 s of load on all
+> four cores at 1.12 GHz. The zones read cpu 43, gpu 39, pllx 43, mem
+> 39 C in idle (board thermistor 34 C) and cpu 63, gpu 55, pllx 62, mem
+> 53 C under load. Before, the gpu zone read 0 C and the cpu zone stopped
+> at about 45 C. The thermtrip, throttle and trip thresholds are
+> programmed as 51, 50 and 45, i.e. 102, 100 and 90 C.
+>
+> Fixes: 9d522a877b6f ("thermal/drivers/tegra: Add Tegra114 specific SOCTHE=
+RM driver")
+> Cc: stable@vger.kernel.org
+> Link: https://lore.kernel.org/all/22816196.EfDdHjke4D@senjougahara/
+> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+> ---
+>  drivers/thermal/tegra/soctherm-fuse.c     | 15 ++++++++++++---
+>  drivers/thermal/tegra/soctherm.c          | 21 +++++++++++++--------
+>  drivers/thermal/tegra/soctherm.h          |  6 ++++++
+>  drivers/thermal/tegra/tegra114-soctherm.c |  4 +++-
+>  4 files changed, 34 insertions(+), 12 deletions(-)
+>
 
-Retain the embedded controller and chip across platform-device removal.
-
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
----
- drivers/mtd/nand/raw/xway_nand.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/xway_nand.c b/drivers/mtd/nand/raw/xway_nand.c
-index af84395dc66e..4686f28797bc 100644
---- a/drivers/mtd/nand/raw/xway_nand.c
-+++ b/drivers/mtd/nand/raw/xway_nand.c
-@@ -8,6 +8,7 @@
- #include <linux/mtd/rawnand.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/slab.h>
- 
- #include <lantiq_soc.h>
- 
-@@ -162,6 +163,11 @@ static const struct nand_controller_ops xway_nand_ops = {
- /*
-  * Probe for the NAND device.
-  */
-+static void xway_nand_release(struct nand_controller *controller)
-+{
-+	kfree(container_of(controller, struct xway_nand_data, controller));
-+}
-+
- static int xway_nand_probe(struct platform_device *pdev)
- {
- 	struct xway_nand_data *data;
-@@ -171,10 +177,12 @@ static int xway_nand_probe(struct platform_device *pdev)
- 	u32 cs_flag = 0;
- 
- 	/* Allocate memory for the device structure (and zero it) */
--	data = devm_kzalloc(&pdev->dev, sizeof(struct xway_nand_data),
--			    GFP_KERNEL);
-+	data = kzalloc_obj(*data);
- 	if (!data)
- 		return -ENOMEM;
-+	err = devm_nand_controller_init(&pdev->dev, &data->controller, xway_nand_release);
-+	if (err)
-+		return err;
- 
- 	data->nandaddr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->nandaddr))
-@@ -192,7 +200,6 @@ static int xway_nand_probe(struct platform_device *pdev)
- 	data->chip.legacy.read_byte = xway_read_byte;
- 	data->chip.legacy.chip_delay = 30;
- 
--	nand_controller_init(&data->controller);
- 	data->controller.ops = &xway_nand_ops;
- 	data->chip.controller = &data->controller;
- 
-@@ -228,9 +235,16 @@ static int xway_nand_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
--	err = mtd_device_register(mtd, NULL, 0);
--	if (err)
-+	err = nand_set_release(&data->chip, NULL);
-+	if (err) {
- 		nand_cleanup(&data->chip);
-+		return err;
-+	}
-+	err = mtd_device_register(mtd, NULL, 0);
-+	if (err) {
-+		nand_disconnect(&data->chip);
-+		mtd_put_master(mtd);
-+	}
- 
- 	return err;
- }
-@@ -246,7 +260,8 @@ static void xway_nand_remove(struct platform_device *pdev)
- 
- 	ret = mtd_device_unregister(nand_to_mtd(chip));
- 	WARN_ON(ret);
--	nand_cleanup(chip);
-+	nand_disconnect(chip);
-+	mtd_put_master(nand_to_mtd(chip));
- }
- 
- static const struct of_device_id xway_nand_match[] = {
-
--- 
-2.53.0
-
+Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab (P1988)
+and ASUS TF701T
