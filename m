@@ -1,65 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794130887;
-	b=dtyiW8p2SPhk6fLJV3LRsxq6JYsb3SdK3BODXSeJpLJjgDs2vtzItDKHiBmvSuqGOPb7
-	 a67xW9bULow0eTsZDzCS4awkH9fQUpOk13MWWeKqWQqHbQWX1kvVaPpPIbED0KD3s01IR
-	 +mJWGBb+W4iDyOw70A712agkB7UIVufCPdmjo9v8Y2y6Tn3Xgw3R2T5SCnpRM4JA/qiRA
-	 l6mOz3SNX4zaEI7JOofJS+6lx8A6dSkG/xHnnrZr4ihLslAnlGC7stK4CgMbVqKdxmDNN
-	 goduzMlINLetJDahyDwHqq33PouwxQMcQvj+KpihEyHBeZX7aREog+D2iIomxVRb1Eg==
+	t=1794135845;
+	b=M+fUXjCJP3fm/pD48IsCCWa7XztK9ujjYbSHYz+ixqyZSiCJ+i3yxwAfz5kVuUXAdOfB
+	 SurF7iOdnrMO2UvamHrEy2GvpcFq8L1jOQVQikP5CsL8W0LmAtRkQJR5S4YylcksKYic3
+	 iAnri/eSbUMYqhA1U9MKiCNo/omt7Jdm0PjsHkk+KCRygTsFX2P1aAEE7ymV/KosMopRN
+	 iinFZcOikyhmFH0U5i66Ki74kYC81XZxfT1ES903akno9w36akIxhI27QVUaZ2o4wQjnv
+	 7Ja/mLlRHIOMzR2msWZY9cDvI9qW7eUYy9vgAsZda7PLR1wW4kv7V6Oxs2UOupcRvjA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794130887;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
-	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
-	bh=l+50H9UydDgvjDUOodm6tPmjOieLyAKe00ss8qncm54=;
-	b=W4bqEcOzuRGtD56jhH5xwQpwSVwYVhNn4t49feE2fGxTRd6DMYdc5RmC2mVeUrPP1zUw
-	 QY2MtaPsRsULgezpgNfKLe2e5cYzvBTK3Lms1EhdzdAr+8Wk+7gT2cIhZWwzqCJDv/0y8
-	 QdeLACkU67qYWhcaQmpfW16Sw1pS6iMDLvPQss0x5BGDEzQB3bW5oeMaJz9ypOUKmYR/1
-	 2Cjfs+QHjvmvGUULYgaKGSJccXrjtTANL1wMRe6pqafzFg5pfl3K/bP80c+SrI7QZHZtE
-	 55l1l0YnSgGmwQfXofz4u79J51kRucSxIUy+3lkjhZZLW0A7ac1y4/kPIfKyjwCpcoQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794135845;
+	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
+	 Subject:Message-Id:Date:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
+	 X-Developer-Key;
+	bh=NOH9rvmKBnbMuVpOzvlihPh29ou5uq8gMNkmR0u8PDU=;
+	b=nJaPo5DwMiFW/hm11rEgfTd8lcXl8eD3z816OROTYoEpOajlV7Fin70/1JXpo0m060xO
+	 7ZTHAqnMj6j4q2zyENsffnd1jZUtyhmLyEYwdENDI+bbFC3FqX6f+MZmSrz65HJaA3yxr
+	 Q38ZKB5gbtzWASAwNCPSrApKmECZp8Pgf/H4rPghr7aFzGFM5srGLotoHVLflEMYh9aDl
+	 a7jtf6TlLoC+aSLNJJfNlbrjnbHNGNB8HVfXxgJMDP2FQjo5Yv4sp6J9htSzLvXjSaQrV
+	 QFoEPqcjEcbmo/d3F4Q8z9dEvLjxA+t/C69g/UcZEESF4N9CdguC++b7JIWaRMDi/MA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=163.com;
-	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=Gkku8EDR;
-	arc=none smtp.remote-ip=117.135.210.4
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dEexgGVA;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6454D606A339;
-	Sun,  8 Nov 2026 09:41:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6454D606A339
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B99D606A332;
+	Sun,  8 Nov 2026 11:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=Gkku8EDR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=l+
-	50H9UydDgvjDUOodm6tPmjOieLyAKe00ss8qncm54=; b=Gkku8EDRpHK2BOv3RK
-	zcXV72FgYqH1xGfyYocVTtkXEYOJLKbRW3s+36B2QVaKjcbcQOiBPDus9+3+wuOq
-	XCIRfxKMXn1n4jp9i3MGdk936eLruQYHkksXsBAR2tZ+oRPrUzZAFVz4IHBCKtAD
-	eEAFN63OBFk6ytwHAopEhFGnY=
-Received: from Precision-7960.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCXz8OTQ_BquUg4GA--.62891S2;
-	Sun, 08 Nov 2026 17:40:37 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com,
-	mani@kernel.org,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	thierry.reding@kernel.org,
-	ryder.lee@mediatek.com,
-	jonathanh@nvidia.com
-Cc: robh@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v2 0/5] PCI: Encapsulate pcie_link_speed array access
-Date: Sun,  8 Nov 2026 17:40:29 +0800
-Message-ID: <20261108094034.679945-1-18255117159@163.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dEexgGVA
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28E91F0089F;
+	Sun,  8 Nov 2026 11:04:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794135845;
+	bh=NOH9rvmKBnbMuVpOzvlihPh29ou5uq8gMNkmR0u8PDU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=dEexgGVAuXucoF8ixDFMhBHOti4RPHfHMPBIu8ZrG+1LDuvZ9LNT/0RN5xd6p7PDy
+	 TDOp68Zoc6KEktnZCGJM+6nzB3TK8l49ElfnK0hEXRmmicbFYo4V8exj/LVm8A2YPS
+	 /0VuJACkvM3ROI5CssnA7MVw0H87HKQ3/2wCfWl5qvidILOFgZxUn04Nnq8yMKQxQ9
+	 HakXOca2pq4l/4Vpz2OMORvhzRalck+q+IbsiWfjqzktw3kdPX43rcc5LUK9ggcq/R
+	 hO0SJpX5J4xrGfiDv2fRvVkI/FevUQCm5mY44Ny4G7bh3St9+n070F650Ak2/vJUKU
+	 olkHcTdlwi3ow==
+Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
+	by traversing.sirena.org.uk (Postfix) with ESMTP id 4426D2BF8D29;
+	Sun, 08 Nov 2026 11:04:03 +0000 (GMT)
+From: Mark Brown <broonie@kernel.org>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>, 
+ Ryan Wanner <ryan.wanner@microchip.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>, 
+ Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
+ Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, linux-spi@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-rpi-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+ linux-tegra@vger.kernel.org, Frank.Li@oss.nxp.com
+Cc: imx@lists.linux.dev, 
+ Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Thierry Reding <treding@nvidia.com>
+In-Reply-To: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
+References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
+Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
+Message-Id: <179406311622.3424803.2869752670970173307.b4-ty@b4>
+Date: Sat, 07 Nov 2026 14:51:56 +0000
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -69,60 +104,46 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCXz8OTQ_BquUg4GA--.62891S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar13WFy8trW5tF48XF1rCrg_yoW8CF1rpF
-	ZrK3yFyr1DXrW5uFWDAa4UZF9Yv3ZxG3yUt34rKw4rZF13CrWfXa4S9w4rGF9FkrZrZry7
-	JFnxtFn8ArnrAFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUUxhdUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC7BbMcGrwQ5b4YAAA3R
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1098; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=e27pH1DOpyvi3Vl4RSGr4H2h6BdkO4/LpSXv3m1TiX4=;
+ b=kA0DAAoWL+9zsLPQOIkByyZiAGrwVyOjdTCE9S9OBFZY60d2uXkflutXeLj+hAPbkWGUWWQYj
+ Ih1BAAWCgAdFiEEXmoL6X9066wOwaGGL+9zsLPQOIkFAmrwVyMACgkQL+9zsLPQOInk9AEApusX
+ E0SNmJSb6PhRBdjP0Qw+zpKfW7o8VMCTkcooCtUA/ith6wDGE8iMhCBn3VujoltYF1KmR9Xr6Al
+ rgHg/wDwA
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Hi,
+On Wed, 04 Nov 2026 10:22:45 -0500, Frank.Li@oss.nxp.com wrote:
+> spi: use dmaengine_desc_set_callback()
 
-This series finishes encapsulating the pcie_link_speed[] array by
-converting the remaining direct users to pcie_get_link_speed() and
-making the array private to probe.c.
+Applied to
 
-The pcie_get_link_speed() helper was introduced and accepted in the
-v10 "PCI: of: Remove max-link-speed generation validation" series, but
-a few users that were added later still index pcie_link_speed[]
-directly.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.5
 
-Changes since v1:
-- Rebase onto v7.4-rc1.
-- Use pcie_get_link_speed(), which is already exported and
-  bounds-checked, instead of introducing a new to_pcie_link_speed()
-  helper.
-- Split the pci.c change from the other core conversions, mirroring the
-  split between v1 patches 1 and 2.
-- Convert probe.c's max_bus_speed lookup, which v1 missed.
-- Convert the Tegra264 and MediaTek controller drivers, which were
-  added after the v10 series and would otherwise fail to build once the
-  array is no longer exported.
-- Split the two controller conversions into separate patches so each
-  driver can be reviewed independently.
-- Make pcie_link_speed[] static instead of only removing its extern
-  declaration and export.
+Thanks!
 
-v1 series: https://patchwork.kernel.org/project/linux-pci/patch/20260315160057.127639-1-18255117159@163.com/
+[1/1] spi: use dmaengine_desc_set_callback()
+      https://git.kernel.org/broonie/spi/c/29fcd5d436c4
 
-Hans Zhang (5):
-  PCI: Use pcie_get_link_speed() in pci.c
-  PCI: Convert remaining core pcie_link_speed[] users
-  PCI: tegra264: Use pcie_get_link_speed()
-  PCI: mediatek: Use pcie_get_link_speed()
-  PCI: Make pcie_link_speed[] private to probe.c
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
- drivers/pci/controller/pcie-mediatek.c | 2 +-
- drivers/pci/controller/pcie-tegra264.c | 6 +++---
- drivers/pci/pci-sysfs.c                | 2 +-
- drivers/pci/pci.c                      | 9 ++-------
- drivers/pci/pci.h                      | 3 +--
- drivers/pci/probe.c                    | 5 ++---
- 6 files changed, 10 insertions(+), 17 deletions(-)
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
--- 
-2.43.0
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
