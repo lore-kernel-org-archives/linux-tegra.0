@@ -1,61 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794064608;
-	b=wAIwHPlkStWDhuxEoFEzVfYSduTRbOWvYBi8qGLGdxjbWYBjQV/q6eX2dj8HB9osWc/L
-	 ItgUThidad+Qx567tCTfekiwqBqzU/TXPNxy5PDlDSWxbBVxn1+elY69wVHDVkC+j7AHX
-	 eA6o84IbDkSVK2Wwi4LLAGqYS17G6vA6AT4ddxdiFXRxD4mF3/ykpLyeNfiRc4ms4jQK3
-	 DxRAgtyo4ni4Ic2OFhwqVddAJJ88fNfSVATKDO7r66zw6kueIJqY+cs6PoHcZh34+zlV8
-	 tlcaJdksGdTGvIKUO2381p7qwxDAEZDh+yDnZFZqr2t79E/nUxpbt2d+6ft8V5wwe7Q==
+	t=1794071151;
+	b=z5pSJKF9vT4hm981W1ZFJd/80s9AoscIX2jf2MvgSuK9JG4NWkxQoEISM46y9EzaImWs
+	 VnckijYJb513fAEDUI3CKUIyv1UBEugQ5hqGFyrKq8f6WgIOfWES2PGgcBHmGZsxGTcr9
+	 LGl0EcpwG2XEEpU212vfZu51Kccc1jFjL0cJVLli0mu3wMJsCMg3o671jIOx2osBXsNsa
+	 ryf1FeQf0MKMXcRyWWqfn+++6b2xq8JXOOO50+P+U/+ZQCiU5fRpD+kKahocSi0c0TtM1
+	 cCRampHvkZPhX8NDuIQrFZsnWjbYw5Oc3+jBtjnJvyazvhGwI8XZc2p3UYKJUnrxBlw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794064608;
-	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
-	 Subject:Message-Id:Date:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key;
-	bh=WcuhQ3hFkrb8fQW7yfgUWsh40+d8FzchJmD0Z3lY1go=;
-	b=vM7I6AFLzBVe+cvtHSsf54U764xZnLukUoR2gfyEBr2of/x2COz5b+5J3jvrpCtFxYBY
-	 /9ZeFenpkj2f7KmVSUi6khy4CfrgduI935YahfNFcGF6JUd9gPr9nCc9vvbH08eqeAzoJ
-	 DB4smlYTX4FB9l/1jX2qHITojNrAH8sYHURx1HQVA/DjWPWwEBex2NjGdOROB6R1wsGbL
-	 JkWG/SYKEI5LuNBU1NKKZqumUhfxeYqI/c8YCUrj6hZtdetdEUqMp4uhNuTMBAgyS8q3d
-	 WwFTFW5Umr7w0u1+32oDDR2FeXWlqsGhf0AaJrzjZGDQrsuNBpbAV8JYUuFSWQ1u1hA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794071151;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer;
+	bh=rD2LIV4XhQpNzg1e3/EW3UGJWsumDmimOWVUWp68OWQ=;
+	b=bwbvx0AlvkVcbpdsoiw25E5sel2G+NB2UksZseHwTHp+WNPpRTKcIk0jKjf2QkkdLXJZ
+	 HTUqwRVKW6R8dlLR/6Fltp+GpuestDzEfdIDCAXG+mtVb5lyBtmd3h1QODhLCeY9g5SJQ
+	 ewYjj3MYA7EHrBMNNX0pZ3nYGS5qb6tiIjaQa1y1F+UnZm3JkAwd/BlddlNFXp/LOCpEV
+	 0WEjqFe2/qeQ9oTP1p8z1TvA0pNchBWUg2sm2wnYoZPQ1w+QxAqU2ezoSQa6Y/1z0CXtR
+	 PRL5KIf9mrZi0DOlafSTXVvqmZsj2U4Xrf8pU+8+NUkmyAfXcKrDcjlaNrEA9Z+9ueQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SEm2vt8I;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PV9C7ypy;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C75606EE82;
-	Sat,  7 Nov 2026 15:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB3C606A32C;
+	Sat,  7 Nov 2026 17:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SEm2vt8I
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556851F008A1;
-	Sat,  7 Nov 2026 15:16:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PV9C7ypy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B359D1F0089F;
+	Sat,  7 Nov 2026 17:05:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794064607;
-	bh=WcuhQ3hFkrb8fQW7yfgUWsh40+d8FzchJmD0Z3lY1go=;
+	s=k20260515; t=1794071150;
+	bh=rD2LIV4XhQpNzg1e3/EW3UGJWsumDmimOWVUWp68OWQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=SEm2vt8I8KjX5pguj4Q5aJz9jX1eNs7x7V5O9ZQVk+YVFE19U/R7fV5rL0nsx2eK/
-	 bKgTe1ovA4ocWzOuyQVDNPE+xkYmpWvqgEi06f+UHvN9p3CRPkqkfh625BFSUoSCuy
-	 fIVWJw7OTF9MnSGV0OgDb+iUMkhQypncKbjbGweOHMQQIMBHkeMS1r4Fbz02hhHvI9
-	 gGY+CetZy3+4qa8h2SrIsm2lq/IV/XVdIBd3Qs+bfJM/Zkfbs8EVZgmjRI/4HWbBpF
-	 vpyYBoVj9sKVksFgqyrSSe7Tgzq1giBvOpUsBesFyTjIihdmeuOjIqtnHFDYzPZ7Pi
-	 JkzIrlDkQJPhg==
-Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
-	by traversing.sirena.org.uk (Postfix) with ESMTP id 2372B2AB30DE;
-	Sat, 07 Nov 2026 15:16:45 +0000 (GMT)
-From: Mark Brown <broonie@kernel.org>
-To: ldewangan@nvidia.com, linux-spi@vger.kernel.org, 
- Weibin Liu <liuwb@xiaopeng.com>
-Cc: thierry.reding@kernel.org, jonathanh@nvidia.com, 
- linux-kernel@vger.kernel.org, swarren@nvidia.com, 
- linux-tegra@vger.kernel.org, zhugl3@xiaopeng.com, stable@vger.kernel.org
-In-Reply-To: <20261026132146.3806906-1-liuwb@xiaopeng.com>
-References: <20261026132146.3806906-1-liuwb@xiaopeng.com>
-Subject: Re: [PATCH v2] spi: tegra20-slink: size words with
- spi_bpw_to_bytes()
-Message-Id: <179405581085.3424803.13259814176477205026.b4-ty@b4>
-Date: Sat, 07 Nov 2026 12:50:10 +0000
+	b=PV9C7ypyRPBPxI/9oeZ6oXKBSaSgZRN7M3pEZGQdEHyt1aFrRJrP/evv6HZLF7v8F
+	 QLYZ9LwJiQBeQd7aajYbmKGWPCeyOmihp8QziyoWDZjCfd3+4A85xk8pzZZRCXFGFr
+	 77qzkWRxeTRZ/L5uz9roMb+6THh5lGrYel881aXK6XV9dPJa+faW9T92S5CQsOEBpx
+	 G/pOtC2sui0XLzPGaMnSSw187NRZM6fiyQ2qbiooCZfnlGbdKCnRxAyj4WhEfwfEg/
+	 EhlCsx+5pvGptyouNzsYMQ2gDRKdmq8I4DmAKK53vi3vdjIANoIB5aB7k+h+JsNVwQ
+	 6HgfXM3UB1reA==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+ bhelgaas@google.com, linux-pci@vger.kernel.org, 
+ Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: robh@kernel.org, thierry.reding@kernel.org, jonathanh@nvidia.com, 
+ vidyas@nvidia.com, cassel@kernel.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org
+In-Reply-To: <20261102092238.3917883-1-mmaddireddy@nvidia.com>
+References: <20261102092238.3917883-1-mmaddireddy@nvidia.com>
+Subject: Re: [PATCH v3 0/2] PCI: dwc: Clean up RAS-DES and register field
+ handling
+Message-Id: <179407114962.87221.11691094749481167318.b4-ty@b4>
+Date: Sat, 07 Nov 2026 22:35:49 +0530
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -66,45 +63,30 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1120; i=broonie@kernel.org;
- h=from:subject:message-id; bh=cHLJXGgW2xV+vqVUshhFt0YpDCp2IMvEvkL3bjmPUsw=;
- b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLLeO9yxTDMMijji+X+v3uYPn7qVbq7JYlxpcSqWQVmzn
- 4t/yvXvHaUsDGJcDLJiiixxWdwv60ter+E7uLANZg4rE8gQBi5OAZhIqgcjw3oV986U71pXxKJ7
- Z6klyGn+a10Tflstze+e8UnWzTOLyxgZlnHUf7sb4N/zIyCDoy3CNu3vZ9se0zveeQurd7THnXT
- jAQA=
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16.0
 
-On Mon, 26 Oct 2026 21:21:46 +0800, Weibin Liu wrote:
-> spi: tegra20-slink: size words with spi_bpw_to_bytes()
 
-Applied to
+On Mon, 02 Nov 2026 14:52:36 +0530, Manikanta Maddireddy wrote:
+> This series addresses review feedback around register field handling in the
+> DWC PCIe code and the Tegra194 PCIe driver.
+> 
+> The first patch converts Tegra194 register programming to FIELD_PREP(),
+> FIELD_MODIFY() and FIELD_GET(). The second patch consolidates the RAS-DES
+> event counter register offsets, field masks and per-event enable values in
+> the DWC header and makes the common debugfs code use those definitions.
+> 
+> [...]
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.5
+Applied, thanks!
 
-Thanks!
+[1/2] PCI: tegra194: Use FIELD_*() for register fields
+      commit: fe84c0b370889bbf65f75bb75a1810227c7ce150
+[2/2] PCI: dwc: Consolidate RAS-DES event counter fields
+      commit: aeddef180e7e70dea2cb684747890338b4d4b059
 
-[1/1] spi: tegra20-slink: size words with spi_bpw_to_bytes()
-      https://git.kernel.org/broonie/spi/c/6a50b668331b
+Best regards,
+-- 
+மணிவண்ணன் சதாசிவம்
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
