@@ -1,49 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794140296;
-	b=w/lYR6uCUBFqT9jTR2Za8qU+JHzCyNII0SzC/MFVTvHv73c+QRo/U7nVfYpP1fAACK2A
-	 203kymAB0GBtMxVl6yj14sDC5CxbRNL1vXda6zlTCQaT1luFWhCDIwYM6LpjLRdFXixtR
-	 3hVlblsCTJKrJ5WdME8F1cPu3QivGwe+5Tsla/IRA1kyULO0sjjsQK2q16Bf1xAzBGbmY
-	 oelySyFknzP9heDVO5td1EtbEqYjDHnSjDzKKMITLcpQoRMUM/vzJDKNoYBa0C4oQrbCm
-	 VDOATuNa5Sl8yAXJGdZuohASIvD9fTbe8223OIqtLvEZvFz0k9ZYq/xgH7OK9uMb8uw==
+	t=1794145433;
+	b=dtSnB/zLUrBPIED6i8g2wJahF+20lwZiIhqzrziha321SWA06k5ZFoZI5wDrclfCqEbp
+	 NfUCm5GNupByb6cSR9ZRceqb0561CaDD6zI3482QTkVDlRqnJ5k8B/ExI9HdTw3NjfCqA
+	 121F5v+ChSvrXB7rcyE5PU9Bu3dWQfTOjAc1R53fVlH+cMb78jNwGFU5OpvmP0RXBY8Pe
+	 Z4jDI/aXIYpaqfsigwgCX1lXvSLADQ/SfWZccEb7hJpsmctDK3PnfhNqtC0vicK6RJe76
+	 Q7WMt930oC/YJdLSUAJNvhwFO7t8eLrUpomKDeOB4H9NSUP54G7otr4xLPbe+ICTf+w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794140296;
-	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=SckiUnu1S01rYyVBaocWKaUFwyjWG4UsjJW3tv/+z/0=;
-	b=pqHl8CYbluvRouRSB/ElDyxZj4ep2wRHx4EDspLFWJbTYf8jBGLWQmYHT5PU24vPz+uX
-	 MsGJXXk0VMYcEmopwv6/+mguplvsjDoXMy2VnPXwX66nzDK6DgeIPdatw/27neiuKpIL8
-	 q6HppLl8NLeUIXEATkH0Kk5dwq6ihgLz+6t4oaAHtdoT5lOkkoLoqS92D/eliPgw7w5Xa
-	 kVU3RqV/q7LotRFKioDNVSOs90jOqzu5sli+VYUDNfr/GV4IQ15E4XVHxD0zf7L35Ac6X
-	 ULcMEEW0eBcIzrafSTBGc9a/dqXWH7QEOw+QiiHOWYsvzE7jO8/wdPjZQNSF6cUNtMg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794145433;
+	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
+	 Subject:Message-Id:Date:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
+	 X-Developer-Key;
+	bh=jyyfi9t7z31wdkTHmBUQ+fMjVugiO0ZSiqAAX6XBmWo=;
+	b=nl9jzFBdEy/w75k2fMo1+VFj+JxYj0X+NxAwvFDsr0iWXSLm+U8z6pozMWi03dczrS5b
+	 M0SQGkB9vFcus3ePeUfdesuNWUOOXOn8M8X4qDzuv8XLX53xYSfrbC4xDlx9o+HKbIG7Q
+	 T+Vz1yLvGZgeleacPmqKsuAfOKviNwueCfuRX59MIklJXJhfRaby/xtips8qA9nUa9iHk
+	 MXShqzeQ5+F3oaE4zS0ct2jfR3Ykpn5pJzZC96f8z5+tFc1D+3ORAqzyurQ9CwqxmkGq6
+	 Dj8GfWCZQGPYbyQ0VTuLyu2OpCURFcfR6s68dKq2Dy7OoD0YYFIhS4iy86wqZuyaE1w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K2doajhm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KmEm1nen;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DA1606A31C;
-	Sun,  8 Nov 2026 12:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E388606A31C;
+	Sun,  8 Nov 2026 13:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K2doajhm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E961F008A2;
-	Sun,  8 Nov 2026 12:18:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KmEm1nen
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD131F0089F;
+	Sun,  8 Nov 2026 13:43:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794140295;
-	bh=SckiUnu1S01rYyVBaocWKaUFwyjWG4UsjJW3tv/+z/0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=K2doajhm7XDLnukMsitOSySzn74EXWrVk4AXgpXZxA6pD34xRObyuefxmA16/VM/i
-	 BHrQR9ZTvyOoTEEjxx9/9vGjgWcOwUnU9l+EzLE0/wejLqSP+qABrqkDwWjdbFwqDc
-	 QisspIbLRPc/TvxHUugJnZhl4UyDwynLIVr5j6A890uG8v3X+ria/xKcd/AQ5FExL3
-	 gRIsYuZbutKaiV3MF7ytEZHgbfhQ4idm6CC4uDNNIFdmyXd4BuYGw1OfgWNwjZulOs
-	 dTQaU0VsOa147go8rEZ9wHGiCns6N58J4bw6tvCeuq0XEElAkom0AnHx7bQ3cSvR2N
-	 +1Jy5qukSzC2g==
-From: Joshua Crofts <crofts@kernel.org>
-Date: Sun, 08 Nov 2026 13:16:58 +0100
-Subject: [PATCH 11/11] spi: tegra210-quad: remove redundant
- pm_runtime_dont_use_autosuspend() calls
+	s=k20260515; t=1794145432;
+	bh=jyyfi9t7z31wdkTHmBUQ+fMjVugiO0ZSiqAAX6XBmWo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=KmEm1nene8y5H8YorJ2KRg5kGano5wehoYWehx59XQwh6nbfg+wLpWI7ykKJHGA8+
+	 XjEYFtlTep4KzIrl/MjDyEz8kia4Cdl8FSRZsHaYUs7Vlt9Wy352qd5zm60UUqI1EU
+	 ZqKNm118tao/pIyRIbuTnADUnfc8e8TiTNDLXlNkJvBUZEGbdEssLzLl4JNj5shYf1
+	 P9SOxvb91sxb3ZhDwaJ7tERKogQZt1oKWvxX/emZ2N9PDSauCMYM6k0nvkAdqvl4iA
+	 uGpm1+G36g1JcjJjXX2nwxqZMte2dIMLb+d8XrfCccAnrY/PgpV8XBbf+wPvW/y6Ac
+	 RKTADLvVCyGkg==
+Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
+	by traversing.sirena.org.uk (Postfix) with ESMTP id 10EB92C79254;
+	Sun, 08 Nov 2026 13:43:49 +0000 (GMT)
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261015130628.184279-1-clamor95@gmail.com>
+References: <20261015130628.184279-1-clamor95@gmail.com>
+Subject: Re: [PATCH v1 0/1] ASoC: dt-bindings: nvidia,tegra-audio:
+ Consolidate all codec support into a single schema
+Message-Id: <179406677464.3424803.4552675393907616069.b4-ty@b4>
+Date: Sat, 07 Nov 2026 15:52:54 +0000
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -55,70 +70,53 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261108-spi-dont-use-autosuspend-v1-11-3587b0183cbe@kernel.org>
-References: <20261108-spi-dont-use-autosuspend-v1-0-3587b0183cbe@kernel.org>
-In-Reply-To: <20261108-spi-dont-use-autosuspend-v1-0-3587b0183cbe@kernel.org>
-To: Vladimir Moravcevic <vmoravcevic@axiado.com>, 
- Tzu-Hao Wei <twei@axiado.com>, Swark Yang <syang@axiado.com>, 
- Prasad Bolisetty <pbolisetty@axiado.com>, Mark Brown <broonie@kernel.org>, 
- Karthikeyan Mitran <kmitran@axiado.com>, 
- Alain Volmat <alain.volmat@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Michal Simek <michal.simek@amd.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Heiko Stuebner <heiko@sntech.de>, Jyan Chou <jyanchou@realtek.com>, 
- Yu-Chun Lin <eleanor.lin@realtek.com>, 
- Laxman Dewangan <ldewangan@nvidia.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-tegra@vger.kernel.org, Joshua Crofts <crofts@kernel.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794140215; l=1182;
- i=crofts@kernel.org; s=20261015; h=from:subject:message-id;
- bh=8JBQ4IcPEGwBD1QITLActHWZFpnabtrNZR/DykpAoss=;
- b=DwG+Igz5rwcKr2H2vQkzimZS8cgXmgDiMkHh4/f5yqxsMm/phmaTniGQH06bGPP7QMM/kq/WT
- BJKXCJ8NUw7DH0kns8hsHuGZwDqFvU0GN7mU+1NSSDUJ/14/p33mCf1
-X-Developer-Key: i=crofts@kernel.org; a=ed25519;
- pk=RTDOoVwgeL4oFdASj9U+cxJuIjXuXk73zkjnGOJKbEo=
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1608; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=RfJx6lDOMYyTez8kNouHxAYi+GWa9mMB09aKjLXIHII=;
+ b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLI+1ExoXDHtyaVVrSsXWZ27yHzj/fWsE7G8OdZRR4pNJ
+ SXPr+lR7ShlYRDjYpAVU2SJy+J+WV/yeg3fwYVtMHNYmUCGMHBxCsBEJOcxMjxtvfr0zYHl2U9l
+ BUuS+aa//X6yYX7o/F3rtMRvu3o6afAx/LNaqvJ7YeOSDosOI6lD7uwBt9kDltxuyGZOyyn9ftb
+ KjRsA
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Since commit d1706f9da9f4 ("PM: runtime: call pm_runtime_dont_use_autosuspend() on reinit()"),
-driver core is now responsible for undoing any
-pm_runtime_use_autosuspend() calls on driver exit.
+On Thu, 15 Oct 2026 16:06:27 +0300, Svyatoslav Ryhel wrote:
+> ASoC: dt-bindings: nvidia,tegra-audio: Consolidate all codec support into a single schema
+> 
+> The number of codecs supported by the NVIDIA Tegra audio complex is
+> increasing, which leads to an increasing number of bindings with minimal
+> changes. The main differences between codecs are the compatible strings
+> and possible pin configurations. With the introduction of auxiliary
+> devices, a definitive description of possible pin configurations becomes
+> nearly impossible.
+> 
+> [...]
 
-Remove the redundant function calls.
+Applied to
 
-Signed-off-by: Joshua Crofts <crofts@kernel.org>
----
- drivers/spi/spi-tegra210-quad.c | 2 --
- 1 file changed, 2 deletions(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.5
 
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index d8cca3aa276b..5178cf7eca68 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -2185,7 +2185,6 @@ static int tegra_qspi_probe(struct platform_device *pdev)
- exit_destroy_wq:
- 	destroy_workqueue(tqspi->wq);
- exit_pm_disable:
--	pm_runtime_dont_use_autosuspend(&pdev->dev);
- 	pm_runtime_force_suspend(&pdev->dev);
- 	tegra_qspi_deinit_dma(tqspi);
- 	return ret;
-@@ -2205,7 +2204,6 @@ static void tegra_qspi_remove(struct platform_device *pdev)
- 	spi_unregister_controller(host);
- 	free_irq(tqspi->irq, tqspi);
- 	destroy_workqueue(tqspi->wq);
--	pm_runtime_dont_use_autosuspend(&pdev->dev);
- 	pm_runtime_force_suspend(&pdev->dev);
- 	tegra_qspi_deinit_dma(tqspi);
- }
+Thanks!
 
--- 
-2.56.0
+[1/1] ASoC: dt-bindings: nvidia,tegra-audio: Consolidate all codec support into a single schema
+      https://git.kernel.org/broonie/sound/c/ad6111b192c5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
