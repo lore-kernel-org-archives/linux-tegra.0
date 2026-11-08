@@ -1,79 +1,80 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794114416;
-	b=yT3noetZcfDaehYt/deuMBw7+gFpBdEueLAGPPsgNzx/xLASL+XCdFjkoDJdQr2BdHy2
-	 PsdsS2pBah8uNr/FxO4s7DT+24JRIJrCwkxjrocPF+/4J1ZToxmmD1ndY2qoTIXYwffVn
-	 D0u8qjKfNqQST6Tq1A9hKup6eOsxtie32pwtOeJu4d9dqDpT1uzFpd7PQWqjHSlpLX3lE
-	 G3/mB5bj2EGSdjd7FxJ84W7xF6yXmgzYALMDMO7Pmk0NOo9b90IlY9KolIuIUBNPsu3LW
-	 329n7rEVZkQpGazrDiVu90Vb+QBVQewOPodeceG9TbKXIDLVRJST66HqsrGGub5aKJg==
+	t=1794115308;
+	b=dDyrlSYMkgP2E7BR+VUwF5vCRErSHHrMlLkYixIZ8mw6BqxvHoz6N7X6+Urb5QPPma5e
+	 irxq/Sr71IQQMktv1PMyG9S2HV3Vuk4T4DNVGLKzsxJu19jhSSrcexDBdjvosxzuXTo5o
+	 QdR/DjIMibJLirlcsfakjwZdpAfZ2d5igFXue2wqTgOreqRvxFiSDbmGPaMA5fl/TE6w4
+	 NAXfdz8JSP26wANgRR+erPQNBxhKWIQQ15Br8DPAdvBe+Lh73wJ/n2EuPRal8yZM9JatU
+	 C01caURnCwvlDoI9ubRiX2HP5HkD7t7invzVkDczx4PlQPIRBuxmIVvmnZXH8pmuRPw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794114416;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=GcD4B/NC+LPFa4i7abrIGM3Q2OUWv45Xz+W+4d/g96Q=;
-	b=a+VbGJGy8l2ttrbD/Ks/97S8hj5bYSCtINPpmd50VPDewZr5PWsW5IQNIzh6S+W8C0l3
-	 0INcyvc01EgLqyRnoDV6Qip3yb7OOVs2/8chkmmsJiVKBsiKysCKox/juMHT0VfI4FSPa
-	 CsfK5YPcG9mBENQHzwpDgviNIRNZ9NetIE6kp055yCNZVrrZ7A1T+3JMmFhR9AA+ELWbH
-	 gi4LMul9qEO/a2wK8FXuiTe+n7KvXgOBwnkhY87MLVACISuKC4iJMVps3MOYNsUlYlM5c
-	 ZHJEojHOfoLpL6D22fVKA1gU6Gnp9MDSPFsNOXD/aGBsfS041iJjE+t7nlTzWOLIXxA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794115308;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=dFRh1RIDMrDysy0Y8CMBpFk0XYpF7u7gwkMGgMDzy6I=;
+	b=xYjVWrg8wsM2lOlZC6UakZ/DtdSnTch78mefEEd7xXwTTw6wvkbCFYaIPRnDn/rjyzi7
+	 vhj+BlH5ebTotBK39tWn03GS5Un3spmrrAbCFqVHy1V7uBOcoW1vx6M++r9cEZGBpx6vA
+	 IONn+50ktv9vOFGUTTc1TdecqtSt25bbrecEIvkjX313sHeYKJ1/AX7/5cL7EzL9KjGqn
+	 B4CN3FEAFmv7uYRvlcMZd5/HfPEAMq6y4Z+T4VhHWyn7AokFYV3H0D6U6bveeb4894vys
+	 ycFbm7SSZsb7XL2EKkl462mX+CId+y6glijlIThxwu/7avoO6FEHsP1UN0O57kn4WRQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n3lOJzt1;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iFc9nXjA;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F07F606A31A;
-	Sun,  8 Nov 2026 05:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8E6606A31A;
+	Sun,  8 Nov 2026 05:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n3lOJzt1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iFc9nXjA
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794114416;
-	b=vHFcTRlLO8qvcS7kc1A2Uqh1gbeQ0U4aTjyUp9VFXdPKXZYDAGJyqppGRQZLCMLjC9jZ
-	 y5In0hX43KhjXImlRHoZmsgrQO4Aqz/HkMYhl0t9vEpgMr40h7Nv2M9wfYc7LXg6PClyU
-	 AG5BH2vgKdzotMJJ5iBvZkDsDXg2ukfa9NX5WTORnBxAXpdcx1/2yXXAbCZHPHhisRclU
-	 lKlK/wmqws0v2q8jywq3y/LeeF1JQ7Hu2ZYw9Ls2IG0m25chGQFQqdcgx/2xBvB6eTGwA
-	 BIzMe2p4gdXv8zyrbKSmua16yihsKuGEUnOG+DMfjVc78AHlx/+HZM59pdoS0f+Nw8Q==
+	t=1794115307;
+	b=J/FSpwGIEpF6Twig2bx35fk8AN2xHKalbG1BLG/Su7+3aV39byur2CznBAWcCJDEFMbc
+	 2JluhK8M7BuwMGFHKZLYN00TWZV2qohuFZvhodpS93Bb2AG9pwnQjmQ8U41Yx0g8AV9OD
+	 wGo/keYnD652YtxS4v/EZqvgU7oQPjUC1eGq6RJvWd5D4vErgrixVt+hp+zZu1xUqxQtM
+	 /vCAzCbAyj30Egeo0yGEGCwEs/k7OUR9oUITi3arR2b0rq6aXuUQ3QNEAVIl/vfVB95iG
+	 UlAbSC2Equ7xNoqddzPDEyHm8aVhknEnXKVYvLzq71eYcJ1cYveBBhwtoAZ5Ig7f5KA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794114416;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=GcD4B/NC+LPFa4i7abrIGM3Q2OUWv45Xz+W+4d/g96Q=;
-	b=wxxgrZ2NQbYzg+lTQwT9OXMpbDLF/jvYXWirmBfdyJDOLnZKMylZtu5v1we1b7k1ARYN
-	 l40qBT6+4mtwCOVsnMNBgYUPYva3YLYtIMYnaLPWKQeGJ9bVxoXV4hsoRIPM2EJX3qJqY
-	 9klnQsR0kkrVHHVRnTo7B/hxvA84ZCJ6B0k7HhKorpjV1r988cVC0Hv4h2NrLGPkcvbLc
-	 B2bYSLvoDjloxQ7xJ/uDMCSUplQsWOcPFpRSIBCk8xcd8WNBGvhknY0mE3osmD2DD/xTx
-	 HuAix2ElZk/o5vqOh/9LwtOf8V8nkCuTGFDBga/gNA8t0gmvhtzqBt+GKtNmSfxow2w==
+	c=relaxed/relaxed; t=1794115307;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=dFRh1RIDMrDysy0Y8CMBpFk0XYpF7u7gwkMGgMDzy6I=;
+	b=MCy2YggIG/kHY+FZVR21Nsk+jRsb0Y+fFmTuku8+o5YY+MlW2iWxsDKCnpm2Srka2bzB
+	 8M+j7hejh/1ZSQ7DAxslbuQ6n6VzGT9oCPOXvJFuPdHmIiynsDGsO43uU4M1S5ITowFBX
+	 a/XluiqtEHTVsWLKlczfucoCVQiaedQekZPHOUs86OxDqJ9x9CyY9p4NVIek/gir2NblZ
+	 McAMJr/uP3DVcCG0ubNdcoFx2LcySjWSYulIQ9Ujq79mPqTRdzJOK+nKgT0HGvPksnH7f
+	 /tNIAJMFVZ8tl5enB/yNEL5O662ZLl6NY29+8Q7In9Uml2/fUZjREgAU5BI93uXDDaQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 85D421F0089F;
-	Sun,  8 Nov 2026 05:06:55 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 3CF521F0089F;
+	Sun,  8 Nov 2026 05:21:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794114416;
-	bh=GcD4B/NC+LPFa4i7abrIGM3Q2OUWv45Xz+W+4d/g96Q=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=n3lOJzt1DhcnFWAcKq9WlrWuNyYvo44tVqVEa8zInf+rW+2RDVUXWqFhVNav0y/dU
-	 OqG6+fmu54V3HF4n7boBuCK90C1q+XIk8Dh+bijjf4LSRB+KlAyR8vSCLpmEBNv/L6
-	 OC1cFF8PNJKSw3gYehk3tylWQe3ha0kKywklP8W2evnj63LHTG9kkJQINvYKF4ywG5
-	 9lzlfBqagplQQ/j5nmuGNl8zMrUNKGGN3Y3PC8L4F3rDbDrTqBCdBi2IV6HzrqbmOu
-	 Go/L8f0RB+QLTOIAE0DMwFp9VHz7rqIzq0CsGZLiuFkTQS5GnQI/sE11yWNOVmtfJ5
-	 3zCIV3YELl2dg==
+	s=k20260515; t=1794115307;
+	bh=dFRh1RIDMrDysy0Y8CMBpFk0XYpF7u7gwkMGgMDzy6I=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=iFc9nXjASN6dWTwRiNKQkxQNiwswB+mxMvvKGr5EjDOotRLtKfEZtHta5STcTLsjC
+	 /+w0mpbxhtHIVUL2nZbUpCvF1121nDISyVGShXuljX1PqUtuyqIoxLd6gt93yyyPqz
+	 97A3Vu6VVaDAVVMh9rkP/ByAexH+TPhS3lmjm94EtgC3kr8pOBa9m07BpmxUVfKLR7
+	 O59NH9tEAPa8DWsdz6FksRBdiJ1KjxhmFRBg+i1DZNeyzzojqWcmysVdIeicAaQBAw
+	 czRHSBI0FOI1VLb9WeEhWMpgLofut3f2yCWtGlD1mQ1Xkyq+9c8OQP1XYqSOWsIgsO
+	 pTLb2IRJOuU1w==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id E69C447DF7;
-	Sun,  8 Nov 2026 05:06:54 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 8B50B47E19;
+	Sun,  8 Nov 2026 05:21:46 +0000 (UTC)
 From: DelaySystem via B4 Relay <devnull+DelaySystem.tubot.lat@kernel.org>
-Date: Sat, 07 Nov 2026 21:06:54 -0800
-Subject: [PATCH] staging: media: tegra-video: use dev_err_probe() in CSI/VI
- probe
+Subject: [PATCH RFC 0/2] Uninterruptible host1x syncpoint wait for Tegra
+ video capture
+Date: Sat, 07 Nov 2026 21:21:45 -0800
+Message-Id: <20261107-batch1-b1-host1x-wait-v1-0-8c8198adf600@tubot.lat>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -84,104 +85,80 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261107-batch1-s2-tegra-probe-v1-1-b4775e6437e5@tubot.lat>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQqDQAxA4atI1g1MBmqpVyldzE/UuFBJpqUg3
- r2jLr/FexsYq7BB12yg/BWTZa6gWwNpDPPAKLkavPMtkXtgDCWNhOax8KABV10iY879nenpsqM
- ItV2Ve/md39f7sn3ixKkcM9j3P5PoQpN5AAAA
-X-Change-ID: 20261107-batch1-s2-tegra-probe-ddf5e190d01b
-To: luca.ceresoli@bootlin.com, mchehab@kernel.org, skomatineni@nvidia.com, 
- thierry.reding@kernel.org, jonathanh@nvidia.com, gregkh@linuxfoundation.org
-Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, 
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWMQQrCMBAAv1L27EI3BSVeBR/gtfSQjatZD61ko
+ y2U/t2oxxmYWcEkqxgcmxWyvNV0GivQroGYwngX1GtlcK3bE7UH5FBiImTCNFmhBeegBbvIHXs
+ nnryH2j6z3HT5fXu4nE8w/KW9+CGxfI+wbR+zXgVRfgAAAA==
+X-Change-ID: 20261107-batch1-b1-host1x-wait-3cb3b92e9199
+To: mperttunen@nvidia.com, thierry.reding@kernel.org
+Cc: DelaySystem <DelaySystem@tubot.lat>, dri-devel@lists.freedesktop.org, 
+ luca.ceresoli@bootlin.com, gregkh@linuxfoundation.org, mchehab@kernel.org, 
  linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
- DelaySystem <DelaySystem@tubot.lat>
+ clamor95@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, 
+ skomatineni@nvidia.com, linux-media@vger.kernel.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2702;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2521;
  i=DelaySystem@tubot.lat; h=from:subject:message-id;
- bh=HadRakgfetZKfm5cBPmgCO0PbLmnRqlErwjrkQRxrOE=;
- b=owGbwMvMwCH2SNl4+SzWXm/G02pJDFkfmPMuPLl/SnLyI83elVuCq5deXp+gs9VSV9vGtVnsL
- 4/BnnCxjlIWBjEOBlkxRRYxGZ739fd14qyt5pyAmcPKBDKEgYtTACbyfSkjw+l9nf7nRc6vPrqd
- +YjtL/9w3+s3g+x+RqyTSO6x9N9R9ZLhf+bJ2cf/qnf7eF06clJtf9ulDZpRR6bd+WEUENDC+O2
- qJh8A
+ bh=DLUckEgyR5Ni9ibN8qkK+UlCenVeIET585HOCl21B1Q=;
+ b=owGbwMvMwCH2SNl4+SzWXm/G02pJDFkf2F7NNQoS2/EpUWuyo8xRho7U69tnTPt5MWzywW1CP
+ I3nOx56d5SyMIhxMMiKKbKIyfC8r7+vE2dtNecEzBxWJpAhDFycAjCReB5Ghiff5mdefPm1PF32
+ XOykyKOvPQ1mTncoVv3YpfrKSG7Tmi2MDDMUnRZG5FvaXOP9E22qyOG+WF/mlVzW1YWTv8rHXVd
+ 15gIA
 X-Developer-Key: i=DelaySystem@tubot.lat; a=openpgp;
  fpr=161C0CEF7FDF2C5E3B3A9CC8E22333A79A058D4B
 X-Endpoint-Received: by B4 Relay for DelaySystem@tubot.lat/default with
  auth_id=1447
 X-Original-From: DelaySystem <DelaySystem@tubot.lat>
 Reply-To: DelaySystem@tubot.lat
-Content-Transfer-Encoding: 7bit
-
-From: DelaySystem <DelaySystem@tubot.lat>
-
-Clock, populate and other probe-time resource lookups can return
--EPROBE_DEFER.  Convert the remaining open-coded dev_err() + return
-sites in tegra_csi_probe() and tegra_vi_probe() to dev_err_probe(),
-which suppresses the error message on deferral and records the deferral
-reason.  This matches the existing dev_err_probe() use in vip.c and in
-the regulator/MIPI paths of tegra_csi_probe() itself.
-
-No functional change other than defer handling.
 
 Signed-off-by: DelaySystem <DelaySystem@tubot.lat>
+The Tegra20 video capture path runs in a kernel thread and waits on
+host1x syncpoints with host1x_syncpt_wait(), which is unconditionally
+interruptible: any signal aborts the wait with -ERESTARTSYS. At high
+resolutions and framerates these spurious failures are common, so the
+driver wraps both waits in do/while retry loops, with a TODO asking
+for an uninterruptible variant of the wait.
+
+This series proposes one: patch 1 refactors host1x_syncpt_wait() so
+the interruptible behavior is preserved exactly for existing callers
+(including two DRM ioctls that are userspace ABI and must stay
+interruptible) and adds host1x_syncpt_wait_uninterruptible() for
+in-kernel users. Patch 2 converts the Tegra20 capture waits and drops
+the retry loops and the TODO.
+
+This is sent as an RFC because the API shape and the scope need
+agreement before a final series:
+
+1. Is a separate _uninterruptible() variant the shape host1x wants,
+   or would the maintainers prefer something else (for example an
+   internal helper with a flag, or a different name)?
+2. Tegra210's two waits (tegra210.c) have no retry loop: a spurious
+   -ERESTARTSYS currently fails the buffer. Should they convert to
+   the uninterruptible wait as well, or is failing on signal
+   intentional there?
+3. drivers/crypto/tegra/tegra-se-main.c also waits with
+   MAX_SCHEDULE_TIMEOUT; left out of scope here, but flagging in
+   case its maintainer wants the same treatment.
+
+drivers/staging/media/tegra-video with VIDEO_TEGRA=m, zero warnings).
+The tegra20.c change itself has no compile coverage here: that object
+builds only for 32-bit ARM (ARCH_TEGRA_2x_SOC/_3x_SOC) and no ARM
+toolchain is available, and there is no Tegra hardware for runtime
+testing. Hardware testing help is needed before any final series.
+
+Testing: compile-tested only (arm64: drivers/gpu/host1x and
 ---
- drivers/staging/media/tegra-video/csi.c |  6 ++----
- drivers/staging/media/tegra-video/vi.c  | 16 ++++++----------
- 2 files changed, 8 insertions(+), 14 deletions(-)
+DelaySystem (2):
+      gpu: host1x: add uninterruptible syncpoint wait variant
+      staging: media: tegra-video: uninterruptible syncpt wait for tegra20
 
-diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
-index 5a5fca378ae6..9ec04ad3a893 100644
---- a/drivers/staging/media/tegra-video/csi.c
-+++ b/drivers/staging/media/tegra-video/csi.c
-@@ -810,10 +810,8 @@ static int tegra_csi_probe(struct platform_device *pdev)
- 		csi->clks[i].id = csi->soc->clk_names[i];
- 
- 	ret = devm_clk_bulk_get(&pdev->dev, csi->soc->num_clks, csi->clks);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to get the clocks: %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "failed to get the clocks\n");
- 
- 	csi->vdd = devm_regulator_get(&pdev->dev, "avdd-dsi-csi");
- 	if (IS_ERR(csi->vdd))
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index d8c77d1290ef..34507a52016e 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -1875,11 +1875,9 @@ static int tegra_vi_probe(struct platform_device *pdev)
- 	vi->soc = of_device_get_match_data(&pdev->dev);
- 
- 	vi->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(vi->clk)) {
--		ret = PTR_ERR(vi->clk);
--		dev_err(&pdev->dev, "failed to get vi clock: %d\n", ret);
--		return ret;
--	}
-+	if (IS_ERR(vi->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(vi->clk),
-+				     "failed to get vi clock\n");
- 
- 	if (!pdev->dev.pm_domain) {
- 		ret = -ENOENT;
-@@ -1888,11 +1886,9 @@ static int tegra_vi_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = devm_of_platform_populate(&pdev->dev);
--	if (ret < 0) {
--		dev_err(&pdev->dev,
--			"failed to populate vi child device: %d\n", ret);
--		return ret;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to populate vi child device\n");
- 
- 	vi->dev = &pdev->dev;
- 	vi->ops = vi->soc->ops;
-
+ drivers/gpu/host1x/syncpt.c                 | 46 ++++++++++++++++++++++-------
+ drivers/staging/media/tegra-video/tegra20.c | 37 +++++++----------------
+ include/linux/host1x.h                      |  2 ++
+ 3 files changed, 48 insertions(+), 37 deletions(-)
 ---
 base-commit: fa4ad798f6f681031775266044ba1b0cf3c670bd
-change-id: 20261107-batch1-s2-tegra-probe-ddf5e190d01b
+change-id: 20261107-batch1-b1-host1x-wait-3cb3b92e9199
 
 Best regards,
 --  
