@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1794115308;
-	b=Fzv/e2H652TpxYd68UTxeVNoXYTyA3Go+NhaxkeS9vCmPmBQOl7MNK+W7rdX+j6PEC+O
-	 ESSeG8DdVslilShHPdu5Z7vklVkBFd8okhkgooctpWg+OMSMA31eBnPXHDd5LdmEi4B0t
-	 3xiv26KOVaAzhen1Wr7OnJT/LRjAPTYtHA53A2OiLix8fgYlaHIZUXmmaaERKSkfq9/2q
-	 Opu6/TrQJh2csb/b77ECZs4oOSj4rOcp0H9NEYYuOlUMybrpao7oxI0T7wqzd0sHOmdjl
-	 n+dxlnC2+lN/Ov8m6QoGT15oIDsPuqRlJpXdZNvigN5VnDFTW96ck8XI8TU58ysP0PQ==
+	b=g89lbqYHy+lzHaPacd6KmRw3s+aCYpME3L/Z9AOWwyhQ8UJbcyvCjkpesseqhA+NUhD+
+	 7tAKODM9l51nQVP3z9xdks+j/xNOAdmwGO6sZpU/5+H3O94KOxZlXeUnMtYkGcjiyUKE4
+	 BtMhjTUmOemRYI0KMT/jcfA/6BYWq1oZLlytlUQcntDFSh/Y7mfOBbPJVcp6EddVNEBna
+	 zyrliFmA8wpQMuLdB1TgrFkx0989Pm4R/hPCwWg1MED4aKHWAIWKFFJMbfwymmVvNKbWD
+	 t3K5s/RyufshIYw0OLNEQVJKa/4/TSd2LW331FfLOG50w1I87RX+bn6ictgbRKgAybw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794115308;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=FEb8JHVtvimMLPLFAiZU0pzm5OR0krTrH2WFlIwv7os=;
-	b=uMH/Fc4/eDuKW85JY0dlVCvSKV1m0gUnURNfPZ61LvX+7G49OtJ3cjV/KyoNtHAdBgg8
-	 EQd45l28f7dbCFYEVDds1FGo1LruzslVVxSAQ/nnflQLtzq3eBkK53MA5rUl5Fp/EuRf4
-	 4e2ADVfVabouARmny/+bStrt37S24JCKAo1Onoy1YLRxW5VHl2POXdFdIhKt1pB83EcKy
-	 g1UaBxSSpmQWeVWrojWc1eeUQd3GBbD5mMc0kkq3d5Pd0OJvywJqWQQLMNJk3gTwXmZ2P
-	 PtabXukbFblF1nQBJzDwXf/o5nUMeU7f6V4tUMjjKcY/ZZS47tC/K9kis4fYXA5mmQw==
+	bh=SoIh5IaJ5fx+BCvM2MKwezXGTpCbXK/6YMkiNnlkXjg=;
+	b=QnKaERJKBd4xTN3FTO2KiXk2sill866wVaritwQ9chlv0hwiFkB3TuNfJXOkGHqYvzzF
+	 2qdbg5xT/CpGHEh3Pgo9ISXcnWr9KZ3O9if95dEb5HjtbZ80S/EjLZFa1Aozu/roQCexL
+	 RpBNf5MIb4csdVBnQg7tiGBjb1ekgUhPwRWHPxVODhv1j9M4r/CsFXQy2lO5QTpX+QzVg
+	 BlUMHDce23HdWhX9942buAVcg44xmvZynyPkaKJbWutZ3BFAu3X4hpWSv/Teg5vcng6Qf
+	 LAG81mW2Sn/QF2CTsnRjIYBnzKOE6S55brFI48DhPBd33CUqI5kAtDkt7trJZLzXjZA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NKGxmDgm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xekfr9v3;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56327606A31C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B45606A31D;
 	Sun,  8 Nov 2026 05:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NKGxmDgm
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xekfr9v3
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1794115308;
-	b=fRX+VYuCHv/hBXPBznGyqMr2XmFW62uR63T/6Gg0DhSOYfIGPOucbmwWxjLs4hRXNBcZ
-	 mpjKhhwH6W8R9hNx8mmc8fLlK/9ykFqxvnwInOY6Ttfj6JB8bBI4334Qevjy5H9pnKRfV
-	 hR1Xv8NUg2D3ZfK1LiSCjZNJAsNA3TA+wZJYRiIHF1BxVEWfbMroQllgicqAe1+ulI+Xe
-	 C2/P+Ei74ayDswl0+jMnzlrOQYWpzex/ZrvBWU8ZqdtWTvtoVeGp3VJScHES0SpvVdgdn
-	 liYbIssnM1dALereC4XcYv00gx5mYnZlb0CD8lesT4UHio5tSTbG0/y0zufBl7R/6Fw==
+	b=pXjmPdeFiLDOvvAD+y6j2jC5krQqak0nS+uoHeYw02Bp6LHq0llW+K5s9t5iHGyvnVTb
+	 ymvNRTfnUf0xAiCCZfHdA3geB54kh6iHteIkud2M8ZmKRkk4hljq0++fkMybkuQ6gsRtS
+	 uqO0mqbSHTAylDouxIDPZ7dLxPKyvz6tFOeZ4yeDRY0OEWlcr2tQGeh6RmeSxUy2qZiUc
+	 2/7qORHQaHIwAaC1hEkUtff2gHsKcfgZCcSRVwhBDthE8UsLQuA52RrLhoOz5jgnCkarT
+	 VKRToqkqW7EVVXWuKSy5At4jtfMbx6PlJFshbEiFqEZcaH9Yyia8jehjD3YQqp08B1A==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1794115308;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=FEb8JHVtvimMLPLFAiZU0pzm5OR0krTrH2WFlIwv7os=;
-	b=j17yisY3rzCJX1+7ib9bKElFZ9J3VsEVoAd05d4lLmHA6/iwYiqPYfavuDGuSv/dHkBH
-	 Qqgtv19ktISj28+4LjhuyWsRBpiqwy596wBX52h5dshmbk+lLP+aXARQJsR7ldaWDKN3q
-	 n9tMYRPscPbyKl7ZXkkWuWsQIXWqgwQrmzeysC3FBn/FDUeX/IWygL/ZU8+x/vYJkejZ+
-	 zwp5VYVCXL+aKHUkx00KGZM+8t8HO+Z4F3ieuAT/HRTSV8Ln+c8+L4Z2T/7zQMs4Xfmyh
-	 6cQ/8hDrixaoiVb2Eecf2DCyXILn0QwKOicMhGUy/kQQBX0EZiHEoAQktHyrdSxs2Zw==
+	bh=SoIh5IaJ5fx+BCvM2MKwezXGTpCbXK/6YMkiNnlkXjg=;
+	b=cyGCOdGv8aBwM3sLwEfNBkr5Z9AdV+pabUcWFzNnhjHlMLsJQs4gJbPUJK5DVdDpkcIB
+	 LbLw1vuhsRzzPI6Rrq6cCjIl5k+ITEXBO08QZ+CRmebG+1EXeRnPC38Kaf/MNHNAGIKeP
+	 YiTOlXoTxBhPdVb/9BtNW42ig8lP0Xi1mxdD+28Dh6gV3nKfzeBxm8sHhzxkangfXYTFB
+	 hIv9MuC9P822XjWMOoJotSp3BW7nB+6m7P0gTrWHLYKvHR5+EA8//Vv8SOm8E+SJlc28O
+	 AcsYOWhkZc4jQRlHw7kv/ezqEAyyh4ItWv75B/2aCO4Mo4/s0uXke+A0oVKBVOzH3MQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 429881F008A1;
+	by smtp.kernel.org (Postfix) with ESMTPS id 48A481F008A2;
 	Sun,  8 Nov 2026 05:21:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1794115308;
-	bh=FEb8JHVtvimMLPLFAiZU0pzm5OR0krTrH2WFlIwv7os=;
+	bh=SoIh5IaJ5fx+BCvM2MKwezXGTpCbXK/6YMkiNnlkXjg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=NKGxmDgmM24KQ4mg5HJ8UoQoldF9pqFNmSoBZq1HgiTT8hAkqjpsTbyZmNwY5o9M/
-	 6NZtn12LpwxtCkQ1f+vb6v3a3hdoIEShr9KwqMJxk2eG3FcD0vlgO7je7nY/AupqHH
-	 YfwkPnIe+RPUfcwybScp60KaZOUpGobNZbecCgkbQd7EN3xHFJ81eDROJrW9APdFt2
-	 t+btfWsZmHHuBHQtRXtb1NYDeNjVpi2+gb+6ukPRl4do5MK9+qcSFYiRy/7o59GrT1
-	 ZA5KTX0F6cUx14mWWsMaxK8tahmVyzAUUsWqSCr8VYEULn9cQpTdKS2EvLQGACo8rC
-	 4mRa/rWOSA3rQ==
+	b=Xekfr9v3qAfIpCpGJnv9VlsH/hJ5haZuB9kErQPFPo2lt078AOyZXgTqZw9hoafGs
+	 J5BQwIjv021SqZO0hFIjiFfYJiTdwxjpDn2ezsALj6FWJpGISwQX6eKI4/n7swpNN4
+	 XVMsa8ydANSBeMTzinC2FKp/vsu7WQHhKS8u1h4alYQQfaH1fgqrPD9pViSrXp5PC+
+	 cL9L6p4lq5sMMglFJjUANAsDBcwNOVZx8tanABoJ7zz2pNiav6eQ3iFmlgcUM+HlyF
+	 SyTkZM9JcreOP++VDxp9mjgKxT0BFnkNnuD0pg7Gf0jMM90AlmRc3JyFQ3DGgCfHos
+	 10uiJZ5duHw3w==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A102947E16;
+	by lkml.kernel.org (Postfix) with ESMTP id B355947E1D;
 	Sun,  8 Nov 2026 05:21:46 +0000 (UTC)
 From: DelaySystem via B4 Relay <devnull+DelaySystem.tubot.lat@kernel.org>
-Date: Sat, 07 Nov 2026 21:21:46 -0800
-Subject: [PATCH RFC 1/2] gpu: host1x: add uninterruptible syncpoint wait
- variant
+Date: Sat, 07 Nov 2026 21:21:47 -0800
+Subject: [PATCH RFC 2/2] staging: media: tegra-video: uninterruptible
+ syncpt wait for tegra20
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261107-batch1-b1-host1x-wait-v1-1-8c8198adf600@tubot.lat>
+Message-Id: <20261107-batch1-b1-host1x-wait-v1-2-8c8198adf600@tubot.lat>
 References: <20261107-batch1-b1-host1x-wait-v1-0-8c8198adf600@tubot.lat>
 In-Reply-To: <20261107-batch1-b1-host1x-wait-v1-0-8c8198adf600@tubot.lat>
 To: mperttunen@nvidia.com, thierry.reding@kernel.org
@@ -94,13 +94,13 @@ Cc: DelaySystem <DelaySystem@tubot.lat>, dri-devel@lists.freedesktop.org,
  clamor95@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, 
  skomatineni@nvidia.com, linux-media@vger.kernel.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4248;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3090;
  i=DelaySystem@tubot.lat; h=from:subject:message-id;
- bh=0A6QGb/AL7pj5kvHCFetL7bFYrncJD8MkYGrpSZhLV0=;
- b=owGbwMvMwCH2SNl4+SzWXm/G02pJDFkf2F4ZHJkuuW+B8QuxGyZJ9+Y4a591z9NRsrfIv9TD6
- bz5Y8imjlIWBjEOBlkxRRYxGZ739fd14qyt5pyAmcPKBDKEgYtTACYSXsXwP+D8P60Awb97bkVK
- SHBOmi/WXS3W89113sKp/ZO5Sn8Yv2P4Z2NtVFQTOEnSfq/lN72OuPWTcmc7JHnd7eVdW1raXBr
- ICwA=
+ bh=7uslf2XS4oy14/GfacExPmou0Ikg+kCKP6aBJT8Gwy0=;
+ b=owGbwMvMwCH2SNl4+SzWXm/G02pJDFkf2F5ZZzAysWlkRNotNl89g+nGy8TPGo7er+YqdjzIv
+ +Oh+VCoo5SFQYyDQVZMkUVMhud9/X2dOGurOSdg5rAygQxh4OIUgIm0XGb4X/4spIKP18/ewqGm
+ 3nj26Vd2WyQ+d7CuiAg46yLsGbbCl+F/pXpCn+AUJ89QoWsRWSrfDBzd10m9j3WaZuyYVPFogxw
+ 3AA==
 X-Developer-Key: i=DelaySystem@tubot.lat; a=openpgp;
  fpr=161C0CEF7FDF2C5E3B3A9CC8E22333A79A058D4B
 X-Endpoint-Received: by B4 Relay for DelaySystem@tubot.lat/default with
@@ -111,110 +111,79 @@ Content-Transfer-Encoding: 7bit
 
 From: DelaySystem <DelaySystem@tubot.lat>
 
-host1x_syncpt_wait() is unconditionally interruptible: any signal
-aborts the wait with -ERESTARTSYS.  Kernel threads that wait on
-syncpoints, such as the Tegra video capture threads, then need
-retry loops to survive spurious wakeups.
+The Tegra20 capture path runs in a kernel thread and retries
+host1x_syncpt_wait() in a do/while loop to survive the -ERESTARTSYS
+its unconditionally interruptible wait returns spuriously at high
+resolutions and framerates.
 
-Refactor the implementation into __host1x_syncpt_wait() with an
-interruptible flag, keep host1x_syncpt_wait() behavior-identical for
-its existing callers (including two DRM ioctls that must stay
-interruptible), and add host1x_syncpt_wait_uninterruptible() for
-in-kernel users that must not fail spuriously.  The wait stays
-bounded by the caller's timeout in both cases.
+Now that host1x provides host1x_syncpt_wait_uninterruptible(), use it
+for both the frame-start and MW-ACK waits and drop the retry loops,
+fulfilling the TODO above the frame-start wait.  Timeouts still fail
+the capture as before; only the spurious signal failures go away.
 
 Signed-off-by: DelaySystem <DelaySystem@tubot.lat>
 ---
- drivers/gpu/host1x/syncpt.c | 46 +++++++++++++++++++++++++++++++++++----------
- include/linux/host1x.h      |  2 ++
- 2 files changed, 38 insertions(+), 10 deletions(-)
+ drivers/staging/media/tegra-video/tegra20.c | 37 ++++++++---------------------
+ 1 file changed, 10 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 5cc3cd46d321..393f50d3be33 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -215,15 +215,8 @@ int host1x_syncpt_incr(struct host1x_syncpt *sp)
- }
- EXPORT_SYMBOL(host1x_syncpt_incr);
+diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
+index cdadff98eae7..e618d1722841 100644
+--- a/drivers/staging/media/tegra-video/tegra20.c
++++ b/drivers/staging/media/tegra-video/tegra20.c
+@@ -589,28 +589,14 @@ static int tegra20_channel_capture_frame(struct tegra_vi_channel *chan,
+ 				  CSI_PP_START_MARKER_FRAME_MAX(0xf) |
+ 				  CSI_PP_SINGLE_SHOT | CSI_PP_ENABLE);
  
--/**
-- * host1x_syncpt_wait() - wait for a syncpoint to reach a given value
-- * @sp: host1x syncpoint
-- * @thresh: threshold
-- * @timeout: maximum time to wait for the syncpoint to reach the given value
-- * @value: return location for the syncpoint value
-- */
--int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
--		       u32 *value)
-+static int __host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh,
-+				long timeout, u32 *value, bool intr)
- {
- 	struct dma_fence *fence;
- 	long wait_err;
-@@ -246,7 +239,7 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
- 	if (IS_ERR(fence))
- 		return PTR_ERR(fence);
+-		/*
+-		 * ERESTARTSYS workaround for syncpoints is used because host1x_syncpt_wait
+-		 * is unconditionally interruptible. This is not an issue with single shots
+-		 * or low resolution capture, but -ERESTARTSYS occurs quite often with high
+-		 * resolution or high framerate captures and if not addressed here will
+-		 * cause capture to fail entirely.
+-		 *
+-		 * TODO: once uninterruptible version of host1x_syncpt_wait is available,
+-		 * host1x_syncpt_wait should be swapped and ERESTARTSYS workaround can be
+-		 * removed.
+-		 */
+-
+ 		val = host1x_syncpt_read(chan->frame_start_sp[0]);
+-		do {
+-			err = host1x_syncpt_wait(chan->frame_start_sp[0],
+-						 val + 1, TEGRA_VI_SYNCPT_WAIT_TIMEOUT, NULL);
+-		} while (err == -ERESTARTSYS);
+-
++		err = host1x_syncpt_wait_uninterruptible(chan->frame_start_sp[0],
++							 val + 1,
++							 TEGRA_VI_SYNCPT_WAIT_TIMEOUT,
++							 NULL);
+ 		if (err) {
+-			if (err != -ERESTARTSYS)
+-				dev_err_ratelimited(&chan->video.dev,
+-						    "frame start syncpt timeout: %d\n", err);
++			dev_err_ratelimited(&chan->video.dev,
++					    "frame start syncpt timeout: %d\n", err);
  
--	wait_err = dma_fence_wait_timeout(fence, true, timeout);
-+	wait_err = dma_fence_wait_timeout(fence, intr, timeout);
- 	if (wait_err == 0)
- 		host1x_fence_cancel(fence);
- 	dma_fence_put(fence);
-@@ -271,8 +264,41 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
- 		return 0;
+ 			tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_PP_COMMAND(port),
+ 					  CSI_PP_START_MARKER_FRAME_MAX(0xf) | CSI_PP_RESET);
+@@ -625,14 +611,11 @@ static int tegra20_channel_capture_frame(struct tegra_vi_channel *chan,
  	}
- }
-+
-+/**
-+ * host1x_syncpt_wait() - wait for a syncpoint to reach a given value
-+ * @sp: host1x syncpoint
-+ * @thresh: threshold
-+ * @timeout: maximum time to wait for the syncpoint to reach the given value
-+ * @value: return location for the syncpoint value
-+ *
-+ * The wait is interruptible: a signal aborts it with -ERESTARTSYS.
-+ */
-+int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
-+		       u32 *value)
-+{
-+	return __host1x_syncpt_wait(sp, thresh, timeout, value, true);
-+}
- EXPORT_SYMBOL(host1x_syncpt_wait);
  
-+/**
-+ * host1x_syncpt_wait_uninterruptible() - wait for a syncpoint, uninterruptibly
-+ * @sp: host1x syncpoint
-+ * @thresh: threshold
-+ * @timeout: maximum time to wait for the syncpoint to reach the given value
-+ * @value: return location for the syncpoint value
-+ *
-+ * Like host1x_syncpt_wait(), but signals do not abort the wait. For use by
-+ * kernel threads that must not fail spuriously with -ERESTARTSYS, such as
-+ * the Tegra video capture threads. The wait is still bounded by @timeout.
-+ */
-+int host1x_syncpt_wait_uninterruptible(struct host1x_syncpt *sp, u32 thresh,
-+				       long timeout, u32 *value)
-+{
-+	return __host1x_syncpt_wait(sp, thresh, timeout, value, false);
-+}
-+EXPORT_SYMBOL(host1x_syncpt_wait_uninterruptible);
-+
- /*
-  * Returns true if syncpoint is expired, false if we may need to wait
-  */
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index e7ba601b2afb..40d4024ca04e 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -221,6 +221,8 @@ int host1x_syncpt_incr(struct host1x_syncpt *sp);
- u32 host1x_syncpt_incr_max(struct host1x_syncpt *sp, u32 incrs);
- int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
- 		       u32 *value);
-+int host1x_syncpt_wait_uninterruptible(struct host1x_syncpt *sp, u32 thresh,
-+				       long timeout, u32 *value);
- struct host1x_syncpt *host1x_syncpt_request(struct host1x_client *client,
- 					    unsigned long flags);
- void host1x_syncpt_put(struct host1x_syncpt *sp);
+ 	val = host1x_syncpt_read(chan->mw_ack_sp[0]);
+-	do {
+-		err = host1x_syncpt_wait(chan->mw_ack_sp[0], val + 1,
+-					 TEGRA_VI_SYNCPT_WAIT_TIMEOUT, NULL);
+-	} while (err == -ERESTARTSYS);
+-
++	err = host1x_syncpt_wait_uninterruptible(chan->mw_ack_sp[0], val + 1,
++						 TEGRA_VI_SYNCPT_WAIT_TIMEOUT,
++						 NULL);
+ 	if (err) {
+-		if (err != -ERESTARTSYS)
+-			dev_err_ratelimited(&chan->video.dev, "mw ack syncpt timeout: %d\n", err);
++		dev_err_ratelimited(&chan->video.dev, "mw ack syncpt timeout: %d\n", err);
+ 		goto exit;
+ 	}
+ 
 
 -- 
 2.34.1
