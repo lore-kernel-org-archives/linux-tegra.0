@@ -1,47 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.197.31.2
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794130879;
-	b=uX0xcGrnwhLFfJB1/uEBYUTGEBfKBLH7vyK1SeJuddho0plz3e73rdGdSVvlvaQbKaGE
-	 vZHcEhD8CoF8mbvb+91SqOnasfgf1akSRJiTiTWw5XdbVDsQqv/3dx2MN+rZ9pINg0fyp
-	 tIH/dUfkzZI2cnXoS416OaJTAwC5TUlM74MBCuEhn0TVFPdJYHtdI3vNM/8e3JawDl/9D
-	 LuaJqigFDG0f28kmr9HUvA1JbbX6lqmNFnrR4rMH+OrErD7gBgEWkO1DslS2m2e95bPA/
-	 RP0j+5MpdHQqeOV6jHttoW8Lx08Bara6G45/t/QDF2FyE8M86ke1C4gaLEY7Z4rwEhA==
+	t=1794130895;
+	b=TWFHVgMYzWbKyz9f6LpKCrzvyMW1CQJC9cyGiBMxcp0K2Unpu3F8+i3yZIu1bpuJyvuz
+	 A9QV9xHDabiSGaCJkbPgob8xSGbrxAoFtPoiCemr7nN9jGz+by0xv8ppbklvgEsQe/ou1
+	 xuztIR6lkiCOBGe+6wgPv3H/7qzf3C5HNvhoWJgCm2MoDiVn5n77trs/UzBwmF8eCynla
+	 l3KG9+E5BmGoDCwrqcFcBv5hI/4VNUG5/n5gFiN2K12EyG001PZC8b2eJQAzbTRKEjg3l
+	 2ycdl8KhE9jatRK9WeW3HSq3bTqsLcGFYqUCO7KY7zzHr+/JFXjZ1JLzy4WCuiRWGAA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794130879;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794130895;
 	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
 	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
 	 X-CM-SenderInfo;
-	bh=kVpUQkMwZfIP9qRjz990+OsHZvfaXMOvnj2vL1S7urw=;
-	b=q8fZnC/vBiJzS43Ryuusr3jZp5C6Ar6I3nX66uuAxB69fPfuuStW0tVu+x0XLqzEVKVv
-	 rQaue6BYHwLifXutT0Warb1QFgW15/KHj0BHjZ2lc8VT7KvXB0ClWMYfHA6P9C3FcuofQ
-	 UdPLapWdgEX4t3TZcQAMh0AszT+nD2v6VisETMQtaL4Eztg5fjoyX//FDfqL8629U6AXU
-	 j69ofzGK1UGkb9MgMiSNxjtCOwiiBPvB3aWE71HkXi+uHDndMPz1bbCoGNrxyldrt69S3
-	 bToSMnttvbP+tWna5EjnEbLZKSlkCmdw501aWChpAuR4dDfMbdA7dKRaoyL7jbqrnaA==
+	bh=Ets5AMQcRfl5b/NAbc3/Lx4RxTaTcnOjaKk4QHCRuPI=;
+	b=oDTkyO954xur3SHsggQcF3KHEbKy2pgScEs3R1ZFzSqT47RTDKctGyLS1M/7OjbqaFfj
+	 EQnjMcodcNsibELuxBqitKTZe/nw8RjaUKTk+PsME7OMPLESthrlbJo9pUikTfAweLZy0
+	 Q78GKEOaGmlkjX2QHOAtxMgcEAUWYviMajKpHcYTUpqUfiEHHxLOSzU/qD1w8RPZpVDRY
+	 tAyJzkt2MsogDPnCQoxZo0wP+bXYNmqn5H29oOgSnPhIIYfazHBRJuamNq0O5tpHd30CX
+	 qPQ/rVvS/WzlneRdm9vwUnAurL6cE3GUkVS2xPtGreKe3CKXQ8Hjy0z9FHqIK5vdXWg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=163.com;
 	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=Bef4cjIF;
-	arc=none smtp.remote-ip=220.197.31.3
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=gIbOUUd9;
+	arc=none smtp.remote-ip=220.197.31.2
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6253606A322;
-	Sun,  8 Nov 2026 09:41:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B6253606A322
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAEF606A320;
+	Sun,  8 Nov 2026 09:41:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6DAEF606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=Bef4cjIF
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=gIbOUUd9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=kV
-	pUQkMwZfIP9qRjz990+OsHZvfaXMOvnj2vL1S7urw=; b=Bef4cjIFKf5eOJNVmS
-	Pno0ImnXznFHAnnLInN7wt5rcJB3+174hujwd1dRlQWU0WHn5bayrqHV+VPPzuTz
-	EvMVLXK9vT97RbEewB/yBO0sKinEXJ/VicxWsEshYZpjJhNggWzhoRgypulJWWFS
-	NzSq1GyJpS2jyhvuadYDxiz5Y=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Et
+	s5AMQcRfl5b/NAbc3/Lx4RxTaTcnOjaKk4QHCRuPI=; b=gIbOUUd9hm04HxVRnd
+	H/X5FB4oznXuyaddcmMwPlyrNEmhg4+lEE78b/SeJlhhkzwK9Lj2VspFw344mEiQ
+	vnr0CkiO9OdWf1PSXmfawCi6c4zEuZmt6HdgHQsha0kJMcMJYGlLDLpo7uxLRmJG
+	wOsmLzf2Ic0bN3GChXneEYlVA=
 Received: from Precision-7960.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCXz8OTQ_BquUg4GA--.62891S5;
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCXz8OTQ_BquUg4GA--.62891S4;
 	Sun, 08 Nov 2026 17:40:40 +0800 (CST)
 From: Hans Zhang <18255117159@163.com>
 To: bhelgaas@google.com,
@@ -57,9 +57,9 @@ Cc: robh@kernel.org,
 	linux-mediatek@lists.infradead.org,
 	linux-tegra@vger.kernel.org,
 	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v2 3/5] PCI: tegra264: Use pcie_get_link_speed()
-Date: Sun,  8 Nov 2026 17:40:32 +0800
-Message-ID: <20261108094034.679945-4-18255117159@163.com>
+Subject: [PATCH v2 2/5] PCI: Convert remaining core pcie_link_speed[] users
+Date: Sun,  8 Nov 2026 17:40:31 +0800
+Message-ID: <20261108094034.679945-3-18255117159@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261108094034.679945-1-18255117159@163.com>
 References: <20261108094034.679945-1-18255117159@163.com>
@@ -73,46 +73,63 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCXz8OTQ_BquUg4GA--.62891S5
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uw4UCF4ftF1xtF1kuw1kAFb_yoW8Gr4kpF
-	W3J3yIyF48XrW5uFW7Wa15Z3WYvFn8AFWUJ3sIg3s7ZF9rJrWDWa4YyrWftFWakwsFvr15
-	JF1YqF1Fka1avrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zKFAl9UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC6xnNcWrwQ5nwPAAA3C
+X-CM-TRANSID:_____wCXz8OTQ_BquUg4GA--.62891S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KF47ZFW8Xw1xuF47ury8Xwb_yoW8urW8pa
+	y3Cr4Fyr18Jry3Wrs5Z3WDWFyYq3ZIvrWjkrWkWas3XF17ArZxXFyay3yftryFvrZrCry3
+	AF1ayrW5Aa17JF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zZg4U5UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC6xjNcWrwQ5jwHwAA3h
 
-Tegra264 was added after pcie_get_link_speed() was introduced and still
-indexes pcie_link_speed[] directly.  Convert it to the helper so it does
-not depend on the array being exported and cannot go out of bounds on
-invalid speed values.
+Convert the remaining direct pcie_link_speed[] accesses in pci-sysfs.c,
+the __pcie_update_link_speed() inline helper, and pci_set_bus_speed() in
+probe.c to pcie_get_link_speed().  This includes the max_bus_speed
+lookup that was missed in v1.
 
 Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
- drivers/pci/controller/pcie-tegra264.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pci/pci-sysfs.c | 2 +-
+ drivers/pci/pci.h       | 2 +-
+ drivers/pci/probe.c     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-tegra264.c b/drivers/pci/controller/pcie-tegra264.c
-index c97576ab4a31..711b66287681 100644
---- a/drivers/pci/controller/pcie-tegra264.c
-+++ b/drivers/pci/controller/pcie-tegra264.c
-@@ -126,7 +126,7 @@ static void tegra264_pcie_icc_set(struct tegra264_pcie *pcie)
- 		width = FIELD_GET(PCI_EXP_LNKCAP_MLW, value);
- 	}
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index 6669e9ad5bd3..30db3349a44c 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -234,7 +234,7 @@ static ssize_t current_link_speed_show(struct device *dev,
+ 	if (err)
+ 		return -EINVAL;
  
--	value = Mbps_to_icc(width * PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]));
-+	value = Mbps_to_icc(width * PCIE_SPEED2MBS_ENC(pcie_get_link_speed(speed)));
+-	speed = pcie_link_speed[linkstat & PCI_EXP_LNKSTA_CLS];
++	speed = pcie_get_link_speed(FIELD_GET(PCI_EXP_LNKSTA_CLS, linkstat));
  
- 	/*
- 	 * We don't want to error out here because a boot-critical device
-@@ -266,8 +266,8 @@ static bool tegra264_pcie_link_up(struct tegra264_pcie *pcie,
+ 	return sysfs_emit(buf, "%s\n", pci_speed_string(speed));
+ }
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 77efa4c5c960..5441741bc330 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -692,7 +692,7 @@ static inline void __pcie_update_link_speed(struct pci_bus *bus,
+ 					    enum pcie_link_change_reason reason,
+ 					    u16 linksta, u16 linksta2)
+ {
+-	bus->cur_bus_speed = pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
++	bus->cur_bus_speed = pcie_get_link_speed(FIELD_GET(PCI_EXP_LNKSTA_CLS, linksta));
+ 	bus->flit_mode = (linksta2 & PCI_EXP_LNKSTA2_FLIT) ? 1 : 0;
  
- 	if (value & PCI_EXP_LNKSTA_DLLLA) {
- 		if (speed)
--			*speed = pcie_link_speed[FIELD_GET(PCI_EXP_LNKSTA_CLS,
--							   value)];
-+			*speed = pcie_get_link_speed(FIELD_GET(PCI_EXP_LNKSTA_CLS,
-+							       value));
+ 	trace_pcie_link_event(bus,
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 9a178e0e5f7f..d0283a8158f2 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -924,7 +924,7 @@ static void pci_set_bus_speed(struct pci_bus *bus)
+ 		u32 linkcap;
  
- 		return true;
+ 		pcie_capability_read_dword(bridge, PCI_EXP_LNKCAP, &linkcap);
+-		bus->max_bus_speed = pcie_link_speed[linkcap & PCI_EXP_LNKCAP_SLS];
++		bus->max_bus_speed = pcie_get_link_speed(FIELD_GET(PCI_EXP_LNKCAP_SLS, linkcap));
+ 
+ 		pcie_update_link_speed(bus, PCIE_ADD_BUS);
  	}
 -- 
 2.43.0
