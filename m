@@ -1,50 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794140222;
-	b=DTBFC3crb3cHABhBGZ3qsAtuZ/eoYOBvxlbAn5a9uDe/KiB6SrIpWdrWdc6UibPtcta6
-	 YKDtJ7SpaKcVI/gBncVxzfnCfAjPVz2OTO1kgk1EzAfhu4xy2TOtKlPzR8APazfKy6nF7
-	 6DgXqyhkMbmvtYISl1qwxGPtOUA2Z7LsG29T4EFeglCZV9igl4ecX0PudvItJ7dokAZCF
-	 CO1jzJZHHaNHpmGFUc4/6+EY6zXAmzPFncnunljT12NMEcOlS9IL2aATYheNZf5388tIm
-	 CghXoZJvqIkqWbR0bGUwPjTI/gfTyaX0DFe/1OSFTGx1eCzrOw/29Sb//9Rn7j63VBA==
+	t=1794140236;
+	b=eX/0J3jceUmerjlmQ1JdtQLLmNKgVuauT9GSssMShz0QnPsnIUFnyJ+UJToFPba7qKvw
+	 IoRO3vHJ7w3XczbaKPRxqxbPi477z4TgKWw7CWYbV9PYizVcFa5J9EJfOZdAV/OmJ2NQn
+	 oH6JXfrCo13oXxzv55BB69/RINJ5tQS26Iug9qoY2UQeY2b+U/8hGVtd+9u3mb1lEBlIg
+	 Cuhdz2ICha/s6p+c4dRFHQy//FBvu0dUTQkP5xRS9QaVAjrkIOsEzZod2euFBgKNJLLD7
+	 JWsYN82zEpUNGq2JwcWtW2Zh6C4x3Olm/6Mlecj5/iIX+TN/4di6ucdtAKWowLRbpqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794140222;
-	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=+QnPHIBmwdoJ1mg7wG97R78F4P6cWdZ4faiCfZ2d3bY=;
-	b=wHsssGbOWnouQsUO177Iuf4oByf7iYfpwJhLktBz/yVu6GtCULA5zt3EM+2ElkcfuOiR
-	 zRg4zIYfHXmpukjNXNK3WHck4Ua9IkIjfNtyaJdG3QXiooYWiU2ptOkdJC35n9KSffCkQ
-	 L4e4vrikidKNM+DbuaA2TaL94NfGq0ky3JXVIKAbLC+tZGCXhrCTfXu3QIWfY/DmKTlbJ
-	 fX+yyKnHfDOBu1rogu9HfV+uosLBP9S7MQxY9gjxO5HRnm8eDb3TfCkaPe/BKY9iMbbw8
-	 s7YNetFlUwNGLZpw9yjZnS9vMTbOVNqrbzyOfHBYOa3jel/3YaUoJxdNmG05fMQIiZQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794140236;
+	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=t0HhTPj4bzTBaikkJltYtx6Hu1FRWN4PirZ6ZWFxmvo=;
+	b=AWKucsRvUS20auNtSa/YAtNxSyHnHH9wvkXqPLGoPeMVm6ySv/zohTxoy8p/qlb4hZ5R
+	 cCaLKn9mW+fR6ZmYKmqZA1WZ8/XCsnX4uY2DmzCdvYg79Dk/5W483j19snuLQKprXNSAb
+	 EpAEQprXW2tBztmmclDuN+JjJ2QsgP4QA0ZPRKD1G6lqP2WVytSiIkX6SokXXRWTmCfx7
+	 rVZMgnqDO3UC0mfvYlVn6EnzaJ/77MrjRJEy+1CzWZBD1r1XuGa0omY7tIXsXZGmDvMml
+	 YNW6FDO/yTTLPlrDwIsNjLE0kfy4onHfIKItO8Qbc1i3x82F9+4NfFqdZDzDA8BAmrQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="JZgmf/U4";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xt6D6o3w;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE27606A31C;
-	Sun,  8 Nov 2026 12:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF919606A334;
+	Sun,  8 Nov 2026 12:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JZgmf/U4
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9394D1F0089F;
-	Sun,  8 Nov 2026 12:16:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xt6D6o3w
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6762E1F008A2;
+	Sun,  8 Nov 2026 12:17:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794140221;
-	bh=+QnPHIBmwdoJ1mg7wG97R78F4P6cWdZ4faiCfZ2d3bY=;
-	h=From:Subject:Date:To:Cc;
-	b=JZgmf/U4Z9wyKVlkorX0WlwOTO91gix93zMroEa6FXjVqmvIdO0rSRZr0fxVWcr1/
-	 MrKA2pu6TO7yhtHE9RxOdRTO5AL1OX0jZ2sKmj2jqVpNbVv1b43aOM06Y/DNSVBtO8
-	 Dm5xvAlS+YtWcI/EGhzzqlzzXpO5KjvwF//yolW87dMlkX903ueJqEUA4m3wHY6mNf
-	 vyTHlWOenWovV5E/sdhHUYGnOw+wCYC1SE6vaA5lIH8Ii70MBlacyyExYd3YfBeATX
-	 DRr07PUi7fAhGO8T+Yg3y4ggMSM60v2Vw4EEM5/dmzPywFmhoVGxr16F9bPQg2NBZv
-	 XmlK4BUNGNo6w==
+	s=k20260515; t=1794140235;
+	bh=t0HhTPj4bzTBaikkJltYtx6Hu1FRWN4PirZ6ZWFxmvo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=Xt6D6o3wwRmLzN1HgqrLJFG+iw7lbY42O4ANyK6/MQUzGsGtAMnfARTq9wTW8gmWx
+	 rQ2EqDfMXU7i8S8Yddd3QBeEf3pN90lGN9W9PEUvfuWn0j3qB3qsSwwDatNjHLyPvz
+	 HzB5cBousC4t6KlOklo4xmThMQOSPJg3sD91RLl94qwVBAyc8cxpxEfxEUx1pwwwsO
+	 ysXUyuEe1XGfCTMGw2OoD1jMSDB6HlMp5NcCI5C198YzdAAik/gKYvIC3ADb2JYRiI
+	 UzpvIDDI/Jtf0krhU7ItMYAN5FXib7fWfidwt45NB6LdLEg1Pnf/BPdwRBoYKkAE7P
+	 vYudWIe4dDHVw==
 From: Joshua Crofts <crofts@kernel.org>
-Subject: [PATCH 00/11] spi: remove redundant
+Date: Sun, 08 Nov 2026 13:16:49 +0100
+Subject: [PATCH 02/11] spi: cadence-quadspi: remove redundant
  pm_runtime_dont_use_autosuspend() calls
-Date: Sun, 08 Nov 2026 13:16:47 +0100
-Message-Id: <20261108-spi-dont-use-autosuspend-v1-0-3587b0183cbe@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -56,10 +55,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MMQ6DMAxA0asgz7VEEE0JV6k6hNopXpIoJhUS4
- u5EjG/4/wDlIqwwdwcU/otKig3m0cF39fHHKNQMQz9YY/oJNQtSihtWZfR1S1o1cyR0zr2WMdg
- nE0HLc+Eg+71+f87zAl3CFTZqAAAA
-X-Change-ID: 20261108-spi-dont-use-autosuspend-9997b4f65edd
+Message-Id: <20261108-spi-dont-use-autosuspend-v1-2-3587b0183cbe@kernel.org>
+References: <20261108-spi-dont-use-autosuspend-v1-0-3587b0183cbe@kernel.org>
+In-Reply-To: <20261108-spi-dont-use-autosuspend-v1-0-3587b0183cbe@kernel.org>
 To: Vladimir Moravcevic <vmoravcevic@axiado.com>, 
  Tzu-Hao Wei <twei@axiado.com>, Swark Yang <syang@axiado.com>, 
  Prasad Bolisetty <pbolisetty@axiado.com>, Mark Brown <broonie@kernel.org>, 
@@ -81,11 +79,11 @@ Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, 
  linux-tegra@vger.kernel.org, Joshua Crofts <crofts@kernel.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794140215; l=2214;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794140215; l=1162;
  i=crofts@kernel.org; s=20261015; h=from:subject:message-id;
- bh=LE9JAEK3uf/fTYpkCMzFmTQWpH/6qGCGHtNgMH5qPu0=;
- b=RPcJRMVGnrnJGMB1ZAmeSk2QRKr5GrfThl48m4h9ie56yEG6K6SvblDR3kPi5lJuxYr5MY0k6
- eaAn83VEbErAaMkMcr6mKQsFWEP7GT0wIpUCogUOVfocctLvl6Rhq2D
+ bh=uyKe4YBV0WQ4xjRxVeaEsXG0/WnAC3tiK57fwM2IAFg=;
+ b=93g0ybMATTAxNpyewzVSnIR92o5FRQQxSwuay4wOjBW1FQjHkbqT39CYxeIHluV2ZLyEZNY2D
+ SG1evYLXLYOD+B2LJyza+hd7pn1c0HFaiTfUHHvvDMNpDZ/Wc+rMECW
 X-Developer-Key: i=crofts@kernel.org; a=ed25519;
  pk=RTDOoVwgeL4oFdASj9U+cxJuIjXuXk73zkjnGOJKbEo=
 
@@ -95,44 +93,32 @@ pm_runtime_use_autosuspend() calls on driver exit.
 
 Remove the redundant function calls.
 
-NOTE: Some drivers in drivers/spi/ (fsl-lpspi, imx, nxp-fspi, omap2-mcspi,
-rpc-if) still keep their calls because they either rely on
-pm_runtime_dont_use_autosuspend() before pm_runtime_disable() to flush
-pending autosuspend delays and trigger synchronous runtime suspension,
-or operate on a parent device rather than the platform device itself.
-
 Signed-off-by: Joshua Crofts <crofts@kernel.org>
 ---
-Joshua Crofts (11):
-      spi: axiado: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: cadence-quadspi: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: cadence: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: stm32: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: stm32-qspi: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: zynqmp-gqspi: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: mtk-nor: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: orion: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: rockchip-sfc: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: rtk-nor: remove redundant pm_runtime_dont_use_autosuspend() calls
-      spi: tegra210-quad: remove redundant pm_runtime_dont_use_autosuspend() calls
-
- drivers/spi/spi-axiado.c          | 2 --
  drivers/spi/spi-cadence-quadspi.c | 2 --
- drivers/spi/spi-cadence.c         | 2 --
- drivers/spi/spi-mtk-nor.c         | 2 --
- drivers/spi/spi-orion.c           | 2 --
- drivers/spi/spi-rockchip-sfc.c    | 2 --
- drivers/spi/spi-rtk-nor.c         | 2 --
- drivers/spi/spi-stm32-qspi.c      | 2 --
- drivers/spi/spi-stm32.c           | 2 --
- drivers/spi/spi-tegra210-quad.c   | 2 --
- drivers/spi/spi-zynqmp-gqspi.c    | 2 --
- 11 files changed, 22 deletions(-)
----
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-change-id: 20261108-spi-dont-use-autosuspend-9997b4f65edd
+ 1 file changed, 2 deletions(-)
 
-Best regards,
+diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
+index 73ea51c41f95..a276745095e4 100644
+--- a/drivers/spi/spi-cadence-quadspi.c
++++ b/drivers/spi/spi-cadence-quadspi.c
+@@ -2001,7 +2001,6 @@ static int cqspi_probe(struct platform_device *pdev)
+ 	pm_runtime_disable(dev);
+ 	pm_runtime_set_suspended(dev);
+ 	pm_runtime_put_noidle(dev);
+-	pm_runtime_dont_use_autosuspend(dev);
+ 
+ 	cqspi_controller_enable(cqspi, 0);
+ disable_clks:
+@@ -2037,7 +2036,6 @@ static void cqspi_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+-	pm_runtime_dont_use_autosuspend(&pdev->dev);
+ }
+ 
+ static int cqspi_runtime_suspend(struct device *dev)
+
 -- 
-Joshua Crofts
+2.56.0
 
