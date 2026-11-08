@@ -1,64 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794145433;
-	b=dtSnB/zLUrBPIED6i8g2wJahF+20lwZiIhqzrziha321SWA06k5ZFoZI5wDrclfCqEbp
-	 NfUCm5GNupByb6cSR9ZRceqb0561CaDD6zI3482QTkVDlRqnJ5k8B/ExI9HdTw3NjfCqA
-	 121F5v+ChSvrXB7rcyE5PU9Bu3dWQfTOjAc1R53fVlH+cMb78jNwGFU5OpvmP0RXBY8Pe
-	 Z4jDI/aXIYpaqfsigwgCX1lXvSLADQ/SfWZccEb7hJpsmctDK3PnfhNqtC0vicK6RJe76
-	 Q7WMt930oC/YJdLSUAJNvhwFO7t8eLrUpomKDeOB4H9NSUP54G7otr4xLPbe+ICTf+w==
+	t=1794171964;
+	b=srGRgx17DDp5oKMtsaN5z78qVYi54d5O1uEqvGG6yhqVRmO2xmJZfoheqCff0I6ag4I+
+	 yWKBbIO8+EEL3S19fYx4A4dB6V+HM55C/ZYNOTaeccBow+BFCrbmJf2GOi/i5pwxhzGTa
+	 Je9Lo5Muoi076eeebaZjan2MSsvfXRAZbvsusQGPlOzEAK9hfTuuPfveg6MQCicb4mi82
+	 x6w+0uN1DCYoTlUCQcFFxgLTjsAp5/nDmRdppd1LTSQ/f+xJjZEx7gjJG3HrpW7VLB3im
+	 exkw2bW5NicY+AzOYFAct7W7Mw432pCu6qlvfV/TGRpdLtu0COpCuo+bPKvJiNGdrCQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794145433;
-	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
-	 Subject:Message-Id:Date:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key;
-	bh=jyyfi9t7z31wdkTHmBUQ+fMjVugiO0ZSiqAAX6XBmWo=;
-	b=nl9jzFBdEy/w75k2fMo1+VFj+JxYj0X+NxAwvFDsr0iWXSLm+U8z6pozMWi03dczrS5b
-	 M0SQGkB9vFcus3ePeUfdesuNWUOOXOn8M8X4qDzuv8XLX53xYSfrbC4xDlx9o+HKbIG7Q
-	 T+Vz1yLvGZgeleacPmqKsuAfOKviNwueCfuRX59MIklJXJhfRaby/xtips8qA9nUa9iHk
-	 MXShqzeQ5+F3oaE4zS0ct2jfR3Ykpn5pJzZC96f8z5+tFc1D+3ORAqzyurQ9CwqxmkGq6
-	 Dj8GfWCZQGPYbyQ0VTuLyu2OpCURFcfR6s68dKq2Dy7OoD0YYFIhS4iy86wqZuyaE1w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794171964;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=GNWXWN4JgZ7053uqaoeB99xmhmDCtwvTAn5dZkJ9Sik=;
+	b=H4Y6ZHRuSflxuEjblgv/Z5Ilju72xRbvZl918MEEsVfzb6lv5PD/Azo18M4cXRocD9mO
+	 Hc7C9SPVXhViHgiWViFMQot/wik4rRBBLTa7yIluGshF936cAoCX1UrV9+PmrCFSE6llB
+	 RMeC9nByzPshSkpHXjCX8gpsV/1i+WURT0AaeyPqwYz13fYV+VA3umG2mg/zqCgEIWyZR
+	 MdLNY2zZhh5jjtUcsFI45qbgktc57fvf+7s0w0fZYi0ecEne5CRyvAIBKZlVf514ro4ze
+	 lwq+9UKSG9FfUswBhbnM6fgQRtlV261PYbf384cetjrbW3+D/tppTrvIB6RrEh0p4Yw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KmEm1nen;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=pEOmnNMk;
+	arc=none smtp.remote-ip=209.85.210.43
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E388606A31C;
-	Sun,  8 Nov 2026 13:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD1F606A31C
+	for <linux-tegra@vger.kernel.org>; Sun,  8 Nov 2026 21:06:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4CD1F606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KmEm1nen
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD131F0089F;
-	Sun,  8 Nov 2026 13:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794145432;
-	bh=jyyfi9t7z31wdkTHmBUQ+fMjVugiO0ZSiqAAX6XBmWo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=KmEm1nene8y5H8YorJ2KRg5kGano5wehoYWehx59XQwh6nbfg+wLpWI7ykKJHGA8+
-	 XjEYFtlTep4KzIrl/MjDyEz8kia4Cdl8FSRZsHaYUs7Vlt9Wy352qd5zm60UUqI1EU
-	 ZqKNm118tao/pIyRIbuTnADUnfc8e8TiTNDLXlNkJvBUZEGbdEssLzLl4JNj5shYf1
-	 P9SOxvb91sxb3ZhDwaJ7tERKogQZt1oKWvxX/emZ2N9PDSauCMYM6k0nvkAdqvl4iA
-	 uGpm1+G36g1JcjJjXX2nwxqZMte2dIMLb+d8XrfCccAnrY/PgpV8XBbf+wPvW/y6Ac
-	 RKTADLvVCyGkg==
-Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
-	by traversing.sirena.org.uk (Postfix) with ESMTP id 10EB92C79254;
-	Sun, 08 Nov 2026 13:43:49 +0000 (GMT)
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261015130628.184279-1-clamor95@gmail.com>
-References: <20261015130628.184279-1-clamor95@gmail.com>
-Subject: Re: [PATCH v1 0/1] ASoC: dt-bindings: nvidia,tegra-audio:
- Consolidate all codec support into a single schema
-Message-Id: <179406677464.3424803.4552675393907616069.b4-ty@b4>
-Date: Sat, 07 Nov 2026 15:52:54 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=pEOmnNMk
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-825b40f8a26so101180a34.1
+        for <linux-tegra@vger.kernel.org>; Sun, 08 Nov 2026 13:06:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794171962; x=1794776762; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=GNWXWN4JgZ7053uqaoeB99xmhmDCtwvTAn5dZkJ9Sik=;
+        b=pEOmnNMkD8sFntj+FkOJGpjj8rcZAQMLRp/9VvuUb3AzT1pihw3SfSA61TPxtOUEGm
+         GUX4v1V6qJWUWjzC7Hvb0FWsyBA8Ch9EZ87VthO/0eR9SJ0oDdX3CDZf0K6sOzeE0Fot
+         kaYJ+xE09txht8kdIuA8zNWdlKagXEkqGEwb3iKZGFv+Di8zv94zFDZphOnH0Q+w16th
+         73EOxV0NT0/ycAsVR9EOuvPddp0N6ASIopAqFHlOYJdz69r4xaLeiCRlItlvC9HWAcQw
+         WCN62W3WMtcDViHj2vYEXVwI71BiAJoBQeNmDKMLVrzqvR7k4sw+29YdGbvAhhZNqL2X
+         rciw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794171962; x=1794776762;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=GNWXWN4JgZ7053uqaoeB99xmhmDCtwvTAn5dZkJ9Sik=;
+        b=k6gNyRFoQabj/Eg6DfINlgoeXv078ALhQQPIGZOb9xtmaugPDBlQ0nzLtrD3frDznQ
+         Fb6E1exps78n5YVUswVSxEe2jxD1vDwXr1Jp4U49U9u+moMrzcodshGx9UoyI3adOWp8
+         8dvI7lkWSj72zEcW8PTHwha19RqYsVnu2mDZjrXb38H/9ex5Ab0bUoL6AWnpbqGqOStW
+         CWp8qx2s8Hc6MIIwUplNEzT9qWxdowSvavWhwfAiTu4ZngX2o37nv6Ee+LWk+csybz9W
+         lQtuN8Q30Yp2VAek4eNKEkhN4vP0qLg97atmKozWCTmV8RYLHMB9Z7C1LN3kGSFhNnC+
+         s8tA==
+X-Forwarded-Encrypted: i=1; AL+hErGlctunoPYZbWd3h4wC6GprwhAB4o4PxHxMJEv0w1aXygD57rYP+EP+1gGLHjNLsxTCQF3qXwq8lNiE6w==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9cqBFdPHJGdbgBW1x9Jz01vXBUUD+cZU4/8lHoTZSF1ASJVXUo
+	DqVDkd3te26FYUCIIQvREU9GrcqcP05JBf8ldEIZ+xS6d3hnkJQHVg/k
+X-Gm-Gg: AYBFou2y/wf8+fhkt3wscJq5OHrSbO2koxlZSKGmYeiXRFJhksyjWPKk7rlrSmNlJ7k
+	Z90lY2JQQ1sWrUCermnOdNqoAns4pnlLkTe8p9DtvxaRf4zfkFiYl048AuMbeJ9HEUPw683Svmb
+	27pvVU9WGyzd7R5H7CCYFkWjePXNxCPLNpR8k+LT5oQk9eq7et8hXfDp4aZpBw7bLoO494YaDJ7
+	3dEQ3TX99vXH0SvkN6gFkQ7f5mbXlbDkY/qurBYJXW+D5ylyL4YP/Doye4plLgJj4OLtqVvhHiy
+	NogYNCRlEbVq6i2GXr/deyqn2WjCG5EGIppdNfB0E5Qcrjs1dVMWe6MuDZBu+H1w/PwUCUO5YFK
+	qKk4YYOd+NnTd9tg9Ou2eJBm7Iba+2AlOpSLktBz+YoaWdE5Ed8xUBwtDtEImgVM7ahi3RJ1tIf
+	1wE77Z+IrkRyYwYf27tHdwU+gRRyEORGwkdVGJNpe6pZA7QKlAeAMFPhiVem2H3DoTuBUZAVoLj
+	8HctepdXXRZJNhrxMkPAM3dsVVAwHkiHvbn/qdbeBJTDYXbfo6yB0r+1g6zrJ7EAoYdRx5UBVTn
+	fj9ZU4MBzo0z5+Sbf88cZRSs4Gnz0VNqK4zHDnxmNcySZs/XY4D0UXvpDI/0yGszeJ91d6uEH5Y
+	hKDNDayrGM2HP25Cxeq+MG93T0e3BeArtJb4NY2/9YSXgLQyrA7OVWUGaJdPregJndlhj4HKvhq
+	UM1pe7rZWbcIEydvlSVsRuRFD49AM3InI3X7V0d3t53DUNvMGKIY7NHtf+bAQfZNBzz7D+omEjj
+	Q==
+X-Received: by 2002:a05:6830:2317:b0:804:ec69:3979 with SMTP id 46e09a7af769-85f50854422mr1625444a34.21.1794171962292;
+        Sun, 08 Nov 2026 13:06:02 -0800 (PST)
+Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-85f4fbcef97sm2275583a34.21.2026.11.08.13.06.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Nov 2026 13:06:01 -0800 (PST)
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Sun, 08 Nov 2026 14:05:55 -0700
+Subject: [PATCH] mtd: rawnand: tegra: drain the IRQ before disabling the
+ clock
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -70,53 +96,75 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1608; i=broonie@kernel.org;
- h=from:subject:message-id; bh=RfJx6lDOMYyTez8kNouHxAYi+GWa9mMB09aKjLXIHII=;
- b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLI+1ExoXDHtyaVVrSsXWZ27yHzj/fWsE7G8OdZRR4pNJ
- SXPr+lR7ShlYRDjYpAVU2SJy+J+WV/yeg3fwYVtMHNYmUCGMHBxCsBEJOcxMjxtvfr0zYHl2U9l
- BUuS+aa//X6yYX7o/F3rtMRvu3o6afAx/LNaqvJ7YeOSDosOI6lD7uwBt9kDltxuyGZOyyn9ftb
- KjRsA
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Message-Id: <20261108-submit-tegra-nand-irq-teardown-v1-v1-1-2c570ad4a22c@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXN3Q6CMAyG4VshPbZhA4M/t2I82E+BmVC0m0hCu
+ Hc3PXy/NE83iCSBIlyrDYSWEMPMOfShAjcaHgiDzw2Najqt1Qnj204hYaJBDLJhj0FeOY34+cO
+ 4aOxU3x0vrWrt2UF2nkJ9WH8/bvd/Z+RBLhW4XFgTCa0YdmOZpuTrItdMa4J9/wI6p3S/pQAAA
+ A==
+X-Change-ID: 20261107-submit-tegra-nand-irq-teardown-v1-60f649303b8c
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
+ Boris Brezillon <bbrezillon@kernel.org>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, stable@vger.kernel.org, 
+ James Hilliard <james.hilliard1@gmail.com>
+X-Mailer: b4 0.15.2
 
-On Thu, 15 Oct 2026 16:06:27 +0300, Svyatoslav Ryhel wrote:
-> ASoC: dt-bindings: nvidia,tegra-audio: Consolidate all codec support into a single schema
-> 
-> The number of codecs supported by the NVIDIA Tegra audio complex is
-> increasing, which leads to an increasing number of bindings with minimal
-> changes. The main differences between codecs are the compatible strings
-> and possible pin configurations. With the introduction of auxiliary
-> devices, a definitive description of possible pin configurations becomes
-> nearly impossible.
-> 
-> [...]
+The managed IRQ handler remains installed until devres cleanup, after
+removal or a late probe failure has suspended the controller and disabled
+its clock. The handler can still be accessing registers at that point:
+it signals the command and DMA completions before its final register
+accesses, so waiting for a NAND operation does not drain the IRQ handler.
 
-Applied to
+Mask controller interrupts and release the managed IRQ before dropping
+the runtime PM reference. Apply the same ordering when chip initialization
+fails after the IRQ has been requested.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.5
+Fixes: d7d9f8ec77fe ("mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+ drivers/mtd/nand/raw/tegra_nand.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Thanks!
+diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
+index 7f9eb5f042a7..1104d75b6cbe 100644
+--- a/drivers/mtd/nand/raw/tegra_nand.c
++++ b/drivers/mtd/nand/raw/tegra_nand.c
+@@ -1212,10 +1212,13 @@ static int tegra_nand_probe(struct platform_device *pdev)
+ 
+ 	err = tegra_nand_chips_init(ctrl->dev, ctrl);
+ 	if (err)
+-		goto err_put_pm;
++		goto err_free_irq;
+ 
+ 	return 0;
+ 
++err_free_irq:
++	writel_relaxed(0, ctrl->regs + IER);
++	devm_free_irq(ctrl->dev, ctrl->irq, ctrl);
+ err_put_pm:
+ 	pm_runtime_put_sync_suspend(ctrl->dev);
+ 	pm_runtime_force_suspend(ctrl->dev);
+@@ -1234,6 +1237,9 @@ static void tegra_nand_remove(struct platform_device *pdev)
+ 
+ 	nand_cleanup(chip);
+ 
++	writel_relaxed(0, ctrl->regs + IER);
++	devm_free_irq(ctrl->dev, ctrl->irq, ctrl);
++
+ 	pm_runtime_put_sync_suspend(ctrl->dev);
+ 	pm_runtime_force_suspend(ctrl->dev);
+ }
 
-[1/1] ASoC: dt-bindings: nvidia,tegra-audio: Consolidate all codec support into a single schema
-      https://git.kernel.org/broonie/sound/c/ad6111b192c5
+---
+base-commit: 30daaf3e7897b4a8d9b72e5b0c86dd6e2a4d7d85
+change-id: 20261107-submit-tegra-nand-irq-teardown-v1-60f649303b8c
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Best regards,
+--  
+James Hilliard <james.hilliard1@gmail.com>
 
