@@ -1,98 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.50
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794209277;
-	b=jxHOlZkyQl7mevt1nVY7ajUT9nEXDa2k/ddDflLBMneTQQVhIsjfzppxmXFM1yofCvHA
-	 QLlqNK6PiF7LgCE1KDP39Ov97FgNuodt20l8imX0sjlqwvhTVghSmyHgj4SB7+qbCsBrA
-	 DGfMI0fN2Wwa/Ym2GenBmmlVcqrJ9vyOnVdXbSlMpEaRhhqqyF4Gpquai3/gfhUuHn8IB
-	 KlE2aJyIt4/iLENB9tv+M8fNAkb3yxjM6RoPzmZAWtJCCs9AShFiajLTPYGFLuKN3Ilcd
-	 fTDsbt4VqUr5/sIFM1YBdbKYxk+2mj4T1ql8TQ0t/1nFW6+ILS/gvVCAX0Zm3gPATVA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794209277;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.171
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794210021;
+	b=DOtVniRM4wddd5/eK8g8zo8YSWUnesxzKFL2XRD8e4DCQAHZQ4d5GJUdYGKiDM0feWLv
+	 6WJ/479VDJRPx50NdtHLnDEVNgRRqMGrMwU4yEBTqVjBNKl1Wd5cSNRsog7kUb/pMPlOc
+	 mmWhri6hu5SGl0KxmhWIChkcloelf77bPff1sChKm8f32s3NmKQlD2FoZzqzFPNud7Vvt
+	 Fdi68Xdh8NmAlUNb+SFvuAvSrL75RDpDZJy/gKpN/6pIiobfzZWK5mDVY8XHvegXpNwNI
+	 nbwWrk9onbcZtuf7ojq1Z8+IFbCSLfbp4hXtBbs7NdcSmQtP33apHUT/bzDWyf1KhHQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794210021;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=E3GSLX6Y3E8KleKfgQiE/C3m6qssnf8TIwA8ymgzC0E=;
-	b=St2UfpF0ew4TKvaz11ax+Ir1/T1FadWCnXPXOTmi5B5F8p095hXskoDBMclbsj3CpsYJ
-	 qsd35hgcKgq7RmsGbDcMU0SSycqbrjb4b/JRCKB8ktDfuVYvvwhecm003/hnoNdEPk3Ty
-	 K1voM0E5yKbC9VcjUlw2mnNk02Labdzc8VZaQx5P/tUUtpQwuvUNcrCzZ66eXZErpmhGS
-	 BfCEMBrTvoTWMQPCp/vWnPrUSvOUcYN5iGe2iZv9EAWJb2gJBoEKdejpWz6CeeP5V1Cy0
-	 VlOegoBFYWwgYO2uyT8fUM02A9SUkrJfzn2iGN8+O+vC7vC7gp4GnuG98Ac1eJA1fzg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=YsJJzZWo;
-	arc=none smtp.remote-ip=209.85.221.50
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=qbtFVfAV0d//avrt7X6KHwZhQyPReObvw80fRr8okBY=;
+	b=jMVXWGCzDxQVLGOWuU4w3q5YQlrrzIPqvZc3Xgx7buouQnjhCqkvTPPGWz6W1skWWJwa
+	 zR3kiDXGkfBYCEilbxB0PbgLmffPB0HKeTEc99LA2yA7sZ3an+XoFKzWLurYcSG3uNHQl
+	 58xAlJUMDMtJjfA1TqKhv5PP9KSdf3iJL1ye/AiMd+Chnw/nZl/pRhHb6VG3lkukzIZRz
+	 SxD3SSnSSapfksYAhM3OS7UyNtSLvbu3av4jHYwcyc4iERwAjq6SPLmbSUiy0nrLbq44d
+	 gcI7SPYR4/6SU7XjhbBkn53BtEU/ltHOKTKepPW+8COzBaJfE0rdXYl3ZJYgpjIeIZg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Fw1HJ3eB;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.171
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67135606A326
-	for <linux-tegra@vger.kernel.org>; Mon,  9 Nov 2026 07:27:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67135606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E026606A338
+	for <linux-tegra@vger.kernel.org>; Mon,  9 Nov 2026 07:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9E026606A338
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=YsJJzZWo
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-49134c8509fso427550f8f.1
-        for <linux-tegra@vger.kernel.org>; Sun, 08 Nov 2026 23:27:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Fw1HJ3eB
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-cdab6ae1ee9so228662a12.1
+        for <linux-tegra@vger.kernel.org>; Sun, 08 Nov 2026 23:40:20 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794210020; cv=none;
+        d=google.com; s=arc-20260327;
+        b=EGY6iEy/v8arlcI6FUwAHsLy+WJEL+rq2y/0GjwfTekqEXrXghFb1mOzkShFsS3Qdz
+         BslMT/WnPsTKg/z6mbj7U7KbQ+VfcM+EqSGh1pESuek1sLtbFCH/btMdqla3S2Uu3SXZ
+         wF4vQQi2ceuAvOa5yMsY5O8d6Pst1O8HV0mRShT7PDIOX5bDE/wxhSHoNAzyuIa4EFoM
+         zp9ed3kR6nKKkXxKQ5A0OPnt3c0gnWlky3c5cyz7gOQq8UwSwuBSAUlFwkWXApW5Haq1
+         +5JOUk11BOKaQTQJ9eMtTKKiOYkh159Mbztk/8+hnYKzwpp5/T5ISECuIQSCAorbOgjK
+         SjqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=qbtFVfAV0d//avrt7X6KHwZhQyPReObvw80fRr8okBY=;
+        fh=zcPpTKDPHSZ8Xt0NwI7d7O8gCakEcmmgClpCRbYhNiU=;
+        b=Ld0+voT8ByfCwe7W0lXzBxcjgZjdBQClpSyLYCrskxz1JbHT6W/s9DYnWIlTlHEm3O
+         QiZW83A/SSX1uTId2Cg1mvjf7InL3oPC3LIvW7JQma8VqwuWj92juICyU2Z5JfPcj7MN
+         /EVdJ6Cj/xwzPh1RiKuZgiohID1N2n2uvRYCIzwFT1AvdQnSo5N1na8jTm2dxSrNE46D
+         JjQovlq8CQwF0tcr3uPSNn1ychF29gIDHPpVOz+UrLMK2612FIPfFwSjcXlE/6I3fP7r
+         l/xk9pUQFPS08loZ59C4ffJTPrCoCGO020T0YvuWdgpi7BYok9UHHU+h3x28QobpxlW4
+         qtew==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794209274; x=1794814074; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20260707; t=1794210020; x=1794814820; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=E3GSLX6Y3E8KleKfgQiE/C3m6qssnf8TIwA8ymgzC0E=;
-        b=YsJJzZWoS0kA6/sx8xVmsiX3lY7D97+g6vmXE2cme19Nw3wx1YjQMQmFrHMzY2lCsM
-         XcR7m9yMzZZuswXowtmaazeEYerimzOcQm72n3THFcnV/ZYKFFf6o5aRdPpKzQ84woP1
-         gArrQlhv7cd+czWvjDX7vYWw+Iv+PdDhH/iL+9VJJyFGW3b0yz3xrIDgC4vpeLAVcI16
-         Nd8eDoPS9WHdAjw//uYc65it8yepxLbt+KEGnULUWt8eOKO3lMN+IEEcxxH521D1/plX
-         v8inpkSfVYu6aOmd0+AK7zC7l8ZPue95LJE+R1FOMYQdj9TxgT3YDsVxvTTCMMvK3qRH
-         RSiA==
+        bh=qbtFVfAV0d//avrt7X6KHwZhQyPReObvw80fRr8okBY=;
+        b=Fw1HJ3eBrEG+YcG2OfXIKNyXLbtxL6pFyShNR64xnTBicLVJTLcqI70PP7XlmXPNx6
+         VWmQ662eksYGc8vJo+lcMpjTIaYcJB9aokKPIxavS8OWhjpOs8W89bix1ozwYvKeb3b4
+         M7C1Y4n+R7cdsAeFDh3I3fT0WNvzf0CnRZWDlQZYC+5M2rSyX8wMQx9uS+vQs8QSo0d/
+         2FLip2Uo0zLuYIubK7TNTBZ4sl8ZrZ+JeHk7SDm/ZlHHFtWu1M3YyNEi+YttPBGWC2RM
+         X/hXAhXzRlZNf20NwByFmIPl+GnzmQCqAB4nehLzmm3jWxLA5k3xC+msTg/JbR6XvUqv
+         ep4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794209274; x=1794814074;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1794210020; x=1794814820;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=E3GSLX6Y3E8KleKfgQiE/C3m6qssnf8TIwA8ymgzC0E=;
-        b=trlwHxT8oWyOi6n0fojxR3XDuoCVBd9e5AB543WmyawHFhN2jS2hM5tyB0B1+RbC4Z
-         5nTALqCjZWY7OBqudHibbxyTn+poyVgDsfP1jc0IWiyUfEaBbxjhgH9pTBDOagkoGwL1
-         Ae0dXZsXgm6hy9seI74ZX7TAVdQ0QAlFOWnMdIcscAfFfLO6aI6qthZRrmPITUcZ4J2a
-         XgQFK+1RP9DXxWCjDOfIHAvvKRTE8fEDUDQ7BE7E+KSStWbk8iaGd3gHNw3cCQxVluKH
-         5D8EAe0EnLeHA/p+HcVaiQgf8pkrTK79ZhPCYTbNX1lYOBy9xT5Vj500H6fmHqTU3Wpe
-         f1sA==
-X-Gm-Message-State: APuU4Z9wH6YH2axUCBGiAvb2UKEoTWW2I0IIS8xTyG2GLs6J0xbgA7NK
-	cFlli+ZQS0zofUPHbHg4qp+b18BmkYz2P6SYwUwX1ssl64oaap4F5hXrsuBIdOBlKCfiRCAaBFZ
-	AJalq9Fc=
-X-Gm-Gg: AYBFou3DB9mzI/UzcWMUf9a3jiRWqwrLpf4lZoHemVqgywW1aXOUMvk1l7Y08PFTKlw
-	0Epvus778JS6ViRhnuC9nnaEWemUUhErwRtoAH4TICteqxLRjsH4zrYUfTEhiOYCM3sPyER77XT
-	g/5M+YnIcitIahaSWKnhFqoP9DbV85CXUlAGR6wVFBoyWa3Bt+R2gJy+rnfC4emdnkaE1ScTko3
-	1Co62euaHNeGwjE3oWyBj3RozmiWMDpuXJN9SnEzptx2+/gCITK7QUcZZCpBhO8COdqeXKSPE5S
-	xSpPMZG1fqVMmnebEJejuIV+7GLWmkCixq4nfD+rz7HK8xfZouoKtt7czgvAT0iLeQ5umwWVJt8
-	br3KJNI/5fpYWVDj9iZQ5BxtXPza9Pyzw9C+5vbEOJTZYk2bjUqc29GCdYFwFP6TLnTTSBqa7c+
-	620wAaPnoe4noIwBSE1Q+3OrUNKdmSon/NFocpnxxJXDzuq87yvtoEsdkPYdiJUFM0evxP9U7NM
-	i0d7zD5UHRTyVDGyrj5c2GWnaFyNADx5Jvii/E9xfjsm9YXRF3rowu0YrQ8unbeezf5Baz2ofiZ
-	UMcpm+bLlyHR0XWji+QyZVOM4NxspErqptP2eg/F6oalNc9QMaHr8h3FMIYDNFmlsC9ThJa5L86
-	ee2fUlZxidHTxmQ4=
-X-Received: by 2002:adf:e18f:0:b0:48b:1296:52ec with SMTP id ffacd0b85a97d-49583ee2222mr5349721f8f.18.1794209273617;
-        Sun, 08 Nov 2026 23:27:53 -0800 (PST)
-Received: from localhost (p200300f65f19a904b11874a4d8ff21ec.dip0.t-ipconnect.de. [2003:f6:5f19:a904:b118:74a4:d8ff:21ec])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-49592f38e55sm8523279f8f.4.2026.11.08.23.27.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Nov 2026 23:27:52 -0800 (PST)
-Date: Mon, 9 Nov 2026 08:27:51 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Marc Dietrich <marvin24@gmx.de>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 2/2] i2c: tegra20: Add driver for Tegra20 I2C target
- controller instances
-Message-ID: <avF1aKFpDAnJi4A1@monoceros>
-References: <20261108212458.275980-1-marvin24@gmx.de>
- <20261108212458.275980-3-marvin24@gmx.de>
+        bh=qbtFVfAV0d//avrt7X6KHwZhQyPReObvw80fRr8okBY=;
+        b=OhIviiY9odsSnYy5R6KdwCeM74H9q1f/CfZTNcTG+WmMDV2M1qNOnGoEvzdaSdmiU6
+         vUOH2xA+Q/Fowt8i9DI/iXqorwJeu1yt8iij8SmwkTJArm8nJ+WC+NrTzPGGa52TU+HA
+         Z29WT4oj0V5enZ83Ghwyp2hBJ2Qi7b56Mbxml+noer/5OyGpOaDWX7j/KwwSmyb2otK1
+         RWnoHzoFrAuJMdfepwNxNkwwVE8RQrqCNu1KR+5K2tQxf2YVJg5zKqAXD6AMd1RYnjSP
+         PhHCkPE4NpDJwHQVBOYD6G34x6Ayz9gJtjyYTKq63FfmGfv1qMrx61GlSfrsbCGiCFsb
+         Xv0w==
+X-Forwarded-Encrypted: i=1; AL+hErGWH86inlTbLzsRhefJZZb86oS9ix3vB6yox3xOUcHK6t6gVYRL4jijExF15l+12sxdcO1AOFFLK54/Cg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+zB8zW+AXoYbkYXY7lne2J+zdnaQax+4MM069sms+i7A8M9aqt
+	D7u4WY0G4o0iP4tme8wJGVORq9uu8cVF/iD3lSUeNo275W3kRFylNlvAGkI5NJeV+qkjMlpblXC
+	nh0gJQT27AI94Wxj3E/Mi5UUz+/DkHng=
+X-Gm-Gg: AYBFou3RAQMC+0z2oe1NqLnFKZvCoB2IJfJBqBRyMNe9FEOo8tWsU7b7EyX/0S5UEdy
+	GjlbBQoXSrerOxedyG7IhFFdQyuefPjBLNLPrtItOk9/q3hXJ6Xhp8MzmhLQNWQC8pMozWG41Iz
+	HCX5E2sLKfLdXEQsw9vyX3dvX9AWKwJJgR3fLmzfLx9ve8lxnzQF6yKw3J5q0eW2y3h1Sy/FQk/
+	8eaxpsd9DBBMC6BfgF67azhZSPKc/RoFHHiRtPChcWc/MEhb1koQ8i++Rnf9DaqiiXPt0PbX6bx
+	ObllycrkbvcfNDu8/tnJkw8VFrb5rgbo6rrPZIaAzdDCkaT0TVAxIAqPjX2VCmNkF1oulw6f3V8
+	plzqys+XGK6Bp8koIhcsca0OfxpQmrZY0U9E=
+X-Received: by 2002:a17:90b:384c:b0:3ad:a270:a623 with SMTP id
+ 98e67ed59e1d1-3b12d107e44mr3364118a91.4.1794210019701; Sun, 08 Nov 2026
+ 23:40:19 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -102,57 +104,98 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fkuwnclrflkupg2u"
-Content-Disposition: inline
-In-Reply-To: <20261108212458.275980-3-marvin24@gmx.de>
+References: <20261102135330.2493332-1-robh@kernel.org> <CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com>
+In-Reply-To: <CAAfSe-uD=s0RpuqQ_h+_fErcEC+G=N_LA6e=p_sXJ=iG7jMc3Q@mail.gmail.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Mon, 9 Nov 2026 15:39:42 +0800
+X-Gm-Features: AclHuK_dnPMk52UN3-2_wspDGRy5a6s-cwmnh8paY6ZY-G54Qz5KZ0bygsAWCVc
+Message-ID: <CAAfSe-shr1+0YpxEvf+4k+DyGe3==PUiD72CwjE+RC4gX-ShiQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Use hex unit address patterns
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Ivan Vecera <ivecera@redhat.com>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Lee Jones <lee@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, 
+	Ulf Hansson <ulfh@kernel.org>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Chanh Nguyen <chanh@os.amperecomputing.com>, Alistair Francis <alistair@alistair23.me>, 
+	Julius Werner <jwerner@chromium.org>, Paul Cercueil <paul@crapouillou.net>, 
+	Dmitry Osipenko <digetx@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Ray Jui <ray.jui@broadcom.com>, 
+	Scott Branden <scott.branden@broadcom.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, linux-gpio@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sound@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, mfd@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 5 Nov 2026 at 10:39, Chunyan Zhang
+<chunyan.zhang@linux.spacemit.com> wrote:
+>
+> On Mon, 2 Nov 2026 at 21:53, Rob Herring (Arm) <robh@kernel.org> wrote:
+> >
+> > Unit-addresses by default (and most commonly) are hexadecimal. There's =
+a
+> > number of cases using decimal patterns. Fix all of them, limiting the
+> > pattern to match the 'reg' limits if there are any.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+>
+> [snip]
+>
+> > diff --git a/Documentation/devicetree/bindings/thermal/sprd-thermal.yam=
+l b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> > index afa551f6185f..222d70baef1e 100644
+> > --- a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> > +++ b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> > @@ -47,7 +47,7 @@ properties:
+> >      const: 0
+> >
+> >  patternProperties:
+> > -  "^([a-z]*-)?sensor(-section)?@[0-9]+$":
+> > +  "^([a-z]*-)?sensor(-section)?@[0-9a-f]+$":
+>
+> Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
 
---fkuwnclrflkupg2u
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 2/2] i2c: tegra20: Add driver for Tegra20 I2C target
- controller instances
-MIME-Version: 1.0
+Following up on Andy's note about this:
 
-Hello Marc,
+Please disregard my Reviewed-by. Even though I did look at some of
+the other hunks, given that I'm not familiar with the other hardware,
+I don't feel comfortable giving a whole-patch Reviewed-by out of
+caution. And since I'm no longer the SPRD maintainer, an Acked-by
+wouldn't be appropriate either. So withdrawing is the best option =E2=80=94
+sorry for the inconvenience.
 
-On Sun, Nov 08, 2026 at 10:24:58PM +0100, Marc Dietrich wrote:
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-
-Please don't include <linux/mod_devicetable.h>.
-<linux/platform_device.h> is good enough to provide struct of_device_id.
-So please just drop <linux/mod_devicetable.h>. (If you insist on full
-IWYU, use <linux/device-id/of.h> instead.)
-
-> [...]
-> +static const struct of_device_id tegra_i2c_target_of_match[] = {
-> +	{ .compatible = "nvidia,tegra20-i2c-target", },
-
-No trailing , before the closing } please.
-
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, tegra_i2c_target_of_match);
-
-Best regards
-Uwe
-
---fkuwnclrflkupg2u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrxdfQACgkQj4D7WH0S
-/k4pyAf+PbxEvdqRidzu2MVCrCyWxeamOnr6Hnxx7hAjskfnXnOBNqZ10n3JDJ+U
-r8iXDCToc1hMFO1yCzKSbqVSYpwzA2BvUAJQ8wngzhF5IMv4bqBBCvl0Ce1NfPSK
-xHHV+dFRjZ53sshblFCv1TBnDdovJZ5FLA+q57pP3pDyMnDPJFRcTQj4praFdVQN
-GScZLPkhaJye+EdS/X9gFIaxZK2i9E+FONR8OD9pt09l+y+0B/CGwm3M3BsWw02C
-bS8D6rJ1FxFFawAvo/38LXSGhShN1Z/xNjeC4015E1Xb2NWTuQgBM44jdQLzixDQ
-0j1UHQnBBm1bVAdXXZkIosER7AEa1Q==
-=o0wN
------END PGP SIGNATURE-----
-
---fkuwnclrflkupg2u--
+Thanks,
+Chunyan
