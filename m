@@ -1,77 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794225793;
-	b=UBnsCubhIEF5/sqN1Na4K7+csSL6uu7VwkHVFB0n4beaz0sa0jHyghnKPkeiIGg6P86o
-	 xsYpBR69Ovrbu+5ejOY67L98WX8g8/ZgKwyySuvlHI4Lfa8q1JJK0m2May0+turtywDhA
-	 DZ2nMQxk47FpsPproDfUdhLlc8mxBmyzxBe2Kl4B8G74bkaKoa897ZhXgcnXnRoQiPzAg
-	 OaRcMv14Axq5fkD4mS06owr1fE7JYAZEtyPKDJQtGN22VxVtii7d0fvF4vbcGQFIAoom4
-	 lijAx33CvX0jg8Wf7kZ923HyHp3I5dc9+tix7JeD8i/t/PUlGwrwcYAfE91ttwkbn6g==
+	t=1794226561;
+	b=5n7E5tK5484eJZsmzyGG2kgyl4SrbQbDBRK4jUkFLHHKbooJjbrpbI+XQ4v9NYC8JrLZ
+	 4ulb2+gEpojiNDmDJ+4bZpipdkoIsgxfnCxSKpOsdLrn/1YSFcw2FMl6wzvTI2Nr/y3HN
+	 RPIJVXC+gd1XX+JGSHunJKoEoMBXJaH0aNYFadAugobrAyGIwOi7tngMD1UeoqGSl3ULr
+	 0hJ6wJEDgq19S1hvKNkfFh0nYNIoQx8NGPN8gQOazkeAnZ2eRxlzZwSKCrBbFuRVnLmij
+	 WLY3oI/PcFU1GfTbaY9qsnZ2LEqH8G4fPgBBZxAK39V3DTl76SYRYdOqBwPgrPTSW3A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794225793;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:Date:To:cc:
-	 Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type;
-	bh=Pz9Hpm8j1u82FYaXh8nr33sjNtVErXhzD75hDRVTwoY=;
-	b=JDnV7Fn+8VFT5sbRPZhwKbmGNc1lIvIcT1qKT6NtDRelVC6U7iScPFuVWQ0zxtGJYxvf
-	 ymUPMWbfGaW/vbY6V4TjiWNZTqsSa7hNcCuZh1DgB6irHbPjR0W1BzQ7JVHdjo2M4mA6A
-	 XNZVaEuLU+CQTXZvzqKOEPEnGR73VYhK701ocPKzwzxvB83ETzpyNhCbdATINi8I02zwU
-	 uoP0AtjQsqrutZpQXQ7E4bVFfG9KFv3jhsp9GcBVuyLfqJnM7alpHdoLjYQRFQUv9b2JB
-	 5bZ9RgYz/zlX5pZZluTZpmHRsXPgsaLGuKJnDL4K7L+hacW069TP8ZH6dI5ijS+Iewg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794226561;
+	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
+	 Subject:Message-Id:Date:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
+	 X-Developer-Key;
+	bh=/CGZa/fBD0TBWmu3LGsIj547whIUEVzNqNobbCkoUPM=;
+	b=GXxh2QzhDoL6N9g3iJ2mKJYmyFzyygHDfTdWQQAuhJ8gTUQ2uYNpVX++4SprTM5ALEsK
+	 Ow1rmrgfT4ZhkePgF0bLIbSzShDznOaCkOy6cPnstb7j9w+HGw2Wl//6tueFBq54BfDVq
+	 +yH3VrPWjnQKMM3Vb6LPJAtSzH/rO97IeUFce1kVeidf2RqaRde9SwRlm/5q/oYTT5TDf
+	 3YgDAI+MXeS7lhDjlj0a2G8yYDEnftGqda+LYfAWvWvUyYS8BDR3g0EaFEPbejE4cO08e
+	 CEpgDm0WHO66HtXzXiZF/qezRTq/x6eeXZaAH5RKuTvqVE83cs7u1T4ynsKTjHKEhiw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="nlX/lCT3";
-	arc=none smtp.remote-ip=192.198.163.19
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bhTkERSN;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AE2606A31C;
-	Mon,  9 Nov 2026 12:03:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 60AE2606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16A1606A32A;
+	Mon,  9 Nov 2026 12:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=nlX/lCT3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794225793; x=1825761793;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=sYbfKgh8lkl7yxvDpMidYJPRN6EgAMxRg2ax/bIvwq8=;
-  b=nlX/lCT3G8XZnDZJKH91ZuhOjs3A9z7MXyzw/0vuVOePY2EOVUlupE8y
-   wKel9erEWxsaT+86jU5hUnE+/xdZemp1h6YDuWFvzyadWpQVv78E4Mida
-   HLEcLFM6hfD09Ph8LnZyEUk/zxpU8hzhq8+3H6r8hszwox+uZzwx655dv
-   wsT8CbEdjh3ZMoSzh36rzh0vgQKBYfR6pwJcmJ75SuKtlEbv/Z9Yfrk2f
-   wt2W99TqoMvydk1v303pNAuw1GkrbaDhweGsGxLcSlaWYOGVH25sJPznA
-   NerK4ufY9c3sIo+E7uB/ntizd+NVh/cPHRCh89SNkbaO2LBc1cBn1TIg4
-   A==;
-X-CSE-ConnectionGUID: 69RhCk68QZ2c7qLXtW8Nmg==
-X-CSE-MsgGUID: T9rd8x2sTdmQVPp/rgGuig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11960"; a="3047382"
-X-IronPort-AV: E=Sophos;i="6.27,203,1787036400"; 
-   d="scan'208";a="3047382"
-Received: from fmviesa013.fm.intel.com ([10.60.135.153])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 04:03:12 -0800
-X-CSE-ConnectionGUID: xYJiNJYtRwe4WKF5bJna/Q==
-X-CSE-MsgGUID: pa3sT1BRSxiuFmlUIbzTqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,203,1787036400"; 
-   d="scan'208";a="9707620"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.139])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 04:03:06 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 9 Nov 2026 14:03:02 +0200 (EET)
-To: Hans Zhang <18255117159@163.com>
-cc: bhelgaas@google.com, mani@kernel.org, lpieralisi@kernel.org, 
-    kwilczynski@kernel.org, thierry.reding@kernel.org, ryder.lee@mediatek.com, 
-    jonathanh@nvidia.com, robh@kernel.org, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-mediatek@lists.infradead.org, 
-    linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] PCI: Use pcie_get_link_speed() in pci.c
-In-Reply-To: <20261108094034.679945-2-18255117159@163.com>
-Message-ID: <43198b7a-b0f7-49e4-731a-807e7d9e5959@linux.intel.com>
-References: <20261108094034.679945-1-18255117159@163.com> <20261108094034.679945-2-18255117159@163.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bhTkERSN
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F521F008A3;
+	Mon,  9 Nov 2026 12:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794226561;
+	bh=/CGZa/fBD0TBWmu3LGsIj547whIUEVzNqNobbCkoUPM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=bhTkERSNG2RGu5E0Yj0B64wkJXexFbmLbXz/JxzFXJYbScfM4b3J9FbC67NzlguT6
+	 W6oZXJ1vvb/9W600HLSnMIBaVHA0VkT3WqDmX+kc83L0YoMDknTz6aeTDTktcOImJY
+	 v6jaSxC9LMwKiYrGOCLj0qrfn235nshs0ks8/ed9NR3hWz1TdJbB8pdzfNUbsJqDsk
+	 1XZoD0P1Cpdc1ZFt6fnpNGBxIbZSnW3+X9UQBVpd1EFRqWEZp7t77vOMIY+YXp9Gsj
+	 vi6uKceUrwKLwtM+5ahvumyBWf3ZHAHJ7F3PYcVpAlWSixyTQ0ae0HY+60Z2JC1x9K
+	 P6ZwLPGSlh4GA==
+Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
+	by traversing.sirena.org.uk (Postfix) with ESMTP id 56FBB2DB91D6;
+	Mon, 09 Nov 2026 12:15:59 +0000 (GMT)
+From: Mark Brown <broonie@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Vishwaroop A <va@nvidia.com>
+Cc: Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, Breno Leitao <leitao@debian.org>, 
+ Aaron Kling <webgeek1234@gmail.com>, Carol Soto <csoto@nvidia.com>, 
+ Suresh Mangipudi <smangipudi@nvidia.com>, linux-tegra@vger.kernel.org, 
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261026111412.3843954-1-va@nvidia.com>
+References: <20261026111412.3843954-1-va@nvidia.com>
+Subject: Re: [PATCH v2 0/3] spi: tegra210-quad: Fix timeout path status
+ handling and DMA leak
+Message-Id: <179422163907.3711751.17599615188016158846.b4-ty@b4>
+Date: Mon, 09 Nov 2026 10:53:59 +0000
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -81,60 +67,65 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2153; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=vMMBf+eFJAAr0SQrfCgzh8jiTGssKOeyUcN5NCXqfuE=;
+ b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLI+7qwvi+RWCzu0wr67uvX24ZdKH+Yp7J275Gjjhb9al
+ g2fTqxq7ChlYRDjYpAVU2SJy+J+WV/yeg3fwYVtMHNYmUCGMHBxCsBEWmoY/so1i9bnLq8u3/fu
+ xqzYxGLuL98/V+/naio6mmE798eifZyMDDN67nDJP5Kc99a77negl9FabQeL3sOGT49q55c5xp3
+ J4QYA
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Sun, 8 Nov 2026, Hans Zhang wrote:
-
-> Replace the to_pcie_link_speed() wrapper with pcie_get_link_speed() in
-> pcie_link_bandwidth_mbps() and pcie_bandwidth_available(), and remove
-> the now-unused wrapper.  pcie_get_link_speed() performs the same lookup
-> with bounds checking and is already exported.
+On Mon, 26 Oct 2026 11:14:09 +0000, Vishwaroop A wrote:
+> spi: tegra210-quad: Fix timeout path status handling and DMA leak
 > 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
->  drivers/pci/pci.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
+> Three fixes in the Tegra QSPI transfer timeout path: the two from v1, plus
+> one new patch out of Mark's review.
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 7c6f2aba8144..92ede1768caf 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -6025,11 +6025,6 @@ int pcie_set_mps(struct pci_dev *dev, int mps)
->  }
->  EXPORT_SYMBOL(pcie_set_mps);
->  
-> -static enum pci_bus_speed to_pcie_link_speed(u16 lnksta)
-> -{
-> -	return pcie_link_speed[FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta)];
-> -}
-> -
->  /**
->   * pcie_link_bandwidth_mbps - get the current bandwidth of a single PCIe link
->   * @pdev: PCI device to query
-> @@ -6048,7 +6043,7 @@ int pcie_link_bandwidth_mbps(struct pci_dev *pdev)
->  	if (err)
->  		return pcibios_err_to_errno(err);
->  
-> -	speed = pcie_dev_speed_mbps(to_pcie_link_speed(lnksta));
-> +	speed = pcie_dev_speed_mbps(pcie_get_link_speed(FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta)));
-
-Readability seems worse due to cramming everything into a single 
-statement.
-
->  	if (speed < 0)
->  		return speed;
->  
-> @@ -6089,7 +6084,7 @@ u32 pcie_bandwidth_available(struct pci_dev *dev, struct pci_dev **limiting_dev,
->  	while (dev) {
->  		pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
->  
-> -		next_speed = to_pcie_link_speed(lnksta);
-> +		next_speed = pcie_get_link_speed(FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta));
->  		next_width = FIELD_GET(PCI_EXP_LNKSTA_NLW, lnksta);
->  
->  		next_bw = next_width * PCIE_SPEED2MBS_ENC(next_speed);
+> Patch 1 fixes a regression from commit 1ff82c13ea94 ("spi: tegra210-quad:
+> Cache TRANS_STATUS in ISR for timeout handler"), currently in linux-next
+> only. When tegra_qspi_handle_timeout() observes a real ISR completion
+> after draining the workqueue, it still publishes the pre-drain lost-IRQ
+> FIFO snapshot. That snapshot can hold zeroed error bits if the ISR W1C-ed
+> the hardware between the two reads, which makes the manual completion
+> handler downstream accept a transfer that actually reported a FIFO
+> underflow or overflow. No stable backport is needed because the offending
+> commit has not been released.
 > 
+> [...]
 
--- 
- i.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.4
+
+Thanks!
+
+[1/3] spi: tegra210-quad: don't overwrite refreshed status with lost-IRQ snapshot
+      https://git.kernel.org/broonie/spi/c/543a83912fed
+[2/3] spi: tegra210-quad: Track DMA mapping state
+      https://git.kernel.org/broonie/spi/c/7b9e6f7bc13c
+[3/3] spi: tegra210-quad: Unmap DMA buffers on transfer timeout
+      https://git.kernel.org/broonie/spi/c/d04ad85dd801
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
