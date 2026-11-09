@@ -1,127 +1,119 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.181
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794250144;
-	b=hONKoIcFsb7JMg4fACDwIMB6ucySt4N9ZkeO8mY4Kn94/qtRnWZuPHHQmRo9hHcDGGrw
-	 JBh86r/8Q7w7/i/f44Bujxx47pIYojsm4jlR964dcXhHC2Rf6VpCp7hiawZ86CsmsLZV4
-	 p5wIVF/cpIjsvzivv0In1WsBmLhncnDjfLlrLA4we5XQvmXlQQys20YQFrdVGLbvBD7R+
-	 cejULr4xJ+bTuQe0n/5h3YOV6w1aepujXrBrosT7LYlTqdDPPTV4cNNkv2RSAeq/JR8wo
-	 33QHTLmZmS3JoUCc2EJ8KJAIHItOUvMU/iyeGkDtTVOTQ4ot4Qkx0Ubfl/QfIywYuAw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794250144;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=O+PQWQ9PbJFOCn9EB5efiBTAKX4GJUUBrxAtO9OF3Dc=;
-	b=bjDdhsc9U4R/loslgPE/ctFNwe2jYw/RvjckXpXBvzkCXAvzWbc2q0xwePq1KXDXBPTn
-	 +UJWHAw6fE8ae2yaf1QWb3yW/7zPNDqPT0P/qMcPZBSzzf4O4cOLz7uynvhbvH8y8pnYz
-	 9ZAOdO2sY5ofk5wvO0ZRyDYSOjmpRwmZKjv2NIWFOzvgFV6LinaOq5qJq5mesGeISoBMU
-	 j/9/0a1pXNOlkei3yTj8EAwix025BzuyrhR7TA3MO+PsUwF/vDoJQo/kUdJlib9Qe2ynY
-	 4PjWjtZLtU5T+DA2ORt6LbpmVkh5zSj0jCLinPMwtxOhROR4oBNsV3VDP0YN/q1Comw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=ziepe.ca;
-	spf=pass smtp.mailfrom=ziepe.ca;
-	dkim=pass header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=PuTYdyOK;
-	arc=none smtp.remote-ip=209.85.160.181
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.196.42
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794253349;
+	b=oZkehfe0ezXTIpnVaGg6Onsg8tcJBtTd2ELm0v4iYfD3ttaqsv9A0/MVSXO9Sl3FunL4
+	 9kGHMsW82jFdFts6uEaC7hGEzYKrDNYj1P79XMBxJMPOEtuJFO9rgHiDMZ2PH0tsnTGo+
+	 8/zqQ4J3J3+SKg+z9ur7pnPvgbCzoR5Tt/YnWsyoZj6eOpVQtQH+pckft0+7gK/QTb5t2
+	 vWMDnNbSB4+Cgq8P89syr0CF6R2TgK/EAQM9JEEaIsoqpz8ANb2/lCsJuxSjYPT76LuPk
+	 RNoaZfUMf7QoYb0KUyLMOWjn7SV2mH3OMhCds++vZgYuxzOsFN12G0fA1ermByGOX0A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794253349;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Received:Date:From:To:CC:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-NV-OnPremToCloud:X-EOPAttributedMessage:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=LCr3WCOsL13MOjtm+aHMaQmG1DxZ+QVChZmLyUFkF5M=;
+	b=4b+8qvKqMHZ+pfjru5DznBZQ3Og7sO8qeXgIoyvSljmBN9YgcQDFLyWt2sZgDuayq6ak
+	 nvRW4myULkQCVtvEO2q6fEJCgF4freNfKTNU6UUAmw427DUyBpLs+sEqgpcyKT+HleFd9
+	 IY3rwIaQD5HvW4IDkSnKF4hkWSvS82DCQZdpet8CA02TvvTWEjDneu7oYPeSlQCLglCdX
+	 7sHBr/AZpUZJmm2QQUeqMLi+S2cIH98Rowe7xmBUNcgLD4TuNwVmgrascXg543FUy2oma
+	 O2/zf3Sb9UMU1z2l8eTUGKuhaXvYzJf7fv2mMubOBI+dJ0ec1BF3hMOIwjFMj7asiZA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=EOZU0itS;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.196.42
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013042.outbound.protection.outlook.com [40.93.196.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CA6606A330
-	for <linux-tegra@vger.kernel.org>; Mon,  9 Nov 2026 18:49:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 20CA6606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D491B606A325;
+	Mon,  9 Nov 2026 19:42:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D491B606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=PuTYdyOK
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-536c8f958d7so9490511cf.1
-        for <linux-tegra@vger.kernel.org>; Mon, 09 Nov 2026 10:49:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1794250143; x=1794854943; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=O+PQWQ9PbJFOCn9EB5efiBTAKX4GJUUBrxAtO9OF3Dc=;
-        b=PuTYdyOKu7rUl19nMbVLJ6he+g7v6e//cAur3W6t4momB8sYNUVcG6lgvYQzXWRQd2
-         wePZJZy5/Izh8q/jhlELM4Aipu2Kq5puT9fASJ7I8RXck/tzsZK36x2w1kVB5L3uvFRk
-         yCZ8eBzX92sdtZMINMf4iRP4iSymdt3sV7+lf2q+Dsmme4JB4gladVLELQlWGhTX5UO8
-         5gjS4JxeWLhg0KwGwZu9rV52lCtsH+msY+e7JnZinD7YQ8GhOWkxw69O2Z8OZoKSY78S
-         rg/ompvsongIANmOMkI5ZtERdMKe9Hsz2Yso7Bgyp2VgeTgP3bwtobBH8NpvH4k6adr8
-         N8TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794250143; x=1794854943;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=O+PQWQ9PbJFOCn9EB5efiBTAKX4GJUUBrxAtO9OF3Dc=;
-        b=srK1Xvkw5cWX5wmc8xtVbfpU3yDkN8+XqmGJpNQ4OaO6F1MJo0OOp2pA6D6oSI9XRi
-         8E2vGUr70DVTwtGF3Jvihe0OCkDui31PaCDZBoa/WFIVOODE354rXY9tePIkkk6tv8Bm
-         NK4poqaVsMtQvg/gMJzx+x2At/y4+rGqK/WloBy2iZlF7OWfwiJvSDqdvV040iY+oCLO
-         xxRSS+LsBv0ShUm0Hf6dOqVIbQ6zuntDrxmK030SCQ9jdKNt1g/49XsXw5PbESYMW/ZS
-         1+40aj070JvW57VxZvyzL9MMzAnPKEi3oTN7KD5JpI9QFZxRPXrMXfoUfR75Z/agh/B5
-         ReRw==
-X-Forwarded-Encrypted: i=1; AL+hErH5TkOlcyl1YCMNSw4c99SMCidajSJ/r8xnSKPZYH0P2JIxfN/dpgasrNc23TSdZ0k0JK8rPap/xsfbQg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8z40Yq0AOoItSkKJphPfH2jSpC1O7WeShpFeOiyHtw8OgnLBlR
-	sOktCBVulY2sDOMeplaZIASLP7uluyswYvQq3BHNItZ4nriAndoDN6VsdwJ3Q8DqUBU=
-X-Gm-Gg: AYBFou1X9egx99sf8l2Y02EdCO14ZouRgdQCQklQLKi30Z3BSJHgSa916F8OtsltQSA
-	FWvPv3znFI7EmXLgtbWGGDXEPMY/1QxuYsxDhOCpU2WQkqpFNfabb5rrVlS0UUCqkoX+a7yYaha
-	yVJwaPGVPp0jz5j2E0C6QWj/VpjrVexwQTUUww3meAzkrqB96rC4+NzgtOzRd9reyULGBE9uCbO
-	vl9T6gDihGJT2qx2IoU0g0PYMP4H8r7l/CyNLyLBtR6wzhNzP5QEs1Upn3Z9TbpbMOA4PBvuzC3
-	KdLyu2OqhkO2ABzYJZqfZKj8gKrnuwnOfj8jtSLdASRgzjRYHtE4JnJ39+mLQ+5JC2Gy0iVHXeH
-	QpNyskZS2eYSubncoiSWZngO95XhQ/dtixMcFaEdQ4iXBcNeslhLYZO7SUCZSKLykTLQCwU9aoI
-	M9n161ItfDuZWdFI0Qtk9wBt7T8cgjtgJQFxm50T/Rsy31zfei9CGn4mr9IxJwcpDpI03LWQnnu
-	xlUZIYU7Wc5ncXoUjLOh/jYY0E7Aaah9bD4iN//GMKeyf4SJY0jA5VlHmsLf1Z/auQBI6Lc8uTF
-	kF27NfTNdaZxAhYJvShaKe8qpOky5KMSM6L21Kg4fCkU/NsB+xhjh8GDjLYt0Qz4uYd3W2+UMTY
-	e3OSbEwNS3nQ7DTYAz8OLTXYej/JVfi0=
-X-Received: by 2002:a05:622a:40e:b0:536:3600:f0af with SMTP id d75a77b69052e-555253df92fmr3996711cf.7.1794250142846;
-        Mon, 09 Nov 2026 10:49:02 -0800 (PST)
-Received: from ziepe.ca (hlfxns010zw-159-2-239-150.pppoe-dynamic.high-speed.ns.bellaliant.net. [159.2.239.150])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5550af60493sm3967801cf.4.2026.11.09.10.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 10:49:02 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1xQUQP-00000002A6b-35np;
-	Mon, 09 Nov 2026 14:49:01 -0400
-Date: Mon, 9 Nov 2026 14:49:01 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Jacob Pan <jacob.pan@linux.microsoft.com>,
-	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	Alex Williamson <alex@shazbot.org>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Lukas Wunner <lukas@wunner.de>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Steven Price <steven.price@arm.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Vasant Hegde <vasant.hegde@amd.com>, Will Deacon <will@kernel.org>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v8 12/15] iommufd/viommu: Allow PCI TSM backends to
- provide vIOMMU operations
-Message-ID: <20261109184901.GQ663069@ziepe.ca>
-References: <20261104161632.3547423-1-aneesh.kumar@kernel.org>
- <20261104161632.3547423-13-aneesh.kumar@kernel.org>
- <20261104152351.00002565@linux.microsoft.com>
- <20261105004934.GE3889730@ziepe.ca>
- <20261105091622.00004a9c@linux.microsoft.com>
- <CO1PR11MB48352506BB91C461F25147098C762@CO1PR11MB4835.namprd11.prod.outlook.com>
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=EOZU0itS
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qHDCr2I9Uxb9/7kuKc1cynYzgF9gdvKRMkr1lz2yKWrjT42VaHG81uqwrfdCi+D7dmux2MiinzXlGLNZ9PxqmWDwYV4h2YUDqGrRvTfqyQixCbq94iKd/8AlMi7GyO7cl32yTxMVq2FWUV47yPEJA+HPR/KCrr5huzDr5xRao7CMNKDID/t176RoI0zqSEwGDHXj2r1Zo8UadcuGxJv6lEKruORVcvuxPz84v24TvppY6REJA3OJ7omvSeGE/jkBDw7gDm3lxr/5odohSfzMRJhsj8sUM7Il5OrvLW75hVxm3h15zlLP1TVWXO79XxtcOFshtbuH5hQfGRbULh6Lfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LCr3WCOsL13MOjtm+aHMaQmG1DxZ+QVChZmLyUFkF5M=;
+ b=rrs8JALdBZiph65o0DdLHT4fqbD9jzz5/Lh++jRQGafPChCwjjPqoVXQyGYJ8QS/XjQnkGY6SILAJ2r27ay9A25SPth8A+mrMak4s+qaWjdskUwA5AsMax/3JDI1iKdmwXKGKp0q4b86R+rzdglrZNd/PKCF5VjlIPWcDuyVqJdSJQEEhnIDbGojTZeYqqGu6DmZNPirJvCnG7WZduMPayRBBfZ0hW3v/MKs89HBbgS+lkXc6nzP3OyqW2DkaoY+VyLH9/BVqk/Q5cUnb+AqN0tQJu42DOqJdnRE9evZO0KAGbg2YzADEs8Ytmonc3r8vNB7/Dj5ZrS+Uw5R1eFucQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linux.dev smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LCr3WCOsL13MOjtm+aHMaQmG1DxZ+QVChZmLyUFkF5M=;
+ b=EOZU0itSOG2yauOU76+az6NckkgXfRMoqyfK9nMVkI9lcHvHRDYUm7lXzfHUuY7kBdahH5MIX1VE9EZWrmqqOdzjLWWtjTZ4tz7xxdVcic4zVb2pqno8pB4ljRDo+zSyrKeqCvAVvJq28hWXasTaY9PbqgXP7RJeIic1+geiRdALLC63V/IQP5WOlYyRNa3qRxEK1ZNxk1EP6d/DYamQsYsjvBReFaZE6n6Mtsc7lNUVIqQSjJOdGvlsjzwNaLVyFi9aFEKQi6uoK739UdUk5LlwUNo2nyWxYI/DPO0f3yW/mrY1XytfEq83Zo0tHM5qwQ4lNVwYsdEUuKAwWxA5AA==
+Received: from BN0PR04CA0192.namprd04.prod.outlook.com (2603:10b6:408:e9::17)
+ by CH2PR12MB4279.namprd12.prod.outlook.com (2603:10b6:610:af::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.16; Mon, 9 Nov
+ 2026 19:42:20 +0000
+Received: from BL6PEPF00022572.namprd02.prod.outlook.com
+ (2603:10b6:408:e9:cafe::8a) by BN0PR04CA0192.outlook.office365.com
+ (2603:10b6:408:e9::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.13 via Frontend Transport; Mon, 9
+ Nov 2026 19:42:19 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.161) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF00022572.mail.protection.outlook.com (10.167.249.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.615.4 via Frontend Transport; Mon, 9 Nov 2026 19:42:18 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 9 Nov
+ 2026 11:41:57 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 9 Nov
+ 2026 11:41:56 -0800
+Received: from nvidia.com (10.127.8.13) by mail.nvidia.com (10.129.68.8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56 via Frontend
+ Transport; Mon, 9 Nov 2026 11:41:53 -0800
+Date: Mon, 9 Nov 2026 11:41:49 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Peng Fan <peng.fan@linux.dev>
+CC: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Joerg
+ Roedel (AMD)" <joro@8bytes.org>, Thierry Reding <thierry.reding@kernel.org>,
+	Krishna Reddy <vdumpa@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	Jean-Philippe Brucker <jpb@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Peng Fan
+	<peng.fan@nxp.com>
+Subject: Re: [PATCH RFC v7 4/7] iommu/arm-smmu-v3: Use a per-domain CD table
+ for non-PASID streams
+Message-ID: <avIh/TUA3rPsytWw@nvidia.com>
+References: <20261030-smmu-shared-sid-ver7-2026-10-26-v7-0-961726ebd6ab@Example.Com>
+ <20261030-smmu-shared-sid-ver7-2026-10-26-v7-4-961726ebd6ab@Example.Com>
+ <auU/RARTx8dv5mAE@nvidia.com>
+ <au8iwj68zXO1us_8@fedora>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -131,60 +123,84 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CO1PR11MB48352506BB91C461F25147098C762@CO1PR11MB4835.namprd11.prod.outlook.com>
+In-Reply-To: <au8iwj68zXO1us_8@fedora>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022572:EE_|CH2PR12MB4279:EE_
+X-MS-Office365-Filtering-Correlation-Id: ffa45807-98d4-4692-e74a-08df3e9990a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|23010399003|7416014|22082099003|18002099003|261026140227099003|261028144727099003|261026121527099003|56012099006|261022105027099003|261009223027099003|261021135927099003|11063799006|4143699003|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	vz5q7miqPN+v4rnCLBvlXqshdJfU5B8Hj4JffgD/JNJMASvsYX+kIleQntUwD/Bime2m0WDASYtkmyrY7eNKWjvso7urvhesYEL6ZLz/W5enJ7ux3cCXGoqnIqi73I6hdKM6cnqoAuXTl3AQry9tI6UMsQdFOG4HXoekkX9M+8cVFpSCoNWa298LWWXjAVGyFSPXgm8+ghGKpUuyCvgChQjspnpfoXYO86Szf7Nr3Kt6ewXzg29PgWQAt1muaOVyyiQnErPp6bOEnccx0TfaWHnEtq3fbFF+KXhAzzJgPaOBEThk2ZxSYsZLiugh0rrMXr9cx8+qrbxP68fqRVWCg9HzLCow4AFLBEh2KHV9fEVmJK6CP7JUIIFUxKM4cO3Q90BGz7i+p6ZxIekLygfWt33x4yb2zuevpDtuS1BG1wtuJji01rFUDnB2ipyWuQhFgroFMTHdmPtxcOhtXLLP6TeXXHHRo6zyCvz2zyJTrB5SA4OI/rChdwZbBiC83/eBRPF5P+GfT0UUSSBm5UTIkp28t01XWOiEIbt8YKY0wgp+W44rkNuF6ld9PoxbzmZ17oIurHVv/Z9J8E8aIvCLrQA9qord64kWkss6JoCJPaQF9ow1u1B/05rfRqtn7CfC1HQy33mQ19iDuLLr9xN+lmByRVepTiyObKvEG5JKDBQrFYcMlbco7KAqmOEtwrne0yvCDFPUDBx9BRtZItKlnA==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(23010399003)(7416014)(22082099003)(18002099003)(261026140227099003)(261028144727099003)(261026121527099003)(56012099006)(261022105027099003)(261009223027099003)(261021135927099003)(11063799006)(4143699003)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	1PRS4eQjulnp5TRMyLmi9vzb4aqZdcsYRt7O3wCvu8bEGWthVPKoNrAbhqdPlZ3Piw3L+HgcY9uokmagn490aCFIvfh/t4asn+/VTwKcow14jKEsmMwFj72UBslXLn0R5mVkrvcQdyc0wY7f8zkJGcXRviWw3ppgw4p8PrN7Me0jMQXfyUyITaqjzj/PodG0fE/I1OkPhOlCZnsI3ZBS6JvUsq2Jsc9pu/aXufLaeRXoB2oWUXu2HYgxaYuujt6aR8ZefNLGCs980xj9A7JZbFbb3IhXLcQ31oiomeiD7D5SK6JiV0OZUqDqVucd+c+2bVqHLx+MHFnhY0GG1dTbmbp/hLO/aF5TnVkHTbYzpj69EoZwklNmeJOk+/cpuNcAqG6NRMrCmcrjd/cta1wks1rnEaEsat7QkSEAbSWMiKVWTWsW3ncVysbyY0ZRikRc
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 19:42:18.5906
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffa45807-98d4-4692-e74a-08df3e9990a5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022572.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4279
 
-On Fri, Nov 06, 2026 at 08:03:48AM +0000, Tian, Kevin wrote:
-> > From: Jacob Pan <jacob.pan@linux.microsoft.com>
-> > Sent: Friday, November 6, 2026 1:16 AM
-> > 
-> > Hi Jason,
-> > 
-> > On Wed, 4 Nov 2026 20:49:34 -0400
-> > Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > 
-> > > On Wed, Nov 04, 2026 at 03:23:51PM -0800, Jacob Pan wrote:
-> > >
-> > > > I am thinking MSHV/pKVM can register an assignment-only tsm_dev to
-> > > > leverage this? Could PCI/TSM support this role without
-> > > > device-security?
-> > >
-> > > It is certainly not what TSM was originally imagined for, but with our
-> > > new arrangement, yah maybe so?
-> > I will rebase on this set and send out patches for a detailed review.
-> > 
-> > > TSM basically just becomes this weird overlay driver on the PCI device
-> > > that does stuff. Some of the stuff it might do:
-> > >  - Register an attestation subsystem device to do SPDM
-> > >  - Register to allow iommufd to create a viommu
-> > >  - Some status sysfs ?
-> > >  - ??
-> > >
-> > So we may expand pci tsm to have more than one role? currently it has
-> > one.
-> > int pci_tsm_register(struct tsm_dev *tsm_dev) {
-> > ...
-> > 	roles = is_link_tsm(tsm_dev) + is_devsec_tsm(tsm_dev) +
-> > 		is_assignment_tsm(tsm_dev);
-> > 	if (roles != 1)
-> > 		return -EINVAL;
+On Sat, Nov 07, 2026 at 09:08:18PM +0800, Peng Fan wrote:
+> On Fri, Oct 30, 2026 at 06:07:16PM -0700, Nicolin Chen wrote:
+> >On Fri, Oct 30, 2026 at 08:09:36PM +0800, Peng Fan (OSS) wrote:
+> >>  	if (!arm_smmu_ssids_in_use(&master->cd_table)) {
+> >>  		struct iommu_domain *sid_domain =
+> >>  			iommu_driver_get_domain_for_dev(master->dev);
+> >>  		bool ats_always_on = master->ats_always_on &&
+> >>  				     sid_domain->type != IOMMU_DOMAIN_BLOCKED;
+> >> -		bool downgrade = sid_domain->type == IOMMU_DOMAIN_IDENTITY ||
+> >> -				 sid_domain->type == IOMMU_DOMAIN_BLOCKED;
+> >> +		bool s1 = (sid_domain->type & __IOMMU_DOMAIN_PAGING) &&
+> >> +			  to_smmu_domain(sid_domain)->stage ==
+> >> +				  ARM_SMMU_DOMAIN_S1;
+> >>  
+> >> -		if (!ats_always_on && downgrade)
+> >> -			sid_domain->ops->attach_dev(sid_domain, dev,
+> >> -						    sid_domain);
+> >> +		if (!ats_always_on &&
+> >> +		    (s1 || sid_domain->type == IOMMU_DOMAIN_IDENTITY ||
+> >> +		     sid_domain->type == IOMMU_DOMAIN_BLOCKED))
+> >> +			ret = sid_domain->ops->attach_dev(sid_domain, dev,
+> >> +							  sid_domain);
+> >
+> >This covers almost all the possible domain types here. So, just
+> >drop that downgrade, and it should cover the other cases:
+> >
+> >		if (!ats_always_on)
 > 
-> Not sure what'd be a proper name for this, but it sounds to me that
-> it tries to over-abstract something into tsm. The reused logic related
-> to assignment or viommu is relatively small, so the other option below
-> sounds better if it can work.
+> Thanks, I agree the reachable set here is only S1/identity/blocked, and the
+> outer condition is effectively !ats_always_on. The separate downgrade
+> check is gone in v8.
 > 
-> Or it may be the original provider framework that Aneesh proposed,
-> so tsm/MSHV/pKVM can each register its own backend...
+> However, I don't think we can fold the inner check into a single
+> attach_dev() call for all cases. For an S1 RID domain this is a PASID
+> teardown path, and arm_smmu_attach_dev() -> arm_smmu_attach_prepare() can
+> allocate with GFP_KERNEL and return -ENOMEM. The IOMMU core requires
+> set_dev_pasid() not to fail here,
 
-That is definately undesirable for TSM
+You got the point that S1 shouldn't propagate the return code.
 
-I think the very best answer for this is to get the viommu from the
-"kvm" fd, I just don't quite know how you implement it..
+The non-S1 case is the previous "downgrade" path, which didn't
+propagate the return code either.
 
-Maybe just register something like a notifier chain where the struct
-file * and the viommu type value goes in and a viommu object comes
-back out?
+So what I was saying is simply:
+-		if (!ats_always_on && downgrade)
++		if (!ats_always_on)
+ 			sid_domain->ops->attach_dev(sid_domain, dev,
+ 						    sid_domain);
 
-Jason
+Nicolin
