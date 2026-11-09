@@ -1,65 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.182.11
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.67
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794182903;
-	b=5CCBRv1T+dIDDt2j5jqLUNJntDXdtA4UsTSZabIq8uCpM5V3ljLYurnzMX2Jx4CAG8RO
-	 g9FQGCeECNj5uszmWwBSVJbg3gRS4KwIspc7B1e0M9Wg8ZT2mrKOswusowGbK4mRINawm
-	 +NRs8GWh7WCqWUKIcaiIa5OSbvKZ/Jdf/1GT93yd8AeOTWIXXY5v48jitEzQ4XW1T4n9U
-	 0Ibz9OotkjNBYX61PbnDav6rBZLGZH0YkhoUHwgV691DMJZIlsYsah8/P01SPO/Un7wgW
-	 6KBcO9TQh8Ew/H79yaVgqnH9kssZz1aTxi+IC0sIpcwMYpN2iP3lp6vl4bg6KqEtMlA==
+	t=1794191948;
+	b=KN0gKcQ1dyYIK41L9GrEBCrj9XZjcqtP7UT2z1EmApGTqeifuAhZWnnOnqdxu8/FsvPp
+	 08u6Kps5TIQesDi9ExDxngBALA3Nvq9NeTgMA5Cd9b6ApKNvwJVpMgO4RJcwow7gEV4RV
+	 1NhpjIatDkOJP4ACXaE9l2WIY75t/oEMV065/zKUqzHl3Q2iosEEkZzZz69jXmDl/mza1
+	 GPzJ4k+/Bf9qetC8dDznv4qorKw0dtarhwd5RGijn7aOiRog2+WeIV9BOcnxyqdq6RvRc
+	 dt3TSEK7w7rDHEJ1h1KjMKRPo16aWZYNG3lvTSftL/jQ+Xgeg3I3uGTx/C4ehlb4h/Q==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794182903;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Zoho-Virus-Status:X-Zoho-AV-Stamp:
-	 X-ZohoMailClient;
-	bh=9rVwbOecFjn75cDjqDTfDsnAfqPeatJDytpCsuFTOOw=;
-	b=Y2sHLa1SfF2moKvf9DC2uHw0HPwoKwuVgtKxfXZ8RiE+AYnbZtSPpMgZ9gDjCqaEFrzx
-	 L5T2+SydLRSdhHEVCA1QFM5JYOLuAXrp5gWZJevWkv6zRoH7wx9P/Uuj0ZUFNi9vFUOB9
-	 fWuaHdfgRVQdOmrgdidDcRA9JHNDbiBvNRUb8v7DVTUgQPYvtPjwtVmZoAFJjwYCcrVvN
-	 UEVTocaiH3mvsjxQ8lxgSE7zKrfRwp5czy5gB+i2M9WBmbcbV3I0xNRlz1qeht35xMWYz
-	 zrkR4qehB+7fZuVI7oqbhchBCYHdkVnTV30cSLJfVjxIGtHCJ4O1zzrEG6sVFkP2cEQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794191948;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
+	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:
+	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=vETqnw6JkuoXbH9f8kankYKi/3tKoS0MH6pDi8u+gIA=;
+	b=ENaiccQMiGwjULJTiwf7sMzQgWhW6XlWu78KJGCbKQ9pCDDjclgb5YEC+JWC+Qte55yb
+	 oZTuC2bG4kVe/9stG1jNcDEQjItqvO+ScwGJmz306x/Rz3s1Nt65L/2p/w0nHH6ddglp4
+	 imqRRo4sl/tSbjD3P/A5dj3JRvJ3xAk97/5jTSEJ1+RRzPQb9rhP1Gu47Cdl0hpOEnl2l
+	 L17Vg4Nm5lRFzFbzXARaPL7Yxv59gUA0BEmBU5iqYciOlIDj1YEwZm83cp1RSrvAVnkLB
+	 I39ufu6G2M3ZnLoEDivZ4AoNwPm5LFhVxCEjU9bCs5jOdrqx7czo/iV7xoc0LoE7FuQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=collabora.com;
-	spf=pass smtp.mailfrom=collabora.com;
-	dkim=pass header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=zohomail header.b=Y1nXV3+1;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.182.11
-Received: from sender5-op-o11.zoho.com (sender5-op-o11.zoho.com [165.173.182.11])
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=RcW+NRuh;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.67
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010067.outbound.protection.outlook.com [52.101.46.67])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10386606A31C;
-	Mon,  9 Nov 2026 00:08:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 10386606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D14606A31C;
+	Mon,  9 Nov 2026 02:39:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6D14606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=collabora.com header.i=@collabora.com header.a=rsa-sha256 header.s=zohomail header.b=Y1nXV3+1
-ARC-Seal: i=1; a=rsa-sha256; t=1794182894; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GZdOfVGwfy+fHzzFImBVN3ZRwh5yJ0rExwch9ff/A1WPXOMJeyl9H7pbyKSpwZ0ktG1SVIPMnSMyMli3qdqr3+XDdVW5OnEOkQXS42SkaGP945U4hUUeCcHLX85jkcVoCu2bBFZovtwLk0yA628do5498cmiDoKBVFs8LCyuJ0g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1794182894; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9rVwbOecFjn75cDjqDTfDsnAfqPeatJDytpCsuFTOOw=; 
-	b=UtOWFT0AU74Ns2xz8nEyYXPyUTIZvRDLn5deaduTCtAY+R5cOJe/OUUHbTWjzKtIuOZjj/jyPoN1lGcDxRbC0gplFaDlxy3semyGTjZ3eIiqZ9WjO/GWSWMnMTYCEQSK9YOfdDOJE7nMRO+eI2BGf0JIo30/shvBmXFtKuCcumY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: a=rsa-sha256; b=Y1nXV3+1hdC3fCNRppldqk7KeJc6XHRAYG+BuJhiILJ7IJEgsKa++uiJJtrep62MhdIQ/yCq54z96CpR830gM9Ew/R82WR+b5kIZj178NXz7YBn+ruCfGsaJNkiwok0NvDP4wySMLECnoNcqn8+PKt+ArVOs8ku13uZ5KTEJvJQ=; c=relaxed/relaxed; s=zohomail; d=collabora.com; v=1; bh=9rVwbOecFjn75cDjqDTfDsnAfqPeatJDytpCsuFTOOw=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zohomail.com with SMTPS id 1794182894285249.11400116708091;
-	Sun, 8 Nov 2026 16:08:14 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 62D591808E6; Mon, 09 Nov 2026 01:08:13 +0100 (CET)
-Date: Mon, 9 Nov 2026 01:08:13 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: admin@tsv-stahl-riesa.de
-Cc: Aaron Kling <webgeek1234@gmail.com>, 
-	Svyatoslav Ryhel <clamor95@gmail.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: bq24190: Fix NTC status decoding for
- BQ24193
-Message-ID: <avEObsi3nkr_-kaf@venus>
-References: <20261026-upstream-bq24190-ntc-v1-1-fdc12d795a99@tsv-stahl-riesa.de>
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=RcW+NRuh
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HPxhw0aAu1HTCakqPafaM57JAEh+276m+6VyF/HB27ibpCBlR78XDx90Q563lICVzfc2QKZ8JLG8FzZ+Ve6feEodj4r8j2CDk1Q1R6Q/Drmsfuylh9l+adL/Aq/c8CND8WFRQDJJY4AXweOEXf/inXYDZRC+ezYOjXJZwOxxXGi04vpvHkl801vYZEtmSZUqNRe5vJnpDah9fND9j5NcAlqXwoMFl/WmMGI/5WvcIs+G2AzRmaeE6KX9oy2Q752JalQDGgfjStX19oNURYD3P4y4LeVFJ6CV0zXwrptY/tqWjGAdvLVUGIDuokMGKEb3mXhsfdav5EsfYafd7Mwaeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vETqnw6JkuoXbH9f8kankYKi/3tKoS0MH6pDi8u+gIA=;
+ b=r3v6JrDsmyJPprPJFvifl3wXU2bsECxdTp7PDDOYpCvooMypwojbUQcnhm2lv6XtAVTPE3D8kJAWgBThhYUlJJQjZqnmzcW/dQydYMXd3ydkzvFbeSwrNxP9Bhc7vzeNqveJme753QHk09wWZTLZVaxE/PaJ3iyQ9rjoehwscK2dgEYuhvpDOIVA/Y56ACqshFd0W02a4twwRdcYTmVW25ETZbmWokMbU6+WXi/AV46+6Rtjr57gNwebhfY2oqvjbA9bXblD+bYWzeztSEbD9+/p9hpEDdqBgwsFpPlNHffdeuuSOL19vP8XgZTlr4SULZj7WjHndjFBy8LwyvpyCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vETqnw6JkuoXbH9f8kankYKi/3tKoS0MH6pDi8u+gIA=;
+ b=RcW+NRuhNQbGtFAnkVhumMaAl+saIEwOmiwPEHi0botkWR0ygZvnMqOM/2d5mlbbGauBL44yo4L0L9I3SugkyU2ldhaFJoht4fDrCfKYTH/cvGcMcRLhXXzNdPHks7KbmXaEOth1CLNikj3f8C3YGHrAQwYBbU82Nf8yidTJ8ra6AyFOx/6/I4ld/LU9xTOurvynId02zNkDiBh7dVh7Bb29NZC/+P54vsrd+2GTID41NQJC6nhm60/yRYHmRfOalq1AwfDEfd9DMvl9uG9kyeR9RPW1NEhgdPpbEG4xMWAb6gCsXISkOOEuzZJZ5khigqnbNnD7UM+DljgHlWsKyA==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by SAWPR12MB999116.namprd12.prod.outlook.com (2603:10b6:806:4e4::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.12; Mon, 9 Nov
+ 2026 02:39:04 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0592.010; Mon, 9 Nov 2026
+ 02:39:04 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>, devicetree@vger.kernel.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jesszhan0024@gmail.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@kernel.org>
+Subject:
+ Re: [PATCH v6 09/10] dt-bindings: display: tegra: Document 8-bit CPU parallel
+ interface
+Date: Mon, 09 Nov 2026 11:38:07 +0900
+Message-ID: <WCkIU6FiT8uFearoaeYKdA@nvidia.com>
+In-Reply-To: <au33NIR4bCAkokJH@orome>
+References:
+ <20261105140510.165165-1-clamor95@gmail.com>
+ <CAPVz0n1j0M1Zjj90pEGCYiNqUQv00N89oPcAxZbA7upuxhoF9w@mail.gmail.com>
+ <au33NIR4bCAkokJH@orome>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0002.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:26c::6) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -69,162 +108,151 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wxjeawftv4clqcwp"
-Content-Disposition: inline
-In-Reply-To: <20261026-upstream-bq24190-ntc-v1-1-fdc12d795a99@tsv-stahl-riesa.de>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-0.2.13.1.5.4/294.158.93
-X-ZohoMailClient: External
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SAWPR12MB999116:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5d58958-13d1-4148-164a-08df3e0a9e61
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|10070799003|23010399003|10067099003|5023799004|11063799006|4143699003|56012099006|261021121427099003|261021135927099003|261022105027099003|261009223027099003|261026140227099003|261028144727099003|261026121527099003|261102123227099003|22082099003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	cA21XAoFRoSahWUhf7+cuiGY8fLe0w9N/mvJALha73wD/EyUG9yv5MpwpkQ3gcMVVHlroYB6ZwX/q7qpOJjy0eZ2MQ5uozUo0W64wNIoCoBrGkmgfK1c8ZoHHN2459bFFgSjonUlWu+iedBvBrEbsQkIF382qeguy9+TysFwJvHqKFG6PoyBHxNDpAqxXjAro6mAxscXBYGHzsy0xKbrrDW8ok5Pzldy2/CV9TBIPrimsknjbawwymeYD72RHBFT0cSLD/UKbgD9dMDEL/dJgOJFwbEHe5M6Sll10t4OnXfHY+scyVgE/KC+pEZg6GbvQ1VcPNM0VHRAKz3zQXSHweVxXfF1wqY9fxalCq4ztJm0yFXrAYD4iw//f8bXFEsEvP+tZ4scdxkapk9KVXprHgud4CBbjTp+SV+NnyGHgsxpCxfEYzUfMjMGwORu1snRxgpomdAbmuWRV8yui01aPbf7CEvbyObKhkw2w5j83kmNv0V9dKNCsthaLUIC4/INDMiiulci2fcKTcPvskVf+zs9NVW8DpMvh6DYbk+GpQg2ngS8H/XJzY9/UwxQBqL4BnBUWafbpPNleNYn8+oRDkUj9xU79iUHLwVbZiOjyNH3Bfbm9pI2SIObTOloYOTKBc8kUMQFjryV6iGYwgtpyV54j/iwtSUOFXhZPaJuL5c=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(10070799003)(23010399003)(10067099003)(5023799004)(11063799006)(4143699003)(56012099006)(261021121427099003)(261021135927099003)(261022105027099003)(261009223027099003)(261026140227099003)(261028144727099003)(261026121527099003)(261102123227099003)(22082099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q1VkN3R0aFVjVlpDRUNoMmk2Qzk0UlkzdXpPY3daVTZnM3lhTjhHMWpiMk1D?=
+ =?utf-8?B?TFpVZGc5Q09McVJ0UHhjTGh3bExudjBJSWw4R3VpVG9ZY1kwVUxDZEV2Ly9O?=
+ =?utf-8?B?NUxMWVF6U2tSam9aVGRtdCtyN1JkNmdVM3NoZ1lBZWYrdElOYXVrYkd3cVdw?=
+ =?utf-8?B?ZisxS1hJZTdMWE4rVkk2UUlOd0o2RHd6Z3RReXR1emhrRDcrWDB3dUQxbG1E?=
+ =?utf-8?B?ODc1QW9NUHBZdVd0L2JPL2hZUUJRaTJTWlpvSzJtTFkxNDhMYjhXMUlVQmdJ?=
+ =?utf-8?B?YUsvY3Y2dkRlQ2RZcHdYY0xUSFhCWldKYnRUTGFuRjhMY3h6ZjdXZ3pKQXV0?=
+ =?utf-8?B?SDNYVnk2R2h2LzgvNUdzaUpLVjZaUnJCUXkrYXdBT05LUkg2eGJUQWp2Und0?=
+ =?utf-8?B?d1hzajk0OEJhWjkrWFFSY3dlU3E3eW5UVXhYQUttQnErNTVXbjhCVWRCbDlq?=
+ =?utf-8?B?WUptYWV5SEY2NEYySVk2VFBmN1lMNzFUaUNSMHQyS0Q3ZkI1ZXZPNStubFNo?=
+ =?utf-8?B?U25tZ2ZpZ1pQcTJQOVY3ckFuaTU4cUN2SDhyZVhtYW1kdk52b011WWx0SVgx?=
+ =?utf-8?B?UTVSSDlOWHkwWW8vSDgrVVQ0cnhYNVhDSGJkdXdrK24yVGo2RzVVTFIyYi9R?=
+ =?utf-8?B?Y1VlVVB6K2ZLeW5lcTJqK1B5NmFSMlhtN0lnWWZZd3dmd2dKclpyMTBsUVRW?=
+ =?utf-8?B?Rzk4SUovc1M5ZGUwNVoyMHNDZW9RY29GTVNTWkczbjB4bU9lQ2sydHpTUnpR?=
+ =?utf-8?B?YWdLTG5ETmRTTzFLeE5COUtmUzRyM1VHeCtZdWt5M0xMSFBpSnNuY2svbjhV?=
+ =?utf-8?B?aUIzZzhCRUFCMWRpV0k5bW1xbGFtUUNKbGRSQkt5WnpZOXljOXBLZ1pDL0ZW?=
+ =?utf-8?B?TUMza0JiWEI3clhpNlJHNTdhdXd5K3BTZnNQNGZRTDZYNWU2UjdacHVQV1hy?=
+ =?utf-8?B?M3pjQnFkSmZROWZMUGd6WmxSUkROQUVNUytOMzdSMDdEZGdkOHpuMkVQL2ho?=
+ =?utf-8?B?NzlrZ2g4Y2RqL0NxTFZDRUk2NzhuSGd6M21EYVFrRFBuUVJwSzVRSUpIZThi?=
+ =?utf-8?B?U3NxY3RmNDNrRVg2RTkyWUNOWFZjQ1RnSFIrMmZkdlBUb0xSQW96OGRoWVkz?=
+ =?utf-8?B?cXhJRkJtL0JtdS93WXQxK3l2Rys1T3VRUHY2RDNadGN6N215SEdOVkxJWEpw?=
+ =?utf-8?B?SXBlMUl0Y2M1YXQrWUdydUFhL2NCNkNFdU5TbVF3ZDQ4R3hQMmdSN1paczhz?=
+ =?utf-8?B?MnB1QS9MM0VwVms4dW5BdHB6dGs4SkF0UFpvbmNodUFrOGVaNkF4eGtRZFl0?=
+ =?utf-8?B?M2dKc3d6Q3lBejZQeDRtN2g1SkJ4bHF1RXRGQ0Z0Y1VZc2g3K01IMlA3Q1Ju?=
+ =?utf-8?B?YmlDZkRjTS9GQVE3V0Z5Ykg4TzhnK3JBeU9adU1SeStkdVhnZ0hmWEN6RVJZ?=
+ =?utf-8?B?VFVZQlBqR0w2dkVmM1RZTURrNmVKYkQyYW9vZnhYeEhvNjliM2JXdGhPVFN5?=
+ =?utf-8?B?OVJLanB6OFpCMzRoeHFrclNQU0FBM3gyc2dwUzVDRDFkd3pmekNoKzVUSmVi?=
+ =?utf-8?B?cHZ6Nk4reFdEZndFNlJYRjBRdTAxdVV2amJyOHplTlQzelRDb21ZNmRCY0J0?=
+ =?utf-8?B?WlloMTlVeUNYZUtvZVlSdC9MYlg4dTlBOGE3Qm9hUXlrellJckNsVXR4NlN6?=
+ =?utf-8?B?aUl5SThidm1tS2ZiMjlBSmxvTTk2bkQvakNyNi9ZSXI4V0thdURKWEpPTHdD?=
+ =?utf-8?B?RUpaSm0vWmhGekxoMlg2U3l4K2VST2RtdVh6RURWdkkzZGM1bkVqOVhkUEZB?=
+ =?utf-8?B?K3o2cWVyamNjOFgzUkVpLzdmWTQ5Y3JJTzQwNXVNa1Z2MXVWdFdvY3lsOStv?=
+ =?utf-8?B?SUhYTy95ZHVVN2ZjQ25zT2kvQXl6RFppNHZQOTc1OUpxMnlTZzE5OUZIeGxL?=
+ =?utf-8?B?M09JTms3R0FNa3ZaVTIwYStHMUZtQ0tLdEx1N1hoWVkxcnlFMVFkWVZWUUpq?=
+ =?utf-8?B?Z1hXZllrRVFib1RVdTlCMWxlYnRhU1A5Z1hXeGFxbG1jM1dnZzAzV1o5bHV4?=
+ =?utf-8?B?VW5xTi9CQ1FpVFVmL05TdjJGYVljNkVZUXZvdWhvODlGclNyN3FUUHRYZmhi?=
+ =?utf-8?B?SHdpYTVQa09Rb3BaaVJ4eG9qK2NXQTYvZUNvQVIvS0FGN3hOaG82MlpFcDUz?=
+ =?utf-8?B?OHJQZkNBN1BvQjdZWktRdkk2RXMwaVhobjRIYUUrWUx2Mm5lUmhhNkFaSFpJ?=
+ =?utf-8?B?VXYzSzFGQTNlUmpEMHRTQzRQOGlZOGg4ZEV4a2ZjeURaQ09SelRLRzBOWWV4?=
+ =?utf-8?B?dzBOdFdkTTRzdjUzYUhxTzVXM3dwWnVwMFZBN3JJZDJ0VXZ5aXdqSTl0eXdz?=
+ =?utf-8?Q?w52XzpOU5MPg6nTwavC+th947v+u9hLL6E90BAN6Ne+uD?=
+X-MS-Exchange-AntiSpam-MessageData-1: BA4Iw+p+SLNF0Q==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5d58958-13d1-4148-164a-08df3e0a9e61
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2026 02:39:03.9853
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jog4meiHHmcbY4bwwGw2V5UmJOiy7AiEaPviQdx9S9XyK3vJoogcsdPBxOpHwtzjM32S7/3Vv0cpZpk2eJKFzA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SAWPR12MB999116
+
+On Saturday, November 7, 2026 12:51=E2=80=AFAM Thierry Reding wrote:
+> On Fri, Nov 06, 2026 at 04:48:17PM +0200, Svyatoslav Ryhel wrote:
+> > =D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 1=
+6:40 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Fri, Nov 06, 2026 at 04:11:12PM +0200, Svyatoslav Ryhel wrote:
+> > > > =D0=BF=D1=82, 6 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=
+=BE 16:08 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=
+=B5:
+> > > > >
+> > > > > On Thu, Nov 05, 2026 at 04:05:09PM +0200, Svyatoslav Ryhel wrote:
+> > > > > > Document 8-bit CPU parallel MIPI DBI Type B interface provided =
+by
+> > > > > > Tegra20/30 SoCs display controller.
+> > > > > >
+> > > > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > > ---
+> > > > > >  .../display/tegra/nvidia,tegra20-dbi.yaml     | 113 ++++++++++=
+++++++++
+> > > > > >  .../display/tegra/nvidia,tegra20-dc.yaml      |  22 ++++
+> > > > > >  2 files changed, 135 insertions(+)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/display/t=
+egra/nvidia,tegra20-dbi.yaml
+> > > > > >
+> > > > > [...]
+> > > > > > diff --git a/Documentation/devicetree/bindings/display/tegra/nv=
+idia,tegra20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvid=
+ia,tegra20-dc.yaml
+> > > > > > index 69be95afd5627..ffeb124905dbf 100644
+> > > > > > --- a/Documentation/devicetree/bindings/display/tegra/nvidia,te=
+gra20-dc.yaml
+> > > > > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,te=
+gra20-dc.yaml
+> > > > > > @@ -79,6 +79,16 @@ properties:
+> > > > > >    rgb:
+> > > > > >      type: object
+> > > > > >
+> > > > > > +  "#address-cells":
+> > > > > > +    const: 1
+> > > > > > +
+> > > > > > +  "#size-cells":
+> > > > > > +    const: 0
+> > > > > > +
+> > > > > > +patternProperties:
+> > > > > > +  "^dbi@[0-1]$":
+> > > > > > +    $ref: /schemas/display/tegra/nvidia,tegra20-dbi.yaml#
+> > > > >
+> > > > > I think it might be better to group these under a separate dbi no=
+de at
+> > > > > the top-level, making it a sibling to the "rgb" node. If you add
+> > > > > #address-cells and #size-cells here, I think that means technical=
+ly the
+> > > > > "rgb" is now in the same address space as those new dbi nodes and=
+ would
+> > > > > need its own "reg" property and such.
+> > > > >
+> > > >
+> > > > Only 1 DBI node per DC is available. Adding address/size cells mean=
+s
+> > > > nothing for rgb.
+> > >
+> > > If only one node is available, then "reg" isn't the right property.
+> > > "reg" indicates we're somehow addressing the child, which applies to =
+all
+> > > children, so I don't think that would work here. A separate property
+> > > would make more sense in that case.
+> > >
+> >=20
+> > Check v5 and talk to Mikko
+>=20
+> I checked v5. I disagree.
+>=20
+> Thierry
+
+My mistake; if there's only one node per DC then reg isn't the right=20
+property.
+
+Mikko
 
 
---wxjeawftv4clqcwp
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] power: supply: bq24190: Fix NTC status decoding for
- BQ24193
-MIME-Version: 1.0
 
-Hi,
-
-On Mon, Oct 26, 2026 at 07:25:05AM +0100, Patrick Fischer via B4 Relay wrot=
-e:
-> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
->=20
-> The BQ24193 has a single thermistor input and applies the JEITA
-> temperature profile. Its NTC_FAULT field in REG09 is encoded
-> differently from the BQ24190, which has two TS inputs:
->=20
->   NTC_FAULT  BQ24190    BQ24193
->   000        Normal     Normal
->   010        TS1 Hot    Warm
->   011        TS2 Cold   Cool
->   101        Both Cold  Cold
->   110        Both Hot   Hot
->=20
-> (BQ24190/2/2I datasheet SLUSAW5B, table 17; BQ24193 datasheet
-> SLUSBG7A, table 16.)
->=20
-> Warm (45-60 C at the TS pin) and Cool (0-10 C) are not faults. The
-> charger keeps charging at a reduced charge voltage or charge current.
-> The BQ24193 uses bq24190_charger_get_ntc_status() though, so a warm
-> battery is reported as POWER_SUPPLY_HEALTH_OVERHEAT and a cool one as
-> POWER_SUPPLY_HEALTH_COLD.
->=20
-> Add a BQ24193 decoder that reports POWER_SUPPLY_HEALTH_WARM and
-> POWER_SUPPLY_HEALTH_COOL for these states. Cold and Hot are unchanged.
->=20
-> On an NVIDIA Tegra Note 7 (P1640) REG09 reads 0x02 after a few minutes
-> on USB power. The battery keeps charging, but the charger reports
-> health "Overheat". With this patch it reports "Warm" in that state and
-> "Good" while REG09 reads 0x00.
->=20
-> Fixes: afe5301bfbaa ("power: bq24190: Add BQ24193 support")
-> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
-> ---
-> I kept this a pure decoding fix. Two things stay as they are and could
-> be follow-ups if you want them:
->=20
-> - The interrupt handler still logs a change to Warm or Cool as
->   "Fault: ... ntc 1", as it does for every change of REG09.
-> - bq24190_charger_get_health() checks the NTC bits first, so while the
->   battery is warm or cool the charger health hides a charge fault or
->   battery over-voltage.
->=20
-> Tool use (see Documentation/process/generated-content.rst): this patch,
-> its changelog and this note were prepared with an LLM coding assistant
-> (Claude Code). It compared the driver with both datasheets and wrote the
-> code change and the texts from my register dumps and instructions. I
-> reviewed the change and ran the test on the device.
-> ---
-
-Looks like bq24190_charger_get_ntc_status can just be updated to
-handle a single temperature sensor as warm/cool and dual-sensor as
-overheat/cold?
-
-Greetings,
-
--- Sebastian
-
->  drivers/power/supply/bq24190_charger.c | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/suppl=
-y/bq24190_charger.c
-> index 4bea6fd83c36..350cf79a0744 100644
-> --- a/drivers/power/supply/bq24190_charger.c
-> +++ b/drivers/power/supply/bq24190_charger.c
-> @@ -999,6 +999,30 @@ static int bq24190_charger_get_ntc_status(u8 value)
->  	return health;
->  }
-> =20
-> +static int bq24193_charger_get_ntc_status(u8 value)
-> +{
-> +	int health;
-> +
-> +	switch (value >> BQ24190_REG_F_NTC_FAULT_SHIFT & 0x7) {
-> +	case 0x2: /* Warm */
-> +		health =3D POWER_SUPPLY_HEALTH_WARM;
-> +		break;
-> +	case 0x3: /* Cool */
-> +		health =3D POWER_SUPPLY_HEALTH_COOL;
-> +		break;
-> +	case 0x5: /* Cold */
-> +		health =3D POWER_SUPPLY_HEALTH_COLD;
-> +		break;
-> +	case 0x6: /* Hot */
-> +		health =3D POWER_SUPPLY_HEALTH_OVERHEAT;
-> +		break;
-> +	default:
-> +		health =3D POWER_SUPPLY_HEALTH_UNKNOWN;
-> +	}
-> +
-> +	return health;
-> +}
-> +
->  static int bq24296_charger_get_ntc_status(u8 value)
->  {
->  	int health;
-> @@ -2013,7 +2037,7 @@ static const struct bq24190_chip_info bq24190_chip_=
-info_tbl[] =3D {
->  		.check_chip =3D bq24190_check_chip,
->  		.set_chg_config =3D bq24190_battery_set_chg_config,
->  		.ntc_fault_mask =3D BQ24190_REG_F_NTC_FAULT_MASK,
-> -		.get_ntc_status =3D bq24190_charger_get_ntc_status,
-> +		.get_ntc_status =3D bq24193_charger_get_ntc_status,
->  		.set_otg_vbus =3D bq24190_set_otg_vbus,
->  	},
->  	[BQ24196] =3D {
->=20
-> ---
-> base-commit: 734bef548a96e8774d6eef5dfa2026c6edc4e80b
-> change-id: 20261023-upstream-bq24190-ntc-f35ec3323449
->=20
-> Best regards,
-> -- =20
-> Patrick Fischer <admin@tsv-stahl-riesa.de>
->=20
->=20
-
---wxjeawftv4clqcwp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmrxDukACgkQ2O7X88g7
-+prEng//VL80jG3ac+N44hjvZX28Pga/56OOG1omtl/BuuUqk3wMbIIUa6lpXAM/
-OWb9gQ3aM9tnX69d9pDega9vMfzSCH4nV1gmSbM4DYr6bDu8kaX1veCDRVNIzj0i
-Q0O8WSd4sbh8J40UZnftYTlSMxJrugR9e8SAOWnUav1gzp7+5QCn6mq6Z9T/Uf+t
-imkdA1ASPe3P4AzAkHgMP8AgsXk2DIWYjo3bc0JWetSksCA8HXZsx5FsjftiwYLP
-CftuocddSIeYb2hWJeadLOG91Q2Izol1yZz0F9TtbBQoicN1+3gHzhOMnS2XVmU6
-2wKBr0p17Ghr6M5MslkVX8ALTI5lhji9Tr9kMWdlPUk/xPm6JI+QsZhd/5dl1Zwb
-c3nI2QhYl1JH0+QYYmq5qBLLMlPCRjE5CYVpCTx1y7Kd0Xxzdl6VAF9Q3ZScje06
-/NCCgDUqJW543bLVakDP3YTd1vnxM0B5jDOx/C5OMeNfclqXot22n3poZVKKQgtv
-5AIgHZAAouCBSMNt+i/Bfi43Bb1tcwS9uuIGrSkdCgK4XJOtt7PLERjlcI768Oyn
-ux+EcGMmoekx2Oh99TxsELi5siThPh4z4EejReZcVJBcNbSPp9pN8oJk7IHEC1cL
-o841MSvhY0ieDr6PaA86m3cKmn6EquQuSPJ8dgpcrLlttUADErQ=
-=CoiC
------END PGP SIGNATURE-----
-
---wxjeawftv4clqcwp--
