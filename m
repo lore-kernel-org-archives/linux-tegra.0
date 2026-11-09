@@ -1,50 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794236863;
-	b=pZQcnD7P/7gF7z0LOD4Y6mp+dWpaUcJLuZSX787XMsiN7UE2lZP+nia/opBe+qZ+lXO+
-	 fVNmAuzZADmXhfRd5swFmTUqQlyIfJwqgKUr7zUYLWJXBkatv4nWB1IfWVcJ+tQsWSwN3
-	 IKLKYpa2WSY5Wy8iBaOsMzQi3s1FvjlYomoxaAldzWxPmvIT5n5m4R8kd1T208RDZJxrJ
-	 lR11E3Io1CF2KPbGe/7rTaQwadGyBicEB26OaQAP5HLkqvPyfAiMpg1BK4M4WFtQeV6FC
-	 9rKeEJC0G/FrFyy4Cep6+02m/+XDdFl5aJR5ORvPEXpSmXKj+uepjNgchVKf9NqFR6w==
+	t=1794243454;
+	b=OUyxOsiR+Bpkjbs0C+vqb/lOLpxLrOe9JhaOMQz4qVNQ4NE9QhP5944jjCABCD2wiR+s
+	 JuyzT6OtKq6NgWoW9koBQ2D3jkmhI8yO1AOLWzmbHckSFow+L3G4a9KEBlslcayy5lSrf
+	 2FZo4TorSOnHDpmCcYKNj+i3qMxjIMu3WrtxrjBbBa39xn1Co4ASk2IfswnpS/YKbwX5Q
+	 gYz1pE/5Gbs7uPJMMj2AImA4k4hGhXh9jZYyCBjgbOM0LRsEtY2OPONpFBN1cC8aq4eBc
+	 ACAz27edFX9r2Wrmobi16NiBL1w/wkPNx/e2A3Q/Zcd1xTa7bY3tEhQsd6ku7qztcsA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794236863;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-CM-TRANSID:
-	 X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
-	bh=InNwYIMIJI8yrg6o/8hogQFe84wdeKa70SPggHPT1Ps=;
-	b=TXPDnbj4jiB0iF5k/pGGONaf3WxEPtZNJ6TPOnQfd/XQL/JYzp2L3jQtQdXmSNjthWQX
-	 Z1qBaL3al6u/5ZL8eT1kzSIJu2Pq7Qb99XVIKi2Bw7qIJyjyy09vUhwYF1QlNKegsiTO2
-	 0Ate5+O60PkQvENp7ntLQO+6hIKysiGggS5pabJGcG+lVqGp0ErUiviwjpYGmenBZy7+a
-	 mZ34VB2WsuTuZCdN46nACo3KofaNITguANRHyFkMWd6KAjsyIvOyy4B32ZUu8xACurQBf
-	 PgsC1Z4CXPq7aLP++qhD0O8/haixuKOxpkPcDSG0GdnwyVCuVojHrcKlTodo9v4ce/w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794243454;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=or84SUgv0BeH2ACDpVutswhOxc7jEVslOk831F8ydnA=;
+	b=BDQlRv6a1YHE0THmnGX/YI9cg0M0bwz9KAvcKZrrLGBxMwP5yjUXPke8N7e0Pz9XUlos
+	 DJbekRIKXjD1zKBYgoVxu1X8Fp/kf7Mz0II8vu79EFbXx6nWYKXZTc+95YCBZpY9l1/IO
+	 73wT3eAgU8Jmw4HiOREzTOYSJueMi193sMKisgOD1k88iA7rBaAVHZZDZNzfGb0Lli6LC
+	 rieRsU+8ySZ3R2JpbH6zOr3HAT76RZwgTeXcMvhq8q3COrDVtdLeHJgO4EphKRkbIPrPA
+	 PYU/feMpZDh+fVqoPwU9rDkfd4W8dDpzvL+z1VWh54knesZpruJCb46IAJAJ0YG79Cw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=163.com;
-	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=KrVbrHBa;
-	arc=none smtp.remote-ip=117.135.210.4
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fd52kfvy;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B184A606A326;
-	Mon,  9 Nov 2026 15:07:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B184A606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24ED606A33C
+	for <linux-tegra@vger.kernel.org>; Mon,  9 Nov 2026 16:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=KrVbrHBa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=InNwYIMIJI8yrg6o/8hogQFe84wdeKa70SPggHPT1Ps=;
-	b=KrVbrHBatWN5A+oE+H9yy3Vf4NfkgY3u8Rj2HFxCrfy7EdplXfSt70HWWcZLwh
-	/C6WnH1r7rLfVgoW1FY1zaLGFzyd7dn95MxfK1IloYJhY6mNWLvFrOOKJCksyygH
-	nw9KRh5w9N9Ue+WQ5j+8iur5GXJoCi6j7QcxLNX0lZ4Vk=
-Received: from [IPV6:240e:b8f:91b3:d000:f8a3:659e:94ea:8cfa] (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD39xp74fFqmq84GA--.54682S2;
-	Mon, 09 Nov 2026 23:06:36 +0800 (CST)
-Message-ID: <ad7ad5ed-bf3f-40b2-97c4-fbd6f35acd3d@163.com>
-Date: Mon, 9 Nov 2026 23:06:36 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fd52kfvy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2F71F00902
+	for <linux-tegra@vger.kernel.org>; Mon,  9 Nov 2026 16:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794243453;
+	bh=or84SUgv0BeH2ACDpVutswhOxc7jEVslOk831F8ydnA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=fd52kfvypHpLFctXWJFV5Xhk4mocUciAELKi5VXFKSSd3phcdIuxWzH5ljUSWmS3H
+	 q+rxRLcP/sjUmHyl0L22oh6n79hTl1aIkKyOPiwjOwncg8W+/vF8RrgpydBpBnEhDy
+	 9IER0aRJDqDMds1UyB6e5IdSaLH83xiaaCURPcZoxEWW1Omv34svRPreKwKaKIp/1g
+	 LObgpPpI/HnWs3pZI/i6WcEthNolZA6eOXKoZWWiSP3W6nBcxzrfe9c/wVa1p2FzyC
+	 99waGB0sAiFAvHFFHwzfSp+c2eHLAeD/N8n9w0PXPXEIpzA8JiUIOK4SNR5Aimx5kU
+	 0rXycXTIVCBBw==
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5eaabf28c06so718444e0c.2
+        for <linux-tegra@vger.kernel.org>; Mon, 09 Nov 2026 08:57:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErG1tBIY5wxRxwVXRck0JwW4wROzbnQKOFozOTiCzG2M3fkLjr4MnlLtAL7+QtCBJQEu6Ww7W/187qd0tA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9Lgkt/sGGG6A5omPcnHhHHdIwQ+eJkxjKuqweyTbPHliiW9pBM
+	daJ23pMOXjjvU3Xvb6AN77g3mhIPB74XW/IG9ZyZ85+j8fxY62NyFOvx2OlYa3Oa6lyjpPCxgdE
+	SRDz7bSfSQ/AtnERYdvZrZvjfuK0t7m4=
+X-Received: by 2002:a05:6122:ca8:b0:5ce:b65d:22c4 with SMTP id
+ 71dfb90a1353d-5ece735974dmr1790071e0c.16.1794243452619; Mon, 09 Nov 2026
+ 08:57:32 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -54,157 +59,127 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] PCI: Use pcie_get_link_speed() in pci.c
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: bhelgaas@google.com, mani@kernel.org, lpieralisi@kernel.org,
- kwilczynski@kernel.org, thierry.reding@kernel.org, ryder.lee@mediatek.com,
- jonathanh@nvidia.com, robh@kernel.org, linux-pci@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org
-References: <20261108094034.679945-1-18255117159@163.com>
- <20261108094034.679945-2-18255117159@163.com>
- <43198b7a-b0f7-49e4-731a-807e7d9e5959@linux.intel.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <43198b7a-b0f7-49e4-731a-807e7d9e5959@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD39xp74fFqmq84GA--.54682S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCrWfAw18uryfWF48GFWUCFg_yoWrWrykpa
-	y7C3WYyF1UJr1fWF4Fqan8ur15X3ZxZrWxJrySka4kWr12yrZ3XFy0q3yayr1Syr4DAry5
-	A3ZIyrs8uan7tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRepBDUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC7ByuUmrx4XyrPAAA3d
+References: <20261106193304.3347374-1-sumitg@nvidia.com> <20261106193304.3347374-2-sumitg@nvidia.com>
+ <125b1872-ce72-4842-88e3-abe7f8b1e772@nvidia.com>
+In-Reply-To: <125b1872-ce72-4842-88e3-abe7f8b1e772@nvidia.com>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Mon, 9 Nov 2026 17:57:18 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jQVRQhJzLoAy3btKovHGYkqGKJAP_5VfENM_WAREQnyQ@mail.gmail.com>
+X-Gm-Features: AclHuK8uIgCcA54cV6Osu4KoIR1Jd3EdCuObjZ0e2qwpL6iy8qO36-B97HRTaLQ
+Message-ID: <CAJZ5v0jQVRQhJzLoAy3btKovHGYkqGKJAP_5VfENM_WAREQnyQ@mail.gmail.com>
+Subject: Re: [PATCH v9 1/8] ACPI: CPPC: Order performance-control updates
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, pierre.gondois@arm.com, 
+	christian.loehle@arm.com, ionela.voinescu@arm.com, zhenglifeng1@huawei.com, 
+	zhanjie9@hisilicon.com, lenb@kernel.org, ray.huang@amd.com, 
+	mario.limonciello@amd.com, perry.yuan@amd.com, kprateek.nayak@amd.com, 
+	maciej.wieczor-retman@intel.com, pawel.chmielewski@intel.com, 
+	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
+	mochs@nvidia.com, bbasu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 6, 2026 at 10:38=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wro=
+te:
+>
+> Hi Rafael,
+>
+>
+> On 07/11/26 01:02, Sumit Gupta wrote:
+> > From: Christian Loehle <christian.loehle@arm.com>
+> >
+> > The ACPI specification requires Minimum Performance to remain below
+> > Maximum Performance. When autonomous selection is disabled, Desired
+> > Performance must also remain within those limits.
+> >
+> > cppc_set_perf() writes the three controls in a fixed order. This can ex=
+pose
+> > an invalid tuple after firmware resets the controls or while policy bou=
+nds
+> > move across the current desired value.
+> >
+> > Read the live limits. Apply non-atomic updates in three phases: widen t=
+he
+> > interval, update Desired Performance, then narrow it. Submit PCC contro=
+ls
+> > in each phase together. Keep the existing single-command path when the
+> > complete tuple is in PCC, reject invalid requests, and stop after the f=
+irst
+> > failed access.
+> >
+> > Make cppc_cpufreq fast switches include the limits only when they diffe=
+r
+> > from the last successful request. Invalidate the cache across resume an=
+d
+> > after a failed request, since firmware may have reset the controls or a=
+n
+> > earlier phase of a failed update may have reached the platform. Publish
+> > slow-path limits only after the complete request succeeds.
+> >
+> > At policy teardown, lower Minimum Performance together with Desired
+> > Performance so the final request remains valid. On initialization, clam=
+p
+> > Desired Performance to the live interval left by firmware or an earlier
+> > driver instance.
+> >
+> > [sumitg:
+> >   - In cppc_read_perf_limits(), skip an unimplemented MIN or MAX, and
+> >     do not fail on a live MIN above MAX.
+> >   - Clamp Desired into the new MIN and MAX instead of rejecting it, as
+> >     amd-pstate resume can round it above MAX.
+> >   - In init(), request the full range if the live MAX is zero or below =
+MIN.
+> >   - Clamp Desired in set_target(), fast_switch() and store_auto_select(=
+),
+> >     to keep the cached value in range.
+> >   - In store_auto_select(), publish the request only after success.]
+> >
+> > Fixes: 76531df5e13b ("ACPI: CPPC: Add min and max perf register writing=
+ support")
+> > Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> > Link: https://lore.kernel.org/all/01d7f07e-839c-428b-833d-713ed2128f4d@=
+nvidia.com/
+> > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> > ---
+>
+>
+> Sashiko flagged three issues on this patch [1].
+> I think none of them needs a change in this patch:
+>
+> 1) SHARED_TYPE_ANY, when policy->cpu changes: the driver uses one set
+>     of controls for all CPUs in the policy, and always writes them
+>     through policy->cpu. So the MIN and MAX written earlier still apply.
+>
+> 2) MIN and MAX not written when the requested frequency is the current
+>     one: not new with this patch. Since commit 9801be8bef65 ("cpufreq:
+>     Avoid redundant target() calls for unchanged limits"), the core
+>     skips ->target() in that case unless the limits changed, also for
+>     the first request after the governor starts. I will send a core fix
+>     for this separately.
 
+The core expects policy->cur to be set adequately before starting the
+governor, so if this doesn't happen, it is not the core's problem.
 
-On 11/9/26 20:03, Ilpo Järvinen wrote:
-> On Sun, 8 Nov 2026, Hans Zhang wrote:
-> 
->> Replace the to_pcie_link_speed() wrapper with pcie_get_link_speed() in
->> pcie_link_bandwidth_mbps() and pcie_bandwidth_available(), and remove
->> the now-unused wrapper.  pcie_get_link_speed() performs the same lookup
->> with bounds checking and is already exported.
->>
->> Signed-off-by: Hans Zhang <18255117159@163.com>
->> ---
->>   drivers/pci/pci.c | 9 ++-------
->>   1 file changed, 2 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index 7c6f2aba8144..92ede1768caf 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -6025,11 +6025,6 @@ int pcie_set_mps(struct pci_dev *dev, int mps)
->>   }
->>   EXPORT_SYMBOL(pcie_set_mps);
->>   
->> -static enum pci_bus_speed to_pcie_link_speed(u16 lnksta)
->> -{
->> -	return pcie_link_speed[FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta)];
->> -}
->> -
->>   /**
->>    * pcie_link_bandwidth_mbps - get the current bandwidth of a single PCIe link
->>    * @pdev: PCI device to query
->> @@ -6048,7 +6043,7 @@ int pcie_link_bandwidth_mbps(struct pci_dev *pdev)
->>   	if (err)
->>   		return pcibios_err_to_errno(err);
->>   
->> -	speed = pcie_dev_speed_mbps(to_pcie_link_speed(lnksta));
->> +	speed = pcie_dev_speed_mbps(pcie_get_link_speed(FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta)));
-> 
-> Readability seems worse due to cramming everything into a single
-> statement.
+Though I'm not going to defer the series because of this.
 
-Hello Ilpo,
-
-Agreed. I'll split the link speed class into a separate local variable
-at both call sites, keeping lnksta intact for the link width extraction.
-
-I'll send v3 of the series with this change.
-
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 7c6f2aba8144..594ee7aa4cad 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -6025,11 +6025,6 @@ int pcie_set_mps(struct pci_dev *dev, int mps)
-  }
-  EXPORT_SYMBOL(pcie_set_mps);
-
--static enum pci_bus_speed to_pcie_link_speed(u16 lnksta)
--{
--	return pcie_link_speed[FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta)];
--}
--
-  /**
-   * pcie_link_bandwidth_mbps - get the current bandwidth of a single 
-PCIe link
-   * @pdev: PCI device to query
-@@ -6041,14 +6036,15 @@ static enum pci_bus_speed to_pcie_link_speed(u16 
-lnksta)
-   */
-  int pcie_link_bandwidth_mbps(struct pci_dev *pdev)
-  {
--	u16 lnksta;
-+	u16 lnksta, lnksta_cls;
-  	int speed, err;
-
-  	err = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnksta);
-  	if (err)
-  		return pcibios_err_to_errno(err);
-
--	speed = pcie_dev_speed_mbps(to_pcie_link_speed(lnksta));
-+	lnksta_cls = FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta);
-+	speed = pcie_dev_speed_mbps(pcie_get_link_speed(lnksta_cls));
-  	if (speed < 0)
-  		return speed;
-
-@@ -6074,7 +6070,7 @@ u32 pcie_bandwidth_available(struct pci_dev *dev, 
-struct pci_dev **limiting_dev,
-  			     enum pci_bus_speed *speed,
-  			     enum pcie_link_width *width)
-  {
--	u16 lnksta;
-+	u16 lnksta, lnksta_cls;
-  	enum pci_bus_speed next_speed;
-  	enum pcie_link_width next_width;
-  	u32 bw, next_bw;
-@@ -6089,7 +6085,8 @@ u32 pcie_bandwidth_available(struct pci_dev *dev, 
-struct pci_dev **limiting_dev,
-  	while (dev) {
-  		pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
-
--		next_speed = to_pcie_link_speed(lnksta);
-+		lnksta_cls = FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta);
-+		next_speed = pcie_get_link_speed(lnksta_cls);
-  		next_width = FIELD_GET(PCI_EXP_LNKSTA_NLW, lnksta);
-
-  		next_bw = next_width * PCIE_SPEED2MBS_ENC(next_speed);
-
-
-
-
-Best regards,
-Hans
-
-
-
-> 
->>   	if (speed < 0)
->>   		return speed;
->>   
->> @@ -6089,7 +6084,7 @@ u32 pcie_bandwidth_available(struct pci_dev *dev, struct pci_dev **limiting_dev,
->>   	while (dev) {
->>   		pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
->>   
->> -		next_speed = to_pcie_link_speed(lnksta);
->> +		next_speed = pcie_get_link_speed(FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta));
->>   		next_width = FIELD_GET(PCI_EXP_LNKSTA_NLW, lnksta);
->>   
->>   		next_bw = next_width * PCIE_SPEED2MBS_ENC(next_speed);
->>
-> 
-
+> 3) store_auto_select() racing with the governor: this is not new
+>     either. Before this patch, both edited the shared
+>     cpu_data->perf_ctrls. Now each builds its own request.
+>     store_auto_select() holds policy->rwsem, so the policy limits cannot
+>     change while it runs. store_auto_select() and the governor both take
+>     MIN and MAX from these limits, and keep Desired between them. So
+>     MIN <=3D Desired <=3D MAX holds, whichever write lands first. At wors=
+t,
+>     Desired keeps the older value until the next governor update.
+>
+> [1]
+> https://sashiko.dev/#/patchset/20261106193304.3347374-1-sumitg@nvidia.com
+>
+> Thanks,
+> Sumit
+>
+> ....
+>
