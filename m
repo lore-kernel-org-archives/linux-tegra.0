@@ -1,49 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794308320;
-	b=Md0D+5VNu6vdlWajliM1A0ehPuaS/MKhpUgB4ysIasyFe089tuyO7EBMED9+gnaT/KAe
-	 KmDzVIYIF81VgxETQns6e66qRaWiyvy89aeZ2Sf1Yi2kA3/ndtgPWq+RNbKCbRvM0U41I
-	 XSStskJq77BTEczrP66/7fSA/G7DwtD7FVNDnf5PdWC8tZfdWfnRoq7GnxI9988FxEM9R
-	 1z/BpkFKOcY8qUvYmdOJJey6/lydF1OMMW/eKsErskWe+zCEtLrMJkureQzNCeUfx1bQy
-	 CS0RwR4GdzTBchBhWz02UOFrk0Cj7+1ykUG4BNWU61OPV//RsrJqEy8k77YYvvnZ00w==
+	t=1794310689;
+	b=zF2fWyJ54qmzskFPXaRkCj6f6DlwngrgvLhZ8nF3jvc9OAERz2guppmyOSVpc0RFThUU
+	 e/cMvoiRXAJQXxc+Ax1Cr35CQfmW/tuBbmZHp3tY8dsGxo0jn29vqFN7zFXpe7g60kCch
+	 ONk45KjaDbgBpeHAVvzmQhpPWVScygYfwHSe85qO0H2iD4T8hvz4HfkHNHLCdqTxH8DOE
+	 6CEvvPVJVr+5I0q3FIMnNlNRn9cUC8eZRd9E5mMuXLZt/QXPinlZB9WB+tRDho38jkusw
+	 Znen+uuhFcmUcWWEYVZ557rxZpj2fKERTTJYnbrT5Aus2j7nc9K7R06D805OwX24vSw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794308320;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=oFUa0NTalT8I2v4z+dJNxj/0wWQceUns2tfMcsjj9Ls=;
-	b=EpMNtflCvr3cqA6AJvN+FxeBgt1hoZnKtl/S70Am6O7afg/BUx8kmgWQ8FZCjUxzGOt5
-	 XQjbj8uVaiW4wXA0Gz4X0TgKMOtFFE8vrnk/QHy1RFDugdj7jG5K8nqzI/P2mxKejn4TR
-	 jS5EHApIe+kC1PxDt+0PW+OxDzN51nh5RSG5GL5mAv47FDF4UFNM029F+j+/I5GW87xja
-	 QmvvjYiPUiuOylRZ75G1R08p2buyNvxTWrKq3ZBRxOHwR7pdfxN840RvBWMk/fYE+tbR8
-	 TBdL5q0R1qC47oEn9aHD5C2ARWlZdqIY2OeqZgohTuQV1oxgNv5XSZwffzKo8gRB5IA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794310689;
+	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
+	 Subject:Message-Id:Date:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
+	 X-Developer-Key;
+	bh=iorjE9z8QyUMJ1RAj7sx526U6HMd38S2kCHhClS7b6g=;
+	b=N9YcCfCepbSs2DvvOPc0iEIsy/aZfupHvLM2+7ILALHd6oHP0gayOrOidFebfc4aTc3b
+	 ewSoPZHfbfgLW66TxrqmTJA6y82dYsQODxni8w2whk3wKYzEoE2GweyCOO1+GrzVc2XcD
+	 c/gHab20Zsej9MBS6ZnxQ72nXW/zT7ZhJwLX5HXab1vsavKidq7cp54bPoYpQTaG9dHa6
+	 OxAXQxh/Ds4c/FEXY1/pFDFoBEnhU2Lkwu03QINvbAYw82vEqks6gF4/M63VGXVxnor2u
+	 hjKjpmVWvJjM9LqkPwWjfQ2m3RVp0Eqpi28Ecknj280K2vkkh7z8s7VWD+wnzU3HkLw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=aSQodJ2n;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D4E606A335;
-	Tue, 10 Nov 2026 10:58:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 83D4E606A335
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ax6ncekN;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5047A60A2602;
+	Tue, 10 Nov 2026 11:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=aSQodJ2n
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8A8D1516;
-	Tue, 10 Nov 2026 02:58:34 -0800 (PST)
-Received: from [10.57.15.53] (unknown [10.57.15.53])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AA5F3F85F;
-	Tue, 10 Nov 2026 02:58:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1794308317; bh=o6OORrG7IfdhK72XlSREVjFq8oJqpEAcuTcKqxHnmic=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aSQodJ2nFurGpy+xIpsDjV11vTFs0fGjvivf195NQHAU5Twb21kaYPTsHdE6NkdMJ
-	 HEgc46ycKsZFSiT3c02oVPI5sfP2qzpnR8dsCTaRdAJ5AxOWOko+aNzUvEOuQydApe
-	 dPyJUkTvhIy2ECSrhqz83KDFRMS/LQInpboTYFvo=
-Message-ID: <09209b48-a469-4bd9-8d43-845f709353ca@arm.com>
-Date: Tue, 10 Nov 2026 10:58:28 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ax6ncekN
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B267B1F008A5;
+	Tue, 10 Nov 2026 11:38:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794310688;
+	bh=iorjE9z8QyUMJ1RAj7sx526U6HMd38S2kCHhClS7b6g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=Ax6ncekNiCm0/WnNpBe+QkJAmkI4oOEbuK1DQjWXxBTCEqs+Zdr8PJVEdRCbQ2/Os
+	 k3ve5AQxcXxUNprkLBWYlkPxNonI1WWsvSpfsesZno+5vEPAN4kmtQioXc0BV7CF7N
+	 dJ9qfoI8VrnE343YvqwStJo7+RtLcXpf1J1OJGxgPz1WfGB0IJjTPeaykorRUY8ZyE
+	 ky8+kRroM9PJhysCoSYiIe+x+VOdcviDs5+8yvlk96SCd/WOR6Lf/86xpTDlf0WRRc
+	 ITPy1m6FlZV+Do87p+giooag+XfwYVkkf/y8Qxkt7mFVhRVq1TNaJocHluzyQ8crZ0
+	 ulUL1ciCT0RVA==
+Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
+	by traversing.sirena.org.uk (Postfix) with ESMTP id DD327310B69B;
+	Tue, 10 Nov 2026 11:38:05 +0000 (GMT)
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>, 
+ Leon Romanovsky <leon@kernel.org>, 
+ Animesh Agarwal <animeshagarwal28@gmail.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org
+In-Reply-To: <20261104124057.240288-1-clamor95@gmail.com>
+References: <20261104124057.240288-1-clamor95@gmail.com>
+Subject: Re: (subset) [PATCH v2 0/7] ASoC: dt-bindings: Add/Update
+ #sound-dai-cells to Tegra related codecs
+Message-Id: <179426618773.3711751.13100572621405559085.b4-ty@b4>
+Date: Mon, 09 Nov 2026 23:16:27 +0000
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -53,91 +73,62 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpufreq: CPPC: Set CPPC Enable register in cpu_init
-To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
- viresh.kumar@linaro.org, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com,
- jbenc@redhat.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
- ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com,
- bbasu@nvidia.com, stable@vger.kernel.org
-References: <20261110101246.3665797-1-sumitg@nvidia.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20261110101246.3665797-1-sumitg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2055; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=A+08dPCEhdxswcFtASv+WxHVH5TxmCKisizGltwDYZk=;
+ b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLI+M8km/VJniHrW+p9ny5PeO+7p2vtsNz344FYtx6RTw
+ s9nFZzUUcrCIMbFICumyBKXxf2yvuT1Gr6DC9tg5rAygQxh4OIUgInsaWFkmGFb5NbXJjzjkOzK
+ dYxzlN65vLrC2Dztvs4t4cJKsakM6owMtxgurhS816Je0et9kDP5QfHViM3a1mY28hkvFD4vELD
+ nAwA=
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 11/10/26 10:12, Sumit Gupta wrote:
-> As per ACPI 6.x s8.4.6.1.4 (CPPC Enable Register):
->   "If supported by the platform, OSPM writes a one to this register
->    to enable CPPC on this processor. If not implemented, OSPM assumes
->    the platform always has CPPC enabled."
+On Wed, 04 Nov 2026 14:40:50 +0200, Svyatoslav Ryhel wrote:
+> ASoC: dt-bindings: Add/Update #sound-dai-cells to Tegra related codecs
 > 
-> The driver never writes this register. CPPC therefore stays disabled
-> on platforms such as NVIDIA GB10 that wait for OSPM to enable it.
+> Add/Update #sound-dai-cells to some codecs often used by Tegra devices.
+> Document #sound-dai-cells property for i2s and ac97 nodes of Tegra20
+> and Tegra30 devices since they all provide a single dai cell. Add these
+> properties to SoC level Tegra audio-related nodes. This is required for
+> creating more complex audio paths.
 > 
-> Call cppc_set_enable() in cppc_cpufreq_cpu_init(). Fail init if
-> enabling CPPC fails. If init fails after CPPC is enabled, disable it
-> again. The register is optional, so -EOPNOTSUPP is not an error.
-> 
-> This relies on commit ab482f1bac6b ("ACPI: CPPC: Refactor register
-> value get and set ABIs") from v6.16. Before it, cppc_set_enable()
-> returned -EFAULT instead of -EOPNOTSUPP when the Enable register is
-> not implemented. On an older kernel this change would make init fail
-> on every platform without the register, so the stable range starts
-> at v6.16.
-> 
-> Fixes: 5477fb3bd1e8 ("ACPI / CPPC: Add a CPUFreq driver for use with CPPC")
-> Cc: stable@vger.kernel.org # v6.16+
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> [...]
 
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+Applied to
 
-> ---
-> v1 -> v2:
-> - Fail init if enabling CPPC fails and disable CPPC again if init
->   fails after enabling it (Christian).
-> - Move enable after the policy->shared_type check, so cppc_set_perf()
->   is the only failure after it.
-> - Mention NVIDIA GB10 in the commit message (Christian).
-> 
-> v1: https://lore.kernel.org/lkml/20261105123244.3132560-1-sumitg@nvidia.com/
-> 
->  drivers/cpufreq/cppc_cpufreq.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index 957fa7775260..b2af24ae5008 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -714,7 +714,17 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  		pr_debug("Unsupported CPU co-ord type: %d\n",
->  			 policy->shared_type);
->  		ret = -EFAULT;
-> -		goto out;
-> +		goto out_put;
-> +	}
-> +
-> +	/*
-> +	 * Enable CPPC. The Enable register is optional - some platforms
-> +	 * may not support it.
-> +	 */
-> +	ret = cppc_set_enable(cpu, true);
-> +	if (ret && ret != -EOPNOTSUPP) {
-> +		pr_err("Failed to enable CPPC for CPU%u (%d)\n", cpu, ret);
-> +		goto out_put;
->  	}
->  
->  	policy->fast_switch_possible = cppc_allow_fast_switch(policy->cpus);
-> @@ -742,6 +752,8 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->  	return 0;
->  
->  out:
-> +	cppc_set_enable(cpu, false);
-> +out_put:
->  	cppc_cpufreq_put_cpu_data(policy);
->  	return ret;
->  }
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.5
+
+Thanks!
+
+[1/7] ASoC: dt-bindings: maxim,max98088: Document #sound-dai-cells property
+      https://git.kernel.org/broonie/sound/c/062bf3ac1ff2
+[3/7] ASoC: dt-bindings: realtek,rt5631: Document #sound-dai-cells property
+      https://git.kernel.org/broonie/sound/c/084a4da7eee3
+[4/7] ASoC: dt-bindings: wlf,wm8903: Document #sound-dai-cells property
+      https://git.kernel.org/broonie/sound/c/0f4a5bcb3245
+[5/7] ASoC: dt-bindings: wlf,wm8994: Update #sound-dai-cells property
+      https://git.kernel.org/broonie/sound/c/c90862fdb96e
+[6/7] ASoC: dt-bindings: nvidia,tegra20/tegra30: Document #sound-dai-cells property
+      https://git.kernel.org/broonie/sound/c/6ffb307005e8
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
