@@ -1,89 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794314364;
-	b=i1GtHmrKZJEgkqiygnS+ihXEb6nVRVjR8dCZ7fg5Fz+kXxKOdtb3zQ+GeaXjMgcRcGZF
-	 Gy2as8qpSxnKrwlQuZk3BPEPNbSWSgQCOCoZDiWupB9ljYZiLxhIPWq+22ZW3KVaXOKTG
-	 7yBlEez5KG4qNqEb/nJ8p+Ojf8J7WUT/ktp9oIKiesAt/0f1lJ2gKqCd9KXdj1dbqjmoV
-	 qPHyf/7tczNhtNtW9gJ4/QuVuNqzKJhlChQZautwubsbwXu2+LV/AdFx/FH6d/zZiv9Ox
-	 kS0QeJw2qL2cNnh1sR6EBGMa9ZRaIwONJwXxspRU/Wcru5pKmpDI5wECrLL1I7v1dYw==
+	t=1794314366;
+	b=BVToccvOrwQG7u5nxVIyVWR9sdAKJUc+gUDSm9Tsk+wJ2/WuXidiDzdjslBXuSoIC9pw
+	 b0XXcK43X7COyoWpjA2z4ybwmdriJ1v9yLPOwqZAieuBV1sDvTnLjwz94m8j9SX/S2MCg
+	 t45iFpb+f/d29hUDxb0kIIDI1M+P4MK1ItBGT+ZFk3PKV06Rbmg1+U/974cZaR4d7rSD5
+	 f5VpDA50IMMI7+CBkP4nn+DUXqG1APKkoHz9G9JqfsIPLrzm93+ZdnNex+jvXcttcPFpR
+	 wp0RClBWBTv0vClfC1XMj7quy3OaOjdl4zZwHRe1GljjOiUn70tE1lWwF75JE1Cc/HA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794314364;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794314366;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=5rbfN6ub87VSj5g3uxehcp7uqTnHm1v2JJmyLn3wnfo=;
-	b=Rv6kAqpX59UVPHMCqk9fIT8V/3EMagVXAqJTqMST9m6Zqf8fIGLpuoHspuh+JsjDxPMz
-	 lOp6V2C0oGfw/4wfDNwqcL/iZEd4AjU7KLwHKv3IBXgBYCORaxYtGVyxyfjfsiqniUWqt
-	 WK8H1nzEZ5JtDNQ35aBysaAcgp03KM2x+r6k8jRab+O9pFGrY1TAQdZgpWGPLrWynYidf
-	 kk6MGWeTqyN6BrxWaUi5Hre2fx8ufp+FMAvp8D3Zse+z4dPJGK33MdsWvkEfkLWWTEtSH
-	 A6ptLpB96cH5HptFxfuMxYri15OViCIdvUj50LATfzy+cEydxpMBwuvzADHMBSl3nFA==
+	bh=HF3shcz+KksloJNRLeQSS2sTiHKjaNkcjpmTc658boM=;
+	b=DNenqHEqywLCjKDqKcgNdetgG9hhCe66hdzkX+KG8l4PaDaAhv0pAEeweUArRvji00ZQ
+	 8TawpjwM2hHoD4BJr1jXJKQt3xMHqbxtIHSMrBnoHC97ZNpae69bE/RA0W5qHVtIo6c+P
+	 8DRKCH/JAi9Znb/F/U1yNjs51EsEuZ2htU7Hcz1lvZRaULwLdp0ysMEtcIijWGZuI24sw
+	 mdDmcuys9Sk+xNbojvIQDobuFl0u8eogmOHtiBvPJiVWK2fGhY3KR8d9t0YIJiEINYHln
+	 iorfZ6UaNy9nneqpYaG5k+HbkDLfAbNP0nb4T1EG0DlbOAoMhUPHUtVbICK3sFVRzMQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vJgDN0+e;
-	arc=none smtp.remote-ip=209.85.221.48
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oM+sbEHx;
+	arc=none smtp.remote-ip=209.85.221.44
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3524160A2635
-	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 12:39:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3524160A2635
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A434B60A3823
+	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 12:39:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A434B60A3823
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vJgDN0+e
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-49412eb1474so1246843f8f.3
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 04:39:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oM+sbEHx
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-4922dbcee23so1058492f8f.0
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 04:39:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794314362; x=1794919162; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794314364; x=1794919164; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=5rbfN6ub87VSj5g3uxehcp7uqTnHm1v2JJmyLn3wnfo=;
-        b=vJgDN0+ePr6yw2k9O8A+b8WCk1n8P/kv/ZXD0VjZUfizwqBrbl/40OaHpk5H1JJaYy
-         7ra4PRCbWwMK3nJR8w2+toz/p/aKVoW3QLepyZN9Aozs2I22xIel2jLc32MrC36Ioquu
-         YRjrSInbFlxkCqiGIL6QzzLSaC4NQdjsyLuwlucZ5VlwPczbr54gOpGWWTcJRkzm2k6O
-         iLJaBGZgwDnzD152JClQ58fCI0CyRSIcoPAOLXAzgFoCtV3LyIA/cZV+EBIlcmXY+0A8
-         AWY5T8AWyPF65WlNL6ANqWBBWFf7qKumEmOsx0pQgGRO9qmDHY4H8Bh4BcRf750adneE
-         nL8A==
+        bh=HF3shcz+KksloJNRLeQSS2sTiHKjaNkcjpmTc658boM=;
+        b=oM+sbEHxgeep4E1/WSL78xYKJMJmf61gIjvuNsamtwPBLooV5Z1KH0D7sRrHW2Mx9w
+         QM2//cd7owTL8gvqMrSUAiN3K0nIilxdaEu+b8DQVOaVyBkhotgpVFYrkKMYsiBYGHnE
+         eoFMtkMe36IUM1I+hpHLPGDPf7BHIzxxvmFATZ06/A31pd01fpSfOxnDVChckVnxeC/L
+         OkHMmsLFbov5ZGfYFysNtxxq8UERvPNVIHfUTWcul9kznoExgAsAIBG8kGZv4RRf5hl7
+         0u06LPcZG7927rbKt+RVY4+otgbdlK1elhJT1xPyIOaFk2vxhhOx5lo/8bJUagNTsnpX
+         6aiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794314362; x=1794919162;
+        d=1e100.net; s=20260707; t=1794314364; x=1794919164;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=5rbfN6ub87VSj5g3uxehcp7uqTnHm1v2JJmyLn3wnfo=;
-        b=wTNFfgYiDaor5WSuAjAQ5+aF/brxjyU7n8uYgzf/l3yqreutXw3VnXpW+IK9TWHpaH
-         5v6ajqKvEWSJyYgi3xS+jEjvWibG+/lZzFGuwe5FI0l+zSYqkr0rTkOq+GkICykKIOcU
-         sjuIQZv7A6M/pqUBP08kMZsJ55tKTp0bigyFS+KI1SpYhunGB4cfsjp2js6pEaqhgOim
-         vHsVYruul+pfY70ifY3eC801QZzyNcsdfJ0mUB1EZslKqfnTrvBfC7GC8+fMQkk2C8sW
-         aCB7pEPhGfv/jz4GYXMIKonYrLzVBSLDisGt8v8ZinyzhDccQPWc6TH/dsVjeatqGzW2
-         MIAA==
-X-Forwarded-Encrypted: i=1; AL+hErHzIbhAHJdUWOL52pZvb2b6J7WIbwy6poYlgfUaWCac/r0phrcxEJKQnZUXreSeGLrAVp6/+NwWcMvcZA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+WV7L0jG/HEzZLMeoykqUATf1/vc44fEngoFaN5Lk4UmzOwoA6
-	I/w1aKLbjrYH8scoBi2jfz2PucRWYLWf2bmiUGx9YOazL4ibonukUKzt
-X-Gm-Gg: AYBFou03jENgd77W2uyNMIpMaG4bCZNpizCtgJOeEW3gSCwqII+dSgCbGzYoNYZSV2P
-	lSkdex6WWSQ7I7UA2WXXExZ2KJToIhnAMGh7uTxs/6TtkGVG3M4ngUCZlqsb6PBRiyOad6rUbh+
-	wqB8A7cQUjGkHrpv5uhN0/JYQzsbGtEIR7IodDq/AF8wJbtIGpFp8gLYrlhnpoHl0K4T1Qf3euF
-	2LZvjrIYd25LAbqTIicTzb9KKlUXvl5ld5uPe4HJC3SohrV5+LoYhSi6XgdvaQKFQySe9R6xS+b
-	QTaCQCa7bvQTNiXsy0IeePN3KOh3AzDix0IJ+LPcpaxu7zj6GWFKLAGGVD7QAxmxVTB8RkugdmR
-	p6LPX7aIGJhIhUECG4CDEP1wxxsp41G5W7IWW9oqgaIECc8aCKNh+72bs2uKRVqbo0fw79dbwOZ
-	hMfD9qriFLCh8T3bCqNGQrqUMrv47PAZat/qrAs+Od5jhpY8GxvT5p9LQJVxJsl7SQQ5SjQo0Ly
-	OIsRL3NN6jC/oK8D3igq7tFLdEtQNFRL5B6yiwrRc6qTdNI81AIA3BC/2Pdmi70uSS3rOR98c2I
-	yxHct6LkxBMXRwbuLSP8s+gnuHL7AXop2BmIVdWy
-X-Received: by 2002:a5d:588b:0:b0:494:6f49:246d with SMTP id ffacd0b85a97d-4982fd3e42bmr4685475f8f.24.1794314362448;
-        Tue, 10 Nov 2026 04:39:22 -0800 (PST)
+        bh=HF3shcz+KksloJNRLeQSS2sTiHKjaNkcjpmTc658boM=;
+        b=sk9fpkheCkD5jpkdL3rX931/fSN4Zawucd6MG5i52kdprRLlF0YwQpazuPSdxP2OYU
+         wqwRRQcxsWU7zmyRt+31u2jCsekIMXBj5sBYo01C4BWH1fd8Grc1E04c7sWT9iT8JyHY
+         nNdfxl23FdrnBULFom1BnrOscMIrxFNRsnhr5hO+KFfb4oWMeSNU7axGSmUajecoDeA5
+         h4a/4sgIX/vutJBV7q/gS+htdMsmmwYMNcdn4ifOix4SxnBt6iVX+I3US6bO+GSZUxRi
+         vZvJ/IsMAXMry24fbDGtc/6zadKWQBjXlRURWruv0vTimlLHCT4Mu5GRv2Xfup6HQwBh
+         p/gQ==
+X-Forwarded-Encrypted: i=1; AL+hErF3k3SZdRCedfA3iKwfCRZtL3smU1ZzhxfHpGssMgAi1xKtJFCFWh0qVu9pYFQSHhXM6eshQSgdOVO5/Q==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8WQoPes0D5w0RJAyBL5bqDsDLlYaOm9BdemDx0SaTH+5RMh8CI
+	XiLzePC3SW8pM4g+Tc+YU+wfyGZnrxa3M/73noxWiOd2AvRrmbp5GyOC
+X-Gm-Gg: AYBFou3DkdZ0isb1t0rZKLRYfvqHvNNjy78cH+tKl/2eF60dGXWVU88iqrhPtPBDmVs
+	nvk20vIgM7AzvR3cJiOHfOj2um1zGqB2U+8tQ6oTpX4sVw47oq61qG9C9IA3Zl2iGVMGu46L7jA
+	USUFjMF3PkdNHXnVDjZbRGpHzvjDi1D704/rMoktOhU6LFkK/lN2KQFn6Doidy8TUefnMme7IOn
+	KiRjDBSCnkCsgy9mdwVMxMMWEUQojYKy0+0iLEPStzQInUCRwklwganmCpA0VJpxNLCT9CF00f3
+	fChWR6YmyLKo2U6miVtcgRLX+IWEtXs0OEf7UrA8pBqzXnfv90Ru1m9/K3qvn33rLZrgkF10tYk
+	3u+2/X6YXklyb4t0BQazvjgqfY8GaWk5Dq1hdkTpzBL4ZeWQyVAhp0x6GX2Sr715Zb4lFTOFXyb
+	c1pztPPr8f2cBVYTiePN/PPowbdXULd9BkK5ACDAcDWCOAM9NTrWv8JrB56hHNR8phuCa2zxjwG
+	GkUAsksVHj8zS2XPz7/0fQfw/X90uFrhCcmTmleEaCcIccS1ZlZvB5rLYhU1HJ4+OuMiv0M7Dwi
+	qn0qu7TIUJEjNkLEgnYGDNsGnP2+8se4RMOpSGkNQZpu9RmxsVYXjv+6Ug7/vw==
+X-Received: by 2002:a5d:5f47:0:b0:498:be72:6370 with SMTP id ffacd0b85a97d-498be7263e8mr2599460f8f.10.1794314363923;
+        Tue, 10 Nov 2026 04:39:23 -0800 (PST)
 Received: from [192.168.0.15] ([2a02:a312:c59b:a180:251a:f25f:80fa:af1d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-498363e0019sm5050033f8f.38.2026.11.10.04.39.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-498363e0019sm5050033f8f.38.2026.11.10.04.39.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2026 04:39:22 -0800 (PST)
+        Tue, 10 Nov 2026 04:39:23 -0800 (PST)
 From: Artur Kowalski <arturkow2000@gmail.com>
-Date: Tue, 10 Nov 2026 13:39:09 +0100
-Subject: [PATCH 4/6] soc/tegra: pmc: Add an option to keep the VDE
- partition on
+Date: Tue, 10 Nov 2026 13:39:10 +0100
+Subject: [PATCH 5/6] soc/tegra: pmc: Add a partition power off notifier
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -95,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261110-t20-for-upstream-v1-4-5923449951fe@gmail.com>
+Message-Id: <20261110-t20-for-upstream-v1-5-5923449951fe@gmail.com>
 References: <20261110-t20-for-upstream-v1-0-5923449951fe@gmail.com>
 In-Reply-To: <20261110-t20-for-upstream-v1-0-5923449951fe@gmail.com>
 To: Daniel Lezcano <daniel.lezcano@kernel.org>, 
@@ -111,167 +110,222 @@ Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org, 
  clamor95@gmail.com, Artur Kowalski <arturkow2000@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5931;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6965;
  i=arturkow2000@gmail.com; s=default; h=from:subject:message-id;
- bh=RSQhcdhD8zd+9Se8dJwIejTDi+AayGM5TfcHzNLktNA=;
- b=owGbwMvMwCVmYeTc/TaVxZzxtFoSQ9ZngaL411+TulkmKqkpO84Ijl1zaLtWRkLnz06JSXcYX
- ZoPBUV1lLIwiHExyIopspg9FPrCM8/r/YaXWzth5rAygQxh4OIUgIkkHmH4Z9WfdiH5M3fwglqr
- Y2eFCkRVDf7l8MT9cdjAFjYzJ+rpIob/KaVhHkurBb7JPDyhsKkgou9QRtOWDr5JFiaznyZFR+5
- mAQA=
+ bh=qF8CXXbZUQJjzOTRVbw07s4VS5+pdb02OBLUNzvZ+sk=;
+ b=owGbwMvMwCVmYeTc/TaVxZzxtFoSQ9ZngaKupkAftk1HIzJfhZtNnLfM6Y9YowF3EuP03TesW
+ JnbWz53lLIwiHExyIopspg9FPrCM8/r/YaXWzth5rAygQxh4OIUgIlULGf4n5fsYmi2X3qt5U/D
+ 1f0Jq0NKWzk6DQ+kzWvy53gWHjeDi+F/+JZNkYfeLd5WHJZf/ay9b8mMe8bfX3O0uny+aOKleuI
+ pGwA=
 X-Developer-Key: i=arturkow2000@gmail.com; a=openpgp;
  fpr=F60710C8D69E03A01A2801CD87A47D20C2709637
 
-After a warm reset, which doesn't reset the PMC, Tegra20's boot ROM
-hangs if the VDE partition is powered off. The driver powers the
-partition off when it registers it, and genpd powers it off whenever
-the VDE is idle. The VDE driver powers it on again when the system
-shuts down, since commit 8f0c714ad9be ("media: staging: tegra-vde: Turn
-ON power domain on shutdown"), which covers regular reboots. A watchdog
-reset doesn't go through the shutdown, so it still hangs the system
-instead of rebooting it.
+After a watchdog reset, which doesn't reset the PMC, Tegra20's boot ROM
+hangs if the VDE partition is powered off. Unless booted with
+tegra_pmc.vde_always_on=1, the PMC driver powers the partition off when
+it registers it, and genpd powers it off while the VDE is idle. The
+Tegra watchdog driver will need to stop the watchdog before that
+happens.
 
-Add the vde_always_on module parameter, which keeps the partition
-powered on, at the cost of its idle power. Instead of powering the
-partition off when registering it, the driver runs the power up
-sequence on it, which puts its clocks, resets and clamps into the same
-known state without cutting its power, and registers its genpd as
-always on. tegra_powergate_set() also doesn't power it off, which
-covers the legacy power gating API.
+genpd notifiers can't be used for this: they only reach devices attached
+to the domain, which the watchdog isn't, and the partitions are powered
+off before their genpds are registered. Add a notifier that is called
+before a partition is powered off, from tegra_powergate_set(), which all
+power off paths go through.
+
+When a notifier is registered, it is also called for every partition that
+is already powered off, except one kept powered on with
+tegra_pmc.vde_always_on, which the PMC driver powers on when it registers
+it. A lock is held across both the notification and the power off, so a
+partition can't be powered off unnoticed while a notifier is being
+registered. Registration uses the early PMC, so it works before the PMC
+driver has probed, which is when the partitions are first powered off.
+The notifier, including the hook on the power off path, is therefore only
+built on 32-bit ARM, the only architecture with an early PMC.
 
 Assisted-by: Claude:claude-opus-5-5
 Signed-off-by: Artur Kowalski <arturkow2000@gmail.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 12 ++++++
- drivers/soc/tegra/pmc.c                         | 54 +++++++++++++++++++++++--
- 2 files changed, 62 insertions(+), 4 deletions(-)
+ drivers/soc/tegra/pmc.c | 104 ++++++++++++++++++++++++++++++++++++++++++++++++
+ include/soc/tegra/pmc.h |  19 +++++++++
+ 2 files changed, 123 insertions(+)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0b3c140babd9..81af8aa1482a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -7571,6 +7571,18 @@ Kernel parameters
- 
- 	tdfx=		[HW,DRM]
- 
-+	tegra_pmc.vde_always_on=
-+			[HW,ARM] Never power off the VDE power partition.
-+			After a warm reset, which doesn't reset the PMC, the
-+			boot ROM of Tegra20 hangs if the partition is off.
-+			The VDE driver powers it on when the system shuts
-+			down for a regular reboot, but a watchdog reset
-+			doesn't go through the shutdown and hangs. Keeping
-+			the partition on makes watchdog resets work, at the
-+			cost of its idle power.
-+			Format: <bool>
-+			Default: false
-+
- 	test_suspend=	[SUSPEND]
- 			Format: { "mem" | "standby" | "freeze" }[,N]
- 			Specify "mem" (for Suspend-to-RAM) or "standby" (for
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 2c70eedf514e..807977f52449 100644
+index 807977f52449..1d9a6aeb0e57 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -522,6 +522,28 @@ static struct tegra_pmc *early_pmc = &(struct tegra_pmc) {
+@@ -31,6 +31,7 @@
+ #include <linux/irq.h>
+ #include <linux/irq_work.h>
+ #include <linux/kernel.h>
++#include <linux/notifier.h>
+ #include <linux/of_address.h>
+ #include <linux/of_clk.h>
+ #include <linux/of.h>
+@@ -520,6 +521,34 @@ static struct tegra_pmc *early_pmc = &(struct tegra_pmc) {
+ 	.base = NULL,
+ 	.suspend_mode = TEGRA_SUSPEND_NOT_READY,
  };
- #endif
- 
-+#ifdef MODULE_PARAM_PREFIX
-+#undef MODULE_PARAM_PREFIX
-+#endif
-+#define MODULE_PARAM_PREFIX "tegra_pmc."
 +
 +/*
-+ * After a warm reset, which doesn't reset the PMC, Tegra20's boot ROM hangs if
-+ * the VDE partition is powered off. The VDE driver powers it on at shutdown,
-+ * but a watchdog reset doesn't go through the shutdown and hangs. Keeping the
-+ * partition powered on makes watchdog resets work, at the cost of its idle
-+ * power.
++ * Notified before a partition is powered off. The lock is held across the
++ * notification and the power off, so that a notifier being registered either
++ * sees the partition still powered or is notified.
 + */
-+static bool vde_always_on;
-+module_param(vde_always_on, bool, 0444);
-+MODULE_PARM_DESC(vde_always_on,
-+		 "Never power off the VDE partition (default: false)");
++static DEFINE_MUTEX(tegra_powergate_nh_lock);
++static RAW_NOTIFIER_HEAD(tegra_powergate_nh);
 +
-+static bool tegra_powergate_is_always_on(unsigned int id)
++static void tegra_powergate_power_off_begin(unsigned int id)
 +{
-+	return vde_always_on && id == TEGRA_POWERGATE_VDEC;
++	mutex_lock(&tegra_powergate_nh_lock);
++	raw_notifier_call_chain(&tegra_powergate_nh,
++				TEGRA_PMC_POWERGATE_POWER_OFF, &id);
 +}
 +
- static inline struct tegra_powergate *
- to_powergate(struct generic_pm_domain *domain)
- {
-@@ -697,6 +719,10 @@ static int tegra_powergate_set(struct tegra_pmc *pmc, unsigned int id,
- 	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
- 		return -EINVAL;
- 
-+	/* the partition is kept powered, also against the legacy API */
-+	if (!new_state && tegra_powergate_is_always_on(id))
-+		return 0;
++static void tegra_powergate_power_off_end(void)
++{
++	mutex_unlock(&tegra_powergate_nh_lock);
++}
++#else
++static inline void tegra_powergate_power_off_begin(unsigned int id)
++{
++}
 +
- 	mutex_lock(&pmc->powergates_lock);
++static inline void tegra_powergate_power_off_end(void)
++{
++}
+ #endif
  
- 	if (tegra_powergate_state(pmc, id) == new_state) {
-@@ -1319,6 +1345,7 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 	struct device *dev = pmc->dev;
- 	struct tegra_powergate *pg;
- 	int id, err = 0;
-+	bool always_on;
- 	bool off;
- 
- 	pg = kzalloc_obj(*pg);
-@@ -1346,6 +1373,7 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 	pg->pmc = pmc;
- 
- 	off = !tegra_powergate_is_powered(pmc, pg->id);
-+	always_on = tegra_powergate_is_always_on(pg->id);
- 
- 	err = tegra_powergate_of_get_clks(pg, np);
- 	if (err < 0) {
-@@ -1363,9 +1391,20 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 	 * If the power-domain is off, then ensure the resets are asserted.
- 	 * If the power-domain is on, then power down to ensure that when is
- 	 * it turned on the power-domain, clocks and resets are all in the
--	 * expected state.
-+	 * expected state. A power-domain that is kept on is powered up instead,
-+	 * which puts it into the same state without powering it off.
- 	 */
--	if (off) {
-+	if (always_on) {
-+		err = tegra_powergate_power_up(pg, true);
-+		if (err) {
-+			dev_err(dev, "failed to turn on PM domain %s: %d\n",
-+				pg->genpd.name, err);
-+			goto remove_resets;
-+		}
-+
-+		dev_info(dev, "keeping PM domain %s powered on\n",
-+			 pg->genpd.name);
-+	} else if (off) {
- 		err = reset_control_assert(pg->reset);
- 		if (err) {
- 			pr_err("failed to assert resets: %d\n", err);
-@@ -1385,11 +1424,18 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 	 * the domain and skip the genpd registration.
- 	 */
- 	if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS)) {
--		WARN_ON(tegra_powergate_power_up(pg, true));
-+		if (!always_on)
-+			WARN_ON(tegra_powergate_power_up(pg, true));
- 		goto remove_resets;
+ #ifdef MODULE_PARAM_PREFIX
+@@ -730,8 +759,14 @@ static int tegra_powergate_set(struct tegra_pmc *pmc, unsigned int id,
+ 		return 0;
  	}
  
--	err = pm_genpd_init(&pg->genpd, NULL, true);
-+	if (always_on) {
-+		/* as tegra_genpd_power_on() does after powering up */
-+		reset_control_release(pg->reset);
-+		pg->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
++	if (!new_state)
++		tegra_powergate_power_off_begin(id);
++
+ 	err = pmc->soc->powergate_set(pmc, id, new_state);
+ 
++	if (!new_state)
++		tegra_powergate_power_off_end();
++
+ 	mutex_unlock(&pmc->powergates_lock);
+ 
+ 	return err;
+@@ -5166,6 +5201,75 @@ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid)
+ 	return tegra_pmc_powergate_remove_clamping(early_pmc, id);
+ }
+ 
++/**
++ * tegra_pmc_powergate_register_notifier() - get notified of partition power off
++ * @nb: notifier block
++ *
++ * The notifier is called with %TEGRA_PMC_POWERGATE_POWER_OFF and a pointer to
++ * the partition ID (unsigned int) as data before a partition is powered off,
++ * from a context that may sleep. Its return value is ignored. It is also
++ * called for every partition that is already powered off before this
++ * function returns, so a partition is either still powered once the function
++ * returns or the notifier has been called for it. A partition that is kept
++ * powered on (tegra_pmc.vde_always_on) is never reported, as the driver powers
++ * it on when it registers it.
++ *
++ * This works before the PMC driver has probed, as the PMC is set up early on
++ * 32-bit ARM, so it covers the partitions that the driver powers off when it
++ * registers them.
++ */
++int tegra_pmc_powergate_register_notifier(struct notifier_block *nb)
++{
++	unsigned int id;
++	int err;
++
++	mutex_lock(&tegra_powergate_nh_lock);
++
++	err = raw_notifier_chain_register(&tegra_powergate_nh, nb);
++	if (err)
++		goto unlock;
++
++	/* the base is switched to the driver's mapping under this lock */
++	mutex_lock(&early_pmc->powergates_lock);
++
++	if (early_pmc->base && early_pmc->soc) {
++		for (id = 0; id < early_pmc->soc->num_powergates; id++) {
++			/* powered on when the driver registers it */
++			if (tegra_powergate_is_always_on(id))
++				continue;
++
++			if (tegra_powergate_is_powered(early_pmc, id) == 0)
++				nb->notifier_call(nb,
++						  TEGRA_PMC_POWERGATE_POWER_OFF,
++						  &id);
++		}
 +	}
 +
-+	err = pm_genpd_init(&pg->genpd, NULL, !always_on);
- 	if (err < 0) {
- 		dev_err(dev, "failed to initialise PM domain %pOFn: %d\n", np,
- 		       err);
++	mutex_unlock(&early_pmc->powergates_lock);
++
++unlock:
++	mutex_unlock(&tegra_powergate_nh_lock);
++
++	return err;
++}
++EXPORT_SYMBOL(tegra_pmc_powergate_register_notifier);
++
++/**
++ * tegra_pmc_powergate_unregister_notifier() - unregister a power off notifier
++ * @nb: notifier block registered with tegra_pmc_powergate_register_notifier()
++ */
++int tegra_pmc_powergate_unregister_notifier(struct notifier_block *nb)
++{
++	int err;
++
++	mutex_lock(&tegra_powergate_nh_lock);
++	err = raw_notifier_chain_unregister(&tegra_powergate_nh, nb);
++	mutex_unlock(&tegra_powergate_nh_lock);
++
++	return err;
++}
++EXPORT_SYMBOL(tegra_pmc_powergate_unregister_notifier);
++
+ bool tegra_pmc_core_domain_state_synced(void)
+ {
+ 	return early_pmc->core_domain_state_synced;
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index 53f6d02889db..c574a6e81a1a 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -231,14 +231,33 @@ static inline void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+ #endif
+ #endif
+ 
++/* event of the partition power off notifier, data points to the partition ID */
++#define TEGRA_PMC_POWERGATE_POWER_OFF	0
++
++struct notifier_block;
++
+ #if defined(CONFIG_ARM) && defined(CONFIG_SOC_TEGRA_PMC)
+ bool tegra_pmc_core_domain_state_synced(void);
++int tegra_pmc_powergate_register_notifier(struct notifier_block *nb);
++int tegra_pmc_powergate_unregister_notifier(struct notifier_block *nb);
+ #else
+ /* needed for COMPILE_TEST */
+ static inline bool tegra_pmc_core_domain_state_synced(void)
+ {
+ 	return false;
+ }
++
++static inline int
++tegra_pmc_powergate_register_notifier(struct notifier_block *nb)
++{
++	return -ENOSYS;
++}
++
++static inline int
++tegra_pmc_powergate_unregister_notifier(struct notifier_block *nb)
++{
++	return -ENOSYS;
++}
+ #endif
+ 
+ #endif /* __SOC_TEGRA_PMC_H__ */
 
 -- 
 2.56.0
