@@ -1,55 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794322694;
-	b=u9eKpjUnBv0mGgA5MQ11v4ac9qPMa06rzWqBNiJeiXqW4DG5WeESVC0puI9RQScZmKfg
-	 QJvcvJ5jK5RuTuHaNCtoLj+j4uYzbnNFZK6v2aSpJw1Ws+KdnphK5mjH1lw5Zh9JSAwnf
-	 2/Ctgo3WZI8WRx2xH4tLAb/PM0Jk3oJnQj9+vnULrNpxX5+UtHa7CAjwTKizpO7vy2q43
-	 attajpVm3Tz+ZE2GOVRkHz58IOrH5nsyTqF/G+dJuh1/gVInuubCJHm3bECv6rLmadS18
-	 s6/1D6uDYl1P9HlEdSmHYZEKQqDJBuXgEUfVh8KnTOO/JNnJBqCNyuAo4zRUREXeTzw==
+	t=1794323986;
+	b=Asw8OXsOmrrINYaaXWX8Kl64dRSGX9fbufEocjc5xhpyzZ2FHZ2eZWFXzRye9ISOAxJ6
+	 hndbg+o0AyTyBimIvmfmWaMxvEh88fmFNBLzES7PcwMqat4eebbQ9jrJy1PnftlOMi4GK
+	 1WE9Bru8yC2inuDrdrnFvvleiqKvJEiSsccqMq1mKQRh7C8DbdN2JmqBCsOWlMWbWxF3l
+	 UUO5SXmTCTaSj5SzF4e94epOVKAQyy5T+i9f95jN9TlDhdb4vv/CDEIfguuHCZnc1HCdp
+	 j+b2tsVD6KXdWDpoB0NYWv6RlVj/zrOqkI+mT9Y4J1I08r02AA1OsdK5zYHV2VT1UjQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794322694;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=WnkJ8LXf/bgZJNIPyQGBBjaA78zgoKgnkLMT97HZ4hM=;
-	b=pUxHMDVeXVr8spb94yYLmsDDpxwRJfVKnjD2mVocDvQ6XCUqfWmL2VboGtVlmY2FFPOl
-	 WixjUz1+/jQ+aSEQ8WgL+x3UYKZjIeN+ogpc8YBObtuR/ZNSglzt3hYP2Rn0yL/NWZxI8
-	 mOsAOivHimtwTpOKEELmb8X74BSu3nmTkj/RxB/g6y7ZrqDOfizWKcEFjocFgqkfuc/Ot
-	 AVk2GqEzQyKArs/QeDErQ4vt9bgBTGx/WrigaiKMqUDdATgDuK4/YOsQ/IzXzOKDeZ7O0
-	 0Z88eTeHv3OkJE9GUQs5XRcrrKWC5fcV3grsQV1nP96ZN9Vw/gYeVVTkGGxXtYY8hnQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794323986;
+	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=vw+Sm29EKmh6vxXYS1fsgbyUW0UkMpXvtgu2IpAMZBg=;
+	b=Kzd+isnICX+CLboMxB8BRMgtdyWjsKfqDgFksVCs5/kVei3FDVq7dmQi8lEuU+FZBDHJ
+	 lDCjT89bTgGgQMq65etPyqiiJoBXjy4x6Gd99r9lAv7ANtEj050/Npsmdb0dpzPnMbzIJ
+	 GJMuTQBGLwkTM+Igh5LSQigg1Uo6z53frHTn61WyHL1QajkAy4EuJ5K5ai9/rthy1g+4n
+	 749w4fr6ih3TKU2j+Gq39NGl/Ig4PVkYEMuErf0TPzW7etRRYd9mngF2LefKBvShJuObJ
+	 3mFLLKF7CSCtgvyg2V8T9Oa2GAzYx2ROQO3msLMIWtogtDQeN1Ilri9VCmalRbsaFYA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EvPtbBbp;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WWxGLdhd;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610D4606A339
-	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 14:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1919B606A325;
+	Tue, 10 Nov 2026 15:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EvPtbBbp
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 108981F00906
-	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 14:58:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WWxGLdhd
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FFF61F008A1;
+	Tue, 10 Nov 2026 15:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794322694;
-	bh=WnkJ8LXf/bgZJNIPyQGBBjaA78zgoKgnkLMT97HZ4hM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=EvPtbBbpY0MjDrJNm/qEfHVLVqDPeNiRukmRUFa4wWsRoo6sCSQw+dMYY0H3/TdIo
-	 5rGBDNsi9o8CXMflRBCr3XSY0eF6h4mL4dZFLwCe5xGnvbOpH/4YndZsn5IZLaOa/v
-	 iSkQ6Pr18uxngCNjGJnx8fe5XPUSAgFwzndWaN99yG0r66WVa89QAHjROZqlQzesFL
-	 r9DBjPRvtBZwST8/tzlm/7BHBGo04X2tKXGG+JlIRHGIigH/76hZVR4S8c5eLr/mn8
-	 cb7I1uW2JG21uHuTSx4xq5fmw1kzmKwZfpeEni0vRhWxHbjyov7ZyTXy3mat1NnXKT
-	 ymgwxGi3mFHHA==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3adef977ad9so15439751fa.1
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 06:58:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHuaBVU/AQmjXl+51KGpd8p9sq26kITxGC/3InzgdbcDiX0h544M5UktAO3cRYuqA0IZtOQh8o4bTLmig==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+e+pjYVanhLWHctV7B1fZY9u6FWuHLHlEBe5jegGnu7bb565XB
-	ij9q4ms96WLfXg4kjO4yhfq45GXXoG3J55R8s/NfmYx1tXsfM1BgETEKojVq/wAseqxnC6rt1oj
-	f3jE+0oULiLj+0mNMFXF2gfbGzIiVLuQ=
-X-Received: by 2002:a2e:a9a5:0:b0:3ab:4f5e:3edc with SMTP id
- 38308e7fff4ca-3ae09632513mr5987871fa.15.1794322692389; Tue, 10 Nov 2026
- 06:58:12 -0800 (PST)
+	s=k20260515; t=1794323986;
+	bh=vw+Sm29EKmh6vxXYS1fsgbyUW0UkMpXvtgu2IpAMZBg=;
+	h=From:Date:Subject:To:Cc;
+	b=WWxGLdhdnvUp5ozzbMFW8xQGEtEgMUYUtlbHQ8YSvLMrCB+ncOtYTkRUAoFWU/4fU
+	 WAoud7ydW48IbgbIUo3KrSPGMVvwdLgN5TI99dOc5PU22diIn1HmmnyjYadu0fdSQ4
+	 kx6ln1yeJmKWBH9AnIqTptb0t4/6df849kwxDC8HoAe41CzawBMmCyJ4KdgQ5yv6HG
+	 xyETxH8Mk7fLEFDKhDWY8aNjyXzFg93x6JLdqCeyDMu2sWWRfiZQ5z90ONB3lSd98R
+	 qn0VDSNa81i7n1qrfGysycJJCfdw3ZqhxoYEovovc4wBG/P5L6EaP1q5C5p97T7wSb
+	 tpO8UYspkomBQ==
+From: Joshua Crofts <crofts@kernel.org>
+Date: Tue, 10 Nov 2026 16:19:32 +0100
+Subject: [PATCH] drm/tegra: remove redundant
+ pm_runtime_dont_use_autosuspend() calls
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,104 +53,82 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261110101246.3665797-1-sumitg@nvidia.com> <09209b48-a469-4bd9-8d43-845f709353ca@arm.com>
-In-Reply-To: <09209b48-a469-4bd9-8d43-845f709353ca@arm.com>
-From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Tue, 10 Nov 2026 15:58:00 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jgUnFO5FsDU64bE9ArzTQaGcU=2ocRJ2QpsJb_octG8w@mail.gmail.com>
-X-Gm-Features: AclHuK8X5hMi8jD3gHPYYnsPSCyrp4PzOzFf8JJiGs5yNkckX-k7Tw8xtv2KRhU
-Message-ID: <CAJZ5v0jgUnFO5FsDU64bE9ArzTQaGcU=2ocRJ2QpsJb_octG8w@mail.gmail.com>
-Subject: Re: [PATCH v2] cpufreq: CPPC: Set CPPC Enable register in cpu_init
-To: Christian Loehle <christian.loehle@arm.com>, Sumit Gupta <sumitg@nvidia.com>
-Cc: viresh.kumar@linaro.org, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	jbenc@redhat.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
-	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
-	mochs@nvidia.com, bbasu@nvidia.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261110-tegra-remove-dont-use-autosuspend-v1-1-f37453d0e441@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAM282oC/x3NQQrDIBBG4auEWXdAXZTQq5QuRH/TWVTDjIZCy
+ N0rXX6b904yqMDosZykOMSk1Ql/Wyi9Y93AkqcpuHD33jvu2DSy4tMOcG618zBwHL3ZsB01c4q
+ xuDWUNYVCs7Mrinz/j+frun4AVNANcwAAAA==
+X-Change-ID: 20261110-tegra-remove-dont-use-autosuspend-caaf082f8c2f
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Joshua Crofts <crofts@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794323983; l=2088;
+ i=crofts@kernel.org; s=20260422; h=from:subject:message-id;
+ bh=SnI+N7txK0nH0+D5PhtVQb+nK0hSZ/+p+Aiy7l9vlAA=;
+ b=9Md2mmwu3sxNtki6GtqxGx9DVSTPwD7h5OscgFinHHLX4YxuceVb+/sj0Pi1rRZA3bM2FJX3U
+ GHaMlTERtaNDnlJB1RIHzue9+bvV5bG5CcOcJH1Qo2jECevJyEOzjd0
+X-Developer-Key: i=crofts@kernel.org; a=ed25519;
+ pk=Xd+UVoRPiiI0K3LHQ2XIcXmO0jvVuFTv9eTx3lgBphI=
 
-On Tue, Nov 10, 2026 at 11:58=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 11/10/26 10:12, Sumit Gupta wrote:
-> > As per ACPI 6.x s8.4.6.1.4 (CPPC Enable Register):
-> >   "If supported by the platform, OSPM writes a one to this register
-> >    to enable CPPC on this processor. If not implemented, OSPM assumes
-> >    the platform always has CPPC enabled."
-> >
-> > The driver never writes this register. CPPC therefore stays disabled
-> > on platforms such as NVIDIA GB10 that wait for OSPM to enable it.
-> >
-> > Call cppc_set_enable() in cppc_cpufreq_cpu_init(). Fail init if
-> > enabling CPPC fails. If init fails after CPPC is enabled, disable it
-> > again. The register is optional, so -EOPNOTSUPP is not an error.
-> >
-> > This relies on commit ab482f1bac6b ("ACPI: CPPC: Refactor register
-> > value get and set ABIs") from v6.16. Before it, cppc_set_enable()
-> > returned -EFAULT instead of -EOPNOTSUPP when the Enable register is
-> > not implemented. On an older kernel this change would make init fail
-> > on every platform without the register, so the stable range starts
-> > at v6.16.
-> >
-> > Fixes: 5477fb3bd1e8 ("ACPI / CPPC: Add a CPUFreq driver for use with CP=
-PC")
-> > Cc: stable@vger.kernel.org # v6.16+
-> > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->
-> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+Since commit d1706f9da9f4 ("PM: runtime: call pm_runtime_dont_use_autosuspend() on reinit()"),
+driver core is now responsible for undoing any
+pm_runtime_use_autosuspend() calls on driver exit.
 
-Applied as 7.4-rc material, thanks!
+Remove the redundant function calls.
 
-> > ---
-> > v1 -> v2:
-> > - Fail init if enabling CPPC fails and disable CPPC again if init
-> >   fails after enabling it (Christian).
-> > - Move enable after the policy->shared_type check, so cppc_set_perf()
-> >   is the only failure after it.
-> > - Mention NVIDIA GB10 in the commit message (Christian).
-> >
-> > v1: https://lore.kernel.org/lkml/20261105123244.3132560-1-sumitg@nvidia=
-.com/
-> >
-> >  drivers/cpufreq/cppc_cpufreq.c | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpuf=
-req.c
-> > index 957fa7775260..b2af24ae5008 100644
-> > --- a/drivers/cpufreq/cppc_cpufreq.c
-> > +++ b/drivers/cpufreq/cppc_cpufreq.c
-> > @@ -714,7 +714,17 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_po=
-licy *policy)
-> >               pr_debug("Unsupported CPU co-ord type: %d\n",
-> >                        policy->shared_type);
-> >               ret =3D -EFAULT;
-> > -             goto out;
-> > +             goto out_put;
-> > +     }
-> > +
-> > +     /*
-> > +      * Enable CPPC. The Enable register is optional - some platforms
-> > +      * may not support it.
-> > +      */
-> > +     ret =3D cppc_set_enable(cpu, true);
-> > +     if (ret && ret !=3D -EOPNOTSUPP) {
-> > +             pr_err("Failed to enable CPPC for CPU%u (%d)\n", cpu, ret=
-);
-> > +             goto out_put;
-> >       }
-> >
-> >       policy->fast_switch_possible =3D cppc_allow_fast_switch(policy->c=
-pus);
-> > @@ -742,6 +752,8 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_pol=
-icy *policy)
-> >       return 0;
-> >
-> >  out:
-> > +     cppc_set_enable(cpu, false);
-> > +out_put:
-> >       cppc_cpufreq_put_cpu_data(policy);
-> >       return ret;
-> >  }
->
+Signed-off-by: Joshua Crofts <crofts@kernel.org>
+---
+ drivers/gpu/drm/tegra/nvdec.c | 1 -
+ drivers/gpu/drm/tegra/nvjpg.c | 1 -
+ drivers/gpu/drm/tegra/vic.c   | 1 -
+ 3 files changed, 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
+index 18a8f6e4ced083ee94cf1611223b7ef507e0b7f6..98a94423b0e2099b9f8330f73dee8f534564078f 100644
+--- a/drivers/gpu/drm/tegra/nvdec.c
++++ b/drivers/gpu/drm/tegra/nvdec.c
+@@ -212,7 +212,6 @@ static int nvdec_exit(struct host1x_client *client)
+ 	if (err < 0)
+ 		return err;
+ 
+-	pm_runtime_dont_use_autosuspend(client->dev);
+ 	pm_runtime_force_suspend(client->dev);
+ 
+ 	host1x_syncpt_put(client->syncpts[0]);
+diff --git a/drivers/gpu/drm/tegra/nvjpg.c b/drivers/gpu/drm/tegra/nvjpg.c
+index e302a8d1f6e7fdbcd7f14881525b4a2e1a422361..09679bb0c75767ff1471134a478b5985b2c0ee5c 100644
+--- a/drivers/gpu/drm/tegra/nvjpg.c
++++ b/drivers/gpu/drm/tegra/nvjpg.c
+@@ -82,7 +82,6 @@ static int nvjpg_exit(struct host1x_client *client)
+ 	if (err < 0)
+ 		return err;
+ 
+-	pm_runtime_dont_use_autosuspend(client->dev);
+ 	pm_runtime_force_suspend(client->dev);
+ 
+ 	host1x_client_iommu_detach(client);
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index 3c2b1ff55deb7f407d2a5995a5dff302cf37f7d5..9648c3d0176bbfd9efbb3c49c8bd9c74e3df9d0e 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -205,7 +205,6 @@ static int vic_exit(struct host1x_client *client)
+ 	if (err < 0)
+ 		return err;
+ 
+-	pm_runtime_dont_use_autosuspend(client->dev);
+ 	pm_runtime_force_suspend(client->dev);
+ 
+ 	host1x_syncpt_put(client->syncpts[0]);
+
+---
+base-commit: b3dfbde62cf1981c4638939c159dfd087b7a72e9
+change-id: 20261110-tegra-remove-dont-use-autosuspend-caaf082f8c2f
+
+Best regards,
+-- 
+Joshua Crofts <crofts@kernel.org>
+
