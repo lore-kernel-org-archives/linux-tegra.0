@@ -1,49 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794323986;
-	b=Asw8OXsOmrrINYaaXWX8Kl64dRSGX9fbufEocjc5xhpyzZ2FHZ2eZWFXzRye9ISOAxJ6
-	 hndbg+o0AyTyBimIvmfmWaMxvEh88fmFNBLzES7PcwMqat4eebbQ9jrJy1PnftlOMi4GK
-	 1WE9Bru8yC2inuDrdrnFvvleiqKvJEiSsccqMq1mKQRh7C8DbdN2JmqBCsOWlMWbWxF3l
-	 UUO5SXmTCTaSj5SzF4e94epOVKAQyy5T+i9f95jN9TlDhdb4vv/CDEIfguuHCZnc1HCdp
-	 j+b2tsVD6KXdWDpoB0NYWv6RlVj/zrOqkI+mT9Y4J1I08r02AA1OsdK5zYHV2VT1UjQ==
+	t=1794327004;
+	b=lqVch3Bn56CDKaM64v8HGji80vcvzjqKcGdTriKN8rfGu1dlR+yTFtsEJeKzdswcdmlS
+	 5SaELp8ZfIMymLLWy46r7RnKZTAgLsAyG6zX5De+Ghv7fxS9n23ehscRUe+L0DPQ5c3I2
+	 KYil7Np64YUnA26FbhBK+dXw/q84nAei8zof0vnVyTo0Khn6g8QRRVsYJS7x09jOg0hNf
+	 fd/iZ+4J9PE+gKE+sqgN1L2FYzer7GnjpS7Ykw/ab51frfiDFp45Y4P/zcXUNBGW2WFA6
+	 +iy08eUt1pVrT2/+wPAy56o5kM1RQp0BlRb6EfWkXLnsCavCXYbUk0AnVJC6I7bHl6g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794323986;
-	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=vw+Sm29EKmh6vxXYS1fsgbyUW0UkMpXvtgu2IpAMZBg=;
-	b=Kzd+isnICX+CLboMxB8BRMgtdyWjsKfqDgFksVCs5/kVei3FDVq7dmQi8lEuU+FZBDHJ
-	 lDCjT89bTgGgQMq65etPyqiiJoBXjy4x6Gd99r9lAv7ANtEj050/Npsmdb0dpzPnMbzIJ
-	 GJMuTQBGLwkTM+Igh5LSQigg1Uo6z53frHTn61WyHL1QajkAy4EuJ5K5ai9/rthy1g+4n
-	 749w4fr6ih3TKU2j+Gq39NGl/Ig4PVkYEMuErf0TPzW7etRRYd9mngF2LefKBvShJuObJ
-	 3mFLLKF7CSCtgvyg2V8T9Oa2GAzYx2ROQO3msLMIWtogtDQeN1Ilri9VCmalRbsaFYA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794327004;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=RSj7n7pAsyky7mg8jG553K5bfRkiKF7XOw0UfMG6Aqg=;
+	b=4JZrY1xd35XySz6/DDMeDRwP4fw7/ICFBUXl5tH+8EX1lsBYoRx2ID1V/beQLu+lZ8i1
+	 CO7jrqyI+89a/aJZAKsCnoJfhnFSvRv8gWG1s0MUeOjStLA+pqY+kO4Nc5M++9cOGjDku
+	 MSZN4k1oa/2XlF2yZCTnqUtRPrQYlhfmmaDmAFHi2tbQ4l0vS/nEsDoi/jd/qeEnye+Dq
+	 Rzk/Y1E/eQ9eprZ78taTfm61ytrA3rNEz8i2nx6d2wX68HiwCT1T53i+AenBVXkcyMH2b
+	 m7xeJx6BLYcnCl23YW1ozhucU5peEQXd2vqgqF9DQU6lMwvE4AquJsnLzTP0FwelOCQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WWxGLdhd;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xi+Qqu+Z;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1919B606A325;
-	Tue, 10 Nov 2026 15:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C9606A321
+	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 16:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WWxGLdhd
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FFF61F008A1;
-	Tue, 10 Nov 2026 15:19:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xi+Qqu+Z
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 757C21F0089F;
+	Tue, 10 Nov 2026 16:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794323986;
-	bh=vw+Sm29EKmh6vxXYS1fsgbyUW0UkMpXvtgu2IpAMZBg=;
-	h=From:Date:Subject:To:Cc;
-	b=WWxGLdhdnvUp5ozzbMFW8xQGEtEgMUYUtlbHQ8YSvLMrCB+ncOtYTkRUAoFWU/4fU
-	 WAoud7ydW48IbgbIUo3KrSPGMVvwdLgN5TI99dOc5PU22diIn1HmmnyjYadu0fdSQ4
-	 kx6ln1yeJmKWBH9AnIqTptb0t4/6df849kwxDC8HoAe41CzawBMmCyJ4KdgQ5yv6HG
-	 xyETxH8Mk7fLEFDKhDWY8aNjyXzFg93x6JLdqCeyDMu2sWWRfiZQ5z90ONB3lSd98R
-	 qn0VDSNa81i7n1qrfGysycJJCfdw3ZqhxoYEovovc4wBG/P5L6EaP1q5C5p97T7wSb
-	 tpO8UYspkomBQ==
-From: Joshua Crofts <crofts@kernel.org>
-Date: Tue, 10 Nov 2026 16:19:32 +0100
-Subject: [PATCH] drm/tegra: remove redundant
- pm_runtime_dont_use_autosuspend() calls
+	s=k20260515; t=1794327004;
+	bh=RSj7n7pAsyky7mg8jG553K5bfRkiKF7XOw0UfMG6Aqg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Xi+Qqu+Z5V33VAweNm4LJxu/CzCtJUcSG+FxlRcGAc09l0sXX6uMZJUUrWpS8fov+
+	 x3QuVFFkf0di29QuzzPCe7FHlhrnfL6Yz3vm3A4HuAZbRfhtk/9ReM80f0Mp3Xhrqt
+	 eufF6a5JOfUpyS8W9CN7eib7L28uwjFKQOYKfFE3DW0j4DN0cgC53bCHerBsZwVOPr
+	 tKMck3a3owBYOUcB8W6yEQAK5x/bqbjUrtSjS1So7j/dVm/gRktKFlKdepTVyJ+vxE
+	 5oJI5a/0/WiahL6tnwWdbpaOdCepN4JWAE6jGvXSPoIAaD6Di0EkgXzjddglnP1+XR
+	 OawUD5Y0qVdaA==
+Date: Tue, 10 Nov 2026 17:10:01 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Simona Vetter <simona@ffwll.ch>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH RESEND 53/83] drm/tegra: Switch to
+ drm_mode_config_create_initial_state
+Message-ID: <avNBTIciv6QlEp9a@houat>
+References: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
+ <20261105-drm-no-more-config-reset-v1-53-1f58d1e33380@kernel.org>
+ <auyjMrCi8trUahdB@orome>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -53,82 +62,75 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261110-tegra-remove-dont-use-autosuspend-v1-1-f37453d0e441@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAM282oC/x3NQQrDIBBG4auEWXdAXZTQq5QuRH/TWVTDjIZCy
- N0rXX6b904yqMDosZykOMSk1Ql/Wyi9Y93AkqcpuHD33jvu2DSy4tMOcG618zBwHL3ZsB01c4q
- xuDWUNYVCs7Mrinz/j+frun4AVNANcwAAAA==
-X-Change-ID: 20261110-tegra-remove-dont-use-autosuspend-caaf082f8c2f
-To: Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Joshua Crofts <crofts@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794323983; l=2088;
- i=crofts@kernel.org; s=20260422; h=from:subject:message-id;
- bh=SnI+N7txK0nH0+D5PhtVQb+nK0hSZ/+p+Aiy7l9vlAA=;
- b=9Md2mmwu3sxNtki6GtqxGx9DVSTPwD7h5OscgFinHHLX4YxuceVb+/sj0Pi1rRZA3bM2FJX3U
- GHaMlTERtaNDnlJB1RIHzue9+bvV5bG5CcOcJH1Qo2jECevJyEOzjd0
-X-Developer-Key: i=crofts@kernel.org; a=ed25519;
- pk=Xd+UVoRPiiI0K3LHQ2XIcXmO0jvVuFTv9eTx3lgBphI=
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="rbyf2cug4iro2d6c"
+Content-Disposition: inline
+In-Reply-To: <auyjMrCi8trUahdB@orome>
 
-Since commit d1706f9da9f4 ("PM: runtime: call pm_runtime_dont_use_autosuspend() on reinit()"),
-driver core is now responsible for undoing any
-pm_runtime_use_autosuspend() calls on driver exit.
 
-Remove the redundant function calls.
+--rbyf2cug4iro2d6c
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RESEND 53/83] drm/tegra: Switch to
+ drm_mode_config_create_initial_state
+MIME-Version: 1.0
 
-Signed-off-by: Joshua Crofts <crofts@kernel.org>
----
- drivers/gpu/drm/tegra/nvdec.c | 1 -
- drivers/gpu/drm/tegra/nvjpg.c | 1 -
- drivers/gpu/drm/tegra/vic.c   | 1 -
- 3 files changed, 3 deletions(-)
+Hi Thierry,
 
-diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.c
-index 18a8f6e4ced083ee94cf1611223b7ef507e0b7f6..98a94423b0e2099b9f8330f73dee8f534564078f 100644
---- a/drivers/gpu/drm/tegra/nvdec.c
-+++ b/drivers/gpu/drm/tegra/nvdec.c
-@@ -212,7 +212,6 @@ static int nvdec_exit(struct host1x_client *client)
- 	if (err < 0)
- 		return err;
- 
--	pm_runtime_dont_use_autosuspend(client->dev);
- 	pm_runtime_force_suspend(client->dev);
- 
- 	host1x_syncpt_put(client->syncpts[0]);
-diff --git a/drivers/gpu/drm/tegra/nvjpg.c b/drivers/gpu/drm/tegra/nvjpg.c
-index e302a8d1f6e7fdbcd7f14881525b4a2e1a422361..09679bb0c75767ff1471134a478b5985b2c0ee5c 100644
---- a/drivers/gpu/drm/tegra/nvjpg.c
-+++ b/drivers/gpu/drm/tegra/nvjpg.c
-@@ -82,7 +82,6 @@ static int nvjpg_exit(struct host1x_client *client)
- 	if (err < 0)
- 		return err;
- 
--	pm_runtime_dont_use_autosuspend(client->dev);
- 	pm_runtime_force_suspend(client->dev);
- 
- 	host1x_client_iommu_detach(client);
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index 3c2b1ff55deb7f407d2a5995a5dff302cf37f7d5..9648c3d0176bbfd9efbb3c49c8bd9c74e3df9d0e 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -205,7 +205,6 @@ static int vic_exit(struct host1x_client *client)
- 	if (err < 0)
- 		return err;
- 
--	pm_runtime_dont_use_autosuspend(client->dev);
- 	pm_runtime_force_suspend(client->dev);
- 
- 	host1x_syncpt_put(client->syncpts[0]);
+On Thu, Nov 05, 2026 at 04:51:46PM +0100, Thierry Reding wrote:
+> On Thu, Nov 05, 2026 at 04:30:02PM +0100, Maxime Ripard wrote:
+> > drm_mode_config_reset() has a dual role: it creates the initial KMS
+> > state at probe time, and resets hardware and software state during
+> > suspend/resume cycles.
+> >=20
+> > Since the two roles need different behaviors (notably for objects like
+> > drm_private_obj that must persist across suspend/resume),
+> > drm_mode_config_create_initial_state() was introduced to handle only
+> > the initial state creation at probe time.
+> >=20
+> > Switch to drm_mode_config_create_initial_state().
+> >=20
+> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > ---
+> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> > Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> > Cc: Thierry Reding <thierry.reding@kernel.org>
+> > Cc: linux-tegra@vger.kernel.org
+> > ---
+> >  drivers/gpu/drm/tegra/drm.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> I'd have to check more closely since it's been a while, but I think we
+> might depend on the reset hooks getting called during probe.
+>=20
+> Looking at the implementation of drm_mode_config_create_initial_state(),
+> it ends up calling drm_mode_config_connector_create_state(), which
+> silently exists if the connector doesn't implement atomic_create_state,
+> which none of the Tegra connectors do, so wouldn't that lead to a NULL
+> pointer dereference at some point?
 
----
-base-commit: b3dfbde62cf1981c4638939c159dfd087b7a72e9
-change-id: 20261110-tegra-remove-dont-use-autosuspend-caaf082f8c2f
+AFAIK, all tegra connectors have now been converted to
+atomic_create_state instead of reset (commits c5c0e4821938 and
+f808d9f8e5a3 in drm-misc-next) so it shouldn't have any reset specific
+behaviour at all and the transition to
+drm_mode_config_create_initial_state().
 
-Best regards,
--- 
-Joshua Crofts <crofts@kernel.org>
+Am I missing something?
 
+Maxime
+
+
+--rbyf2cug4iro2d6c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCavNB2AAKCRAnX84Zoj2+
+dvk4AX41wC6YenLs+6gSvLfk0LYowGG7IO4upIFRx8JklbzlzQz6PJtUI+hChU2e
+Efy1Tz4Bf3pU7J3nQTleT+S64dPRffAAbQvET1bwtJQ1v8NUqNLJngoW0BXI5DSB
+Z/iSR5qWew==
+=HmBz
+-----END PGP SIGNATURE-----
+
+--rbyf2cug4iro2d6c--
