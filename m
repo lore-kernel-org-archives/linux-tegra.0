@@ -1,55 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794321158;
-	b=bIS0R0q6ZSC1cb4akmkA+U77FvuSO6yNih6vn71s1RZ1fC9K13sla17tATRXtkEXFJ8a
-	 lPVry30p58elJ4J3QnzB6unFEInXbcnjRGGXx54QJSDHId0ZMlfmpffz5F9AxvXSHuVJT
-	 E/F7EEADaMNmVPPvW8erWhMzd5BSlohy0kpdnCpPu3i5AK+a+GFWY4ilOPCyoXi8tvHL3
-	 OnNP3N9gAehdvFzRQc8L16eHJUnvaR5gZzHQUJddbgsDRJBxDWGj+84bUfdrJHQObFiE5
-	 FFkZyagryztF1wnvXtO2MPdeQCqdDeWcoz1TMb7vzES0R2MHj7Hc6eynzQ65OpEvPMg==
+	t=1794322694;
+	b=u9eKpjUnBv0mGgA5MQ11v4ac9qPMa06rzWqBNiJeiXqW4DG5WeESVC0puI9RQScZmKfg
+	 QJvcvJ5jK5RuTuHaNCtoLj+j4uYzbnNFZK6v2aSpJw1Ws+KdnphK5mjH1lw5Zh9JSAwnf
+	 2/Ctgo3WZI8WRx2xH4tLAb/PM0Jk3oJnQj9+vnULrNpxX5+UtHa7CAjwTKizpO7vy2q43
+	 attajpVm3Tz+ZE2GOVRkHz58IOrH5nsyTqF/G+dJuh1/gVInuubCJHm3bECv6rLmadS18
+	 s6/1D6uDYl1P9HlEdSmHYZEKQqDJBuXgEUfVh8KnTOO/JNnJBqCNyuAo4zRUREXeTzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794321158;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-HM-Tid:
-	 X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=uZCCOZMeXohRf6kOx9rNWgDDoZ60k4TuUeWWIH/0Eh0=;
-	b=CQGehfHKCIQvaFuHvGJAKUbXnOTGOVZtWpbWO1kmlUScMhxnosS2ybwyORISv8X/zp2d
-	 3+i1c5yh2nmjDqhqr2q1oJKQ35M9t6KFxiO2B/zJBwxOW7hOI5Zq0GVzMonX5dv1W0rWW
-	 fUghLeDakajUc4Q4i/kmmKMhOAL0cT9HrQx38jONtti0Mt0WcYS2GCIsmqZWyU52+Qzq5
-	 AfgVswlXjhETtKpR4nWQnequeDIWRu4gAGrLG6VxQFz2o6f6wZJqZ6EzGuFx7rpN9ZQNU
-	 ibhV71G/zkNJHxtHg8lAhIEkzySyW3anrTtT6LIlCGIyjsShJa5WoCYp4FiBT7phwtg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794322694;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=WnkJ8LXf/bgZJNIPyQGBBjaA78zgoKgnkLMT97HZ4hM=;
+	b=pUxHMDVeXVr8spb94yYLmsDDpxwRJfVKnjD2mVocDvQ6XCUqfWmL2VboGtVlmY2FFPOl
+	 WixjUz1+/jQ+aSEQ8WgL+x3UYKZjIeN+ogpc8YBObtuR/ZNSglzt3hYP2Rn0yL/NWZxI8
+	 mOsAOivHimtwTpOKEELmb8X74BSu3nmTkj/RxB/g6y7ZrqDOfizWKcEFjocFgqkfuc/Ot
+	 AVk2GqEzQyKArs/QeDErQ4vt9bgBTGx/WrigaiKMqUDdATgDuK4/YOsQ/IzXzOKDeZ7O0
+	 0Z88eTeHv3OkJE9GUQs5XRcrrKWC5fcV3grsQV1nP96ZN9Vw/gYeVVTkGGxXtYY8hnQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mail.sdu.edu.cn;
-	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
-	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b="DQb7l/NW";
-	arc=none smtp.remote-ip=101.71.155.101
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EvPtbBbp;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CCA606A334;
-	Tue, 10 Nov 2026 14:32:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 49CCA606A334
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610D4606A339
+	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 14:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=DQb7l/NW
-Received: from lgs.. (unknown [101.76.249.61])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 542cd9c4a;
-	Tue, 10 Nov 2026 22:32:32 +0800 (GMT+08:00)
-From: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-sound@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: tegra: Fix potential NULL dereference on AHUB removal
-Date: Tue, 10 Nov 2026 22:32:32 +0800
-Message-ID: <20261110-9f141e6bc8-asoc-tegra@mail.sdu.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EvPtbBbp
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 108981F00906
+	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 14:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794322694;
+	bh=WnkJ8LXf/bgZJNIPyQGBBjaA78zgoKgnkLMT97HZ4hM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=EvPtbBbpY0MjDrJNm/qEfHVLVqDPeNiRukmRUFa4wWsRoo6sCSQw+dMYY0H3/TdIo
+	 5rGBDNsi9o8CXMflRBCr3XSY0eF6h4mL4dZFLwCe5xGnvbOpH/4YndZsn5IZLaOa/v
+	 iSkQ6Pr18uxngCNjGJnx8fe5XPUSAgFwzndWaN99yG0r66WVa89QAHjROZqlQzesFL
+	 r9DBjPRvtBZwST8/tzlm/7BHBGo04X2tKXGG+JlIRHGIigH/76hZVR4S8c5eLr/mn8
+	 cb7I1uW2JG21uHuTSx4xq5fmw1kzmKwZfpeEni0vRhWxHbjyov7ZyTXy3mat1NnXKT
+	 ymgwxGi3mFHHA==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3adef977ad9so15439751fa.1
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 06:58:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHuaBVU/AQmjXl+51KGpd8p9sq26kITxGC/3InzgdbcDiX0h544M5UktAO3cRYuqA0IZtOQh8o4bTLmig==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+e+pjYVanhLWHctV7B1fZY9u6FWuHLHlEBe5jegGnu7bb565XB
+	ij9q4ms96WLfXg4kjO4yhfq45GXXoG3J55R8s/NfmYx1tXsfM1BgETEKojVq/wAseqxnC6rt1oj
+	f3jE+0oULiLj+0mNMFXF2gfbGzIiVLuQ=
+X-Received: by 2002:a2e:a9a5:0:b0:3ab:4f5e:3edc with SMTP id
+ 38308e7fff4ca-3ae09632513mr5987871fa.15.1794322692389; Tue, 10 Nov 2026
+ 06:58:12 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,47 +59,104 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa1c5dffb7a03a1kunm396f0fdb16cdef
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZTUhNVh9IGBlJGB8aQ0hLHlYeHw
-	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlKS0pVTE1VSU9CVU1KWVdZFhoPEhUdFFlBWUtVS1VLVUtZBg
-	++
-DKIM-Signature: a=rsa-sha256;
-	b=DQb7l/NWr4H/toy2duZMk+270fV3oclTWFyz8rGWtTXY95X1HoimPFH5CzfemClL6OCcvAeTChN3JtZuOslnUyV5OgINzNP6N1fcNSXtJ9uTZ8XRAMs9wcm6FnYa6TvIj3unr+lnPt+Fz5d6UlWfZl3e8GPf0QVhpekULwipy2g=; s=default; c=relaxed/relaxed; d=mail.sdu.edu.cn; v=1;
-	bh=uZCCOZMeXohRf6kOx9rNWgDDoZ60k4TuUeWWIH/0Eh0=;
-	h=date:mime-version:subject:message-id:from;
+References: <20261110101246.3665797-1-sumitg@nvidia.com> <09209b48-a469-4bd9-8d43-845f709353ca@arm.com>
+In-Reply-To: <09209b48-a469-4bd9-8d43-845f709353ca@arm.com>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Tue, 10 Nov 2026 15:58:00 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jgUnFO5FsDU64bE9ArzTQaGcU=2ocRJ2QpsJb_octG8w@mail.gmail.com>
+X-Gm-Features: AclHuK8X5hMi8jD3gHPYYnsPSCyrp4PzOzFf8JJiGs5yNkckX-k7Tw8xtv2KRhU
+Message-ID: <CAJZ5v0jgUnFO5FsDU64bE9ArzTQaGcU=2ocRJ2QpsJb_octG8w@mail.gmail.com>
+Subject: Re: [PATCH v2] cpufreq: CPPC: Set CPPC Enable register in cpu_init
+To: Christian Loehle <christian.loehle@arm.com>, Sumit Gupta <sumitg@nvidia.com>
+Cc: viresh.kumar@linaro.org, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	jbenc@redhat.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
+	mochs@nvidia.com, bbasu@nvidia.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I2S child removal releases its FIFOs and routes through the AHUB.
-Leaving the children registered while removing the AHUB clears their
-shared context before those cleanup operations can run.
+On Tue, Nov 10, 2026 at 11:58=E2=80=AFAM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 11/10/26 10:12, Sumit Gupta wrote:
+> > As per ACPI 6.x s8.4.6.1.4 (CPPC Enable Register):
+> >   "If supported by the platform, OSPM writes a one to this register
+> >    to enable CPPC on this processor. If not implemented, OSPM assumes
+> >    the platform always has CPPC enabled."
+> >
+> > The driver never writes this register. CPPC therefore stays disabled
+> > on platforms such as NVIDIA GB10 that wait for OSPM to enable it.
+> >
+> > Call cppc_set_enable() in cppc_cpufreq_cpu_init(). Fail init if
+> > enabling CPPC fails. If init fails after CPPC is enabled, disable it
+> > again. The register is optional, so -EOPNOTSUPP is not an error.
+> >
+> > This relies on commit ab482f1bac6b ("ACPI: CPPC: Refactor register
+> > value get and set ABIs") from v6.16. Before it, cppc_set_enable()
+> > returned -EFAULT instead of -EOPNOTSUPP when the Enable register is
+> > not implemented. On an older kernel this change would make init fail
+> > on every platform without the register, so the stable range starts
+> > at v6.16.
+> >
+> > Fixes: 5477fb3bd1e8 ("ACPI / CPPC: Add a CPUFreq driver for use with CP=
+PC")
+> > Cc: stable@vger.kernel.org # v6.16+
+> > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>
+> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
-Depopulate the children before disabling runtime PM and clearing ahub.
+Applied as 7.4-rc material, thanks!
 
-This issue was found by our static analysis tool under development.
-
-Fixes: be944d42ccc1 ("ASoC: tegra: add tegra30-ahub driver")
-Signed-off-by: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
----
- sound/soc/tegra/tegra30_ahub.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index ee68f28852c4..fe04d19dd6c7 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -595,6 +595,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 
- static void tegra30_ahub_remove(struct platform_device *pdev)
- {
-+	of_platform_depopulate(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
- 	ahub = NULL;
-
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
--- 
-2.43.0
-
+> > ---
+> > v1 -> v2:
+> > - Fail init if enabling CPPC fails and disable CPPC again if init
+> >   fails after enabling it (Christian).
+> > - Move enable after the policy->shared_type check, so cppc_set_perf()
+> >   is the only failure after it.
+> > - Mention NVIDIA GB10 in the commit message (Christian).
+> >
+> > v1: https://lore.kernel.org/lkml/20261105123244.3132560-1-sumitg@nvidia=
+.com/
+> >
+> >  drivers/cpufreq/cppc_cpufreq.c | 14 +++++++++++++-
+> >  1 file changed, 13 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpuf=
+req.c
+> > index 957fa7775260..b2af24ae5008 100644
+> > --- a/drivers/cpufreq/cppc_cpufreq.c
+> > +++ b/drivers/cpufreq/cppc_cpufreq.c
+> > @@ -714,7 +714,17 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_po=
+licy *policy)
+> >               pr_debug("Unsupported CPU co-ord type: %d\n",
+> >                        policy->shared_type);
+> >               ret =3D -EFAULT;
+> > -             goto out;
+> > +             goto out_put;
+> > +     }
+> > +
+> > +     /*
+> > +      * Enable CPPC. The Enable register is optional - some platforms
+> > +      * may not support it.
+> > +      */
+> > +     ret =3D cppc_set_enable(cpu, true);
+> > +     if (ret && ret !=3D -EOPNOTSUPP) {
+> > +             pr_err("Failed to enable CPPC for CPU%u (%d)\n", cpu, ret=
+);
+> > +             goto out_put;
+> >       }
+> >
+> >       policy->fast_switch_possible =3D cppc_allow_fast_switch(policy->c=
+pus);
+> > @@ -742,6 +752,8 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_pol=
+icy *policy)
+> >       return 0;
+> >
+> >  out:
+> > +     cppc_set_enable(cpu, false);
+> > +out_put:
+> >       cppc_cpufreq_put_cpu_data(policy);
+> >       return ret;
+> >  }
+>
