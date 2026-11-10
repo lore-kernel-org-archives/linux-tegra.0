@@ -1,89 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.219.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794279746;
-	b=k0zBbnorNMhTWuCgxKJrS1X68Y8Pcr4JZN0AHcXF7j2eVMDXMOD1o0V5omNqLcPGBLfK
-	 rHNCx1jr74dBg9lDbBjw12MTsW7fHIx9c6ZxQdkVt+opY5kNQCQGeGcGObRMcP7CUQyfJ
-	 wfJcsnGeepn3uIkPeJRwi1uPwHwVQw3jkXnHU3p+ubLqiFKwZ/srQtqNjLU0DSonP/XeD
-	 qxDsj+FhRRU4bH2YUH4MbFNxQkOwstieBshI8V2zZ0MOe2y08FWesuUThlIPLew/vXLpf
-	 3oCawM3MVqiOig8lCVznc4roaIgtM6FCAFbzijQMTZRxdAQuO05yjfxNiDIMxJ1Gtxg==
+	t=1794287296;
+	b=gfi35Od+b+dFmyvwteMSC0AciQ4UjLyS3CGrcWFgtsW05Qwu9fcR4QqhlmRyhsgkR2bS
+	 R00d+fiZ7nhiqajAeWG+kvKeVJ4oI8Zaz/cx4tTBkeZSDs2flXyZoec9CwKeX0IklMvzH
+	 8K5N++PuD+GHN0OTMDnioucgHvO5xhrFbykejnvYk8H4HzkuDXyAWgm7qgv5r5UlhcI7f
+	 RWW0zsEHGRdYTFjHCOBvnHUgTUgUZrY2XFVaDQ1Ntwkicbm8K/XlfQfN1JXghHXCWk4QN
+	 DqYHt8jpOHusYEv/z2YBjb4s61tNSjx1HLp0jS2XyjRNGN9uBbZGMwYOPBU9NOVX9HQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794279746;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794287296;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
-	bh=lNlAAFeqvPs3+2DrLUisJfKXmiq6ODin2NN2Dn+TzsQ=;
-	b=yyW0bjN+eH+/K4uH2leQBfrAQ1c19n1uVHe1VllfjGVEQJeXx9WRswOLxf6BFrBdkAeP
-	 PaipQ92TxwmloirJHMQv3NNWYZZ0wmoYJMNSdotq6SsqOeCRHn6noyNNYvVRFeZvZ81Vp
-	 tn00tAA6ZKAZjHY0KL8zz/6VxTrp6UoTbQgIWlVmmwGQxOZh5TxInRduWUTG3jDJ+gNEW
-	 aHm7aZN22uwBBEuK8aGAEZnBy/mP5iXCVds4sHV4NkzBizAxe+ZeCUBnqBkoCb/4ZUERm
-	 LQTqy2xwv+tZHpLpxiHbSvrEj6u8FB8dB1fr8X9RZajXpFcDDDpkZfqG9mri849GG8A==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=uqjEjkaxes0qicdPDD9LDyvBW4T968M1FfYrP68rAAE=;
+	b=2WHYBg1gOtuHekBwsoAMOcR91BNWHs2jgTau9H+YmdsRSASY6pVAFnLpLQLVa0uWLJJy
+	 cMRLqGzY71TSgYYgFRt+CbdFBl6v3KEVG3VdnEQodupWn6ZpUnHU8JHRKp/NIKV3EjqVj
+	 OHTbLR75+ecbMxiIyIHZtz14ZTqrsfgST+aD/AmJLOQVnp0vqx+RamkmA+cpA7v/+GjK6
+	 cLyrLOD0ovm97sCXyTPU6T5Zdogw5Z8CcvXdJ2N1P9Cse5V2d1vOPjFep6xIavbR0pHd3
+	 zD9LiatjfAOlFna0tIW99lvSIiE1PBJ0EIt57+sYfLgtNpX/sdx+vKoFKEiso9b17dA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gFbBk4Zv;
-	arc=none smtp.remote-ip=209.85.210.47
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LM2jeGhl;
+	arc=none smtp.remote-ip=209.85.219.46
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B151F606A31C
-	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 03:02:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B151F606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22160606A321
+	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 05:08:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 22160606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gFbBk4Zv
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-845788309b4so720560a34.1
-        for <linux-tegra@vger.kernel.org>; Mon, 09 Nov 2026 19:02:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LM2jeGhl
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-91befbcad6dso18855496d6.3
+        for <linux-tegra@vger.kernel.org>; Mon, 09 Nov 2026 21:08:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794279744; x=1794884544; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=lNlAAFeqvPs3+2DrLUisJfKXmiq6ODin2NN2Dn+TzsQ=;
-        b=gFbBk4Zv4HAt4Wxj+pKFz4aUR6pmLgUYtSl9v4+p5Qa2ZurJFBBsdjonxf6lmsYMGa
-         fRBWiOb5lhEaD4kGO6T5Y5PQcoUS9XbE1F9vVPW29HUDvlIdrnfWwAyg01diShoK77C1
-         MC9nGnbpBtO3NTY3NiIVQO01wk6HO4x7tc7yKdoFJx5/YohrMKb+E3NhgShT6d6yJlhE
-         YVR4qxvny/1di+qAfMiizlOUuwMc4DTKh373Drz2wT9jq56bgrDHiQaWJWMLm1NQdJoG
-         xSqZmPpqudZoM2duhXKvY4l2uJ6/wrDCaJjI8z/DpE41YpddAghl1/6zJ0RBMcC35kYD
-         3luA==
+        d=gmail.com; s=20260707; t=1794287295; x=1794892095; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=uqjEjkaxes0qicdPDD9LDyvBW4T968M1FfYrP68rAAE=;
+        b=LM2jeGhly9EsTrZhPdy9KYDsv7PKM1mEJcgHQAmE8psDhCbkRIYe+q8dXoEoaZV0Wd
+         YOkB4gEHGfwYa8wGjFmKQrcnVeetXxHPJO0kbq0e6rLl8DTcgcs0mv1dXkxP40XFtYML
+         ux9LEU2Iml+vGvU7ITB7dJMl6Bz9ks2Fa4cBtCCSOpx4Yiwu9VyxF2h9Loy8aiAI5egY
+         HNGjvk1W3qFCVijBP+VcrCHkKOf+1RVZKmDm9HlGuxbU/xbsG24DHYtkRIZt3rv6MXyD
+         baWqKMVU+5yCdjReo0Ju3TLshoEMT6ZREpoHogh8QL8Afpe+8KLBZtlkTmu7TEDp9aCc
+         h6Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794279744; x=1794884544;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=lNlAAFeqvPs3+2DrLUisJfKXmiq6ODin2NN2Dn+TzsQ=;
-        b=jvs4k+2m1h8yqWdfMsjzVKf+3PyEPeTFY3T61QCvxJQ6qDwU7zSeenQrUHjaWmbpa9
-         +byuAZ6vOhYUQe8D+7JF4hGECoO1lwdWKkbregCFLbhgScg4dDbhcjIUjSnEVlvwE3qW
-         uvx5jcsykHIU7/clxo2erc2IPgrDfn8feFq2Wj9HsxYTFk/luuAMK6qYcVQBuW8xdpkp
-         7aLnptjygSE2zWaF3AzeLWWWvRN2cmL/l59b32VWrMCPWgTn1dv4cCoRY8QWuQ6urVoo
-         nvcncfwc9X1A+OHayEOE4oog19O+lynJ6+wlhHqVRWhF2Nz6XJudiij9Nqz7L16fJ8oW
-         XfmQ==
-X-Forwarded-Encrypted: i=1; AL+hErFVK8Kx9Vn4BGII2fvvNWSfBiRzUfmvY4sqSv8XQmWIcN9kpwllKX7B0Tg1qCmVCbl2U15O4hKO6nPYcA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9s/GQ9xAcQcCg4D0uH/eHrN95N6J7KVYWvZ+NyFzXQrTYBVNOS
-	fXN8+Jh1MEOMGyJ8JO3+5HRyTdSJEmlG5UG/MAecRmJ+mk/dMnSZBUll
-X-Gm-Gg: AYBFou2PSICPBLPBdHHNA1HZHb+I6mNxXP+xXZVex0FWX+3EBVwjGhJUGgkIyO4DTRd
-	7lZtpmPXtn/hR5AN7MWf6S+EUpxHn2O1PfQAla5U1m4JGCmvdjt8VX6+16LOVQVmcY3PjmuZRAR
-	MwpBsQ+tVK40tG+TiQJ24KSB5Ucf+VRJ/IgxGNR2FjajKXKe4MmFd2ruXdhqeP8Bz2IyuxxUcyE
-	rPIDH2jGInCBXsgDu4KBTiR91KPo8/Ejq1Sjxgv2anxM798ZKkgHug7kGQTXpxgJCBjCsViymKP
-	4+Hv+eUJV7prngwseQJR7bVsacBOcsBKoiAvfcPzOgq6oJtBmiCMbU2ORUhHK7ofyPQwU7EyuGn
-	ShuL7xdpQyGMRJfNGgV2h5dpWv8VONAiYR6QlCX5E/T01Suny1JHybeRFiuw0Kc7V/NhSfQmZmt
-	P/u47mAVhHlUgkylu0UcwnG9kYVK9TryyeXEyF1MlOH5Vr6Lxn27LqSxcJwCfIRKSH52AQwQy9G
-	PelYFRoYPztXka5xbgJ4BlLr4bHHU8ZfkHmA9xa463H2OBORQIEekAKJFNsxfBQmH+MeZBdocG/
-	rIp2nXsrhONnVx8IxXa9R+XeOIk9HqgXWO6N91iRHQOlmqyhAAcy41noEP5qgveZilJoVAeP84n
-	84a0m2/txM3NIJUCMSV/J5c62F8xqQucKRPaCcXRuZQcK/CTvVw6uTE2TCZdlyAyYJfvK+1xYms
-	G7cQlVJ/6sSuFANhJoK04mw3RIVXHUGT4EZIHYK2tVVvIzejIlAXc=
-X-Received: by 2002:a05:6830:913:b0:804:365a:bb82 with SMTP id 46e09a7af769-860dc818e73mr1351189a34.22.1794279744586;
-        Mon, 09 Nov 2026 19:02:24 -0800 (PST)
-Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-860dcbebfc6sm882545a34.18.2026.11.09.19.02.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 19:02:23 -0800 (PST)
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Mon, 09 Nov 2026 20:02:14 -0700
-Subject: [PATCH v2] dmaengine: tegra: only advertise supported pause
- operations
+        d=1e100.net; s=20260707; t=1794287295; x=1794892095;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=uqjEjkaxes0qicdPDD9LDyvBW4T968M1FfYrP68rAAE=;
+        b=Ass0QyvRxPDT0vVxYLe2lHnWHFVcKzhre94Sd3SA8S0hUn8z8lRuFj1P5swvI1s/sI
+         RyNDWhm451s1lnG1GdW3bN+QqZdhYoOScctV9LeVgsHLErHgcclfLPqcgiOH+Cx7Lclg
+         C4Y8URjMXeZu978tTKWGLYqa9dcPaIjXT0NqgjuOxYW9RHGE1RPX5r5MdJLIYe2k/Jum
+         pfPIuO7YWRj/BxoJzT4TFzw0nKBcyDrLEFwDzz7RrO/KJik/so9VhS6p/IKSm8mR6Hv/
+         87koLurDRUNFPIDXjQ0itDyBCIBaTjuyU6MoZQ7RTBJO52xTGDUHI6Yn8Esl5kPKDuK6
+         tAUQ==
+X-Forwarded-Encrypted: i=1; AL+hErEQgg4eaXLs/CTSW4AK2QfAOetlrKOszH4TS/BlKveT/KU2mC+0onEpC8afpFuAn4PCQHWzez7tEN6M2Q==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8PYvjvdG8iey7tmMQfk/hOzeF2sFPuJn8AeYVF996zZrncBJDc
+	r6KIY8cOxV6oyJlWPWkqH7COeZO7KgvExrwv/0U38HFILhNIPdgB000=
+X-Gm-Gg: AYBFou3dfmZ0YeGF+OzOON4aonsDy3bNd0g4DJ+L2p6WxtoVYEHcyZt0TbOWa/T2glg
+	tikQhoWyE85wjQQAssnEZ6b27FpqNqPWn6hDrTtNb9EA8Y2eE9J6OHPnpJZZ/PmUOdC6ubyp/3X
+	+keRy4DIGpgO0c8BtIctNAGmYRgzBECk9PEDZgoDkRYsZkaBBPDhOU0rKshID6/rAPtWCufd0+f
+	/e6Kue2E3PNGBxhIepLOM6pAgR4I69gdXHmWv6bftsW3dwLNffC3N1SMXxjTvJG8//3z3mp5uUI
+	DzLgKapReTc6f7KWK6Kd/9igOt5sItcqMRWLNj/bEzsfIflDEUpei17hTTXtVj3M48ntcbTM/Pg
+	E8JYhfI2x4GahXb3xWLx5Jals53VElN9PfKkfnSqUeEqlvOrvYMdGIFFkCYFn56t+q+tW8DAMWV
+	IJ45jWFJIV2qdQPQgbdrpyJWfSt3rc5lt37ksyzd/L8ooE8FeN7TqZHAkSnJLZAivzLSrdSD6o0
+	Os1NgL34K0XZDq9Bw7Det99hhRj9+q64gt77kSbGDxD6JBENhKMdmkb9POlQCF+70dRqIJ9+7a4
+	soMogHNlBJ4zxkfptI3l0qt94KIjJT3U1K+Q4APWv2G7O1XU8ELwGD+2tNZi6CeH3t8OQL73/Mv
+	+qTUIaxm/VKhrtioM0/IXqf/TEZXSeowGRgURcNpZvGsn0tSC+N7e29KyJ0ruKK59yDcECCzWXv
+	81RSAVFj4CKQ==
+X-Received: by 2002:a05:6214:2b85:b0:91c:60e8:a8ab with SMTP id 6a1803df08f44-91eef81bda5mr29310036d6.37.1794287295004;
+        Mon, 09 Nov 2026 21:08:15 -0800 (PST)
+Received: from localhost.localdomain ([104.39.152.7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91ef0547744sm12648546d6.44.2026.11.09.21.08.13
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 09 Nov 2026 21:08:14 -0800 (PST)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Myeonghun Pak <mhun512@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ijae Kim <ae878000@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Subject: [PATCH v6] ASoC: wm8962: stop microphone work before component removal
+Date: Tue, 10 Nov 2026 00:08:12 -0500
+Message-ID: <20261110-wm8962-v6-c78c17edd171@gmail.com>
+X-Mailer: git-send-email 2.54.0
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -93,107 +107,119 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261109-submit-tegra186-dma-pause-caps-v1-v2-1-accf568bf0cc@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5WOwQ6CMBBEf4X07GpbFMGT/2E4LO0Ka6SQFoiG8
- O8W+AKTvcxm5s3MIpBnCuKWzMLTxIE7F4U+JMI06GoCtlELLXWmlMwhjFXLAwxUe1R5BrZF6HE
- MBAb7AJOCLDtblWppL1KLyOk9PfmzdTzKXUfIi8ywgldHhTFeeXSmWV8RSa5mR6c9Fx0Nh6Hz3
- 23mpFbSP4viKSiMKSp1RZmm9l63yO+j6VpRLsvyA7Q7gp4GAQAA
-X-Change-ID: 20261108-submit-tegra186-dma-pause-caps-v1-664d1320d502
-To: Laxman Dewangan <ldewangan@nvidia.com>, 
- Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
- Frank Li <Frank.Li@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
- Pavan Kunapuli <pkunapuli@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>
-Cc: Rajesh Gumasta <rgumasta@nvidia.com>, 
- Thierry Reding <treding@nvidia.com>, Akhil R <akhilrajeev@nvidia.com>, 
- dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- James Hilliard <james.hilliard1@gmail.com>
-X-Mailer: b4 0.15.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Tegra186 does not support pausing a channel, but the driver installs
-device_pause and device_resume for every variant. Both callbacks return
--ENOSYS on Tegra186.
+The I2C-owned IRQ outlives the codec component. Cancelling mic_work during
+component removal leaves its producer running, so another microphone event
+can queue work for the old component and jack.
 
-dma_get_slave_caps() derives cmd_pause and cmd_resume from the presence
-of these callbacks. Clients such as generic 8250 therefore accept RX DMA
-channels that cannot satisfy their pause requirement. A receive timeout
-then reaches an unsupported pause operation instead of being excluded
-when the channel capabilities are checked.
+Mask microphone sources, synchronize the IRQ and drain mic_work before
+changing the jack pointer, regardless of whether a jack was registered.
+Disable microphone detection during cleanup only while holding an active
+runtime-PM reference, because its control register is volatile. Keep
+unrelated IRQ events available.
 
-Only install the pause and resume callbacks when the matched chip data
-advertises hardware support. Keep them available on Tegra194 and later,
-and remove their now-redundant checks for unsupported hardware.
+Run this cleanup unconditionally from codec removal and drop Tegra's late
+card remove callback, which runs after component and PCM runtime teardown.
 
-Fixes: ee17028009d4 ("dmaengine: tegra: Add tegra gpcdma driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Fixes: 0512615db6db ("ASoC: wm8962: Convert interrupt handler to direct regmap usage")
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
 ---
-Changes in v2:
-- Remove the capability checks from the pause and resume callbacks now that
-  they are registered only on hardware that supports them.
-- Link to v1: https://patch.msgid.link/20261108-submit-tegra186-dma-pause-caps-v1-v1-1-9cc9b17a033d@gmail.com
+No hardware testing.
 
-To: Laxman Dewangan <ldewangan@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-To: Vinod Koul <vkoul@kernel.org>
-To: Frank Li <Frank.Li@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-To: Akhil R <akhilrajeev@nvidia.com>
-To: Pavan Kunapuli <pkunapuli@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: dmaengine@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/dma/tegra186-gpc-dma.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+Changes in v6:
+- Mask microphone IRQs and drain the IRQ/work path even with no old jack.
+- Run codec cleanup unconditionally from component removal.
+- Retain the active runtime-PM guard and Tegra callback removal.
 
-diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
-index e76c58f213d8..bd606b71e714 100644
---- a/drivers/dma/tegra186-gpc-dma.c
-+++ b/drivers/dma/tegra186-gpc-dma.c
-@@ -419,9 +419,6 @@ static int tegra_dma_device_pause(struct dma_chan *dc)
- 	unsigned long flags;
- 	int ret;
- 
--	if (!tdc->tdma->chip_data->hw_support_pause)
--		return -ENOSYS;
--
- 	spin_lock_irqsave(&tdc->vc.lock, flags);
- 	ret = tegra_dma_pause(tdc);
- 	spin_unlock_irqrestore(&tdc->vc.lock, flags);
-@@ -445,9 +442,6 @@ static int tegra_dma_device_resume(struct dma_chan *dc)
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
- 	unsigned long flags;
- 
--	if (!tdc->tdma->chip_data->hw_support_pause)
--		return -ENOSYS;
--
- 	spin_lock_irqsave(&tdc->vc.lock, flags);
- 	tegra_dma_resume(tdc);
- 	spin_unlock_irqrestore(&tdc->vc.lock, flags);
-@@ -1518,8 +1512,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
- 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
- 	tdma->dma_dev.device_issue_pending = tegra_dma_issue_pending;
--	tdma->dma_dev.device_pause = tegra_dma_device_pause;
--	tdma->dma_dev.device_resume = tegra_dma_device_resume;
-+	if (cdata->hw_support_pause) {
-+		tdma->dma_dev.device_pause = tegra_dma_device_pause;
-+		tdma->dma_dev.device_resume = tegra_dma_device_resume;
+ sound/soc/codecs/wm8962.c      |   34 +++++++++++++++++++---------------
+ sound/soc/tegra/tegra_wm8962.c |   13 -------------
+ 2 files changed, 19 insertions(+), 28 deletions(-)
+
+diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
+--- a/sound/soc/codecs/wm8962.c
++++ b/sound/soc/codecs/wm8962.c
+@@ -3248,21 +3248,27 @@
+ {
+ 	struct wm8962_priv *wm8962 = snd_soc_component_get_drvdata(component);
+ 	struct snd_soc_dapm_context *dapm = snd_soc_component_to_dapm(component);
+-	int irq_mask, enable;
++	int mic_irq_mask = WM8962_MICD_EINT | WM8962_MICSCD_EINT;
++
++	snd_soc_component_update_bits(component, WM8962_INTERRUPT_STATUS_2_MASK,
++				      mic_irq_mask, mic_irq_mask);
++	if (pm_runtime_get_if_active(component->dev) > 0) {
++		snd_soc_component_update_bits(component, WM8962_ADDITIONAL_CONTROL_4,
++					      WM8962_MICDET_ENA, 0);
++		pm_runtime_put(component->dev);
 +	}
- 	tdma->dma_dev.device_synchronize = tegra_dma_chan_synchronize;
- 	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
++	if (wm8962->irq)
++		synchronize_irq(wm8962->irq);
++	cancel_delayed_work_sync(&wm8962->mic_work);
  
-
----
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-change-id: 20261108-submit-tegra186-dma-pause-caps-v1-664d1320d502
-
-Best regards,
---  
-James Hilliard <james.hilliard1@gmail.com>
-
+ 	wm8962->jack = jack;
+ 	if (jack) {
+-		irq_mask = 0;
+-		enable = WM8962_MICDET_ENA;
+-	} else {
+-		irq_mask = WM8962_MICD_EINT | WM8962_MICSCD_EINT;
+-		enable = 0;
+-	}
+-
+-	snd_soc_component_update_bits(component, WM8962_INTERRUPT_STATUS_2_MASK,
+-			    WM8962_MICD_EINT | WM8962_MICSCD_EINT, irq_mask);
+-	snd_soc_component_update_bits(component, WM8962_ADDITIONAL_CONTROL_4,
+-			    WM8962_MICDET_ENA, enable);
++		snd_soc_component_update_bits(component,
++					      WM8962_INTERRUPT_STATUS_2_MASK,
++					      mic_irq_mask, 0);
++		snd_soc_component_update_bits(component, WM8962_ADDITIONAL_CONTROL_4,
++					      WM8962_MICDET_ENA, WM8962_MICDET_ENA);
++	}
+ 
+ 	/* Send an initial empty report */
+ 	snd_soc_jack_report(wm8962->jack, 0,
+@@ -3592,9 +3598,7 @@
+ 
+ static void wm8962_remove(struct snd_soc_component *component)
+ {
+-	struct wm8962_priv *wm8962 = snd_soc_component_get_drvdata(component);
+-
+-	cancel_delayed_work_sync(&wm8962->mic_work);
++	wm8962_mic_detect(component, NULL);
+ 
+ 	wm8962_free_gpio(component);
+ 	wm8962_free_beep(component);
+diff --git a/sound/soc/tegra/tegra_wm8962.c b/sound/soc/tegra/tegra_wm8962.c
+--- a/sound/soc/tegra/tegra_wm8962.c
++++ b/sound/soc/tegra/tegra_wm8962.c
+@@ -97,18 +97,6 @@
+ 	return 0;
+ }
+ 
+-static int tegra_wm8962_remove(struct snd_soc_card *card)
+-{
+-	struct snd_soc_dai_link *link = &card->dai_link[0];
+-	struct snd_soc_pcm_runtime *rtd = snd_soc_get_pcm_runtime(card, link);
+-	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
+-	struct snd_soc_component *component = codec_dai->component;
+-
+-	snd_soc_component_set_jack(component, NULL, NULL);
+-
+-	return 0;
+-}
+-
+ SND_SOC_DAILINK_DEFS(wm8962_hifi,
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+ 	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8962")),
+@@ -129,7 +117,6 @@
+ 	.owner = THIS_MODULE,
+ 	.dai_link = &tegra_wm8962_dai,
+ 	.num_links = 1,
+-	.remove = tegra_wm8962_remove,
+ 	.fully_routed = true,
+ };
+ 
