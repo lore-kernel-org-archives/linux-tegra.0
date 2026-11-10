@@ -1,58 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794327004;
-	b=lqVch3Bn56CDKaM64v8HGji80vcvzjqKcGdTriKN8rfGu1dlR+yTFtsEJeKzdswcdmlS
-	 5SaELp8ZfIMymLLWy46r7RnKZTAgLsAyG6zX5De+Ghv7fxS9n23ehscRUe+L0DPQ5c3I2
-	 KYil7Np64YUnA26FbhBK+dXw/q84nAei8zof0vnVyTo0Khn6g8QRRVsYJS7x09jOg0hNf
-	 fd/iZ+4J9PE+gKE+sqgN1L2FYzer7GnjpS7Ykw/ab51frfiDFp45Y4P/zcXUNBGW2WFA6
-	 +iy08eUt1pVrT2/+wPAy56o5kM1RQp0BlRb6EfWkXLnsCavCXYbUk0AnVJC6I7bHl6g==
+	t=1794327696;
+	b=ZY+tRGqphY5uyRO6CrKB73FydMvYYIbIDgioudeP44WTmhWvBaKW4cVYbk3SDhgYC1tQ
+	 zESmHkdq3jmRgUJGj268KDb4LvR/pSRAGWyOav7LGiSe+YrwB7pn84MB0i2C18RFelBCM
+	 FfNcOgVUm8ed8Pki7D+4JVjH1KSMEQGqwIqACoUpVc5RY9dY7iJjTlgaQGucf1K+Hn1mc
+	 12d28Nw1Yr0avtut4Ik9RNBXPAaVe2Z4rKLa8/ICF6twJFkJfLTFZeR9kSMuS1vtbSpd1
+	 MBTsaHvlA0sdtNuvK1d4ho2EDV0Lqgt4NsLGKf1zw85HwayI3mOrP4QGH5vCkue4tpQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794327004;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=RSj7n7pAsyky7mg8jG553K5bfRkiKF7XOw0UfMG6Aqg=;
-	b=4JZrY1xd35XySz6/DDMeDRwP4fw7/ICFBUXl5tH+8EX1lsBYoRx2ID1V/beQLu+lZ8i1
-	 CO7jrqyI+89a/aJZAKsCnoJfhnFSvRv8gWG1s0MUeOjStLA+pqY+kO4Nc5M++9cOGjDku
-	 MSZN4k1oa/2XlF2yZCTnqUtRPrQYlhfmmaDmAFHi2tbQ4l0vS/nEsDoi/jd/qeEnye+Dq
-	 Rzk/Y1E/eQ9eprZ78taTfm61ytrA3rNEz8i2nx6d2wX68HiwCT1T53i+AenBVXkcyMH2b
-	 m7xeJx6BLYcnCl23YW1ozhucU5peEQXd2vqgqF9DQU6lMwvE4AquJsnLzTP0FwelOCQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794327696;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=bP5wdLNpyiJ9+ruTpF6sR5/wEnB1y9H630XlBE2DLdQ=;
+	b=F7VKwlzn36Mbc6JTKu0pYTJm7gBHN2mO1N0qJeOz40fy5WeA/IN9+afg1TbU5oS5d6h5
+	 ARSO+aPXIV7AGvKjaFVmaOheSg0+EeLG9BqMLJf5UJH9I8EpqTtHF0QphoOGwmUFiqAvE
+	 czX3Gq3D6xiBAEY6nmMDOc+YLpzlQcSUNFiUBw4n+Jo+ngOt06Vih8zVv/9a3qiFfT6IQ
+	 SVte1E7bDNbDkca3LESicO32ec9lYPx+/WMmYcrloqQGnUToUCWzicYAtzccihjnYmaZq
+	 qJseg/mmZ5LNLqOHHcUZ2J8K63vKEBbqw4nAOBbGfqTGvpmHiKXEVxd7biIlBvux2WA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xi+Qqu+Z;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JTGfbKd2;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C9606A321
-	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 16:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A73606A320;
+	Tue, 10 Nov 2026 16:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xi+Qqu+Z
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 757C21F0089F;
-	Tue, 10 Nov 2026 16:10:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JTGfbKd2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45351F0089F;
+	Tue, 10 Nov 2026 16:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794327004;
-	bh=RSj7n7pAsyky7mg8jG553K5bfRkiKF7XOw0UfMG6Aqg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Xi+Qqu+Z5V33VAweNm4LJxu/CzCtJUcSG+FxlRcGAc09l0sXX6uMZJUUrWpS8fov+
-	 x3QuVFFkf0di29QuzzPCe7FHlhrnfL6Yz3vm3A4HuAZbRfhtk/9ReM80f0Mp3Xhrqt
-	 eufF6a5JOfUpyS8W9CN7eib7L28uwjFKQOYKfFE3DW0j4DN0cgC53bCHerBsZwVOPr
-	 tKMck3a3owBYOUcB8W6yEQAK5x/bqbjUrtSjS1So7j/dVm/gRktKFlKdepTVyJ+vxE
-	 5oJI5a/0/WiahL6tnwWdbpaOdCepN4JWAE6jGvXSPoIAaD6Di0EkgXzjddglnP1+XR
-	 OawUD5Y0qVdaA==
-Date: Tue, 10 Nov 2026 17:10:01 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Simona Vetter <simona@ffwll.ch>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH RESEND 53/83] drm/tegra: Switch to
- drm_mode_config_create_initial_state
-Message-ID: <avNBTIciv6QlEp9a@houat>
-References: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
- <20261105-drm-no-more-config-reset-v1-53-1f58d1e33380@kernel.org>
- <auyjMrCi8trUahdB@orome>
+	s=k20260515; t=1794327695;
+	bh=bP5wdLNpyiJ9+ruTpF6sR5/wEnB1y9H630XlBE2DLdQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=JTGfbKd2jUS4VPVhdDdly/iy8wv65CnMHH+paZDTMqxrPURLhYqh8+dlyT/KoAc8y
+	 KFHIePGE/iaUd2Bp4HDpKPw+QT/oIjrpRkf44ON2CuFDW7ZTjlIF5SL2X5AHk6m6eP
+	 6Eby4xYgGaEay2rXmCfdQi3oIjCbBenzGIQsbQFXJ9VA109Xo6Kv/GX19HjXNP52qb
+	 tpwLWp4ocPqZbJcu0lTXwD9/3ZSLs689Ffhz9ED5AXWRVNT9ptrcEkwxQnac671Jx3
+	 q/WMEHxrdrl4NlVyPxeVMU9//QT+82C2U2tLXqDqykMv8p7NQ9oqZsB+sbtRDczRd6
+	 E6o5a0YVNbIxg==
+Message-ID: <eb9fdef7-2cef-425b-a62e-c28b7dbe1596@kernel.org>
+Date: Tue, 10 Nov 2026 17:21:27 +0100
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -62,75 +51,111 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="rbyf2cug4iro2d6c"
-Content-Disposition: inline
-In-Reply-To: <auyjMrCi8trUahdB@orome>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] watchdog: tegra_wdt: Support Tegra20
+To: Artur Kowalski <arturkow2000@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Thomas Gleixner
+ <tglx@kernel.org>, Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap
+ <rdunlap@infradead.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org, clamor95@gmail.com
+References: <20261110-t20-for-upstream-v1-0-5923449951fe@gmail.com>
+ <20261110-t20-for-upstream-v1-3-5923449951fe@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
+ /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
+ s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
+ EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
+ rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
+ DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
+ IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
+ vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
+ oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
+ sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
+ vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
+ Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
+ BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
+ 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
+ f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
+ WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
+ XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
+ IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
+ YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
+ p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
+ GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
+ YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
+ vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
+ ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
+ QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
+ +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
+ wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
+ c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
+ K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
+ n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
+ qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
+In-Reply-To: <20261110-t20-for-upstream-v1-3-5923449951fe@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 10/11/2026 13:39, Artur Kowalski wrote:
+> +static int tegra20_wdt_init(struct platform_device *pdev, struct tegra_wdt *wdt,
+> +			    void __iomem *regs)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np;
+> +	struct resource res;
+> +	int ret;
+> +
+> +	/*
+> +	 * RST_SOURCE belongs to the clock and reset controller, whose driver
+> +	 * doesn't use it. Map only this register, without requesting it, as
+> +	 * the region belongs to the clock and reset controller.
+> +	 */
+> +	np = of_find_compatible_node(NULL, NULL, "nvidia,tegra20-car");
+> +	if (!np)
+> +		return dev_err_probe(dev, -ENODEV,
+> +				     "clock and reset controller not found\n");
+> +
+> +	ret = of_address_to_resource(np, 0, &res);
+> +	of_node_put(np);
+> +	if (ret)
+
+Looks like doing syscon here. This in general is more fragile.
+
+...
+
+> +/*
+> + * Tegra30 and later list "nvidia,tegra20-timer" as well, but match their more
+> + * specific compatible string.
+> + */
+>  static const struct of_device_id tegra_wdt_of_match[] = {
+>  	{ .compatible = "nvidia,tegra30-timer", .data = &tegra30_wdt_soc },
+> +	{ .compatible = "nvidia,tegra20-timer", .data = &tegra20_wdt_soc },
+
+Why in reversed order?
+
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, tegra_wdt_of_match);
+> 
 
 
---rbyf2cug4iro2d6c
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND 53/83] drm/tegra: Switch to
- drm_mode_config_create_initial_state
-MIME-Version: 1.0
-
-Hi Thierry,
-
-On Thu, Nov 05, 2026 at 04:51:46PM +0100, Thierry Reding wrote:
-> On Thu, Nov 05, 2026 at 04:30:02PM +0100, Maxime Ripard wrote:
-> > drm_mode_config_reset() has a dual role: it creates the initial KMS
-> > state at probe time, and resets hardware and software state during
-> > suspend/resume cycles.
-> >=20
-> > Since the two roles need different behaviors (notably for objects like
-> > drm_private_obj that must persist across suspend/resume),
-> > drm_mode_config_create_initial_state() was introduced to handle only
-> > the initial state creation at probe time.
-> >=20
-> > Switch to drm_mode_config_create_initial_state().
-> >=20
-> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > ---
-> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> > Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> > Cc: Thierry Reding <thierry.reding@kernel.org>
-> > Cc: linux-tegra@vger.kernel.org
-> > ---
-> >  drivers/gpu/drm/tegra/drm.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> I'd have to check more closely since it's been a while, but I think we
-> might depend on the reset hooks getting called during probe.
->=20
-> Looking at the implementation of drm_mode_config_create_initial_state(),
-> it ends up calling drm_mode_config_connector_create_state(), which
-> silently exists if the connector doesn't implement atomic_create_state,
-> which none of the Tegra connectors do, so wouldn't that lead to a NULL
-> pointer dereference at some point?
-
-AFAIK, all tegra connectors have now been converted to
-atomic_create_state instead of reset (commits c5c0e4821938 and
-f808d9f8e5a3 in drm-misc-next) so it shouldn't have any reset specific
-behaviour at all and the transition to
-drm_mode_config_create_initial_state().
-
-Am I missing something?
-
-Maxime
-
-
---rbyf2cug4iro2d6c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCavNB2AAKCRAnX84Zoj2+
-dvk4AX41wC6YenLs+6gSvLfk0LYowGG7IO4upIFRx8JklbzlzQz6PJtUI+hChU2e
-Efy1Tz4Bf3pU7J3nQTleT+S64dPRffAAbQvET1bwtJQ1v8NUqNLJngoW0BXI5DSB
-Z/iSR5qWew==
-=HmBz
------END PGP SIGNATURE-----
-
---rbyf2cug4iro2d6c--
+Best regards,
+Krzysztof
