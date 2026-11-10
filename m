@@ -1,77 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794264271;
-	b=x/jXpUKCf0C+sGBcWfro43JNX6CSGEPVQyGCSHUZf722PKj5EBycNGH9tDQuq8fL3Gy5
-	 88wq2LdP7MLqzRzv07Qvc8uecVQk/WZP113K0cxn4Tj92qy8oCBomCJt9ERvUpl9x4ruq
-	 IPmaqr/TgFruZlTMYNDcIG5xPCEi/VzobqNsqhbrgWOs0hP49GbaVl09SaTSc4WPzb083
-	 tX0YJH4tuYYmCkuJS3+zus+AwxHGcWfwvAmdkUkvk6+/LWfR/1BS5BSP3+q8O9vZEal8L
-	 adu7NmuviGXd4zYjoi7zVbyFeQ6lDsEnKr6Ialrw4YMVzqMTQE4znpKSaQjDmAg/Brw==
+	t=1794279746;
+	b=k0zBbnorNMhTWuCgxKJrS1X68Y8Pcr4JZN0AHcXF7j2eVMDXMOD1o0V5omNqLcPGBLfK
+	 rHNCx1jr74dBg9lDbBjw12MTsW7fHIx9c6ZxQdkVt+opY5kNQCQGeGcGObRMcP7CUQyfJ
+	 wfJcsnGeepn3uIkPeJRwi1uPwHwVQw3jkXnHU3p+ubLqiFKwZ/srQtqNjLU0DSonP/XeD
+	 qxDsj+FhRRU4bH2YUH4MbFNxQkOwstieBshI8V2zZ0MOe2y08FWesuUThlIPLew/vXLpf
+	 3oCawM3MVqiOig8lCVznc4roaIgtM6FCAFbzijQMTZRxdAQuO05yjfxNiDIMxJ1Gtxg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794264271;
-	h=Received:DKIM-Signature:Received:From:To:Cc:In-Reply-To:References:
-	 Subject:Message-Id:Date:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key;
-	bh=lbmh/0Z0zwTEAIGZ8vw8plOMg7G98sTILva2sucTUcE=;
-	b=sI2ncTyFm1E9C1/Ww6yoUyeXD7Pk6YfyHLU56qbG8CVd4UH3gic42SSFX8ybxhDTX/tm
-	 oc533KzUqE/4pHEOvnfDkcuXAMOqmqTPb/tTfS7oOPvVj3VA/lWvlUKPH38CDABjl8QpV
-	 N9cNMCLBeVvwEK5vNFETkI96VhsXI9/qPj6/xbe3wtBNPUWXPsJ4SB53W4/Htjs73R8lZ
-	 Hn82VdWkuhdp7vn2yJN6iWXjSf8ToNux5pmKiehNtg6uTKTOo2VVEgW23XT457zgSq1Sn
-	 W9vmAPWVxyArNpq/8mO+n973lvwubt9ABiJ+oGcDWPJ91dLegjdUdxvm5qswuDVHSzg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794279746;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=lNlAAFeqvPs3+2DrLUisJfKXmiq6ODin2NN2Dn+TzsQ=;
+	b=yyW0bjN+eH+/K4uH2leQBfrAQ1c19n1uVHe1VllfjGVEQJeXx9WRswOLxf6BFrBdkAeP
+	 PaipQ92TxwmloirJHMQv3NNWYZZ0wmoYJMNSdotq6SsqOeCRHn6noyNNYvVRFeZvZ81Vp
+	 tn00tAA6ZKAZjHY0KL8zz/6VxTrp6UoTbQgIWlVmmwGQxOZh5TxInRduWUTG3jDJ+gNEW
+	 aHm7aZN22uwBBEuK8aGAEZnBy/mP5iXCVds4sHV4NkzBizAxe+ZeCUBnqBkoCb/4ZUERm
+	 LQTqy2xwv+tZHpLpxiHbSvrEj6u8FB8dB1fr8X9RZajXpFcDDDpkZfqG9mri849GG8A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YS340XH9;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gFbBk4Zv;
+	arc=none smtp.remote-ip=209.85.210.47
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386AC606A326;
-	Mon,  9 Nov 2026 22:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B151F606A31C
+	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 03:02:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B151F606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YS340XH9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B61871F0089F;
-	Mon,  9 Nov 2026 22:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794264271;
-	bh=lbmh/0Z0zwTEAIGZ8vw8plOMg7G98sTILva2sucTUcE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=YS340XH9AgYiYC0jmay2BOZ8psYLNTS9Zrj+ai1c0l0V3ody+zwIbLGKaNGAGBa4J
-	 d9aPJgiLauxuP8BmJQSc4iHfqQSdIMPFvqoZdhvllfDpSeXc3vutC6h9i9MK/xnRN9
-	 dIRg1N6rLkEd2ZBuRQl19ce7kHwCYP6jorqrFPJxo1LriWVol/DWOFmnbLH1HMilCc
-	 7Uj68OXXpLHznUZRlz7kcg6kTHT3s1XEMPq+7NHYItafxe7T66Oh3nx8NXaqJT/l7T
-	 dBvKnsrMMJzH/z0kiG9OTMLFTueglK0GqfYsdJKUEz8yrPmdhSIpTDARYW5sQLa6NL
-	 pdO/hDQ3kA+2g==
-Received: from traversing.sirena.org.uk (localhost [IPv6:::1])
-	by traversing.sirena.org.uk (Postfix) with ESMTP id 351CF303EFF9;
-	Mon, 09 Nov 2026 22:44:27 +0000 (GMT)
-From: Mark Brown <broonie@kernel.org>
-To: Vladimir Moravcevic <vmoravcevic@axiado.com>, 
- Tzu-Hao Wei <twei@axiado.com>, Swark Yang <syang@axiado.com>, 
- Prasad Bolisetty <pbolisetty@axiado.com>, 
- Karthikeyan Mitran <kmitran@axiado.com>, 
- Alain Volmat <alain.volmat@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Michal Simek <michal.simek@amd.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Heiko Stuebner <heiko@sntech.de>, Jyan Chou <jyanchou@realtek.com>, 
- Yu-Chun Lin <eleanor.lin@realtek.com>, 
- Laxman Dewangan <ldewangan@nvidia.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>, 
- Joshua Crofts <crofts@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-tegra@vger.kernel.org
-In-Reply-To: <20261108-spi-dont-use-autosuspend-v1-0-3587b0183cbe@kernel.org>
-References: <20261108-spi-dont-use-autosuspend-v1-0-3587b0183cbe@kernel.org>
-Subject: Re: [PATCH 00/11] spi: remove redundant
- pm_runtime_dont_use_autosuspend() calls
-Message-Id: <179425512291.3711751.11313466595449863242.b4-ty@b4>
-Date: Mon, 09 Nov 2026 20:12:02 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gFbBk4Zv
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-845788309b4so720560a34.1
+        for <linux-tegra@vger.kernel.org>; Mon, 09 Nov 2026 19:02:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794279744; x=1794884544; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=lNlAAFeqvPs3+2DrLUisJfKXmiq6ODin2NN2Dn+TzsQ=;
+        b=gFbBk4Zv4HAt4Wxj+pKFz4aUR6pmLgUYtSl9v4+p5Qa2ZurJFBBsdjonxf6lmsYMGa
+         fRBWiOb5lhEaD4kGO6T5Y5PQcoUS9XbE1F9vVPW29HUDvlIdrnfWwAyg01diShoK77C1
+         MC9nGnbpBtO3NTY3NiIVQO01wk6HO4x7tc7yKdoFJx5/YohrMKb+E3NhgShT6d6yJlhE
+         YVR4qxvny/1di+qAfMiizlOUuwMc4DTKh373Drz2wT9jq56bgrDHiQaWJWMLm1NQdJoG
+         xSqZmPpqudZoM2duhXKvY4l2uJ6/wrDCaJjI8z/DpE41YpddAghl1/6zJ0RBMcC35kYD
+         3luA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794279744; x=1794884544;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=lNlAAFeqvPs3+2DrLUisJfKXmiq6ODin2NN2Dn+TzsQ=;
+        b=jvs4k+2m1h8yqWdfMsjzVKf+3PyEPeTFY3T61QCvxJQ6qDwU7zSeenQrUHjaWmbpa9
+         +byuAZ6vOhYUQe8D+7JF4hGECoO1lwdWKkbregCFLbhgScg4dDbhcjIUjSnEVlvwE3qW
+         uvx5jcsykHIU7/clxo2erc2IPgrDfn8feFq2Wj9HsxYTFk/luuAMK6qYcVQBuW8xdpkp
+         7aLnptjygSE2zWaF3AzeLWWWvRN2cmL/l59b32VWrMCPWgTn1dv4cCoRY8QWuQ6urVoo
+         nvcncfwc9X1A+OHayEOE4oog19O+lynJ6+wlhHqVRWhF2Nz6XJudiij9Nqz7L16fJ8oW
+         XfmQ==
+X-Forwarded-Encrypted: i=1; AL+hErFVK8Kx9Vn4BGII2fvvNWSfBiRzUfmvY4sqSv8XQmWIcN9kpwllKX7B0Tg1qCmVCbl2U15O4hKO6nPYcA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9s/GQ9xAcQcCg4D0uH/eHrN95N6J7KVYWvZ+NyFzXQrTYBVNOS
+	fXN8+Jh1MEOMGyJ8JO3+5HRyTdSJEmlG5UG/MAecRmJ+mk/dMnSZBUll
+X-Gm-Gg: AYBFou2PSICPBLPBdHHNA1HZHb+I6mNxXP+xXZVex0FWX+3EBVwjGhJUGgkIyO4DTRd
+	7lZtpmPXtn/hR5AN7MWf6S+EUpxHn2O1PfQAla5U1m4JGCmvdjt8VX6+16LOVQVmcY3PjmuZRAR
+	MwpBsQ+tVK40tG+TiQJ24KSB5Ucf+VRJ/IgxGNR2FjajKXKe4MmFd2ruXdhqeP8Bz2IyuxxUcyE
+	rPIDH2jGInCBXsgDu4KBTiR91KPo8/Ejq1Sjxgv2anxM798ZKkgHug7kGQTXpxgJCBjCsViymKP
+	4+Hv+eUJV7prngwseQJR7bVsacBOcsBKoiAvfcPzOgq6oJtBmiCMbU2ORUhHK7ofyPQwU7EyuGn
+	ShuL7xdpQyGMRJfNGgV2h5dpWv8VONAiYR6QlCX5E/T01Suny1JHybeRFiuw0Kc7V/NhSfQmZmt
+	P/u47mAVhHlUgkylu0UcwnG9kYVK9TryyeXEyF1MlOH5Vr6Lxn27LqSxcJwCfIRKSH52AQwQy9G
+	PelYFRoYPztXka5xbgJ4BlLr4bHHU8ZfkHmA9xa463H2OBORQIEekAKJFNsxfBQmH+MeZBdocG/
+	rIp2nXsrhONnVx8IxXa9R+XeOIk9HqgXWO6N91iRHQOlmqyhAAcy41noEP5qgveZilJoVAeP84n
+	84a0m2/txM3NIJUCMSV/J5c62F8xqQucKRPaCcXRuZQcK/CTvVw6uTE2TCZdlyAyYJfvK+1xYms
+	G7cQlVJ/6sSuFANhJoK04mw3RIVXHUGT4EZIHYK2tVVvIzejIlAXc=
+X-Received: by 2002:a05:6830:913:b0:804:365a:bb82 with SMTP id 46e09a7af769-860dc818e73mr1351189a34.22.1794279744586;
+        Mon, 09 Nov 2026 19:02:24 -0800 (PST)
+Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-860dcbebfc6sm882545a34.18.2026.11.09.19.02.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Nov 2026 19:02:23 -0800 (PST)
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Mon, 09 Nov 2026 20:02:14 -0700
+Subject: [PATCH v2] dmaengine: tegra: only advertise supported pause
+ operations
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,72 +95,105 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2825; i=broonie@kernel.org;
- h=from:subject:message-id; bh=fGK1+6kBLTgLKjWD8aKdb74u71yNwRTJZfTglc1HBn0=;
- b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLI++ZwODWpPPLn8k2Swd6BwZ+i06Lcex+7e3ZW06bQrL
- 8vrE7O/dpSyMIhxMciKKbLEZXG/rC95vYbv4MI2mDmsTCBDGLg4BWAiHC2MDGc67Hb+5puz5IRx
- GdsjBpnZF97yZonUlPO0X+D66L1UIZKR4au03ISGG6cDm2792q+lcTQvZNuXKQqR0/3a7jyzWrv
- Sjx8A
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Message-Id: <20261109-submit-tegra186-dma-pause-caps-v1-v2-1-accf568bf0cc@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5WOwQ6CMBBEf4X07GpbFMGT/2E4LO0Ka6SQFoiG8
+ O8W+AKTvcxm5s3MIpBnCuKWzMLTxIE7F4U+JMI06GoCtlELLXWmlMwhjFXLAwxUe1R5BrZF6HE
+ MBAb7AJOCLDtblWppL1KLyOk9PfmzdTzKXUfIi8ywgldHhTFeeXSmWV8RSa5mR6c9Fx0Nh6Hz3
+ 23mpFbSP4viKSiMKSp1RZmm9l63yO+j6VpRLsvyA7Q7gp4GAQAA
+X-Change-ID: 20261108-submit-tegra186-dma-pause-caps-v1-664d1320d502
+To: Laxman Dewangan <ldewangan@nvidia.com>, 
+ Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+ Frank Li <Frank.Li@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
+ Pavan Kunapuli <pkunapuli@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>
+Cc: Rajesh Gumasta <rgumasta@nvidia.com>, 
+ Thierry Reding <treding@nvidia.com>, Akhil R <akhilrajeev@nvidia.com>, 
+ dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ James Hilliard <james.hilliard1@gmail.com>
+X-Mailer: b4 0.15.2
 
-On Sun, 08 Nov 2026 13:16:47 +0100, Joshua Crofts wrote:
-> spi: remove redundant pm_runtime_dont_use_autosuspend() calls
-> 
-> Since commit d1706f9da9f4 ("PM: runtime: call pm_runtime_dont_use_autosuspend() on reinit()"),
-> driver core is now responsible for undoing any
-> pm_runtime_use_autosuspend() calls on driver exit.
-> 
-> Remove the redundant function calls.
-> 
-> [...]
+Tegra186 does not support pausing a channel, but the driver installs
+device_pause and device_resume for every variant. Both callbacks return
+-ENOSYS on Tegra186.
 
-Applied to
+dma_get_slave_caps() derives cmd_pause and cmd_resume from the presence
+of these callbacks. Clients such as generic 8250 therefore accept RX DMA
+channels that cannot satisfy their pause requirement. A receive timeout
+then reaches an unsupported pause operation instead of being excluded
+when the channel capabilities are checked.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.5
+Only install the pause and resume callbacks when the matched chip data
+advertises hardware support. Keep them available on Tegra194 and later,
+and remove their now-redundant checks for unsupported hardware.
 
-Thanks!
+Fixes: ee17028009d4 ("dmaengine: tegra: Add tegra gpcdma driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+Changes in v2:
+- Remove the capability checks from the pause and resume callbacks now that
+  they are registered only on hardware that supports them.
+- Link to v1: https://patch.msgid.link/20261108-submit-tegra186-dma-pause-caps-v1-v1-1-9cc9b17a033d@gmail.com
 
-[01/11] spi: axiado: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/9c5ba93a5a13
-[02/11] spi: cadence-quadspi: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/4a1cab30f7e0
-[03/11] spi: cadence: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/e5187e13ce1f
-[04/11] spi: stm32: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/6d2a6ec8942d
-[05/11] spi: stm32-qspi: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/73f3bb4134f4
-[06/11] spi: zynqmp-gqspi: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/affeee16b705
-[07/11] spi: mtk-nor: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/634d73e929cb
-[08/11] spi: orion: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/ca8b81eca7f1
-[09/11] spi: rockchip-sfc: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/b90c9acd16cb
-[10/11] spi: rtk-nor: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/1fcfd0275515
-[11/11] spi: tegra210-quad: remove redundant pm_runtime_dont_use_autosuspend() calls
-        https://git.kernel.org/broonie/spi/c/ff3bd58298fc
+To: Laxman Dewangan <ldewangan@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+To: Vinod Koul <vkoul@kernel.org>
+To: Frank Li <Frank.Li@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+To: Akhil R <akhilrajeev@nvidia.com>
+To: Pavan Kunapuli <pkunapuli@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: dmaengine@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/dma/tegra186-gpc-dma.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
+index e76c58f213d8..bd606b71e714 100644
+--- a/drivers/dma/tegra186-gpc-dma.c
++++ b/drivers/dma/tegra186-gpc-dma.c
+@@ -419,9 +419,6 @@ static int tegra_dma_device_pause(struct dma_chan *dc)
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	if (!tdc->tdma->chip_data->hw_support_pause)
+-		return -ENOSYS;
+-
+ 	spin_lock_irqsave(&tdc->vc.lock, flags);
+ 	ret = tegra_dma_pause(tdc);
+ 	spin_unlock_irqrestore(&tdc->vc.lock, flags);
+@@ -445,9 +442,6 @@ static int tegra_dma_device_resume(struct dma_chan *dc)
+ 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+ 	unsigned long flags;
+ 
+-	if (!tdc->tdma->chip_data->hw_support_pause)
+-		return -ENOSYS;
+-
+ 	spin_lock_irqsave(&tdc->vc.lock, flags);
+ 	tegra_dma_resume(tdc);
+ 	spin_unlock_irqrestore(&tdc->vc.lock, flags);
+@@ -1518,8 +1512,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
+ 	tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
+ 	tdma->dma_dev.device_issue_pending = tegra_dma_issue_pending;
+-	tdma->dma_dev.device_pause = tegra_dma_device_pause;
+-	tdma->dma_dev.device_resume = tegra_dma_device_resume;
++	if (cdata->hw_support_pause) {
++		tdma->dma_dev.device_pause = tegra_dma_device_pause;
++		tdma->dma_dev.device_resume = tegra_dma_device_resume;
++	}
+ 	tdma->dma_dev.device_synchronize = tegra_dma_chan_synchronize;
+ 	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+ 
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+---
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+change-id: 20261108-submit-tegra186-dma-pause-caps-v1-664d1320d502
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Best regards,
+--  
+James Hilliard <james.hilliard1@gmail.com>
 
