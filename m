@@ -1,90 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.46
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794296679;
-	b=C/C6+mYTmx4XGG+hEbJh4Mx92VI/xG6xUsn7VMIzHOybKHKz6CGKMX0YK6qleOdMcWbG
-	 VpBDVWKwXdg9XZ8j6wcQn/N+NZ/398xtLuH5NtoJVX8W2L8IWoy/Lg9ezw76Ux9Xj/3D/
-	 ZHPoFwxq7jguXmzvjJh324dyC/oAVn0bHt+G6lf/Zeexv42jqgC+Xlo4yPPG7e9MVwD9Q
-	 SC0ZUMu8hVYq3xBXwGTgfqDTy3HQwM6/xQoKWZ+GTI1yXgWEkdRq75rdN4kOq6SmsSnmb
-	 7OjahLu/Q+/QtPo+JhSPsmuTJm6ivnbPf4xrEOUml1WyXC5qZgopU1WuI4y/v3xIgfg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794296679;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=tWLOvNebXGBlVQ7Zi8BeorzFtiggtoriqZHb9Vv2KlY=;
-	b=v2G+uzQzdqWfrfN7Lr2sG2jvhiav5NttR0bb6OaTCivOVqgw7sI1MbYHpv8DHdifupi5
-	 e9OSxAaI1OFrrLolV2c0PAKJ5kld/wYGz2VA9NDb6fWq8QKTaHwvyEOC2XvEAs7h8/OXC
-	 u1kHWDH29OyAZJEemMRzI2MWXq0IqHqGYyEi0696mfvTABmgX0kFbF7sTqLHGzQeCj3g2
-	 ChNRp6QNhcH+IvLDG955WtK4npL3kGRgl2nxj/0byJIixPsIDE976Ue0X27qFKQMKZe5B
-	 7HVz0QqOXzzT2AYJrlA7LAWTGxaTcSpD+Qi7fzulIYFMe3s9QjwYcMbrAtByufj2zag==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="ENZD2/ft";
-	arc=none smtp.remote-ip=209.85.210.46
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.201.63
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794305595;
+	b=2Cy7bba3h39D7iSMZlVWmY2fZET5lM4bUxrMUXPCMHRoe25veo2pKs8ehHe2ZdbITUOL
+	 VL4Wzthw5JdIGBHn0IOxNaPXyFsvBtLYb09v8257KcAWYSNd6cww1GtEn4QQ87s+/e2+Y
+	 KQrxhpsDuRbljjdIeITxi+t8pT5B/6cXjGd2rLoPXLpD5FbjzQ/kBBBfKUqJWHPd5PTc8
+	 WPzzzZPkzhS8zb6E3cKeHITgf95k0C9EOzMapvQQL4B8NKNPx5DrG9fK5An3xoa/m053x
+	 xDCdWWIUsNAHfC7gH+3BRa2pALg9UFCpeMqEwFgO+nth19STVdWnlwfCuHTHd8RfXjQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794305595;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+	 Content-Type:X-NV-OnPremToCloud:X-EOPAttributedMessage:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=9/nG/58UggFfe2uO9QMMBeLWjpJu8dLuVbabhL8V1DY=;
+	b=AvIlX+VsmTHfZxPxIKjbFcrdBWErknjj94X/Dqw4Ra9pnvf/Z+2iNChzXzlWHGftdavT
+	 vJstYWFT1KrO7chmz3VponVmo+aWvLOqK3myvDOvponbQeZT349JZ1y3MP3/m20Rd1UNa
+	 S1m6XAA0mUHz9tZ5LLSkWZgircw85qxVU+cQ3csdAucCLnHCae2QRv/5z/UOGfBfQhFI5
+	 MUtSBxWmWtu6z4+DYo4oPVPLoZoBWSuB6ARwnqqDQgH+p6HHWo/JbYdt9nakLxQVQTSn4
+	 2XfYz1UYE0drFBGJeE/zunn6AQwpkOP43N1alOpifds6y6VyQ8WaMHmaa4Ew2ovi1sA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=cRZud1BA;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.201.63
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010063.outbound.protection.outlook.com [52.101.201.63])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C6760A3825
-	for <linux-tegra@vger.kernel.org>; Tue, 10 Nov 2026 07:44:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 95C6760A3825
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE822606A337;
+	Tue, 10 Nov 2026 10:13:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DE822606A337
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ENZD2/ft
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-82380b0f55dso791536a34.1
-        for <linux-tegra@vger.kernel.org>; Mon, 09 Nov 2026 23:44:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794296677; x=1794901477; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=tWLOvNebXGBlVQ7Zi8BeorzFtiggtoriqZHb9Vv2KlY=;
-        b=ENZD2/ft9SIAOm54oePCmpux15dfOVGIhPUuuGrSX9jDtt50WedR2UjhfneRCZDS8T
-         uvFh1+wT3YODSOpwrkaXAxth1s/ps8QFOp9CjIXSh43L1cVTqQ0NYn9MWBU4WUoVG6pv
-         t4cfp86H1AIafk5OiI1/NJ7o0Cm1ylZTErpWzms2NrVg7rikfV/5FR3A2sT/e7X6EimJ
-         tQqfEF6LkvewNxpVgl+hfDJmlRTQRs6kiRS/U/3xTKuCDpuUUUVs8yh7xYYR9DkBtt2S
-         E65XTmmt0DX+b8uCmuG/8EOFUIjnjkWW/l/sd6LbnLNevfl05pgzgLe+Fqd+yxHxw1Gf
-         QJ2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794296677; x=1794901477;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=tWLOvNebXGBlVQ7Zi8BeorzFtiggtoriqZHb9Vv2KlY=;
-        b=CCuEU/678qXO6dHiM7hwEz9bag9AgYXBpCdkIQFlmZXtYsI1yAra+mkvoOvF45hgKX
-         +jbuCZpHlysMY7JzuKHDrzWes9BxHCTOhN7f9KMqXo3yMyUyjg7542UNqwff0QB2KEYZ
-         JfbNbTG9CfrrQQknWQNp1psyFTGcTAT7YiCt+yp0RL80Nxu/nXunco12biGxQ3xdRLjM
-         FEwAA3+s+BEoUVOk37fJee97oOnaGwAwVz3fyMJM+Ca07NOnrCYKdDboXGjKFP9agQgU
-         LpmrpbFWEF21JH6xfsebus0Oj+q1Sl2Uh8Lnv0mIv7edhVwJapG4cAZtN+YKY6kIr5hO
-         SVeQ==
-X-Forwarded-Encrypted: i=1; AL+hErGqf2/NkPrSnyB7dIWPIE961D9ftFCquLnHpt0fbbUS0MLJPP2BnzF8CsN5k9K1ZYQA7VgSrYb7IRzcVg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/nrgiXiCY5I+ah1hh/wuDaTob+MA59lrMkdkdfpP2p2E+g/4kL
-	QEYNmYP28mU+tGJN32xnBwBbtgSSdQOTm3O8L2Ik79cPhd09wHtXJwAMcuQZmgMZ
-X-Gm-Gg: AYBFou1rHVp6iva4a7vGjwWWzsAqQCKNhvJVOHkPxR80KHfM2aEXz1ZRAjHgtCIjsaM
-	LnlHu+w0hmRjtKOoWAUQmWU++OHIu7CSsQv5TOKNrm72BhvJp8TgWjwH9n4vY5KO5tZNhTEE6JF
-	pUSkrWfOrhAU6i0FQnjOlLBtV8hsbAT6F8fh7DIbxJq9alPj1UBo8qJ40gAmIUmmRl8s30PzyQI
-	abGgRthpKDDn6QJ1Aw4iimIMxptabgeWlHxcBqF2NQyofF31A8K+kh0J5jXMmQ4MZHxqsUIamck
-	s+N+BtNwweOwx9aMSri3CadK27k/lXreDmG8aismIoAt5Zrhqe9XqX9/sBxv4ZheJ0idhT36QSk
-	RCFWufZARl67yuGL8bfTD3ctyR3Y0z+3tBDMTwikN+qXbJ9VRlyRhGuDiw7vFYI9TMQMIBd5Y0V
-	bcDbV4SJKSg5C+80rSUCjub5d5u3vlEJrJUBWqNAnHSwrJHVosHxiFKZdM2ovvxeXDJENnCID/3
-	uLrj8CrEdlP+vn0WRPlnjuiRJ4x/pKQsGRR+vPopMsUyfeyHW0C/tKBy6zs86AhLTA6rmQJCiuc
-	IvUcaWqHiY2MmmP4arRBuISKIoJj77NaOLCPqQpT/XOQ7BmwKbcAn64xRYOU7OgHVFPkV+8EYWo
-	uW383xOvTKabUcM/j1mcq30YGk5IELP7OrbiGD+iudGeCXt3A+4hHMrlDyZRLvVoVuSNEtD+9Yw
-	tkdHE+9+8+He7hZLk+hu8bk+OqCjr0pDTKG0ZYpxR+2b5sr1e2Fck=
-X-Received: by 2002:a05:6808:4441:b0:4f4:73a9:f838 with SMTP id 5614622812f47-5683c9bbba4mr1481876b6e.22.1794296677454;
-        Mon, 09 Nov 2026 23:44:37 -0800 (PST)
-Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-5690504fdb5sm1522804b6e.3.2026.11.09.23.44.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 23:44:36 -0800 (PST)
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Tue, 10 Nov 2026 00:44:18 -0700
-Subject: [PATCH v2 15/58] mtd: rawnand: tegra: retain open-handle state on
- removal
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=cRZud1BA
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YcMNP3FdOpv92RGR+6OkdOVs5LkaPslXototz8oRsHMls9hH4uAJc6xyx6idOEKl2zYpKIOnMsbZgHvZGI1Unf0JcZrRdV78y/QDlwM84dnTyGqrwmbuP8ybzEbmoPa0SZev37IKzjAwZfoATbGtpTDh2ZwBTgrjJcp8b3zzocPPD2ZY5NJf4GrbY0A7FtXH8GkgSuC5m+IrZJVDIy/NHic0xg2A79gOJkbwlhNHzldLbVMRf2NO7BqXoGb2JZ9OcccAKa9LsB60vV+ITHCiYgnbDjU9o8dChogZMnC64oukMIQw2Pt9KoY0BVTExqOJsiKGNk6Oqv2QOukZuAqwQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9/nG/58UggFfe2uO9QMMBeLWjpJu8dLuVbabhL8V1DY=;
+ b=HuFtp0f+ciE+gIdJHrztpEtOUiB2Rla31HbtWd8FmISV5KamFYXOsKJSqWTQMp4Hrqn/QuaMQ605N/+bicOAUrmO+/uHPy9MlQXvee+QJe8E40IYV1Fj3hP4rWX+7Om1HsIKrCW9x+rv5rCFlZXwPQIc9bWkKU3OTuqXC9Y1i6BzEn2YblmE+RSwnLvMYRbv/jcqN6SjIIDYHEk75th2W7gwq0lsbl3Pt/hUrLApmPjO3PLtqY+Z1DxWbXRQGHN4NqujrNdyrj34STdHmMCSClxjPUr9sMPhqQg/iVJInzOxklofRc9R3dc8rAaBLOrwf06bypP81Kt25WaqZbq+1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9/nG/58UggFfe2uO9QMMBeLWjpJu8dLuVbabhL8V1DY=;
+ b=cRZud1BAvnLC2tjxrl9GJttK2hwq9qimf3NOKqu/VGL/0WS4R6flS72+oi3c1AvKk4LaTRkeJ/LOCBN/X/ukB0XgJB1TxYv0vl7Xu/Pz2jBGNLUhuujKxwXg1VHCe6a18fgAT+m+dIm4qqxuimxqx6+PArkOrKbz2uOBCiEp+ltDAeLW9ItKtb2QRlg42VGXpwTHJe1+1QN6Fg8UeWXEp3r2AGt80+FPDehYAoCzNca0FdDeAZUKiONLOaseYyGFMjIwgPgaGJQQkEQPx34dnMsWGCFPOhw9l7zSTck7yp8Zg9g580rmNO90TpYLMswrYehGFjV8pO1iu09gGSLvCg==
+Received: from BN9PR03CA0736.namprd03.prod.outlook.com (2603:10b6:408:110::21)
+ by DS2PR12MB108293.namprd12.prod.outlook.com (2603:10b6:8:404::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.8; Tue, 10 Nov
+ 2026 10:13:10 +0000
+Received: from MN1PEPF00079401.namprd05.prod.outlook.com
+ (2603:10b6:408:110:cafe::5c) by BN9PR03CA0736.outlook.office365.com
+ (2603:10b6:408:110::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.13 via Frontend Transport; Tue,
+ 10 Nov 2026 10:13:10 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.118.233) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MN1PEPF00079401.mail.protection.outlook.com (10.167.249.197) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.615.4 via Frontend Transport; Tue, 10 Nov 2026 10:13:10 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Tue, 10 Nov
+ 2026 02:12:55 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Tue, 10 Nov 2026 02:12:54 -0800
+Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.56 via Frontend
+ Transport; Tue, 10 Nov 2026 02:12:50 -0800
+From: Sumit Gupta <sumitg@nvidia.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <zhanjie9@hisilicon.com>,
+	<zhenglifeng1@huawei.com>, <christian.loehle@arm.com>, <jbenc@redhat.com>,
+	<linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+	<ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <mochs@nvidia.com>,
+	<bbasu@nvidia.com>, <sumitg@nvidia.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2] cpufreq: CPPC: Set CPPC Enable register in cpu_init
+Date: Tue, 10 Nov 2026 15:42:46 +0530
+Message-ID: <20261110101246.3665797-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -94,156 +116,104 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261110-submit-rawnand-retained-handle-lifetime-v1-v2-15-9137d08f05df@gmail.com>
-References: <20261110-submit-rawnand-retained-handle-lifetime-v1-v2-0-9137d08f05df@gmail.com>
-In-Reply-To: <20261110-submit-rawnand-retained-handle-lifetime-v1-v2-0-9137d08f05df@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- James Hilliard <james.hilliard1@gmail.com>, 
- Boris Brezillon <bbrezillon@kernel.org>, Lucas Stach <dev@lynxeye.de>, 
- Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
- linux-tegra@vger.kernel.org, Stefan Agner <stefan@agner.ch>, 
- Thierry Reding <thierry.reding@kernel.org>
-X-Mailer: b4 0.15.2
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF00079401:EE_|DS2PR12MB108293:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74185d4b-1629-4f20-316e-08df3f1338fe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|82310400026|1800799024|376014|7416014|23010399003|56012099006|11063799006|18002099003|10067099003|261009223027099003|261102123227099003|261026140227099003|261021123027099003|261021121427099003|261022105027099003|261028144727099003|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	8CgwY4Aq9WC1nd043MKjiqEdyA4ZamCFA5QL7INnqyY6BJNH/AXDcifX2c66RYckkNcHlVTAeC6OmRtvN5WmbidBGfJndxpSmekj+V6YR+S0u50+ffyVYyxFqQaQCbJ+HEw2EC+vbKZFI3UpQWGOBBbJfBYcEyvRj8M7oV3UiBkF1FOUhcxJdqey0HpvYVyxEm3e1uv8cbUozEb4Jk3eJhbqvwogCPq10rJ1sgmXpg8yRuMoiSws5vLHoyMEX5uy6EEQBJcSmcHc1rC4ilCkqh3QADGocldY2g5ZJbeAkbruqAPO+MNHr/464r4dQ4rpVWY6U2SIP9QH33qNTiUCSRxxHyHs1xcaZsYFmW12Vme1JOr+zAwP1pMkoavALDQKIAUxONzIvm/1x2lLw+OeUHeuN/J54L11ibIL9Z+zuIlOyxClvOpp6Bf88p2Zt7L2mEjLn4h9tPBCInsCqoDqCRHunzSGAE20dPBLOzITuLb226Yx+hJJz6QPBON739tMwgj6yD4rl7QuLr3z+U1+d2TboASszHz7L4iUTu3tIScQz2R10cZSyWt9TTz2adugBSH+xnh9hjPkBzmB0Llqvjp9F0AVFDvnJalQMvnzXniznBQ88F7gK4kj+M6OdHoTiunoKEoPGWYYFFPL6fur1uoWkk88Adv6v0cLGRQ66ngzZ0u44w2WspGAcjMfPC+jkAJGkElA1z+Y/ns3777ZMQ==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(1800799024)(376014)(7416014)(23010399003)(56012099006)(11063799006)(18002099003)(10067099003)(261009223027099003)(261102123227099003)(261026140227099003)(261021123027099003)(261021121427099003)(261022105027099003)(261028144727099003)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	fw2V6ZyeRXumNIYwUbsbApZq2v7MJlS4n2/Q/NZh7ZgBTrqsDiDpXA1O0cvu8etncrhOno5W3vU6S6MGWe7UXWVLRjxSeUvutzHXHR5nsWFPfR5Pp7M5f+IsbXY+kQbUBrWWdaKrc/huP+nYG4vFlSQ4Ufw8fazS3+awkPrdun5YjYkubqcG+x6g+rxtCjhnDkUBUK8HJ5wqWCQ89/FqhROI9iqhbwKtnESVHsUZ2EidCeUCWn15eq2v8KGxf7Ki5XmulJo5dtIaNxDbXDSfiRJ3ZbU+MRUlfWH7e7Tk+ZGRcHdk/ywJiz9wGLpMpSV/I86kVWxdP+EGSkjMqj8zoTOgiaclUJBAcqUN6H7Bx+IbAjCnCJ60ORz4cVu8EMBK+1cyMmOO5dghzjUfpnanqrMU83rWd60SkowWtvwho7IWUP4+3yKaU6ql7oMd1m32
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2026 10:13:10.1047
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74185d4b-1629-4f20-316e-08df3f1338fe
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF00079401.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB108293
 
-Retain the chip and controller allocations until their final MTD
-references are released. Disconnect the chip before suspending the
-controller so retained handles cannot reach powered-down hardware. Leave
-metadata cleanup to the final put, including registration-failure
-unwinding.
+As per ACPI 6.x s8.4.6.1.4 (CPPC Enable Register):
+  "If supported by the platform, OSPM writes a one to this register
+   to enable CPPC on this processor. If not implemented, OSPM assumes
+   the platform always has CPPC enabled."
 
-Release the probe-time child-node reference on every exit. Lifetime
-ownership takes its own reference before publication.
+The driver never writes this register. CPPC therefore stays disabled
+on platforms such as NVIDIA GB10 that wait for OSPM to enable it.
 
-Fixes: d7d9f8ec77fe ("mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver")
-Cc: Boris Brezillon <bbrezillon@kernel.org>
-Cc: Lucas Stach <dev@lynxeye.de>
-Cc: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Thierry Reding <thierry.reding@kernel.org>
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Call cppc_set_enable() in cppc_cpufreq_cpu_init(). Fail init if
+enabling CPPC fails. If init fails after CPPC is enabled, disable it
+again. The register is optional, so -EOPNOTSUPP is not an error.
+
+This relies on commit ab482f1bac6b ("ACPI: CPPC: Refactor register
+value get and set ABIs") from v6.16. Before it, cppc_set_enable()
+returned -EFAULT instead of -EOPNOTSUPP when the Enable register is
+not implemented. On an older kernel this change would make init fail
+on every platform without the register, so the stable range starts
+at v6.16.
+
+Fixes: 5477fb3bd1e8 ("ACPI / CPPC: Add a CPUFreq driver for use with CPPC")
+Cc: stable@vger.kernel.org # v6.16+
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 ---
- drivers/mtd/nand/raw/tegra_nand.c | 39 +++++++++++++++++++++++++++++++--------
- 1 file changed, 31 insertions(+), 8 deletions(-)
+v1 -> v2:
+- Fail init if enabling CPPC fails and disable CPPC again if init
+  fails after enabling it (Christian).
+- Move enable after the policy->shared_type check, so cppc_set_perf()
+  is the only failure after it.
+- Mention NVIDIA GB10 in the commit message (Christian).
 
-diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
-index 1104d75b6cbe..5130bee46d60 100644
---- a/drivers/mtd/nand/raw/tegra_nand.c
-+++ b/drivers/mtd/nand/raw/tegra_nand.c
-@@ -1064,11 +1064,16 @@ static const struct nand_controller_ops tegra_nand_controller_ops = {
- 	.setup_interface = tegra_nand_setup_interface,
- };
- 
-+static void tegra_nand_chip_release(struct nand_chip *chip)
-+{
-+	kfree(container_of(chip, struct tegra_nand_chip, chip));
-+}
-+
- static int tegra_nand_chips_init(struct device *dev,
- 				 struct tegra_nand_controller *ctrl)
- {
- 	struct device_node *np = dev->of_node;
--	struct device_node *np_nand;
-+	struct device_node *np_nand __free(device_node) = NULL;
- 	int nsels, nchips = of_get_child_count(np);
- 	struct tegra_nand_chip *nand;
- 	struct mtd_info *mtd;
-@@ -1096,7 +1101,7 @@ static int tegra_nand_chips_init(struct device *dev,
- 		return ret;
- 	}
- 
--	nand = devm_kzalloc(dev, sizeof(*nand), GFP_KERNEL);
-+	nand = kzalloc_obj(*nand);
- 	if (!nand)
- 		return -ENOMEM;
- 
-@@ -1107,7 +1112,7 @@ static int tegra_nand_chips_init(struct device *dev,
- 	if (IS_ERR(nand->wp_gpio)) {
- 		ret = PTR_ERR(nand->wp_gpio);
- 		dev_err(dev, "Failed to request WP GPIO: %d\n", ret);
--		return ret;
-+		goto free_chip;
- 	}
- 
- 	chip = &nand->chip;
-@@ -1127,20 +1132,35 @@ static int tegra_nand_chips_init(struct device *dev,
- 
- 	ret = nand_scan(chip, 1);
- 	if (ret)
--		return ret;
-+		goto free_chip;
- 
- 	mtd_ooblayout_ecc(mtd, 0, &nand->ecc);
-+	ret = nand_set_release(chip, tegra_nand_chip_release);
-+	if (ret) {
-+		nand_cleanup(chip);
-+		goto free_chip;
+v1: https://lore.kernel.org/lkml/20261105123244.3132560-1-sumitg@nvidia.com/
+
+ drivers/cpufreq/cppc_cpufreq.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index 957fa7775260..b2af24ae5008 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -714,7 +714,17 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 		pr_debug("Unsupported CPU co-ord type: %d\n",
+ 			 policy->shared_type);
+ 		ret = -EFAULT;
+-		goto out;
++		goto out_put;
 +	}
- 
- 	ret = mtd_device_register(mtd, NULL, 0);
- 	if (ret) {
- 		dev_err(dev, "Failed to register mtd device: %d\n", ret);
--		nand_cleanup(chip);
-+		nand_disconnect(chip);
-+		mtd_put_master(mtd);
- 		return ret;
++
++	/*
++	 * Enable CPPC. The Enable register is optional - some platforms
++	 * may not support it.
++	 */
++	ret = cppc_set_enable(cpu, true);
++	if (ret && ret != -EOPNOTSUPP) {
++		pr_err("Failed to enable CPPC for CPU%u (%d)\n", cpu, ret);
++		goto out_put;
  	}
  
- 	ctrl->chip = chip;
- 
+ 	policy->fast_switch_possible = cppc_allow_fast_switch(policy->cpus);
+@@ -742,6 +752,8 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
  	return 0;
-+
-+free_chip:
-+	kfree(nand);
-+	return ret;
-+}
-+
-+static void tegra_nand_release(struct nand_controller *controller)
-+{
-+	kfree(container_of(controller, struct tegra_nand_controller, controller));
+ 
+ out:
++	cppc_set_enable(cpu, false);
++out_put:
+ 	cppc_cpufreq_put_cpu_data(policy);
+ 	return ret;
  }
- 
- static int tegra_nand_probe(struct platform_device *pdev)
-@@ -1149,13 +1169,15 @@ static int tegra_nand_probe(struct platform_device *pdev)
- 	struct tegra_nand_controller *ctrl;
- 	int err = 0;
- 
--	ctrl = devm_kzalloc(&pdev->dev, sizeof(*ctrl), GFP_KERNEL);
-+	ctrl = kzalloc_obj(*ctrl);
- 	if (!ctrl)
- 		return -ENOMEM;
-+	err = devm_nand_controller_init(&pdev->dev, &ctrl->controller, tegra_nand_release);
-+	if (err)
-+		return err;
- 
- 	ctrl->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, ctrl);
--	nand_controller_init(&ctrl->controller);
- 	ctrl->controller.ops = &tegra_nand_controller_ops;
- 
- 	ctrl->regs = devm_platform_ioremap_resource(pdev, 0);
-@@ -1235,13 +1257,14 @@ static void tegra_nand_remove(struct platform_device *pdev)
- 
- 	WARN_ON(mtd_device_unregister(mtd));
- 
--	nand_cleanup(chip);
-+	nand_disconnect(chip);
- 
- 	writel_relaxed(0, ctrl->regs + IER);
- 	devm_free_irq(ctrl->dev, ctrl->irq, ctrl);
- 
- 	pm_runtime_put_sync_suspend(ctrl->dev);
- 	pm_runtime_force_suspend(ctrl->dev);
-+	mtd_put_master(mtd);
- }
- 
- static int __maybe_unused tegra_nand_runtime_resume(struct device *dev)
-
 -- 
-2.53.0
+2.34.1
 
