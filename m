@@ -1,54 +1,138 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.161
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794386312;
-	b=e3XKS3Y4c4hQSYOxLYSiU6FWxLyx9mMFL8Hu7lQaM0oMss3uRktWaJmXym6texLfMnKU
-	 gv+V7XCE0+w6OZ1AmqrxNYwDLr3teMFP/T2oFF3V67OA1To/4tRqPZoPKlfzzACb/BVAM
-	 XcxtBsnl88bZNYzaGbA8OgczWYI7zxB3pkZQFXTG/tAyjWzw7lLmbN+3792tqA1CcEKZt
-	 PhewE6g2rcyU9teV8sbukVO6CvTZFdt4dkYSmnC7mowwlHYqZ3lUclecT3GK0Z4kvU4hE
-	 rwuYzBhRI3O8+oAGEl2i1OZmoFPiemYZM5rEig7SbcvRp+F0ttvcU8hhzJv3o7VbCmg==
+	t=1794387228;
+	b=bvqNkidlCKmXBAyGampW222zDoZ6bOxAuIMKkoA8xbEZZYVVP7OjoIdSfKHg8O9zVlxA
+	 Xv0aTZp1i1VmkxPDiB8BUqFhI1u5QDoaA9ljjxn4ifc6EROx99OZClOPoWa+rTpFgBnPq
+	 nsfHnUr0yHiqnUhYqM/MrmuabPj5aHDowsHWYMkTjQ8lr7VXk4VFYZea4gQ9AZ2Xt65U7
+	 gA7+Lu/bA/9sdigUrMFZR8CmWvVIt8owd4/lSUxs8DLjulxCAv/grxaIZo4/MNE/PagX9
+	 i8TQv2aeS48xLvxY/oXeXYnR+KwT2zIvwrPBNP9jTqyuZY5lcpEWvZYhzHrqywGjoaA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794386312;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=tnRZdc6pPanIFGOHFfotmOvahDjRevBjIUfUi8ZUfS8=;
-	b=Q2JysQ1yDssSMJj1IL5IQPPHFN0Iepmq1IXn3cI6d0ERqHJV6hsfOCfhqwUBdVA7GUnf
-	 VUBU5jj0ZaXkpJW04S4jiLhYYidXCCBUOqbsK8D+HpIiUIlwvLXjw5eYMVE3lyeUzeFYm
-	 DKwhN48jG6OwnsuX9Z9R5Dro7wsIzsL4aS+ff8oHkQJ/jpnIjmz1p9o6+MnvLzpgtHmDq
-	 eHjhipZM9NvycgamaQapkm+QRgr7358fwCBwzQeqAVpIFC0AMNL6EJGH4s/gWQ1up9mET
-	 MaropPDEMaAGfXLEeuYRfi6j5wtazpl53C8PP4vlUXRYaPPn0PLgebrFP0NApqlrWSw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794387228;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:
+	 Reply-To:To:Cc:Date:In-Reply-To:References:Content-Type:
+	 Content-Transfer-Encoding:User-Agent:MIME-Version:X-MBO-RS-ID:
+	 X-MBO-RS-META;
+	bh=VRiZhzrsDkrLspAml0XRBl5rak3lI4bTzhSsupMJ/y8=;
+	b=Spaq2VioqTkTuF5sdkwEGqC/wTdg4fczpQ/Pm6kBtgyVkFOphmb+3eoE1WLjqmYfA8r/
+	 Xgl+Ya1f8dhbGGSMC5oC4SJVnAfJUEDAwlem8BeehTuTv08TcHI5tKroKey/LEspFHjdT
+	 7JEUQmsx7ejgYFqHGlw5yQWuyRwGX9SeQ5BO4GWj/Fv6zTL5T8V92T8xNyUWbwq/5Fdb2
+	 Dc6/vPF7zecd0pZ1NDh7fnZZVnGGxdrLKM+CiKqesiXVZLRKC+uzrxQw+U9CZAXhk09Cu
+	 2YqCWovJFQnOIaUNptsaIEmQsLZwCN4Cb1WG4YDQPe/sjD4D9UJwHYFJcs/HCg5St0g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bXudsq1e;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=td12n49U;
+	arc=none smtp.remote-ip=80.241.56.161
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BE8606A320;
-	Wed, 11 Nov 2026 08:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABC5606A31C;
+	Wed, 11 Nov 2026 08:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AABC5606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bXudsq1e
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 912C31F00A05;
-	Wed, 11 Nov 2026 08:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794386312;
-	bh=tnRZdc6pPanIFGOHFfotmOvahDjRevBjIUfUi8ZUfS8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=bXudsq1eylol36ELo3+1fX+VipPgsFy3hzS7QavXUEdIjQh1BqkZow775WPpUm6jQ
-	 Ij1FwBoPNUPBg1O8AZAWL88Cy86ZEBgkN44QnwEz2/dslPnlrnXof0azDiauHVH2dU
-	 gsGp4S05XBa2raFRmwsCxFgnxwN5Ff1dpYibsdyY7PF9fgfQR2iPBtwXE7JWLAvRaI
-	 n1lg50IUt/hs6cejAfRCsiwAqTTuExvl9dGOrpPE9pMeFGm+Ul70U2hIpEUjMXmUdV
-	 qYuupUiGGGF2zga6u/GMHUBsagiKkZaV1TyT/YlvH53PGMNHya4g/Gj0aNDwaw5akg
-	 OWg/Anelx4lIA==
-Date: Wed, 11 Nov 2026 09:38:27 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-ide@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3] ata: ahci_tegra: use devm_kzalloc_flex()
-Message-ID: <avQpg7e6cVWhXjHM@ryzen>
-References: <20261111023939.75386-1-rosenp@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=td12n49U
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4jPckV6nT2zKmwl;
+	Wed, 11 Nov 2026 09:53:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1794387219; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VRiZhzrsDkrLspAml0XRBl5rak3lI4bTzhSsupMJ/y8=;
+	b=td12n49UKDo56vCxSTn09U/FbdYGCk/hjrgkPwsYYmfR0Gs5QBppPCBDtVxxLchIEUwdQb
+	qOgaQ7bu4TKe2ydp1VVhzS3MjouOIvhK3svhqAqL4/zeXX6snq3K7vPx9e14jLpaWSPfrN
+	CC8kqaWegcbNN3dhGKGxAUSh8tFn4cT6u0zUeVOhFHv7yRgcI2X3Hx2TJKeot6Qlqt1EwC
+	lXHAwJBaYus+xC2WzZaQgsfOSySsNxfufDkkyksnvgI5eJB6EDfy5i8Q8e6p4IJt1EIvEW
+	KDNGmFpUTrOi351V8lzioglBOuHpSOovM/WIAIwzWjYiS+xktKSPpS25dn1MEg==
+Message-ID: <a2e7519ab463dec876aa806d91961456f31a725a.camel@mailbox.org>
+Subject: Re: [PATCH 0/3] dma-buf: dma-fence: Remove dma_fence_init64()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Philipp Stanner <phasta@kernel.org>, Min Ma <mamin506@gmail.com>, Lizhi
+ Hou	 <lizhi.hou@amd.com>, Oded Gabbay <ogabbay@kernel.org>, "Rob Herring
+ (Arm)"	 <robh@kernel.org>, Tomeu Vizoso <tomeu@tomeuvizoso.net>, Karol
+ Wachowski	 <karol.wachowski@linux.intel.com>, Andrzej Kacprowski	
+ <andrzej.kacprowski@linux.intel.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <christian.koenig@amd.com>,  Felix Kuehling <Felix.Kuehling@amd.com>, Alex
+ Deucher <alexander.deucher@amd.com>, David Airlie	 <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Lucas Stach
+ <l.stach@pengutronix.de>, Russell King	 <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>,  Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Alessio Belle	
+ <alessio.belle@imgtec.com>, Luigi Santivetti <luigi.santivetti@imgtec.com>,
+  Qiang Yu <yuq825@gmail.com>, Rob Clark <robin.clark@oss.qualcomm.com>,
+ Dmitry Baryshkov	 <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang	 <jesszhan0024@gmail.com>, Sean
+ Paul <sean@poorly.run>, Marijn Suijten	 <marijn.suijten@somainline.org>,
+ Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, Boris
+ Brezillon <boris.brezillon@collabora.com>, Steven Price	
+ <steven.price@arm.com>, =?ISO-8859-1?Q?Adri=E1n?= Larumbe	
+ <adrian.larumbe@collabora.com>, Liviu Dudau <liviu.dudau@arm.com>, Dave
+ Airlie	 <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Matthew
+ Brost	 <matthew.brost@intel.com>, Natalie Vock <nat@pixelcluster.dev>, Arun
+ Pravin	 <arunpravin.paneerselvam@amd.com>, Matthew Auld
+ <matthew.auld@intel.com>,  Thomas =?ISO-8859-1?Q?Hellstr=F6m?=	
+ <thomas.hellstrom@linux.intel.com>, Melissa Wen <mwen@igalia.com>, 
+ =?ISO-8859-1?Q?Ma=EDra?= Canal	 <mcanal@igalia.com>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>,  Raspberry Pi Kernel Maintenance	
+ <kernel-list@raspberrypi.com>, Dmitry Osipenko
+ <dmitry.osipenko@collabora.com>,  Gurchetan Singh
+ <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, Zack Rusin
+ <zack.rusin@broadcom.com>,  Broadcom internal kernel review list	
+ <bcm-kernel-feedback-list@broadcom.com>, Thierry Reding	
+ <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Cameron	 <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Neill Kapron	 <nkapron@google.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Alice Ryhl
+ <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng
+ <boqun@kernel.org>,  Gary Guo <gary@garyguo.net>, =?ISO-8859-1?Q?Bj=F6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>,  Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+  Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein
+ <tamird@kernel.org>, Alexandre Courbot	 <acourbot@nvidia.com>, Onur
+ =?ISO-8859-1?Q?=D6zkan?= <work@onurozkan.dev>,  Sunil Khatri
+ <sunil.khatri@amd.com>, Prike Liang <Prike.Liang@amd.com>, Vitaly Prosyak	
+ <vitaly.prosyak@amd.com>, Jesse Zhang <Jesse.Zhang@amd.com>, Timur
+ =?ISO-8859-1?Q?Krist=F3f?=	 <timur.kristof@gmail.com>, Srinivasan Shanmugam
+ <srinivasan.shanmugam@amd.com>,  David Rosca <david.rosca@amd.com>, Marco
+ Crivellari <marco.crivellari@suse.com>, Krzysztof Karas	
+ <krzysztof.karas@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>,
+ Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>, Shixiong Ou
+ <oushixiong@kylinos.cn>, Jouni =?ISO-8859-1?Q?H=F6gander?=	
+ <jouni.hogander@intel.com>, Joel Fernandes <joelagnelf@nvidia.com>, Thadeu
+ Lima de Souza Cascardo	 <cascardo@igalia.com>, Pierre-Eric Pelloux-Prayer	
+ <pierre-eric.pelloux-prayer@amd.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+ Michael Bommarito <michael.bommarito@gmail.com>, Sam Day <me@samcday.com>,
+ Gabriel Prostitis	 <prostitisgabriel@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
+	etnaviv@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	imagination@lists.freedesktop.org, lima@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	nouveau@lists.freedesktop.org, virtualization@lists.linux.dev, 
+	spice-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Date: Wed, 11 Nov 2026 09:53:25 +0100
+In-Reply-To: <20261105113529.1989375-2-phasta@kernel.org>
+References: <20261105113529.1989375-2-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.60.2 (3.60.2-3.fc44) 
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -58,31 +142,38 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261111023939.75386-1-rosenp@gmail.com>
+X-MBO-RS-ID: 63c1ec95d89f50e0830
+X-MBO-RS-META: pdph9mgme6uj6kihqyt55uq9zqcpmeni
 
-Hello Rosen,
+On Thu, 2026-11-05 at 12:35 +0100, Philipp Stanner wrote:
+> We recently had a discussion about reworking dma_fence init to close a
+> race-window [1].
+>=20
+> The community agreement seems to have been that we can get rid of
+> dma_fence_init64(), so let's do that already. In the meantime we can
+> continue our discussions regarding the race in [1].
+>=20
+> This also touches the Rust dma_fence, which actually should use 64-bit
+> seqnos (was forgotten so far). Rust fence has no users currently, so
+> needs no backporting, so I would like to address that in a distinct
+> patch.
+>=20
+> Tested on Nouveau with and without the SEQNO64 flag. Nouveau also uses
+> the USER flag, so I hope we're fine.
+>=20
+>=20
+> P.
+>=20
+> [1] https://lore.kernel.org/dri-devel/20261029095542.1526750-3-phasta@ker=
+nel.org/
+>=20
+>=20
+> Philipp Stanner (3):
+> =C2=A0 dma-buf: dma-fence: Add flags parameter to dma_fence_init()
+> =C2=A0 dma-buf: Port users of dma_fence_init64()
+> =C2=A0 dma-buf: dma-fence: Remove dma_fence_init64()
 
-On Tue, Nov 10, 2026 at 06:39:39PM -0800, Rosen Penev wrote:
-> Combine allocations into one by using a flexible array member.
+@Christian, what do you think, shall we go on with this one?
 
-Thanks for adding the comment and fixing the subject.
 
-However, the commit log still does not explain the benefit, so my
-reply to V2 still applies:
-https://lore.kernel.org/linux-ide/ah1HD1aOyTnMBEqD@ryzen/
-
-A flexible array member also has disadvantages: nothing can be added
-after it, and there can be only one per struct.
-
-If we use one anyway, it should be annotated with __counted_by(), as
-Damien and I asked for in V1. devm_kzalloc_flex() calls
-__set_flex_counter(), so that should mostly be a matter of adding a
-counter member.
-
-Since neither Jon nor I am a fan of this change, I will only apply a
-V4 if Jon explicitly asks for it.
-
-Kind regards,
-Niklas
+P.
