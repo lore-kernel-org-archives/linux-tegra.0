@@ -1,103 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.28
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794391951;
-	b=NXMCVzDViWzmjh4c37194BtOuDnGu/r6x35VsUbuqKT8ie0C6An6f81/caI0E6r+K/Yh
-	 mUQylGmza14rqnPJ/7VQ86Z6acafEXWRBoJJ+MJH7HZBxLpFW/yMI0peY1gvEQMAyjLQf
-	 GdhJOz6yhz2/lpqZc+0Kd/Y4PeR7eyFGzJgZR9jidwVARfBIbKlR0ySpzgdFIgcCewsdo
-	 w45oSTMBDf+kjpPL7YHY2bjuS42lkjLYAwRshXGqEIWx2TTwI60Ifb4762l+nco95Cwwz
-	 CddL+NO/JxOghn1W4GRQo3Eo/ZopQ6b7y8hPSld9ySrt5+AUUQ38ToQd51tXoCGXh0g==
+	t=1794392095;
+	b=ohsg+8oO3O0D+KGUKIYIcnkJo5lpS/xxqW0ZgQcs5abrRWhopiRmdCC7g5fMsgP1f4lj
+	 b6ryrKNlcNwCvutHVYQCll1RmB32L8DpOddxa6/PIveKCh9DWfaffCsxo4OAmYH0555Hp
+	 sZmAG2vV4g9YTet10zG+Ba61uSiMxW+e7Rn0hrwUMfQx5ERzGLabPu300IlarTyIKv4is
+	 R0dHxk7zZxfaQ2ybwvzsr4YT1NcP/jVIXxX/429sIUVUU2/B/nMuTPWDG3/caZF0q60ir
+	 2U//qNtlFefkN14UnuV9ptoRGdPSGwunEg7j3h/qKSx1+hHZEF81S26tWnMUCp4DMqg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794391951;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=08z53+8yrbTGjIZvszG1gqicLmRIcvV8HxhxbsaCpO4=;
-	b=FBzGi4WhriOZGYAiWWHmwgjOL/BT2qSDUkqPemNfn7ruzzWredoMtXAu2KVUr/+WmLFI
-	 mNt78VN8njQ6jeKRcRHmPUk072jCcmhBIRwwLozAPSfPWfzrZNI9zZtbtyfl6dMvgWtd6
-	 ojMLIb6CZtdY7SZW3Thm53ZRy1dk+HKzDjPPonEvbKflkNjK+d+TVC1kirdRKgyOY/u39
-	 ZFc3I9NukkxImyzoUuB+2AcQIFomZ215yMELHPCdBeu1TcTPZe6y99MMkXvdQAhvSBMFz
-	 frupTTAf2nEsvZt8WRIHCkMnaY7xvSSSUS3EVXQS+tsCT0oErJZCa/uNvtjd2O/bIpg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794392095;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=XZ4b+XzZVJKQkDZyWOAJQrEn1AJC2/ca7/9qI+oGbNk=;
+	b=xawhIFvkAan5Fdw3MAs1Q8Fy4sUGcPZB3mejNhRjI4rB5MloqAjCbHqUuD1HyE5elehQ
+	 N9kDCKWvtANY78C+h+LlDks/ciESok3Qhx09dgxxJjwUZYd3dXZRuCiPK0e4oE0vihstA
+	 LHZVsTJ1wamlAgUoD4jcicvvbkHTs2N8ddpr7xkENwog7tP93VW65zad1dtZUfyGT9azM
+	 rK59XL8h0z4s3MDTicw7m9mrbOVu+UAFPImH0NVyS6Y4r3RK2xjt8eRY/avCHj984qqFQ
+	 vxMR8e5BauFl/0SiTeQ5V1F60r6GI/K+JMtIXhDxtuxs//pBZmqYBoCsFtnvhw1HRbg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amd.com;
-	spf=fail smtp.mailfrom=amd.com;
-	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=y0QEcFsH;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.28
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011028.outbound.protection.outlook.com [52.101.62.28])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gIJumyJ+;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AA5606A331;
-	Wed, 11 Nov 2026 10:12:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D2AA5606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77836606A31C;
+	Wed, 11 Nov 2026 10:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=y0QEcFsH
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uPbFIHRH3lFeMc8AID215+IsSpDmc2OYpu0/rYe9dSM9QX6OWnjGKjQh+zTPZt6Txea1ypba6uloh1qxa1OB7ZCDsykFxD9WSHB2uL0LuV4mGVwZUCPqvmvwKW74kYhq+X7+RCL+6s9nBYIAqizifURNKp3JeDVUtsyXEqcrsLgXWh/O2Amzz7wHQ8uIzuWOhhq2bftCRs7Dgy7shzrVliW+dF+Nl9QOBgk92147dRDscLsqtltxLQOimGuzoOBP14hSGUJGL3HboAEVTVvznqndmGq2ZBVj0BKeD0hXeEgUGydxiFeutQA68uaUJJgRyBuds7YnXST14qa4f65Gpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=08z53+8yrbTGjIZvszG1gqicLmRIcvV8HxhxbsaCpO4=;
- b=FzdBRtqhYuKmsRBZh1HV4alY9Fv51HJJlD6gwe4KvkBQdJtpJI32IhEmdQPvvU1O8q7rEKr7LjNhoiCDoAdIxN6iNX9oKh6K1uV7kLHDUQovMWf1LMP2DJ9pcd32xfDTuDfgTSUY0jfERtphbN9qvZhS7id+wsCoxoaburDtbnFWGOrQPJUcHy6E/0FEf4HN6lauQ61I6Ht+qEQhpfIiPcDZEnLEFwheiB8p2BQECEzQDWtspBeMJsvXbWdoso+zu59PROQVvVEJESk7NOU05uUQioqlgHacaVA+3OPfAK+LOuf0Dv8oqTRJf4IrVP1HctT2SqGgi6VnxE2bKb4fBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=08z53+8yrbTGjIZvszG1gqicLmRIcvV8HxhxbsaCpO4=;
- b=y0QEcFsHsQUSx7pIM+k0V12d97+pyVWFJXgoRVs4LYL8MB+yk1nouk7D8zCQd+C4FG4JuXwl1JMYlToROagiGzeysHxL/HfOWUS8Q3MrQQXhHw5pf64/yJnbWyjZulFXRdGx057+xF9G0wuL2UmFqDIG9fYCut0qst4raB605Kc=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6254.namprd12.prod.outlook.com (2603:10b6:8:a5::17) by
- PH7PR12MB8595.namprd12.prod.outlook.com (2603:10b6:510:1b5::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.9; Wed, 11 Nov 2026 10:12:17 +0000
-Received: from DM4PR12MB6254.namprd12.prod.outlook.com
- ([fe80::8211:9b5a:99d2:ffa1]) by DM4PR12MB6254.namprd12.prod.outlook.com
- ([fe80::8211:9b5a:99d2:ffa1%4]) with mapi id 15.21.0615.007; Wed, 11 Nov 2026
- 10:12:16 +0000
-Message-ID: <f5fdc266-aed3-47e6-a10f-e8188b58c93f@amd.com>
-Date: Wed, 11 Nov 2026 10:12:10 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 12/19] PCI/CXL: Add CXL Device Reset sequencing
-To: Srirangan Madhavan <smadhavan@nvidia.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Dave Jiang <dave.jiang@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <iweiny@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, Vishal Verma
- <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Li Ming <ming.li@zohomail.com>, Joshua Machauer <machaujo@amazon.de>,
- Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
- alwilliamson@nvidia.com,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-References: <20261105185917.2667656-1-smadhavan@nvidia.com>
- <20261105185917.2667656-13-smadhavan@nvidia.com>
-Content-Language: en-GB
-From: "Lucero Palau, Alejandro" <alejandro.lucero-palau@amd.com>
-In-Reply-To: <20261105185917.2667656-13-smadhavan@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MR1P264CA0152.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:54::14) To DM4PR12MB6254.namprd12.prod.outlook.com
- (2603:10b6:8:a5::17)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gIJumyJ+
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794392095;
+	b=E1pEPBcvlGLagg0bbmhQo/wPF6z1DVAJqBCdXUKpFva7PHgbIBoKKqSROeQf1xlvsfA2
+	 8HEa4TzDf+cZe7ipwBNj6LMJ8uaaKWviyWpA5bkBgWY/trEgS4rPX2RlmvuDjrG3phuMS
+	 MXeuR43ke1h97xMX1g6pbi+jMRO68VS/esNzvjVulp0+qdVNWWy8N1QBetmf6GFmqFnbw
+	 SQVnXTI29zmhCtrlO7BuYAd9WzkFwj47PtpmxyWXB4blyCfu0E1oD9igj1w0ZjH5LD7IA
+	 lHT5C915wC1ANN9Q5tQyan+ZllJVCb8nHurN2qVJOSgX6Zl6LRj+5kTG5aBHSyMsnHw==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794392095;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=XZ4b+XzZVJKQkDZyWOAJQrEn1AJC2/ca7/9qI+oGbNk=;
+	b=fpK5r5OHEVtH5APF0w9S0F4Rcb7SKn4ZHUOwkS+YDdxWYrzyNTXuLXuPC4w5M4Guixsg
+	 o/YyLT4xJneqXjhpNVkvSIe5gJPVF2ylfA8SeVQyzTalFTqkIA+oyzy5PwaXXtlgliRl1
+	 QvN9CnEH50iOiHp6SsDHFnMvDYNZNtNJr+qgqhj/DQ6Bt96TJ4VMIrANy7ac9JI+/Sgi8
+	 vKPkYaGb2fu8ae8245l3XI7YvzI/5byvy5hdV7LiZ9gZ6wVV1r8CZvGwh+kCCiv4IFAsH
+	 +x0pupjyiSHmEYGQuPB5d6FhHOVJFk/wrIE5GjEhISjyndg5Nt2c3y4inJkHQAWju8w==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id B1CD01F00A05;
+	Wed, 11 Nov 2026 10:14:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794392095;
+	bh=XZ4b+XzZVJKQkDZyWOAJQrEn1AJC2/ca7/9qI+oGbNk=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=gIJumyJ+Maj8VCW9xKoWHYrqA9/RZ8tjCI0OothbBPpo8/bN2Xmex0Ey6Dx4o2WPp
+	 e3Ybmf5szsnbFySvkJ9StL8RYgUKYRO+3RtHPg02LpS7DPfzwErfJ+xZqOYmvLSNiu
+	 Ai79eBaw7IfZWH4OD9NM9HSnv6w1DEdF8RkqZdu0CImTdcYwNczPMctsu4IQ4odBlB
+	 hcVplBFaX4uVpKBCiulnYx7/SpnxnC1KlTHzHeTEQuejtorTv1wxAd5a0MB4najddZ
+	 bfJ8Cb7kD+d6b+POsoZQi7tNKny6RneY2mrtbzR3y43D1x4tdk05og5rnMeN8QtLyS
+	 hCUodbkuKZ3CA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 07C1A48F1A;
+	Wed, 11 Nov 2026 10:14:54 +0000 (UTC)
+From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
+Date: Wed, 11 Nov 2026 11:14:10 +0100
+Subject: [PATCH] clk: tegra: tegra124-emc: Skip timings whose parent rate
+ cannot be set
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -107,135 +83,151 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6254:EE_|PH7PR12MB8595:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4ace5aa4-1611-4092-5ba2-08df3fdc433b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|23010399003|366016|921020|10067099003|11063799006|4143699003|56012099006|261022105027099003|261021121427099003|261026121527099003|261026140227099003|261028144727099003|261102123227099003|261009223027099003|18002099003|22082099003|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	S5IMQ8KA2T47W+snnmc7bkoCIV5xVxXgKqurFgXsbjDsiFKKzpSn1RjBwcriHw6gdYmbW2exF9q86ccw2WeMQtWuF560zO1qVA/640gwiJN4cIFlPxf64oDwpVFcsqHjpeRz6X8WoSKoNQbrEZjuTbMpI4E+cZ87mjqyuagOpfVdsf7AeKSbuIgYVrgd3A3F+BDHExTgqXpSNCaaaMvZboLhmj9bTFNL4DLayTyi6Jw0g0AHFY7Rhek5vPtI9RGb3VcEi54XSsROiVIzgIt+aKhEu1SZ84TnYgfzXmRuHvp6Y4X+J3pfMEcMKsgzgCfSEEM94Ylpjyd9PuvuyFAmI5S1ILNrBtiwpqz0CsNVO0zdDG4VGm/Zz0AzjJBk53tLSkrJ1Mdws4Yin0fUhHH2wGXJmo4EojH6rCx4ePBnJqoqfYl6cIhSZICg1H3T5H1j/j2uL8AmsfyBz3JuukGbn/3HK9/rlYvY5jYjushVpjVJq3aj+hYnqgWTkQwDriwYBl5R7supXofmz67moXNakbWwxRV/bueYS4+1cGr7gYhN+JHEGkZuv573+F8fmxN7vaDbzn5KW02SR1Sq5Eyp0Jta67tjVqEvTGwk8BMvdjI9cp3RLYIbrHaCgxwBldHvMedinX8qE0wGEQEhdP52TW8Hr7y69sRPKbeAwE176X34nCevLuCS77WFos6iNoefBJUyLSJCYtpFOrN+ChB3JA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6254.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(23010399003)(366016)(921020)(10067099003)(11063799006)(4143699003)(56012099006)(261022105027099003)(261021121427099003)(261026121527099003)(261026140227099003)(261028144727099003)(261102123227099003)(261009223027099003)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cThWNDlETXIxUG5nRGVHemt1U1dPQm50c3BwVGhFTFRuUENHR2hKcjhFYk8z?=
- =?utf-8?B?VkpGV3ZvbDVaRmlZYitlSUlPRXhnb2xRd1ZvZHJvZnpJb0dRdm9ScVB3VDdz?=
- =?utf-8?B?U0tvWllMMXAxaCtKWGg2VzFLMjZrQ0tkdisydFFpY3RXWGtHanNjaDVvOWpn?=
- =?utf-8?B?Z2VSbTNTUjI0YTB3eFJUVVVJSlhUcGlPTExLZnZBT0VveUJMVTFGRTVibmNv?=
- =?utf-8?B?M082NDZYN2txV0V5Z3hONzVpb3BGMUJtOHMvMFBqclRDN20rSlR0SWtSUTdD?=
- =?utf-8?B?bXQ4SVFYeDdlMGFDWVZwMmFSNVBJWTkwLzdjQ20zazJMc2N4QmNwTW5hNkRR?=
- =?utf-8?B?WS9heFRNQkRqUy9jTzJzNFJGYW9PM0ttd1V2aitBcXdzQjRpY0lyUGFhS0Vy?=
- =?utf-8?B?N3RDcExmS1RlQ0xPT3h6TzA4VU9YbzNqS1p3UWs5aTNnLzR0UU1KYnljZkRh?=
- =?utf-8?B?SjdWMG9IOC9nb253TkFOOUZJR2lzZzUrZ0ZNSzRLWUpuTmg0YmNYdFZzdG9P?=
- =?utf-8?B?ZWc2QkoxWHVZV0V1cFBPanVrcU9ncGtRNHdGRDRzZW43QmY5ODlGb3JKbU9X?=
- =?utf-8?B?bTVoek5ib3ZIMzA3a0dydUNxay90SFdSSmZtMzByREtuZUlNVFlaVFJaWVNp?=
- =?utf-8?B?Ri9ySjE0S2VUU2ZIM1RST0E3K0preStsenc3WmVDYXl1ZVh2Y0FrTVRKaFlu?=
- =?utf-8?B?REJXZVhzSm93bHdsMmo3WUF1MkdGWWpoWFNwbkNWSlJFUG1EVVBUY2s3Wmcy?=
- =?utf-8?B?TXFKRGVsWEFCV2hUdEE3dWNxUC9DbkJqZFhjTDA0SU44cGNiNlY4azRCeHpW?=
- =?utf-8?B?RjhuL2FtZXQxUlNuZ3BWWjhPZGhZVTFrQjlpVitQTGxxZ2dsNFN2cHBBa3JP?=
- =?utf-8?B?VUJGOWE2Y0ZKMTRpWXJoVllxcGIwTDNaczFwUjd6d003RlhQU0hvakpjUHdS?=
- =?utf-8?B?NVEwUzUzTDk1U0FBUzRaRTdnQncxZzVYSUNpbjdoR3I3MUlzeUMrU3RuRTVn?=
- =?utf-8?B?Q2tvOEJFZUhNa09TZVhMLzl4dm9URmhKV2lOL201RFZPakRJbHRFYmxWaVha?=
- =?utf-8?B?aWN1bHA2VVg1SEpLbUF2eWFtbGxkc1pIZENIQkRDRTRGZFFlaGFUU2oyL2tQ?=
- =?utf-8?B?bGVLUGZ0ejd3TW95NGdCclNlcEozZUt1aWd0ZWc2RC90VE1xYzViemJ6cWJy?=
- =?utf-8?B?TjRWTmlNUnZvRUZYNnQ1RCt4dGRxUjA3WkZvdUtCNzBLUXh0bUJWNTlIQ2dk?=
- =?utf-8?B?ekhBTTRIRnkwUnN0OVR2RnVRcEhIUHE3NWZtSFNOUzVqSFFqc2FiRjgwU25s?=
- =?utf-8?B?NG9xWWdmeTFDd3RiRVZyTjVlZUpJTytUNHFaNG12K09sb3BKT25qbzhoODhI?=
- =?utf-8?B?SHZ4NnE0R3JIcTNqck1qR08xV3phZ0F3c0dLMjQrSVhvSU53SjAxU0FaZkhE?=
- =?utf-8?B?VGNaenI4WDMvcnZHVUF4TkJFamlIeFB2eG1Ea2lRY3doYU55YXg4YzEzZkx4?=
- =?utf-8?B?MkFNWmNvOXhtV2RRck83cHpGUzJGQ1U4aWcrV0dJYVc4NGlGcXpVckY4dW1N?=
- =?utf-8?B?Tnd1OXJpMVlhR2o4ZW5pWFBkbnNwVzJyNGZvUnpIcks4ZExibG16ZzhJYWZr?=
- =?utf-8?B?TWtidG1PbkxHdG4wR1ZUMDJEb3kyMSsxeEJGcEdTQldHNTc1ckN4SExNb3Qy?=
- =?utf-8?B?TE1paExyYWlNa1htOGYwVlJWWVBZNlh6dkRqZzVNQnE4djhHOWl3bDlDRFpl?=
- =?utf-8?B?SThLNWxmbk0yTjNhNjM2YnViZjB3b0dCTGVMb2JYZElvVmNnT0d6TjdTQ25U?=
- =?utf-8?B?MDFJRTN1MGpjTkcxbGR6dElFOVJKQkplUG9xL0VyamVvRTZuc1lwS0hNS3A2?=
- =?utf-8?B?M1VKYlRMUVpsRExSRUtBS2FtSVh1VjN4RXB0bnZPbzVsMU9BSjd3SEhmZ0dP?=
- =?utf-8?B?YzFSUUh2SU0ycHNVcWxNRjVQaTRaWmRWZFdTSmRRSUxad1lpN0RuYjhERGZr?=
- =?utf-8?B?M0JTb3NlaVhMUjFZVkdwdVlBVHAxUC9leTZBWEdobWtzVU4vVHk0MHozT0FJ?=
- =?utf-8?B?SDhuWXNNUk93MnRTbmVhUkpXUmY3SFBxTnFSbGY4ODFmTUlJdUtpblF6NHhZ?=
- =?utf-8?B?dURET1JkTHBLMTM1SXdQaXYvTHdtQjd0Y294OXpiL2ZpUk8rbjYxYzJGWkhl?=
- =?utf-8?B?aEI4WEZCSjRJL01kM1BIYVZUaG10V1U5d2hxQkMrZWFUQlZldzBlMXV2Sy9R?=
- =?utf-8?B?ZmxmOGhKa1kyU0o1K2tsRDhUcVZicGY5aXhIaUdRbFBmYS9QVUIxelN2V0pj?=
- =?utf-8?Q?MC30GxROBQXDJ5Gzav?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ace5aa4-1611-4092-5ba2-08df3fdc433b
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6254.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2026 10:12:16.5360
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YSgj3F5hocGyy4C0tmQDRITyq6RKN0K9MrtOH4wes/TJQwo++VWRtubzaevTnuHyWeycWO6o8h63ShT+EjoCfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8595
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261111-upstream-clk-emc-parent-v1-1-636eea572572@tsv-stahl-riesa.de>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMSw7CMAwA0atUXmMpKSq/qyAWqeOCgYbIThFS1
+ bs3wPItZmYwVmGDUzOD8ltMXqnCbxqgW0hXRonV0Lp2573b45StKIcR6flAHglzUE4Ft52PLtJ
+ w7OMBap2VB/n8zufL3zb1d6by3cGyrPLnGj17AAAA
+X-Change-ID: 20261107-upstream-clk-emc-parent-351d0dcf9bd8
+To: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Brian Masney <bmasney@redhat.com>, Thierry Reding <treding@nvidia.com>, 
+ linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable+noautosel@kernel.org, 
+ Patrick Fischer <admin@tsv-stahl-riesa.de>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794392093; l=5092;
+ i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
+ bh=6O+WzvkYoAaO5jXWXFBWqRwW5kYIxCEWKdPNp4Ndczk=;
+ b=FTrv+GtupkxKHloaZku+A8CmQfPKs7Jw2RLUllNkiQ39lY2K/SZIafaFEiPVqwi2WGVxpNsVw
+ HAh0WYWsz55CQiIDQaZpA4G58xqwqLe9lTrWmaTaUs/hp4U2nKHiw+g
+X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
+ pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
+X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
+ auth_id=1251
+X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+Reply-To: admin@tsv-stahl-riesa.de
+Content-Transfer-Encoding: 7bit
 
-On 05/11/2026 18:59, Srirangan Madhavan wrote:
-> Implement CXL Device Reset for eligible Type 2 devices: disable CXL.cache,
-> perform supported writeback, drain transactions, prepare the IOMMU,
-> initiate reset with Memory Clear enabled, and wait for completion.
->
-> Observe the 100 ms post-reset quiet period before polling Status2, and
-> treat an all-ones read as not ready. Wait for the timeout the device
-> advertises, up to 100 seconds, and access only Status2 until reset
-> completion, error or expiry, as CXL 4.0 section 9.7.3 requires. Control2
-> cleanup runs only afterwards. Treat Control2 command bits as
-> transient state, restore cache policy on exit, preserve the primary error,
-> and abort when IOMMU preparation fails.
->
-> Reuse Device DVSEC discovery from cache initialization and keep the
-> reset entry point declaration private to PCI core.
->
-> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 
+Each EMC timing names a parent clock and the rate that parent has to run
+at. On Tegra114, PLLM is registered with TEGRA_PLL_FIXED, so its rate
+cannot be changed, but the Tegra114 device trees still contain timings
+on pll_m at rates the bootloader did not set up, e.g. 792 MHz on a
+Tegra Note 7 where the bootloader leaves PLLM at 408 MHz.
 
-Hi Srirangan,
+emc_set_timing() calls clk_set_rate() on the parent, which succeeds
+without changing anything, and then loads the 792 MHz timing while the
+EMC runs at 408 MHz. On the Tegra Note 7 that gives a refresh interval
+of about 15 us instead of 7.7 us (DDR3 allows 7.8 us), and the clock
+core then reports 408 MHz, so later requests for 408 MHz keep the
+792 MHz register values.
 
+Skip timings whose parent cannot be rounded to the requested rate when
+loading them, so that the highest reachable timing is used instead.
+On Tegra124 PLLM is not fixed, so its timings should all stay; this was
+not tested on Tegra124.
 
-A concern regarding IOMMU handling below. If it turns to be unfounded, 
-you can add my review tag.
+Fixes: cf561283254d ("clk: tegra: set up proper EMC clock implementation for Tegra114")
+Cc: stable+noautosel@kernel.org # needs the Tegra114 EMC auto-calibration fixes
+Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+---
+Tested on a Tegra Note 7 (Tegra114, P1640) with Svyatoslav's tegratab
+device tree on top of v7.3: both 792 MHz timings on pll_m are skipped at
+boot ("pll_m cannot run at 792000000 Hz, skipping"), the EMC goes up to
+624 MHz on pll_c instead, and the timing registers match the table at
+each rate. Actmon requests for 792 MHz now end up at 624 MHz without
+errors; a memory test of 3 h 20 min with mostly such requests ran
+without errors, together with the EMC series below. Before, an actmon
+request for 792 MHz left the EMC at 408 MHz with the 792 MHz register
+values.
 
+This came up together with a series for the Tegra114 EMC driver,
+"memory: tegra114-emc: Fix bus width and pad auto-calibration" [1],
+which I sent to the memory controller tree earlier today. This patch
+builds without it, but please do not let it land in a release without
+"memory: tegra114-emc: Stop clearing EMC_AUTO_CAL_CONFIG" from that
+series: this patch moves the EMC from 408 MHz with the wrong register
+values to a real 624 MHz on pll_c, and both kernel panics I saw on a
+change to 624 MHz were with the pad auto-calibration cleared. For the
+same reason it is not marked for stable and asks to be left out of
+AUTOSEL, despite the Fixes tag: I could not show that the wrong register
+values cause failures, while 624 MHz without calibration did.
 
-Thank you,
+[1] https://lore.kernel.org/r/20261111-upstream-emc-t114-v1-0-54d9e1bceb6a@tsv-stahl-riesa.de
 
-Alejandro
+As Svyatoslav confirmed, PLLM does not have to be fixed on Tegra114, so
+the proper fix would be to make it scalable, as the downstream kernel
+does. Until then, this keeps the EMC from running with register values
+for another rate.
 
+Tool use (see Documentation/process/generated-content.rst): the patch,
+its changelog and this note were prepared with an LLM coding assistant
+(Claude Code). It traced the rate change through the EMC clock code,
+read the EMC registers on the device, wrote the code change and drafted
+the texts from my measurements and instructions. I reviewed the change
+and ran the tests on the device.
+---
+ drivers/clk/tegra/clk-tegra124-emc.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-<snip>
+diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+index 0fc74808fe39..2f4d39922b73 100644
+--- a/drivers/clk/tegra/clk-tegra124-emc.c
++++ b/drivers/clk/tegra/clk-tegra124-emc.c
+@@ -458,7 +458,7 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
+ 	tegra->num_timings += child_count;
+ 
+ 	for_each_child_of_node_scoped(node, child) {
+-		struct emc_timing *timing = timings_ptr + (i++);
++		struct emc_timing *timing = timings_ptr + i;
+ 
+ 		err = load_one_timing_from_dt(tegra, timing, child);
+ 		if (err) {
+@@ -466,11 +466,28 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
+ 			return err;
+ 		}
+ 
++		/*
++		 * The register values of a timing are only valid at its rate.
++		 * If the parent cannot provide the parent rate, for example
++		 * because the PLL has a fixed rate, the EMC would run at a
++		 * different rate with these values. Skip such a timing.
++		 */
++		if (clk_round_rate(timing->parent, timing->parent_rate) !=
++		    timing->parent_rate) {
++			pr_warn("timing %pOF: %s cannot run at %lu Hz, skipping\n",
++				child, __clk_get_name(timing->parent),
++				timing->parent_rate);
++			clk_put(timing->parent);
++			continue;
++		}
++
+ 		timing->ram_code = ram_code;
++		i++;
+ 	}
+ 
+-	sort(timings_ptr, child_count, sizeof(struct emc_timing),
+-	     cmp_timings, NULL);
++	tegra->num_timings -= child_count - i;
++
++	sort(timings_ptr, i, sizeof(struct emc_timing), cmp_timings, NULL);
+ 
+ 	return 0;
+ }
 
-> +static int __cxl_reset_execute(struct pci_dev *pdev, int dvsec, u16 cap)
-> +{
-> +	int rc, rc2;
-> +
-> +	if (!pci_wait_for_pending_transaction(pdev)) {
-> +		pci_err(pdev, "timed out waiting for pending transactions\n");
-> +		return -ETIMEDOUT;
-> +	}
-> +
-> +	rc = pci_dev_reset_iommu_prepare(pdev);
+---
+base-commit: f4897f9ed38a327ce63658e025c7d2229a0d9368
+change-id: 20261107-upstream-clk-emc-parent-351d0dcf9bd8
 
-
-I'm not sure if this is safe enough. I can see a situation where a Type2 
-device could not be using CXL.mem and CXL.cache but CXL.io. This would 
-imply no CXL initialization from the Type2 driver but:
-
-
-     1) Such a driver could be giving functionality without CXL
-
-     2) The device belonging to an IOMMU domain which such functionality 
-is using
-
-     3) The HDM decoder range as a system resource is free.
-
-
-If I am right, a CXL reset could happen, and although it should not be 
-triggered by user space under these circumstances, the door is open ...
-
-
-The solution would be, currently, to check for a  driver not bound to 
-the device in an IOMMU enabled system. I say currently because CXL.cache 
-will need extra work with IOMMU mapping which are not yet there.
-
+Best regards,
+--  
+Patrick Fischer <admin@tsv-stahl-riesa.de>
 
 
