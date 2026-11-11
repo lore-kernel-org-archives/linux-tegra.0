@@ -1,79 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.28
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794391866;
-	b=r6/zIRCRH5ckR5QUXec9NP6U4VENpwYg+JQFKewOiT1axTh61p/OrG2JutviGhtdQhqC
-	 w5uJtSuAuI+xCxE66t20CwF/fMwscB5JkUIJ4bR9WjaQnTqCXfjLKph3/WKAuFe3qh+jW
-	 qdcjVtBritffXTNdbHeVRixwZCXWRQ6V1QGPbjXxBMru28CsGZqX3E7dFMGsy6qqvPhKE
-	 w7LN2ttaJ/dql+od5hG+dee4O2N3rNxOFChlhVm3OV3GPWIZiEDRAxmqf22EtdYXhSTCe
-	 xA/5Qwm96kIBP1+rE/Iujo/zy7OVl11Q5VSdqirH//QSFrBZ3jKplcFKjOeosGAyl/Q==
+	t=1794391951;
+	b=NXMCVzDViWzmjh4c37194BtOuDnGu/r6x35VsUbuqKT8ie0C6An6f81/caI0E6r+K/Yh
+	 mUQylGmza14rqnPJ/7VQ86Z6acafEXWRBoJJ+MJH7HZBxLpFW/yMI0peY1gvEQMAyjLQf
+	 GdhJOz6yhz2/lpqZc+0Kd/Y4PeR7eyFGzJgZR9jidwVARfBIbKlR0ySpzgdFIgcCewsdo
+	 w45oSTMBDf+kjpPL7YHY2bjuS42lkjLYAwRshXGqEIWx2TTwI60Ifb4762l+nco95Cwwz
+	 CddL+NO/JxOghn1W4GRQo3Eo/ZopQ6b7y8hPSld9ySrt5+AUUQ38ToQd51tXoCGXh0g==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794391866;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=ERqVg4GZOQQriW6i/ANt3fOPEW6L4lP4DmjNV7VZQGc=;
-	b=cVABTGqGYDo5JCWKBXJgKCCmI1msd2XyG+9NusJI9oFnv+YhycSLwcCD6ZRPGAKmRCaN
-	 EpKyN1mGe/YAcQUMVa8CafwGuJeKnrHr7OVm2u79xFE+y4McQFlvSyjAiR3Ed2sulAD+p
-	 +Ypql0tdSkSAVKyeFxuAGVXxVtk+/JABU8q614JPN7+NYtNlNGZsH8Mt5fVdR0NPSqYFR
-	 r3zAz5TX5bRHKjA0/mORQVGyamOIY1CEdkZOtkAKs7r1F3GwVCSAw/uX7Sqz0xE81Zj3T
-	 yqUNPmtjH2BaZpheUEPgqGOoVEXdj6wsYMal6uH8nVFbfHv2L88ZugYWQco0NVfrvYw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794391951;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=08z53+8yrbTGjIZvszG1gqicLmRIcvV8HxhxbsaCpO4=;
+	b=FBzGi4WhriOZGYAiWWHmwgjOL/BT2qSDUkqPemNfn7ruzzWredoMtXAu2KVUr/+WmLFI
+	 mNt78VN8njQ6jeKRcRHmPUk072jCcmhBIRwwLozAPSfPWfzrZNI9zZtbtyfl6dMvgWtd6
+	 ojMLIb6CZtdY7SZW3Thm53ZRy1dk+HKzDjPPonEvbKflkNjK+d+TVC1kirdRKgyOY/u39
+	 ZFc3I9NukkxImyzoUuB+2AcQIFomZ215yMELHPCdBeu1TcTPZe6y99MMkXvdQAhvSBMFz
+	 frupTTAf2nEsvZt8WRIHCkMnaY7xvSSSUS3EVXQS+tsCT0oErJZCa/uNvtjd2O/bIpg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cR4TsrU+;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=amd.com;
+	spf=fail smtp.mailfrom=amd.com;
+	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=y0QEcFsH;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.28
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011028.outbound.protection.outlook.com [52.101.62.28])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50643606A8A8;
-	Wed, 11 Nov 2026 10:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AA5606A331;
+	Wed, 11 Nov 2026 10:12:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D2AA5606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cR4TsrU+
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794391866;
-	b=BRDciIe6jBd2f3/ER6Syw3XDtEAqiHGz6zEh8p61ISmIpz8RCRb3nIQc0Jz5d64jID8r
-	 ca3YW0bHk8m1wy/ND/EbC9f2vif3/tFzTocREREHfVF1lvWBcsaabVKnpjsUi6uWj5hdv
-	 e+JReHlwLGNSX4U56ld9cnk6JHT023u+b1XnbMZfCBg1rS5HT0Z0e74UcQwA4CjgbWSmo
-	 jKG9nA56+Z+Pp8Oo6Mo+FjElhO36lEtgyWih4d/hDIKpJkgMIxlP7u5JTNiaMoFG10qmW
-	 mUOIWKfJRW/3k36+A2cYnkSoglNTPi5EMaW0EyjdBXiLF9CRGyOQg9FBSUqz66F+bfw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794391866;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=ERqVg4GZOQQriW6i/ANt3fOPEW6L4lP4DmjNV7VZQGc=;
-	b=LUFmjj0F5/+nb6H2lrk9nTN/LG1BVyShiG/6PPjUjJGY1gdtJ5ZrIXxH5lUquCcXWynj
-	 CENJ3liLbjscA/YI1/51E+x6B4+EqvKhivqi7lwQt0Z87qmNZlAi8zadQejGc+7lahoEu
-	 D/lvaJQgIc/DBaAHXahWLAdY21CE0kQB1Oc4fv/y6ZUfjIH4wpW7eaEWSMQYZB/fFH9Q2
-	 4RO2PYBIPP8wbL2P3mdqWjXDgeKN+vhcFxgwleQHZAYjo4bQ1WfZ3BqAZCCrsyDC4yNvW
-	 wr8/rstcsFAJmoGtJ46YSzAsIEFAchIIHxJHxqO8AOAtTzeu1fVwJJPynqa0spvbKNw==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 604481F00A05;
-	Wed, 11 Nov 2026 10:11:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794391866;
-	bh=ERqVg4GZOQQriW6i/ANt3fOPEW6L4lP4DmjNV7VZQGc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=cR4TsrU+JTzuZElrOKSUnSk7rPr7MiF3JqEQDjSguDDskBdB+jZI5ngy121f9ovyL
-	 nJVgen3fn7JLgxMtZ17wuwBI/gdES/LzpVcdBwtLIDAtRfc9xFsWxHmNe0CXNo9nP7
-	 TyzD+8Gkjib9XYXTP4tOf6wZnPfAGn9rS/CnMKS/HYstEPQ2ZNJZc1rET3VPisrZY6
-	 XPCF4TNohll0nYhwj5oyvrtPXvMENEgA6qDkwcLbxLK5VFzeF+wKyUwS09BD7WZ6xL
-	 UWNHgKhwIv2P3Uwz3TyigI71i2pKPHmetpSpsvzeXQTeOKGOttzoWfnAfbGEuzEzD6
-	 MGzZvaC3l3qnQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 4E94E48F3F;
-	Wed, 11 Nov 2026 10:11:04 +0000 (UTC)
-From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
-Date: Wed, 11 Nov 2026 11:11:00 +0100
-Subject: [PATCH 5/6] memory: tegra114-emc: Program pad auto-calibration per
- channel
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=y0QEcFsH
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uPbFIHRH3lFeMc8AID215+IsSpDmc2OYpu0/rYe9dSM9QX6OWnjGKjQh+zTPZt6Txea1ypba6uloh1qxa1OB7ZCDsykFxD9WSHB2uL0LuV4mGVwZUCPqvmvwKW74kYhq+X7+RCL+6s9nBYIAqizifURNKp3JeDVUtsyXEqcrsLgXWh/O2Amzz7wHQ8uIzuWOhhq2bftCRs7Dgy7shzrVliW+dF+Nl9QOBgk92147dRDscLsqtltxLQOimGuzoOBP14hSGUJGL3HboAEVTVvznqndmGq2ZBVj0BKeD0hXeEgUGydxiFeutQA68uaUJJgRyBuds7YnXST14qa4f65Gpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=08z53+8yrbTGjIZvszG1gqicLmRIcvV8HxhxbsaCpO4=;
+ b=FzdBRtqhYuKmsRBZh1HV4alY9Fv51HJJlD6gwe4KvkBQdJtpJI32IhEmdQPvvU1O8q7rEKr7LjNhoiCDoAdIxN6iNX9oKh6K1uV7kLHDUQovMWf1LMP2DJ9pcd32xfDTuDfgTSUY0jfERtphbN9qvZhS7id+wsCoxoaburDtbnFWGOrQPJUcHy6E/0FEf4HN6lauQ61I6Ht+qEQhpfIiPcDZEnLEFwheiB8p2BQECEzQDWtspBeMJsvXbWdoso+zu59PROQVvVEJESk7NOU05uUQioqlgHacaVA+3OPfAK+LOuf0Dv8oqTRJf4IrVP1HctT2SqGgi6VnxE2bKb4fBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=08z53+8yrbTGjIZvszG1gqicLmRIcvV8HxhxbsaCpO4=;
+ b=y0QEcFsHsQUSx7pIM+k0V12d97+pyVWFJXgoRVs4LYL8MB+yk1nouk7D8zCQd+C4FG4JuXwl1JMYlToROagiGzeysHxL/HfOWUS8Q3MrQQXhHw5pf64/yJnbWyjZulFXRdGx057+xF9G0wuL2UmFqDIG9fYCut0qst4raB605Kc=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6254.namprd12.prod.outlook.com (2603:10b6:8:a5::17) by
+ PH7PR12MB8595.namprd12.prod.outlook.com (2603:10b6:510:1b5::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.615.9; Wed, 11 Nov 2026 10:12:17 +0000
+Received: from DM4PR12MB6254.namprd12.prod.outlook.com
+ ([fe80::8211:9b5a:99d2:ffa1]) by DM4PR12MB6254.namprd12.prod.outlook.com
+ ([fe80::8211:9b5a:99d2:ffa1%4]) with mapi id 15.21.0615.007; Wed, 11 Nov 2026
+ 10:12:16 +0000
+Message-ID: <f5fdc266-aed3-47e6-a10f-e8188b58c93f@amd.com>
+Date: Wed, 11 Nov 2026 10:12:10 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 12/19] PCI/CXL: Add CXL Device Reset sequencing
+To: Srirangan Madhavan <smadhavan@nvidia.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Dave Jiang <dave.jiang@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <iweiny@kernel.org>,
+ Jonathan Cameron <jic23@kernel.org>, Vishal Verma
+ <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Li Ming <ming.li@zohomail.com>, Joshua Machauer <machaujo@amazon.de>,
+ Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
+ alwilliamson@nvidia.com,
+ Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
+ Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
+ Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
+ linux-tegra@vger.kernel.org
+References: <20261105185917.2667656-1-smadhavan@nvidia.com>
+ <20261105185917.2667656-13-smadhavan@nvidia.com>
+Content-Language: en-GB
+From: "Lucero Palau, Alejandro" <alejandro.lucero-palau@amd.com>
+In-Reply-To: <20261105185917.2667656-13-smadhavan@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MR1P264CA0152.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:54::14) To DM4PR12MB6254.namprd12.prod.outlook.com
+ (2603:10b6:8:a5::17)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,125 +107,135 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261111-upstream-emc-t114-v1-5-54d9e1bceb6a@tsv-stahl-riesa.de>
-References: <20261111-upstream-emc-t114-v1-0-54d9e1bceb6a@tsv-stahl-riesa.de>
-In-Reply-To: <20261111-upstream-emc-t114-v1-0-54d9e1bceb6a@tsv-stahl-riesa.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, 
- Patrick Fischer <admin@tsv-stahl-riesa.de>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794391862; l=3713;
- i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
- bh=K2SPmhgJ6C3ZE/fZgTA83RQZgcOScMG8/6jryEAwAiU=;
- b=cKfBOE8LlyrABtcd1DYsV04cH0l8FZKu6uC6HlyXjBQ3Cyyclj2nZwnk1qrbIIadsie7Or/W8
- k87Gil9yIzzARwh48prVIkb0Y0CoZLIfN6MMpps/E5gnMr0i9hCuMZT
-X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
- pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
-X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
- auth_id=1251
-X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
-Reply-To: admin@tsv-stahl-riesa.de
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6254:EE_|PH7PR12MB8595:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ace5aa4-1611-4092-5ba2-08df3fdc433b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|23010399003|366016|921020|10067099003|11063799006|4143699003|56012099006|261022105027099003|261021121427099003|261026121527099003|261026140227099003|261028144727099003|261102123227099003|261009223027099003|18002099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	S5IMQ8KA2T47W+snnmc7bkoCIV5xVxXgKqurFgXsbjDsiFKKzpSn1RjBwcriHw6gdYmbW2exF9q86ccw2WeMQtWuF560zO1qVA/640gwiJN4cIFlPxf64oDwpVFcsqHjpeRz6X8WoSKoNQbrEZjuTbMpI4E+cZ87mjqyuagOpfVdsf7AeKSbuIgYVrgd3A3F+BDHExTgqXpSNCaaaMvZboLhmj9bTFNL4DLayTyi6Jw0g0AHFY7Rhek5vPtI9RGb3VcEi54XSsROiVIzgIt+aKhEu1SZ84TnYgfzXmRuHvp6Y4X+J3pfMEcMKsgzgCfSEEM94Ylpjyd9PuvuyFAmI5S1ILNrBtiwpqz0CsNVO0zdDG4VGm/Zz0AzjJBk53tLSkrJ1Mdws4Yin0fUhHH2wGXJmo4EojH6rCx4ePBnJqoqfYl6cIhSZICg1H3T5H1j/j2uL8AmsfyBz3JuukGbn/3HK9/rlYvY5jYjushVpjVJq3aj+hYnqgWTkQwDriwYBl5R7supXofmz67moXNakbWwxRV/bueYS4+1cGr7gYhN+JHEGkZuv573+F8fmxN7vaDbzn5KW02SR1Sq5Eyp0Jta67tjVqEvTGwk8BMvdjI9cp3RLYIbrHaCgxwBldHvMedinX8qE0wGEQEhdP52TW8Hr7y69sRPKbeAwE176X34nCevLuCS77WFos6iNoefBJUyLSJCYtpFOrN+ChB3JA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6254.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(23010399003)(366016)(921020)(10067099003)(11063799006)(4143699003)(56012099006)(261022105027099003)(261021121427099003)(261026121527099003)(261026140227099003)(261028144727099003)(261102123227099003)(261009223027099003)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cThWNDlETXIxUG5nRGVHemt1U1dPQm50c3BwVGhFTFRuUENHR2hKcjhFYk8z?=
+ =?utf-8?B?VkpGV3ZvbDVaRmlZYitlSUlPRXhnb2xRd1ZvZHJvZnpJb0dRdm9ScVB3VDdz?=
+ =?utf-8?B?U0tvWllMMXAxaCtKWGg2VzFLMjZrQ0tkdisydFFpY3RXWGtHanNjaDVvOWpn?=
+ =?utf-8?B?Z2VSbTNTUjI0YTB3eFJUVVVJSlhUcGlPTExLZnZBT0VveUJMVTFGRTVibmNv?=
+ =?utf-8?B?M082NDZYN2txV0V5Z3hONzVpb3BGMUJtOHMvMFBqclRDN20rSlR0SWtSUTdD?=
+ =?utf-8?B?bXQ4SVFYeDdlMGFDWVZwMmFSNVBJWTkwLzdjQ20zazJMc2N4QmNwTW5hNkRR?=
+ =?utf-8?B?WS9heFRNQkRqUy9jTzJzNFJGYW9PM0ttd1V2aitBcXdzQjRpY0lyUGFhS0Vy?=
+ =?utf-8?B?N3RDcExmS1RlQ0xPT3h6TzA4VU9YbzNqS1p3UWs5aTNnLzR0UU1KYnljZkRh?=
+ =?utf-8?B?SjdWMG9IOC9nb253TkFOOUZJR2lzZzUrZ0ZNSzRLWUpuTmg0YmNYdFZzdG9P?=
+ =?utf-8?B?ZWc2QkoxWHVZV0V1cFBPanVrcU9ncGtRNHdGRDRzZW43QmY5ODlGb3JKbU9X?=
+ =?utf-8?B?bTVoek5ib3ZIMzA3a0dydUNxay90SFdSSmZtMzByREtuZUlNVFlaVFJaWVNp?=
+ =?utf-8?B?Ri9ySjE0S2VUU2ZIM1RST0E3K0preStsenc3WmVDYXl1ZVh2Y0FrTVRKaFlu?=
+ =?utf-8?B?REJXZVhzSm93bHdsMmo3WUF1MkdGWWpoWFNwbkNWSlJFUG1EVVBUY2s3Wmcy?=
+ =?utf-8?B?TXFKRGVsWEFCV2hUdEE3dWNxUC9DbkJqZFhjTDA0SU44cGNiNlY4azRCeHpW?=
+ =?utf-8?B?RjhuL2FtZXQxUlNuZ3BWWjhPZGhZVTFrQjlpVitQTGxxZ2dsNFN2cHBBa3JP?=
+ =?utf-8?B?VUJGOWE2Y0ZKMTRpWXJoVllxcGIwTDNaczFwUjd6d003RlhQU0hvakpjUHdS?=
+ =?utf-8?B?NVEwUzUzTDk1U0FBUzRaRTdnQncxZzVYSUNpbjdoR3I3MUlzeUMrU3RuRTVn?=
+ =?utf-8?B?Q2tvOEJFZUhNa09TZVhMLzl4dm9URmhKV2lOL201RFZPakRJbHRFYmxWaVha?=
+ =?utf-8?B?aWN1bHA2VVg1SEpLbUF2eWFtbGxkc1pIZENIQkRDRTRGZFFlaGFUU2oyL2tQ?=
+ =?utf-8?B?bGVLUGZ0ejd3TW95NGdCclNlcEozZUt1aWd0ZWc2RC90VE1xYzViemJ6cWJy?=
+ =?utf-8?B?TjRWTmlNUnZvRUZYNnQ1RCt4dGRxUjA3WkZvdUtCNzBLUXh0bUJWNTlIQ2dk?=
+ =?utf-8?B?ekhBTTRIRnkwUnN0OVR2RnVRcEhIUHE3NWZtSFNOUzVqSFFqc2FiRjgwU25s?=
+ =?utf-8?B?NG9xWWdmeTFDd3RiRVZyTjVlZUpJTytUNHFaNG12K09sb3BKT25qbzhoODhI?=
+ =?utf-8?B?SHZ4NnE0R3JIcTNqck1qR08xV3phZ0F3c0dLMjQrSVhvSU53SjAxU0FaZkhE?=
+ =?utf-8?B?VGNaenI4WDMvcnZHVUF4TkJFamlIeFB2eG1Ea2lRY3doYU55YXg4YzEzZkx4?=
+ =?utf-8?B?MkFNWmNvOXhtV2RRck83cHpGUzJGQ1U4aWcrV0dJYVc4NGlGcXpVckY4dW1N?=
+ =?utf-8?B?Tnd1OXJpMVlhR2o4ZW5pWFBkbnNwVzJyNGZvUnpIcks4ZExibG16ZzhJYWZr?=
+ =?utf-8?B?TWtidG1PbkxHdG4wR1ZUMDJEb3kyMSsxeEJGcEdTQldHNTc1ckN4SExNb3Qy?=
+ =?utf-8?B?TE1paExyYWlNa1htOGYwVlJWWVBZNlh6dkRqZzVNQnE4djhHOWl3bDlDRFpl?=
+ =?utf-8?B?SThLNWxmbk0yTjNhNjM2YnViZjB3b0dCTGVMb2JYZElvVmNnT0d6TjdTQ25U?=
+ =?utf-8?B?MDFJRTN1MGpjTkcxbGR6dElFOVJKQkplUG9xL0VyamVvRTZuc1lwS0hNS3A2?=
+ =?utf-8?B?M1VKYlRMUVpsRExSRUtBS2FtSVh1VjN4RXB0bnZPbzVsMU9BSjd3SEhmZ0dP?=
+ =?utf-8?B?YzFSUUh2SU0ycHNVcWxNRjVQaTRaWmRWZFdTSmRRSUxad1lpN0RuYjhERGZr?=
+ =?utf-8?B?M0JTb3NlaVhMUjFZVkdwdVlBVHAxUC9leTZBWEdobWtzVU4vVHk0MHozT0FJ?=
+ =?utf-8?B?SDhuWXNNUk93MnRTbmVhUkpXUmY3SFBxTnFSbGY4ODFmTUlJdUtpblF6NHhZ?=
+ =?utf-8?B?dURET1JkTHBLMTM1SXdQaXYvTHdtQjd0Y294OXpiL2ZpUk8rbjYxYzJGWkhl?=
+ =?utf-8?B?aEI4WEZCSjRJL01kM1BIYVZUaG10V1U5d2hxQkMrZWFUQlZldzBlMXV2Sy9R?=
+ =?utf-8?B?ZmxmOGhKa1kyU0o1K2tsRDhUcVZicGY5aXhIaUdRbFBmYS9QVUIxelN2V0pj?=
+ =?utf-8?Q?MC30GxROBQXDJ5Gzav?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ace5aa4-1611-4092-5ba2-08df3fdc433b
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6254.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2026 10:12:16.5360
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YSgj3F5hocGyy4C0tmQDRITyq6RKN0K9MrtOH4wes/TJQwo++VWRtubzaevTnuHyWeycWO6o8h63ShT+EjoCfA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8595
 
-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+On 05/11/2026 18:59, Srirangan Madhavan wrote:
+> Implement CXL Device Reset for eligible Type 2 devices: disable CXL.cache,
+> perform supported writeback, drain transactions, prepare the IOMMU,
+> initiate reset with Memory Clear enabled, and wait for completion.
+>
+> Observe the 100 ms post-reset quiet period before polling Status2, and
+> treat an all-ones read as not ready. Wait for the timeout the device
+> advertises, up to 100 seconds, and access only Status2 until reset
+> completion, error or expiry, as CXL 4.0 section 9.7.3 requires. Control2
+> cleanup runs only afterwards. Treat Control2 command bits as
+> transient state, restore cache policy on exit, preserve the primary error,
+> and abort when IOMMU preparation fails.
+>
+> Reuse Device DVSEC discovery from cache initialization and keep the
+> reset entry point declaration private to PCI core.
+>
+> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
 
-The timing tables carry a value for EMC_AUTO_CAL_CONFIG, but the driver
-cannot apply it through the broadcast registers: channel 0 runs the
-calibration and channel 1 takes over its results as a slave
-(AUTO_CAL_SLAVE_MODE, bit 27), as the values the bootloader leaves show
-(0x20f10f0f and 0x28f10f0f on a Tegra Note 7, P1640). The downstream
-driver (tegra11_emc.c, rel-tegranote-r8) programs this register per
-channel for the same reason.
 
-Map the channel registers when the device tree describes them and write
-the table value to channel 0 and the same value with the slave bit to
-channel 1. As in the downstream driver, this happens directly on every
-rate change, with the AUTO_CAL_START bit from the table. It does not
-need the CCFIFO: the Tegra 4 TRM lists EMC_AUTO_CAL_CONFIG among the
-shadow registers that are programmed for the new frequency before the
-clock change. With an older device tree the register stays as the
-bootloader set it.
+Hi Srirangan,
 
-Tested on a Tegra Note 7 (P1640) together with the previous patches:
-the channels read 0x20f10000 and 0x28f10000 after rate changes and
-EMC_AUTO_CAL_STATUS keeps changing. Before, two out of two rate changes
-from pll_p at 408 MHz to pll_c at 624 MHz ended in a kernel panic; with
-this series, about an hour of memory testing that switched between 408
-and 624 MHz ran without errors. That points at the calibration but does
-not prove it, as the old runs also had the wrong bus width.
 
-Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
----
- drivers/memory/tegra/tegra114-emc.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+A concern regarding IOMMU handling below. If it turns to be unfounded, 
+you can add my review tag.
 
-diff --git a/drivers/memory/tegra/tegra114-emc.c b/drivers/memory/tegra/tegra114-emc.c
-index 9de3f2e728ea..d5c3142a0671 100644
---- a/drivers/memory/tegra/tegra114-emc.c
-+++ b/drivers/memory/tegra/tegra114-emc.c
-@@ -142,6 +142,7 @@
- 
- #define EMC_AUTO_CAL_CONFIG			0x2a4
- #define EMC_AUTO_CAL_CONFIG_AUTO_CAL_START	BIT(31)
-+#define EMC_AUTO_CAL_CONFIG_SLAVE_MODE		BIT(27)
- #define EMC_AUTO_CAL_INTERVAL			0x2a8
- #define EMC_AUTO_CAL_STATUS			0x2ac
- #define EMC_AUTO_CAL_STATUS_ACTIVE		BIT(31)
-@@ -393,6 +394,7 @@ struct tegra_emc {
- 	struct device *dev;
- 	struct tegra_mc *mc;
- 	void __iomem *regs;
-+	void __iomem *ch_regs[2];
- 	unsigned int irq;
- 	struct clk *clk;
- 
-@@ -609,6 +611,19 @@ static int tegra114_emc_prepare_timing_change(struct tegra_emc *emc,
- 		emc_ccfifo_writel(emc, timing->emc_auto_cal_config3,
- 				  EMC_AUTO_CAL_CONFIG3);
- 
-+	/*
-+	 * Channel 0 runs the pad calibration and channel 1 takes over its
-+	 * results, so the two channels need different values. Without the
-+	 * channel registers in the DT, keep what the bootloader set up.
-+	 */
-+	if (emc->ch_regs[0]) {
-+		writel(timing->emc_auto_cal_config,
-+		       emc->ch_regs[0] + EMC_AUTO_CAL_CONFIG);
-+		writel(timing->emc_auto_cal_config |
-+		       EMC_AUTO_CAL_CONFIG_SLAVE_MODE,
-+		       emc->ch_regs[1] + EMC_AUTO_CAL_CONFIG);
-+	}
-+
- 	/* DDR3: predict MRS long wait count */
- 	if (emc->dram_type == DRAM_TYPE_DDR3 &&
- 	    dll_change == DLL_CHANGE_ON) {
-@@ -1253,6 +1268,16 @@ static int tegra114_emc_probe(struct platform_device *pdev)
- 	if (IS_ERR(emc->regs))
- 		return PTR_ERR(emc->regs);
- 
-+	/* Older device trees only describe the broadcast registers */
-+	if (platform_get_resource(pdev, IORESOURCE_MEM, 2)) {
-+		for (unsigned int i = 0; i < ARRAY_SIZE(emc->ch_regs); i++) {
-+			emc->ch_regs[i] =
-+				devm_platform_ioremap_resource(pdev, i + 1);
-+			if (IS_ERR(emc->ch_regs[i]))
-+				return PTR_ERR(emc->ch_regs[i]);
-+		}
-+	}
-+
- 	emc->mc = devm_tegra_memory_controller_get(dev);
- 	if (IS_ERR(emc->mc))
- 		return PTR_ERR(emc->mc);
 
--- 
-2.56.0
+Thank you,
+
+Alejandro
+
+
+<snip>
+
+> +static int __cxl_reset_execute(struct pci_dev *pdev, int dvsec, u16 cap)
+> +{
+> +	int rc, rc2;
+> +
+> +	if (!pci_wait_for_pending_transaction(pdev)) {
+> +		pci_err(pdev, "timed out waiting for pending transactions\n");
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	rc = pci_dev_reset_iommu_prepare(pdev);
+
+
+I'm not sure if this is safe enough. I can see a situation where a Type2 
+device could not be using CXL.mem and CXL.cache but CXL.io. This would 
+imply no CXL initialization from the Type2 driver but:
+
+
+     1) Such a driver could be giving functionality without CXL
+
+     2) The device belonging to an IOMMU domain which such functionality 
+is using
+
+     3) The HDM decoder range as a system resource is free.
+
+
+If I am right, a CXL reset could happen, and although it should not be 
+triggered by user space under these circumstances, the door is open ...
+
+
+The solution would be, currently, to check for a  driver not bound to 
+the device in an IOMMU enabled system. I say currently because CXL.cache 
+will need extra work with IOMMU mapping which are not yet there.
+
 
 
