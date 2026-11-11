@@ -1,79 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794392095;
-	b=ohsg+8oO3O0D+KGUKIYIcnkJo5lpS/xxqW0ZgQcs5abrRWhopiRmdCC7g5fMsgP1f4lj
-	 b6ryrKNlcNwCvutHVYQCll1RmB32L8DpOddxa6/PIveKCh9DWfaffCsxo4OAmYH0555Hp
-	 sZmAG2vV4g9YTet10zG+Ba61uSiMxW+e7Rn0hrwUMfQx5ERzGLabPu300IlarTyIKv4is
-	 R0dHxk7zZxfaQ2ybwvzsr4YT1NcP/jVIXxX/429sIUVUU2/B/nMuTPWDG3/caZF0q60ir
-	 2U//qNtlFefkN14UnuV9ptoRGdPSGwunEg7j3h/qKSx1+hHZEF81S26tWnMUCp4DMqg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794392095;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=XZ4b+XzZVJKQkDZyWOAJQrEn1AJC2/ca7/9qI+oGbNk=;
-	b=xawhIFvkAan5Fdw3MAs1Q8Fy4sUGcPZB3mejNhRjI4rB5MloqAjCbHqUuD1HyE5elehQ
-	 N9kDCKWvtANY78C+h+LlDks/ciESok3Qhx09dgxxJjwUZYd3dXZRuCiPK0e4oE0vihstA
-	 LHZVsTJ1wamlAgUoD4jcicvvbkHTs2N8ddpr7xkENwog7tP93VW65zad1dtZUfyGT9azM
-	 rK59XL8h0z4s3MDTicw7m9mrbOVu+UAFPImH0NVyS6Y4r3RK2xjt8eRY/avCHj984qqFQ
-	 vxMR8e5BauFl/0SiTeQ5V1F60r6GI/K+JMtIXhDxtuxs//pBZmqYBoCsFtnvhw1HRbg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gIJumyJ+;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.238.236.174
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794395988;
+	b=4XeGfvHcCvvw9oMXiqaGTUMxUW9T11Ah3YTQhYLTfMcxPokZhPLd2ctC42MSRjKBgw0i
+	 iuw/PPlCx/HxqWL+2K4IN0Q3JJbbgMOZcr9mmt0Kf+rFsM2j+Zw3wUQPJetpES0z6NJfT
+	 8jqMARN+BrFsfEZH9fbtvGPjd6AmdKuQMcJRVrCzRqvSifxO9DAfF8ZNi+gNxrZIqTDHV
+	 Cyx3tRabqtiHL4DG264YyT+6hCkF+cKaHG3aUOAYPPUFpUPCLqrtYnnQMrctwLdHiOLNU
+	 Oh+EwRuCFHDTTqEuGKvkikdGckNojNm8KQe6tOTDAkuz1ECa0fSexGb+MpKwI5UKiKw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794395988;
+	h=DMARC-Filter:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=UGGOSnoQOa8uQR6vbajtQptujNdknjBUZcDCmSIDNdo=;
+	b=5TL6NjrmVTrzwcA+KCiF7blRqQ+tlV5SKvIPt4ozJvKzos/Bakb2Bt7ywaY6wRwyheXe
+	 bt5qTgd0xCzgsfYsTYLEI5FOvdBZpM42KmJQVq+dwg0uevdyXK9eFDjyZxPg8UWfiWm3T
+	 9Ot5KvFwyysRQHfcWhW/CVtbAIs/fQhNtyiadgel2EqN9bDaD2rwNIM3zqQLifOG5L2JR
+	 eap85DsGPhgwyUamMFkqY9+/ErNeL+20tG3G/rYuqeoQfx6+cYiJkRJNZDUoCFFcE1uDx
+	 kPWRMT9ea9YhzmaveoSK/efsudlu5mnMUKxEe1mOkn/ppaeT2gM7C354ryCnyccsfSA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=kemnade.info;
+	spf=pass smtp.mailfrom=kemnade.info;
+	dkim=pass header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=QBOWFM3N;
+	arc=none smtp.remote-ip=178.238.236.174
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77836606A31C;
-	Wed, 11 Nov 2026 10:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CEF606A321;
+	Wed, 11 Nov 2026 11:19:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 32CEF606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gIJumyJ+
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794392095;
-	b=E1pEPBcvlGLagg0bbmhQo/wPF6z1DVAJqBCdXUKpFva7PHgbIBoKKqSROeQf1xlvsfA2
-	 8HEa4TzDf+cZe7ipwBNj6LMJ8uaaKWviyWpA5bkBgWY/trEgS4rPX2RlmvuDjrG3phuMS
-	 MXeuR43ke1h97xMX1g6pbi+jMRO68VS/esNzvjVulp0+qdVNWWy8N1QBetmf6GFmqFnbw
-	 SQVnXTI29zmhCtrlO7BuYAd9WzkFwj47PtpmxyWXB4blyCfu0E1oD9igj1w0ZjH5LD7IA
-	 lHT5C915wC1ANN9Q5tQyan+ZllJVCb8nHurN2qVJOSgX6Zl6LRj+5kTG5aBHSyMsnHw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794392095;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=XZ4b+XzZVJKQkDZyWOAJQrEn1AJC2/ca7/9qI+oGbNk=;
-	b=fpK5r5OHEVtH5APF0w9S0F4Rcb7SKn4ZHUOwkS+YDdxWYrzyNTXuLXuPC4w5M4Guixsg
-	 o/YyLT4xJneqXjhpNVkvSIe5gJPVF2ylfA8SeVQyzTalFTqkIA+oyzy5PwaXXtlgliRl1
-	 QvN9CnEH50iOiHp6SsDHFnMvDYNZNtNJr+qgqhj/DQ6Bt96TJ4VMIrANy7ac9JI+/Sgi8
-	 vKPkYaGb2fu8ae8245l3XI7YvzI/5byvy5hdV7LiZ9gZ6wVV1r8CZvGwh+kCCiv4IFAsH
-	 +x0pupjyiSHmEYGQuPB5d6FhHOVJFk/wrIE5GjEhISjyndg5Nt2c3y4inJkHQAWju8w==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id B1CD01F00A05;
-	Wed, 11 Nov 2026 10:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794392095;
-	bh=XZ4b+XzZVJKQkDZyWOAJQrEn1AJC2/ca7/9qI+oGbNk=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=gIJumyJ+Maj8VCW9xKoWHYrqA9/RZ8tjCI0OothbBPpo8/bN2Xmex0Ey6Dx4o2WPp
-	 e3Ybmf5szsnbFySvkJ9StL8RYgUKYRO+3RtHPg02LpS7DPfzwErfJ+xZqOYmvLSNiu
-	 Ai79eBaw7IfZWH4OD9NM9HSnv6w1DEdF8RkqZdu0CImTdcYwNczPMctsu4IQ4odBlB
-	 hcVplBFaX4uVpKBCiulnYx7/SpnxnC1KlTHzHeTEQuejtorTv1wxAd5a0MB4najddZ
-	 bfJ8Cb7kD+d6b+POsoZQi7tNKny6RneY2mrtbzR3y43D1x4tdk05og5rnMeN8QtLyS
-	 hCUodbkuKZ3CA==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 07C1A48F1A;
-	Wed, 11 Nov 2026 10:14:54 +0000 (UTC)
-From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
-Date: Wed, 11 Nov 2026 11:14:10 +0100
-Subject: [PATCH] clk: tegra: tegra124-emc: Skip timings whose parent rate
- cannot be set
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=QBOWFM3N
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
+	Reply-To:Content-ID:Content-Description;
+	bh=UGGOSnoQOa8uQR6vbajtQptujNdknjBUZcDCmSIDNdo=; t=1794395987; x=1795605587; 
+	b=QBOWFM3NmCqXcWpeEpiAe1sLa7w9smTt2ygsWJvoDwexClILCEuyimAjy2Dszrb3lsYu4Acc/Uu
+	2c6vYi4oIu+hgg+ymTO9QaAf7UP7ZP3OL3Tax6Zb8rzT9A7pywLwZCQnNXt8ysE66/Br8fzvZ1ZWA
+	EW3f7wb/10m3DojJt++RZ/cJIBx/4TDW8smgJurrgvL3p7fLP1eUX3PrmqPN5sOTKz/YStz3jaL4H
+	20DoIqZoybcHHvr0hpzBJjr71aTMyS5F4hLjaIEd1yoM5CspZlFMsTqAliqzPNQgcdKYx3ff/z2Hp
+	I8VsFee+B2mi0pf6N1osXzG9wsT9UQPsgmjQ==;
+Date: Wed, 11 Nov 2026 12:19:24 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ tomi.valkeinen@ideasonboard.com
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jessica Zhang
+ <jesszhan0024@gmail.com>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Paul Cercueil
+ <paul@crapouillou.net>, Paul Kocialkowski <paulk@sys-base.io>, Linus
+ Walleij <linusw@kernel.org>, Inki Dae <inki.dae@samsung.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
+ <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, Albert
+ Esteve <aesteve@redhat.com>, Anusha Srivatsa <asrivats@redhat.com>, Dmitry
+ Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Hui Pu
+ <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, asahi@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 17/19] drm/omap: dss: don't create a panel_bridge
+Message-ID: <20261111121924.0e54e7e8@kemnade.info>
+In-Reply-To: <20260916-drm-bridge-every-panel-v3-17-83afb4f1a707@bootlin.com>
+References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
+	<20260916-drm-bridge-every-panel-v3-17-83afb4f1a707@bootlin.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,151 +88,132 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261111-upstream-clk-emc-parent-v1-1-636eea572572@tsv-stahl-riesa.de>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMSw7CMAwA0atUXmMpKSq/qyAWqeOCgYbIThFS1
- bs3wPItZmYwVmGDUzOD8ltMXqnCbxqgW0hXRonV0Lp2573b45StKIcR6flAHglzUE4Ft52PLtJ
- w7OMBap2VB/n8zufL3zb1d6by3cGyrPLnGj17AAAA
-X-Change-ID: 20261107-upstream-clk-emc-parent-351d0dcf9bd8
-To: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Brian Masney <bmasney@redhat.com>, Thierry Reding <treding@nvidia.com>, 
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable+noautosel@kernel.org, 
- Patrick Fischer <admin@tsv-stahl-riesa.de>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794392093; l=5092;
- i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
- bh=6O+WzvkYoAaO5jXWXFBWqRwW5kYIxCEWKdPNp4Ndczk=;
- b=FTrv+GtupkxKHloaZku+A8CmQfPKs7Jw2RLUllNkiQ39lY2K/SZIafaFEiPVqwi2WGVxpNsVw
- HAh0WYWsz55CQiIDQaZpA4G58xqwqLe9lTrWmaTaUs/hp4U2nKHiw+g
-X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
- pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
-X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
- auth_id=1251
-X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
-Reply-To: admin@tsv-stahl-riesa.de
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+On Wed, 16 Sep 2026 15:45:41 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-Each EMC timing names a parent clock and the rate that parent has to run
-at. On Tegra114, PLLM is registered with TEGRA_PLL_FIXED, so its rate
-cannot be changed, but the Tegra114 device trees still contain timings
-on pll_m at rates the bootloader did not set up, e.g. 792 MHz on a
-Tegra Note 7 where the bootloader leaves PLLM at 408 MHz.
+> Now a panel_bridge is automatically created for every drm_panel and the
+> panel-bridge API is just a deprecated wrapper to access it.
+> 
+> Update and simplify the code by just getting a reference to the
+> already-existing bridge using of_drm_get_bridge_by_endpoint().
+> 
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-emc_set_timing() calls clk_set_rate() on the parent, which succeeds
-without changing anything, and then loads the 792 MHz timing while the
-EMC runs at 408 MHz. On the Tegra Note 7 that gives a refresh interval
-of about 15 us instead of 7.7 us (DDR3 allows 7.8 us), and the clock
-core then reports 408 MHz, so later requests for 408 MHz keep the
-792 MHz register values.
+This breaks the display on GTA04/OMAPDRM.
 
-Skip timings whose parent cannot be rounded to the requested rate when
-loading them, so that the highest reachable timing is used instead.
-On Tegra124 PLLM is not fixed, so its timings should all stay; this was
-not tested on Tegra124.
+Panel is panel-tpo-td028ttec1 attached via DPI, controlled
+via spi_gpio.
 
-Fixes: cf561283254d ("clk: tegra: set up proper EMC clock implementation for Tegra114")
-Cc: stable+noautosel@kernel.org # needs the Tegra114 EMC auto-calibration fixes
-Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
----
-Tested on a Tegra Note 7 (Tegra114, P1640) with Svyatoslav's tegratab
-device tree on top of v7.3: both 792 MHz timings on pll_m are skipped at
-boot ("pll_m cannot run at 792000000 Hz, skipping"), the EMC goes up to
-624 MHz on pll_c instead, and the timing registers match the table at
-each rate. Actmon requests for 792 MHz now end up at 624 MHz without
-errors; a memory test of 3 h 20 min with mostly such requests ran
-without errors, together with the EMC series below. Before, an actmon
-request for 792 MHz left the EMC at 408 MHz with the 792 MHz register
-values.
+I get
+[   12.050201] omapdrm omapdrm.0: [drm] No compatible format found
+[   12.050231] omapdrm omapdrm.0: [drm] Cannot find any crtc or sizes
 
-This came up together with a series for the Tegra114 EMC driver,
-"memory: tegra114-emc: Fix bus width and pad auto-calibration" [1],
-which I sent to the memory controller tree earlier today. This patch
-builds without it, but please do not let it land in a release without
-"memory: tegra114-emc: Stop clearing EMC_AUTO_CAL_CONFIG" from that
-series: this patch moves the EMC from 408 MHz with the wrong register
-values to a real 624 MHz on pll_c, and both kernel panics I saw on a
-change to 624 MHz were with the pad auto-calibration cleared. For the
-same reason it is not marked for stable and asks to be left out of
-AUTOSEL, despite the Fixes tag: I could not show that the wrong register
-values cause failures, while 624 MHz without calibration did.
+Workaround:
+rmmod omapdrm
+modprobe omapdrm
 
-[1] https://lore.kernel.org/r/20261111-upstream-emc-t114-v1-0-54d9e1bceb6a@tsv-stahl-riesa.de
+Regards,
+Andreas
 
-As Svyatoslav confirmed, PLLM does not have to be fixed on Tegra114, so
-the proper fix would be to make it scalable, as the downstream kernel
-does. Until then, this keeps the EMC from running with register values
-for another rate.
-
-Tool use (see Documentation/process/generated-content.rst): the patch,
-its changelog and this note were prepared with an LLM coding assistant
-(Claude Code). It traced the rate change through the EMC clock code,
-read the EMC registers on the device, wrote the code change and drafted
-the texts from my measurements and instructions. I reviewed the change
-and ran the tests on the device.
----
- drivers/clk/tegra/clk-tegra124-emc.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
-index 0fc74808fe39..2f4d39922b73 100644
---- a/drivers/clk/tegra/clk-tegra124-emc.c
-+++ b/drivers/clk/tegra/clk-tegra124-emc.c
-@@ -458,7 +458,7 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
- 	tegra->num_timings += child_count;
- 
- 	for_each_child_of_node_scoped(node, child) {
--		struct emc_timing *timing = timings_ptr + (i++);
-+		struct emc_timing *timing = timings_ptr + i;
- 
- 		err = load_one_timing_from_dt(tegra, timing, child);
- 		if (err) {
-@@ -466,11 +466,28 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
- 			return err;
- 		}
- 
-+		/*
-+		 * The register values of a timing are only valid at its rate.
-+		 * If the parent cannot provide the parent rate, for example
-+		 * because the PLL has a fixed rate, the EMC would run at a
-+		 * different rate with these values. Skip such a timing.
-+		 */
-+		if (clk_round_rate(timing->parent, timing->parent_rate) !=
-+		    timing->parent_rate) {
-+			pr_warn("timing %pOF: %s cannot run at %lu Hz, skipping\n",
-+				child, __clk_get_name(timing->parent),
-+				timing->parent_rate);
-+			clk_put(timing->parent);
-+			continue;
-+		}
-+
- 		timing->ram_code = ram_code;
-+		i++;
- 	}
- 
--	sort(timings_ptr, child_count, sizeof(struct emc_timing),
--	     cmp_timings, NULL);
-+	tegra->num_timings -= child_count - i;
-+
-+	sort(timings_ptr, i, sizeof(struct emc_timing), cmp_timings, NULL);
- 
- 	return 0;
- }
-
----
-base-commit: f4897f9ed38a327ce63658e025c7d2229a0d9368
-change-id: 20261107-upstream-clk-emc-parent-351d0dcf9bd8
-
-Best regards,
---  
-Patrick Fischer <admin@tsv-stahl-riesa.de>
-
+> ---
+>  drivers/gpu/drm/omapdrm/dss/omapdss.h |  1 -
+>  drivers/gpu/drm/omapdrm/dss/output.c  | 42 ++++-------------------------------
+>  2 files changed, 4 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/dss/omapdss.h b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+> index 4c22c09c93d5..e3e685c931f1 100644
+> --- a/drivers/gpu/drm/omapdrm/dss/omapdss.h
+> +++ b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+> @@ -204,7 +204,6 @@ struct omap_dss_device {
+>  	struct dss_device *dss;
+>  	struct drm_bridge *bridge;
+>  	struct drm_bridge *next_bridge;
+> -	struct drm_panel *panel;
+>  
+>  	struct list_head list;
+>  
+> diff --git a/drivers/gpu/drm/omapdrm/dss/output.c b/drivers/gpu/drm/omapdrm/dss/output.c
+> index 6e9bc605ee22..36d37deac802 100644
+> --- a/drivers/gpu/drm/omapdrm/dss/output.c
+> +++ b/drivers/gpu/drm/omapdrm/dss/output.c
+> @@ -12,7 +12,6 @@
+>  #include <linux/of_graph.h>
+>  
+>  #include <drm/drm_bridge.h>
+> -#include <drm/drm_panel.h>
+>  
+>  #include "dss.h"
+>  #include "omapdss.h"
+> @@ -20,40 +19,16 @@
+>  int omapdss_device_init_output(struct omap_dss_device *out,
+>  			       struct drm_bridge *local_bridge)
+>  {
+> -	struct device_node *remote_node;
+> +	struct drm_bridge *bridge;
+>  	int ret;
+>  
+> -	remote_node = of_graph_get_remote_node(out->dev->of_node,
+> -					       out->of_port, 0);
+> -	if (!remote_node) {
+> +	bridge = of_drm_get_bridge_by_endpoint(out->dev->of_node, out->of_port, 0);
+> +	if (IS_ERR(bridge)) {
+>  		dev_dbg(out->dev, "failed to find video sink\n");
+>  		return 0;
+>  	}
+>  
+> -	out->panel = of_drm_find_panel(remote_node);
+> -	if (IS_ERR(out->panel))
+> -		out->panel = NULL;
+> -
+> -	if (!out->panel)
+> -		out->bridge = of_drm_find_and_get_bridge(remote_node);
+> -
+> -	of_node_put(remote_node);
+> -
+> -	if (out->panel) {
+> -		struct drm_bridge *bridge;
+> -
+> -		bridge = drm_panel_bridge_add(out->panel);
+> -		drm_panel_put(out->panel);
+> -		if (IS_ERR(bridge)) {
+> -			dev_err(out->dev,
+> -				"unable to create panel bridge (%ld)\n",
+> -				PTR_ERR(bridge));
+> -			ret = PTR_ERR(bridge);
+> -			goto error;
+> -		}
+> -
+> -		out->bridge = drm_bridge_get(bridge);
+> -	}
+> +	out->bridge = bridge;
+>  
+>  	if (local_bridge) {
+>  		if (!out->bridge) {
+> @@ -65,11 +40,6 @@ int omapdss_device_init_output(struct omap_dss_device *out,
+>  		out->bridge = drm_bridge_get(local_bridge);
+>  	}
+>  
+> -	if (!out->bridge) {
+> -		ret = -EPROBE_DEFER;
+> -		goto error;
+> -	}
+> -
+>  	return 0;
+>  
+>  error:
+> @@ -79,10 +49,6 @@ int omapdss_device_init_output(struct omap_dss_device *out,
+>  
+>  void omapdss_device_cleanup_output(struct omap_dss_device *out)
+>  {
+> -	if (out->bridge && out->panel)
+> -		drm_panel_bridge_remove(out->next_bridge ?
+> -					out->next_bridge : out->bridge);
+> -
+>  	drm_bridge_put(out->next_bridge);
+>  	drm_bridge_put(out->bridge);
+>  }
+> 
 
