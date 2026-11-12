@@ -1,105 +1,117 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.159.49
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.194.50
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794469761;
-	b=PL7/BMNCzAAE/s+Cu1HweFnsJGrufXnOi1RiGEgIfG7KzaJb8Id6LpOIFmt0m24FtL9Q
-	 WzTR6ahzSDKQRbpHJe7BCH7CGwIgbB4EkKMTjAtMwcChSQh+XCeZ7hsd7bDweOFUMWEgX
-	 5xerirWZNZO23AUWPhymrS1nqvMsBse0huR3rY2ch+4ZfZ0G1PVU1PAz+9iq1quBzSUFs
-	 DgVwvAOwNn85zpDc8R+AnzddVaOQS1lbXJRYngMxDIdJkrq9DGDHGmDTOsdhVjA3KTb3n
-	 9AguBhuiFad8zGIm8f/EQpTvksnPHAx9Nlu1qGzk0g+xj/DPDZVe5mGM2flfyorTlBQ==
+	t=1794470716;
+	b=zfC4qpmCMBMUlQr58RQ6IgVjAvPG3UDEO6Ur0aaw3uw+EN0OGa3QmfPctjCTABKWvO0G
+	 IMbpMmgwvAEUKeNkIon8lR4vOmnQTXH/rhrR4GzII48tGIwf9ljbBkfO9r3mzqjzq7YnB
+	 L2NkF4R4Ie6Q9l3rFwqaNI831CQ334NSo9u9hypWg10wfV11B59oloUU+k+55E9x99uam
+	 IrfZ3zSUyRrh+Xr+pRQZpc770+XjscfltcQIYKo3tc6Vr/vs0ZX6KXcgz+qBlNe6SzzVX
+	 /l5BA67bjek8+xp5f2Iub1h+KDixC7UYxRHxDoS1CX9b/4UC9jQvXnf66tOkwuHaISw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794469761;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Date:Subject:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-ClientProxiedBy:MIME-Version:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794470716;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+	 Content-Type:X-NV-OnPremToCloud:X-EOPAttributedMessage:
 	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
 	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
 	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
 	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
 	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
 	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
 	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
 	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=mKYYQ27MTtrrNZha95pQu8ZURoZIIyu3o1V9iakQjNg=;
-	b=XjeEwzN/u6QTvCLLOFVmjXzxjSDPMpwkqO6dSO71HSXHwnDmM8Phau3LO6KJ2oYloHnf
-	 H0gkdU9+9H3e38JCqoIlb+uW7KD8fEdRgYloh7k0sod1XGAsetYN0vMa0TShMQz1T6jHE
-	 nXado2TFyiHHKN3qgml0Y2NDEMM8qzejwv5UiWJcdwUd0a/+rFeX9zp4ZGEXcYB9zGAvl
-	 KLjEKREBjU+E7G8drCxXIlunhQ7lhVAfUYypPHL9qqjDOli7arPdeP9SM8FtqZ83q2zwb
-	 y/eo8WghooQpUeXHDBqvvZAHJT08UXz8jnYUUKzwxJewii4jjXRjG54SVPDqnLPU7sg==
+	bh=3DP0u6heTUKIvk6c+NeqBXteoicj2MVAZTHcqEdezDA=;
+	b=zqNXuezdl9LAo8vDaAoyAD9QoBS56g7UHVmDyJ9EfD1f3QEOk7ODv0kdKamahSJRbLMH
+	 DLAOJNf7x7whr9RjLd0ohbpkzfe3ufqW7zMySZUbb8zQat8O54f7pQ7WbPwy7lDv9TeTq
+	 L3/SzqLk27UDJWrr+ciakxjC2vLVHGjWNEvpavfq3tx8JYt+9YIPtiMAAmAj2C57vb98a
+	 RI78Xz8v0Nm5TtYFLE8vq1raRy90DSE3+VLGac6Cb00vW83BkKFlwBKelFEmajKlQWdQu
+	 PWlCiofW9tZpxMgeXaD/wDakP7WlOoE7aimgYeHAPRd1ruyHBfD1Ilj8ug6w7WNauYQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=CC8sap8B;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.159.49
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013049.outbound.protection.outlook.com [40.107.159.49])
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=UEwZW5Cp;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.194.50
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011050.outbound.protection.outlook.com [40.93.194.50])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C90660A5BE0;
-	Thu, 12 Nov 2026 07:49:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9C90660A5BE0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610BC606A32A;
+	Thu, 12 Nov 2026 08:05:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 610BC606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=CC8sap8B
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=UEwZW5Cp
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cIaeft3HjHeut8KnEXR7CvT7aHkgKBl58GpMuZEpKAySWFdvwPxhsAB3Tse3yPTZ1zGT0cSxK97b9fwfJ1BV30CCzxie++gZ26wqFJ7640WGceWTEXrpQAtT8BhfTj97tYv6u3zTBK6qcFO23vVBEfp3vIACjDRGXhpTw3LAC7JMza/kucKfo8tzMVBdbBBukojGpfBNo/KxXKDdpKMguMIrO/7BtiZ7zVnkPDiu0ZEW0byUS6ORYA7oMQB6GlG+1Au5Rosv0sjbQuV6+ZlyO8luJ4ttjY+xEsTs46gbHspSRYiitmyeLhiMi2L5hkPmcUOTDbbPSp/hygBRVP624Q==
+ b=QtuD5ZDzq6pU4YB1UeIU+26TVsf2AhWo1+ZziHMUv++Dgw4ZnIrCoN2A7HFJ3FCRcPVjasjyCUJYvtOVkG3sbM9hvo3hcuduEqO8/wcj8pSpJbgw0PFStjqeDpPu5raQiWfuXdJMJHwy5YrZHxIurxi1G0Xlvv4BQfER/3Rf4Himi7l6Kle4xDclG1iaJsdZgn4jyynqjA7347LI8/mey4IWzBP5MeBJSmvkh3fuoy/8ltL2IjH7eZwMvrlqUCFgytztAN053g16VvVns2O+viDklM3kgAvOc7gLL6JTxpA4fCZczBqij/NgD7WV/zkkL5VrvDYdJx+j1WtPGf1T8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mKYYQ27MTtrrNZha95pQu8ZURoZIIyu3o1V9iakQjNg=;
- b=VxHHMD+tehMHr1RsY4fvnu6RoLZ+8dBYblzAFEtrXwoTCKx2kET+RhCRl5k06yudrl5EY3qDoOne0j3KzwknRF3nKiJYy878Of4Sm1NnRNuBEogGlUbHz+lXnJVEfWd5CcuMRQuCMiUcT2zhYq3LeJRERdLU4Enovf3EoZ1je8ZkX295w6Doq3e9q2rQykzlG3WLZsQ0b6o27etSGcnnm8hJU9tPg02xasHToqO7P2mY8970v4yZMeQfAE3khtQzTi5nKmoioS7dr4gVWqU938IiOizVW5qMM5ArG7c0HMXL1+f2xxzFot/ofXIWlEov+PrVMndN0nfbBoNpmuxSWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
+ bh=3DP0u6heTUKIvk6c+NeqBXteoicj2MVAZTHcqEdezDA=;
+ b=m436iRqqB/Vwf+uaS2CCdezyPNfHeOKl3+z66QxUXRr3E29gC50i0jFU/7x27WgMUm9XQz+y6TXS3uooYLFnHsVeUTM4JbJT4igR2eOHrTgAKwJ0AAYNoi2r1ll8aypkg7NaiVfgO1EusAzUgSNoK46NcV491Yzdo36oQwEeJ54PRAaHL26jD0TF1SidaqLrH/nSQNTHUb1+epqXXd7EVQcM2/rSUP7KMexQGHfpuLJSC5751Jt0NIikBmYxekfRHCOgF+tzWe862SdgFuRXN/tTSix1iZfq73DW0N6alKWW99QfqF4poAFbzs6JpPBvAN71ihshvp6S/YFYDyJhQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mKYYQ27MTtrrNZha95pQu8ZURoZIIyu3o1V9iakQjNg=;
- b=CC8sap8BLi2GG8zIkAuYtmk5yg5cqWhfYixe4qKLpKaucMSPN0jjFM+1wzRXKB7S3EXB0y7iA1A+6fseR6JM4SrLkcHc1Ab36dbSNVNdOcIxmGDUyRO1RKUuPyVKn1q3piCSxEB10Dys3V+a91h0rVXctdzdt+ZDQ/MYSrR2/r2tSuOYn47GvxzHVzk47rZOxvpSdJ9kmWY9HTPu219nA6XKMNHf30JN+BSsbtYFL3zZEyR2P8pcmzykUwmP8fRReL5xvqAhT7l9yY5wHxysmf9wDuY3kJNEgaxClNBln7hHA/FitfuhN7f8EdIcjw7z2GKSE050XS9XxjOocFWjdQ==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
- by DB9PR04MB9645.eurprd04.prod.outlook.com (2603:10a6:10:309::13) with
+ bh=3DP0u6heTUKIvk6c+NeqBXteoicj2MVAZTHcqEdezDA=;
+ b=UEwZW5CpGWZFKGW1DgywIISFyi5gugiQnxYbanAkyKZoEAQaibTVaeRMyiM8dHJUOOxLlV5pUcAPjbBik8wJp4o5INLGJhapOzsozgB+7sPVmte25kYvBeSBqoojzOB2tjnzCDx0lh0OQXr4gRv0L3xwEHxzC/xGLZrHP/V5uj7CZq4xfV2VC7mx3CmGG5x7dJ1+qXGKedViwM/p+4OLfFPnWmzuNXyzW/LPB0LxXcaxc0wjwsqf2gxPkCTNlKDB+0ZsUTnR5j4TYDHwiF3UvdBd3W8UYtetHlN+Hz1fHK6k6JQqKWrSvH63EbT5Hqj1dFLqCpFzAWeSjv4IYFts3g==
+Received: from CH2PR03CA0005.namprd03.prod.outlook.com (2603:10b6:610:59::15)
+ by CY5PR12MB6382.namprd12.prod.outlook.com (2603:10b6:930:3e::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.10; Thu, 12 Nov
- 2026 07:49:17 +0000
-Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
- ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
- ([fe80::ac38:1699:6f18:c5d9%5]) with mapi id 15.21.0615.008; Thu, 12 Nov 2026
- 07:49:17 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Date: Thu, 12 Nov 2026 15:53:12 +0800
-Subject: [PATCH v6 9/9] arm64: dts: imx95: convert eDMA to per-channel
- child nodes
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261112-edma-iommu-v3-v6-9-b038edb8ce6f@nxp.com>
-References: <20261112-edma-iommu-v3-v6-0-b038edb8ce6f@nxp.com>
-In-Reply-To: <20261112-edma-iommu-v3-v6-0-b038edb8ce6f@nxp.com>
-To: Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>, 
- "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Laxman Dewangan <ldewangan@nvidia.com>, 
- Jon Hunter <jonathanh@nvidia.com>, 
- Thierry Reding <thierry.reding@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: Frank Li <Frank.Li@kernel.org>, 
- Larisa IIeana Grigore <larisa.grigore@nxp.com>, imx@lists.linux.dev, 
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
- iommu@lists.linux.dev, linux-tegra@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.16-dev-7bc12
-X-ClientProxiedBy: SI1PR02CA0001.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::15) To AM8PR04MB7874.eurprd04.prod.outlook.com
- (2603:10a6:20b:24d::9)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.9; Thu, 12 Nov
+ 2026 08:05:08 +0000
+Received: from BN2PEPF0000A7FE.namprd02.prod.outlook.com
+ (2603:10b6:610:59:cafe::27) by CH2PR03CA0005.outlook.office365.com
+ (2603:10b6:610:59::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.9 via Frontend Transport; Thu, 12
+ Nov 2026 08:05:08 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.160) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN2PEPF0000A7FE.mail.protection.outlook.com (10.167.245.165) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.615.4 via Frontend Transport; Thu, 12 Nov 2026 08:05:07 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Thu, 12 Nov
+ 2026 00:04:52 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Thu, 12 Nov
+ 2026 00:04:51 -0800
+Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.56 via Frontend
+ Transport; Thu, 12 Nov 2026 00:04:44 -0800
+From: Sumit Gupta <sumitg@nvidia.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <zhanjie9@hisilicon.com>,
+	<zhenglifeng1@huawei.com>, <christian.loehle@arm.com>,
+	<pierre.gondois@arm.com>, <ionela.voinescu@arm.com>,
+	<mario.limonciello@amd.com>, <maciej.wieczor-retman@intel.com>,
+	<pawel.chmielewski@intel.com>, <lenb@kernel.org>, <corbet@lwn.net>,
+	<skhan@linuxfoundation.org>, <rdunlap@infradead.org>,
+	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<acpica-devel@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+CC: <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+	<ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <mochs@nvidia.com>,
+	<bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [PATCH v6 RESEND] cpufreq: CPPC: Add autonomous mode boot parameter support
+Date: Thu, 12 Nov 2026 13:34:42 +0530
+Message-ID: <20261112080442.4007723-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -109,893 +121,301 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|DB9PR04MB9645:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f4ce156-d3ae-4d41-4a5a-08df40917426
+X-MS-TrafficTypeDiagnostic: BN2PEPF0000A7FE:EE_|CY5PR12MB6382:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e1000ee-8ca9-4347-b152-08df4093aaca
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|19092799006|23010399003|366016|921020|10067099003|11063799006|56012099006|261022105027099003|261028144727099003|261026140227099003|261021123027099003|261021121427099003|261102123227099003|261009223027099003|22082099003|18002099003;
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700016|376014|7416014|23010399003|18002099003|6133799003|261009223027099003|3023799007|13003099007|921020|56012099006|11063799006|261028144727099003|261021121427099003|261102123227099003|261026140227099003|261026121527099003|261022113327099003|261022105027099003|261022075727099003|10067099003;
 X-Microsoft-Antispam-Message-Info:
-	ZYLibfQhfdCM+iFHd+bweNWToIpPdR/wYCYErqi0EBbUT2VcDofHLVF86WouJT2DdiRyApbJa29mpPrrDwoED4hTJEEy+foAGgL6OtRGKTD38r8QIZEc7pTfiFH3fdKv354l9Vjf5IPMofYIORQOoMRNKZhLWPTCDt/lK3Fw2DHL8tIADV5xdHm1TBtnCWCjVmVdrJiiZPz8Ng0lCUtV2qro5Ze9QqEfMcJfNp7E9AWCqw3rxMxOm+h9D6uJI5P9FJLMHzk6qzfyJeDoR7eZOR2nODFd9lS8EsA2V2n64++QMkN07Dn/msfAG+yG5s4XjKF3Dj81JDlVso2O1dbL7UGkxmDNmnKRBRpjQvUkVpQxwCduL06udNA6tfyPH/sMfmzNiMSFlX41jVa9H4Cys7KJKK/wlhOvNJsQpPl1DLc8VMR/EpMdTfifyxwpLY4N6JyEjS6IfliChE6fvnSdKdXlS7Y3YwhHrFK6bux1KBbWgpJhvIVmEGksJOQI5OHxMVo11zNniIGOuIaHHP25KHXbM03J55DuDGLXm9RsEvc5lzw5uO9Y+Ib2JL60qZxY52EwnuDNN4meBXImgVJaA7su73szJox7AO1Drp3noDRLGtwGhokXi9hYT2kghRGCHBfQPS5ocHHRuqpX4TNSuUEbnZci/sVCftyeSi8EA23AruF8zAagyFRORHN1bYrXFtc6lv1zFN+SkhJPscCLEg==
+	Hhia6MmIOGDwQv9uKynqKv+RC0QBcceO9b017lw58lRbwmB0CbZEt3T5D2XDA1NHOcVJ2XjnoyCp81u1d4VG5oWwlo8Y2BOczxWvSCnamyGb6ohU/hPbF/R/5iEfmuJCwyj5oZpSYkiBzJMNMLvXecyLjsivCf9wCxnnLI7R0akhpSzoznyQj909jF4V2OvpDzrDBiRjNx3vHVC5VCQK5T5eHFvJGsghvaaWparlnxhWlmvAoxzaZf7pMBxBuaMoipmOBcnU2s3vtX4lRgqddJd4+8+ZTAyv7vDLAg6sYWSco6wCqTdOJr9RIKlXSyaW9BtyrlC7Ge9xw6bm7vIWXaz6UMxHvRDxhwvNYb2wtxQTL+HJaJcEBWy/uCBJx3+ah3NBhyvQzTiA+xuVrQ8eWoqqH5UUUu2TLbzN8DU6nIsUGre3XBn8y+T/2Imnt2WWjmq2bh0jZ4IoA9hdW3ziu+8F+9wZPExhE87qPVkcGkXviOV0+QVfs/tkAjezBKM4NxPuI1yPxF1UDZXJsNTNFs27WoxnyOXx2UMKjqy4an/b5O55NEt44KWET22KENojCvZKgu/EQozMjtn3n7RzAbTaAhxJVUNOrOfblHF6VAOmbTTVfexJ8P+xGLzFj28/4ym0TYQuVj0Lbr4vqdq+tpr7cqvfQwsY2oovgJRMMdTOgVi/R9QOKx1II30kct60k9+UTD8lpOUZ4etHm/cMiNR+DKu941VhKchWKF+Y+MF3pvExO1mgkDqb5uj5PK3O
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(19092799006)(23010399003)(366016)(921020)(10067099003)(11063799006)(56012099006)(261022105027099003)(261028144727099003)(261026140227099003)(261021123027099003)(261021121427099003)(261102123227099003)(261009223027099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700016)(376014)(7416014)(23010399003)(18002099003)(6133799003)(261009223027099003)(3023799007)(13003099007)(921020)(56012099006)(11063799006)(261028144727099003)(261021121427099003)(261102123227099003)(261026140227099003)(261026121527099003)(261022113327099003)(261022105027099003)(261022075727099003)(10067099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OTI4QUhMTzExM1ZJMEE4ajZVUnRlV0l6bVJYYjdPQ3ZJREdBUkJuU3lHK214?=
- =?utf-8?B?bjlpTjZuaXYzVUxzRWEvcGJsVjcxYWVrKzZVcVpycCt5UlFuVTZORXd6dmU4?=
- =?utf-8?B?UzU5MTFFcW5QZnd2VXhZd2tCNUU5bEJ3MXhVdjJrUjhCaEU3Yy9LdkIxSWFa?=
- =?utf-8?B?dXR3VURVMk5EZDlHOFh6V2pGS0JBazNpcmNTTVArQ3lSTzRWWGQ2MlVxUjNK?=
- =?utf-8?B?bEw2TDBWWlY1aU5pSWVXdkJBcEwzSmdZNXNHYS9BV3JjWitMZGR0N3kvbW14?=
- =?utf-8?B?UllZVUthdnU3YnJRQk9sTzJ0YnQxbjRIemxkR3VZalkyU0pwc09Dc2kvUXAw?=
- =?utf-8?B?YnRFaGI5NFNOVGk1b091d3FVZ0M1N0JZU2JGL3UwUG5jY1hvVzBvaysyTWFz?=
- =?utf-8?B?a2Y0RGpRWlNsV1dkenAyczlyT09tdzhnY2M5QTJkaVI1a0h3NTNQVDh5WjNC?=
- =?utf-8?B?a1ZsaG0vM3hEeDNGM0pyR2pNU3oyOXZOYnladkF4VER6SjJPZHExUHdxWlJM?=
- =?utf-8?B?elRDYmsvRGJXZkt4ZkwzenlLSGYyamF6WnJMaDVLbWd2OERjN3ZuR2t2eVpz?=
- =?utf-8?B?b3MzQXgwWWUzMC8rTmJNWmxNWW9hTWJVMFYzQktjSGNRbTJqeHJqM2xnK0Fv?=
- =?utf-8?B?YkRBc0MrT3UwSXhRaStEZ2xiM3RJbzZUcDJmTEY1U0VTR3MxOVJsT1BKbVJX?=
- =?utf-8?B?dEJYeG5DRlNaci9UQ2RHeER1Ulh5WkpmUnVabkNSMU0zN1AwZG04ekRWRW5T?=
- =?utf-8?B?YUMvZkdCVUZsdnQ0WVVpNE1JUTJONnVHSmFlV3d5N1hvOXZrdTVjaGZBS0Rv?=
- =?utf-8?B?eUlxNUFRSkV5Tm5BWkZCUjM0cGZ6OXZoZ0wzdzFsNHZoa3FJQ1dwS092UkVj?=
- =?utf-8?B?K3NiSmJkQks4L0plS2JpRmU2a3VZRlBTS3A3SlhyUXhSL1hudzhZUXhuaE91?=
- =?utf-8?B?Z0tEOGtlS2NBNzVaSmdtVmh4bVZ0cjVCWWR5ZXd5MXg5K25OMGVDZHdmbWNl?=
- =?utf-8?B?WXVwRWNXc05EejVqSHJYVHpCUGUxemtmUEFVNVJVRHAxQUNpOUd3QldQRjcy?=
- =?utf-8?B?MDlQN21JR3BtbTdtcUdncll6N0NaTUt5ZEl2c3A2a2ZZVXdHM3ZDSWxVR1Ax?=
- =?utf-8?B?Um00Z2prMTB3WkM2OG04czZkVHhCSUhQaWhmc2dxSWRqWWJLSWNrU0FQK0Q0?=
- =?utf-8?B?TzlPNEFLR0J6UVE4ODVrYm1xQnZISDZmMEluUFFRRWQydlpNOEI0T3VqVE05?=
- =?utf-8?B?U29MWHlEcnJVVFdGbUlrWXpUVWJ5c0ZXN2l6aENhNEJFQmYzVGlGa2NQbXg4?=
- =?utf-8?B?aEhtczA1ZGh0TklUNEt1SHdPTmcxVXpoc29UWG5IK3ExZFd6YWVxUnZlSi91?=
- =?utf-8?B?ZDhxRkgxeUtHNElSQysxN0x3NnBzbDNMS05VR0haayt2MmR3VXpabVVJMGVv?=
- =?utf-8?B?THA1TXE1SWgzTkw4cVdIUzhkQWpaZXhNSEJUSTZ1Q0loNlNGaDg0RVMrMTVa?=
- =?utf-8?B?Nk9zMW1yMm5RRzFYYVBISjM5SVdKaFMvQjdWVnZHZmZEUHJnTVBQSEo5NjJh?=
- =?utf-8?B?dStBc3ZPZkRYb3NHaTN0WlNHNFdmVkZIN2RQMXQxalFLbjhtMnRoN3AxZHZZ?=
- =?utf-8?B?UXlISUwvR09rbDQvRGQrOVJwZDlkNlB0enAwMFV0ZkMvNXJBdUJmT3A4SGc1?=
- =?utf-8?B?N2JueWZiTG1MZldaaW9CbmVGcDRJTjlrTUQrM3BndWFyc2xTV3Era0ZtMWF2?=
- =?utf-8?B?VHF0bVlvNk1hZVlwb2lRN2I0TllUT0Mrek1mcWtTVzQ5bHZNeFVvSXVLS3Jo?=
- =?utf-8?B?NEEydU9FVUNuQW1pRkZUb0wreFRlVzZ0TlFERE43OHZqTGxyUnRlWldHY3FZ?=
- =?utf-8?B?c24xbGFOOTNXOW5PaGc1eTZEaER4N1l2T2xNQmprK2YxU0FsM0VxUEFlYVRp?=
- =?utf-8?B?NUFUMmFTOW5tUlVlNUpWQjRHanhnNkdYWEt3N216RkdNdThPa1B0QnNzbjhU?=
- =?utf-8?B?ajV3Q3JzbDFsZGo3WGU3V3kwbGJlUlRnczJaQ0w2WUYwRFZ4Y1lybWUrSnFx?=
- =?utf-8?B?ckV2SVA1T2ZjS1duU2RnWmlPSjMrTzdwVmE4SWlWaEppbkt6dy9acE50eWJ6?=
- =?utf-8?B?M2V4VnliOGY1RXJvUGdRak10QXBKaGNaQmlXWlJvUVU4bHBDbi9xUjBDOXJw?=
- =?utf-8?B?TERoYVVPZngzbXQvWDMwdWxWSVF5c0pjSS9yalNQV2x5MDlvSHRRSkZjYzFN?=
- =?utf-8?B?SUlod1hiOGNGazVMT1FncURrTm4vbzd0ZFFhNTB3S0NFNnp5WEZCV1JWelMx?=
- =?utf-8?B?dmpRMUJuU1Z3WFkzNjUzVS92dFRjSXpXVE1uKzl6MmVhU0hPcHFoY0hrbnNX?=
- =?utf-8?Q?aSwDz+tBQFt9eWkg8OpV3ux9HbxXGQAfgj00i?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f4ce156-d3ae-4d41-4a5a-08df40917426
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2026 07:49:17.5930
+	QHKEBCl6NDGba7Dt69aC57kyGm6SlfhXVFrrSi115KQnxzA3JlIrC50ANv4kQ0+kqlyEj1Q/iuoRzvgQdzn5Kba+EpmXT6u+40ye8Mf9y2oQrE83zw9mV0waDndnvJ7M7R1bxyInym6TccDhIf4QdiwtL+5WWVmj0TRnV1IHxzFxqbW3sjyM1QYdSk6g79pQDMszaUc2ERntqBBSnIOyWsdQL2ShZJxWHjeNUJ8pa9fmFzD9qPPHuYKN1i1Qq2IUtvxtLZPSAUJ7DVE7oL4Aasjd54YTRIOrkP2KQIsl1oFiVlbdmjcyjAdUAVxWXTHaj4kdcEyAsxMj9ziUhm2d9XKxkEUf019K7TP+FqjeZjIbGNEUGVmCIdruGvLscOXQs/dOa9/qiUkrhd8zaDvDhMa9lmDH4gBwUaefJOXjE9acF2wifgWRQXk7pROrQsad
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2026 08:05:07.7906
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o8yzGAkcv6nAwfWb/jYZiNWHp4h9wJ9Pf3B/B0odSvcn82VcHFAABTz73wH7GKHoWiN0eJkKTQH9kICDRp+RTfdCzb25+EEZfeRfWFKKZ8VmIAi3ArR3lNcbpYkN0nN2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9645
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e1000ee-8ca9-4347-b152-08df4093aaca
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF0000A7FE.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6382
 
-From: Peng Fan <peng.fan@nxp.com>
+Configuring autonomous selection and Energy Performance Preference (EPP)
+at every boot currently requires per-policy sysfs writes.
 
-Convert edma2 and edma3 from flat interrupt arrays at the parent node
-to per-channel child nodes (dma-channel@<addr>). Each child carries
-its own reg (real per-channel MMIO region) and interrupts property.
+Add the 'cppc_cpufreq.auto_sel_mode' boot parameter to enable autonomous
+selection during policy initialization and optionally set EPP. In
+autonomous mode, the platform selects the performance level within the
+MIN and MAX limits, which the driver sets from the policy limits. The EPP
+hint guides that selection.
 
-edma2 (64 channels at 0x42000000):
-  - Channel N at 0x42010000 + N * 0x8000 (size 0x8000)
-  - Paired interrupts: SPI 128-159, two channels per SPI
+The parameter accepts:
+- performance: enable autonomous selection and set EPP to 0x00
+- balance_performance: enable it and set EPP to 0x80
+- balance_power: enable it and set EPP to 0xc0
+- power: enable it and set EPP to 0xff
+- default_epp: enable it and preserve firmware EPP
+- disabled: preserve the firmware configuration (default)
 
-edma3 (64 channels at 0x42210000):
-  - Channel N at 0x42220000 + N * 0x8000 (size 0x8000)
-  - Paired interrupts: SPI 256-287, two channels per SPI
+Warn about unrecognized values and ignore them.
 
-edma1 (imx93-edma3, 31 channels with 1:1 non-paired interrupts) is
-left unchanged as it uses a different interrupt scheme.
+Skip policies without autonomous-selection support. The driver enables
+autonomous selection before writing EPP, as the platform may ignore EPP
+while autonomous selection is disabled.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Record successful writes so the existing online and resume paths reapply
+the requested values. The offline and suspend paths restore the saved
+firmware values, including during driver unload.
+
+Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 ---
- arch/arm64/boot/dts/freescale/imx95.dtsi | 774 ++++++++++++++++++++++++++-----
- 1 file changed, 646 insertions(+), 128 deletions(-)
+Resending v6 with base-commit info and Pierre added to Cc.
+No changes to the code or commit message.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
-index d20c2498b9aa..64570703ce6c 100644
---- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-@@ -635,148 +635,666 @@ edma2: dma-controller@42000000 {
- 				compatible = "fsl,imx95-edma5";
- 				reg = <0x42000000 0x210000>;
- 				#dma-cells = <3>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges;
- 				dma-channels = <64>;
- 				/* channels 0 and 1 reserved for V2X fast hash */
- 				dma-channel-mask = <0x3>;
--				interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>;
- 				clock-names = "dma";
-+
-+				dma-channel@42010000 {
-+					reg = <0x42010000 0x8000>;
-+					interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42018000 {
-+					reg = <0x42018000 0x8000>;
-+					interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42020000 {
-+					reg = <0x42020000 0x8000>;
-+					interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42028000 {
-+					reg = <0x42028000 0x8000>;
-+					interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42030000 {
-+					reg = <0x42030000 0x8000>;
-+					interrupts = <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42038000 {
-+					reg = <0x42038000 0x8000>;
-+					interrupts = <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42040000 {
-+					reg = <0x42040000 0x8000>;
-+					interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42048000 {
-+					reg = <0x42048000 0x8000>;
-+					interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42050000 {
-+					reg = <0x42050000 0x8000>;
-+					interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42058000 {
-+					reg = <0x42058000 0x8000>;
-+					interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42060000 {
-+					reg = <0x42060000 0x8000>;
-+					interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42068000 {
-+					reg = <0x42068000 0x8000>;
-+					interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42070000 {
-+					reg = <0x42070000 0x8000>;
-+					interrupts = <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42078000 {
-+					reg = <0x42078000 0x8000>;
-+					interrupts = <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42080000 {
-+					reg = <0x42080000 0x8000>;
-+					interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42088000 {
-+					reg = <0x42088000 0x8000>;
-+					interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42090000 {
-+					reg = <0x42090000 0x8000>;
-+					interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42098000 {
-+					reg = <0x42098000 0x8000>;
-+					interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420a0000 {
-+					reg = <0x420a0000 0x8000>;
-+					interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420a8000 {
-+					reg = <0x420a8000 0x8000>;
-+					interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420b0000 {
-+					reg = <0x420b0000 0x8000>;
-+					interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420b8000 {
-+					reg = <0x420b8000 0x8000>;
-+					interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420c0000 {
-+					reg = <0x420c0000 0x8000>;
-+					interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420c8000 {
-+					reg = <0x420c8000 0x8000>;
-+					interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420d0000 {
-+					reg = <0x420d0000 0x8000>;
-+					interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420d8000 {
-+					reg = <0x420d8000 0x8000>;
-+					interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420e0000 {
-+					reg = <0x420e0000 0x8000>;
-+					interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420e8000 {
-+					reg = <0x420e8000 0x8000>;
-+					interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420f0000 {
-+					reg = <0x420f0000 0x8000>;
-+					interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@420f8000 {
-+					reg = <0x420f8000 0x8000>;
-+					interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42100000 {
-+					reg = <0x42100000 0x8000>;
-+					interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42108000 {
-+					reg = <0x42108000 0x8000>;
-+					interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42110000 {
-+					reg = <0x42110000 0x8000>;
-+					interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42118000 {
-+					reg = <0x42118000 0x8000>;
-+					interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42120000 {
-+					reg = <0x42120000 0x8000>;
-+					interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42128000 {
-+					reg = <0x42128000 0x8000>;
-+					interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42130000 {
-+					reg = <0x42130000 0x8000>;
-+					interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42138000 {
-+					reg = <0x42138000 0x8000>;
-+					interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42140000 {
-+					reg = <0x42140000 0x8000>;
-+					interrupts = <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42148000 {
-+					reg = <0x42148000 0x8000>;
-+					interrupts = <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42150000 {
-+					reg = <0x42150000 0x8000>;
-+					interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42158000 {
-+					reg = <0x42158000 0x8000>;
-+					interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42160000 {
-+					reg = <0x42160000 0x8000>;
-+					interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42168000 {
-+					reg = <0x42168000 0x8000>;
-+					interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42170000 {
-+					reg = <0x42170000 0x8000>;
-+					interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42178000 {
-+					reg = <0x42178000 0x8000>;
-+					interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42180000 {
-+					reg = <0x42180000 0x8000>;
-+					interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42188000 {
-+					reg = <0x42188000 0x8000>;
-+					interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42190000 {
-+					reg = <0x42190000 0x8000>;
-+					interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42198000 {
-+					reg = <0x42198000 0x8000>;
-+					interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421a0000 {
-+					reg = <0x421a0000 0x8000>;
-+					interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421a8000 {
-+					reg = <0x421a8000 0x8000>;
-+					interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421b0000 {
-+					reg = <0x421b0000 0x8000>;
-+					interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421b8000 {
-+					reg = <0x421b8000 0x8000>;
-+					interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421c0000 {
-+					reg = <0x421c0000 0x8000>;
-+					interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421c8000 {
-+					reg = <0x421c8000 0x8000>;
-+					interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421d0000 {
-+					reg = <0x421d0000 0x8000>;
-+					interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421d8000 {
-+					reg = <0x421d8000 0x8000>;
-+					interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421e0000 {
-+					reg = <0x421e0000 0x8000>;
-+					interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421e8000 {
-+					reg = <0x421e8000 0x8000>;
-+					interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421f0000 {
-+					reg = <0x421f0000 0x8000>;
-+					interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@421f8000 {
-+					reg = <0x421f8000 0x8000>;
-+					interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42200000 {
-+					reg = <0x42200000 0x8000>;
-+					interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42208000 {
-+					reg = <0x42208000 0x8000>;
-+					interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-+				};
- 			};
- 
- 			edma3: dma-controller@42210000 {
- 				compatible = "fsl,imx95-edma5";
- 				reg = <0x42210000 0x210000>;
- 				#dma-cells = <3>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges;
- 				dma-channels = <64>;
--				interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&scmi_clk IMX95_CLK_BUSWAKEUP>;
- 				clock-names = "dma";
-+
-+				dma-channel@42220000 {
-+					reg = <0x42220000 0x8000>;
-+					interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42228000 {
-+					reg = <0x42228000 0x8000>;
-+					interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42230000 {
-+					reg = <0x42230000 0x8000>;
-+					interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42238000 {
-+					reg = <0x42238000 0x8000>;
-+					interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42240000 {
-+					reg = <0x42240000 0x8000>;
-+					interrupts = <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42248000 {
-+					reg = <0x42248000 0x8000>;
-+					interrupts = <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42250000 {
-+					reg = <0x42250000 0x8000>;
-+					interrupts = <GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42258000 {
-+					reg = <0x42258000 0x8000>;
-+					interrupts = <GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42260000 {
-+					reg = <0x42260000 0x8000>;
-+					interrupts = <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42268000 {
-+					reg = <0x42268000 0x8000>;
-+					interrupts = <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42270000 {
-+					reg = <0x42270000 0x8000>;
-+					interrupts = <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42278000 {
-+					reg = <0x42278000 0x8000>;
-+					interrupts = <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42280000 {
-+					reg = <0x42280000 0x8000>;
-+					interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42288000 {
-+					reg = <0x42288000 0x8000>;
-+					interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42290000 {
-+					reg = <0x42290000 0x8000>;
-+					interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42298000 {
-+					reg = <0x42298000 0x8000>;
-+					interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422a0000 {
-+					reg = <0x422a0000 0x8000>;
-+					interrupts = <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422a8000 {
-+					reg = <0x422a8000 0x8000>;
-+					interrupts = <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422b0000 {
-+					reg = <0x422b0000 0x8000>;
-+					interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422b8000 {
-+					reg = <0x422b8000 0x8000>;
-+					interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422c0000 {
-+					reg = <0x422c0000 0x8000>;
-+					interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422c8000 {
-+					reg = <0x422c8000 0x8000>;
-+					interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422d0000 {
-+					reg = <0x422d0000 0x8000>;
-+					interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422d8000 {
-+					reg = <0x422d8000 0x8000>;
-+					interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422e0000 {
-+					reg = <0x422e0000 0x8000>;
-+					interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422e8000 {
-+					reg = <0x422e8000 0x8000>;
-+					interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422f0000 {
-+					reg = <0x422f0000 0x8000>;
-+					interrupts = <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@422f8000 {
-+					reg = <0x422f8000 0x8000>;
-+					interrupts = <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42300000 {
-+					reg = <0x42300000 0x8000>;
-+					interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42308000 {
-+					reg = <0x42308000 0x8000>;
-+					interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42310000 {
-+					reg = <0x42310000 0x8000>;
-+					interrupts = <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42318000 {
-+					reg = <0x42318000 0x8000>;
-+					interrupts = <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42320000 {
-+					reg = <0x42320000 0x8000>;
-+					interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42328000 {
-+					reg = <0x42328000 0x8000>;
-+					interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42330000 {
-+					reg = <0x42330000 0x8000>;
-+					interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42338000 {
-+					reg = <0x42338000 0x8000>;
-+					interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42340000 {
-+					reg = <0x42340000 0x8000>;
-+					interrupts = <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42348000 {
-+					reg = <0x42348000 0x8000>;
-+					interrupts = <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42350000 {
-+					reg = <0x42350000 0x8000>;
-+					interrupts = <GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42358000 {
-+					reg = <0x42358000 0x8000>;
-+					interrupts = <GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42360000 {
-+					reg = <0x42360000 0x8000>;
-+					interrupts = <GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42368000 {
-+					reg = <0x42368000 0x8000>;
-+					interrupts = <GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42370000 {
-+					reg = <0x42370000 0x8000>;
-+					interrupts = <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42378000 {
-+					reg = <0x42378000 0x8000>;
-+					interrupts = <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42380000 {
-+					reg = <0x42380000 0x8000>;
-+					interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42388000 {
-+					reg = <0x42388000 0x8000>;
-+					interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42390000 {
-+					reg = <0x42390000 0x8000>;
-+					interrupts = <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42398000 {
-+					reg = <0x42398000 0x8000>;
-+					interrupts = <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423a0000 {
-+					reg = <0x423a0000 0x8000>;
-+					interrupts = <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423a8000 {
-+					reg = <0x423a8000 0x8000>;
-+					interrupts = <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423b0000 {
-+					reg = <0x423b0000 0x8000>;
-+					interrupts = <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423b8000 {
-+					reg = <0x423b8000 0x8000>;
-+					interrupts = <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423c0000 {
-+					reg = <0x423c0000 0x8000>;
-+					interrupts = <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423c8000 {
-+					reg = <0x423c8000 0x8000>;
-+					interrupts = <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423d0000 {
-+					reg = <0x423d0000 0x8000>;
-+					interrupts = <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423d8000 {
-+					reg = <0x423d8000 0x8000>;
-+					interrupts = <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423e0000 {
-+					reg = <0x423e0000 0x8000>;
-+					interrupts = <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423e8000 {
-+					reg = <0x423e8000 0x8000>;
-+					interrupts = <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423f0000 {
-+					reg = <0x423f0000 0x8000>;
-+					interrupts = <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@423f8000 {
-+					reg = <0x423f8000 0x8000>;
-+					interrupts = <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42400000 {
-+					reg = <0x42400000 0x8000>;
-+					interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42408000 {
-+					reg = <0x42408000 0x8000>;
-+					interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42410000 {
-+					reg = <0x42410000 0x8000>;
-+					interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+				};
-+
-+				dma-channel@42418000 {
-+					reg = <0x42418000 0x8000>;
-+					interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+				};
- 			};
- 
- 			mu7: mailbox@42430000 {
+This is based on the "Preserve OSPM-set registers" [1] and
+"ospm_nominal_perf" [2] series, which are applied for 7.5.
 
+v5 -> v6:
+- Split "Set CPPC Enable register in cpu_init" into a separate fix [3].
+- Accept strings only (Pierre [4]).
+- Move the setup into cppc_cpufreq_setup_auto_sel_mode() and check
+  autonomous selection support first (Pierre [4]).
+- Drop the last_governor check, as init() now runs only for a new
+  policy (Pierre [4]).
+- Drop the MIN/MAX seeding, Desired hint and policy->min/max override,
+  as init() and the governor already set valid values (Pierre [4]).
+- Apply the parameter at the end of init(), after the usual
+  performance controls write.
+- Save auto_sel and EPP through the saved-register code from [1]
+  (Sashiko [5]).
+- Drop the cppc_cpufreq_exit() loop that cleared auto_sel on all
+  present CPUs (Pierre [4], Sashiko [5]).
+- Enable autonomous selection before writing EPP.
+- Set EPP also when firmware has already enabled autonomous selection.
+- Add the balance_power (0xc0) and power (0xff) modes.
+- Ignore an unrecognized value instead of treating it as disabled.
+
+v5: https://lore.kernel.org/lkml/20260623080652.3353386-1-sumitg@nvidia.com/
+[1] https://lore.kernel.org/lkml/20261106193304.3347374-1-sumitg@nvidia.com/
+[2] https://lore.kernel.org/lkml/20261109195400.3600561-1-sumitg@nvidia.com/
+[3] https://lore.kernel.org/lkml/20261110101246.3665797-1-sumitg@nvidia.com/
+[4] https://lore.kernel.org/lkml/f61f592a-bc9c-4a83-bde1-e999c8101c36@nvidia.com/
+[5] https://sashiko.dev/#/patchset/20260623080652.3353386-1-sumitg@nvidia.com
+
+ .../admin-guide/kernel-parameters.txt         |  26 ++++
+ drivers/cpufreq/cppc_cpufreq.c                | 120 ++++++++++++++++++
+ include/acpi/cppc_acpi.h                      |   2 +
+ 3 files changed, 148 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 0b3c140babd9..5714c0d30fce 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1015,6 +1015,32 @@ Kernel parameters
+ 			Format:
+ 			<first_slot>,<last_slot>,<port>,<enum_bit>[,<debug>]
+ 
++	cppc_cpufreq.auto_sel_mode=
++			[ACPI,CPU_FREQ] Enable ACPI CPPC autonomous performance
++			selection on all CPUs at boot. In autonomous mode, the
++			platform selects the performance level within the CPPC
++			Minimum and Maximum Performance limits. The driver sets
++			these limits from scaling_min_freq and scaling_max_freq.
++			The Energy Performance Preference (EPP) hint guides the
++			platform toward performance (0x00) or energy efficiency
++			(0xff).
++			Requires the ACPI CPPC Autonomous Selection Enable
++			register. EPP is set only if the platform implements it.
++			Format: <string>
++			  performance:
++				  enable autonomous selection, set EPP to 0x00
++			  balance_performance:
++				  enable autonomous selection, set EPP to 0x80
++			  balance_power:
++				  enable autonomous selection, set EPP to 0xc0
++			  power:
++				  enable autonomous selection, set EPP to 0xff
++			  default_epp:
++				  enable autonomous selection, keep firmware EPP
++			  disabled:
++				  keep the firmware configuration (default)
++			An unrecognized value is ignored with a warning.
++
+ 	cpuidle.off=1	[CPU_IDLE]
+ 			disable the cpuidle sub-system
+ 
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index a62589c0674f..c9bed93cf0c9 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -238,6 +238,58 @@ static void cppc_cpufreq_apply_saved_regs(struct cpufreq_policy *policy,
+ 					     saved_type);
+ }
+ 
++/* Autonomous Selection boot parameter modes */
++enum {
++	AUTO_SEL_MODE_DISABLED,
++	AUTO_SEL_MODE_PERFORMANCE,
++	AUTO_SEL_MODE_BALANCE_PERFORMANCE,
++	AUTO_SEL_MODE_BALANCE_POWER,
++	AUTO_SEL_MODE_POWER,
++	AUTO_SEL_MODE_DEFAULT_EPP,
++};
++
++static const char * const auto_sel_mode_names[] = {
++	[AUTO_SEL_MODE_DISABLED]		= "disabled",
++	[AUTO_SEL_MODE_PERFORMANCE]		= "performance",
++	[AUTO_SEL_MODE_BALANCE_PERFORMANCE]	= "balance_performance",
++	[AUTO_SEL_MODE_BALANCE_POWER]		= "balance_power",
++	[AUTO_SEL_MODE_POWER]			= "power",
++	[AUTO_SEL_MODE_DEFAULT_EPP]		= "default_epp",
++};
++
++static int auto_sel_mode;
++
++static int auto_sel_mode_set(const char *val, const struct kernel_param *kp)
++{
++	int *mode = kp->arg;
++	int ret;
++
++	ret = sysfs_match_string(auto_sel_mode_names, val);
++	if (ret < 0) {
++		pr_warn("Invalid auto_sel_mode \"%s\", ignoring it\n", val);
++		return 0;
++	}
++
++	*mode = ret;
++	return 0;
++}
++
++static int auto_sel_mode_get(char *buffer, const struct kernel_param *kp)
++{
++	int *mode = kp->arg;
++
++	return sysfs_emit(buffer, "%s\n", auto_sel_mode_names[*mode]);
++}
++
++static const struct kernel_param_ops auto_sel_mode_ops = {
++	.set = auto_sel_mode_set,
++	.get = auto_sel_mode_get,
++};
++
++module_param_cb(auto_sel_mode, &auto_sel_mode_ops, &auto_sel_mode, 0444);
++MODULE_PARM_DESC(auto_sel_mode,
++		 "Autonomous selection mode: performance, balance_performance, balance_power, power, default_epp, disabled");
++
+ #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
+ static enum {
+ 	FIE_UNSET = -1,
+@@ -938,6 +990,72 @@ static u32 cppc_cpufreq_effective_nominal(struct cpufreq_policy *policy)
+ 	return (u32)ospm_nominal;
+ }
+ 
++/*
++ * Apply the auto_sel_mode boot parameter in init(). Enable autonomous
++ * selection unless it is already enabled. Then set EPP for the selected mode.
++ *
++ * Enable auto_sel before writing EPP, as the platform may ignore EPP while
++ * autonomous selection is disabled. Save each value written, so that online()
++ * and resume() write it again.
++ */
++static void cppc_cpufreq_setup_auto_sel_mode(struct cpufreq_policy *policy)
++{
++	struct cppc_policy_state *st = cppc_cpufreq_policy_state(policy);
++	struct cppc_cpudata *cpu_data = policy->driver_data;
++	unsigned int cpu = policy->cpu;
++	u64 auto_sel, epp;
++	int ret;
++
++	if (auto_sel_mode == AUTO_SEL_MODE_DISABLED)
++		return;
++
++	/* U64_MAX means the platform does not implement the register. */
++	auto_sel = st->regs[CPPC_SAVED_AUTO_SEL][CPPC_SAVED_FIRMWARE];
++	if (auto_sel == U64_MAX) {
++		pr_info_once("Autonomous selection is not supported, ignoring auto_sel_mode\n");
++		return;
++	}
++
++	if (!auto_sel) {
++		ret = cppc_set_auto_sel(cpu, true);
++		if (ret) {
++			pr_warn("Failed to enable auto_sel for CPU%u (%d)\n",
++				cpu, ret);
++			return;
++		}
++		cppc_cpufreq_save_requested(policy, CPPC_SAVED_AUTO_SEL, true);
++	}
++	cpu_data->perf_ctrls.auto_sel = true;
++
++	switch (auto_sel_mode) {
++	case AUTO_SEL_MODE_PERFORMANCE:
++		epp = CPPC_EPP_PERFORMANCE_PREF;
++		break;
++	case AUTO_SEL_MODE_BALANCE_PERFORMANCE:
++		epp = CPPC_EPP_BALANCE_PERFORMANCE_PREF;
++		break;
++	case AUTO_SEL_MODE_BALANCE_POWER:
++		epp = CPPC_EPP_BALANCE_POWER_PREF;
++		break;
++	case AUTO_SEL_MODE_POWER:
++		epp = CPPC_EPP_ENERGY_EFFICIENCY_PREF;
++		break;
++	default:
++		/* default_epp keeps the EPP value set by firmware. */
++		return;
++	}
++
++	/* EPP is optional. */
++	ret = cppc_set_epp(cpu, epp);
++	if (ret) {
++		if (ret != -EOPNOTSUPP)
++			pr_warn("Failed to set EPP for CPU%u (%d)\n", cpu, ret);
++		return;
++	}
++	cpu_data->perf_ctrls.energy_perf = epp;
++	cppc_cpufreq_save_requested(policy, CPPC_SAVED_EPP, epp);
++}
++
+ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ {
+ 	unsigned int cpu = policy->cpu;
+@@ -1058,6 +1176,8 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	}
+ 	cpu_data->perf_limits_valid = true;
+ 
++	cppc_cpufreq_setup_auto_sel_mode(policy);
++
+ 	cppc_cpufreq_cpu_fie_init(policy);
+ 	return 0;
+ 
+diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+index 2cec54b4d2e2..3d47c07f494b 100644
+--- a/include/acpi/cppc_acpi.h
++++ b/include/acpi/cppc_acpi.h
+@@ -42,6 +42,8 @@
+ #define CPPC_AUTO_ACT_WINDOW_SIG_CARRY_THRESH 129
+ 
+ #define CPPC_EPP_PERFORMANCE_PREF		0x00
++#define CPPC_EPP_BALANCE_PERFORMANCE_PREF	0x80
++#define CPPC_EPP_BALANCE_POWER_PREF		0xC0
+ #define CPPC_EPP_ENERGY_EFFICIENCY_PREF		0xFF
+ 
+ #define CPPC_PERF_LIMITED_DESIRED_EXCURSION	BIT(0)
+
+base-commit: a917b5968c17196b98b514158de800194d09e505
 -- 
 2.34.1
 
