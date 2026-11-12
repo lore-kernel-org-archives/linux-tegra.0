@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794479525;
-	b=WbYOfzL3WMbNlgjYJp7qWtYGvStmSuj+CSqfc/K/eDdHfV6hU9yNz8O3yruz4DmVGjNj
-	 Rqjz1SByt2mEKKDo49osr8LYhhP3TgcVc4OHVRyP4zsnk3yRcwjHb1FJX2hULpX/fCRDA
-	 QvrkqrnRxMvMSqFbuaM57wn+qyRfJBSI/qyNCb6u4NrenXmjLZ2QOBDhJjVNY8P+2G2CQ
-	 2goHxUv6bY+DYbISx3LF2z8m7rieDvv4W6GPBaXHWMvzcDszi6JVIcdIbwfDPUUGnhOOq
-	 VTZQDPAey+Rl4+SLlPQi/dumHPLQEcipoQ4HrBRkiBf95rWnapUAk9jQGUCW8aFsaPA==
+	t=1794480685;
+	b=AxM6dlI4UHqkZl1xnwBODr+y2hl7JTOlXBtnPeKRoIzCIGBSTlF8qHs308tH0YHYdg2V
+	 7OAt5mwqfq+NbWKDNeDmqrIi7uGrhNGenDP8wltoVdyIa3xKjI5wnJZKpAo8DIM9CwLtX
+	 QHZpUrKdHlkfzsXE8cpV/+7qNHtlzmUkzDqfynp643RK8W6ngJOR2nMHeA8NYTpQK+sBF
+	 OxHECcoSZZqg9IUeaKXQQLrxz73iRlXX1hZdKYbo9/9Tbsx09DZ8Yj7HTLyBixSorqOji
+	 xAqzBBKiNi+Sa6GUuzuAu8ab2FzQH2SJVhMiFSKqXMsRSh/8BA0zSWKJK/JHi0n18Hw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794479525;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794480685;
 	h=Received:DKIM-Signature:X-Mailer:From:To:Cc:Subject:In-Reply-To:
 	 References:Date:Message-ID:MIME-Version:Content-Type;
-	bh=DaFOdktrS9fp8GjCaaexp9MaiiYjCXQTieg0RYTagzo=;
-	b=xtf9fL+dXb8tiQaISrdxJhpcJ9SrJrehGscmU2Xl4FO7FDL+crlRjknB3dU5ZRK0hBbV
-	 TUd+lEzwS6ONOrmYxPeiffrPSsQW+GiweFE0RzY/RZZ+KEzXeZyz+gMD3bknadlTPj4+1
-	 sv9Rmgppl7n1BJ37ZdtkdudVzVrDzZMnBHN3FbCznk5fiORCK5PXPxaabBZIqFL3Ybdl8
-	 5n6bHyaWDg0lhC8VpVp0AmsgF9t0EdPsLGYIMpEI627elu1aUqqJrXu0+kiXgZE3wZLxk
-	 KPC30mv5P4+OF9JoJ+UUZ478xiaeBPnMus7ZUaFmFisn+D147Ru4N+mCr4iDbUkeZ8w==
+	bh=pywy5r6pDPMlHENdQdhMX3LebB9YShrau+u2EOFSYes=;
+	b=BcTKobvhrdyIa5YN6+vvxTD6rrJSCEmRlNXehz6g0HioVP5WysVCiD+zad4gc1hSK3nD
+	 cPMRlow9AjarAC4XICdyGsSEku8N7g2ii1WRiqz7pEnroB8XKJFxMaGJfG/Giy7sID1ax
+	 RmP46waifKs+HJXXtT/ZmSOcW54t+zhfFo714Blcw9ICq0ndgjFqfz7mPH0QSNoWDqVHj
+	 TDoi9QniFGun1CGBEViEXOtH7CawrznaaxFaxqFxoNGU8OWOiEImi238BNGoSwBgIsBk+
+	 ws9OlEf9MvbEKq6Za9XsTqAjwnlA3iODUbiJhVPGtVA46n2GaIasrDWEjMhUFhaxaOw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SVCKZF+a;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NyTu+pBP;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51DA606A32A;
-	Thu, 12 Nov 2026 10:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029AE606A321;
+	Thu, 12 Nov 2026 10:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SVCKZF+a
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9843A1F00A05;
-	Thu, 12 Nov 2026 10:31:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NyTu+pBP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEE0E1F00A05;
+	Thu, 12 Nov 2026 10:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794479525;
-	bh=DaFOdktrS9fp8GjCaaexp9MaiiYjCXQTieg0RYTagzo=;
+	s=k20260515; t=1794480684;
+	bh=pywy5r6pDPMlHENdQdhMX3LebB9YShrau+u2EOFSYes=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=SVCKZF+auGmqT7JSUb746d9UAYnxXK8NWFfq/0oYpoErPWvB81l2FLR7ZNtt1TzRs
-	 SOfI8u76neTSvF2w5qbIOVuKL+j0Qdh6z4NfLSuKTzJC1HYiLRrvVCW+ItdeGsyYhB
-	 0xlkYqobVHgprk7YC6bfI9EaNr8ah+XrX4cNJm0+dsmvib7BsjEv9Z3jN2rLkg2sGR
-	 MI32t1e5nR4llWY0pS55Dcb/MdeZz4OkIAu7g3AqoCR6aOMCNrkFy4bHY133gLUfKu
-	 NvKAmHPiobyEkFiawUS89SUAGf2RECSFN4yWnkCah3YSfAeSzsWc22rZpjE4HCsa5S
-	 l3Qlv9hfTFjNQ==
+	b=NyTu+pBPJgo0IB/eZQsoHzsyRKO3iN+jIxpyl8bWDIcxaDufID0hYesdnuAEu5S09
+	 Sckhb1ihC0JjNfCe/VZ/0dE6EfvHMq1aeQjOGwGk+OV91Ff47v1Lqs6UvhF605Eta3
+	 wqD82AU6Z6Q5HyU9Ltah30EsTw+B1M4g4W5yhvs3eqwGRFkKZ3lxXdMmEjSEumyXip
+	 znxH4zR4+tL3nPFrvhzEV7ItlMOu0ZXK4cjY8u2jI7AC6j4dY1Vgqz6/YgsxSq5QDO
+	 kxcuLzRHt03BGPhofFDyKegLBVhQ/EevoaFq2FN8rm1xr5+eOOTgX+dssNLgKSFySa
+	 LHRs3t7Xtw3bA==
 X-Mailer: emacs 31.1 (via feedmail 11-beta-1 I)
 From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
 To: "Tian, Kevin" <kevin.tian@intel.com>,
@@ -71,14 +71,14 @@ Cc: Alex Williamson <alex@shazbot.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
 	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: RE: [PATCH v8 11/15] iommufd/viommu: Select vIOMMU operations
- before allocation
-In-Reply-To: <SA2PR11MB4844544BB238847916EA3A038C762@SA2PR11MB4844.namprd11.prod.outlook.com>
+Subject: RE: [PATCH v8 12/15] iommufd/viommu: Allow PCI TSM backends to
+ provide vIOMMU operations
+In-Reply-To: <CO1PR11MB483536F447DF311831A64D4D8C762@CO1PR11MB4835.namprd11.prod.outlook.com>
 References: <20261104161632.3547423-1-aneesh.kumar@kernel.org>
- <20261104161632.3547423-12-aneesh.kumar@kernel.org>
- <SA2PR11MB4844544BB238847916EA3A038C762@SA2PR11MB4844.namprd11.prod.outlook.com>
-Date: Thu, 12 Nov 2026 16:01:54 +0530
-Message-ID: <yq5ay0aypch1.fsf@kernel.org>
+ <20261104161632.3547423-13-aneesh.kumar@kernel.org>
+ <CO1PR11MB483536F447DF311831A64D4D8C762@CO1PR11MB4835.namprd11.prod.outlook.com>
+Date: Thu, 12 Nov 2026 16:21:12 +0530
+Message-ID: <yq5av762pbkv.fsf@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -95,57 +95,87 @@ Content-Type: text/plain
 >> From: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
 >> Sent: Thursday, November 5, 2026 12:16 AM
 >> 
->> Physical IOMMU drivers currently provide the vIOMMU size and
->> initialization callbacks through iommu_ops. The initialization callback
->> then selects and installs the corresponding iommufd_viommu_ops.
->> 
->> Add iommu_ops::get_viommu_ops() to select the operations from the
->> physical device and requested vIOMMU type before allocation. Move the
->> size and initialization callbacks into iommufd_viommu_ops. The core can
->> then validate the selected operations, allocate the driver structure,
->> initialize it, and install the operations.
->> 
->> Convert AMD, Arm SMMUv3, Tegra CMDQV, and the selftest backend to the
->> new interface.
->> 
->> Selecting the operations early allows subsequent changes to use
->> implementation-specific vIOMMU properties, including when validating the
->> parent HWPT.
+>> In confidential-computing configurations, a vIOMMU may be implemented by
+>> a TEE Security Manager rather than by the physical IOMMU driver. Such an
 >
-> what does "implementation-specific" mean? Isn't every existing vIOMMU
-> type already implementation specific?
+> TSM is the firmware. Here it is the TSM driver.
 >
 
-How about I update this to.
-
-The current code requires a valid parent HWPT before calling
-viommu_init(), which selects the vIOMMU operations. A later patch adds
-an operations flag indicating that a vIOMMU type does not require a parent
-HWPT. Selecting the operations earlier allows the core to check that flag
-before deciding whether to look up and validate a parent HWPT.
+Will use TSM driver instead of TSM 
 
 >
+>> implementation also needs the TSM identity when creating and validating
+>> vdevices.
 >> 
->>  /*
->>   * This function is assigned to struct
->> iommufd_viommu_ops.alloc_domain_nested()
->> - * during the call to struct iommu_ops.viommu_init().
->> + * when the vIOMMU operations are selected.
->>   */
->>  struct iommu_domain *
->>  amd_iommu_alloc_domain_nested(struct iommufd_viommu *viommu, u32
->> flags,
+>> Allow VIOMMU_ALLOC to first query the TSM associated with the target PCI
+>> device for vIOMMU operations. Fall back to the physical IOMMU driver
+>> when the TSM does not provide operations for the requested vIOMMU type.
+>> 
+>> Resolve the PCI TSM association under pci_tsm_rwsem, pin the module
+>> providing the operations, and take a TSM device reference. Store the TSM
+>> device in the vIOMMU and release both references on allocation failure,
 >
-> the comment sounds changing the semantics.
+> what does "both references" mean?
 >
-> ideally it's still assigned at viommu_init(), just from iommufd_viommu_ops
-> instead of iommu_ops now.
 
-How about
- /*
-  * This function is assigned to struct iommufd_viommu_ops.alloc_domain_nested()
-- * during the call to struct iommu_ops.viommu_init().
-+ * during the call to struct iommufd_viommu_ops.viommu_init().
-  */
+device reference and module reference. How about i update this to
+
+Resolve the PCI TSM association under pci_tsm_rwsem, take a TSM device
+reference, and pin the module providing the operations. Store the TSM
+device in the vIOMMU. Release the device reference and module pin on
+allocation failure, fallback to the physical IOMMU driver, or vIOMMU
+destruction. Drop the device reference before releasing the module pin,
+since the final put may call into the backend module.
+
+
+
+>
+>> fallback to the physical IOMMU driver, or vIOMMU destruction. Keep the
+>> module pinned until after dropping the device reference, since the final
+>> put may release the TSM device.
+>> 
+>> The device reference preserves the TSM allocation. Backends providing
+>> vIOMMU operations must not unregister their TSM while the module is pinned,
+>> since the reference does not prevent backend resource teardown.
+>> 
+>> This enables the Realm vIOMMU implementation to provide its operations
+>> through the PCI TSM backend and retain the TSM identity needed by its
+>> vdevices.
+>
+> It's not specific to Realm vIOMMU, and Realm is never explained in
+> prior patches.
+>
+
+I will drop this para.
+
+>
+>> @@ -49,15 +52,33 @@ int iommufd_viommu_alloc_ioctl(struct
+>> iommufd_ucmd *ucmd)
+>>  		rc = -EOPNOTSUPP;
+>>  		goto out_put_idev;
+>>  	}
+>> -	if (!iommu_dev->ops->get_viommu_ops) {
+>> -		rc = -EOPNOTSUPP;
+>> +	tsm_dev = tsm_get_device(idev->dev);
+>> +	if (IS_ERR(tsm_dev)) {
+>> +		rc = PTR_ERR(tsm_dev);
+>> +		tsm_dev = NULL;
+>>  		goto out_put_idev;
+>>  	}
+>
+> Is it legal to have a device connected in tsm (i.e. with a valid
+> pdev->tsm) but one wants to assign it to a non-confidential
+> guest using a non-cc vIOMMU type?
+>
+> If yes we want to fallback to the physical IOMMU driver even
+> when tsm_get_device() returns an error.
+
+
+tsm_get_device() does not use the vIOMMU type, so an error return
+(rather than NULL) indicates an actual error. In the case you describe,
+tsm_get_device() should return NULL or a valid TSM device. For a valid
+TSM device, tsm_viommu_get_ops() will return NULL because the TSM driver
+does not support the non-confidential vIOMMU type, allowing fallback to
+the physical IOMMU driver.
 
 -aneesh
