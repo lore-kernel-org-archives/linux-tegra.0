@@ -1,68 +1,110 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.5
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794450291;
-	b=2VOEhQt/tmWtl4UhxzXUPsYG9KOp4OiZHGEG1v2YZEIvDX3zZILv69WIEHwNk6OFhVNv
-	 OVUiC7MX2wmruU3M6X7vS8tZTGN8IkdOB03RUwGLyeGmy1/DQNwBf4+8HRmU+WSaVG2Cr
-	 wXJ2ZunzwGdy7rsFoxz+QdRyrvoAGUE0Bpzm/U5nyZ91qOpPpGErgDb9DVCV0jwI8LADH
-	 AQAFLg9emiRED3+SNWnhuL96igKXNEMuO9rzLmm9nVPjY7OAqU1Bm7/3XFFDU3B1cZOTP
-	 bdIg6nahklfZbpMJkgQDtmb6ukHoQ6+bhYDerUtOpM/qlv2DxLpiF0RG4cKaEWD9fxA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794450291;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
-	 X-CM-SenderInfo;
-	bh=B75XeCji0Hq4KB2ucqYdo8KpN0Fb8I/YrmcRagsu6Ms=;
-	b=Kyr1P3RQmaq+1D/gphAxfM10dd4P0CyVSXQU8msNW32AwvmoAvuHlurbmPYCtzIPZny3
-	 dbnrQtoUg7rnXpar2SkOC/TnPwe0JDJ1RQS/Kk2KWq2RDi7KDwRVes4qJmc6zPdphB60V
-	 KrhSsbEiDGaoN9jDrxsx4nLfF4EzKNpsTeSFjRZJNkbIkfXqMDM+OFO6y26rKRJaRnlWx
-	 kE0EKCtwjiKSfkQd9tdQdawFkJG+ZgzeKktjKTNydxDW5jurv/WinOPythBHSkX/X3zLc
-	 HfqylVCvQzTwG1M8JAsv/+DbnNNPsxLYmOhbQZfG6qRojIPp0y1puvGpkrIr1uFh/QA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=163.com;
-	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=aEY7Yzpg;
-	arc=none smtp.remote-ip=117.135.210.5
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.162.17
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794452939;
+	b=dEacw/IvEYv8tIQsZjVuhT6xSiaRiRhr72R+mDG3tyYeGV6FSS8uEkn9viJJ6IEaL+4S
+	 IDAxT36I3rYB1dXbhLMfPjA6z7NiWdYQIjSxtAVCd6DEPyF4DOJgjlWipLinmDa3g7E5u
+	 nE/bRh8pmM8wRV/FQvUlLwwA+TN99j13Edw91EsOhft/QHBCn8n3H9zckNQ1PVDn2tNZz
+	 9yOK9fpIjEWPo2VyXk0zSSZxJSSDX7mOLfKOeBhwry13VPHtrQ78Uo5R0uhvzvjKChXfw
+	 3kTbRfHKiryFVebxNMK4f1T8OhIQdz8z7yGg1mV9mIsaa4FkXZw0LBnntf4XlAR+g9g==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794452939;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:Content-Type:Content-Disposition:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=RiBCISnpJiqbr0nI7/ueSbTpeFzR/h0QLNdgAcoovZI=;
+	b=l77hUg2yhVUxYsF1eEnUIetppfjjttv1n3EZspiAZ1WRk+1NbdaxyFqvpRxWz/kSuZec
+	 sxUO6szNZ5K87BBKugizNtSpYfKIrZNsvbE6F6ZJOg4S3Ky5lmoUTQkFSfgMQiRKa648n
+	 f+UGnI+S93obECaGO9rMb11wqxsNO+WmLWIWzqnIMH6ao6swmKHYO3BrkXXp9uAgLfA7M
+	 xSEnOAbU3lwn2S9sUWP38aTKgm0KYRzZJKtH0jNOVZcUbwO1OGHwXiKztE08VUjI+6Guz
+	 KuZFdu5oIQCSAyQjdvgL5jYvc3y4BoRZsNBJ3iI0EHRoTFZ+ptCsZ5JgPM4SQZ2MiIw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=aFU2mkns;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.162.17
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013017.outbound.protection.outlook.com [40.107.162.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76742606A33A;
-	Thu, 12 Nov 2026 02:24:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 76742606A33A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C174606A324;
+	Thu, 12 Nov 2026 03:08:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5C174606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=aEY7Yzpg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=B7
-	5XeCji0Hq4KB2ucqYdo8KpN0Fb8I/YrmcRagsu6Ms=; b=aEY7YzpgLMktlL9Ka/
-	rDcyD/NJMczXVnAL4o54+U1RCtEVcRQ+kEyos8gax9Kpcukr5MZh96R5XLZXo+lh
-	lGicryKbtxanOAfe7sbYcm5lrPuvXu05XSTfr1TAOOIlWBrsZxlt/AYtuKUdv87L
-	MaW5Zk2bkCFfrvobKQWKLNFu0=
-Received: from Precision-7960.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDXj+5GI_VqPgXEGg--.53291S6;
-	Thu, 12 Nov 2026 10:24:13 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com,
-	mani@kernel.org,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	thierry.reding@kernel.org,
-	ryder.lee@mediatek.com,
-	jonathanh@nvidia.com
-Cc: robh@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v3 4/5] PCI: mediatek: Use pcie_get_link_speed()
-Date: Thu, 12 Nov 2026 10:24:04 +0800
-Message-ID: <20261112022405.1230200-5-18255117159@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261112022405.1230200-1-18255117159@163.com>
-References: <20261112022405.1230200-1-18255117159@163.com>
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=aFU2mkns
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N2BiQfzVv+ikfc9JAHRUiLwM7zx4mZnFynrISmLDfv3SqLhuQL4DDKKAlVrJu+CCc5Yx5GRpA2icQbXJxChdI5YA1ezb/fC/PU9dj0CVtkFIh00WwcmnS6oaWFiFYsoelgnA1SQjDK4hT2INLhN1TAEpP6J/ux0FWBPyasEThgfps4hvltZCmFG0O02UNy7i9cm2mJ8tJnbNHplEYcaQC4lr9OxcTHSRBC/8r0vgdCHIrX/VOrwWPKQaGmvKYzlBztfnaRpY1XR1rquHzMzzeztcRcXqRIx3FB5ohRc+p/ybfkcbVNrPALIxYdnjMp34qhzuDqNzrQJHdyjqEBBNeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RiBCISnpJiqbr0nI7/ueSbTpeFzR/h0QLNdgAcoovZI=;
+ b=yBEkVhVT97f1SwlMnEJc+7L5QFJzy2vZAJy23b5zqZ8pDoApC9612a5v7Y1ers65ZTp0Pdaydfsln3I7rysTBerqaRH6xI0YN40mkIhNEOFDlEZd/6x/C1Gg0NXJ/bJS+yPfSHcF4Kjm8DAyAAu34zhIVGQIedO1NSHDZEpnFh22XGjGw5QQ5qwl4QCElciAgZlhm5O/9Myyba9uUgJLTcNcI9Ncmzj4Fi5tkMDexBPDSSS2no8gh0jJzOzeB3jNMsSYpfVfs4of+7/hy6pe0Y/11HSjEfyLHFjT1xPf6x7FhUFwaOrmEr/cBld1uTFXZoo4cFwzvESxHylkXErgWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RiBCISnpJiqbr0nI7/ueSbTpeFzR/h0QLNdgAcoovZI=;
+ b=aFU2mknsPygj/gIFsbK9EdBYLY9d0yATER2qBNJWORRQKtPslCeuTr4MOviGpJ+lgTKZoUGNMLe2afnGQ/SNqUaqEX9zQ3etE95QoVD2QzfeC5/3yoEAP/DGPruDg286idJ16X6oTFd4uDBKuLO48/amgEhnXzK4dt7KD6M5n6+ip0JZA3QIolfoV4Wj4NtsJbEdZM1JanIjex1yq2NxF7xVzAsHVMmrrjdttAtaJ1PAvMTRb/XQVfyDoobmyM3YZOQ3CF1kFPgFc+Be/oi13MwqUwGrUZbV7dBba42SBbYIIiPegN7GGih0UZJ28BweGjHSw3eqrvm5ZRCJGmdekg==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
+ by DBBPR04MB7658.eurprd04.prod.outlook.com (2603:10a6:10:20d::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.8; Thu, 12 Nov
+ 2026 03:08:55 +0000
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9%5]) with mapi id 15.21.0615.008; Thu, 12 Nov 2026
+ 03:08:54 +0000
+Date: Thu, 12 Nov 2026 11:13:49 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	"Joerg Roedel (AMD)" <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@kernel.org>,
+	Larisa IIeana Grigore <larisa.grigore@nxp.com>, imx@lists.linux.dev,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v5 2/7] dmaengine: add a bus for DMA channel devices
+Message-ID: <avUu7akskg50FfL/@shlinux89>
+References: <20261111-edma-iommu-v3-v5-0-2537cebe6ca2@nxp.com>
+ <20261111-edma-iommu-v3-v5-2-2537cebe6ca2@nxp.com>
+ <avSmdAQhFqKIOMis@SMW015318>
+ <avUH9MXGu5AzEkv/@shlinux89>
+ <avUhh6_vdOg-g1qf@SMW015318>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <avUhh6_vdOg-g1qf@SMW015318>
+X-ClientProxiedBy: JH0PR01CA0186.apcprd01.prod.exchangelabs.com
+ (2603:1096:990:75::11) To AM8PR04MB7874.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24d::9)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -72,37 +114,113 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXj+5GI_VqPgXEGg--.53291S6
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JFWxGF4kKF17urW3uw43GFg_yoWfKFbE9w
-	nrtF4UJr4UGryfGw1YyFyFvr9ava4fWr10vayFqF1aya48u3s5Zr9agFWqqF9rGr4xXFy2
-	yr90kF4xCFyUCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRihL05UUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC6w3zl2r1I00gPAAA3v
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|DBBPR04MB7658:EE_
+X-MS-Office365-Filtering-Correlation-Id: ebe6d7a9-4838-4a8f-1e59-08df406a4868
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|7416014|366016|23010399003|1800799024|22082099003|18002099003|6133799003|261009223027099003|5023799004|261102123227099003|56012099006|11063799006|4143699003|261026121527099003|261021121427099003|261022075727099003|261021123027099003|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	+3gcuJUAgl6zd/nsM7iywcBupTDSOzLww6IQYa/aFdauhswAqjbglj+p0Hd46WaWUNWpIa8cQbN136IEN/ZXDYUsyoGoo4zMgmmezhmkLK/dUqpWZH6eegXwfmmt86ojRhyhJDItgDzmzek1KvDTJGoZoi8Lf5sNIKl1OkTdYzpl5/Hm+EORy7gLPCHQaS7VNtAn9fLd9KTxKA3ehIUeGNMVLUKuj6YzB47aEuKEIxQWd3Y/rvcH+jk//VeOkNJis1Yb9vyWix9BqdMgpE35vceXRIxSxGxdHFS7MRejroHkHJz0NViZjYCXo/cMMhiFGTJ22xm4/+FQz8nQKGijsNx/0+XQoBIOpK1FtM6P7gOUOxM+W5Uu/NCVHBVweIdc5bi3hy5YQr4AZHnU0yZOAKqc3SFxiVGYmHnTbU1FiPqoZJ5OLhde9jkSZu0fVgBaAZjEhzizzjWXv3/8KFhH2Kh4yrGyuTu6ZBbjYaD/0kxMpQlBp473x6ci3cCim4WvOzdKjHWa+2dspfjxr4PIvzqctoKDw+y2KygDx4WR9Y4JdBZRLCXYQWRpDng28pwy58JDKmy761Q4OC4fbCWS/RvgNzZguT+ueHzYygYgqnHrOqItLx6iAYf7YN51yXon
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(7416014)(366016)(23010399003)(1800799024)(22082099003)(18002099003)(6133799003)(261009223027099003)(5023799004)(261102123227099003)(56012099006)(11063799006)(4143699003)(261026121527099003)(261021121427099003)(261022075727099003)(261021123027099003)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?M/dGf+bOfwHgjUnECRvecyKjnH0tUMBfkfqwByAkJAgTmE362ZdF5hSlr85c?=
+ =?us-ascii?Q?CKUq2vcl9e4NTdYdWAxxzh8xZycGQd5kuC183RFNQ3tg5QQfWLvJBTSCWmlM?=
+ =?us-ascii?Q?cA1AnumqEWkOL7TjjHFn8wFA6RplecCi8bpG955fzGqIAx1Wcrb1hz+nqQs3?=
+ =?us-ascii?Q?1CZ7O572QC7gafy7U+ltmoM/p5VDjnRKxAnLICJVPR3k/W1bskiTefA0GAT5?=
+ =?us-ascii?Q?WcBykJ9Nk24GjUI7jZQkxXhrSiXy+f2twR6d8xS80mMwlqY5QH/3ezqlOy8z?=
+ =?us-ascii?Q?6z4BRVp0MhLQLChMa4xfpvDb2p8WeH6MjKoveoLowMVXZtWO4YbiyEaex/0V?=
+ =?us-ascii?Q?6Tg732Rb2BRGbkBTxubx9wHd1zG2V2Rt85ID+gYlVQKZBuiA2AYnKwc5p5wl?=
+ =?us-ascii?Q?iwqy46vlH1MXIiPvF/KCYzUcvY2W3xZa3C9mM6WdF3fMd5pYALMRBhgDFr2v?=
+ =?us-ascii?Q?jr/1dZOXY5bN6iC5qXko+fA/5SsLaDGf5md/h0ETYhLqG4qks5tdwxUVA6Nm?=
+ =?us-ascii?Q?Z6lD5iwf44hnwcUBu+fJV1ZiYi7i9vK8F3hsh1OFG2kEi6TOY+1WqjxDxa+Q?=
+ =?us-ascii?Q?1LuRV/9Tp0CMqad/wVA/dp46CRDaLbfKUF7T+sBJoLRk61rUECu6v/5nP0x1?=
+ =?us-ascii?Q?fdJZvv6UEG4s6/wZr+K20sE9arqLyoQfZXWa7b1t0/X7nGd401xNcAL2rHR8?=
+ =?us-ascii?Q?UCGUghfsZ5EdIjfN8DSj+FH1qf1fPUuOYhWE+w5z6J7Zf6abidkPIWsBsXdm?=
+ =?us-ascii?Q?cEIt0w7dqewWQ+/zAEV/p9z1LVlxDFizjGgrZ4rKXCflOXlKiCXnYBtjhfIJ?=
+ =?us-ascii?Q?Q8XoLMBquoc9b6yvVZG/jGAt9PKncTVGaL8tTrkGcqkeFYrBeLVycDu5aNuI?=
+ =?us-ascii?Q?HjhVls5StUWfXXIwlvwSWcFUmFih/vbZd9mAfJc1bIN9qmduc5EAP7alDoFa?=
+ =?us-ascii?Q?QvM98GVGcK8Ym5fSOs48TGDXbMkEtnKN/BH8+yprXPMq79H70gNw8hEQ4Xia?=
+ =?us-ascii?Q?kmsSSETD6+K6bYWCYJsaQukqPcpyXurJq0Ci4H95qIdrPcfX7cloUEJARtYC?=
+ =?us-ascii?Q?XtR9bQuueORyPMCP32o/3hJXzEYRtV+hWKhe8gwUHWAKHHPefEmBN2IcTRuV?=
+ =?us-ascii?Q?fspgVRmK1vdtah9vVWwjYP1gsH4rBFsAmUz+Jf8m8f9XrCUv3WIOIGOcx8gu?=
+ =?us-ascii?Q?dH+36+lnfwyG/59frFeeVJ7uFatOh/c8+pJkZNaWzibGEE2RTeFpKWw/5OIu?=
+ =?us-ascii?Q?uyEdcJyc0w5CuWACjuSNrCIpc0bYbp93eZ5DK14zGlVz0gpOGn4BRd5J0Nhj?=
+ =?us-ascii?Q?YJVlXswEitRCnavkB0vZ4lm4+iCGHDT9jSIO+mOwJuzWrQqXFPCTh4tCwOZr?=
+ =?us-ascii?Q?nalfHUeVabLGsGsRerhImgbMFFcYAXL3BxqaP3/QwXjp94tIzrtbU3b7/jUO?=
+ =?us-ascii?Q?2ditIn+gmcSXgg3sn16BCcoe7oeFrUQgdenTQFjTHknUTGmxxmMC4dVBDuuG?=
+ =?us-ascii?Q?fpZNuWXlpAXPHnvLklO12TnspGiRWEjKgrFiAmQGvr32xjE2DTpJwdJlacpV?=
+ =?us-ascii?Q?FZSIUpPnohxwNLNCECYpEiehI6W99XN7xwWKmEtkN+ulnyNp/49gLBANMV5R?=
+ =?us-ascii?Q?+ULhp5Nz/aF/vCMgRY54XW4LHuXgc7cu9CEpE0lDNgIDlv7/cq/qyIrAz/fT?=
+ =?us-ascii?Q?GEPdzZn9jt5UJ3DNfp4zMk9498CWdFZJv90Fvm7tYUNxmtahrhJdxL1tp5LP?=
+ =?us-ascii?Q?5gJ3zd50hA8wKEaIXO+9dhfpwqbNwkARYdn9AptCW+k6JYlxjkOE?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebe6d7a9-4838-4a8f-1e59-08df406a4868
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2026 03:08:53.9301
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6/ExsI+z4Tyo6P+MzK4z9Qch69uwySiwx1web2Zuk+B627zYVfEk+5o2XdNoNdxfYcwqrBZFt6tFdNUx+9umfUwc2TGwpwQkkKSDWcW6DUYRsLdPOYsjntps5emU9da8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7658
 
-MediaTek was added after pcie_get_link_speed() was introduced and still
-indexes pcie_link_speed[] directly.  Convert it to the helper so it does
-not depend on the array being exported and cannot go out of bounds on
-invalid speed values.
+On Wed, Nov 11, 2026 at 08:16:39PM -0600, Frank Li wrote:
+...
+>>
+>> >
+>> >Not sure how other dmaengine support it before? Maybe already block for
+>> >long time.
+>>
+>> In drivers/dma/tegra186-gpc-dma.c:
+>> 1543       if (use_iommu_map) {
+>> 1544                chdev->bus = pdev->dev.bus;
+>>
+>> I used similar method, but Sashiko spotted issue for v1 [1], we have to
+>> add a new bus to handle it.
+>>
+>> "
+>> Does this illegally modify the bus type of an already-registered device?
+>>
+>> This is executed after dmaenginem_async_device_register() has already called
+>> device_add(). Since bus_add_device() is never executed, won't device_del()
+>> invoke bus_remove_device() during driver unbinding or removal, causing a fatal
+>> reference count underflow and use-after-free on the global platform_bus_type
+>> subsystem?
+>> "
+>>
+>> [1] https://lore.kernel.org/dmaengine/20260916160608.099201F000FF@smtp.kernel.org/
+>
+>Can you add it to commit message to know why need add new bus type
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/pcie-mediatek.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ok. Update in V6.
 
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 3a3e91cd0c21..ffde365c987f 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -888,7 +888,7 @@ static int mtk_pcie_retrain(struct device *dev, struct pci_host_bridge *host)
- 		speed = lnksta & PCI_EXP_LNKSTA_CLS;
- 
- 		pci_info(rp, "link retrained, speed %s\n",
--			 pci_speed_string(pcie_link_speed[speed]));
-+			 pci_speed_string(pcie_get_link_speed(speed)));
- 
- 	}
- 
--- 
-2.43.0
+Thanks
+Peng
 
+>
+>Frank
+>
+>>
+>> Thanks
+>> Peng
+>>
+>> >
+>> >Frank
+>> >
+>> >> +#endif
+>> >> +
+>> >>  /**
+>> >>   * enum dma_slave_buswidth - defines bus width of the DMA slave
+>> >>   * device, source or target buses
+>> >>
+>> >> --
+>> >> 2.34.1
+>> >>
+>> >
+>
+>
