@@ -1,78 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794599945;
-	b=rITgmoRzkZXrzZsswsackqRkxk3dWFpM1icT/LGOVSqkBQDD7mOO5Y0n0rXUDw3X29SJ
-	 ZnYxAKpEfDtfz9EvGKTPqD+2ZLbs7DNYwAknwpgbfjziF9TAGX+1jUTCt4qU9R1j7cBRm
-	 nywjk+nfAVlM1T4/J30BKlCmIzIpNmK/BXVmACSLoxyq5bXgMoTEsADlL7vX7qljYsmkK
-	 JHSYNFuyxwSNgzvlIcqUSWPOy39NN6uxsW/t3Ume/7RwuU5NDJokEuM13wmXXnAv1Y9hs
-	 OUWWFZrArRzKREAANwzASZd2ZedsuJHMhaOqxv8Z6zkOYQf4WsSQfP5WEmmKM5qD//g==
+	t=1794599946;
+	b=Xr+bgCGzThdCOweT1D9dYC6UhjcyC/xFernAKzL+jXIyEAvS4zjSVOGFVYHagGr9wxLT
+	 zAxr48obr5YxYz4RBSF22UFf881/yxbEuDcIRuDZmyT1isuDvN8gd6WwFW+KbzZuFfQt3
+	 rshOUJ7L7uZ0M8pLvxJoRkZqtqYwtrafZot4uBTz9/sSwYi9RVvRdMLyESNDwfS3fm1AZ
+	 CviE3+O4WXQUHkpB1muUMKFqeAykJeWi9+Wl4gnZ+FSYe+Cpq8S8H6GDTgCP23MVbQKE1
+	 TEpDrQ5PTb1IcFyIth6zqmfLcS4OJ1yBeOalOV9wXp48Bscnm6KelN3h2JnYMSw7iIA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794599945;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794599946;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=8d7moL64qRIbbil14RkFEI96WRP1DNirjzCKrhmfays=;
-	b=U8K2f9GUH6no7/ny1yQH0A2nRg/avOnSR1nskY8rsjNlDodFZz1pMijKWo9os8by0Wqd
-	 u0Y+H6QrWGXFTuRR2fexDqbbq+h+oR8+sqmm+NbPqvKsPXkfL/lW0gPJAiUHBIWMkeAUS
-	 RwyY7vgReMWcLpvM7JflZCzVegPq1/sz9oU7ppAC9w8e2EZvJuNU64EtKGEb02g1AtHIo
-	 3EntplnTfNGChcDMQx/KbLb8y54HndZ4yWIzwNT9ro0wNjQ2Gim/Ysyw7FDcKBFc7rR4+
-	 kP4o7IYa/RB3YfFpTqK70oBuWHIyzlOxnH9bWo4nLY7AViC49fTYH1Hd39ddD8O01Ig==
+	bh=SmLPCE0qhv6FNW3gZma9y5zDUjY/RqlT1DeD+kv3wWs=;
+	b=vgz1zMEvlEPWm0qUskomlptlArZVLMAc9Kqkzn3RbY8I2JuFFlk3MIsDJzp1CJGYDKfd
+	 HnJm8FmAbCIR2vaXm5Bsi06h0BDWjj/CjOxyMnexFECKKwqe5K6+2ZdGnknRxebI6VGA5
+	 48JUgMO0HxODsG+Mh9ZO4DaoOyB2X5XT1DRm1QrHq9g3LncWz8CQyMdQG60gyaYOt3n+5
+	 DIK9txdSoie991CDiJaUgFpcHU72OXV5WQKPXqlKk3sOe2zbwXCBmi8rLpLbRrcZtj9m2
+	 D+0snkOclBCMi2XpvWjmpXajXNFPM4hJ2ikK4EY+mZwvRDhth7Tw1Hbze20V7ZZASag==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="dcr+Ry/e";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d+saJmwE;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E412D606A8B3;
-	Fri, 13 Nov 2026 19:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630C0606A898;
+	Fri, 13 Nov 2026 19:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dcr+Ry/e
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d+saJmwE
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794599944;
-	b=Xdw7Bcf3BvVIQLPnfYYXNyFwcloICeGv7n1KMapIEsxsIirJI7DIZG8uU3qDU3p4a83g
-	 wRRNEaz/0XfkLPwF/QYseeLl51BrGVvGJxZLApmiAzAEaLuo1wwULTfi7lDEDCVBV64LO
-	 A/1d1Q5eRZvmIG/Xz0AcsCOup76dnNuWeTNSLcWaDddU9RqB9WggnUC7xmQzRqopL3Ht+
-	 lCykrW2HtQjJQ5uw9BErpYvXGQZ8iDu1rylxud/H0RdTY0RT4Xtf3A6slcdciZ1FASsJ5
-	 YzUpdHp0+SEi4VUsEkLV0Qu/OlnHRCqLvGwt0il/8NMGZu/EpKnWUZr+0fnWfWaSSMw==
+	t=1794599946;
+	b=eVEydpKoWyYkweKK0wfKf9wPCbMMYLzM+R2pIkKCVKEy9sAI9bA59rThB/nGpLbgnt52
+	 JsduWe+oZAq9ynQuJgNhaTjyKOlib4pmqZQuZabj7ZfwwkwC+3wi5JUn1tu3jABJ3EQFq
+	 PyGtvf25qEGZQVhXz/Im+omYm/YFp1OLKhkrJgf3+ffD+ki0lJU1Q+DlTAr3g0PEiIxOl
+	 dh2FG0vPrzJIXWaUnPVt9WLjrVh7OpyShrciJPQFg5iUEiEDwyGozqvKvoBzX/ifsTKm7
+	 jXKGlWFd0BzzTOXivhYs2UIxsnQT7lZ6zFqfpZXD7QY9b/GSG4MvuX/WCr1cuIwds4Q==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794599944;
+	c=relaxed/relaxed; t=1794599946;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=8d7moL64qRIbbil14RkFEI96WRP1DNirjzCKrhmfays=;
-	b=FuZt3eIVUmuAS+aQAIW5LdXoHk39LR8zfMHoFZwAsOzLlnTqnAW6T0larSDI5LOWeGWt
-	 E2wLiD68FS805cMixWRS1Ca+VgBk0Fv2od2plHLl/DPovmUelI2BNnIuGHd9w6eiW/pRR
-	 lutjiC4jtSu35EO5IMPOdNLA9qBcpEGcK9MrN8HZcG2P1vZ9D/ngD7WrjkHUZLR/eNdaV
-	 YT6/CVcc9coPxD462GU4EsP9PMK1oG3X5N039kaSdCs4ProsGATjQwA4NbGR98XGXIPTg
-	 FRhuoWOjBQT5FMB9MU2C2cWx27J1rkgag+tRz92fUVaU94tBagO72Qel1U7Q7I0sI7A==
+	bh=SmLPCE0qhv6FNW3gZma9y5zDUjY/RqlT1DeD+kv3wWs=;
+	b=T4sOhnqbSJE1YIOrp60gkl3jRHUvFUTdoSCfWu5/bGa0cszn3J0D28crFKxgbZOtB+6b
+	 una6GvtbF54dtwTAgAmANSEyHV/etDaJa3NrO/NJdm8LuwanQx4/Uri7ByyPSytsT0mU1
+	 mzv1nFbHf2+wxt4xD5RwB2QitbPZoXUX7Y8Oder6pqlUjiPGVeBegJJWEde/TQxHb33QR
+	 MtL3ceU37WjyG7pgpC+jV1x+DnoVEUWnv/YJkjgw0BgZaMl5L8bD2s3X2U7Crjhe7tSvY
+	 j0Rx/mmfFWi445ESSBBtABcMco8FgUQH57fnIpSXiuo+Q2vRbFHMzNrIJyD74eNsCSw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 0893F1F000C5;
+	by smtp.kernel.org (Postfix) with ESMTPS id 1BB761F000C6;
 	Fri, 13 Nov 2026 19:59:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794599944;
-	bh=8d7moL64qRIbbil14RkFEI96WRP1DNirjzCKrhmfays=;
+	s=k20260515; t=1794599946;
+	bh=SmLPCE0qhv6FNW3gZma9y5zDUjY/RqlT1DeD+kv3wWs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=dcr+Ry/eHnwvVlrI0j0tSMBkpl3xDBR8sqcZKKkXGa3yZVsouQUSzdMgKhdlpdelG
-	 za949qc8em6k9NrksJ7nbrpr+zt8nT/XAOTkXMaJhU9b7ggiZYATdbenWhxPSvWSgo
-	 dIVuYpil3Jdysq8260gbFobdDxlevjj9hmKQ6eUkaLd+j7Kh19eSXgBpIq4KKrjT7g
-	 g1f4HB4YyH6qLUA+dk0e7LkvNyDysaw9NF8otEQR4hUJYznGqZxT5Gtcrv9bpOolR2
-	 Rm7SABKaDTpeNWXM8dxrsWh3ie9RFwe+mRb82LeYXTBGJFXmXte+vjE+AjO+PU7c+2
-	 B44mp6OcXCzyw==
+	b=d+saJmwEpCrgsNWCC8dr9MYNf64EQzQZJKJl8MIj/M33GgkioStek2cMyN1Uw000C
+	 593Mu/HkS/6yecpdF3Rnk7kddpnWFQFpY2F1M492PGuuWMDXA8DSSlRLvCF/soOLyq
+	 ss8IC57tK3CL6Abkuot3HVI2soGXeG8WpQ2MqiuY0iKpFAOLf7XbGs7aWAAbZBpF1f
+	 hBw46Y0APvmNfAvG6p2U/uZ/oLJmMJwdpJLSoEp5iDrtIBGQEWZl+Q+FtY2Qixq7XE
+	 IJNOWov7dl8ob5SxevBhkRdVgCUDl2qnEIufpvh59Q3C0aRspE8JNwOubzTM5IEh6p
+	 ivcaunDDNwkFQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 8822B49AAF;
+	by lkml.kernel.org (Postfix) with ESMTP id 9CDA049AB2;
 	Fri, 13 Nov 2026 19:59:03 +0000 (UTC)
 From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
-Date: Fri, 13 Nov 2026 20:58:59 +0100
-Subject: [PATCH v3 1/2] dt-bindings: iio: light: Add Capella CM3217
+Date: Fri, 13 Nov 2026 20:59:00 +0100
+Subject: [PATCH v3 2/2] iio: light: Add Capella CM3217 ambient light sensor
+ driver
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,7 +84,7 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261113-upstream-iio-cm3217-v3-1-c4d5b2485dff@tsv-stahl-riesa.de>
+Message-Id: <20261113-upstream-iio-cm3217-v3-2-c4d5b2485dff@tsv-stahl-riesa.de>
 References: <20261113-upstream-iio-cm3217-v3-0-c4d5b2485dff@tsv-stahl-riesa.de>
 In-Reply-To: <20261113-upstream-iio-cm3217-v3-0-c4d5b2485dff@tsv-stahl-riesa.de>
 To: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -96,11 +97,11 @@ Cc: David Lechner <dlechner@baylibre.com>,
  devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Patrick Fischer <admin@tsv-stahl-riesa.de>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794599942; l=1979;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794599942; l=15387;
  i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
- bh=z7mQtMfNm0xaT/KOZpQZ7OocJj4b4MNfSXLn05ky7ZE=;
- b=d1yhZ5y8Bd9Jkfpclza3JAOkx/JvqIT6pc5wkJ/CqlaTICFCyF6FfLEROQiR+KUgikhtMTYyA
- IYTbGD4cn6oAeqsorDVqNbcKtcrnmBZCQhWohUKJO4LClJNHT2X2B9d
+ bh=vCDOS8bjxFc6J/yAr4T9ZnzKbFBxpjK/N80WvHzltiw=;
+ b=a+QK2bsw4gghZl3uUarn6+fxawFL9IXe0EHhDbCE9Ltv9esQyjI0p5KPqr1m2i9m90F2VQ6Cm
+ uU0WdEY6QA3DJkZcDjhe6+F0w5Fo3MaofWcG9gfxm9VKpKXBouJ8zeB
 X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
  pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
 X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
@@ -111,74 +112,504 @@ Content-Transfer-Encoding: 7bit
 
 From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 
-The Capella CM3217 is an ambient light sensor with an I2C interface but
-without registers and without an interrupt line. It always answers on
-the two fixed addresses 0x10 and 0x11, which are both listed in reg.
+The CM3217 has no registers and no ID. Writing a byte to address 0x10
+or 0x11 sets command byte 1 or 2, reading a byte from 0x10 or 0x11
+returns the high or low byte of the 16-bit light count. The driver
+takes the second address from the second reg entry and falls back to
+0x11 when there is no firmware node, as with new_device.
 
-The sensor is used in the NVIDIA Tegra Note 7 and the NVIDIA Shield
-Tablet.
+Command byte 1 holds the shutdown bit and the IT_T field (1/2 T, 1 T,
+2 T or 4 T), command byte 2 the FD_IT field (800 ms down to 66 ms). The
+count scales linearly with both. The driver exposes FD_IT as the
+integration time and IT_T through the scale, so the scale list offers
+four ranges for each integration time.
 
+The datasheet is not public. The bit fields, the reserved bits that are
+written as 1 and the startup setting of 2 T and 100 ms come from NVIDIA's
+downstream drivers (drivers/staging/iio/light/cm3217.c in the 3.4 kernel
+rel-tegranote-r8 and the 3.10 kernel
+android-tegra-flounder-3.10-nougat-mr1.1). One value differs: the vendor
+header defines 4 T as 4 << 2, which is outside the two-bit field. On a
+Tegra Note 7 field value 3 gave four times the 1 T count, so the driver
+uses that. For the resolution, Capella
+gives a range of 0.01875 to 119156 lux. The driver takes 0.01875 lux
+per count at 4 T and 800 ms. This matches both the upper end (65535
+counts at 1/2 T and 66 ms) and the 0.3 lux per count that the NVIDIA
+3.4 driver uses at 2 T and 100 ms.
+
+The sensor has no data-ready flag, and a new setting only takes effect
+when the conversion in progress ends. A conversion takes IT_T times
+FD_IT, up to 3.2 s. Leaving shutdown starts a new one at once, so the
+driver passes through shutdown on every change and waits one conversion
+period plus a margin before it reads the count. The timing was measured
+on a Tegra Note 7.
+
+Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab P1988
 Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
 ---
- .../bindings/iio/light/capella,cm3217.yaml         | 50 ++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ drivers/iio/light/Kconfig  |  10 ++
+ drivers/iio/light/Makefile |   1 +
+ drivers/iio/light/cm3217.c | 419 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 430 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/light/capella,cm3217.yaml b/Documentation/devicetree/bindings/iio/light/capella,cm3217.yaml
+diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+index d0dea4f3113b..451d26e6e97d 100644
+--- a/drivers/iio/light/Kconfig
++++ b/drivers/iio/light/Kconfig
+@@ -196,6 +196,16 @@ config BH1780
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called bh1780.
+ 
++config CM3217
++	tristate "Capella CM3217 ambient light sensor"
++	depends on I2C
++	help
++	  Say Y here to build support for the Capella Microsystems CM3217
++	  ambient light sensor.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called cm3217.
++
+ config CM32181
+ 	depends on I2C
+ 	tristate "CM32181 driver"
+diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
+index 9fc046e636a2..5daff8ef0daa 100644
+--- a/drivers/iio/light/Makefile
++++ b/drivers/iio/light/Makefile
+@@ -20,6 +20,7 @@ obj-$(CONFIG_AS7343)		+= as7343.o
+ obj-$(CONFIG_BH1745)		+= bh1745.o
+ obj-$(CONFIG_BH1750)		+= bh1750.o
+ obj-$(CONFIG_BH1780)		+= bh1780.o
++obj-$(CONFIG_CM3217)		+= cm3217.o
+ obj-$(CONFIG_CM32181)		+= cm32181.o
+ obj-$(CONFIG_CM3232)		+= cm3232.o
+ obj-$(CONFIG_CM3323)		+= cm3323.o
+diff --git a/drivers/iio/light/cm3217.c b/drivers/iio/light/cm3217.c
 new file mode 100644
-index 000000000000..9aba05949a27
+index 000000000000..0c2c7f9d7d69
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/light/capella,cm3217.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/light/capella,cm3217.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/iio/light/cm3217.c
+@@ -0,0 +1,419 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Capella CM3217 ambient light sensor driver
++ *
++ * The CM3217 has no registers. It answers on two fixed I2C addresses:
++ * writing a byte to 0x10 or 0x11 sets command byte 1 or 2, reading a byte
++ * from 0x10 or 0x11 returns the MSB or LSB of the 16-bit light count.
++ *
++ * Copyright (C) 2026 Patrick Fischer <admin@tsv-stahl-riesa.de>
++ */
 +
-+title: Capella CM3217 ambient light sensor
++#include <linux/array_size.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/build_bug.h>
++#include <linux/cleanup.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/ktime.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/pm.h>
++#include <linux/property.h>
++#include <linux/regulator/consumer.h>
++#include <linux/time64.h>
++#include <linux/types.h>
++#include <linux/units.h>
 +
-+maintainers:
-+  - Patrick Fischer <admin@tsv-stahl-riesa.de>
++#include <linux/iio/iio.h>
 +
-+description:
-+  The CM3217 is an I2C ambient light sensor without registers or interrupt
-+  line.
++/* Second address if the firmware node does not give it */
++#define CM3217_ADDR_CMD2_LSB	0x11
 +
-+properties:
-+  compatible:
-+    const: capella,cm3217
++#define CM3217_CMD1_RSVD	BIT(5)		/* reserved, set to 1 */
++#define CM3217_CMD1_IT_T	GENMASK(3, 2)	/* 1/2 T, 1 T, 2 T, 4 T */
++#define CM3217_CMD1_WDM		BIT(1)		/* set to 1 like the vendor driver */
++#define CM3217_CMD1_SD		BIT(0)		/* shutdown when set */
 +
-+  reg:
-+    items:
-+      - description:
-+          Command byte 1 (shutdown and IT_T) on write, high byte of the light
-+          count on read. Fixed at 0x10.
-+      - description:
-+          Command byte 2 (FD_IT) on write, low byte of the light count on
-+          read. Fixed at 0x11.
++#define CM3217_CMD2_FD_IT	GENMASK(7, 5)
 +
-+  vdd-supply: true
++#define CM3217_IT_T_2T		2
++#define CM3217_FD_IT_100MS	5
 +
-+required:
-+  - compatible
-+  - reg
-+  - vdd-supply
++/*
++ * The finest resolution is 0.01875 lux per count, at 4 T and 800 ms. The
++ * resolution is inversely proportional to IT_T and FD_IT, so keep it as
++ * nanolux per count times milliseconds.
++ */
++#define CM3217_NLUX_MS		(18750000ULL * 800)	/* 0.01875 lux * 800 ms */
 +
-+additionalProperties: false
++#define CM3217_MARGIN_MS	10
 +
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++/* FD_IT settings in seconds, indexed by the field value */
++static const int cm3217_int_time_avail[][2] = {
++	{ 0, 800000 }, { 0, 400000 }, { 0, 266000 }, { 0, 200000 },
++	{ 0, 130000 }, { 0, 100000 }, { 0, 80000 }, { 0, 66000 },
++};
 +
-+        light-sensor@10 {
-+            compatible = "capella,cm3217";
-+            reg = <0x10>, <0x11>;
-+            vdd-supply = <&vdd_2v85_sen>;
-+        };
-+    };
-+...
++/* Split nanolux into the integer and nano parts of IIO_VAL_INT_PLUS_NANO */
++#define CM3217_NLUX_TO_VAL(nlux)	{ (nlux) / NANO, (nlux) % NANO }
++
++/* Scale in lux per count at FD_IT = ms milliseconds and IT_T = 1/2 T << it_t */
++#define CM3217_SCALE(ms, it_t) \
++	CM3217_NLUX_TO_VAL((CM3217_NLUX_MS << (3 - (it_t))) / (ms))
++
++#define CM3217_SCALES(ms) {					\
++	CM3217_SCALE(ms, 0), CM3217_SCALE(ms, 1),		\
++	CM3217_SCALE(ms, 2), CM3217_SCALE(ms, 3),		\
++}
++
++/* Available scales, indexed by FD_IT and then by IT_T */
++static const int cm3217_scale_avail[][4][2] = {
++	CM3217_SCALES(800), CM3217_SCALES(400),
++	CM3217_SCALES(266), CM3217_SCALES(200),
++	CM3217_SCALES(130), CM3217_SCALES(100),
++	CM3217_SCALES(80), CM3217_SCALES(66),
++};
++
++static_assert(ARRAY_SIZE(cm3217_scale_avail) == ARRAY_SIZE(cm3217_int_time_avail));
++
++struct cm3217_data {
++	struct i2c_client *client;
++	struct i2c_client *client_lsb;
++	/* protects the command bytes and ready */
++	struct mutex lock;
++	u8 cmd1;
++	u8 cmd2;
++	ktime_t ready;
++};
++
++static unsigned int cm3217_conv_ms(struct cm3217_data *data)
++	__must_hold(&data->lock)
++{
++	unsigned int fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
++	unsigned int it_t = FIELD_GET(CM3217_CMD1_IT_T, data->cmd1);
++
++	return ((cm3217_int_time_avail[fd_it][1] / USEC_PER_MSEC) << it_t) / 2;
++}
++
++static int cm3217_power_down(struct cm3217_data *data, u8 cmd1)
++{
++	return i2c_smbus_write_byte(data->client, cmd1 | CM3217_CMD1_SD);
++}
++
++/*
++ * A new setting only takes effect when the conversion in progress ends,
++ * which can take up to 3.2 s. Leaving shutdown starts a new conversion
++ * right away, so pass through shutdown on every change.
++ */
++static int cm3217_write_cmd(struct cm3217_data *data, u8 cmd1, u8 cmd2)
++	__must_hold(&data->lock)
++{
++	unsigned int conv_ms;
++	int ret;
++
++	ret = cm3217_power_down(data, cmd1);
++	if (ret)
++		return ret;
++
++	ret = i2c_smbus_write_byte(data->client_lsb, cmd2);
++	if (ret)
++		return ret;
++
++	ret = i2c_smbus_write_byte(data->client, cmd1);
++	if (ret)
++		return ret;
++
++	data->cmd1 = cmd1;
++	data->cmd2 = cmd2;
++
++	/*
++	 * The first count is ready after one conversion. The conversion time
++	 * is only the nominal one, so add 10 % and a fixed margin.
++	 */
++	conv_ms = cm3217_conv_ms(data);
++	conv_ms += conv_ms / 10 + CM3217_MARGIN_MS;
++	data->ready = ktime_add_ms(ktime_get(), conv_ms);
++
++	return 0;
++}
++
++static int cm3217_read_count(struct cm3217_data *data, int *val)
++	__must_hold(&data->lock)
++{
++	s64 wait_ms;
++	int lsb, msb;
++
++	wait_ms = ktime_ms_delta(data->ready, ktime_get());
++	if (wait_ms > 0)
++		msleep(wait_ms);
++
++	lsb = i2c_smbus_read_byte(data->client_lsb);
++	if (lsb < 0)
++		return lsb;
++
++	msb = i2c_smbus_read_byte(data->client);
++	if (msb < 0)
++		return msb;
++
++	*val = msb << 8 | lsb;
++
++	return 0;
++}
++
++static const struct iio_chan_spec cm3217_channels[] = {
++	{
++		.type = IIO_LIGHT,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
++				      BIT(IIO_CHAN_INFO_SCALE),
++		.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE),
++		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME),
++		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_INT_TIME),
++	},
++};
++
++static int cm3217_read_raw(struct iio_dev *indio_dev,
++			   struct iio_chan_spec const *chan,
++			   int *val, int *val2, long mask)
++{
++	struct cm3217_data *data = iio_priv(indio_dev);
++	unsigned int fd_it, it_t;
++	int ret;
++
++	guard(mutex)(&data->lock);
++
++	fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
++	it_t = FIELD_GET(CM3217_CMD1_IT_T, data->cmd1);
++
++	switch (mask) {
++	case IIO_CHAN_INFO_RAW:
++		ret = cm3217_read_count(data, val);
++		if (ret)
++			return ret;
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SCALE:
++		*val = cm3217_scale_avail[fd_it][it_t][0];
++		*val2 = cm3217_scale_avail[fd_it][it_t][1];
++		return IIO_VAL_INT_PLUS_NANO;
++	case IIO_CHAN_INFO_INT_TIME:
++		*val = cm3217_int_time_avail[fd_it][0];
++		*val2 = cm3217_int_time_avail[fd_it][1];
++		return IIO_VAL_INT_PLUS_MICRO;
++	default:
++		return -EINVAL;
++	}
++}
++
++static int cm3217_read_avail(struct iio_dev *indio_dev,
++			     struct iio_chan_spec const *chan,
++			     const int **vals, int *type, int *length,
++			     long mask)
++{
++	struct cm3217_data *data = iio_priv(indio_dev);
++	unsigned int fd_it;
++
++	switch (mask) {
++	case IIO_CHAN_INFO_SCALE:
++		scoped_guard(mutex, &data->lock)
++			fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
++		*vals = (const int *)cm3217_scale_avail[fd_it];
++		*length = 2 * ARRAY_SIZE(cm3217_scale_avail[0]);
++		*type = IIO_VAL_INT_PLUS_NANO;
++		return IIO_AVAIL_LIST;
++	case IIO_CHAN_INFO_INT_TIME:
++		*vals = (const int *)cm3217_int_time_avail;
++		*length = 2 * ARRAY_SIZE(cm3217_int_time_avail);
++		*type = IIO_VAL_INT_PLUS_MICRO;
++		return IIO_AVAIL_LIST;
++	default:
++		return -EINVAL;
++	}
++}
++
++static int cm3217_find_avail(const int (*avail)[2], unsigned int len,
++			     int val, int val2)
++{
++	for (unsigned int i = 0; i < len; i++) {
++		if (avail[i][0] == val && avail[i][1] == val2)
++			return i;
++	}
++
++	return -EINVAL;
++}
++
++static int cm3217_write_raw(struct iio_dev *indio_dev,
++			    struct iio_chan_spec const *chan,
++			    int val, int val2, long mask)
++{
++	struct cm3217_data *data = iio_priv(indio_dev);
++	unsigned int fd_it;
++	u8 cmd1, cmd2;
++	int i;
++
++	guard(mutex)(&data->lock);
++
++	switch (mask) {
++	case IIO_CHAN_INFO_SCALE:
++		fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
++		i = cm3217_find_avail(cm3217_scale_avail[fd_it],
++				      ARRAY_SIZE(cm3217_scale_avail[0]),
++				      val, val2);
++		if (i < 0)
++			return i;
++
++		cmd1 = data->cmd1;
++		FIELD_MODIFY(CM3217_CMD1_IT_T, &cmd1, i);
++
++		return cm3217_write_cmd(data, cmd1, data->cmd2);
++	case IIO_CHAN_INFO_INT_TIME:
++		i = cm3217_find_avail(cm3217_int_time_avail,
++				      ARRAY_SIZE(cm3217_int_time_avail),
++				      val, val2);
++		if (i < 0)
++			return i;
++
++		cmd2 = FIELD_PREP(CM3217_CMD2_FD_IT, i);
++
++		return cm3217_write_cmd(data, data->cmd1, cmd2);
++	default:
++		return -EINVAL;
++	}
++}
++
++static int cm3217_write_raw_get_fmt(struct iio_dev *indio_dev,
++				    struct iio_chan_spec const *chan,
++				    long mask)
++{
++	switch (mask) {
++	case IIO_CHAN_INFO_SCALE:
++		return IIO_VAL_INT_PLUS_NANO;
++	case IIO_CHAN_INFO_INT_TIME:
++		return IIO_VAL_INT_PLUS_MICRO;
++	default:
++		return -EINVAL;
++	}
++}
++
++static const struct iio_info cm3217_info = {
++	.read_raw = cm3217_read_raw,
++	.read_avail = cm3217_read_avail,
++	.write_raw = cm3217_write_raw,
++	.write_raw_get_fmt = cm3217_write_raw_get_fmt,
++};
++
++static void cm3217_power_off(void *_data)
++{
++	struct cm3217_data *data = _data;
++
++	cm3217_power_down(data, data->cmd1);
++}
++
++static int cm3217_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	struct cm3217_data *data;
++	struct iio_dev *indio_dev;
++	u16 addr_lsb = CM3217_ADDR_CMD2_LSB;
++	u32 reg[2];
++	u8 cmd1, cmd2;
++	int ret;
++
++	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	data = iio_priv(indio_dev);
++	data->client = client;
++	i2c_set_clientdata(client, indio_dev);
++
++	ret = devm_mutex_init(dev, &data->lock);
++	if (ret)
++		return ret;
++
++	ret = devm_regulator_get_enable(dev, "vdd");
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to enable vdd supply\n");
++
++	/* Without a firmware node (e.g. sysfs new_device) use the fixed one */
++	if (!device_property_read_u32_array(dev, "reg", reg, ARRAY_SIZE(reg)))
++		addr_lsb = reg[1];
++
++	data->client_lsb = devm_i2c_new_dummy_device(dev, client->adapter,
++						     addr_lsb);
++	if (IS_ERR(data->client_lsb))
++		return dev_err_probe(dev, PTR_ERR(data->client_lsb),
++				     "failed to register second address\n");
++
++	/* Start with the setting of the vendor driver: 2 T, 100 ms */
++	cmd1 = CM3217_CMD1_RSVD | CM3217_CMD1_WDM |
++	       FIELD_PREP(CM3217_CMD1_IT_T, CM3217_IT_T_2T);
++	cmd2 = FIELD_PREP(CM3217_CMD2_FD_IT, CM3217_FD_IT_100MS);
++
++	scoped_guard(mutex, &data->lock) {
++		ret = cm3217_write_cmd(data, cmd1, cmd2);
++		if (ret)
++			return dev_err_probe(dev, ret, "failed to power on\n");
++	}
++
++	ret = devm_add_action_or_reset(dev, cm3217_power_off, data);
++	if (ret)
++		return ret;
++
++	indio_dev->name = "cm3217";
++	indio_dev->info = &cm3217_info;
++	indio_dev->channels = cm3217_channels;
++	indio_dev->num_channels = ARRAY_SIZE(cm3217_channels);
++	indio_dev->modes = INDIO_DIRECT_MODE;
++
++	return devm_iio_device_register(dev, indio_dev);
++}
++
++static int cm3217_suspend(struct device *dev)
++{
++	struct cm3217_data *data = iio_priv(dev_get_drvdata(dev));
++
++	guard(mutex)(&data->lock);
++
++	return cm3217_power_down(data, data->cmd1);
++}
++
++static int cm3217_resume(struct device *dev)
++{
++	struct cm3217_data *data = iio_priv(dev_get_drvdata(dev));
++
++	guard(mutex)(&data->lock);
++
++	return cm3217_write_cmd(data, data->cmd1, data->cmd2);
++}
++
++static DEFINE_SIMPLE_DEV_PM_OPS(cm3217_pm_ops, cm3217_suspend, cm3217_resume);
++
++static const struct i2c_device_id cm3217_id[] = {
++	{ .name = "cm3217" },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, cm3217_id);
++
++static const struct of_device_id cm3217_of_match[] = {
++	{ .compatible = "capella,cm3217" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, cm3217_of_match);
++
++static struct i2c_driver cm3217_driver = {
++	.driver = {
++		.name = "cm3217",
++		.of_match_table = cm3217_of_match,
++		.pm = pm_sleep_ptr(&cm3217_pm_ops),
++	},
++	.probe = cm3217_probe,
++	.id_table = cm3217_id,
++};
++module_i2c_driver(cm3217_driver);
++
++MODULE_AUTHOR("Patrick Fischer <admin@tsv-stahl-riesa.de>");
++MODULE_DESCRIPTION("Capella CM3217 ambient light sensor driver");
++MODULE_LICENSE("GPL");
 
 -- 
 2.56.0
