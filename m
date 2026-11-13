@@ -1,55 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794580499;
-	b=mEbj9Vxu9VH36pHv+PWjMhg+wTll0idh6X3+ArgPrQoNOPnG1PKo/G1/hFzqWXQkqqVi
-	 CQAIRdgFDJgMAuDyxK615Jg/tpS/ZD9jCEGHXqiIAJIygm5y8ye0HQ+2x8MwkYViTreGF
-	 axyzCsLncKk4O+9QST7X7NsgcSLiclgVVAPQg6gYR7rwvlI4Rf9ippuSGAGfiAGxdynU+
-	 M29gURDozEYMUM2KwtAth1l8geKLlFaepeIkTzdQlu1dUyzxd2sogiOMf5vy5OsdrDxha
-	 NgSmWU2144mLFpeIdfvp2XGDQp4kwJZmtxdS48YN9H5J5ZDnokgsvL1eEb8MYJ+/Azw==
+	t=1794581850;
+	b=q73LjJ6Am4bjBZsoOtO/HaWbIy8mFUZ7whkh/8qiQe6P0aQ/0Cgz88kcNEpJ06xrcnXy
+	 rTCPMz0LAORIEzAsOAOnctkup46aL7RL3gTtMP5dKq80IJrEZ9fS8Mc3WC8CBFT33B8Cv
+	 Q6NwOq/moksH/087dv71Ri8YFTDgo5VaWCfZNnL97HmDKW8BpO3n+3Bfy/iYzt4bEQ3nu
+	 g904EpyRtQd/M399ZFZ1D9E+qEbgEKXFkiMPnXJRxsdvxMTV6I5X7DxOYTPlTPXKw/6Q5
+	 Bu+6HrQeopdtOfkc8PJskgu1fxMuyp5I2XYib4vH53+Rr0Nmi3qYbmlUVaE2aY7ZN1w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794580499;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=PF7x+WHFDlFjFzclJMmi7Uvb2yYXpjZa21XSXBNN68Y=;
-	b=qbvwx2BxdYH4HvzcnFD6nELsIKK8BG5z3KIwhMn2Hyi6jgd5KIy5kMRVeeady9t/i6BE
-	 n3ugKKAlF1ahg9YRx+PASAnfVB44R7FSjC92ReHegEcXkzIDIJKFwo2GdgXi6i9Ph9Dmc
-	 H64qy5/NC6BNrMFdDV50blVBnrzWPS9D3McMAnRhr/sxICSUQbUBueoN+HS+38E58IUpq
-	 ibewTK3HXjJNtOTKm+M4lrZlZazefsgzh2Sk4EfN+XZlIZnY69XcsvZ3w4IbPA6sZ6INT
-	 5lVNEIXFiIeMh6MGMWVElV1OpratFM90J1I/V0d8+Kadwm2QzB9GUMlRJ4NhqkgUEow==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794581850;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=lZnQS5vzjGFgkIk1Rz40qxA1rsbMTGKx4DvpvdhHSZU=;
+	b=Se08IMMvOaQz7IIDORoZJ6aF/PYBoCuJgnIIXMoOgxds2yLmwwulvVbQDAOxCxaxSkn1
+	 r3h9xaH+jhWTWfNg0HIHoksYzgHb5o0mgNKJ1NJ9hUFUSc4ZmcZnHCmSi+g5/wXm92FJT
+	 0x2AdnRtygU9loKpK77/7YhIDUMSlcdgfT9jGI9JEFd3y04JpKkvNHDYuQh8ha4h943n6
+	 BnZ09XRqvfNv5hw3zCZ3be5N4bcP9X67zWbVJJDjN//LtIkh3oPteRSg5uxOcRlHQ86kA
+	 MeG3wsfDnf+BPTXU/74C/vWrn79juYES9jXo1bsXlTtjayFfoL36UDiS5bjMOPei7eA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zs+kdfNJ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=K9CSmkJY;
+	arc=none smtp.remote-ip=209.85.218.43
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B498A606A339
-	for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 14:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC60606A338
+	for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 14:57:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BDC60606A338
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zs+kdfNJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 913551F0089E
-	for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 14:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794580499;
-	bh=PF7x+WHFDlFjFzclJMmi7Uvb2yYXpjZa21XSXBNN68Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Zs+kdfNJoLMkl/WkGe794yJ/6X4epq2Y0S9osHqwtoywyGWWo5acUIiHSXv04wbm7
-	 jT/Lpt5RBcdJ4H/5KDckMWd11BZlN7NY3J7Kg4iq8zkmjv3UmtVQtTTmcZMdsogjpK
-	 /1Ix/X/H1c1uvRoR9KuN41hX+QgC/q+/2BNBCz7ObiJCI0w4gNTmmxdBrBdzTVUyF7
-	 HnaUrlhe6B3NCHoXhN4Wqcuj0NTPB0p51y5t28+X1h+4dJZJZlYqqyXqKnErGu3tCE
-	 IT+KTIx9lAc5aSvhJMluLkZ+uS5+IzI807cN03nbgP9G38DTbnXDsJDnODPry9L/NQ
-	 3PZRqmJoROLXA==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-6d290b10a35so351019eaf.2
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 06:34:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErH9synatMluG9vEMk1ZTHv5+yAL0sM7pml07o6F/OntuQrnDO5FScb+GUGTq6/aiVG3PyVQO4CJ5snfeA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/Ng98YyYc1jR0qtJjd2HvDFyTjSvUt1sTki/oqLezPnEQNcJsD
-	YuOlijIbNYk4kqWgnSyEJRWb+NIhf51Ecmv/F3al/cbLM7Xyh+NGyjc9jenlroOnolLj+Wg1k8e
-	ZDZd2OqkJ9EFGRNutkjdUsODTZZCp78Q=
-X-Received: by 2002:a05:6820:238b:b0:6f4:d9d4:3948 with SMTP id
- 006d021491bc7-71ab50535a7mr1136848eaf.45.1794580497611; Fri, 13 Nov 2026
- 06:34:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=K9CSmkJY
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c50a2efbe1dso180423666b.3
+        for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 06:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794581848; x=1795186648; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=lZnQS5vzjGFgkIk1Rz40qxA1rsbMTGKx4DvpvdhHSZU=;
+        b=K9CSmkJYNmtAbvWCYPrP+SDpZMQQ0xdsPYXo8PsLi7q0i7Is28YK2oObjdZIdIT9Hy
+         oUZeGt2AyBbZItYfe9wK+vYDeM1J8WQInwUA6ANAfPmVZ6W3eHYOh2uFtetiapb8VA7z
+         2hJQEzbUki2GkUe54rvHxcY47jRM7YZ9kawcYDZpTB1ajp4LEuTAmkgk6NQg2C0JRwhT
+         FJuYRGnfvm0iGRi94tXz55orMhZs2oscRwq261Ud/F+R9cedJFud5B4MJ3u8ZUVekYRC
+         XXw54HRwFyv2zeglylezSoT/W0SPhglx0UvxuGoBYFkIqAwretjToNI1b3jjRZTQzKP5
+         Wdog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794581848; x=1795186648;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=lZnQS5vzjGFgkIk1Rz40qxA1rsbMTGKx4DvpvdhHSZU=;
+        b=sxv8SydEIA6ONKjhmLPH5s8wVKeSMTsE7mjH94FXStaGOT1MwnPPWlvjZ1gUwzHpQa
+         g6GKOZGLIaLPXBY6SOUn8ntL06qIzdvLKr5bslW3XsT7Vdw0JR3yDAWYF0keU7Nc5STl
+         SGcQwcRjpnwlC+fXhDLTt0NDZorCXwQ+YDAskUAfmM2nUz1md4Y2vtKADL5klt5kteDd
+         9grbpFXy55Nvfohhq2mileXfXndPJ2hJFBfAtUZCL1ssG25syIKfqpXsJITxa7KI4xJo
+         lLuvhQxlmtp4F3ZhOEpjaF6xHpUH87Fh+BXBizBH82iNv8CzW7Rn7qxMjfkQHNVVWfZY
+         OQnQ==
+X-Forwarded-Encrypted: i=1; AL+hErGJcAF9dCHGPTH/LYXiOZ4SUxF5JorwLgNJLVPqEgQ8sxZf0sqhA9B63jGNglt/AKka2ubWGOgXoiwlzA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9ZSlAs4dN+yIhDhCNnllPuHrUGtpvIO0X8TMmVKQU2kTWCA8zA
+	E2KXRR3sPR+mBDZ/Xp29OUkpxFLG4VjPrCTKPssTxJxT5i7JQxoGxfXY
+X-Gm-Gg: AYBFou1JCZXXQ2emSdzkSFpv1paLrS29Gg6MFeRsZQZlbvzI8gtZ/7YLuoPFjZQ4kuH
+	KjegvsTcr0QyXONjvb1VMC0wge9WAERqzp/dushnx2R8CqOfR8ZFcjgKD+0NTHbi5LNwVlOjS7a
+	vL+TWCWR6pbVLchMi/gGx31Ypwsi9Pd2Jo1ctrV+vgnlaMNOApQ3erGvkKwsnte6KYIt499KO9n
+	IjlnIgW5bEG5e8wB2sl9HrJeEznVjjWwmn652wTaZMr4M+kCM0PAk9rQoN+iREgMKawGSR1fLpc
+	KR9NOwfaWuLDErseRf6VYiO+fqiqYdXnulXDOkFztco9HuRShmd5O0RgrMvQJzoY9PKi2Pg4IHp
+	kQh7Y40OBq1hIGkqJpn+tFwkTbREU5bMjuBJcpog/9xZN7oPFJUdYEckY5rw7vr6J4kpjZU/ciF
+	AzNwlV4V04s58ZOCipbUj1KxfTmHdAVzZw/zwlufAP09RYSXzdW/ylfyKLn/GHuWvBlJ87EX/FB
+	YIVNU3egwdaa8fahc0KJeat5EJlFj4D4xXLyZ3/LMt/VfPg36WC1OenAjOp1e5N3miDsTNgX4nH
+	vqWnmLIClYeuO/CdgjbPT+LVQN7vJSz+AJ+YhaQr9ERhFrswTQhJiqFMIeWvG3Hhq/ZnLjFPVN7
+	PtJVPIrQR9N9XXXAKwXTOXlWV1LhWfEvv
+X-Received: by 2002:a17:907:3d51:b0:c34:c5e8:1dc5 with SMTP id a640c23a62f3a-c5096312247mr256633166b.20.1794581848001;
+        Fri, 13 Nov 2026 06:57:28 -0800 (PST)
+Received: from xeon ([188.163.112.62])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c5095b2369asm109937066b.25.2026.11.13.06.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Nov 2026 06:57:27 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v1 0/2] clk: tegra114: Add CSI pad clock gates
+Date: Fri, 13 Nov 2026 16:57:06 +0200
+Message-ID: <20261113145708.261530-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,89 +107,22 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-22-5e3070a3478f@oss.qualcomm.com>
-In-Reply-To: <20261026-drm-panel-funcs-v1-22-5e3070a3478f@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 13 Nov 2026 15:34:42 +0100
-X-Gmail-Original-Message-ID: <CAD++jLmME3b35ipG0N9agoe+5P1J6dsDiy3hoT9MJ9vyRwBA7A@mail.gmail.com>
-X-Gm-Features: AclHuK879_MUVY4wh3-oLFktJApN7IrvQSuSi80dujOkyN3zJSTWDVcOyRF70LI
-Message-ID: <CAD++jLmME3b35ipG0N9agoe+5P1J6dsDiy3hoT9MJ9vyRwBA7A@mail.gmail.com>
-Subject: Re: [PATCH 22/35] drm/panel: drop the orientation workaround from get_modes()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Igor Reznichenko <igor@reznichenko.net>, 
-	Michael Walle <mwalle@kernel.org>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
-	Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
-	=?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
-	Purism Kernel Team <kernel@puri.sm>, Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
-	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
-	Michael Trimarchi <michael@amarulasolutions.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Casey Connolly <casey.connolly@linaro.org>, Michael Tretter <m.tretter@pengutronix.de>, 
-	Cristian Cozzolino <cristian_ci@protonmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
-	Ryan Brue <ryanbrue.dev@gmail.com>, Nickolay Goppen <setotau@mainlining.org>, 
-	Stefan Mavrodiev <stefan@olimex.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Robert Chiras <robert.chiras@nxp.com>, Alexander Koskovich <akoskovich@pm.me>, 
-	Markuss Broks <markuss.broks@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
-	David Heidelberg <david@ixit.cz>, Dzmitry Sankouski <dsankouski@gmail.com>, 
-	Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 26, 2026 at 12:11=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
+Tegra114 has CSI pad bits in both PLLD and PLLD2 clocks that are required
+for the correct work of the CSI block. Add CSI pad A and pad B clock gates
+with PLLD/PLLD2 parents, respectively.
 
-> Setting the orientation from get_modes() was a stopgap for the display
-> drivers not calling drm_connector_set_orientation_from_panel(). It is
-> also too late: by then the connector is registered and the property can
-> no longer be attached properly.
->
-> drm_bridge_connector and the panel bridge set the orientation on their
-> own, and the drivers using a panel directly do it when creating the
-> connector now. The exceptions are sun6i_mipi_dsi, sti_dvo and the Tegra
-> DSI, which get the panel only after the DRM device has been registered.
-> None of the in-tree boards using them has a rotated panel.
->
-> Assisted-by: LLM
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+This change is similar to Tegra30 pad clocks and is required for CSI block.
 
-Makes sense.
-Acked-by: Linus Walleij <linusw@kernel.org>
+Svyatoslav Ryhel (2):
+  dt-bindings: clock: tegra114: Add IDs for CSI pad clocks
+  clk: tegra114: Add CSI pad clock gates
 
-Yours,
-Linus Walleij
+ drivers/clk/tegra/clk-tegra114.c         | 11 +++++++++++
+ include/dt-bindings/clock/tegra114-car.h |  3 ++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+-- 
+2.53.0
+
