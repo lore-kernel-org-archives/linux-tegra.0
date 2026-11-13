@@ -1,106 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794581853;
-	b=Pv+wt3muJF9gvbauxY9BbKYC3qfGD31EF6CrwAsZHJAK0qyaiDe8H/rOMw9dLwSxB2AA
-	 PNTRS821gFT3fNy66rhnNAyFWDe6p0qqpknG4tvMKRltEtSQJW+rZX1uh6Y5z9AVUjy8n
-	 +axnGDZlb2rjvW08YOz1Jv3n5/UCIMAWjlnIz+KSi91vgK5cDVWqWpOiFwRm8oTH4ajx2
-	 2rbCQK4CAjrL4eZkOU1QjT2Hko+OwaFDPoyjl4ECQXjieT5mkYAG8NWCvPXKIIeytWEhw
-	 hL857VsY1T2qkFVlBEYDetcYrJfEFwUjVMZkCx08XeUwSHEkZcKd81JXdgbMUr6Zsag==
+	t=1794582279;
+	b=khmhSl9BpKkB60LbcBRSoNdCZk/HIupPEY1T/PB86pH8wwP1SSVja4Hop07RotAShHmt
+	 MdzLHH0UDRkHiPQh9qMqg8RCoJOBdU01gMCmlkww/LhX/DayaECx8twNNw0UPNWKVazFZ
+	 ihk0i/vjiVfypxS9Wzz+ZNIRfwXV5EGVvYppkt46dIxLX/R4HEaW8F9rxVFHtQbS5hjVT
+	 6eKRPv/u4LuN6hWubKANeEepa08CmjFA1U+/k/wqu3adCXyC+hltyyoHaws2mKzSoTv41
+	 kyHp09B5o6gIAuUdw7/uIzasUIe6sAlN/jCbiXzQgTG1W4JodWKgEp1AJMxBfAdE4CQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794581853;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=scsWxuEwzNIQ5N/PGO6xJlWHR6rWMshg3tU60+o1X18=;
-	b=1Q8PXB/AIBzlYqrVsqQAxn8OMXsqG4pd0AdujICU6TFMzlqR7AlFSaNX7X6QeL0gu8tL
-	 /kMgQvufWiD6kRRUlPzjIqzqKbrtd9HfpEf5DBbA/1SDhOmi/tr1VA1YVaBALevzu1WOD
-	 YpoRlQKtHrUfE/6l9v3k6IfzaNW9g6EZj4fnl6lwfUwnmznDT/zUoQIr8aYOblCaDSrbU
-	 9UVtk6SIATrcwDkztPNYWbaOL7kem0xV9BVLcLAtBwB5boozRUgXsARdV1LcDeXqNsBH8
-	 AW1Rv7F3Medc1lwXLH2HUZ2zfJwoYusJIGVON1DHycKx5Ax2Hy6zboIXusFCv2I0fsQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794582279;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=kbBjRgmT9qgWX9JcAIks0NFFYmbsdb28Bgdoa2Ns/l0=;
+	b=ftMwGXm+SJAa3SVW2fCJ0qaiHf+B1vsaXNWRnButwaMNY8cEE2vsNVHcmZnsPn5REmgi
+	 ur1FfxthObADca14L7RYURYTLXvcQxsF6L5wZzXLiNctzcA31Fs77ZMyI0haRnLWJZtc3
+	 jWxeLdgjmXsn6fYQwO7K2orjr0QEGYKjKVvRhmqD08wLOEHRd4ZSK/QAbz3Uo1hLbXwcc
+	 J7uZkwRmsrLO4HAiTzztzjSp1q4UYzeoyksc9tSvPPuwF2lUdLDp36jsRhPd3UcVXzY84
+	 x41iZ3IYaO9ooz4IRu9X02e6hkNtcxzTNbYLOX2Uo2zOXEKUXj0ALIjZfgwaC+43i5w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=owO76DdV;
-	arc=none smtp.remote-ip=209.85.218.46
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IrCrDKxV;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270FF606A88B
-	for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 14:57:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 270FF606A88B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3579606A336
+	for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 15:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=owO76DdV
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-c5075fa7ed0so242606666b.2
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 06:57:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794581851; x=1795186651; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=scsWxuEwzNIQ5N/PGO6xJlWHR6rWMshg3tU60+o1X18=;
-        b=owO76DdV+intecB+gfvcaXp9qFLZHPv1oqwmheQeztT/p+qKx7StnlQPrf9T9xHAiO
-         2RUEOCFi01EIq5y6j/nq2SR27fG86EGMwVX1h+hljVpRA4Ijj5eR9Z0bgRIRnBd/LOUe
-         86eVB9DZnbqXjO7xcBGYT20LQmmYCZBNTieEV/sUaNTZ/SPKG5AoAppc3pfgQiYzgL9I
-         /YjJJ1gUA0RUmFDJ9xnWDxuRnpSeaQaavc0gCMehJtUUU68q1Jz56JAXgfc8FJ1TzUeg
-         aCkcOZGNWE9I4STm6ZaDOqZFmmsstugQ6ug7a+7umu9UU7RsN4kdEYAWOEY0zGEKhb8Z
-         1utA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794581851; x=1795186651;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=scsWxuEwzNIQ5N/PGO6xJlWHR6rWMshg3tU60+o1X18=;
-        b=0whk5/G0KJbhwRYavhzBqjpB/r/5f0J3lgydOlRSYxk7NJLdMfduXZzME9zY49q8RE
-         bP28hJl/qmLK2+v1HsflvnYiiEeV3Slh/sGt3ywREKf/hlI9BBCvWZuHN0A1vfN+bB/Y
-         YvjxQL8+bcuA1UFGYjzk4COPrpHE1mu1iy+qR7l1e6PQDvQXgjKJ9AbBrPlswInDtrLM
-         AmDJ+cKnLF/RZP7l9JeZ7Tlk6cmZsEIHaLt9DbGlbWbVMPB/wDHadbbk/PbUIzxGKoPS
-         iYNQElM2djtxB9CyCzet/zJn8zFvR3O13A7zoWnjkyou8/1a1rPTKvTIHmYbRMbsxOJg
-         B7UQ==
-X-Forwarded-Encrypted: i=1; AL+hErEfvNOpdExORL98x4Xy1nvecOBiABsYo0JI6bSTBrzpkkJE4cAqSCA5mapgA3B63FWMfXVMlHRcheC7Xg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/Sc7jeGgzVFZJqMRoZre5+F2E8nbt4tXxdtfNqQ1/wSiILldsy
-	Nka9ISkHh5oMeMlaeIy2p+NwbDUtNAJg7wzOz8NJvZ2e5GoT9jXSP4tV
-X-Gm-Gg: AYBFou0dEFJnOMK2LidPlF3kV+EKQ252jbbFRjkI1/OgFl9rEbGq8l/1LY/doKKb/LX
-	4DN215axT0WS+kl0V/9MrrwVabbvv0WHbfbpCJzz25ZXkeE5ivYO885mafHZfNTJR7oh5undKV5
-	PXXLgIbKHe2zhS/Y8kJqE1ehZoCyycmWsi6eTdwGSGLSpRWzkEGe/jXlH+uLxWHIDo+IvJuQTS4
-	qw0cN+eG8w0NQsVD5WsVpDLa9dkt2t0dlhgqKcOshls79GKVsLjuFHZT8Z+4HOWIqT25krRGw4U
-	341xW+Niauw98KcSoO6J87BRsFjaiY5JZXN6FaCpCVcEMOJhbssK3fOVGEZ7w5VgRuoD9qHqdeq
-	Jo5+Tw4W1SxuG9RAEnZmOPNn62rIyU27jwu/hWsXojcVHm2D5YqlJRVdSAU2ZF1Bu+vYJxkAdqw
-	9KC5oGqCjbaEKkhVmEl6cZDvu3VhdaaYw4XpKaMxpG/idQjZmCVcZkOhihhabx6CSVWAvsMuKLj
-	NZfsTZ2UrxtaI+yxoOPQHYRZ56PnN5orQTItxh0eB/tQ1V/lcnk9JtW5EqukaZXO3csSZeQIuRR
-	e1dWIHLby6XAVIKRQtZhK+frnAPGfsq+rQGgY9Lvo8EjUAz9JalLuFWZz+/bZhPdJckV2BQ83+f
-	bg2j2WewV6Q==
-X-Received: by 2002:a17:907:a088:b0:c50:52b4:eb04 with SMTP id a640c23a62f3a-c50962ee311mr275471466b.16.1794581851329;
-        Fri, 13 Nov 2026 06:57:31 -0800 (PST)
-Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c5095b2369asm109937066b.25.2026.11.13.06.57.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2026 06:57:30 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v1 2/2] clk: tegra114: Add CSI pad clock gates
-Date: Fri, 13 Nov 2026 16:57:08 +0200
-Message-ID: <20261113145708.261530-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261113145708.261530-1-clamor95@gmail.com>
-References: <20261113145708.261530-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IrCrDKxV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A62641F000D0
+	for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 15:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794582278;
+	bh=kbBjRgmT9qgWX9JcAIks0NFFYmbsdb28Bgdoa2Ns/l0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=IrCrDKxV/9wVP7o1A7Uwwq7KjWFyRCJl3dAQ7/g7gWaijgrPjFRCRmhQlBLdWVcBH
+	 Y0JBHhUopPngdNXRgzXWeyCUbHm2ANpWsFzJs6UoBzYMjNJ9DuO58pg/jwr8b17Aee
+	 MqnJ7Fal6xcUQ6DroTmn7ezlWMbttYPwdkEbnbIMZZClr0LaaNjSyFXp+J/u7zUiEH
+	 X6kVqlDG+lBoaY0er8P3dIrFDfdGFRIOI+jmHy8D1rRS8/+xAdIjpZygXcULlQAbxi
+	 NxZykgby/i4t778qxSQH6v0jKBhX430t8ut1zBjsQpPQhGn83TTnDiuGmjaKqvwnw1
+	 D2VrlneApiEKg==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5c15ccd7fb5so1333850e87.2
+        for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 07:04:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErEXF4ULMGYs6Npl/PVn+SX6N2pUbVE1QIK7Lao5TfD/qSc7pw8swbDZX1xdpqDD2J+wRignB/QCO+08vA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+g3AqFeRzR295uZguu+mqRR4jPm5McK90WCBVRDFmXBc8v6ah5
+	ITKoGHCN/HcPDHeQYmuKalzBOW88b8uHwIhB+IYn2zFx+5xZmZaQNpcGeZj/FL/uZkKWW6rLbHZ
+	xUq7hYWINrW3Bn/Cm1ccmj9WcEqDcoR0=
+X-Received: by 2002:a05:6512:3c9f:b0:5bf:d0d5:3b12 with SMTP id
+ 2adb3069b0e04-5c1709e535bmr1462462e87.42.1794582276836; Fri, 13 Nov 2026
+ 07:04:36 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -110,38 +59,331 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261111220803.3953790-1-sumitg@nvidia.com>
+In-Reply-To: <20261111220803.3953790-1-sumitg@nvidia.com>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Fri, 13 Nov 2026 16:04:24 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hJExw-TYyF-TtEeuZ9kw3v5cm=H3Q=vLLqQ51V0Xn8Mg@mail.gmail.com>
+X-Gm-Features: AclHuK_uNNKHpJk3ChlalQ1s4LPVs3H0vhMDhZKt2eCu7idDfJ7Nkp1Kg8j37kg
+Message-ID: <CAJZ5v0hJExw-TYyF-TtEeuZ9kw3v5cm=H3Q=vLLqQ51V0Xn8Mg@mail.gmail.com>
+Subject: Re: [PATCH v6] cpufreq: CPPC: Add autonomous mode boot parameter support
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, zhanjie9@hisilicon.com, 
+	zhenglifeng1@huawei.com, christian.loehle@arm.com, 
+	maciej.wieczor-retman@intel.com, pawel.chmielewski@intel.com, lenb@kernel.org, 
+	corbet@lwn.net, skhan@linuxfoundation.org, rdunlap@infradead.org, 
+	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, treding@nvidia.com, 
+	jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com, 
+	sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Tegra114 has CSI pad bits in both PLLD and PLLD2 clocks that are required
-for the correct work of the CSI block. Add CSI pad A and pad B clock gates
-with PLLD/PLLD2 parents, respectively.
+On Wed, Nov 11, 2026 at 11:08=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wr=
+ote:
+>
+> Configuring autonomous selection and Energy Performance Preference (EPP)
+> at every boot currently requires per-policy sysfs writes.
+>
+> Add the 'cppc_cpufreq.auto_sel_mode' boot parameter to enable autonomous
+> selection during policy initialization and optionally set EPP. In
+> autonomous mode, the platform selects the performance level within the
+> MIN and MAX limits, which the driver sets from the policy limits. The EPP
+> hint guides that selection.
+>
+> The parameter accepts:
+> - performance: enable autonomous selection and set EPP to 0x00
+> - balance_performance: enable it and set EPP to 0x80
+> - balance_power: enable it and set EPP to 0xc0
+> - power: enable it and set EPP to 0xff
+> - default_epp: enable it and preserve firmware EPP
+> - disabled: preserve the firmware configuration (default)
+>
+> Warn about unrecognized values and ignore them.
+>
+> Skip policies without autonomous-selection support. The driver enables
+> autonomous selection before writing EPP, as the platform may ignore EPP
+> while autonomous selection is disabled.
+>
+> Record successful writes so the existing online and resume paths reapply
+> the requested values. The offline and suspend paths restore the saved
+> firmware values, including during driver unload.
+>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+> This is based on the "Preserve OSPM-set registers" [1] and
+> "ospm_nominal_perf" [2] series, which are applied for 7.5.
+>
+> v5 -> v6:
+> - Split "Set CPPC Enable register in cpu_init" into a separate fix [3].
+> - Accept strings only (Pierre [4]).
+> - Move the setup into cppc_cpufreq_setup_auto_sel_mode() and check
+>   autonomous selection support first (Pierre [4]).
+> - Drop the last_governor check, as init() now runs only for a new
+>   policy (Pierre [4]).
+> - Drop the MIN/MAX seeding, Desired hint and policy->min/max override,
+>   as init() and the governor already set valid values (Pierre [4]).
+> - Apply the parameter at the end of init(), after the usual
+>   performance controls write.
+> - Save auto_sel and EPP through the saved-register code from [1]
+>   (Sashiko [5]).
+> - Drop the cppc_cpufreq_exit() loop that cleared auto_sel on all
+>   present CPUs (Pierre [4], Sashiko [5]).
+> - Enable autonomous selection before writing EPP.
+> - Set EPP also when firmware has already enabled autonomous selection.
+> - Add the balance_power (0xc0) and power (0xff) modes.
+> - Ignore an unrecognized value instead of treating it as disabled.
+>
+> v5: https://lore.kernel.org/lkml/20260623080652.3353386-1-sumitg@nvidia.c=
+om/
+> [1] https://lore.kernel.org/lkml/20261106193304.3347374-1-sumitg@nvidia.c=
+om/
+> [2] https://lore.kernel.org/lkml/20261109195400.3600561-1-sumitg@nvidia.c=
+om/
+> [3] https://lore.kernel.org/lkml/20261110101246.3665797-1-sumitg@nvidia.c=
+om/
+> [4] https://lore.kernel.org/lkml/f61f592a-bc9c-4a83-bde1-e999c8101c36@nvi=
+dia.com/
+> [5] https://sashiko.dev/#/patchset/20260623080652.3353386-1-sumitg@nvidia=
+.com
+>
+>  .../admin-guide/kernel-parameters.txt         |  26 ++++
+>  drivers/cpufreq/cppc_cpufreq.c                | 120 ++++++++++++++++++
+>  include/acpi/cppc_acpi.h                      |   2 +
+>  3 files changed, 148 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+> index 0b3c140babd9..5714c0d30fce 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1015,6 +1015,32 @@ Kernel parameters
+>                         Format:
+>                         <first_slot>,<last_slot>,<port>,<enum_bit>[,<debu=
+g>]
+>
+> +       cppc_cpufreq.auto_sel_mode=3D
+> +                       [ACPI,CPU_FREQ] Enable ACPI CPPC autonomous perfo=
+rmance
+> +                       selection on all CPUs at boot. In autonomous mode=
+, the
+> +                       platform selects the performance level within the=
+ CPPC
+> +                       Minimum and Maximum Performance limits. The drive=
+r sets
+> +                       these limits from scaling_min_freq and scaling_ma=
+x_freq.
+> +                       The Energy Performance Preference (EPP) hint guid=
+es the
+> +                       platform toward performance (0x00) or energy effi=
+ciency
+> +                       (0xff).
+> +                       Requires the ACPI CPPC Autonomous Selection Enabl=
+e
+> +                       register. EPP is set only if the platform impleme=
+nts it.
+> +                       Format: <string>
+> +                         performance:
+> +                                 enable autonomous selection, set EPP to=
+ 0x00
+> +                         balance_performance:
+> +                                 enable autonomous selection, set EPP to=
+ 0x80
+> +                         balance_power:
+> +                                 enable autonomous selection, set EPP to=
+ 0xc0
+> +                         power:
+> +                                 enable autonomous selection, set EPP to=
+ 0xff
+> +                         default_epp:
+> +                                 enable autonomous selection, keep firmw=
+are EPP
+> +                         disabled:
+> +                                 keep the firmware configuration (defaul=
+t)
+> +                       An unrecognized value is ignored with a warning.
+> +
+>         cpuidle.off=3D1   [CPU_IDLE]
+>                         disable the cpuidle sub-system
+>
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufre=
+q.c
+> index a62589c0674f..c9bed93cf0c9 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -238,6 +238,58 @@ static void cppc_cpufreq_apply_saved_regs(struct cpu=
+freq_policy *policy,
+>                                              saved_type);
+>  }
+>
+> +/* Autonomous Selection boot parameter modes */
+> +enum {
+> +       AUTO_SEL_MODE_DISABLED,
+> +       AUTO_SEL_MODE_PERFORMANCE,
+> +       AUTO_SEL_MODE_BALANCE_PERFORMANCE,
+> +       AUTO_SEL_MODE_BALANCE_POWER,
+> +       AUTO_SEL_MODE_POWER,
+> +       AUTO_SEL_MODE_DEFAULT_EPP,
+> +};
+> +
+> +static const char * const auto_sel_mode_names[] =3D {
+> +       [AUTO_SEL_MODE_DISABLED]                =3D "disabled",
+> +       [AUTO_SEL_MODE_PERFORMANCE]             =3D "performance",
+> +       [AUTO_SEL_MODE_BALANCE_PERFORMANCE]     =3D "balance_performance"=
+,
+> +       [AUTO_SEL_MODE_BALANCE_POWER]           =3D "balance_power",
+> +       [AUTO_SEL_MODE_POWER]                   =3D "power",
+> +       [AUTO_SEL_MODE_DEFAULT_EPP]             =3D "default_epp",
+> +};
+> +
+> +static int auto_sel_mode;
+> +
+> +static int auto_sel_mode_set(const char *val, const struct kernel_param =
+*kp)
+> +{
+> +       int *mode =3D kp->arg;
+> +       int ret;
+> +
+> +       ret =3D sysfs_match_string(auto_sel_mode_names, val);
+> +       if (ret < 0) {
+> +               pr_warn("Invalid auto_sel_mode \"%s\", ignoring it\n", va=
+l);
+> +               return 0;
+> +       }
+> +
+> +       *mode =3D ret;
+> +       return 0;
+> +}
+> +
+> +static int auto_sel_mode_get(char *buffer, const struct kernel_param *kp=
+)
+> +{
+> +       int *mode =3D kp->arg;
+> +
+> +       return sysfs_emit(buffer, "%s\n", auto_sel_mode_names[*mode]);
+> +}
+> +
+> +static const struct kernel_param_ops auto_sel_mode_ops =3D {
+> +       .set =3D auto_sel_mode_set,
+> +       .get =3D auto_sel_mode_get,
+> +};
+> +
+> +module_param_cb(auto_sel_mode, &auto_sel_mode_ops, &auto_sel_mode, 0444)=
+;
+> +MODULE_PARM_DESC(auto_sel_mode,
+> +                "Autonomous selection mode: performance, balance_perform=
+ance, balance_power, power, default_epp, disabled");
+> +
+>  #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
+>  static enum {
+>         FIE_UNSET =3D -1,
+> @@ -938,6 +990,72 @@ static u32 cppc_cpufreq_effective_nominal(struct cpu=
+freq_policy *policy)
+>         return (u32)ospm_nominal;
+>  }
+>
+> +/*
+> + * Apply the auto_sel_mode boot parameter in init(). Enable autonomous
+> + * selection unless it is already enabled. Then set EPP for the selected=
+ mode.
+> + *
+> + * Enable auto_sel before writing EPP, as the platform may ignore EPP wh=
+ile
+> + * autonomous selection is disabled. Save each value written, so that on=
+line()
+> + * and resume() write it again.
+> + */
+> +static void cppc_cpufreq_setup_auto_sel_mode(struct cpufreq_policy *poli=
+cy)
+> +{
+> +       struct cppc_policy_state *st =3D cppc_cpufreq_policy_state(policy=
+);
+> +       struct cppc_cpudata *cpu_data =3D policy->driver_data;
+> +       unsigned int cpu =3D policy->cpu;
+> +       u64 auto_sel, epp;
+> +       int ret;
+> +
+> +       if (auto_sel_mode =3D=3D AUTO_SEL_MODE_DISABLED)
+> +               return;
+> +
+> +       /* U64_MAX means the platform does not implement the register. */
+> +       auto_sel =3D st->regs[CPPC_SAVED_AUTO_SEL][CPPC_SAVED_FIRMWARE];
+> +       if (auto_sel =3D=3D U64_MAX) {
+> +               pr_info_once("Autonomous selection is not supported, igno=
+ring auto_sel_mode\n");
+> +               return;
+> +       }
+> +
+> +       if (!auto_sel) {
+> +               ret =3D cppc_set_auto_sel(cpu, true);
+> +               if (ret) {
+> +                       pr_warn("Failed to enable auto_sel for CPU%u (%d)=
+\n",
+> +                               cpu, ret);
+> +                       return;
+> +               }
+> +               cppc_cpufreq_save_requested(policy, CPPC_SAVED_AUTO_SEL, =
+true);
+> +       }
+> +       cpu_data->perf_ctrls.auto_sel =3D true;
+> +
+> +       switch (auto_sel_mode) {
+> +       case AUTO_SEL_MODE_PERFORMANCE:
+> +               epp =3D CPPC_EPP_PERFORMANCE_PREF;
+> +               break;
+> +       case AUTO_SEL_MODE_BALANCE_PERFORMANCE:
+> +               epp =3D CPPC_EPP_BALANCE_PERFORMANCE_PREF;
+> +               break;
+> +       case AUTO_SEL_MODE_BALANCE_POWER:
+> +               epp =3D CPPC_EPP_BALANCE_POWER_PREF;
+> +               break;
+> +       case AUTO_SEL_MODE_POWER:
+> +               epp =3D CPPC_EPP_ENERGY_EFFICIENCY_PREF;
+> +               break;
+> +       default:
+> +               /* default_epp keeps the EPP value set by firmware. */
+> +               return;
+> +       }
+> +
+> +       /* EPP is optional. */
+> +       ret =3D cppc_set_epp(cpu, epp);
+> +       if (ret) {
+> +               if (ret !=3D -EOPNOTSUPP)
+> +                       pr_warn("Failed to set EPP for CPU%u (%d)\n", cpu=
+, ret);
+> +               return;
+> +       }
+> +       cpu_data->perf_ctrls.energy_perf =3D epp;
+> +       cppc_cpufreq_save_requested(policy, CPPC_SAVED_EPP, epp);
+> +}
+> +
+>  static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  {
+>         unsigned int cpu =3D policy->cpu;
+> @@ -1058,6 +1176,8 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_pol=
+icy *policy)
+>         }
+>         cpu_data->perf_limits_valid =3D true;
+>
+> +       cppc_cpufreq_setup_auto_sel_mode(policy);
+> +
+>         cppc_cpufreq_cpu_fie_init(policy);
+>         return 0;
+>
+> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+> index 2cec54b4d2e2..3d47c07f494b 100644
+> --- a/include/acpi/cppc_acpi.h
+> +++ b/include/acpi/cppc_acpi.h
+> @@ -42,6 +42,8 @@
+>  #define CPPC_AUTO_ACT_WINDOW_SIG_CARRY_THRESH 129
+>
+>  #define CPPC_EPP_PERFORMANCE_PREF              0x00
+> +#define CPPC_EPP_BALANCE_PERFORMANCE_PREF      0x80
+> +#define CPPC_EPP_BALANCE_POWER_PREF            0xC0
+>  #define CPPC_EPP_ENERGY_EFFICIENCY_PREF                0xFF
+>
+>  #define CPPC_PERF_LIMITED_DESIRED_EXCURSION    BIT(0)
+> --
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/clk/tegra/clk-tegra114.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 80b7f64125d92..e3d8ab76db649 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1041,6 +1041,16 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
- 					     0, 82, periph_clk_enb_refcnt);
- 	clks[TEGRA114_CLK_DSIB] = clk;
- 
-+	/* csia_pad */
-+	clk = clk_register_gate(NULL, "csia_pad", "pll_d", CLK_SET_RATE_PARENT,
-+				clk_base + PLLD_BASE, 26, 0, &pll_d_lock);
-+	clks[TEGRA114_CLK_CSIA_PAD] = clk;
-+
-+	/* csib_pad */
-+	clk = clk_register_gate(NULL, "csib_pad", "pll_d2", CLK_SET_RATE_PARENT,
-+				clk_base + PLLD2_BASE, 26, 0, &pll_d2_lock);
-+	clks[TEGRA114_CLK_CSIB_PAD] = clk;
-+
- 	/* csus */
- 	clk = tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
- 					     clk_base, 0, TEGRA114_CLK_CSUS,
--- 
-2.53.0
-
+Applied as 7.5 material, thanks!
