@@ -1,90 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.45
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794593735;
-	b=mcIGruVtQwWFFeeKmg5TdYkFbr/G2kOxK8gWhJHZzlOZM6mu2ZydArZKCv6MGK2koMrT
-	 +eYbk8vpGUZKI0C+Ev7PcHlFpun4KbQfpxxIyfAtbiKoRucQR/JmsUXH1oQa4l48n2Ugz
-	 ipRP0/vJXRMdoQY73a125D9EQ0IIxwaAAga8AeMKijav1o/PZbbpL9V8jEe0O/n0uTPae
-	 0MT72JPhlqI3CbbEGwnyGc6g0m3ay2gYupdgjbJDh/yaEB2jmRod84kNwX5eppQ2d5gA/
-	 OWlIq1fwaNO7v/WVpps9po1oFyGyEZEDU7WZQNpazouXJtp0OiZXkssay6wYDXcZshQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794593735;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=SkGAF3rvqZpMpEv+A0EsfbrHuzz+MIXvk9S9duAZxjo=;
-	b=c2GoSOzdTNtQK9ZykdXXaDunBWo333MBUthnXkouGp8DkLfRTG7A+RYPARuT2rIAG7v9
-	 NlleDyIMLFxty21ft6Po7DjBFGMfOhmD4JSsYSzcTiWSw2eOLvrI/ymany/NJPJpJrZp9
-	 EZjyi08CM/Ij6I2CylZSGT+qnxtC5tg3hBLQW3w1fa7lzWO5SWVn/pYpP4CuXln8RV6Ue
-	 e9O3FbCJcXMKnRktVMW2khctMHNIL/WtYcgtT5fTJJcKfPUqlMZEfLhNjcJO6g/YJc/bv
-	 IoQdi86kNhRtEuGdJyQbVZa33fEhQGfCvh0DeqsuHL4bnEIlJ+hwZpezU5nKXg4bbSQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vL8JNU8c;
-	arc=none smtp.remote-ip=209.85.161.45
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794596480;
+	b=WynuVJhSimuGilw8UOFcA3BmI1WEmdU512TXGhUDG6ZDJ9SA4OCWJ2jWYDWD7m59zxYh
+	 gbqZGLRhk5ob5+nthZkOsqBjwuwFC+LBFjOkDuxsMOhjHYsMqhFqETC8zzYWZMEXlBoRI
+	 9+2M1s2fNoA+BGrbmSk6SqeCUBaSSFTPsdIdtw7vzHd4wY2IEGbUcUPzhJVzA1I6KRFJw
+	 lWyxEB4thYm4cyKDBGrJ5V6z6NIF+Rqmabvxphev+aAcZkxVUBUWWW7ir8dmiN+5nCdj6
+	 jev4f6bWZYm57gghvIK8zLPf6i2ttt4N+WnAMXR0ejSRAFVFT+z1gt41u+AAc4V/t/A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794596480;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=nsSfnDpbQw7dfC3kYEhB0DRn0ChvOh3fdhFKa8KvdXc=;
+	b=LDAgI+8ESpYuMIHj71dQd+MZXnWBg/l6hXIwrcs7b6MS6b0jTxSVDCwhDtrLpazLcExi
+	 27wIpEhy3RpXlt8gGg/sB8llc1qKmcRXk9xxAuvX2t5e3gAajhjTH0RQbqCkk33U4ETou
+	 CWzLwZDHom6wNTahHMh+Z9DocWeV+qqzugKky09OSETssXKb1aKXW1ofdnsVNN9y1d4T5
+	 VY+M8VPUnbsxE1GglGkdVNvZyrgiX3FCkw8wERI8MYOkVEbN1YJCy8GY3RV2lJYEW6Rzq
+	 3WlVfbnsRXHgHNEFiEH/P3Cru+biKq2vATvOGo8eJs/wA9QIZsFMyati5R+WipRdPVQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FLv71mKf;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80BF606A336;
+	Fri, 13 Nov 2026 19:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FLv71mKf
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794596479;
+	b=ozaSJ9Vmhn3mCAixPPQ6swV+IlCK06I9reBl6F3S5hnqChcBturSoxMGtytrkKgrIpUJ
+	 Yw4cj/BNPYKA/k2RA27Whnh/wlAiIc/Zt1p4M/RB/breNsmJl9l+Gk/d2+QTbMTB+hG2+
+	 zltJlIz7pUTy9HMObSs+fQTAo9/gmI8Z8pU1F0g322dXSi6K2DXrBviAhJgwwky15VLY3
+	 jqaKvgJlWO0TsL7y3kgPyyRV46xGdyFEjTcoXF53LmkNpsiYpOL4qAREXn8UDbnmC/8V3
+	 WJexdhmx2KAckUtTrHDQPJTQRnRBbJpROazXsV3jjTaShv79WZkFQ/LhbppjSt49vvw==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794596479;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=nsSfnDpbQw7dfC3kYEhB0DRn0ChvOh3fdhFKa8KvdXc=;
+	b=FRa38nK9iSTcgUTZbq+tYmkuk09WxlBSsy7gBHLekH6L8EBU/fmyABG7VFAjfnVkjMv+
+	 YC3DXk/G7n+U67kG7PRlQPp0lWCy7Mm0uJiyoqXnnmQ8q42r3q4DPJhIZ/wPrWY66qYzU
+	 Ly0QwQdWJoKru4CKpOvyAW588t2C6PsoKPhUAwCB9PoJ1b4RMNjb9tpOesDZ55JKFVYhm
+	 VrW9olw40u0MUQOIbUJmw9hCQJiaALF0LTKHsZyUcUKP2HT0TSa+y/CXMwydl7yQODvDI
+	 P7p5xXIARhlrO3557L71EfMsHalmgeGqj0W91iVbBInNHPeuWFllle6AQGrKYTpA1xw==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168A660A5BE0
-	for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 18:15:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 168A660A5BE0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vL8JNU8c
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-703be215729so422726eaf.1
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Nov 2026 10:15:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794593734; x=1795198534; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=SkGAF3rvqZpMpEv+A0EsfbrHuzz+MIXvk9S9duAZxjo=;
-        b=vL8JNU8capIlGUkmK/0rBjqquGRvUq5D0FCaQC1AV3AS3bgjkpC3Q4F7FGncJlSqOj
-         N3FqIRoNlGllXvWmVhpICLCRAW9fkwdrDbexFEjbPzACz/vCfx5DcAf7/Q3pcZz9aPwc
-         aFXSyY0lshBASiy1HVR1hbAmENGfny9GFhhrBEx53y6L0DDjWTZhAqKzcVG7rlsY90FI
-         I8oPYrx995Ral9qjcnVtBOddJEhJGD0Kt4uEckShiPkYoFJ1I/jsbKbrBbvLsEMAEMZv
-         FX13JWaC3ScHfS51f6p/YVHraGkANOpaKzp5VesYnuwjdfLx7PBgt0buyEpztmztEZCv
-         l1ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794593734; x=1795198534;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=SkGAF3rvqZpMpEv+A0EsfbrHuzz+MIXvk9S9duAZxjo=;
-        b=b02o2z2NNc79zFCVSD1U/c1SaeRvKy8WQDw8agP8MVNs1Dys3cye6jfKi7WmMlPqfV
-         /Q9O53ZAT0LeBBvnyEJ6xoGEoeGq4jxLyinWdLWzIj59nmT/GXcVqgzgIPJiH12WBxBm
-         MOv4QmSvIa0Z8GuTIE68YgKvjIhSVoCGB7rhOOhazGkRJXVdkU614J1ER3Ju8zDzIQ3M
-         xHmvX/y9lMwLNGKLHvGmWpFyqrN2Bjdtp4fr2q8Ahu3RRwDZfV2Pabn9VdSRVOegraSn
-         dFD/kTbMVjvloWzXtWYrLsu9O30dktCFDeugY/5aZddzpwUTFOdTtPyHxpJPd4A68ePP
-         9dkg==
-X-Forwarded-Encrypted: i=1; AL+hErEAuwmIUqmksY8/uFoT4w++nCLnC/GeRiazyp8wgk+zG0tsnroCLH+T6ssl0tKDpqUW0jnH4idip5mBGQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+tPaygB/IBr4KlHeF5dNF2pd8kQYQJOv0//RlEMK6ob0LVMH4X
-	1mi1kUMdMREMq75Q09JxiuFjDpMLVad9XZ3exYSyNDlZ/pC2t66U8igz
-X-Gm-Gg: AYBFou2TtKrWFVvboCHE31e+OvEjkc5h6UwZ/2cxhEs4OtS3qcwe8znhsp6GS09FvjS
-	rFi0v7G1Q/dTFY7t4fDmANF4p2xbPKys3ZE6P3IeixOBqasaPWSjmu7xTGC4WYCFwsIg2K8ZjME
-	Tt4V2votviEpzs9a5sNfixPMKRKqh3272luvyNhGrDmvCWdEZu4V2FPqQFLD0t5gYhGTxM2+p+w
-	8S0v15+VpQzWNsTOmPVCnC7ehWpbKOiweSZJuE2Zn2qg/RuBistIcrVBzJeglG3AKO40avUt3AK
-	4aVVyvmZGAVmlgc4A60Jkj/IyBBXJTeBSWwYY2GvBCiK73HvL30LHGIks06M+GJcxikRZbsLyOl
-	FgEozMI62qOoNEz20Gc40AzERE7lkYcBGpMyJV1dp54NubLlEQ1Pko2KREgQzOGEWYF0h0ELV9/
-	ssqC7byODfE/BEuRcwBi6KJ9au2HINhAtAAk58m3oIv2f5lvM4Ru0nt4UU/kP5SApia5waJ6B1e
-	4WGQgv6DCZszA72lImFcEpSmqa5RSJjVlsbyEeWuLhsk65OtcrttBVPv8mpmnw+86Nzb9zm3aSH
-	ZPO3McbmFFBt/rP7kRufkb2lsfiedtxY/EbnZG+2hWZOeX45P6rrizRbnPNKPH9VuZKkfZTj7Uh
-	bTpikKuKaeNqvuLPMFB7ZLcauHWaHNpJLMLh2y4BzvNrFjEkpu/9cuMaSHBU6RqyUSMtHGkPGb9
-	GEdgk/AK5uV/yhRrxbmbecrTs0s4wxHRNA3+bX/0krbdFZvFhiLNk=
-X-Received: by 2002:a05:6820:f012:b0:71a:cee1:caa6 with SMTP id 006d021491bc7-71acee1ce75mr26036eaf.59.1794593734058;
-        Fri, 13 Nov 2026 10:15:34 -0800 (PST)
-Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-8628817d979sm3253414a34.22.2026.11.13.10.15.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2026 10:15:33 -0800 (PST)
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Fri, 13 Nov 2026 11:14:31 -0700
-Subject: [PATCH v4 15/58] mtd: rawnand: tegra: retain open-handle state on
- removal
+	by smtp.kernel.org (Postfix) with ESMTPS id F02A41F000C4;
+	Fri, 13 Nov 2026 19:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794596479;
+	bh=nsSfnDpbQw7dfC3kYEhB0DRn0ChvOh3fdhFKa8KvdXc=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=FLv71mKfDNEjRTdjCX9qWkZtYvZFobGa/9DY27RUnsEGLt+B39QM7GjNZsPogSvQG
+	 tOoPWwUPxWYwW31zgoat/74gGiktOmB5kgOnLazrcjZJcIjuLGVn323M5mBkghQtEN
+	 fCFJIOZzB9TZJfTqdWFpXgrtpXaIa8jVEPisoyPeuedMdKjYX4VnJgWgtzFp3VQ3Lh
+	 MxFDbNwoUtdZVprNUOGfR4gn9/x43Ago/Dq9DUOq6G6vkso6ep+kzkMxMPypnfP4wv
+	 0PY2hNkOaNY2ol3a0TgR09ivCCcOrBsi/EJZYmAgMwFET63Zf+dIbYfypCNeh7qHIa
+	 q0c9aWTl5TtYA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 814DE49A75;
+	Fri, 13 Nov 2026 19:01:18 +0000 (UTC)
+From: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>
+Date: Fri, 13 Nov 2026 20:01:08 +0100
+Subject: [PATCH] gpu: host1x: Cancel the fence when a syncpoint wait is
+ interrupted
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -95,138 +84,108 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261113-submit-rawnand-retained-handle-lifetime-v1-v4-15-556b1d7c6221@gmail.com>
-References: <20261113-submit-rawnand-retained-handle-lifetime-v1-v4-0-556b1d7c6221@gmail.com>
-In-Reply-To: <20261113-submit-rawnand-retained-handle-lifetime-v1-v4-0-556b1d7c6221@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- James Hilliard <james.hilliard1@gmail.com>, 
- Boris Brezillon <bbrezillon@kernel.org>, Lucas Stach <dev@lynxeye.de>, 
- Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
- linux-tegra@vger.kernel.org, Stefan Agner <stefan@agner.ch>, 
- Thierry Reding <thierry.reding@kernel.org>
+Message-Id: <20261113-upstream-host1x-fence-cancel-v1-1-89f453504222@tsv-stahl-riesa.de>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDMBBA0avIrDuQSVChV5EuYhx1So2SiUUQ7
+ 9603Xx4m3+CchJWuFcnJH6LyhoL6FZBmH2cGGUoBmtsQ0QO901zYr/gvGqmA0eOgTH40hea3tm
+ 2dlSboYGy2BKPcvz23eNv3fsnh/x9wnV9AEi9W5aAAAAA
+X-Change-ID: 20261113-upstream-host1x-fence-cancel-0b32753150d6
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>, dri-devel@lists.freedesktop.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Patrick Fischer <admin@tsv-stahl-riesa.de>
 X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794596477; l=3463;
+ i=admin@tsv-stahl-riesa.de; s=20261020; h=from:subject:message-id;
+ bh=ma0XREdmMy4ffQO85e1k8ga8QFqtOsd1gUnED0Gj8hE=;
+ b=AImcND9Q3ZBs1nzv3pd5kyP7ZjsNI4ynf7JGlkn7e2QDU+r4vkwsg/ERQOsPjn3m9xClaHAtL
+ mdSJsZhynNYD/ylWY3E4gANZDqR6pT+R4sgotTBPNapj1yu34n/itpn
+X-Developer-Key: i=admin@tsv-stahl-riesa.de; a=ed25519;
+ pk=D+v6EloYcEY9PIUHFyTM5sqcGIU/fIXzLUdkR8vjAtk=
+X-Endpoint-Received: by B4 Relay for admin@tsv-stahl-riesa.de/20261020 with
+ auth_id=1251
+X-Original-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+Reply-To: admin@tsv-stahl-riesa.de
+Content-Transfer-Encoding: 7bit
 
-Retain the chip and controller allocations until their final MTD
-references are released. Disconnect the chip before suspending the
-controller so retained handles cannot reach powered-down hardware. Leave
-allocation release to the final core-owned put, including
-registration-failure unwinding.
+From: Patrick Fischer <admin@tsv-stahl-riesa.de>
 
-Release the probe-time child-node reference on every exit. Lifetime
-ownership takes its own reference before publication.
+host1x_syncpt_wait() creates its fence without the internal 30 second
+timeout and cancels it only when dma_fence_wait_timeout() returns 0.
+If the wait is interrupted, dma_fence_wait_timeout() returns
+-ERESTARTSYS and the fence is left on the syncpoint's fence list,
+holding the reference that host1x_syncpt_fence_enable_signaling() took
+for the interrupt path. It is freed only once the syncpoint reaches the
+threshold, which may never happen.
 
-Fixes: d7d9f8ec77fe ("mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver")
-Cc: Boris Brezillon <bbrezillon@kernel.org>
-Cc: Lucas Stach <dev@lynxeye.de>
-Cc: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Thierry Reding <thierry.reding@kernel.org>
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Callers that retry on -ERESTARTSYS allocate a new fence each time.
+tegra20_channel_capture_frame() retries in a loop without delay, and
+while the syncpoint does not move, for example with a camera that
+delivers no frames, every round leaks one fence until the system runs
+out of memory. Svyatoslav Ryhel reported this as an out-of-memory crash
+in the VI capture thread; the allocations in his report come from
+host1x_fence_create(), called by host1x_syncpt_wait() from
+tegra20_chan_capture_kthread_start(). The DRM syncpoint wait IOCTLs end
+up in host1x_syncpt_wait() as well, so a process that is signalled while
+waiting leaks a fence the same way.
+
+Cancel the fence whenever the wait did not succeed. host1x_fence_cancel()
+is safe if the interrupt path has signalled the fence in the meantime,
+as do_fence_timeout() then returns early.
+
+The leak was found with the help of an LLM assistant reading the host1x
+and dma-fence code against the call chain in the report.
+
+Fixes: d5179020f5ce ("gpu: host1x: External timeout/cancellation for fences")
+Cc: stable@vger.kernel.org
+Reported-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
 ---
- drivers/mtd/nand/raw/tegra_nand.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+Svyatoslav reported the out-of-memory crash, and he confirmed off-list
+that this patch stops the leak on his LG P895 (Tegra30). I left out a
+Tested-by so that he can give it here.
 
-diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
-index ef765fa21e72..4b9416ecbe43 100644
---- a/drivers/mtd/nand/raw/tegra_nand.c
-+++ b/drivers/mtd/nand/raw/tegra_nand.c
-@@ -1068,9 +1068,7 @@ static int tegra_nand_chips_init(struct device *dev,
- 				 struct tegra_nand_controller *ctrl)
- {
- 	struct device_node *np = dev->of_node;
--	struct device_node *np_nand;
- 	int nsels, nchips = of_get_child_count(np);
--	struct tegra_nand_chip *nand;
- 	struct mtd_info *mtd;
- 	struct nand_chip *chip;
- 	int ret;
-@@ -1081,7 +1079,7 @@ static int tegra_nand_chips_init(struct device *dev,
- 		return -EINVAL;
- 	}
- 
--	np_nand = of_get_next_child(np, NULL);
-+	struct device_node *np_nand __free(device_node) = of_get_next_child(np, NULL);
- 
- 	nsels = of_property_count_elems_of_size(np_nand, "reg", sizeof(u32));
- 	if (nsels != 1) {
-@@ -1096,7 +1094,7 @@ static int tegra_nand_chips_init(struct device *dev,
- 		return ret;
- 	}
- 
--	nand = devm_kzalloc(dev, sizeof(*nand), GFP_KERNEL);
-+	struct tegra_nand_chip *nand __free(kfree) = kzalloc_obj(*nand);
- 	if (!nand)
- 		return -ENOMEM;
- 
-@@ -1116,7 +1114,6 @@ static int tegra_nand_chips_init(struct device *dev,
- 	mtd = nand_to_mtd(chip);
- 
- 	mtd->parent_dev = dev;
--	mtd->owner = THIS_MODULE;
- 
- 	nand_set_flash_node(chip, np_nand);
- 
-@@ -1130,11 +1127,18 @@ static int tegra_nand_chips_init(struct device *dev,
- 		return ret;
- 
- 	mtd_ooblayout_ecc(mtd, 0, &nand->ecc);
-+	ret = nand_set_lifetime(chip, container_of(chip, struct tegra_nand_chip, chip));
-+	if (ret) {
-+		nand_cleanup(chip);
-+		return ret;
-+	}
-+	retain_and_null_ptr(nand);
- 
- 	ret = mtd_device_register(mtd, NULL, 0);
- 	if (ret) {
- 		dev_err(dev, "Failed to register mtd device: %d\n", ret);
--		nand_cleanup(chip);
-+		nand_disconnect(chip);
-+		mtd_put_master(mtd);
- 		return ret;
- 	}
- 
-@@ -1149,13 +1153,15 @@ static int tegra_nand_probe(struct platform_device *pdev)
- 	struct tegra_nand_controller *ctrl;
- 	int err = 0;
- 
--	ctrl = devm_kzalloc(&pdev->dev, sizeof(*ctrl), GFP_KERNEL);
-+	ctrl = kzalloc_obj(*ctrl);
- 	if (!ctrl)
- 		return -ENOMEM;
-+	err = devm_nand_controller_init(&pdev->dev, &ctrl->controller, ctrl);
-+	if (err)
-+		return err;
- 
- 	ctrl->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, ctrl);
--	nand_controller_init(&ctrl->controller);
- 	ctrl->controller.ops = &tegra_nand_controller_ops;
- 
- 	ctrl->regs = devm_platform_ioremap_resource(pdev, 0);
-@@ -1235,13 +1241,14 @@ static void tegra_nand_remove(struct platform_device *pdev)
- 
- 	WARN_ON(mtd_device_unregister(mtd));
- 
--	nand_cleanup(chip);
-+	nand_disconnect(chip);
- 
- 	writel_relaxed(0, ctrl->regs + IER);
- 	devm_free_irq(ctrl->dev, ctrl->irq, ctrl);
- 
- 	pm_runtime_put_sync_suspend(ctrl->dev);
- 	pm_runtime_force_suspend(ctrl->dev);
-+	mtd_put_master(mtd);
- }
- 
- static int __maybe_unused tegra_nand_runtime_resume(struct device *dev)
+I could not test this myself: the Tegra Note 7 I work on has no
+working camera path in mainline yet. Build-tested for arm and arm64.
+The DRM IOCTL case in the changelog comes from reading the code; I have
+not tried it.
 
--- 
-2.53.0
+The retry loop in tegra20_channel_capture_frame() still spins without
+delay as long as the wait keeps returning -ERESTARTSYS. With this patch
+that costs CPU time instead of memory; how the VI driver should handle
+an interrupted wait is a separate question.
+
+Tool use (see Documentation/process/generated-content.rst): an LLM
+assistant (Claude, in a chat) found the leak by reading
+host1x_syncpt_wait() and the fence code against the call chain in the
+OOM report. Claude Code then checked the finding against the code and
+wrote the change, the changelog and this note from my notes and
+instructions. I reviewed the change.
+---
+ drivers/gpu/host1x/syncpt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index fe74ff6fc6f2..f9c871f218f3 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -247,7 +247,7 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
+ 		return PTR_ERR(fence);
+ 
+ 	wait_err = dma_fence_wait_timeout(fence, true, timeout);
+-	if (wait_err == 0)
++	if (wait_err <= 0)
+ 		host1x_fence_cancel(fence);
+ 	dma_fence_put(fence);
+ 
+
+---
+base-commit: 9d66f26fefacebfeed15de31c1123451a17ff119
+change-id: 20261113-upstream-host1x-fence-cancel-0b32753150d6
+
+Best regards,
+--  
+Patrick Fischer <admin@tsv-stahl-riesa.de>
+
 
