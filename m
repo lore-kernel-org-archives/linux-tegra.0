@@ -1,67 +1,116 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=85.13.135.14
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794600397;
-	b=P/djltYTGsOPbtbmTaFIYKTqTfahCMu43eA3cYUg+g/sCi+r4GJXyDLxVDcwf/fso2+O
-	 5KC7FweBXu8nhyL85JQm8jj8ONF/UEzQgvlskcL9zCTzOAFtxfr7OiSqS3l5K+wBew+Li
-	 wmOVWZ+sLi12euMVmXdrYmwkVQaxicWaPJx5WccOBjBXi7j7h87FYdR3kquZKxTrzyIt8
-	 z4nzh2zSp5nsRwVu5/KpS4JCElrvvSJZay8PRt61/Go3glv6Mtu349+Iqgcv83lXAAGvR
-	 L5/XsuIE5byAHU+iJJ9n0qLO5HFiMZVzEh5Cxce5FV0vAU9ElFXXJw2FhvVzdWUSzdQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794600397;
-	h=DMARC-Filter:DKIM-Signature:X-KAS-Sym:Received:Message-ID:Date:
-	 MIME-Version:User-Agent:Subject:To:Cc:References:Content-Language:
-	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding:X-Spamd-Bar;
-	bh=Oh4mgN4ZVfiXY+EWoWQm2pIFCmjwWGZlx97DLoJkTVk=;
-	b=4kcZ7k8l5MK8CtMxwzt//9GflNkcwbYU9DNhsid3O9OhcOjSijKkDEGj8v8nn+6HZo6j
-	 x/qT49fjaoaoI/be0vhTmxO5h702Q1RdmG3X6qjz1akSyhOzz2DxowQoyvunmGrXVE852
-	 uIAwvaUUBljH5PRhaMOX8cq8iJ4QIIe6yjc3HM00o3DoazNEKPPGM3oHxPa7KXOhMbjYU
-	 zL3I2LuWGY50OzRp5SBsbIfsYb0EO5LGBk8gmA9NeAbj5+wbw4tpOMStxN1dYeniwjebS
-	 plfTiqUb2gJwCCB5KTGCzNA7gu4J/EXjGNaAxS9dgUf1wEIpxMAssa208cZs/AaeFZw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=tsv-stahl-riesa.de;
-	spf=pass smtp.mailfrom=tsv-stahl-riesa.de;
-	dkim=pass header.d=tsv-stahl-riesa.de header.i=@tsv-stahl-riesa.de header.a=rsa-sha256 header.s=kas202608160020 header.b=nWX9jZlM;
-	arc=none smtp.remote-ip=85.13.135.14
-Received: from dd13108.kasserver.com (dd13108.kasserver.com [85.13.135.14])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.49
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794601399;
+	b=ZBwrPx3Mssxb+eYZREWa2wrqOwUhfx1YoB10XHhOG99rX8ac0GNu8lJmyltRWeIGT3Ly
+	 GDBTbhZZFrIM6vFV0ZfHWZgGhKV2vUDkQC49kHzLgxokFKZ6RoOqs8gsadRVSusFVj630
+	 9I51qAR6CuVY/JPz/aJMMQyz3AEZJ1/O1PXeoikIYNEFSd4knSKwXGqvvcNPHP23kYptI
+	 aoRDa64w2xMPDKSkLpbdttxGvBSolmC4y4VeYobqjHa0TP7TNz4MibnUJGQKo2V2rCUuT
+	 p/CuRLAsJQIX3Vki07/oBNx4AWgN4I6xtkkAmnbciRbQYApxzLkK4iapfedBUj6vlxw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794601399;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Received:Date:From:To:CC:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-NV-OnPremToCloud:X-EOPAttributedMessage:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=i+27OMhkekJ4x3HweJlHBK+ybJFd/US9qI8SkM8nXRw=;
+	b=rNJFQ1h8m9H+YCL7anJ6/Zm4qPlLvCS3c3TSoYZ46DyIMTXmMV46DnKHbuPmEpaJ3TsS
+	 JaZwU2UPeqGjAzeDH5HZniittDcqOuuivPoc0EpnMdgJoZ++hwS1XwL4J1CADtFodABQr
+	 SH7QSN+iC6VkyunbUXqxoqhq++feTaeDvPhyO1JMXhK1xBGghYjVdtNEOmz2cpNVzLUVv
+	 QYL7XMvhMcA0RZicnMnnwbO5KuyHAD9zoREK7M5cFFS72uJb1NYm4mTLbazbwzDxVF7N3
+	 eIsJ3Q+jnwsl5988VfiGKIY2L4LvxNzPkuojEJWN5ZUJB14BwmamWeYAmlA9lXOy95A==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=d+cdfXfS;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.49
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011049.outbound.protection.outlook.com [52.101.57.49])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA97606A332;
-	Fri, 13 Nov 2026 20:06:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0BA97606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tsv-stahl-riesa.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tsv-stahl-riesa.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F9B606A323;
+	Fri, 13 Nov 2026 20:23:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A3F9B606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=tsv-stahl-riesa.de header.i=@tsv-stahl-riesa.de header.a=rsa-sha256 header.s=kas202608160020 header.b=nWX9jZlM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tsv-stahl-riesa.de;
-	s=kas202608160020; t=1794600387;
-	bh=Oh4mgN4ZVfiXY+EWoWQm2pIFCmjwWGZlx97DLoJkTVk=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:From;
-	b=nWX9jZlM249VKOxp/2Yk88uizUaHJk2vy69lbMtCDt6I20XIi6VSqjtTX+mFdxBoP
-	 6567rKBhEgktBpkF0VHz7sKxEm39CjszwP0BNnC/f3a2RKSgW3J2UqGo+zh23Ut6Mv
-	 vOhe5SZQNydRBQ9MFBOlDhk5rQr6MQX3zwqezs/NXqxcAjwMQB7Rz++6esN4yn6e7e
-	 0S30Mbs1B5eSNDfgA/RhPLgyPNlKh7aLzermQ411dgMJV+X8//rSch2egFKrJtwh1U
-	 MPvxJ5XSwGnRoSmMtGD2NRX11qXIIrcccQRsDDKHbFRi8lK0lyVUh7GbRP3v/BqNCz
-	 z/XJ/hQaVV6Nw==
-X-KAS-Sym: v3:f51bdf72230551df:H+CSNaG9hrISRZOYFI15PAF2iD5BgztdFFoV5QIXh+trM
-	47WHYi7lRDAxyylbxnGi3gOB9VFB9RMT/wklL3OeHs0HRKaAtO9d8AdadVAKDuUjh3Db6z5WMby
-	DOKGtD71OiCU40I2n7ZIWGL8kNoN1yczmAcYCcy7bI1t9eiIVkp7CIEfTt+CX4ZYzRDQLJra5YC
-	F/6pjvQk3pkBAqonoWCI+W/fNN/xHAH/QJqMBsSgbrhOol7eG+HRW7UyyJFZpOsqZAtkf69ECFi
-	YFUXOnhDiJiY9MH65WtxxqcP0iN8VBdjGij+1Dn+ghgU7f0E2d63UqpgU1gRtVQQvkzpgK1Q==:
-	KYBALMuc7sJ7qME51eRps+Lm6RpZIpX0KQkMlFFVlgwTmsMallL18aT7SY86fgQMSYWXsxSw+y4
-	KD/IajDCcITWsevHMEMsVSC4Yn+lUDMVfTPGt3lGHSbF8nX6vn51P8YdZW6OEXK3GpfOlc4obpe
-	36RyhKtdpAVk2KByg6Mkb0QwfpN7+5TYDKlupfY5n4hBSXbY4hh6YGGpdlRMhphsxMw24zY4Oc4
-	hvgSGPEP+cU/pFmzcCoUGZewdCEMogicLg7LSwHGpgrFPc9VrYCBEs8cO5FWxVO3DUFfaiRAWb8
-	QtBVBg8gIzBxvNODRLiKq9yFdK4H2rGsf4+a50czSp7G/uk5KuqGO6bfK91CkNH27xjqz05n5aX
-	2xARvZK28FFSj5OAeMbKp7ncffFfTHSiWafgERsK9uQsncSMr8bJhiiBTEZ12KdH7rr0KOTXrz8
-	ScinQ4QkJaLndx767q+HqfL2SwYheJCPmz6t7quHgTat5crNsShVKauDU3euL9QODQ63mYZQIf9
-	b6nXcxmjlVvLUaEE4/DLRd4Lgxs+54h82KSJ4XZdw4Izw2j2VQDk1YKYHIa5CX7PSe5TxSYldy4
-	0nskYXUDLSiKLh0C5ivZTWjTCjNZfcHwtBZ7U2CqZnBjPSJzNr92cjcNuFMokn4Q1A==
-Received: from [192.168.2.174] (dslb-188-098-198-255.188.098.pools.vodafone-ip.de [188.98.198.255])
-	by dd13108.kasserver.com (Postfix) with ESMTPSA id 12CF178279BD;
-	Fri, 13 Nov 2026 21:06:22 +0100 (CET)
-Message-ID: <182203d9-3026-4078-a9e4-71ef597e5727@tsv-stahl-riesa.de>
-Date: Fri, 13 Nov 2026 21:06:21 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=d+cdfXfS
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=umsZHgIGiv3VMgnBFtSpipxf31KJL9kPKGnr9NipV41cvFuiUJZa1o36Xz+yHurr/uZZdzbawAaexNafmIZoIGRjpEMTUOkjrHe+HPWvG7kIKQzF/S0Y91d4ayfDuNw4ZhhlmNtvAzXy1fri6koTCN7dqa+B27yTMYtO8lGTnOWB69q0lvANx3Goa28hlq4MX9jMEKjoeu4vyNqLlC2cVqYtDeRQdJRNIoWlpbhjldLo7s4rZKUMQGGRMw453/tcxiVuVrKBR1BaVnZQR4iTOyoJ/ZcZQ1AfLLRrrwt/gWvjXuJIdpQmTHxYaoMzLoEhadtPQjqnCK0noRtsY2D8ZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i+27OMhkekJ4x3HweJlHBK+ybJFd/US9qI8SkM8nXRw=;
+ b=CpOqb8417VIB4X6dvs1zG+s1bt62ofBLIRr6LDDDvDkzWlNqxvjqHfI9KXfdq6T7UXSqkIOwurAtPjl5mgTrnlQUrHge+g/aMEJag/CehmQLe8mVtrfNMHa7X6j8zQBms4ZLxkD0FyvqIbVzUTO225TQoKLeVGZj78FVvCUmuv9JX/uN4uqFXkIlA6nyy9QmPnA86M/X85JMJFRwNXm69HdVqukj9EO0o19NnAcjVHSf1sWYvaLRWrcYkUUK/JmdFsx3mrf4xAPDPiV4piM7mB1vzhAxfQcXAX/sjOjT0V22q4Jo8awVo812dbyTRAvysOlFrZNmJFfFtbHqaRDEjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i+27OMhkekJ4x3HweJlHBK+ybJFd/US9qI8SkM8nXRw=;
+ b=d+cdfXfSCy0RqipaZLnuH/GwuOpEvhK+v2eu73KP9tmSoMsnWFW0mMfl9RSEOHrMxGsp+XzBjsR1mkr3xuDuzThNt0rknHhvl5kfi28vwS0k4QUcIt7ggetAo2NBUzV3JP9vob6EunERpPRQr7Wf1DeFekQue7v5XPEvE3TVV3rh3CX+UEK0p7f2zwMswur/FifrbeQSeQagiKdM03KT5b7NdSwcauHCeNUV7vB4IfKKVBmJzzPFTnFD5068o/X78RvLZG4bwoDvH3bclHlWjRIq3BvtwHD8vWS2/zIPEJxTStsSSVExeHUWyGh1ghd/AEg+L/LKzaEBGdyBhnDPJw==
+Received: from DS3P221CA0009.NAMP221.PROD.OUTLOOK.COM (2603:10b6:8:45e::14) by
+ CYYPR12MB8989.namprd12.prod.outlook.com (2603:10b6:930:c2::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.615.8; Fri, 13 Nov 2026 20:22:56 +0000
+Received: from DS4PEPF000001C2.namprd21.prod.outlook.com
+ (2603:10b6:8:45e:cafe::42) by DS3P221CA0009.outlook.office365.com
+ (2603:10b6:8:45e::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.546.22 via Frontend Transport; Fri,
+ 13 Nov 2026 20:22:55 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.118.233) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ DS4PEPF000001C2.mail.protection.outlook.com (10.167.23.168) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.639.0 via Frontend Transport; Fri, 13 Nov 2026 20:22:55 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Fri, 13 Nov
+ 2026 11:01:08 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Fri, 13 Nov 2026 11:01:07 -0800
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56 via Frontend
+ Transport; Fri, 13 Nov 2026 11:01:06 -0800
+Date: Fri, 13 Nov 2026 11:01:04 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Robin Murphy
+	<robin.murphy@arm.com>
+CC: Will Deacon <will@kernel.org>, "Joerg Roedel (AMD)" <joro@8bytes.org>,
+	Jean-Philippe Brucker <jpb@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Thierry Reding <thierry.reding@kernel.org>, Krishna Reddy
+	<vdumpa@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Peng Fan
+	<peng.fan@nxp.com>
+Subject: Re: [PATCH RFC v8 4/9] iommu/arm-smmu-v3: Use a per-domain CD table
+ for non-PASID streams
+Message-ID: <avdecPsIeaABLGkN@nvidia.com>
+References: <20261113-b4-smmu-shared-sid-ver8-v8-0-587307a77f3a@nxp.com>
+ <20261113-b4-smmu-shared-sid-ver8-v8-4-587307a77f3a@nxp.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -71,63 +120,200 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] iio: light: Add Capella CM3217 ambient light
- sensor driver
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Kevin Tsai <ktsai@capellamicro.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261106-upstream-iio-cm3217-v2-0-d97adde9171c@tsv-stahl-riesa.de>
- <20261106-upstream-iio-cm3217-v2-2-d97adde9171c@tsv-stahl-riesa.de>
- <avJJsIJvUVpfZXnb@ashevche-desk.local>
-Content-Language: en-US
-From: Patrick Fischer <admin@tsv-stahl-riesa.de>
-In-Reply-To: <avJJsIJvUVpfZXnb@ashevche-desk.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: -
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20261113-b4-smmu-shared-sid-ver8-v8-4-587307a77f3a@nxp.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS4PEPF000001C2:EE_|CYYPR12MB8989:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e8e376b-ed0f-47f8-c729-08df41c3e68b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|23010399003|1800799024|82310400026|36860700016|10067099003|4143699003|11063799006|56012099006|261026121527099003|261022105027099003|261026140227099003|261028144727099003|261021135927099003|261009223027099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	0JB86hD2sBA/BFhOB2jGaGlFl7/z/8W+rw0hDBtS2x5sObDtqrK9B0EXVuyVdAqMjmL5o1t9YUsRcthsHFnUynxCDgs7awJ6mj2FzkIlIRD7ezD50rXj+dj11nb1ricVYJ7IkmOsJ7l8A3VxXHa9lBwjjV2diG2zjCLcyzjVRiJL1p6bktDEMCchciGdBfO3r90CVB4mEHg1PB/Kn5qIbtJpCl4kzONA1ihW9AZ+F5m9eSvRaxmDe+no0MkBWSN0C7rTolurBLmbeIBgHABhVeNq58dXnK2H3S3fzKS+asQjHVhjTA+y/FyylVRpYMPIrJp8+WQEmDelEpv8ZIqI6Aro0IonRzczePXbh1mupk8ufX/SXYFpyPoCeJ8eFE/S+LCw3Ym9jSNPLYIcckAJQxxh8c1uBqa7p95DjH0agSDgDXq1vbg8Njbgk5W+aFO0k4nkmyPHQ4ZKh71TH0S8bNzgbdUzQkvy2YtzEauyapwR/zdIa3EXiZXvMQJkIc2DWDZKnAHnwTMXw2eE4mo8Z1JmAZw9NJ4IrwhgirA/0uNI805htoWkmGo+LpHCHnYUPX6EAC0NTwIPu+h+xsWD4X5zI37jDHG5IgI5PH2mjhFxI6aaLycA5Zu0wBi7X3sj6qIw1vyjstZQgi/aZDr1L9e4mL72eXLj8rKHqU+F8DY/qBoAL8gTm7/CQZyuOqF/xs/2mY/JOMhId1LJo66RIA==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(23010399003)(1800799024)(82310400026)(36860700016)(10067099003)(4143699003)(11063799006)(56012099006)(261026121527099003)(261022105027099003)(261026140227099003)(261028144727099003)(261021135927099003)(261009223027099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	fYBD6h5y8Ilp8qaOB/RFKma+mGYXn7deM0nC4WQBlqeeaPswSbIneKPj8hV1NK/X8nPCI9lQRhxPQPVspUhXE/ry9Udianh34uCyQ0B6y0cBMt5xSniWsJicZDJBQ+ftYJkfwJPc8YDfkw4jeviF13bMl2yLsRuUBedBFbugcna7U4x82qnq21tRLUl0hzsSjzyouNrQbJXuUodJMZH1i1UOR7WJhAhOYM/D/KeYjG7hcgT4a1uXW12OTQBeh3JT0letDEwsg324zi9u6g0/P5fsYUmGY3ZHSJpsYuuRywIqk+oXLHIt5Nmpb9EkI5AE5cErlA6DAz0rFPwz9IFYxjMjRv2J3Gd29W6abh0W9C1Qzf6Q7ny4B4rFcbiy+s63sX8fAoiTaKxKL8zIWAnyTz1+FffxPwuPD55Usz5JZgfMl1d+rmiloaXF91+AhGUa
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2026 20:22:55.1070
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e8e376b-ed0f-47f8-c729-08df41c3e68b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS4PEPF000001C2.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8989
 
-On Tue, Nov 10, 2026 at 12:31:12AM +0200, Andy Shevchenko wrote:
-> > +#define CM3217_NLUX_MS		(15ULL * NANO)
->
-> Hmm... Can we use rather formula inside the definition? Also one of the
-> multipliers from time.h might make sense here as MS are mentioned.
->
-> 18.75 per 800 µs, or 1875 per 8 µs if I'm not mistaken. Hence
->
-> 	(1875 * 8 * NSEC_PER_MSEC)
+On Fri, Nov 13, 2026 at 09:27:16PM +0800, Peng Fan (OSS) wrote:
+> +static int arm_smmu_alloc_cd_ptr_l2(struct arm_smmu_master *master, u32 ssid)
+> +{
+> +	struct arm_smmu_ctx_desc_cfg *cd_table = &master->cd_table;
+> +	unsigned int idx = arm_smmu_cdtab_l1_idx(ssid);
+> +	struct arm_smmu_cdtab_l2 **l2ptr = &cd_table->l2.l2ptrs[idx];
+> +	dma_addr_t l2ptr_dma;
+> +
+> +	if (*l2ptr)
+> +		return 0;
+> +
+> +	*l2ptr = dma_alloc_coherent(master->smmu->dev, sizeof(**l2ptr),
+> +				    &l2ptr_dma, GFP_KERNEL);
+> +	if (!*l2ptr)
+> +		return -ENOMEM;
+> +
+> +	arm_smmu_write_cd_l1_desc(&cd_table->l2.l1tab[idx], l2ptr_dma);
+> +	/* An invalid L1CD can be cached */
+> +	arm_smmu_sync_cd(master, ssid, false);
+> +	return 0;
+> +}
 
-The resolution is 0.01875 lux per count at 800 ms, and the constant is
-that resolution times the 800 ms, in nanolux * ms. NSEC_PER_MSEC gives
-the right number, but there is no time conversion in it, so in v3 I
-wrote it as the formula instead:
+This patch is a bit too big. Move this into a prep patch please.
 
-	#define CM3217_NLUX_MS	(18750000ULL * 800)	/* 0.01875 lux * 800 ms */
+> @@ -1793,9 +1801,22 @@ static int arm_smmu_alloc_cd_tables(struct arm_smmu_device *smmu,
+>  
+>  static int arm_smmu_master_alloc_cd_tables(struct arm_smmu_master *master)
+>  {
+> -	return arm_smmu_alloc_cd_tables(master->smmu, &master->cd_table,
+> -					master->ssid_bits,
+> -					master->ats_always_on);
+> +	int ret;
+> +
+> +	ret = arm_smmu_alloc_cd_tables(master->smmu, &master->cd_table,
+> +				       master->ssid_bits,
+> +				       master->ats_always_on);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (master->cd_table.s1fmt == STRTAB_STE_0_S1FMT_64K_L2) {
+> +		ret = arm_smmu_alloc_cd_ptr_l2(master, IOMMU_NO_PASID);
+> +		if (ret) {
+> +			arm_smmu_free_cd_tables(master->smmu, &master->cd_table);
+> +			memset(&master->cd_table, 0, sizeof(master->cd_table));
+> +		}
 
-> These NANO again are misleading.
+It'd be helpful to have a line of inline comments stating why this
+is needed here.
 
-v3 has a small helper, CM3217_NLUX_TO_VAL(), so NANO only shows up where
-the nanolux value is split into the integer and nano parts of
-IIO_VAL_INT_PLUS_NANO.
+> @@ -1830,6 +1851,12 @@ static void arm_smmu_free_cd_tables(struct arm_smmu_device *smmu,
+>  	}
+>  }
+>  
+> +static int arm_smmu_domain_alloc_cd_tables(struct arm_smmu_domain *smmu_domain)
+> +{
+> +	return arm_smmu_alloc_cd_tables(smmu_domain->smmu,
 
-> Have you checked with `pahole`?
+Hmm, that's not good. We are trying to decouple smmu_domain from an
+SMMU instance so that one smmu_domain can be shared across multiple
+SMMU instances.
 
-Yes: 40 bytes on 32-bit ARM, with a 2-byte hole after cmd2. As ktime_t
-needs 8-byte alignment, none of the orders I tried is smaller, on ARM or
-on 64-bit, so I kept the fields next to the lock that protects them.
+Tying one instance to a domain is apparently going against it..
 
-The other points (static_assert() on one line, the margin added to
-conv_ms, FIELD_MODIFY(), dev_err_probe() inside scoped_guard()) are done
-in v3. The scale and integration time tables come out identical to v2.
+Instead, we would need an {smmu, cd_table, refcount} list. And it'd
+make thing more complicated than letting master own CD table as-is.
 
-v3:
-https://lore.kernel.org/r/20261113-upstream-iio-cm3217-v3-0-c4d5b2485dff@tsv-stahl-riesa.de
+Not sure if it's still worth doing so. Robin?
 
-Thanks for the review,
-Patrick
+> @@ -3971,15 +4058,23 @@ int arm_smmu_set_pasid(struct arm_smmu_master *master,
+>  	if (smmu_domain->smmu != master->smmu)
+>  		return -EINVAL;
+>  
+> -	if (!master->cd_table.in_ste &&
+> +	if (!((sid_domain->type & __IOMMU_DOMAIN_PAGING) &&
+> +	      to_smmu_domain(sid_domain)->stage == ARM_SMMU_DOMAIN_S1) &&
+>  	    sid_domain->type != IOMMU_DOMAIN_IDENTITY &&
+>  	    sid_domain->type != IOMMU_DOMAIN_BLOCKED)
+>  		return -EINVAL;
+>  
+> +	first = !arm_smmu_ssids_in_use(&master->cd_table);
+>  	cdptr = arm_smmu_alloc_cd_ptr(master, pasid);
+>  	if (!cdptr)
+>  		return -ENOMEM;
+>  
+> +	if (first) {
+> +		cd0ptr = arm_smmu_master_get_cd_ptr(master, IOMMU_NO_PASID);
+> +		if (WARN_ON(!cd0ptr))
+> +			return -ENXIO;
+
+You don't need "first" at all, given ...
+
+>  	mutex_lock(&arm_smmu_asid_lock);
+>  	ret = arm_smmu_attach_prepare(&state, &smmu_domain->domain);
+>  	if (ret) {
+> @@ -3995,7 +4090,30 @@ int arm_smmu_set_pasid(struct arm_smmu_master *master,
+>  	cd->data[0] |= cpu_to_le64(
+>  		FIELD_PREP(CTXDESC_CD_0_ASID, smmu_domain->cd.asid));
+>  
+> +	/*
+> +	 * The private CD table is taking over the STE now. Make sure its
+> +	 * default substream matches the RID domain before the STE points at
+> +	 * it, since non-PASID traffic follows CD[0].
+> +	 */
+> +	if (first) {
+> +		if ((sid_domain->type & __IOMMU_DOMAIN_PAGING) &&
+> +		    to_smmu_domain(sid_domain)->stage == ARM_SMMU_DOMAIN_S1) {
+> +			struct arm_smmu_cd cd0;
+> +
+> +			arm_smmu_make_s1_cd(&cd0, master,
+> +					    to_smmu_domain(sid_domain));
+> +			arm_smmu_write_cd_entry(master, IOMMU_NO_PASID,
+> +						cd0ptr, &cd0);
+
+... there is only one place using the cd0ptr.
+
+> @@ -4015,35 +4133,61 @@ static int arm_smmu_blocking_set_dev_pasid(struct iommu_domain *new_domain,
+[...] 
+>  	/*
+> -	 * When the last user of the CD table goes away downgrade the STE back
+> -	 * to a non-cd_table one, by re-attaching its sid_domain.
+> +	 * When the last user of the CD table goes away, switch the STE back to
+> +	 * the RID domain's CD table (S1) or to the native bypass/abort STE
+> +	 * (identity/blocked). Do not call attach_dev() for an S1 paging domain:
+> +	 * this is a teardown path where allocation failures cannot be
+> +	 * propagated. The private CD table is kept allocated for reuse and
+> +	 * freed when the device goes away.
+>  	 */
+>  	if (!arm_smmu_ssids_in_use(&master->cd_table)) {
+>  		struct iommu_domain *sid_domain =
+>  			iommu_driver_get_domain_for_dev(master->dev);
+> -		bool ats_always_on = master->ats_always_on &&
+> -				     sid_domain->type != IOMMU_DOMAIN_BLOCKED;
+> -		bool downgrade = sid_domain->type == IOMMU_DOMAIN_IDENTITY ||
+> -				 sid_domain->type == IOMMU_DOMAIN_BLOCKED;
+>  
+> -		if (!ats_always_on && downgrade)
+> -			sid_domain->ops->attach_dev(sid_domain, dev,
+> -						    sid_domain);
+> +		if (!master->ats_always_on ||
+> +		    sid_domain->type == IOMMU_DOMAIN_BLOCKED) {
+> +			if ((sid_domain->type & __IOMMU_DOMAIN_PAGING) &&
+> +			    to_smmu_domain(sid_domain)->stage ==
+> +				    ARM_SMMU_DOMAIN_S1) {
+> +				struct arm_smmu_ste ste;
+> +				struct arm_smmu_domain *sid_smmu_domain =
+> +					to_smmu_domain(sid_domain);
+> +
+> +				mutex_lock(&arm_smmu_asid_lock);
+> +				arm_smmu_make_cdtable_ste(
+> +					&ste, master, &sid_smmu_domain->cd_table,
+> +					master->ats_enabled,
+> +					STRTAB_STE_1_S1DSS_SSID0);
+> +				arm_smmu_install_ste_for_dev(master, &ste);
+> +				mutex_unlock(&arm_smmu_asid_lock);
+> +			} else if (sid_domain->type == IOMMU_DOMAIN_IDENTITY ||
+> +				   sid_domain->type == IOMMU_DOMAIN_BLOCKED) {
+> +				ret = sid_domain->ops->attach_dev(sid_domain, dev,
+> +								  sid_domain);
+
+I commented in v7 that attach_dev shouldn't propagate the ret..
+
+Although your patch-9 clean it back to the right form, I think
+there should be a way to prepare things cleanly so that you can
+make a change here in one shot.
+
+Nicolin
