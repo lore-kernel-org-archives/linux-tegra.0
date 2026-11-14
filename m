@@ -1,97 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=35.89.44.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794673291;
-	b=jOVpcjFyeNkaFUZF9V3YBNDxbPDG8d/UMoEAU9maDJ1mNTVlDXpgE9+EuAfGQofOWFJN
-	 Nu34/+HHlad+m3unxFc/iIt7WGgXiOD8q1YlFYHdtWVOGg+0D2gsM5eSuZPbWUQxuvXDQ
-	 G1gKiXn+9lxmDla/1W8Fgrzn03Le0GbOQLsDBYeHROyi4NYEusOizmCCmkmFRow5Jd6l/
-	 gawHdU74dFGmi6opRxddQWXTgp3rnjgtBFng7siGvxarU+a7clU9x9rG/lVDI75TyLtAH
-	 X70pjM75HUsctofdvBR/ThWA04fGh/AQg7+nAAgPbZxfGyPIaeQbGobyl+k2wBmLUig==
+	t=1794676967;
+	b=Q/Yb2nqxOvBdWpGQW71t8cK6Xf6fPPCu3GSB59DkxSqTDhm1tY14mSnijRkdwAxpGJpf
+	 rzlEUC8n4B8yU6DXWZ4JeBAk+V4p0sUe8gA/NTnPEQrIRertPul5NsHrCrmE+WgO8XBnD
+	 yyG5LM43u9AX8apc6TWGY1LcZlC9bxLFJfWmXOEdZriAaD0dw7bov1pDEevRiVeh91ElZ
+	 VzlcQR+xInpdtYWlppKCr7wNq04uMPfwwfYLSaejWrixuCpsYR1acSzc+UlPgrmyjPABz
+	 qx3atov9NVoZED/nLo0c/mxswIlwwQgFE00NkE29pVIWCBDs95S38pEkIlB7ubneUGw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794673291;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=SAXE+Cbl9G5IRb7happTo9S2j4c3HyT4UpqiPP6R4YQ=;
-	b=dAYhHFDu+lAWIqNpwXM++je8mSUKAESE5ZtIKs5WTrq879ZT2C3PlBToo5iuVYsWczxq
-	 DnOiRbSfDfFBGxvavWO+qm7JxexVyeRw2Jc9oBgNdSraR7JiBRHcmrdH1yB/6n5LMpszP
-	 KD4AdauAvu7xPmHMyIVW0fpq2Sw19x17/WwGhveFKpa+54rud5J8cYeC/0zYJ9I1twkaf
-	 YcXQhFqZGpUDKd0kvVZpHWfc+l8UIuTZffDNT7XD1CglE+iDYaxg1pYP5sA8zotwvUova
-	 1vedtVL5lTlqPXYL/6KAb17RyIOVSmrx5kqCMc122JJmpNOuYwrJMUjeikqcjZMsyng==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794676967;
+	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
+	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:
+	 X-Source-L:X-Exim-ID:X-Source:X-Source-Args:X-Source-Dir:
+	 X-Source-Sender:X-Source-Auth:X-Email-Count:X-Org:X-Source-Cap:
+	 X-Local-Domain:X-CMAE-Envelope;
+	bh=PkmzYMQrJ+f+2RbIonUJxeJ2n2q97YNDRbeN91mqvik=;
+	b=Xpg+uh1oNYY3BXKl+PWhsan6w4L1zCMXp+d0oTkT38gd4sFq5gRgcYcxavT3YTmw5Lp8
+	 nLgYtj3RakcLcrdAAEogROo3lnBvUtbG1Je+mXI0Tp/qlqV1ncu/e94nMqA5tEjc29+DG
+	 ht20rLNWH1K3JOQ6FxEhIMmDn7eUFzFjcgYj7E0XWqHkhTfxAVTaB7Rnik79IMDdEA15J
+	 Sitq7rCyGwj3LY4+jFNe3Ur7BrfhsaserzSZbUxziWpgMll+zB1MH5+gQECDX4mjBxk7o
+	 fYUdtn6s+hhRUJ9zBTmqvFsD9JHFAXhugAy8HIr82JFeqFndgTxS+ngccDmdmjSQMjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HLoOsEvN;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=none header.from=roeck-us.net;
+	spf=fail smtp.mailfrom=roeck-us.net;
+	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=vNMRetAN;
+	arc=none smtp.remote-ip=35.89.44.33
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A8B606A32E
-	for <linux-tegra@vger.kernel.org>; Sat, 14 Nov 2026 16:21:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E7A8B606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87DC606A332
+	for <linux-tegra@vger.kernel.org>; Sat, 14 Nov 2026 17:22:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A87DC606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HLoOsEvN
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4ba013938d7so24323225e9.2
-        for <linux-tegra@vger.kernel.org>; Sat, 14 Nov 2026 08:21:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794673289; x=1795278089; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=SAXE+Cbl9G5IRb7happTo9S2j4c3HyT4UpqiPP6R4YQ=;
-        b=HLoOsEvNbLLkbRRIYZsJtLww7CbQcnin1oQuSxP54eY4wkWFnWCPiDyqur1mMaOY/l
-         BAYYzwyU3dnEvSYF4WG9SC8fjp03w2JTYF8XP+egEYQGU2HG0Zml5mgHgrfElNL3nR/V
-         xFQQug8gOPBmz4u4F2d0xwnwVyqSdUlOueJIqBg94uBNbtzShZnRpVTTXOxERD4nbxKA
-         s9G7sYj2+NexFH5/CM8BqXIkmxSPnb3fOTVNZicYk080/8+Td3Vh+3unzVoc3NQ1uM0c
-         D0jQjRaGs5/kXf9PRVuUiYG7OCl4UR8VCa8EdINSehubJnbmYGsDhURGjOseZuiOZ+mi
-         qYIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794673289; x=1795278089;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=SAXE+Cbl9G5IRb7happTo9S2j4c3HyT4UpqiPP6R4YQ=;
-        b=vxrQgqvINlbldNsK3DvZVb8uB8dbZpooCqvHgIsplBoiqt1hHDvoqCiLEyE54AVmOw
-         5uw1gnqZ7RN4no6iXIaFrUaZbKmG1JdQ9HFH8yGN1ynNqFEpGqgLlwq48GFZWu+y4Xnc
-         JBtiCxkiLXmhYz6RsNktLMu9f9jPaBGskd9zqwA5Lg6odyvDWp/i0thtpoeEzk3gYcax
-         SWKYPIEu2cjUUL6qpuqldsS/FIuKF48CcGpCD5tOJ3P0ehazAjP7uoNkNpjM9bUiq+dR
-         gHML37kNJFHjCUOP0o8GECivuhY/VxFIl0xhPRxb5DS4+cNFDsmSOz07bN1tJWorVhc4
-         1XmQ==
-X-Forwarded-Encrypted: i=1; AL+hErHib8IYoj6QlU7Yqmg4X9M87RvDfW/TOLqdEzxDPxrrQhu8Edf4e5FGk7OCecAAL+RAhh0aV9T4RP4j/g==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+BTmqieqHd+N7cU/ISChS6RCTC3tNomFzgx2PZz5liwOtCmgbD
-	bymZTotiw8HEzU3tsfPg8Gc9gZdX+9RZe7Rh7CmUN26R7tRqEAtCDxZk3Lro7Q==
-X-Gm-Gg: AYBFou3ywQmALyLTA2l+rU9b0xPHnURJwLN9sY1wCjrwkhSwd9U68eBOlVN8mM8r7lm
-	8pWodOvmJEqkrm/bmIkoAtXcZbh91aL2mwyYLLtio0mX0ZxlXszy7D7S2DuKPvdwxMrUcDl9IkT
-	p8BpsE7QcHE3nbLF5RBevlv9MIO11S7mAhIiT4cscX+ue7T3N/5s3K41Zn6dIi2FSOJllPK8rtj
-	wgUv0iI3AQ1JUWhb1w3GXmR0mCt4wpiVXKBpgsaXznNFa5MWb7XLApdEzXwQKTK9OPrCcooAMIj
-	P0ba8FdoUfZSUWfobN4uYHwztZIDS3QgnsDq7ZLGciIZdYxn3Jg0b5Wlno/RfDBSpNhD1n/CaGY
-	aeLbN9pFIHYtD6s3B8dOELAy4Z/2GIDekwy7RbRlh/psVqp1yDlSHmR3di9nVss6XfTaqLV/vx6
-	Voty1pNw8Kf0pV0UMznNGap/WD/+54ak+mh7qfcJ7SgE98b0KEBI1wds3+5yjslpW5H8picXfam
-	aJDz+zzMgwQZVgb89emwTzDuPMZdDPQ4uHixHbg8d+QWLV7E4Aoz2UjvImOrAODX2DMYDTGhJVk
-	WFAqNg3ksaXWOeTjm/8nDtCuMg+qpXe0KGkMCAC5gJQdoc/3mVuLIgnzvl9z8Oa+ZJQ4CDG8HSZ
-	GOacyCBufatfw2jLOFfEp4So35sclx1oU4Lcm
-X-Received: by 2002:a05:600c:81c9:b0:4a1:83f0:7c91 with SMTP id 5b1f17b1804b1-4bb55a65b31mr117276745e9.18.1794673289246;
-        Sat, 14 Nov 2026 08:21:29 -0800 (PST)
-Received: from DESKTOP-0KSTGNI.localdomain ([197.45.81.39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb55ae5299sm162652275e9.11.2026.11.14.08.21.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Nov 2026 08:21:28 -0800 (PST)
-From: Temitope obabi <obabitemitope765@gmail.com>
-To: thierry.reding@kernel.org,
-	mperttunen@nvidia.com
-Cc: airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org,
-	obabitemitope765@gmail.com
-Subject: [PATCH] gpu: host1x: Remove unused host1x_channel_release tracepoint
-Date: Sat, 14 Nov 2026 18:20:06 +0200
-Message-ID: <20261114162006.3673-1-obabitemitope765@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=vNMRetAN
+Received: from eig-obgw-5003b.ext.cloudfilter.net ([10.0.29.155])
+	by cmsmtp with ESMTPS
+	id S7k2xppgeAR1iSHSgxOPGO; Sat, 14 Nov 2026 17:22:46 +0000
+Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
+	by cmsmtp with ESMTPS
+	id SHSfx0nRASgq1SHSgxUikc; Sat, 14 Nov 2026 17:22:46 +0000
+X-Authority-Analysis: v=2.4 cv=c8KrQQ9l c=1 sm=1 tr=0 ts=6af898e6
+ a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
+ a=kj9zAlcOel0A:10 a=zJRp6_cAMcgA:10 a=M0FbrtG7MMAA:10
+ a=3h6KpzBizPpaPHiOcEgA:9 a=CjuIK1q_8ugA:10 a=KPbNTLLc3YvdawN95zVk:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+	:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PkmzYMQrJ+f+2RbIonUJxeJ2n2q97YNDRbeN91mqvik=; b=vNMRetANoN4dxqqFfQ1I0nEJt8
+	VdPC52+NTgVIpETzcJa6D6zkyYsKlGVJigXEpUW7qUyOhs4mpo6XqZ2gyOPzv9Act+HTwFf82He2G
+	UC5o9GL+HHj2QFECaPTjlyas9gaf6blTTaC7vt7eduoqfbzy9yoEXNu2a38XcecXy14OKGm9FlOMd
+	ZO0ZsEytSEtgx5AfI/dRnqcaoFUyzbbDEci7soGWTj8Mi5sNbAjwviIGn9Ff0jWucIEktH6WS6Btx
+	W5RgZKX70rQvaqzyrEMibc0eWVVO2Mj7BTs7c/ysctAq7cOJqyX328+hhkPojA9g+jHzGc4Lcr2AD
+	Q6BNehVw==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:55400 helo=server.roeck-us.net)
+	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <linux@roeck-us.net>)
+	id 1xSHSe-00000000ch6-38VG;
+	Sat, 14 Nov 2026 22:52:44 +0530
+Date: Sat, 14 Nov 2026 09:22:43 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Artur Kowalski <arturkow2000@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+	clamor95@gmail.com
+Subject: Re: [PATCH 2/6] watchdog: tegra_wdt: Move SoC specific parts into
+ match data
+Message-ID: <ea2ab23d-d628-46a7-9cad-0bbcd8722869@roeck-us.net>
+References: <20261110-t20-for-upstream-v1-0-5923449951fe@gmail.com>
+ <20261110-t20-for-upstream-v1-2-5923449951fe@gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -101,33 +93,49 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261110-t20-for-upstream-v1-2-5923449951fe@gmail.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-BWhitelist: no
+X-Source-IP: 108.223.40.66
+X-Source-L: No
+X-Exim-ID: 1xSHSe-00000000ch6-38VG
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net (server.roeck-us.net) [108.223.40.66]:55400
+X-Source-Auth: guenter@roeck-us.net
+X-Email-Count: 30
+X-Org: HG=direseller_whb_net_legacy;ORG=directi;
+X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPKEnP71FYpGm/rgtEaYkqPrMEHZASo1EHcjYrpLPYizIKyngDEwmBiUzUWnKGTuWpqjy6tBESua8y0lkrcDtu9avxMued3Cq0xXlLJxZ/DmlpmnTNJe
+ oHPV/G5FTQ9yKYxy8O3znP/6kO88JVBdirCsyjItlXEcwp/Z8cwkHuSTYM2nNAIXSxcGPYOEvyho4v9uoxo+3u4CWnQC/vpzU1yYcdL+U9cXiQbXFjDpf1lB
 
-Nothing calls trace_host1x_channel_release(), so the tracepoint is
-unused. Remove this unused tracepoint.
+On Tue, Nov 10, 2026 at 01:39:07PM +0100, Artur Kowalski wrote:
+> The driver only supports the watchdog blocks of Tegra30 and later. Move
+> the parts that differ between SoC generations, namely the watchdog
+> operations, the maximum timeout and the register setup, into a per-SoC
+> structure selected through the match data, so that support for Tegra20,
+> which has no watchdog block, can be added.
 
-Fixes: 6579324a41cc ("gpu: host1x: Add channel support")
-Signed-off-by: Temitope obabi <obabitemitope765@gmail.com>
----
- include/trace/events/host1x.h | 5 -----
- 1 file changed, 5 deletions(-)
+This does not make sense. Literally every watchdog operation is different.
+Tegra 20 support should be added with a separate driver.
 
-diff --git a/include/trace/events/host1x.h b/include/trace/events/host1x.h
-index 1b6aeb7b177b..6e9010ec5a3e 100644
---- a/include/trace/events/host1x.h
-+++ b/include/trace/events/host1x.h
-@@ -33,11 +33,6 @@ DEFINE_EVENT(host1x, host1x_channel_open,
- 	TP_ARGS(name)
- );
- 
--DEFINE_EVENT(host1x, host1x_channel_release,
--	TP_PROTO(const char *name),
--	TP_ARGS(name)
--);
--
- DEFINE_EVENT(host1x, host1x_cdma_begin,
- 	TP_PROTO(const char *name),
- 	TP_ARGS(name)
--- 
-2.53.0
+> 
+> Suspend and resume call the operations through the watchdog device, so
+> they work with any SoC.
+> 
+> No functional change.
+> 
+> Assisted-by: Claude:claude-opus-5-5
 
+This trailer is obsolete. Please have your agent follow AGENTS.md.
+
+Thanks,
+Guenter
