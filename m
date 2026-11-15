@@ -1,101 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.179
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.47
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794743666;
-	b=pmkr62f8tMIomAYkF8MTnTibxWKTL+OXbT/zLGRzM8Q6Tu+fbKspoABpXdTmfIdCvJdg
-	 pMOgdg8nioSWbVen9UdkwzQZJWmOIq66iZ7fkfns+MyfFzRK5SihEm9JZ5mZLYBxarsKu
-	 slYGpbZiQW2uA+A4e9mM+lRPHboNRPtQ8mI011SmVMQ/yWD4eL1kTJSsRvGh0mAS6kxHJ
-	 8T0GD1YcdLZUamuhP7DR6LHydcQU0kCM7ddAHiwupTdtcrlXBMrhHPJ6sVMwSpGO9nq8Z
-	 dIP+S/NMHTcB7/kUxiHaQEOP82VQIkZwa1q5DOaDucWqBGu3NZBZdaJTA+KbEPGCT0g==
+	t=1794757321;
+	b=lIJP+t0jQIKHoXh3OP4QvKQKrKm9j1ScaK6pNwyB5qZRgh9BXnANhfDo+9eiekFeR2TA
+	 KMpg7u5r3DH/3DNAdx+T5nzikZytHZXOXxk8pnfH+O68aibaILeR6XwS/LI5H7pUy5Oat
+	 pvSn+UyCTO3c+ngEv6tESjeffUXiGCQBBWARvhpDtBtdNdFHdv8NvHTjCdgvN1yOUBXwH
+	 KY4JDweV+/vzQ7ajqSASUrtK5zrroCsHVJa+CghVSOBxe1k6a1+p8/gCMsdE6IbNQmkmP
+	 xKdg1g1gFRuXMOudBbke6tjlbZkYA/9eCO0FrPtEYYTHMw9/25yU+cMiLMmdreJW1/w==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794743666;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794757321;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=oqFc1dkJ0uhI3kAkP/ntcsru7jDDN6wYlX8lnvW2kQA=;
-	b=nBPyUK6IvOsCOKNf1IjxNN399goXUaOyUax/8mCAsIbOm9j8KRH5+tFy9KcYLrv5PW3A
-	 eNUm6LQIQPkQnRgTo2DciokHYhPHR9mej/nELeCopK2y1SW2GicngPYLndqiM5wrdFRkt
-	 sOkvyA+cXQijGYY2u6oeEUaJ7Q+u11tHBfEBzQuyEKktpN+2WZ91iC8am6ZEVDRfmfwGt
-	 zradbxJSJPwEnu27i39XhSVa/4FpkW72YrNQ+k0Fj6Bo9CJrLh2JgsO40SGcSHId+v22L
-	 DMkwA9CRck2X7wsReEVTivd9eER0uNSz9G7xwVxn6r3mxzwPGny330S8e0JAsPXMZZw==
+	bh=Y0shGZ6hyhRZI7u9lKNPwzmsqe7OyakFksQ4HOiAHG4=;
+	b=FQ3W4xhNguoFVSo6R27ZQL6kq/G3j0sR5QnAt/8eMg0HH94jdpxgDj7fN5gwL4NPR2lG
+	 ikhhL6jv8e5M30NKS4NOUDxQ8k0ZMqKWofzBN1acYCcsDCS75qr7yARzQ/MCrC/ffrAKD
+	 sReBDegGMMg7wmXhOBwNitFc1nomhALwfJ2i20rRDQ5hqAVR7uNpjeDzXy970dbXmWMBh
+	 4LsqJMwGXrfjmH6Lw4WO2m1zriiM94KPU7xzI6UIbdv6ND/zLhsWd8Q3XHg2TYUjM78FB
+	 LmOegpjwaf0T0wSAuE1qXtuBUO6qVYqWqYK63/YzbMAXaRwYWa7EM202WGZ+8K5SkDQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tTrBdHJA;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.179
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=u+Lw0+fG;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.47
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D64606A333
-	for <linux-tegra@vger.kernel.org>; Sun, 15 Nov 2026 11:54:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 77D64606A333
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E95606A323
+	for <linux-tegra@vger.kernel.org>; Sun, 15 Nov 2026 15:42:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 37E95606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tTrBdHJA
-Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-3282db206d3so7559185eec.0
-        for <linux-tegra@vger.kernel.org>; Sun, 15 Nov 2026 03:54:26 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794743666; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=u+Lw0+fG
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-67be4f2f4d4so3072161d50.2
+        for <linux-tegra@vger.kernel.org>; Sun, 15 Nov 2026 07:42:01 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794757320; cv=none;
         d=google.com; s=arc-20260327;
-        b=ZjTDAttvKUbeWFpT7dLiPO7z1qxa2uioDJGAtfS5NGhW+rwsjEsO6a2NkuqFUm+AsJ
-         0sK3bm8X1mlebcYZmuOMZ0RkpgeTVGwwY8JCfHhPuCNiAlWUL2SUr0dIjiQgBXeXxOfc
-         bqzVMIlAw1n1QnGFlGHzVD7gQii8Q/6TqpmgwoebOuU6ZB/b4qT9LDBo6f88JjXylxl+
-         R+abGco/fQbyFNzgmAiUxbeugdiAaDwfgLzTmhzml+6uhrxf1WYVhhWvWP/sLG09HKEl
-         tBny61nSfuBv61A6SXNS31n4SEbTJR7PIxGBI+7f9ojVOa24BXjq6K3KMjcchv32/fqQ
-         exnw==
+        b=Yldth349RwXbnYSIbYUUItV8sXHlkBOT0NtS3nhfmd1fjiJdlDmXKsqzdYNxLed9Qy
+         d+gHgQgLs5RQ+GbGDEVl4z5L60Ati0NDjeoNxUAXMwyRRijO1H0+90pd99U7m7h6SDBK
+         Oi7Ef44/CLqyhzZZ6PiAmbYDY3NuatDD42HmiEUyytriLJIMpyZjHXaMO4IXFwLKf8wE
+         iBcu16POC9htvIRWp4jijDiwJrZ8lPPPKsw9SIU5Nghlwc4YfNeuNqlghcxz3q7DfxTm
+         ZhR0ZQ+NqF+Q842OQOFTL+ldm0l+C8Wmm8/D4LrsTTKbQJvcQc0FBnP88P57lVMVHY2A
+         atrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=oqFc1dkJ0uhI3kAkP/ntcsru7jDDN6wYlX8lnvW2kQA=;
-        fh=3iHtBPZe4ssgbJWBiHjDdlH5q7jAr3WeCCrVeOWHdCw=;
-        b=LEhLSbG4qVZQx49h/QoEY6AmEkoMcedz1aojfGk3AhOr8FSZqAfUDrlL+jrB/AA3r+
-         o9i41gQcvYT2g8BgL1gnPQD70fTtMb0PWvGs7KlIEDj2FIJGIvt8MmySUJ42fwxAfqeq
-         1BcScLroDG76UU3wnke4HUoAi41ppwJTTEUTeIqq7LHWogA1GIWWpoe2TrrJ/U3iM6VW
-         W4H607mLBJON2UH4GYZPKETktRLaqcI9s2lj6va11uouCoqGZ6C+9i6PUJ0aJZoz/+Kc
-         aMhlm9d+BIzbXvLxGVprKoYPTcGisfZYj7odSKNKDzuX5SX53Q3gXhttG4WNbAy+a/TM
-         HCLA==;
+        bh=Y0shGZ6hyhRZI7u9lKNPwzmsqe7OyakFksQ4HOiAHG4=;
+        fh=U5toaxPH5VPF+A5q83VJO5eZIDGdXfuti8j5N9MQqcM=;
+        b=bYjHCDEQguAmSXANtffMcD2y67JT+1y6Hgwxsx/wnzcgLuKWRlpsyFczU5TbjnROp4
+         zIrmTli+F66++cFraQKW9uT53HwGZ70a0X0h4Rd7mUxqZixqBmL+dEDL0e14wWpG78r3
+         9gxBXv6pimDBtAxICs7g1LzcgoG0H0+oHyxluutyiq1M/fLvwrNnuFlP4elDFrYwdqhF
+         sbFqDgShujg+FRKrn87FFo6MMowmSiK2BnWXsmRsILRirzJkhB7E9ysCpQjwaAyyZdKB
+         3l5fiwVNyX7njGhRFDiwfMOf5bDkLKRP3JVLVI6/Q1L4OzMmpjR4gFidFBbzUCP3CFR3
+         HSIA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794743666; x=1795348466; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794757320; x=1795362120; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=oqFc1dkJ0uhI3kAkP/ntcsru7jDDN6wYlX8lnvW2kQA=;
-        b=tTrBdHJA3EGwmoZUxQrkbZUVwQBHP3AVn2M7YykEYWfQzkdbVbo06Dt08bxI7pef9n
-         2s5g3e6ZjDuUdLINOz/16cOa2/67Qga+pbtgDTbQFxvCV7/wYiN2HvnbTM9v2KHTKMDn
-         lXhXKg70kdruDYacOcw3OrnPpwE9x3GVwE1cjyM4WQkTet3p2ruaVtk4iuD0Vg5W+40t
-         KP2+dPxFKTHI5qnPljVlljIzh7r9ZubPmJpP/c23PhesDSTedONJirXt706HnDYtn2+I
-         UuhxxKVd9i/wMgFDGMAuCSok9bEAJUAMXM1t5xxd2EobaTIgnXd0jaE5l5G9qIC9Zxxb
-         fIKQ==
+        bh=Y0shGZ6hyhRZI7u9lKNPwzmsqe7OyakFksQ4HOiAHG4=;
+        b=u+Lw0+fGEwnsMts5plO615IBT8mWkOZSG19nR+eOkB1ARvLDkFzNhwCHkTIk1uaLYN
+         NxBVG223K6iHF5QqFD1WRsXx/u/f3GXhApT+6SIApEwIW/N/HI8o2RxWC/Eh5ByEaeQz
+         oHzDBBcQaXmpug2I9j6SR5oFS2IU2WVQGT7/o0p1nVgtfTaI8oNYxJRzVZjLMcGx5saL
+         o1y7TFOryoG4Z/zPF7xcXhxhJwUlle51sRjt4ohFJim3lGD0cWFGE4a/9Qa0VNwGfSi3
+         sIaM2vyeso0PJSx5g8oGO10tsLpv4Apmf5i6arpUjnsOoFIbdkfw+mdWUjQ6o+nZMRyy
+         XHwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794743666; x=1795348466;
+        d=1e100.net; s=20260707; t=1794757320; x=1795362120;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=oqFc1dkJ0uhI3kAkP/ntcsru7jDDN6wYlX8lnvW2kQA=;
-        b=x9xiq2cYcTgk7JpcSeH5UUvAztWbkld5uaXVuKU/CLcGmC7s6pCvKUi/D2fyHekmN8
-         mOfjcr+ouZbX21wScXoh3ycA+bfadcquhQVA3jYOCdJpRzDcpm2RQIxX6V8GTUCqV41E
-         4Axwzq2GeRkvt0Z8XwuwRIrkuhHskQgdNHouaVlzqBfPSMeXlkPhF1fTXKWG+kc1z2ie
-         dtI9XlwMz3zaGdYdev4zxbMhu5QbKIWedPyYXOqRwrby+FN8j4ILD88ZI17ufi8m9iWY
-         RNxaH+K7DgJrOgNo1x0mDN9jZb4EllyMT2ZN5XX5w0qSgPL2wSQVsiFfxcgGAXZB0bu1
-         bmYA==
-X-Forwarded-Encrypted: i=1; AL+hErEj5duHr4en3ptWg2ccJjD0AQBtMhI5XeJZ2nKoBNvXAr0lv70evF4QmVYnim07UEXz5pGsdJdn3J/Wcg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9D6REUXIDfVvSM0NSXh+ZkkoMlLDeeDnW4xRWXIH4ov9EQ31VT
-	Fl9nPtAVlFj13DNg0OU3JISek2BNiIA6cUsIIES/QFhMB4j5ql/Qq3Jh7Asv93JpdxdLJy5VkUr
-	vhYeButVwSUy6Q5P832TagDyeFn7CKgs=
-X-Gm-Gg: AYBFou3OWFY8mAxpXc8G4MMY5FlaE95rNxKgvi3atP14e9D8CNpJynTlQJ6umzbLucM
-	b2RYH0KpZqwt9QyKjZS6N+V24BsMp0L6W+7TM+tmRL8asOuaYR5kFIGTihVJeVx11h+vzU03Lj4
-	Mxyh7qyfUnGVHvveR+sfC71gTqQGOkchNe+hlapkN1o57Bt0btKoVt/aNTEGiAw/OH6Rq47fJWB
-	BLXYTI/GZdIyFA+dRTs4qNamruUk8MAVvGklPZGV12l0wkL2x1mV35/oUmBu0XF6gcJLjE5yGYG
-	z96rwdYBkDh8hFlK6gj8my3POHzilWyM6sGUKTFvg+fqmnJONdF0Zs3LauiYdz8M1W+HEU9QZDh
-	gmUvUzLCuzFjE3Xx0WQREGyDjEehU3mPLWkEBQiBqlncE7q4hjP1qnzRcYoIKbEYTX3BkDu+yfr
-	a6b7DL28/Q4hxt07nPYMq31IXeWSZdAQ==
-X-Received: by 2002:a05:7301:52c5:b0:36c:a281:1bc with SMTP id
- 5a478bee46e88-37966a5ba74mr7873015eec.16.1794743665605; Sun, 15 Nov 2026
- 03:54:25 -0800 (PST)
+        bh=Y0shGZ6hyhRZI7u9lKNPwzmsqe7OyakFksQ4HOiAHG4=;
+        b=B3PRh59/NLSqCeYjdh7MXSQi9bC+mEO8DqW4X5wTOXOxX3UrqMF6JpYyEtVGzrQBJg
+         QyF3s9MVGIdsYPMPZrljCYqi2EmX1XFr4tjCZwutDKvDYkodSZHzUlGYxs+lET9F1qTI
+         EHukc4ZWENupLrM9DDOR2mSDcnLw6z0uvgaXtnDP9MUKyvMgW3O3dHsTIl7ikEu63Tt9
+         DNJxELvhD9nISgBMplprgwKdmphmoh+szPEdAIIhPVbN4aAdgFXs9XI2+HGetpOUDMBB
+         nOHaXKIAAZZQnOTbSEgi3fF9qa0ioX9FcNhM+fDUnKUEAB9EYfK4iO0VdW4BjFfwXgGZ
+         GBog==
+X-Forwarded-Encrypted: i=1; AL+hErFdFy14oorCAhB4xqmBFIjWZay+zRtacXQNIRID1PJOnYX1kCmD+fAC3l2bEA6aAsK+5vWoVackTGq2jw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9DRR9Y6dqrefWGmL4Jx4v+6whMsJkICjjBSzqYDe371dKci9Re
+	CiqH93Sesus2zFgWTLj3ejSDLzGf9WNuOpVowdNIzRGPx+45Xl/OjNPKqWwYyeq36DWbKYCJTeI
+	cXWku0aAHqXryYzseTdA8p+GMqEyQGpi4RtaeTjWQ+CxX
+X-Gm-Gg: AYBFou3+JD0Mqf0gOgg/sWWtE7CQhYDjS+iFs08WVDJF185ElQZaNMN50xaWtlM//ee
+	GiJnZ78WJ5bWK5t68LuRoGCruiP4TTnFY1WGemtPRizbOjWiVDLEW8MKITIr2cK/5H3QOShS4Vf
+	/40JU1ectSvCVac3XXZar8AHq0Hga7/7Mk8oWRKK8xEHdJiVdMMJCadt+09LrnO7/a4Re+2g362
+	kR4N0iKs5qiJtDOdcdQF4xLWSS0sMKb47PrtqxKfGmUaSMOT3rXHLinH0GbXJ5jmXJFG6yWkEN0
+	bFWG5G7lNJwf3O/+m/SD0lexgE2EOXKkrbrQnlQ7edjDvMXPi8P0S3fghEPPknts2Q0yxF/72+m
+	UiMYw75WI4W+JWn9+XZ+Vr/sKZey7ONECAB9M6VDwJdf9gdZW58f+AJQJEa4geyUBwZjFhpA=
+X-Received: by 2002:a05:690e:419c:b0:67c:443b:7437 with SMTP id
+ 956f58d0204a3-67d8972f769mr4176218d50.81.1794757320129; Sun, 15 Nov 2026
+ 07:42:00 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -105,89 +104,92 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261113145708.261530-1-clamor95@gmail.com> <20261113145708.261530-3-clamor95@gmail.com>
- <179474058020.3790083.7531788945003507652.b4-review@b4>
-In-Reply-To: <179474058020.3790083.7531788945003507652.b4-review@b4>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Sun, 15 Nov 2026 13:54:13 +0200
-X-Gm-Features: AclHuK-EzmuYPh1U1Wrw3n2IgQZOy9QQQk19QQZyaFRGFCYZ5HQfcbePna83mwQ
-Message-ID: <CAPVz0n154OuYUG2RObrdh4TmASjRhKF9svF0Z=4iCrPyyNt0pA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] clk: tegra114: Add CSI pad clock gates
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, linux-clk@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
+References: <20261114-nyan-wifi-32k-v1-1-311c6f2163d4@gmail.com>
+In-Reply-To: <20261114-nyan-wifi-32k-v1-1-311c6f2163d4@gmail.com>
+From: Volodymyr Chapman <volodymyrchapman@gmail.com>
+Date: Sun, 15 Nov 2026 15:41:49 +0000
+X-Gm-Features: AclHuK9XI2phd4ElF0I4ZWo1qXh6X3hb82lItzI21-3DRYQCtspJfYTGO2-pD7I
+Message-ID: <CAN1s30rP9jkTp8rmyFBjp9FtmZO9QTXNXqawpJ1nZbusFw59bw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: tegra: nyan: Enable the 32 kHz clock for the Wi-Fi module
+To: volodymyrchapman@gmail.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BD=D0=B4, 15 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 13:0=
-3 Jerome Brunet <jbrunet@baylibre.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> > Tegra114 has CSI pad bits in both PLLD and PLLD2 clocks that are requir=
-ed
-> > for the correct work of the CSI block. Add CSI pad A and pad B clock ga=
-tes
-> > with PLLD/PLLD2 parents, respectively.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/clk/tegra/clk-tegra114.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-t=
-egra114.c
-> > index ec537efac692..08e425365469 100644
-> > --- a/drivers/clk/tegra/clk-tegra114.c
-> > +++ b/drivers/clk/tegra/clk-tegra114.c
-> > @@ -1041,6 +1041,16 @@ static __init void tegra114_periph_clk_init(void=
- __iomem *clk_base,
-> >                                            0, 82, periph_clk_enb_refcnt=
-);
-> >       clks[TEGRA114_CLK_DSIB] =3D clk;
-> >
-> > +     /* csia_pad */
-> > +     clk =3D clk_register_gate(NULL, "csia_pad", "pll_d", CLK_SET_RATE=
-_PARENT,
-> > +                             clk_base + PLLD_BASE, 26, 0, &pll_d_lock)=
-;
-> > +     clks[TEGRA114_CLK_CSIA_PAD] =3D clk;
-> > +
-> > +     /* csib_pad */
-> > +     clk =3D clk_register_gate(NULL, "csib_pad", "pll_d2", CLK_SET_RAT=
-E_PARENT,
-> > +                             clk_base + PLLD2_BASE, 26, 0, &pll_d2_loc=
-k);
-> > +     clks[TEGRA114_CLK_CSIB_PAD] =3D clk;
-> > +
->
-> Change seems ok in itself, just a couple of things I'd like to check with=
- you.
->
-> Seems both the CSI and DSI can use the PLL D and D2. Can they be used con=
-currently ?
-> If yes, are you sure you want to add CLK_SET_RATE_PARENT which the
-> DSI counter part does not have ?
->
+Dear all,
 
-CSI pad clocks are used only by CSI and CSI does not change rate of
-pad clocks. Saying "DSI counter part" would not be correct, DSI mux
-switched DSI clock parent while csi pad clocks do not touch clock
-layout of CSI nor DSI.
+In the interest of transparency, (and to meet the kernel AI policy
+outlined in Documentation/process/generated-content.rst), I was
+assisted by Claude Code (Anthropic) in creating the patch described.
 
-Same layout is used in Tegra30 and Tegra114 inherits it.
+It inspected the device tree and clock state of the device (HP
+chromebook 14 G3: nyan-blaze), identified the missing 32 kHz PMC blink
+clock and drafted the change and commit message. Warm reboots were
+scripted by Claude over SSH and cold boots were performed by me. I
+have reviewed the change, understand it and take full responsibility,
+acknowledged through my sign-off.
 
-> Also the DSI get the PLL through a fixed factor 'out0' but not the CSI ? =
-is it something
-> you have checked ? it just seems a little odd.
+My best wishes,
+Volodymyr
+
+On Sat, Nov 14, 2026 at 2:13=E2=80=AFPM Volodymyr Chapman via B4 Relay
+<devnull+volodymyrchapman.gmail.com@kernel.org> wrote:
 >
-
-Yes, out0 is a fixed div2 of DSI clocks and that is code reflection of
-hardware. CSI pad clocks do not have this setup in the hardware.
-
+> From: Volodymyr Chapman <volodymyrchapman@gmail.com>
+>
+> The Marvell SD8897 Wi-Fi/Bluetooth module on the Nyan Chromebooks needs
+> a 32.768 kHz sleep clock, which these boards take from the PMC blink
+> output (CLK_32K_OUT_PA0). Nothing in the device tree requests that
+> clock, so whether it is running when the SDIO card is brought up
+> depends on the state the firmware left it in. On warm reboots it is
+> usually off, and every attempt to bring up the card fails with:
+>
+>   mmc2: error -110 whilst initialising SDIO card
+>
+> leaving the system without Wi-Fi. Toggling the reset GPIO on each retry
+> does not help.
+>
+> Describe the clock in the SDIO power sequence, as the Tegra30 Asus
+> Transformer and Nexus 7 device trees already do for their Wi-Fi
+> modules, so that mmc-pwrseq-simple enables it before releasing the
+> module from reset.
+>
+> Tested on an HP Chromebook 14 G3 (nyan-blaze) running v6.6.144: with
+> this change Wi-Fi came up on 8 out of 8 warm reboots, against 1 out of
+> 22 before, and on 5 out of 5 cold boots (4 of them on battery), and
+> the clock summary shows pmc_blink enabled by pwrseq-sdhci0 (ext_clock).
+> nyan-big shares this file but was not tested.
+>
+> Signed-off-by: Volodymyr Chapman <volodymyrchapman@gmail.com>
+> ---
+>  arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi b/arch/arm/boot/=
+dts/nvidia/tegra124-nyan.dtsi
+> index 89a749c..c98de0d 100644
+> --- a/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
+> +++ b/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
+> @@ -645,6 +645,9 @@
+>         sdhci0_pwrseq: pwrseq-sdhci0 {
+>                 compatible =3D "mmc-pwrseq-simple";
+>
+> +               clocks =3D <&tegra_pmc TEGRA_PMC_CLK_BLINK>;
+> +               clock-names =3D "ext_clock";
+> +
+>                 reset-gpios =3D <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
+>         };
+>
+>
+> ---
+> base-commit: 97d73c8251226cf27cc6656b4c542869bb8c69fa
+> change-id: 20261114-nyan-wifi-32k-9964d3513b7e
+>
+> Best regards,
 > --
-> Jerome
+> Volodymyr Chapman <volodymyrchapman@gmail.com>
+>
 >
