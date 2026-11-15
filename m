@@ -1,55 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.94
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794713162;
-	b=t1yW1IKcutwyhQBcKDjFcxxuUfEymFf+z8j0w+60sQ56CpMay3eliJTVRzRtVogGQhob
-	 VLxuF1rZ+mjBK0ZxuqhBb5ScUMFN1f2Q0zHI2ECUo/GjJnXWI0dU5w+UKvwLQak8o7aru
-	 gtR/GWHTBqcsXharRjQzF5uxMKT/+904sjiZxu0EBlQDCKWw9Ml/4Aqv0V891F3OW/8qI
-	 lOMIl2+DMQhBVJafuzcAACIUS96/uPw4RT52n6cWSXLVHxSdGZM6KTCg3E6qBgQEU0vwU
-	 q/msTydoJCD5HrLcT+RMiDti7o4z2P7xXfCm+9oL42jQ1T89OWrtx3pmYrLFY8TQaUw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794713162;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:Feedback-ID:X-Zoho-CM-AccountID:
-	 X-ZohoMailClient;
-	bh=fCr4vk87uIVxv+fnbM3PawDMY6ycKwKe/urALmU/BHM=;
-	b=I7ENaqqr+OpepffNDVtTSDwlFNfiB6gHo5236GLyakVUDpoHDHNWK3YO9UCrBWDou5Qj
-	 z7cEWPu/xzoAlhj3XlmpOUbRGw6RaTq3s3rXoAaYzGCZxxSvMxNlChiJEGTNKT3UKLGWK
-	 SXun6MEpjt/INmkukdoSiWPOlP4y2dwCu0El886J/JeBSSTth2jLT27E4HgSzI0eJBiFB
-	 jAZKHWiz5DEtnTwGp5dBNK1yiR3AwrUhrHAA80TJjz9UpibGRJBSFS6kAHTBhUiQ+PRs9
-	 qbdsGYv/HPihq3Ndnvp/bv5IvNENjo9JpMRWHWOkIhOM4eAmKGs09Rf6pnWUL5uR5cw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zohomail.com;
-	spf=pass smtp.mailfrom=zohomail.com;
-	dkim=pass header.d=zohomail.com header.i=@zohomail.com header.a=rsa-sha256 header.s=zm2022 header.b=Cy8fGPlD;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.94
-Received: from sender6-pp-o94.zoho.com (sender6-pp-o94.zoho.com [165.173.180.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794740593;
+	b=NTAr4DqswHcPqhvqq2a48ABsmIQxxol2ID6YiUiie2g84znPfcTrQoRAX+iy36bcN3vB
+	 5v6v8CzUydbmfR8mzecbPVRniA0GdYrpetDrWr9Y7i5Mao09F5OS2UwK7BGoS2psEpZ3j
+	 WfNi5zNvFVU9Tta0ChibrnPxJNHcjowfM+NI8B2kxxaz/alqka8AqLcJbpDho4Cfzp3XY
+	 UfwcnIsTbfQVoWdjI8ppm+LvvC9BQRP5YOvPDJodJ4cJt+udddOpNQRSm6ic5t6GGmzVb
+	 elpfSRIS5KK1sOf0JEvveDD/zSUQ8IK2JMh4mbW83aLyF0cjztOWPDri0bY1yEUy8cg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794740593;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=w1ACO595+ELz+z8hohqisqtB7dSuEVIa1QoS/POdlBI=;
+	b=zukLMe7D7F2Tpr3ISYTLMfJmIRtV2y599a2/uJRAkf0hcXTJNkfHr+KIKSs3ynVXqFy5
+	 Tsncu1uTlBGT0Ne7TyO+bWKWmW0xWH/0eEc2yIhtgwsJbtIBD/QtpL6cAzpTjhlvhQGgg
+	 0LmQPpulwTxVzUFac5IWLEsCyfTgzMgxU2iPZUA0i6nNNp+UWjc+uUNJml1MDf0SYdbO1
+	 Nw5zdLq3JxgK2wUMDOZ2rUq+BtwK/qBzrU9eCT1tXHFwWsDpMSD1TeRqpXT/lZt9SS6ej
+	 uJ5FRGfdp97TwhBfjtQn1S8kHoqxeX58Jk2T2SKUlLCfuw3bd+41WYQFJN+1oLIpvTA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=WR02KrBz;
+	arc=none smtp.remote-ip=209.85.221.49
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929D9606A323;
-	Sun, 15 Nov 2026 03:26:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 929D9606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBA8606A329
+	for <linux-tegra@vger.kernel.org>; Sun, 15 Nov 2026 11:03:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4FBA8606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=zohomail.com header.i=@zohomail.com header.a=rsa-sha256 header.s=zm2022 header.b=Cy8fGPlD
-ARC-Seal: i=1; a=rsa-sha256; t=1794713142; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RnYPPLKJ0/JhnoarrVShf55nqGCNKuZ4WoBuHA6NEs5Xc5b1ff9d1DK3GvFZdYAztmwTHcPgKhF5wJvJRBSLl6xR9j+8MUixo3g0XrQwLewxsgTwBUPQogunBrThGIwuvfDONLvy0FH1+vkfV1oqVfopM7aAG8Q6ZlmJnz707P0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1794713142; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=fCr4vk87uIVxv+fnbM3PawDMY6ycKwKe/urALmU/BHM=; 
-	b=Z8Ln1fTR8MuZALc6w55eEJxfgTmKP8k+G2dL8sAfrh/zjGI/Llr10jCqdyR26DfnLygPLP2h19jF7u3vt17SYc5Nrfs9jbBPzXC2l4TA7xOEUYbntjmSdLkWjTQCtApEsvXWi+3plfDqKgvRVoLT6DMATP8PZJD+cB+eqHWRdWY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: a=rsa-sha256; b=Cy8fGPlDwJoV1lzxCVd82pP5Lwlmxrv8CDIda94qu3b26750NDRwUcK+fnWcQ/by5A4oWCURxo9JP1aSRk/2ugkrTG2J+o4ICTj/inUb423AsBqQ6aMNrNd8LWKjyqsBQGtUbvKWycCa/yDkSJ32QRiwyWmk/bqMIbXEZL6Dv1k=; c=relaxed/relaxed; s=zm2022; d=zohomail.com; v=1; bh=fCr4vk87uIVxv+fnbM3PawDMY6ycKwKe/urALmU/BHM=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zohomail.com with SMTPS id 1794713140424547.7867298639073;
-	Sat, 14 Nov 2026 19:25:40 -0800 (PST)
-Message-ID: <2e8e3f34-b252-415f-8eb5-ceb1db668175@zohomail.com>
-Date: Sun, 15 Nov 2026 11:25:28 +0800
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=WR02KrBz
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-490585eddfcso1827574f8f.0
+        for <linux-tegra@vger.kernel.org>; Sun, 15 Nov 2026 03:03:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1794740591; x=1795345391; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=w1ACO595+ELz+z8hohqisqtB7dSuEVIa1QoS/POdlBI=;
+        b=WR02KrBzOV/h19PNnmRdTn+XT8cRK5mKsqg9OanSndZSfGTqZFubzv30P77zOMp2qQ
+         kQtzYOO+dTHK2YOlLOQ6pS7ZbUlphK3ZryIgbFID4LZ7zxzUZF19PbTUSY5ISwL2u9zL
+         F47L+ASapoErsRmS3Dcyby4L6EPVCbmU96Cuxn+jydfTMAJSterK1bG8nxtf1IZ1U00L
+         kJCC5GY8cJAhMoOZr26+HN0j3KDa1dSq2fswp9GEA+LetvBHW5RlKGX97gCPSyWOMMdV
+         a8I0lQjzX+naCxu7XF+36CNIpCYOEBJmS7EcvCInQSQuLnUcBsBnep2PKV4WC7pOzzJB
+         7+Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794740591; x=1795345391;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=w1ACO595+ELz+z8hohqisqtB7dSuEVIa1QoS/POdlBI=;
+        b=HkSSJMZDNJZwgNAMyoKEmIioPtFWS1gickjybFrKOuAg01AWX7HN1GPYTBywvkcjOV
+         Q0CZudqGpmn39lCTqpygO4AavLscoWGk1FR7V2/Kf3DzPgBJZeH7CIufqaXTFtE8wXzJ
+         U2yIgv+Xlvhjiii3Atz9J8sGkAaNjGqBIqlxB6hJNMgoDwC8o8J5Oqc6ERyetB3ICa6c
+         Tmz+607H3dw3/tP2gOjLJ+RmYzVyPwYFKr5ainvgTCwsqjIe8xC0036F/A5A4kmEnjUk
+         Oc1oXrukBpnvMWArZeiOjXJz2RGmIvnpCCtNAQKxQPguvKHLicGDOBzVNqbweG5zyyrP
+         +B2g==
+X-Forwarded-Encrypted: i=1; AL+hErF+aFwD7zxMv1okjTLODQAuceG+N5M3aULnGBSB/pqvrMpN/xpEF2D2lVs8kyvZMRfsvVA+PqsG0V8Bsw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8OqKsYsuNCPBq3MhwL9oSMb2CcSco2QBKEhsteTceVYST5I5li
+	hyJz+SGVcZwUV8DiOU7E+PcB6uo4FoOoKF3bPnkcLrCt3LEA9PO1mW00xTkOBH7sRwk=
+X-Gm-Gg: AYBFou0oOE2L8qttBkshAXVzK3hkZnuz3RykCB122H2pPTi+JcLogcuxoekmJYzoaL+
+	oBslyn+wBvTRxZLcP1rk7iz8v1oWO31OL/Y+DYq1XYWTeLGkII8VmJxl0HcJUgmKAal71TRMctU
+	/PtZwr5Q9M10krxXvW3yeGlQCtS62xnI8buL2EHjUt276F1Uqd2IbM1sWOuAwg95YUqfLSO0RhL
+	mRQ11bK6jrUSMh1chbVe55aYMgyhbq7zCVfpIVnbU6NBlZjJSHG1uAJ8o/V44sx9X6naC/7nJqm
+	CF9fGGr11lKgRIJC6HhpE9fpK1J/C0HQeeS2zRzSTpP5YO4KdIlXuJXqg1JNl2MtH82039PYYkq
+	UVyeBUnOdHRLuxYSvZvMy/eNQvyKcY3sqq1Mg21H+CuOaNh7uH35pI0ifZPXsOI5zmFMxxlDAkH
+	nlxxNZXzu2JUXmg5wWsaQUG14udb6PyTgWudg51xBK8uyJv2cjOKQEdac3lfNVdoYEyiluvgymL
+	2/2sb3H6wQPN3Bc4YUEQO0p+MstX7h2WVQVqdGsksgr7y9Zx6T+pERrEOZO5Bxz5xlFjNO4srlT
+	HrKrGKhzyD6yeu/XhkvAINA4+z+BHPwBOvmlbNGG0Flk2044
+X-Received: by 2002:a5d:584b:0:b0:491:620b:b60f with SMTP id ffacd0b85a97d-49c72ba5d70mr15726879f8f.48.1794740590749;
+        Sun, 15 Nov 2026 03:03:10 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5f5972a7sm15132051f8f.21.2026.11.15.03.03.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Nov 2026 03:03:09 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,249 +89,72 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 02/19] cxl: Share CXL port upstream PCI device lookup
-To: Dave Jiang <dave.jiang@intel.com>,
- Srirangan Madhavan <smadhavan@nvidia.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Ira Weiny <iweiny@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Joshua Machauer <machaujo@amazon.de>,
- Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
- alwilliamson@nvidia.com,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org,
- Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
-References: <20261105185917.2667656-1-smadhavan@nvidia.com>
- <20261105185917.2667656-3-smadhavan@nvidia.com>
- <f67ecd0e-1eae-41b1-8a61-d06eb062e523@zohomail.com>
- <70b69d4c-34b2-4166-9e3c-fbd9e21daf75@intel.com>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <70b69d4c-34b2-4166-9e3c-fbd9e21daf75@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: zu08011227ad363084d4183c4ef58ab89800004bcd12f20718ed38e92b1557a58da56d825851b8e75eaace76:ZohoMail
-X-Zoho-CM-AccountID: abd763e7b9fa23acf4f42a44f9876d2d993e05abdb9290f9ccb1008c977bf7f0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v1 2/2] clk: tegra114: Add CSI pad clock gates
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+ linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20261113145708.261530-3-clamor95@gmail.com>
+References: <20261113145708.261530-1-clamor95@gmail.com>
+ <20261113145708.261530-3-clamor95@gmail.com>
+Date: Sun, 15 Nov 2026 12:03:00 +0100
+Message-Id: <179474058020.3790083.7531788945003507652.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1564; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=lFRDSGY15F4GXWb4HrNUlotV6eaXTV/VaJfiOjVavqU=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDFk/J6Zn6+1MEdwhlvNA2UgluMX+9NH9LEf+6Nw4c2C+o
+ Uu5D1NeRykLgxgXg6yYIksNd7X4O0mtL7Om69yGmcPKBDKEgYtTACbyj43hf1nIoowvEUd8Dial
+ tufF/IuOz3njJib8ZHVTt0aEuLX2IYb/niZ3mq8ufHv5qLraOp/9yxYcfvzMOdXxpP7CDJYT+XH
+ L+QE=
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On 11/13/2026 11:50 PM, Dave Jiang wrote:
+> Tegra114 has CSI pad bits in both PLLD and PLLD2 clocks that are required
+> for the correct work of the CSI block. Add CSI pad A and pad B clock gates
+> with PLLD/PLLD2 parents, respectively.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-tegra114.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 >
-> On 11/10/26 6:36 AM, Li Ming wrote:
->> 在 2026/11/6 02:59, Srirangan Madhavan 写道:
->>> read_cdat_data() resolves a CXL port's upstream device to its backing PCI
->>> device. HDM cache updates need the same mapping.
->>>
->>> Factor the lookup into cxl_port_get_uport_pci_dev() and return a referenced
->>> PCI device to make caller ownership explicit.
->>>
->>> Use automatic reference cleanup in read_cdat_data(), as suggested by
->>> Li Ming, so early returns release the PCI device reference.
->>>
->>> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
->>> Reviewed-by: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
->>> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
->>> Reviewed-by: Richard Cheng <icheng@nvidia.com>
->>> Reviewed-by: Li Ming <ming.li@zohomail.com>
->>>
->>> ---
->>> Changes in v17:
->>> - Use an explicit pci_dev_put() on a single exit path in
->>>    read_cdat_data() instead of mixing __free() with goto cleanup
->>>    (Sashiko)
->>>    https://sashiko.dev/#/patchset/20261029145703.2185231-1-smadhavan@nvidia.com?part=2
->> Reviewed-by: Li Ming <ming.li@zohomail.com>
->>
->>
->> I still think the new goto makes the code harder to follow. But I saw your discussion in v13[1], both Jonathan and Dave agree with your current changes. I post my proposal here which can eliminate all goto labels. If there is no response from them, or if they disagree with my changes, we can continue with your implementation.
->>
->> [1]: https://lore.kernel.org/all/fb513893-7c6c-408c-811f-1eae20f0436c@intel.com/
->>
->> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
->> index 9d807c1a002c..fbf4b56a39c4 100644
->> --- a/drivers/cxl/core/pci.c
->> +++ b/drivers/cxl/core/pci.c
->> @@ -573,17 +573,8 @@ void read_cdat_data(struct cxl_port *port)
->>         size_t table_length, length;
->>         int rc;
->>
->> -       if (is_cxl_memdev(uport)) {
->> -               struct device *host;
->> -
->> -               cxlmd = to_cxl_memdev(uport);
->> -               host = cxlmd->dev.parent;
->> -               if (dev_is_pci(host))
->> -                       pdev = to_pci_dev(host);
->> -       } else if (dev_is_pci(uport)) {
->> -               pdev = to_pci_dev(uport);
->> -       }
->> -
->> +       struct pci_dev *pdev __free(pci_dev_put) =
->> +                               cxl_port_get_uport_pci_dev(port);
->>         if (!pdev)
->>                 return;
->>
->> @@ -606,30 +597,32 @@ void read_cdat_data(struct cxl_port *port)
->>          * bytes for the DOE header. Table data starts afterwards.
->>          */
->>         buf = devm_kzalloc(dev, sizeof(*buf) + length, GFP_KERNEL);
->> -       if (!buf)
->> -               goto err;
->> +       if (!buf) {
->> +               dev_err(dev, "Failed to allocate CDAT buffer.\n");
->> +               return;
->> +       }
->>
->>         table_length = length;
->>
->>         rc = cxl_cdat_read_table(dev, doe_mb, buf, &length);
->> -       if (rc)
->> -               goto err;
->> +       if (rc) {
->> +               devm_kfree(dev, buf);
->> +               dev_err(dev, "Failed to read CDAT.\n");
->> +               return;
->> +       }
->>
->>         if (table_length != length)
->>                 dev_warn(dev, "Malformed CDAT table length (%zu:%zu), discarding trailing data\n",
->>                         table_length, length);
->>
->> -       if (cdat_checksum(buf->data, length))
->> -               goto err;
->> +       if (cdat_checksum(buf->data, length)) {
->> +               devm_kfree(dev, buf);
->> +               dev_err(dev, "Failed to validate CDAT.\n");
->> +               return;
->> +       }
->>
->>         port->cdat.table = buf->data;
->>         port->cdat.length = length;
->> -
->> -       return;
->> -err:
->> -       /* Don't leave table data allocated on error */
->> -       devm_kfree(dev, buf);
->> -       dev_err(dev, "Failed to read/validate CDAT.\n");
->>  }
->>
->>
-> How about something like this? I think it's cleaner:
-
-Hi Dave,
-
-
-Your implementation also works for me.
-
-
-Ming
-
->
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index 905892cfedef..c924904faec4 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -556,6 +556,27 @@ static unsigned char cdat_checksum(void *buf, size_t size)
->  	return sum;
->  }
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+> index ec537efac692..08e425365469 100644
+> --- a/drivers/clk/tegra/clk-tegra114.c
+> +++ b/drivers/clk/tegra/clk-tegra114.c
+> @@ -1041,6 +1041,16 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
+>  					     0, 82, periph_clk_enb_refcnt);
+>  	clks[TEGRA114_CLK_DSIB] = clk;
 >  
-> +static int cxl_cdat_read_validate(struct device *dev,
-> +				  struct pci_doe_mb *doe_mb,
-> +				  struct cdat_doe_rsp *buf, size_t *length)
-> +{
-> +	size_t table_length = *length;
-> +	int rc;
+> +	/* csia_pad */
+> +	clk = clk_register_gate(NULL, "csia_pad", "pll_d", CLK_SET_RATE_PARENT,
+> +				clk_base + PLLD_BASE, 26, 0, &pll_d_lock);
+> +	clks[TEGRA114_CLK_CSIA_PAD] = clk;
 > +
-> +	rc = cxl_cdat_read_table(dev, doe_mb, buf, length);
-> +	if (rc)
-> +		return rc;
+> +	/* csib_pad */
+> +	clk = clk_register_gate(NULL, "csib_pad", "pll_d2", CLK_SET_RATE_PARENT,
+> +				clk_base + PLLD2_BASE, 26, 0, &pll_d2_lock);
+> +	clks[TEGRA114_CLK_CSIB_PAD] = clk;
 > +
-> +	if (table_length != *length)
-> +		dev_warn(dev, "Malformed CDAT table length (%zu:%zu), discarding trailing data\n",
-> +			 table_length, *length);
-> +
-> +	if (cdat_checksum(buf->data, *length))
-> +		return -EIO;
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * read_cdat_data - Read the CDAT data on this port
->   * @port: Port to read data from
-> @@ -564,13 +585,13 @@ static unsigned char cdat_checksum(void *buf, size_t size)
->   */
->  void read_cdat_data(struct cxl_port *port)
->  {
-> -	struct pci_dev *pdev = cxl_port_get_uport_pci_dev(port);
->  	struct device *dev = &port->dev;
->  	struct pci_doe_mb *doe_mb;
->  	struct cdat_doe_rsp *buf;
-> -	size_t table_length, length;
-> -	int rc;
-> +	size_t length;
->  
-> +	struct pci_dev *pdev __free(pci_dev_put) =
-> +		cxl_port_get_uport_pci_dev(port);
->  	if (!pdev)
->  		return;
->  
-> @@ -578,14 +599,14 @@ void read_cdat_data(struct cxl_port *port)
->  				      CXL_DOE_PROTOCOL_TABLE_ACCESS);
->  	if (!doe_mb) {
->  		dev_dbg(dev, "No CDAT mailbox\n");
-> -		goto out;
-> +		return;
->  	}
->  
->  	port->cdat_available = true;
->  
->  	if (cxl_cdat_get_length(dev, doe_mb, &length)) {
->  		dev_dbg(dev, "No CDAT length\n");
-> -		goto out;
-> +		return;
->  	}
->  
->  	/*
-> @@ -593,31 +614,15 @@ void read_cdat_data(struct cxl_port *port)
->  	 * bytes for the DOE header. Table data starts afterwards.
->  	 */
->  	buf = devm_kzalloc(dev, sizeof(*buf) + length, GFP_KERNEL);
-> -	if (!buf)
-> -		goto err;
-> -
-> -	table_length = length;
-> -
-> -	rc = cxl_cdat_read_table(dev, doe_mb, buf, &length);
-> -	if (rc)
-> -		goto err;
-> -
-> -	if (table_length != length)
-> -		dev_warn(dev, "Malformed CDAT table length (%zu:%zu), discarding trailing data\n",
-> -			table_length, length);
-> -
-> -	if (cdat_checksum(buf->data, length))
-> -		goto err;
-> +	if (!buf || cxl_cdat_read_validate(dev, doe_mb, buf, &length)) {
-> +		/* Don't leave table data allocated on error */
-> +		devm_kfree(dev, buf);
-> +		dev_err(dev, "Failed to read/validate CDAT.\n");
-> +		return;
-> +	}
->  
->  	port->cdat.table = buf->data;
->  	port->cdat.length = length;
-> -	goto out;
-> -err:
-> -	/* Don't leave table data allocated on error */
-> -	devm_kfree(dev, buf);
-> -	dev_err(dev, "Failed to read/validate CDAT.\n");
-> -out:
-> -	pci_dev_put(pdev);
->  }
->  EXPORT_SYMBOL_NS_GPL(read_cdat_data, "CXL");
 
+Change seems ok in itself, just a couple of things I'd like to check with you.
+
+Seems both the CSI and DSI can use the PLL D and D2. Can they be used concurrently ?
+If yes, are you sure you want to add CLK_SET_RATE_PARENT which the
+DSI counter part does not have ?
+
+Also the DSI get the PLL through a fixed factor 'out0' but not the CSI ? is it something
+you have checked ? it just seems a little odd.
+
+-- 
+Jerome
 
