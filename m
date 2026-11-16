@@ -1,66 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.10
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794820418;
-	b=wpGnRWRsI+r23h3vbufyPen0ZqmnnGz443KUiYqP1r78hpWBtx+lhf1cQCx+/EY1PYMi
-	 oYcEbJubIu/PkpUeRpUriKhDWjwvSk5+0ORmFUkx8g9hQwgCTFA6s6jKuFOXxr98LTcyY
-	 ttCOsQtOhXT0DhgABJN40nY2WGApPVaCq7Or+evoG8Ls6CFxCkb6bkPQ5x9KFWXvC7GOq
-	 Jrkzcl8scWe+YaY/oV+PLpjb+K+WgAmP2qs5bc0XKnR2hwHpLieNiA5Vez69iVMNlCa99
-	 hJ9/mhtKf6DuIw3uT7q2H0+AnxZmzxiUT0ggEHFNSM/F+vWnGjchEnihS6H2ydcMTXQ==
+	t=1794820429;
+	b=qGTkzWZW99poiDLizk2WSXbsldFtDfYLtdsmQRDXi0rxR/oi7F6FjPDjHvI5GOu4PTvd
+	 7SETqEbdC7dGtFBUWiu4iSyqqvVkyJ2TfokRu4AzBHXjcFH4Ecw2wNs2EgrvBPYdd7kwU
+	 9FnEVcMeyOz+axuTwkjZSHYfSDekkuZjl60Cj6CYjnTDt8g2GOzFWw9A+SkMe/D0vQJRv
+	 Xwy5jEspC7IlyqLAejHl0PM5T7T9qKe5NS1mNyQDPYkW8QLqunjweR8l3Y/MU1754pIxr
+	 9GRsWUN1tff0wREINzbTdJfaTko8EXU6zlmMp8fRdMdp3ZBdOZNJ0Gn7t2Gjvh9Gnug==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794820418;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794820429;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Type:Organization:Content-Transfer-Encoding;
-	bh=Qa2bzZGm5O/wJ/BgySPcuwTVYD13HxzjTxwGsGtIuyk=;
-	b=RFMMhUaRf9OO5VLHNdMF3nvelnleJKlwFa3WJNCINaSzYZfS8i9fXYiVGl04gS1Lcg5a
-	 xT1SXzALYstUY4ES/N2LnTFyNb533y3wcG0teCWD3PLOBLRS8BnoTyYsCRT6YmfRL58xm
-	 UjZ2u4j8bAsfwPqqFu9B7RaCfVNjiFcMUUrr7atVejQ+r5ijk1cZmZ1KnWMmYqyQcdoTf
-	 jokXxikC9X2Ll/IJ70pe3cCdbK96ZAByYEyR7sfNVs2kmvhHZ4RfPFGgIlxLWjLpz9jBS
-	 TiERVgumgK/IxxtqQYLHHBiFuJu7vvvGQF+5ciEJuF72ETHV9GCCYZ/LH8/nOGZsoEg==
+	bh=q+IeP9KxR1ltj3JOOG9VwsrHbqw44F6E5PTklAlXz8o=;
+	b=SLLLYfNHayYPMWfxOxUZkfaperpiSJMBSI6yUFUzb+Jvn7tAOLC9bMDvIqOziSEyYnP7
+	 NtGbQUd4wLXjSTMsnNzdTsGq9o8cfKXo5HoITnVehbW+G2bLMWqjhdzvshfA5/m42szxc
+	 bllQ15Ro1d0z0UdYfXKe2xtHBlLcajBBUPRA5pz3rIfd+MEgf0KTsZdJdbQHNqAhWicGz
+	 fDidzZbiyZ/LMkhosNVVbG3XvFJ7mGsEPHdxkF+40yf+2wYUjqCQ6BNuuL3ypCQGxrCq6
+	 LfL6br917Su8aEUBo+b8x6ps6OxPEmvKnIqwoSCC0GHFStJ1eSO53EqbJ9riIzsYP6Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kg6uPett;
-	arc=none smtp.remote-ip=192.198.163.18
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dbNL2dqZ;
+	arc=none smtp.remote-ip=198.175.65.10
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CAF606A32F;
-	Mon, 16 Nov 2026 09:13:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 45CAF606A32F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E5C606A329;
+	Mon, 16 Nov 2026 09:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D0E5C606A329
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kg6uPett
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=dbNL2dqZ
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794820417; x=1826356417;
+  t=1794820428; x=1826356428;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=R2jtCYJzpoIMcias7P6pJiZdvsxl+IKsmM3AiTZ415c=;
-  b=kg6uPettSnNMMUv1qAVAtlGVTrLZa/V5s6B93wq/6vi6qNXMedZfP/Qb
-   5JEIBFo0rCIcOylIG4Atz5oezL1+hJyIPTS1mi8fXw4WvIfEEz6hYKdvs
-   RCv+wWdlKBVFtPR/xgH+LTm5NC6tkTHrD2EhkH9B5aTpbv+82wFFoTI+V
-   Zw2V1xQ/nUmPVNPD3OSdZZ4A+JCw05ZpnWzJ6T3ISNnym6nBr19EW38+a
-   TW0XxE5q/0Q+kHOVz86ZKIXnepLnPrQSdIE/8DvAPsGeh9zha9Bi0YBvM
-   HobkR0drWoiE/xyU+BJZB3PUSCZ43q3O8+yje9cQfzG+IUg91JgEWIbui
+  bh=6RcgTJRMkf6knyitWUlwWvr0eo1SGio0/PgROTWQTvY=;
+  b=dbNL2dqZOhPpk77vkRZJVkE4vKJLyWsmP3DLker4eMFSZv5jO1qzmaKK
+   fWjlEYrN47n2ST7NpDyxspVyo2jGf9fa3IXHa7lz4kWRL5+5uyTVkqmd3
+   uaZDzL1ByPOHD7W3QTDZ01aDTA8cEJQin1peJkXIaL4qj8ww+Sz/3+tC4
+   JBbaNtdM78TjgmqNUkJYapd3CLe1Lss6l1uw4qFXoTEow5j4Sdo85DdOQ
+   EqBbf07Zx1OhvCnMI3m1hVHwWBn1s+BtzXQc4uaRBIurmzndTWariIoMr
+   DRv5023BQfcrMZmsXyssh1hNfxpxt6jD6S440XX3MMwu9CPKzNcWvDaF0
    A==;
-X-CSE-ConnectionGUID: MO3NvhSzS82diC58H0xNpg==
-X-CSE-MsgGUID: EWBKizpTSN27+rCjguEFCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11967"; a="3579240"
+X-CSE-ConnectionGUID: UXPvN6JsRAyIHUIDmlzRiQ==
+X-CSE-MsgGUID: pIbIlFFqQJS6jQA49+5NQA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11967"; a="3458233"
 X-IronPort-AV: E=Sophos;i="6.27,216,1787036400"; 
-   d="scan'208";a="3579240"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:13:36 -0800
-X-CSE-ConnectionGUID: LJd/t5j7RBuvfs/0Ms9siA==
-X-CSE-MsgGUID: hHJSOhWCSuqX5dqc8w6vYw==
+   d="scan'208";a="3458233"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:13:47 -0800
+X-CSE-ConnectionGUID: bvoRwiFQRNi3Az4Cm0njaA==
+X-CSE-MsgGUID: pGwRFgaZQoqDY1QJ87JxXg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,216,1787036400"; 
-   d="scan'208";a="10032418"
+   d="scan'208";a="9692160"
 Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.93])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:13:30 -0800
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:13:40 -0800
 From: Ville Syrjala <ville.syrjala@linux.intel.com>
 To: dri-devel@lists.freedesktop.org
 Cc: intel-gfx@lists.freedesktop.org,
@@ -94,9 +94,9 @@ Cc: intel-gfx@lists.freedesktop.org,
 	wayland-devel@lists.freedesktop.org,
 	Xaver Hugl <xaver.hugl@kde.org>,
 	Xi Ruoyao <xry111@xry111.site>
-Subject: [PATCH 11/12] drm/atomic/uapi: Make async flips a bit more palatable through atomic
-Date: Mon, 16 Nov 2026 11:11:29 +0200
-Message-ID: <20261116091130.13950-12-ville.syrjala@linux.intel.com>
+Subject: [PATCH 12/12] drm/atomic/uapi: Extract {connector,crtc,plane}_async_flip_check()
+Date: Mon, 16 Nov 2026 11:11:30 +0200
+Message-ID: <20261116091130.13950-13-ville.syrjala@linux.intel.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261116091130.13950-1-ville.syrjala@linux.intel.com>
 References: <20261116091130.13950-1-ville.syrjala@linux.intel.com>
@@ -115,68 +115,9 @@ Content-Transfer-Encoding: 8bit
 
 From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-Userspace developers are supremely lazy, and apparently not willing
-to spend any effort on trimming out no-op property changes from
-their atomic commits.
-
-For normal atomic commits it just means that the kernel and/or
-hardware will need to do a bit more work to deal with the redundant
-updates. Eg. on i915/xe we don't bother doing an exhaustive comparison
-of all the state to filter out no-ops, and thus we end up feeding
-most of it to the hardware. Apart from wasted power (not an
-insignificant amount probably in some cases) that is kinda fine.
-
-For normal atomic commit the rule is also that all side effects
-of the commit must be observed. For example, if the plane's
-framebuffer appears on the property list, we have to make sure
-that any shadow copies of the framebuffer contents (PSR,
-i915/xe FBC, etc.) are updated (even if the FB_ID stays the
-same) in case there was any front buffer rendering done to
-the buffer.
-
-But for async flips the uapi has completely separate rules,
-essentially saying that a plane that is part of the atomic
-commit can be completely ignored by the driver if none its
-properties are changing values. Ie. side effects need not
-be observed.
-
-The current scheme can sort of work without any extra state
-comparisons, but only if every plane on the device supports
-async flips. That is generally not the case. Eg. on i915/xe
-we only support async flips on the primary plane. Later
-hardware generations do support async flips on sprite planes
-as well, but we've not hooked that up yet. And cursor planes
-don't support async flips on any hardware generation.
-
-Currently the only way to implement the no-op checks is by
-having the driver perform that exhaustive comparison of the
-full state. That would be tedious and supremely fragile as
-it would be very easy to forget to update those checks when
-adding a new piece of state.
-
-Let's avoid that whole mess by doing the no-op filtering
-directly in the atomic ioctl handler. It's pretty easy on
-this level as all we really have to care about is the actual
-uapi property values, not how they get stored in the state
-objects (since we reuse the normal drm_atomic_get_property()
-for that), and derived state is not a factor on this level
-at all. The code is in fact mostly already there, just for
-input validation purposes. It just needs to be extended
-slightly to completely filter out the no-ops.
-
-This way we can completely skip adding planes and connectors
-to the state if all they have is no-op property changes. The
-driver never even sees the no-op objects, and thus can't think
-it needs to reject the commit due to their presence. CRTCs
-we have to add even if none of their properties change state.
-This is because the uapi rules say that any CRTC named in the
-commit (either directly, or indirectly via a plane/connector)
-must actually perform the commit, and send back the completion
-event. For that reason we must also always add the
-plane's/connector's current crtc to the state in the new
-bespoke __drm_atomic_get_current_*_state() helpers.
-
-TODO: igt tests for atomic+async uapi don't really exist :(
+Reduce the clutter in drm_atomic_set_property() by
+extracting the async flip related checks to
+connector,crtc,plane}_async_flip_check().
 
 Cc: amd-gfx@lists.freedesktop.org
 Cc: André Almeida <andrealmeid@igalia.com>
@@ -210,345 +151,273 @@ Cc: Xaver Hugl <xaver.hugl@kde.org>
 Cc: Xi Ruoyao <xry111@xry111.site>
 Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 ---
- drivers/gpu/drm/drm_atomic.c        |  97 +++++++++++++++++++
- drivers/gpu/drm/drm_atomic_uapi.c   | 139 ++++++++++++++++++++--------
- drivers/gpu/drm/drm_crtc_internal.h |   9 ++
- 3 files changed, 205 insertions(+), 40 deletions(-)
+ drivers/gpu/drm/drm_atomic_uapi.c | 215 +++++++++++++++++-------------
+ 1 file changed, 124 insertions(+), 91 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index 81591173265d..176520aec21c 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -497,6 +497,28 @@ drm_atomic_get_crtc_state(struct drm_atomic_commit *state,
- }
- EXPORT_SYMBOL(drm_atomic_get_crtc_state);
- 
-+const struct drm_crtc_state *
-+__drm_atomic_get_current_crtc_state(struct drm_atomic_commit *state,
-+				    struct drm_crtc *crtc)
-+{
-+	const struct drm_crtc_state *crtc_state;
-+	int ret;
-+
-+	WARN_ON(!state->acquire_ctx);
-+	drm_WARN_ON(state->dev, state->checked);
-+
-+	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
-+	if (crtc_state)
-+		return crtc_state;
-+
-+	ret = drm_modeset_lock(&crtc->mutex, state->acquire_ctx);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return crtc->state;
-+}
-+/* Do not export! Only meant for drm_atomic_set_property(). */
-+
- static int drm_atomic_crtc_check(const struct drm_crtc_state *old_crtc_state,
- 				 const struct drm_crtc_state *new_crtc_state)
- {
-@@ -704,6 +726,43 @@ drm_atomic_get_plane_state(struct drm_atomic_commit *state,
- }
- EXPORT_SYMBOL(drm_atomic_get_plane_state);
- 
-+const struct drm_plane_state *
-+__drm_atomic_get_current_plane_state(struct drm_atomic_commit *state,
-+				     struct drm_plane *plane)
-+{
-+	const struct drm_plane_state *plane_state;
-+	int ret;
-+
-+	WARN_ON(!state->acquire_ctx);
-+	drm_WARN_ON(state->dev, state->checked);
-+
-+	plane_state = drm_atomic_get_new_plane_state(state, plane);
-+	if (plane_state)
-+		return plane_state;
-+
-+	ret = drm_modeset_lock(&plane->mutex, state->acquire_ctx);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	plane_state = plane->state;
-+
-+	/*
-+	 * The plane's current crtc must always be added
-+	 * to the commit for completion/event purposes.
-+	 */
-+	if (plane_state->crtc) {
-+		struct drm_crtc_state *crtc_state;
-+
-+		crtc_state = drm_atomic_get_crtc_state(state,
-+						       plane_state->crtc);
-+		if (IS_ERR(crtc_state))
-+			return ERR_CAST(crtc_state);
-+	}
-+
-+	return plane_state;
-+}
-+/* Do not export! Only meant for drm_atomic_set_property(). */
-+
- static void drm_atomic_commit_set_colorop_state(struct drm_atomic_commit *commit,
- 						struct drm_colorop *colorop,
- 						struct drm_colorop_state *colorop_state)
-@@ -1496,6 +1555,44 @@ drm_atomic_get_connector_state(struct drm_atomic_commit *state,
- }
- EXPORT_SYMBOL(drm_atomic_get_connector_state);
- 
-+const struct drm_connector_state *
-+__drm_atomic_get_current_connector_state(struct drm_atomic_commit *state,
-+					 struct drm_connector *connector)
-+{
-+	struct drm_mode_config *config = &connector->dev->mode_config;
-+	const struct drm_connector_state *connector_state;
-+	int ret;
-+
-+	WARN_ON(!state->acquire_ctx);
-+	drm_WARN_ON(state->dev, state->checked);
-+
-+	connector_state = drm_atomic_get_new_connector_state(state, connector);
-+	if (connector_state)
-+		return connector_state;
-+
-+	ret = drm_modeset_lock(&config->connection_mutex, state->acquire_ctx);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	connector_state = connector->state;
-+
-+	/*
-+	 * The connectors's current crtc must always be added
-+	 * to the commit for completion/event purposes.
-+	 */
-+	if (connector_state->crtc) {
-+		struct drm_crtc_state *crtc_state;
-+
-+		crtc_state = drm_atomic_get_crtc_state(state,
-+						       connector_state->crtc);
-+		if (IS_ERR(crtc_state))
-+			return ERR_CAST(crtc_state);
-+	}
-+
-+	return connector_state;
-+}
-+/* Do not export! Only meant for drm_atomic_set_property(). */
-+
- static void drm_atomic_connector_print_state(struct drm_printer *p,
- 		const struct drm_connector_state *state)
- {
 diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-index 7517950d2e51..87181aba1451 100644
+index 87181aba1451..65e1be6c4ad5 100644
 --- a/drivers/gpu/drm/drm_atomic_uapi.c
 +++ b/drivers/gpu/drm/drm_atomic_uapi.c
-@@ -1212,15 +1212,19 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 	case DRM_MODE_OBJECT_CONNECTOR: {
- 		struct drm_connector *connector = obj_to_connector(obj);
- 		struct drm_connector_state *connector_state;
--
--		connector_state = drm_atomic_get_connector_state(state, connector);
--		if (IS_ERR(connector_state)) {
--			ret = PTR_ERR(connector_state);
--			break;
--		}
-+		bool is_noop = false;
+@@ -1194,6 +1194,124 @@ int drm_atomic_connector_commit_dpms(struct drm_atomic_commit *state,
+ 	return ret;
+ }
+ 
++static int connector_async_flip_check(struct drm_atomic_commit *state,
++				      struct drm_connector *connector,
++				      struct drm_property *prop,
++				      u64 prop_value, bool *is_noop)
++{
++	const struct drm_connector_state *current_connector_state;
++	u64 old_val = 0;
++	int ret;
++
++	current_connector_state =
++		__drm_atomic_get_current_connector_state(state, connector);
++	if (IS_ERR(current_connector_state))
++		return PTR_ERR(current_connector_state);
++
++	ret = drm_atomic_connector_get_property(connector, current_connector_state,
++						prop, &old_val);
++	if (ret)
++		return ret;
++
++	/*
++	 * Note that for WRITEBACK_FB_ID and WRITEBACK_OUT_FENCE_PTR
++	 * the old value will always be 0. So any commit that sets either
++	 * property to any other value will not be considered a no-op.
++	 */
++	if (old_val != prop_value) {
++		drm_dbg_atomic(prop->dev,
++			       "[CONNECTOR:%d:%s][PROP:%d:%s] Unsupported property change during async flip\n",
++			       connector->base.id, connector->name,
++			       prop->base.id, prop->name);
++		return -EINVAL;
++	}
++
++	*is_noop = old_val == prop_value;
++
++	return 0;
++}
++
++static int crtc_async_flip_check(struct drm_atomic_commit *state,
++				 struct drm_crtc *crtc,
++				 struct drm_property *prop,
++				 u64 prop_value, bool *is_noop)
++{
++	const struct drm_crtc_state *current_crtc_state;
++	u64 old_val = 0;
++	int ret;
++
++	current_crtc_state =
++		__drm_atomic_get_current_crtc_state(state, crtc);
++	if (IS_ERR(current_crtc_state))
++		return PTR_ERR(current_crtc_state);
++
++	ret = drm_atomic_crtc_get_property(crtc, current_crtc_state,
++					   prop, &old_val);
++	if (ret)
++		return ret;
++
++	/*
++	 * Note that for OUT_FENCE_PTR the old value will always be 0.
++	 * So any commit that sets the property to any other value
++	 * will not be considered a no-op.
++	 */
++	if (old_val != prop_value) {
++		drm_dbg_atomic(prop->dev,
++			       "[CRTC:%d:%s][PROP:%d:%s] Unsupported property change during async flip\n",
++			       crtc->base.id, crtc->name,
++			       prop->base.id, prop->name);
++		return -EINVAL;
++	}
++
++	*is_noop = old_val == prop_value;
++
++	return 0;
++}
++
++static int plane_async_flip_check(struct drm_atomic_commit *state,
++				  struct drm_plane *plane,
++				  struct drm_property *prop,
++				  u64 prop_value, bool *is_noop)
++{
++	struct drm_device *dev = plane->dev;
++	struct drm_mode_config *config = &dev->mode_config;
++	const struct drm_plane_state *current_plane_state;
++	u64 old_val = 0;
++	int ret;
++
++	current_plane_state =
++		__drm_atomic_get_current_plane_state(state, plane);
++	if (IS_ERR(current_plane_state))
++		return PTR_ERR(current_plane_state);
++
++	ret = drm_atomic_plane_get_property(plane, current_plane_state,
++					    prop, &old_val);
++	if (ret)
++		return ret;
++
++	/*
++	 * Fail everything that isn't no-op or a pure flip.
++	 *
++	 * Note that for IN_FENCE_FD the old value will always be -1.
++	 * So any commit that sets the property to any other value
++	 * will not be considered a no-op.
++	 */
++	if (old_val != prop_value &&
++	    prop != config->prop_fb_id &&
++	    prop != config->prop_in_fence_fd &&
++	    prop != config->prop_fb_damage_clips) {
++		drm_dbg_atomic(prop->dev,
++			       "[PLANE:%d:%s][PROP:%d:%s] Unsupported property change during async flip\n",
++			       plane->base.id, plane->name,
++			       prop->base.id, prop->name);
++		return -EINVAL;
++	}
++
++	*is_noop = old_val == prop_value;
++
++	return 0;
++}
++
+ int drm_atomic_set_property(struct drm_atomic_commit *state,
+ 			    struct drm_file *file_priv,
+ 			    struct drm_mode_object *obj,
+@@ -1202,7 +1320,6 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
+ 			    bool async_flip)
+ {
+ 	struct drm_mode_object *ref;
+-	u64 old_val;
+ 	int ret;
+ 
+ 	if (!drm_property_change_valid_get(prop, prop_value, &ref))
+@@ -1215,36 +1332,10 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
+ 		bool is_noop = false;
  
  		if (async_flip) {
--			ret = drm_atomic_connector_get_property(connector, connector_state,
-+			const struct drm_connector_state *current_connector_state;
-+
-+			current_connector_state =
-+				__drm_atomic_get_current_connector_state(state, connector);
-+			if (IS_ERR(current_connector_state)) {
-+				ret = PTR_ERR(current_connector_state);
-+				break;
-+			}
-+
-+			ret = drm_atomic_connector_get_property(connector, current_connector_state,
- 								prop, &old_val);
- 			if (ret)
- 				break;
-@@ -1238,6 +1242,21 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 				ret = -EINVAL;
- 				break;
- 			}
-+
-+			if (old_val == prop_value)
-+				is_noop = true;
-+		}
-+
-+		/* No-op connector property changes can be completely skipped */
-+		if (is_noop) {
-+			ret = 0;
-+			break;
-+		}
-+
-+		connector_state = drm_atomic_get_connector_state(state, connector);
-+		if (IS_ERR(connector_state)) {
-+			ret = PTR_ERR(connector_state);
-+			break;
- 		}
- 
- 		ret = drm_atomic_connector_set_property(connector,
-@@ -1248,15 +1267,19 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 	case DRM_MODE_OBJECT_CRTC: {
- 		struct drm_crtc *crtc = obj_to_crtc(obj);
- 		struct drm_crtc_state *crtc_state;
+-			const struct drm_connector_state *current_connector_state;
 -
--		crtc_state = drm_atomic_get_crtc_state(state, crtc);
--		if (IS_ERR(crtc_state)) {
--			ret = PTR_ERR(crtc_state);
--			break;
--		}
-+		bool is_noop = false;
- 
- 		if (async_flip) {
--			ret = drm_atomic_crtc_get_property(crtc, crtc_state,
-+			const struct drm_crtc_state *current_crtc_state;
-+
-+			current_crtc_state =
-+				__drm_atomic_get_current_crtc_state(state, crtc);
-+			if (IS_ERR(current_crtc_state)) {
-+				ret = PTR_ERR(current_crtc_state);
-+				break;
-+			}
-+
-+			ret = drm_atomic_crtc_get_property(crtc, current_crtc_state,
- 							   prop, &old_val);
- 			if (ret)
- 				break;
-@@ -1274,6 +1297,24 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 				ret = -EINVAL;
- 				break;
- 			}
-+
-+			if (old_val == prop_value)
-+				is_noop = true;
-+		}
-+
-+		/*
-+		 * CRTCs must always be included in the commit,
-+		 * even for no-op property changes.
-+		 */
-+		crtc_state = drm_atomic_get_crtc_state(state, crtc);
-+		if (IS_ERR(crtc_state)) {
-+			ret = PTR_ERR(crtc_state);
-+			break;
-+		}
-+
-+		if (is_noop) {
-+			ret = 0;
-+			break;
- 		}
- 
- 		ret = drm_atomic_crtc_set_property(crtc,
-@@ -1285,16 +1326,19 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 		struct drm_plane_state *plane_state;
- 		struct drm_mode_config *config = &plane->dev->mode_config;
- 		const struct drm_plane_helper_funcs *plane_funcs = plane->helper_private;
+-			current_connector_state =
+-				__drm_atomic_get_current_connector_state(state, connector);
+-			if (IS_ERR(current_connector_state)) {
+-				ret = PTR_ERR(current_connector_state);
+-				break;
+-			}
 -
--		plane_state = drm_atomic_get_plane_state(state, plane);
--		if (IS_ERR(plane_state)) {
--			ret = PTR_ERR(plane_state);
--			break;
--		}
-+		bool is_noop = false;
- 
- 		if (async_flip) {
--			/* no-op changes are always allowed */
--			ret = drm_atomic_plane_get_property(plane, plane_state,
-+			const struct drm_plane_state *current_plane_state;
-+
-+			current_plane_state =
-+				__drm_atomic_get_current_plane_state(state, plane);
-+			if (IS_ERR(current_plane_state)) {
-+				ret = PTR_ERR(current_plane_state);
-+				break;
-+			}
-+
-+			ret = drm_atomic_plane_get_property(plane, current_plane_state,
- 							    prop, &old_val);
+-			ret = drm_atomic_connector_get_property(connector, current_connector_state,
+-								prop, &old_val);
++			ret = connector_async_flip_check(state, connector,
++							 prop, prop_value, &is_noop);
  			if (ret)
  				break;
-@@ -1318,25 +1362,40 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 				break;
- 			}
- 
+-
 -			/*
--			 * FIXME this is in the wrong place. Whether to do a
--			 * bypass commit for async flips would is a driver
--			 * decision. Drivers that want this need to just do
--			 * these checks themselves somewhere.
+-			 * Note that for WRITEBACK_FB_ID and WRITEBACK_OUT_FENCE_PTR
+-			 * the old value will always be 0. So any commit that sets either
+-			 * property to any other value will not be considered a no-op.
 -			 */
--			if (old_val != prop_value && plane->type != DRM_PLANE_TYPE_PRIMARY) {
--				/* ask the driver if this non-primary plane is supported */
--				if (plane_funcs && plane_funcs->atomic_bypass_check)
--					ret = plane_funcs->atomic_bypass_check(plane, state, true);
--				else
--					ret = -EINVAL;
-+			if (old_val == prop_value)
-+				is_noop = true;
-+		}
- 
--				if (ret) {
--					drm_dbg_atomic(prop->dev,
--						       "[PLANE:%d:%s] does not support async flips\n",
--						       obj->id, plane->name);
--					break;
--				}
-+		/* No-op plane property changes can be fully skipped */
-+		if (is_noop) {
-+			ret = 0;
-+			break;
-+		}
-+
-+		plane_state = drm_atomic_get_plane_state(state, plane);
-+		if (IS_ERR(plane_state)) {
-+			ret = PTR_ERR(plane_state);
-+			break;
-+		}
-+
-+		/*
-+		 * FIXME this is in the wrong place. Whether to do a
-+		 * bypass commit for async flips would is a driver
-+		 * decision. Drivers that want this need to just do
-+		 * these checks themselves somewhere.
-+		 */
-+		if (async_flip && !is_noop && plane->type != DRM_PLANE_TYPE_PRIMARY) {
-+			/* ask the driver if this non-primary plane is supported */
-+			if (plane_funcs && plane_funcs->atomic_bypass_check)
-+				ret = plane_funcs->atomic_bypass_check(plane, state, true);
-+			else
-+				ret = -EINVAL;
-+
-+			if (ret) {
-+				drm_dbg_atomic(prop->dev,
-+					       "[PLANE:%d:%s] does not support async flips\n",
-+					       obj->id, plane->name);
-+				break;
- 			}
+-			if (old_val != prop_value) {
+-				drm_dbg_atomic(prop->dev,
+-					       "[CONNECTOR:%d:%s][PROP:%d:%s] Unsupported property change during async flip\n",
+-					       connector->base.id, connector->name,
+-					       prop->base.id, prop->name);
+-				ret = -EINVAL;
+-				break;
+-			}
+-
+-			if (old_val == prop_value)
+-				is_noop = true;
  		}
  
-diff --git a/drivers/gpu/drm/drm_crtc_internal.h b/drivers/gpu/drm/drm_crtc_internal.h
-index 3492787c3697..5ae86d33e3ae 100644
---- a/drivers/gpu/drm/drm_crtc_internal.h
-+++ b/drivers/gpu/drm/drm_crtc_internal.h
-@@ -252,6 +252,15 @@ int __drm_atomic_helper_set_config(struct drm_mode_set *set,
+ 		/* No-op connector property changes can be completely skipped */
+@@ -1270,36 +1361,10 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
+ 		bool is_noop = false;
  
- void drm_atomic_print_new_state(const struct drm_atomic_commit *state,
- 		struct drm_printer *p);
-+const struct drm_crtc_state *
-+__drm_atomic_get_current_crtc_state(struct drm_atomic_commit *state,
-+				    struct drm_crtc *crtc);
-+const struct drm_connector_state *
-+__drm_atomic_get_current_connector_state(struct drm_atomic_commit *state,
-+					 struct drm_connector *connector);
-+const struct drm_plane_state *
-+__drm_atomic_get_current_plane_state(struct drm_atomic_commit *state,
-+				     struct drm_plane *plane);
+ 		if (async_flip) {
+-			const struct drm_crtc_state *current_crtc_state;
+-
+-			current_crtc_state =
+-				__drm_atomic_get_current_crtc_state(state, crtc);
+-			if (IS_ERR(current_crtc_state)) {
+-				ret = PTR_ERR(current_crtc_state);
+-				break;
+-			}
+-
+-			ret = drm_atomic_crtc_get_property(crtc, current_crtc_state,
+-							   prop, &old_val);
++			ret = crtc_async_flip_check(state, crtc,
++						    prop, prop_value, &is_noop);
+ 			if (ret)
+ 				break;
+-
+-			/*
+-			 * Note that for OUT_FENCE_PTR the old value will always be 0.
+-			 * So any commit that sets the property to any other value
+-			 * will not be considered a no-op.
+-			 */
+-			if (old_val != prop_value) {
+-				drm_dbg_atomic(prop->dev,
+-					       "[CRTC:%d:%s][PROP:%d:%s] Unsupported property change during async flip\n",
+-					       crtc->base.id, crtc->name,
+-					       prop->base.id, prop->name);
+-				ret = -EINVAL;
+-				break;
+-			}
+-
+-			if (old_val == prop_value)
+-				is_noop = true;
+ 		}
  
- /* drm_atomic_uapi.c */
- int drm_atomic_connector_commit_dpms(struct drm_atomic_commit *state,
+ 		/*
+@@ -1324,46 +1389,14 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
+ 	case DRM_MODE_OBJECT_PLANE: {
+ 		struct drm_plane *plane = obj_to_plane(obj);
+ 		struct drm_plane_state *plane_state;
+-		struct drm_mode_config *config = &plane->dev->mode_config;
+ 		const struct drm_plane_helper_funcs *plane_funcs = plane->helper_private;
+ 		bool is_noop = false;
+ 
+ 		if (async_flip) {
+-			const struct drm_plane_state *current_plane_state;
+-
+-			current_plane_state =
+-				__drm_atomic_get_current_plane_state(state, plane);
+-			if (IS_ERR(current_plane_state)) {
+-				ret = PTR_ERR(current_plane_state);
+-				break;
+-			}
+-
+-			ret = drm_atomic_plane_get_property(plane, current_plane_state,
+-							    prop, &old_val);
++			ret = plane_async_flip_check(state, plane,
++						     prop, prop_value, &is_noop);
+ 			if (ret)
+ 				break;
+-
+-			/*
+-			 * Fail everything that isn't no-op or a pure flip.
+-			 *
+-			 * Note that for IN_FENCE_FD the old value will always be -1.
+-			 * So any commit that sets the property to any other value
+-			 * will not be considered a no-op.
+-			 */
+-			if (old_val != prop_value &&
+-			    prop != config->prop_fb_id &&
+-			    prop != config->prop_in_fence_fd &&
+-			    prop != config->prop_fb_damage_clips) {
+-				drm_dbg_atomic(prop->dev,
+-					       "[PLANE:%d:%s][PROP:%d:%s] Unsupported property change during async flip\n",
+-					       plane->base.id, plane->name,
+-					       prop->base.id, prop->name);
+-				ret = -EINVAL;
+-				break;
+-			}
+-
+-			if (old_val == prop_value)
+-				is_noop = true;
+ 		}
+ 
+ 		/* No-op plane property changes can be fully skipped */
 -- 
 2.56.0
 
