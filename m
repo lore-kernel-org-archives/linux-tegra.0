@@ -1,86 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794821015;
-	b=d9rvG6dptcjNN8vEV8or16ZbRDOHoISOTqzbywXv4TGmlkTuImEXnMKpxxPxtfD2U/Zf
-	 uEtjIVAiutAPu4ePqyc9RLMfCaUzpWNBk4KfKpxlKjyCHwZiOFJvI+sucWsyeskeyo+es
-	 mdhsVWbXhc+a++6icqapjFr4cd8I/ybFWSbgfHqyKDan4JYxyXL0Z+qYAWWTOw4prJXrj
-	 +fqJppxzLtr544IowqyKmdpz1VH9LuAJsW/fu7L5lZQvpPWEIIGDTMrQsz1SkJad9zi81
-	 bG+bGJOp2LYQHZpOxEdQgWgMzYLXjccPMAXfMEqzleG1xdGSy9qZ6z1++8Ysm9Rxo2w==
+	t=1794821913;
+	b=WTl7zdZDdUBfHpEUES6ay2flEN+1wQmm2A5mr9lFAyLarxj+MS+m9aETaJPyzidgCzZH
+	 b9tGiTjuwpTQ/9dBN2dKw95Phgaecnc/f2cYfDvke1U3/4b5ATqZrDzakKEnpuCURL9PB
+	 Pwp46CO6nqQauUOwnTh8b5Eg9O5QO7rpzeenpkPLgnRneLJwXUFWQ14eBwi1HpyEj7NWL
+	 5MR0JxsnGKmaPi0Hlar4vxeW5sBaxEcIqKzkvntoO1FcqM+2mHaoPWV1fSPIl8Hq7ZgUO
+	 vVe2JSV/g/ekRCYCNxoHTgdhat4uP7i/qmutKmWz/Eo7qnUUPGZDoGfCDmmoWxXziZg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794821015;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=U7QGeUHPLaOKaTFmRwI4vSzvwc9pnqiaJV8xvo3ZyVo=;
-	b=mWIjz0Lr5FvP+23Lmc+z3bzzexbOTZtEZHcTaOxcPuqzaycj/4f3JP2E8IRGOlpXBo69
-	 7tAG2ujIVtqE5jyKFQa/dWDVHkZBYDel/wLVy46ug+tih2B8vo5CUFHRXqfpWoNR9DfKL
-	 3R418tNbdiwctlYcHLuBznCae1p2H6yZ23O9VNKHx9Cyc3Z8RC+wiM/M1ccsXRBYoe5/x
-	 cYWqqSYDgbbA8HvSOqh+kkyI8MCIVAZkzu1yrAu6xbmllVxxIzPHM3XENBGaAYornBYhY
-	 IjzNpnkdM8vLIPHNCg0PxoTJuThvPppu7fLPXF/pbkw+RGAFhMsMVbDge6imi16i/pA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794821913;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=KVZRUyQxjEZeB1X14No1R2cixIaW3jXxvUBDYA6Pc60=;
+	b=YoJXBpJTQBmU4qlctC/YXx5wfQHiMgOu2691tXB/Ni0Xz4X5a4SKkt8Frjiq6lyLCAxe
+	 yOg3WkpvXKr0+9yKcK96J10IKUz57Kq84hmtTm0ARXFl4ot0qrgaMf0sWjRG9ucx580Hd
+	 XM18SD3mhyChBJQ9ytIe1dU0a3PV57kSY84yKM9rk2J09ETr+l7nk8gkCJXHR46vbATXi
+	 zoPiuaIvM+Ywumzl+sWUfr99wUm0lzgpNxk7khxbztzqu+7J8+rucV+N/GG4TDe5cu2ZK
+	 FJXNuPzGwpvzqQZijplhtirpHe43hiTQ1rSw9KqOJ5ClQ4XXT8n2U24RFqybZ50zJKg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EMsJFdki;
-	arc=none smtp.remote-ip=192.198.163.18
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=UYpWc1sh;
+	arc=none smtp.remote-ip=209.85.218.43
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48263606A323;
-	Mon, 16 Nov 2026 09:23:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 48263606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510B6606A330
+	for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2026 09:38:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 510B6606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=EMsJFdki
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794821015; x=1826357015;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nGUJYj/3FEkggBBxupS2Xofdcl6yEIq2D4ZxSGaqdUc=;
-  b=EMsJFdkigzLsi6ZEeuIW2dcB/m6Jps55ShWQPeKbZB6BQnCR2mfPAz3b
-   77E93W5ooEuuc0+DdaB46xypCKSVOtoUoO9aJaQCFNKhwCsN8xWQy+NaG
-   feC8IV7wSZwr3xuSHJaIw+FvMSFZv6EFcRR09qCUlfYESraKtYjzN4jba
-   3M1IoYkLE3LD03r9d+k1YpoITz0QeMIJBGQCsg/rLn7GqxoIQwNO1/lWc
-   GUv/vLPW+MJuceAGlSc5NhoJRsQ3ZliEzy3Dl6spRomCedjr/cf799FiR
-   iz8LcfjQAujxntZSqJ/f2zIdvB5Fibt8w9XZtdKYggZCFuzysvOhWiy/7
-   Q==;
-X-CSE-ConnectionGUID: OqQqt/28ThaED4EDJP/eCg==
-X-CSE-MsgGUID: tv97WclHRnqWwsMB0ilEHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11967"; a="3580053"
-X-IronPort-AV: E=Sophos;i="6.27,216,1787036400"; 
-   d="scan'208";a="3580053"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:23:35 -0800
-X-CSE-ConnectionGUID: L03AtofEQZiAP50YHomc3A==
-X-CSE-MsgGUID: 2p72z+SJSqyRVDyz+zkqRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,216,1787036400"; 
-   d="scan'208";a="9578043"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.90])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:23:31 -0800
-Date: Mon, 16 Nov 2026 11:23:28 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org>,
-	admin@tsv-stahl-riesa.de, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Kevin Tsai <ktsai@capellamicro.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iio: light: Add Capella CM3217 ambient light
- sensor driver
-Message-ID: <avrLkP1IR449AwLy@ashevche-desk.local>
-References: <20261113-upstream-iio-cm3217-v3-0-c4d5b2485dff@tsv-stahl-riesa.de>
- <20261113-upstream-iio-cm3217-v3-2-c4d5b2485dff@tsv-stahl-riesa.de>
- <20261114012906.6f66edce@jic23-hlaptop>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=UYpWc1sh
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c40f29667e6so568234266b.0
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2026 01:38:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794821911; x=1795426711; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=KVZRUyQxjEZeB1X14No1R2cixIaW3jXxvUBDYA6Pc60=;
+        b=UYpWc1shzf8kBKXESlt/rmRtpLOuJDihEpFizMS9pLPsKgILSIB2MQiINeMJgSACZb
+         vThq3hMHZMZpT/BZSTNfPPdHQOLPP6iuQ9Ot42sHnNwrkMyw6NDbqq1BqoqfMNVS1iGx
+         8CBbPn/da+IbGlMvtMTvt5bBAdXjFs+fnSzmDF+FVAVjM+2NvO5SydpJTLDE0PUei/1X
+         X8sNNO1XFi2ozqqXwBKcIQhQ5GsofOsDc1CZ4WTQThrlDvA6cuXd8M6R/AfHcUng3vV+
+         G8+pIWUKot8EbVPzXtJKnlR0hw6DOr0vl8TBudSZ7mcQqa6jjOkMtviTr7u0bT4LAZMY
+         214Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794821911; x=1795426711;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=KVZRUyQxjEZeB1X14No1R2cixIaW3jXxvUBDYA6Pc60=;
+        b=UInSpjXyvk7ZfRf2p5Kj4udeara6PQunNEY4d0tPq3H5Uv4lHfAB85GdR6mFalPkgk
+         bNgLmykvnbMva8U8cAgZUyeC+YNLY66owae8bhGNw7XbCqhrgYhSz69WiGHge1GRtnTt
+         cSqiMrx3631D5vMgCQFkXKS6uJ/fM/YXgogC0eWCRDGvjSOeI/W2+6V+zRizoezxnmuQ
+         y9+w5/IF0PvfSFriXNXsSSu7Gvaw0VHTku4fEeJI/bhTPvJgfgMjPOmvs2OQAycxp/g+
+         7YZGW6lUyyas550cAxfFNLQI3KtSPpeU5FE/NX83IPOisueRKf/UrDV+1YdVbifCe6Ig
+         GBxA==
+X-Forwarded-Encrypted: i=1; AL+hErE8sCxcKVQz9kiQjkSh8Fl++xAAQFXoPwJV80RRhU2hN47hjGpztSsOBAPGZMtxZSFUI7ReRTdrXV2xtA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8MTMpA2jo8eM4RzAl8YnhrkHcytKVxnDLlh67Hf+yvrE2lMfQM
+	w7FNcWK8plHxh+ngqzipZwVMEpcFkODnYxm47yU6a6nnqPKmgI6pDWNl
+X-Gm-Gg: AYBFou075S+wexhtQEG885ibVCEJJhran8gsy8T/rSrg3F3LybMJqC0JO4FHTnnLYpV
+	/QM6xed6nP9OoopvtaD7xSaij4RV8/kmKwU+BsBJBXAReUBy8tsLu/YfLu/AeetEEBWddGKYxkR
+	y/gz5hv8vcuI1vQYXCRiawewSseCBejfVrSzjLWVOtGTlQuseiP3u5g0MQ/6stV5nQXqmixM6vP
+	0yZmWgB+shWglA+90sCv6ku10pOkNO3mip1KWSavHiP6v/iNWEC/s462Y7ltIjK6t/LfslWIV19
+	rPpB/k6SI9/OQGbc50Kqt/1l0VeJ/lvxtpY35bjqgGz1K0NP27sFFCu6+uMml6jzkd+MJOFPr79
+	7cokyKeSrVcSmcBYTKpUoDZfOCRkq6EdPneCtu3JsXO5GzDX2OZ4UJshgmfyEokEhvHauz1LTLH
+	3q+FUZuryI/Iz/3bDpBUOClzZysOmn0XxIjbLkW7NqwN1539bm4bNM4bi8cooti4jmCzJS4QDhD
+	+lpuynZ/gxndzPXC/bKuZSpOr8f9bhAVrv7tBrA85gdh9tZmg1bkIhzxxLmbfCW9CglawrYCbnL
+	7FK/+2hswUzaIMc/kKmEYMm5wGg7eFYey6d66/k/XqBFehF3agUqPq6KZ8Sj60UzdTfThUAUtgs
+	qRpkAxY2zig==
+X-Received: by 2002:a17:907:9349:b0:c50:4720:4aec with SMTP id a640c23a62f3a-c5096398b9cmr726615066b.12.1794821911427;
+        Mon, 16 Nov 2026 01:38:31 -0800 (PST)
+Received: from xeon ([188.163.112.62])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c5095b72868sm379906166b.65.2026.11.16.01.38.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2026 01:38:30 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
+	Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v1 0/3] ASoC: tegra: Consolidate and update tegra_asoc_machine
+Date: Mon, 16 Nov 2026 11:37:58 +0200
+Message-ID: <20261116093805.73715-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -90,73 +104,41 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261114012906.6f66edce@jic23-hlaptop>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 14, 2026 at 01:29:06AM +0000, Jonathan Cameron wrote:
-> On Fri, 13 Nov 2026 20:59:00 +0100
-> Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org> wrote:
+This patchset is based on 
+https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/log/?h=for-7.5
 
-...
+It requires this series to work ("ASoC: Convert last few codecs to set_jack")
+https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?h=for-7.5&id=30b0682691a3709441146311a4f695b08eca567b
 
-> > +static int cm3217_probe(struct i2c_client *client)
-> > +{
-> > +	struct device *dev = &client->dev;
-> > +	struct cm3217_data *data;
-> > +	struct iio_dev *indio_dev;
-> > +	u16 addr_lsb = CM3217_ADDR_CMD2_LSB;
-> > +	u32 reg[2];
-> > +	u8 cmd1, cmd2;
+Patch set consolidates remaining wm8903, wm8962 and wm8994 partial machine
+implementations into tegra_asoc_machine which now is possible thanks to
+conversion of codecs to use unified .set_jack callback.
 
-Keep reversed xmas tree order.
+Second patch removes repetitive, boilerplate codec-specific initialization
+functions with similar content.
 
-> > +	int ret;
-> > +
-> > +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> > +	if (!indio_dev)
-> > +		return -ENOMEM;
-> > +
-> > +	data = iio_priv(indio_dev);
-> > +	data->client = client;
-> > +	i2c_set_clientdata(client, indio_dev);
-> > +
-> > +	ret = devm_mutex_init(dev, &data->lock);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = devm_regulator_get_enable(dev, "vdd");
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "failed to enable vdd supply\n");
-> > +
-> > +	/* Without a firmware node (e.g. sysfs new_device) use the fixed one */
-> 
-> I'd rather we handled that explicitly.
-> 
-> 	if (dev_fwmode(dev))
-> 
-> That way we can return an error if there is firmware but it's broken.
+Third patch is just sorting, no functional code changes.
 
-I think here we want
+Svyatoslav Ryhel (3):
+  ASoC: tegra: Consolidate remaining separate codec machine drivers into
+    tegra_asoc_machine
+  ASoC: tegra: Generalize forced DAPM pin enabling via tegra_asoc_data
+  ASoC: tegra: Reorder the codec structures and sort the machine OF
+    match table alphabetically
 
-	if (device_property_present()) {
-		...
-	} else {
-		addr_lsb = CM3217_ADDR_CMD2_LSB;
-	}
-
-I really discourage people to check for FW node presence with dev_fwnode(dev).
-This is a corner case which is in most cases needs better granularity (like
-distinguishing the fwnode by type). But in general ideally it has not to be
-used at all.
-
-> > +	if (!device_property_read_u32_array(dev, "reg", reg, ARRAY_SIZE(reg)))
-> > +		addr_lsb = reg[1];
+ sound/soc/tegra/Makefile             |   6 -
+ sound/soc/tegra/tegra_asoc_machine.c | 510 ++++++++++++++++++---------
+ sound/soc/tegra/tegra_asoc_machine.h |   4 +-
+ sound/soc/tegra/tegra_wm8903.c       | 188 ----------
+ sound/soc/tegra/tegra_wm8962.c       | 165 ---------
+ sound/soc/tegra/tegra_wm8994.c       | 175 ---------
+ 6 files changed, 344 insertions(+), 704 deletions(-)
+ delete mode 100644 sound/soc/tegra/tegra_wm8903.c
+ delete mode 100644 sound/soc/tegra/tegra_wm8962.c
+ delete mode 100644 sound/soc/tegra/tegra_wm8994.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.53.0
 
