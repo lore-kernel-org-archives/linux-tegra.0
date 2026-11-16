@@ -1,106 +1,106 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794841385;
-	b=JRxWm+faUmHoFnOvPXO3+dWXQqttRCkFDSjBERdyOUIPwjbNyRa71thr70zck8gQHx9O
-	 IiirM/Hd5AQXdnsncQzT4Ajec/Y7UuoZ8yRwOVm/YLJdUOt2DDwlV7PPB8l0X/EUXeCxU
-	 OfGjbrDZTjCcjuEOmGKtAcm3o1D9pGXp/owFK7EsDzjljVbv/YR70nj0dcWvVPTHCL9lN
-	 4k9ysh6Bxm5ggXScLM39MS32UHZjcucAfTh2lmrpwedQnNNQfm5wN/0G+z6xTpiBCOXmK
-	 XnKwwOsH0czbyj3BZcAYykqaBELC9NGAkkzqTwA7ckFm+mT0/U8LfRzw6QvhEERO3RA==
+	t=1794841834;
+	b=Ukj4DkWnwmutA/AQrQBL877YyRw76dgL1i+n3iaLwE7JvAy7SJu/kSVCUSenIH9n6P6k
+	 jUVqJlZPrTG+Fw0Eo5rR/gEcSE4jan0cJ0ZdaiNvFRL4/vHL9m66g3v6ZhagDVw0RMmTd
+	 GF7Q3EzVG1co96/krD1MXCj2qTo3mqrDaVntD4bQaNW5TtF8e/E1iJZ9sd+V3gw9NEUbQ
+	 S3LAQpHcHJWp+fnb58g14WGDkafEsLu2L54zU2Jy7uJKRJuhpIo4fb78f7SUvOu97LYff
+	 53KlI/bUohm4ZYu7nc3dqWrUKU3mjdsQSLMEWtmez2b4A/9ThtezHMVKfI+Gik8t5gQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794841385;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794841834;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=AENLxt5LQ9ja+qhvz5yRKPI/PUABSCNWRgi2+AHk9pc=;
-	b=avCKLHagbavYAPIH5lTM87SWU81gSMYBs0j1StKry32Nd6BEP2beq04bGAIN9+MZGmy2
-	 VHCzoswDdcJ5jWoDRwdAr80Cjvp57BURsmzNMZMw3cYmXBwdAME99kbPMY120nh4xIYuc
-	 IFn9b2jTK9wSAPiytjTKRi8y9WM0h7POBFDHG+unI9io8O/U6zGyKra8LaZ+LKbz8JOeu
-	 ORIJua4QlNdjFsDbDUcGhKbLsH7PQj7MaVhKDxn/DKdT4JtqYasL6fCvF60JiSj8qdSdC
-	 mjwWKQiFxwQ7JmqZDTEK5h+i69MTzYjB6b2JKC6JKtTpQJoWqBRRqzw91fu4xc36eMg==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=LbqgOhVybNkMwnYCeynnQ6YccVR5nx8I+2FxMfh6a2M=;
+	b=PnbBDKE8M/2armVQhVoorN5Roi8R+e0NJhmq7z1OPfrjXvO/XAKAUA7/kVQhhxEVUnc7
+	 K1MHct/XRrdTnn7CmQwDbFfJ2iO+O2owe/uJU3XFm2EivLVWKbpjia80mQSx7AvO3SzuZ
+	 53aVNwgeZUhFxwSulhx/KH6mDWnfKmSSIeUd/lw4+wgTz3TtDIiY6oP922+/vSYYEkfbW
+	 1uthgDd285jchcC2MpMdwymyuA6Fnbw3zRTCpaEgReARpM0UVfqRZe/9Z32S6y2e5vd1l
+	 5qamw4+CzvinW55oouI1K4w0IzEdfqqXhqJLtrWNCu1SlnHI9Z9/mvgtCuK411eg2Pw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YEj0XDIx;
-	arc=none smtp.remote-ip=209.85.218.46
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=f6DGU+Hc;
+	arc=none smtp.remote-ip=209.85.218.52
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9C1606A33D
-	for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2026 15:03:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3E9C1606A33D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68526606A31C
+	for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2026 15:10:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68526606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=YEj0XDIx
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-c40f29667e6so627865766b.0
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2026 07:03:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=f6DGU+Hc
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-c4395d31228so574232166b.1
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2026 07:10:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794841383; x=1795446183; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=AENLxt5LQ9ja+qhvz5yRKPI/PUABSCNWRgi2+AHk9pc=;
-        b=YEj0XDIxnVpNPh1DI2ma2SbX2pA5ZgtjEweikP1Agh+FH9GBYjgKpmyp+ruqzqi5Te
-         mEW+DXBtzmB6vAV+BVH1GD+eQAe+yNKdaNHAph/os0MGvxmO/T3cdsH3At+3krs8SAEM
-         Aht2+glUmrVQCK1y5xumU0DFyXOYOm1lnAZngFvntBfbT3c31FhLv+pOytir08+XLow3
-         CePrFiu12Pf6mqYIzOGPhrq8xJkwceSvVsC1o8ARLU/w1EsHBsOthRsULTp8d2287XO3
-         yLVX6XYXNQ/QvPKZnvCsuXN0Z9mWqyNvtDmv8QUTeo/P/1mMKe/uEczz7wOUlykcc/K8
-         id6Q==
+        d=gmail.com; s=20260707; t=1794841833; x=1795446633; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=LbqgOhVybNkMwnYCeynnQ6YccVR5nx8I+2FxMfh6a2M=;
+        b=f6DGU+HcSxlHxYv5Tm4Nl1Odjt+hIGzC88yrqlY4HniHll+xVJWSCo5ibVxCXygR7g
+         7dXQin42WLyZikwYMyKQ5JlyBCM6Cqe0o6bPET5NSFp49FeNcQ6QPLCbq5EBSD7+2Aik
+         ZlyTx5dJMHCbtogOS3Y3i0n9XU53WZDCs7ePncUMBa0uAAoX8EJWM/VVIsoZDWxu+ibD
+         NVchlnyNt0J02JAw1fxPzzhgJ3TpiYF6j4zlpGg/ET3esZXqmkw3WfR0O2AjwrxUp6XS
+         2SQcZAmMsLMuy7VRo38S7BfLHAEKKN/N6hRIN1jx5o8p47vp0HcBxXLxl3HD3AAyceIQ
+         WCxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794841383; x=1795446183;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=AENLxt5LQ9ja+qhvz5yRKPI/PUABSCNWRgi2+AHk9pc=;
-        b=2AIbxGvoaVZi5ZPb1ah0cP21BAfRWS/tzhD0Yp2cslpcP1gaIOzrf50lWD/ASRgxSM
-         vXO0kt8KZCQ5Ja6Kq8tT3ttTPOP6ZNLBLP2498KlNcu/tfdeB5OMdgYQ7Rc+lXMhSEAT
-         L72RTU8mOpr34QElTkULGQ/llajNzfyJTrveMMkHLk37dx92CTxt/YwDAPCiUSWCY89R
-         WiDEZ6JxcFS2BdA0bHZMAJ56hkS823iYyAYo5ei1U7cMwPhp0LIqevuaHLVX2Crn6HRG
-         vm9DWRxCbL3/R2f7Qep3rDi7DzEp4V1WNx5nhvCoDB0m4Cq4Ch7q8Iz2S5nqwwDHADOb
-         yL8Q==
-X-Forwarded-Encrypted: i=1; AL+hErENRipSjLeJDoa55rK6XHhdgDrPkL3lFI4CJQQyuF6mEFtygJnp04MeJGjA1tOGs6/JeRXMMXVF8GsdnQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8zoSL27cAl6uIGF036Of/axegIovetCJAS4M1G88qFfiZ36DME
-	YWueVBR+GawgOtlNetPOd5FRzqT7oVhKbbkf6mPtcarcDfvCbfCfTM/q
-X-Gm-Gg: AYBFou044Xe/LciZO/UT56UGJz3AwlvlPB4bLYY56/7Xh9pvE4glkfUhzLvuJEofPTV
-	SDH4VEIaPccjJniN4uNNN96az6mxO7Y9Cl7Gay4tooS5I9xpseaN2Y7ypYbKo3zyLMcIqV0WomQ
-	EiTjx07eyP1djN9IMgL4Y9DnAn/YVILAo9+7LHHrHMUTHCOTgHaA1tLEb0mQQWoJJCWMqAmseSk
-	Iyf5tfzwxRBa5XSgxg/v+7/M63Zp9879VFwJNhkxoRihd4UEUl2dc8jHNT9hpnXUH1uEp3PfjiS
-	r/usX/5toYIDNSwZCGJqTq2IpyWAZavz1Gt20kDCCDwJ7v1yHvvXhAQT/nIpLPbw/1RJG5x/4tr
-	Bee/DxH/8ZyvufdN1c6XKdLaH/FBWdwhS/YZM2ZotsSmZ7BAumk5G5X1Va0FXdY71rhHsXI97O8
-	/Uzxfs82xJHzSL/wuUfcyoO/mu73tY8sf6iiplqGO6ZP4gSCUO+ROfULJnAA+f9DalAtZummcC4
-	ERd9Z/+F/4/0BAH6b0qQ+76a8xQUr3g0sHOwdmLWE4R1WMsKEDy7Wi4R2tDZOW5dB3dCkeacEyA
-	+9Les6uc8j3SRLB61PaOGFBQdhSew6ek0ZFCAt+yMQDN4OTUmpZwxQnjYkT6G4IlHyysIeWHXVT
-	jQVjE7XW890p4fchA72UU3FJ4d5KjGLs=
-X-Received: by 2002:a17:907:a785:b0:c46:a607:6922 with SMTP id a640c23a62f3a-c50963d90b8mr891096666b.25.1794841382509;
-        Mon, 16 Nov 2026 07:03:02 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794841833; x=1795446633;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=LbqgOhVybNkMwnYCeynnQ6YccVR5nx8I+2FxMfh6a2M=;
+        b=RWOKZof3XGfCEWlKMhsEg8mNkfuWxM0Oc/im9nRL7Oysb+HsjYJgfnSFq8oXch2lDh
+         LU7lH4TiLY8BocLoZTbNTk7FmUjPpNtl+hwH/ncTC3+w/9RgR1r/PF+mcxglnN20v/Nw
+         x02U4/ZLzBlm0T07tkk9H8NTXVq6Z5cJ+Jmj7ep8n+g9C3F1lTQEE/R/0ESdQWR87OLm
+         XgY8hShdwqzRyXuC0bFVWiHY1oSAvqj75Wb2raZ0MG5mWyCzk3HxBdxaSQ4CvqvrC1Aw
+         McgxfK8loiN2rvF3kr6irVrhCo/QhMLLqQ02uNBDyIIib7fzBRDVvk0pquwdnKy2VEGa
+         0vUA==
+X-Forwarded-Encrypted: i=1; AL+hErH7lzXEoXyDVEdqzZWVkF9JiJP292qF2iyKUv6/s9tYysP5CqgoK4+Dh+urzMGiYOdRD1Uy25tKm9Q/+A==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8IBhieUx30YrZTGVan1niRljjSgV6YHbf2Z/PTSUIg/G63qyB+
+	qVxmHd+1XWKHLPrUcnv5vuU3mS9+rLmjuuwESzkZnH8KJ+xeT/z8C2js
+X-Gm-Gg: AYBFou39Kx4a9LlVlA1z2bhX3HBYhryUwLTzW2RZb1Y+R/gmMLy50gSJnleDoPcPtYi
+	JU/eSBKcpvfAIwu0+f1xXnFjdYJGpO6hBjFVA5iF1GUXG9WIbxNCgv0OgKaMfkyAd5wnbYIaxwW
+	venQtki1kky5Gy7/S+JJVm0O40D+VQinP3r9obE4iLu/Qo26q0r3mqu+duCmTSzpkaJwDzHjRN8
+	j1TuNIbdz8UCokJ2Q/MfFqz7bU7+ZQD1fRZaTjv3LxWb99LAYvZlmiLMotDSZ8IePhfGQMMTMdv
+	1lvIqXdgMT9hT3MlFnZBCYE5CRA/cJ4w+MaSW6+NP4RFUn/zuz3F2hstPfInEA3dIbk2KIhjPLT
+	SgX/cEw30l1VDAtELvt5TyAtXl7BmaHFKIAQ3Zf8OeSWnHYlNSUkGBLTghaBUu+TF7KQTvna0aP
+	g9icgb31W4r0FEGFIFaEzLr7f6LwJxtr0e4429WbECpp9H4uAFYTj/xVXfC75IBqKo7bMm+HZ8a
+	YTyRc3cYCsMCCW8gJwGCHitE1pzURkDZBCuKhxW6gwdryVs0h0GQDILraIMJDKHzWDq/cfAeyCb
+	r9EZaKU8ECs83mI4qwYd+mnb4DdvHEjx/oUrManMg7rmRcrdJ+s/WHNWcoprp46HXEChgRnwKN8
+	0HGkdXebRTw==
+X-Received: by 2002:a17:907:3e8c:b0:c3e:ee86:d2c with SMTP id a640c23a62f3a-c5096343b6cmr963645466b.27.1794841831798;
+        Mon, 16 Nov 2026 07:10:31 -0800 (PST)
 Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c5095b7eb14sm439306966b.75.2026.11.16.07.03.00
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c5095b93a85sm420868466b.84.2026.11.16.07.10.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 07:03:01 -0800 (PST)
+        Mon, 16 Nov 2026 07:10:30 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
 	Mikko Perttunen <mperttunen@nvidia.com>,
 	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-clk@vger.kernel.org,
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 2/3] clk: tegra114: Add CSI pad clock gates
-Date: Mon, 16 Nov 2026 17:02:38 +0200
-Message-ID: <20261116150239.264139-3-clamor95@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 00/12] drm/tegra: Add support for Tegra20/Tegra30 8-bit CPU interface
+Date: Mon, 16 Nov 2026 17:10:05 +0200
+Message-ID: <20261116151017.274764-1-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261116150239.264139-1-clamor95@gmail.com>
-References: <20261116150239.264139-1-clamor95@gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -112,36 +112,154 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Tegra114 has CSI pad bits in both PLLD and PLLD2 clocks that are required
-for the correct work of the CSI block. Add CSI pad A and pad B clock gates
-with PLLD/PLLD2 parents, respectively.
+The display controller in Tegra20/30 SoCs features an 8-bit SPI interface
+that closely resembles the MIPI DBI Type B protocol and is referred to as
+'8-bit CPU'.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Add MIPI DBI bus support along with 2 DBI Type B panels used in
+LG Optimus 2X which work with the 8-bit CPU interface.
+
+Convert rgb, dsi, hdmi and sor to use atomic versions of
+drm_encoder_helper_funcs needed for bridge state requesting.
+Refactor and expand DC header. Add DC parametrization options
+needed for fine tuning by bridges. Make panel parsing by
+tegra_output_probe() optional and document optional DSI port. 
+Add 8-bit CPU interface in form of a bridge linking to RGB port.
+
 ---
- drivers/clk/tegra/clk-tegra114.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Changes in v2:
+- convert enums in the dc header into definitions list
+- add check in RGB if bridge_state is not NULL, if yes, use default flags
+- inverted FLAG_PIXDATA_SAMPLE flag setup logic since default value is set to
+  be on NEGEDGE while v1 set default to be on POSEDGE
+- 8bit-cpu schema renamed to dbi, removed compaible and set as DC child
+- expanded list of required properties
+- 8bit-cpu bridge remodelled into dbi interface as DC child
+- improve gpio handling
+- rework attach to get drvdata from parent
+- add panel supplies description
+- split panel driver into per-panel drivers
+- get DBI interface from the patent directly
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 80b7f64125d92..53899f2b1772c 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1041,6 +1041,16 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
- 					     0, 82, periph_clk_enb_refcnt);
- 	clks[TEGRA114_CLK_DSIB] = clk;
- 
-+	/* csia_pad */
-+	clk = clk_register_gate(NULL, "csia_pad", "pll_d", 0,
-+				clk_base + PLLD_BASE, 26, 0, &pll_d_lock);
-+	clks[TEGRA114_CLK_CSIA_PAD] = clk;
-+
-+	/* csib_pad */
-+	clk = clk_register_gate(NULL, "csib_pad", "pll_d2", 0,
-+				clk_base + PLLD2_BASE, 26, 0, &pll_d2_lock);
-+	clks[TEGRA114_CLK_CSIB_PAD] = clk;
-+
- 	/* csus */
- 	clk = tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
- 					     clk_base, 0, TEGRA114_CLK_CSUS,
+I have deliberately left GPIO parsing from device tree since it seems to
+be the most convenient and mainstream method of working with GPIOs.
+
+Changes in v3:
+- rgb: fix default bus_flags to match original behavior
+- dbi-schema: remove compatible from required props
+  remove dc@54200000 wrapper from example
+  restrict dbi nodes for tegra20/tegra30 only
+- dbi: remove unused idx from tegra_dbi_priv
+  wrap dbi registration in dc with devm_add_action_or_reset()
+  separate dbi into separate object
+  export tegra_dc_commit() and trace_dc_readl()/dc_readl()
+
+Changes in v4:
+- reorder patches to avoid errors on checking dbi schema
+- dbi schema renamed to nvidia,tegra20-dbi for consistency
+- fix DC_DISP_V_PULSE0_POSITION_* > DC_DISP_V_PULSE1_POSITION_*
+- add MODULE_ALIAS
+- swap width and height in panels
+- dropped use of init-sequence and gpios
+- dbi driver reworked to use only DC to operate pins
+
+Changes in v5:
+- added commit modelling DBI bus (suggested by Mikko Perttunen)
+- hitachi and lg panels converted to mipi_dbi_driver
+- dc header refactored and completed
+- added commit documenting DSI controller port
+- added commit which converts drm_encoder_helper_funcs to use atomic
+  enable/disable
+- added commit which makes panel parsing in tegra_output_probe() optional
+- dbi command/data converted to enum
+- dc com pins are now backed up into drivers private structure
+- magic numbers replaced with pin defines
+- dropped tegra_dc_readl() from tegra_dbi_pin_set
+- tegra_dbi_pin_set() accepts boolean third argument
+- tegra_dbi_write() second argument converted to use tegra_dbi_dc_signal enum
+- used field_get() to extract pin value
+- extended comment regarding init sequence
+- nvidia,index > generic reg property
+- adjusted tegra_dbi_atomic_enable() to properly handle shadowed registers
+- switched to use of_drm_get_bridge_by_endpoint() since panels are auto-wrapped
+  into bridge now
+- added support for mipi_dbi_host_ops
+- added resource managed helper to register DBI device and provided to DC via
+  header
+- dbi.o built with all other tegra drm files
+
+Changes in v6:
+- improved descriptions of new framework
+- mipi dbi bus commit authorship was changed with Mikko's permission
+- panel commits swapped with mipi dbi panel conversion commits
+- fixed tegra_output_probe() for hdmi
+- added CONFIG_DRM_MIPI_DBI select into CONFIG_DRM_TEGRA
+- devm_drm_bridge_add() moved into bridge probe to avoid possible issues with
+  deferred panel probing
+- setting LDC pin to V Pulse 1 moved before GPIO pin reconfiguration
+- DC_CMD_STATE_ACCESS is set to read and write in tegra_dbi_atomic_disable()
+- platform_driver_register() does not error out if driver is registered
+
+Changes in v7:
+- reduce changes in the panels when converting to mipi dbi
+- dropped of_node_get() in devm_mipi_dbi_device_register
+- remove enable()/disable() operations and add prep prev bridge flag
+- drop add DC header changes, add only strictly needed by the dbi
+- dropped tegra_dbi_iface and reg_entry enums
+- dropped reg from struct tegra_dbi_priv, com_pin_backup converted to u32
+- interface dropped from struct tegra_dbi_interface and init call added
+- BIT macro converted to PIN_UNMASK in the tegra_dbi_pin_set()
+- init functions and tegra_dbi_interface structure moved before probe
+- tegra_dbi_atomic_enable() split into pre_enable() and enable() phases
+  to squeeze interface into existing framework
+- DC_CMD_STATE_ACCESS and setting active true moved into init functions
+- reg reading moved before bridge allocation
+- reg renamed to nvidia,interface
+
+Please, keep in mind that this series must be applied on top of
+https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+---
+
+Svyatoslav Ryhel (12):
+  drm: Add MIPI DBI bus support for MIPI DBI Type A and B
+  drm/panel: panel-hitachi-tx10d07vm0baa: Convert to use MIPI DBI bus
+  drm/panel: panel-hitachi-tx10d07vm0baa: Drop redundant disable()
+    operation
+  drm/panel: panel-lg-lh400wv3: Convert to use MIPI DBI bus
+  drm/panel: panel-lg-lh400wv3: Drop redundant disable() operation
+  drm/tegra: dc: Add elements required by Tegra MIPI DBI
+  dt-bindings: display: tegra: Document Tegra20 DSI port
+  drm/tegra: output: Make panel parsing configurable
+  drm/tegra: Convert to use atomic versions of drm_encoder_helper_funcs
+  drm/tegra: rgb: Parameterize configuration based on bus flags
+  dt-bindings: display: tegra: Document 8-bit CPU parallel interface
+  drm/tegra: Add support for 8-bit CPU interface
+
+ .../display/tegra/nvidia,tegra20-dbi.yaml     | 108 ++++
+ .../display/tegra/nvidia,tegra20-dc.yaml      |  15 +
+ .../display/tegra/nvidia,tegra20-dsi.yaml     |   6 +
+ drivers/gpu/drm/Makefile                      |   2 +-
+ drivers/gpu/drm/drm_mipi_dbi_bus.c            | 258 ++++++++
+ .../drm/panel/panel-hitachi-tx10d07vm0baa.c   |  35 +-
+ drivers/gpu/drm/panel/panel-lg-lh400wv3.c     |  35 +-
+ drivers/gpu/drm/tegra/Kconfig                 |   1 +
+ drivers/gpu/drm/tegra/Makefile                |   1 +
+ drivers/gpu/drm/tegra/dbi.c                   | 551 ++++++++++++++++++
+ drivers/gpu/drm/tegra/dc.c                    |   4 +
+ drivers/gpu/drm/tegra/dc.h                    | 197 ++++++-
+ drivers/gpu/drm/tegra/drm.h                   |   2 +-
+ drivers/gpu/drm/tegra/dsi.c                   |  22 +-
+ drivers/gpu/drm/tegra/hdmi.c                  |  22 +-
+ drivers/gpu/drm/tegra/output.c                |  52 +-
+ drivers/gpu/drm/tegra/rgb.c                   |  64 +-
+ drivers/gpu/drm/tegra/sor.c                   |  20 +-
+ include/drm/drm_mipi_dbi_bus.h                | 113 ++++
+ 19 files changed, 1397 insertions(+), 111 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dbi.yaml
+ create mode 100644 drivers/gpu/drm/drm_mipi_dbi_bus.c
+ create mode 100644 drivers/gpu/drm/tegra/dbi.c
+ create mode 100644 include/drm/drm_mipi_dbi_bus.h
+
 -- 
 2.53.0
 
