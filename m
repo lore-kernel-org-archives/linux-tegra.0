@@ -1,66 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.14
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794820358;
-	b=sYZ1dzkp6pjiAyuhXPhI1v+AziZOuS0Za6EobrhKBNfREYt5ll32YAg01d545VfiptqB
-	 UOTByls9NJ0MTOzYJdR+TtzP+tqdfn7YynAUedbdboxWYqSL8t/2w17PhfSBKaFvP0WOy
-	 lwlbEL8DL8YoB+1fw7dTbnyjOH8KUMCzjDaQA+EYcgE61KnsWHj5ZM1pgMHhXxfdB/oO+
-	 EuW+9tYMKtTvMwa65mATJee5rpTpdrwIXqzG6Dl4kbwm5I0t3x08ACaopk8YzcGlUxjHV
-	 1dPnuQCOVtAZfV3dzaKX9UMYxKTLlq5DY4vL+7eGHu7ZcCqLm/sXgsGyfMNxhk7G2MA==
+	t=1794820373;
+	b=DF1Vx15pL5QZMb9ArkYMoUZAUZtckXvQly5YpZwnZbIJFE2yIoFVgxJV5Wwp++biCw0A
+	 Q3aZNKIYvLpOb6CqA5P9alifSXEoEG7V5c59wKQumZ0O7EAC9pQR3mNOx4IfIKzkhPHbo
+	 h3YebyN6zHn+1kMajNXDsApkRuGBg1i7mhiFRnyM6jYd9cJRsA69VNj+YneTvXIHoWs5i
+	 Gmtcakf6cvJBZ0gmTQ+Uf/Bvz7QnpHZ8NgWWJ1XiEtUuAA2ICD1SWp1Z15x4JBYSNQIrG
+	 CoqWScBao6vZQWuO+5IEno9XgGsElJocYM7utbYcQxTVAfaCOHeCWTEEXWmGwBfa5VA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794820358;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794820373;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Type:Organization:Content-Transfer-Encoding;
-	bh=gljLKtd1DY0BbYFXhcXXIEgEeuG4APBeWpQtrZKf0GA=;
-	b=QvIAkStf3sUlfXTh6r1LQy+cQO70Us++Nl0IDY80CMvALj2RzPsxEvCZ2Pi8RUu6f6ce
-	 tFe4O+BBuN5lEis93FiLUNUsc9qSyHslV/+gricB9uSUAyTrKNEifuluSIr9LerNpWUVA
-	 L9Y/0bpqfskJSYLi7wtDw2IR/JAhYeeeZaw/rIbJmyIg81AkRUsfdGXXxmjvcHZ2p0YIa
-	 YV6gfzsGhJ5l8ktkp/2/tGU30O87bT0T/IsndY8rb0s65DRw3vR90HIoOdn1LrXcIaB2V
-	 US+jMPwzvM5BeXrqfXCTRmegQCYJbz+nSAvegr77+3nbmPcdraDw+bEp7Zyt4PwgpQQ==
+	bh=LaPawNG6lVfcrIoq+MIVkHWBmNB3i0kILRqRDxDrrDQ=;
+	b=shj+dIzZl39MqUp/oPmsav1m+fNOhvglCoCE3l7x9LJCySpfFYpdkfmdOdd3ydAr9d5Q
+	 rKhibKaI2OaFFQB4crBI/UlSw5Nj8euO1ldteGt/vTJbcDPrmGzZKTya4v1XPyN2+g5ag
+	 vjRH67RxOFwvbV1R0jOYW8HrKLN7g9l+Jw6PauQOnOfJKhtCRA6IxiexiskAtVAkyWfdh
+	 zs0xNGlMn2HJYxjzQz/1DO7BV4bcbrt2TM4RiV1SWZCsEcpbwFLJw/K2lR9B2AZooWCFX
+	 +gsxnoct3xePK2H27/lD4T99wo4wFect548qJFnW1RhlTpEpVv0NKmWqC8sWdBTtVgQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fdhj0z7l;
-	arc=none smtp.remote-ip=192.198.163.10
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RPj3y5Vs;
+	arc=none smtp.remote-ip=198.175.65.14
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0E5606A337;
-	Mon, 16 Nov 2026 09:12:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F0E5606A337
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E1B606A31C;
+	Mon, 16 Nov 2026 09:12:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 51E1B606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fdhj0z7l
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RPj3y5Vs
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794820357; x=1826356357;
+  t=1794820373; x=1826356373;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=RkhyzjuNlXgxmJ1hs/ayERDzfWzK8akCYym0w0pTyDc=;
-  b=fdhj0z7lzOaYSJIDDXFaGiMa7TMDQ1nN5DLoX/iOl0hUX1zC3dwAApmT
-   o1ZXx3EPaf7TEwKJQLSXbmLtbxmD+7gET61aTVu0jN8jXJ4BnGf0FhJPF
-   4rrSP6yi1nViA99m8L3UGia6/07JPfH9gnBrBCKwuYcOf7cY3bao7CdEg
-   ci85a+eago+d/qU/3rFREHucWyzmMeib+Pz5GQKMdkpx9CxTbPb7JY/Ux
-   5F8l+Ca6mvnvfRdBMT6JLZFeZWi0tZpg+/NjmFkx6GJ31ZuB14iq0oCbu
-   dboTPJiaoH15A2AS15LAzPf00QRBzIX9meYqW+8dMZ4bXpBZoqN1tEBDW
-   A==;
-X-CSE-ConnectionGUID: oVvm2OcVSRK/lPksdnDyxg==
-X-CSE-MsgGUID: K1LY1Yz3SiyGr9N47VQmLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11967"; a="3441735"
+  bh=lgXiNcTty7xTAzrRCls8eXQdKOJV57lUY6JX7ooMS6s=;
+  b=RPj3y5VshtFG5SgaEJ+cweHMvY6kWspgC/uGE9a61Ty6Q7xW87sLnQ5t
+   4ivOj0hadsymn+1JOsoH3GtLtYmdMDuLZk6thTTtz0GVHHXcN+kGVrA1m
+   q28Aj2ZaUGV5asGQd3YH9v66j4npmd04aJ09/ZPTdDqyAeD4aiL/dMpEy
+   f2gm7Ndv3FudA46tsVvMVLbJJAshBfZMG6GS7lEr/rsDZaQnG7dIAypJt
+   T4RtqOjd6B+BN5qJxsecxXuGZgbZ5g8RR2kSw1VCmFHfuY0/YZPpffkFW
+   bL6Dw7V0QFfIcc7AMyoGhKwj4xQ0GT63zOl12O2eZrO0MezlakjpG09+e
+   Q==;
+X-CSE-ConnectionGUID: JppDzULDQt+xk5p0Nhrfng==
+X-CSE-MsgGUID: JdrZHNtGR1aPwkwdEbGy/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11967"; a="3443432"
 X-IronPort-AV: E=Sophos;i="6.27,216,1787036400"; 
-   d="scan'208";a="3441735"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:12:36 -0800
-X-CSE-ConnectionGUID: eSWWbGsqQsClMOtxH9qrUQ==
-X-CSE-MsgGUID: ujhghr56Si+fr6fdGRMLpw==
+   d="scan'208";a="3443432"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:12:52 -0800
+X-CSE-ConnectionGUID: MbF+WPQPQreUpryutwuyyw==
+X-CSE-MsgGUID: Mfg8cZhcS0ynPIvV9t4bKw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,216,1787036400"; 
-   d="scan'208";a="9636389"
+   d="scan'208";a="9909164"
 Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.93])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:12:29 -0800
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:12:45 -0800
 From: Ville Syrjala <ville.syrjala@linux.intel.com>
 To: dri-devel@lists.freedesktop.org
 Cc: intel-gfx@lists.freedesktop.org,
@@ -94,9 +94,9 @@ Cc: intel-gfx@lists.freedesktop.org,
 	wayland-devel@lists.freedesktop.org,
 	Xaver Hugl <xaver.hugl@kde.org>,
 	Xi Ruoyao <xry111@xry111.site>
-Subject: [PATCH 05/12] drm/atomic/uapi: Eliminate the confusing drm_atomic_check_prop_changes()
-Date: Mon, 16 Nov 2026 11:11:23 +0200
-Message-ID: <20261116091130.13950-6-ville.syrjala@linux.intel.com>
+Subject: [PATCH 07/12] drm/atomic/uapi: Document the non-obvious fence/fb_id prop behaviour
+Date: Mon, 16 Nov 2026 11:11:25 +0200
+Message-ID: <20261116091130.13950-8-ville.syrjala@linux.intel.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261116091130.13950-1-ville.syrjala@linux.intel.com>
 References: <20261116091130.13950-1-ville.syrjala@linux.intel.com>
@@ -115,23 +115,11 @@ Content-Transfer-Encoding: 8bit
 
 From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-drm_atomic_check_prop_changes() is a very confusing for
-many reasons:
-- the 'ret' propagation through it is completely non-obvious
-- for planes it prints the debug message about rejecting the
-  update before we actually decide whether the update needs
-  to be rejected or not
-- the debug message is also printed if the property doesn't
-  exist, which is confusing
-- the debug message lacks the KMS object type/ID/name,
-  which could be helpful during debugging
-
-Just get rid of the whole drm_atomic_check_prop_changes() and
-do things by hand.
-
-Also remove the debug message for the case where the property
-doesn't exist as drm_atomic_*_get_property() will already print
-its own debug message in that situation.
+The atomic async flip checks want to compare the old vs. new
+property values. For normal properties that is all perfectly
+clear, but for the fence/fb_id properties the old value is
+not what one might expect. Add some notes to remind the reader
+what is happening.
 
 Cc: amd-gfx@lists.freedesktop.org
 Cc: André Almeida <andrealmeid@igalia.com>
@@ -165,106 +153,52 @@ Cc: Xaver Hugl <xaver.hugl@kde.org>
 Cc: Xi Ruoyao <xry111@xry111.site>
 Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 ---
- drivers/gpu/drm/drm_atomic_uapi.c | 51 +++++++++++++++++++------------
- 1 file changed, 31 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/drm_atomic_uapi.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-index eb002799497c..2ea03b4b0be9 100644
+index aad71d3e2105..cf1edcb242cc 100644
 --- a/drivers/gpu/drm/drm_atomic_uapi.c
 +++ b/drivers/gpu/drm/drm_atomic_uapi.c
-@@ -1194,19 +1194,6 @@ int drm_atomic_connector_commit_dpms(struct drm_atomic_commit *state,
- 	return ret;
- }
- 
--static int drm_atomic_check_prop_changes(int ret, uint64_t old_val, uint64_t prop_value,
--					 struct drm_property *prop)
--{
--	if (ret != 0 || old_val != prop_value) {
--		drm_dbg_atomic(prop->dev,
--			       "[PROP:%d:%s] No prop can be changed during async flip\n",
--			       prop->base.id, prop->name);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
- int drm_atomic_set_property(struct drm_atomic_commit *state,
- 			    struct drm_file *file_priv,
- 			    struct drm_mode_object *obj,
-@@ -1235,8 +1222,16 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 		if (async_flip) {
- 			ret = drm_atomic_connector_get_property(connector, connector_state,
- 								prop, &old_val);
--			ret = drm_atomic_check_prop_changes(ret, old_val, prop_value, prop);
--			break;
-+			if (ret)
-+				break;
-+
-+			if (old_val != prop_value) {
-+				drm_dbg_atomic(prop->dev,
-+					       "[PROP:%d:%s] No prop can be changed during async flip\n",
-+					       prop->base.id, prop->name);
-+				ret = -EINVAL;
-+				break;
-+			}
- 		}
- 
- 		ret = drm_atomic_connector_set_property(connector,
-@@ -1257,8 +1252,16 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 		if (async_flip) {
- 			ret = drm_atomic_crtc_get_property(crtc, crtc_state,
- 							   prop, &old_val);
--			ret = drm_atomic_check_prop_changes(ret, old_val, prop_value, prop);
--			break;
-+			if (ret)
-+				break;
-+
-+			if (old_val != prop_value) {
-+				drm_dbg_atomic(prop->dev,
-+					       "[PROP:%d:%s] No prop can be changed during async flip\n",
-+					       prop->base.id, prop->name);
-+				ret = -EINVAL;
-+				break;
-+			}
- 		}
- 
- 		ret = drm_atomic_crtc_set_property(crtc,
-@@ -1281,12 +1284,18 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 			/* no-op changes are always allowed */
- 			ret = drm_atomic_plane_get_property(plane, plane_state,
- 							    prop, &old_val);
--			ret = drm_atomic_check_prop_changes(ret, old_val, prop_value, prop);
-+			if (ret)
-+				break;
- 
- 			/* fail everything that isn't no-op or a pure flip */
--			if (ret && prop != config->prop_fb_id &&
-+			if (old_val != prop_value &&
-+			    prop != config->prop_fb_id &&
- 			    prop != config->prop_in_fence_fd &&
- 			    prop != config->prop_fb_damage_clips) {
-+				drm_dbg_atomic(prop->dev,
-+					       "[PROP:%d:%s] No prop can be changed during async flip\n",
-+					       prop->base.id, prop->name);
-+				ret = -EINVAL;
+@@ -1225,6 +1225,11 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
+ 			if (ret)
  				break;
- 			}
  
-@@ -1296,10 +1305,12 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
- 			 * decision. Drivers that want this need to just do
- 			 * these checks themselves somewhere.
- 			 */
--			if (ret && plane->type != DRM_PLANE_TYPE_PRIMARY) {
-+			if (old_val != prop_value && plane->type != DRM_PLANE_TYPE_PRIMARY) {
- 				/* ask the driver if this non-primary plane is supported */
- 				if (plane_funcs && plane_funcs->atomic_bypass_check)
- 					ret = plane_funcs->atomic_bypass_check(plane, state, true);
-+				else
-+					ret = -EINVAL;
++			/*
++			 * Note that for WRITEBACK_FB_ID and WRITEBACK_OUT_FENCE_PTR
++			 * the old value will always be 0. So any commit that sets either
++			 * property to any other value will not be considered a no-op.
++			 */
+ 			if (old_val != prop_value) {
+ 				drm_dbg_atomic(prop->dev,
+ 					       "[CONNECTOR:%d:%s][PROP:%d:%s] Unsupported property change during async flip\n",
+@@ -1256,6 +1261,11 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
+ 			if (ret)
+ 				break;
  
- 				if (ret) {
- 					drm_dbg_atomic(prop->dev,
++			/*
++			 * Note that for OUT_FENCE_PTR the old value will always be 0.
++			 * So any commit that sets the property to any other value
++			 * will not be considered a no-op.
++			 */
+ 			if (old_val != prop_value) {
+ 				drm_dbg_atomic(prop->dev,
+ 					       "[CRTC:%d:%s][PROP:%d:%s] Unsupported property change during async flip\n",
+@@ -1289,7 +1299,13 @@ int drm_atomic_set_property(struct drm_atomic_commit *state,
+ 			if (ret)
+ 				break;
+ 
+-			/* fail everything that isn't no-op or a pure flip */
++			/*
++			 * Fail everything that isn't no-op or a pure flip.
++			 *
++			 * Note that for IN_FENCE_FD the old value will always be -1.
++			 * So any commit that sets the property to any other value
++			 * will not be considered a no-op.
++			 */
+ 			if (old_val != prop_value &&
+ 			    prop != config->prop_fb_id &&
+ 			    prop != config->prop_in_fence_fd &&
 -- 
 2.56.0
 
