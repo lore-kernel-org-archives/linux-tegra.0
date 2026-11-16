@@ -1,49 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794825176;
-	b=jrITQQHfvYhkCPN5fbNAVgg9gqg88CW5oTjhkKpoM/qq+DuloT4UjtirR/uMD3SQknfd
-	 zcqjrRDUAsf/yu04H0QaG2HooNsgKqBgLwPeChIbMY6t6kxcKFl8zaX0b8qgNN8pmA/Cm
-	 b0DPW2A/ZSDWe7QTqIEOqVPBqPr+5pcfEgL278ClpWFZ37+7JOj00yHmQ4iSz3GARL4zP
-	 XBPgX43ZN467bOuTkiEHOcZVEejRYAHlyFUjNDOQi5IOntzagBs1eE9sZDv48Rs/3ekHO
-	 E6kun3LZfPy3AvAMHVwr3MlP9siHoTCn7HOJxsOLEcG19uN7k8wek2vh7tdSS6o8kxA==
+	t=1794829474;
+	b=q5qFz91zblZIkgBXiBr4bTNfVmUtuI2Q76P/LBiMdreO4pkuGto/DZ4SkST7PK7LA0Qz
+	 Dp/JRBQebadr8CDq8KN/3uhq8vKg/ko7EjygbpaQ5sdBgi6CbXZK+yvqU7EfkYl/oYQ0q
+	 xRbJmK+WdQQ7yQhI8jszf6UwiLVmRD4soAwIZLmsvc8+2d/USpMuj+DrTlkpRxoOnzpDf
+	 sibznnA8n9hmBgT9lGtFDkZYJUB6at1mrh4e3XVVxgNFoe9HwxapCQRw/vPMXAJJwa9ZR
+	 9yfE+sjdvsfzshNGadnMgMWe5uzV6TVz4S13mifg0+C8cKbYYosVc38a3xtQfA9hAgw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794825176;
-	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=XGlVbRtaTnXWzANGObeu2EjzWI6NpTfSibHuyiKPESw=;
-	b=qb6SbUgnykOP8fKuZZnd9ZxgqN0IZ7eKt7un8mLn7OtWXrS7Oq/wWWlHNTTw7Va5QdPD
-	 FEO5kruEocy7Z7Go2NRnUjRHI9tGSc8Efe1ogdElqAYG/aO/e7TANLhSq1PvE1WHFIjic
-	 3Dt3GlLFrdTXO7MmVt0HQ4JyIGtqU7rfbql23WFvhM8970toi/84KtRAosQbSgwud5sTI
-	 bTq2Zb/4W14Bsed7z0e0BNt+fB4Z+rFYXUF60tdNH3RnBr59yFlVN9QfNr+2SXDtofJ8b
-	 STduSm0zZ0RjVtDvJ4JRfQaCsnN8kbIqrxueUe2GfzvoU1csPBhQJjfG8tKSQ2zarrw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794829474;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=KGZgtFOwBdvEiMXgivra/57xr6FQxzyBu11AFSKiqZI=;
+	b=IHH3GH1QtcIaVnvC+zuzjhSATZYc7xLu1gJPuns6sPeNq6GS/RJVioax2a5W6Df3lc6k
+	 vqPKVN+kVhkj5+iGh8RjnZMkN/RtAqF0SLydFBrdnrGlExyTpGWVBbgb9VWHUU34oUQT6
+	 q+c9/1T31dJfzWnHOrFkUUaCb8JjZ5MK6EwSdyUsYccHc+GQ+JMqOQGFXMYoIM24qI5Is
+	 sZ5fr6qfOn509DepnrvqbOTKboNZE7HqqG2uHBKmZtJ5voEZ+6JQuBQjihpQXgZn/Lodp
+	 RmOVwUhLsumn2mYR6BWZVNOj7Ug5k6pEjcX5qMdhe3oBZgnMbvzjbnI1VZE9w/OYG5w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KqNGgXZJ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="kI/I4yLU";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C551606A333
-	for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2026 10:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45950606A31C;
+	Mon, 16 Nov 2026 11:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KqNGgXZJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9C51F000CC;
-	Mon, 16 Nov 2026 10:32:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kI/I4yLU
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D1091F000C5;
+	Mon, 16 Nov 2026 11:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794825176;
-	bh=XGlVbRtaTnXWzANGObeu2EjzWI6NpTfSibHuyiKPESw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=KqNGgXZJhi0K1mYvjwRBggOOvEKs7GyoMP4Nnobquz/9GSw0JsiKHZviduywU9dIX
-	 NXYVftH3ePqB6kautcPwico7eI5CApTFXrxsAxT9zIR0777V+dgrO0HNxHrgPmmSVY
-	 +zjQE+v7dBQahx34Q0iLkgwF1kH50Te+igPC0cf+9j30D+s+4KhTKF9e2ChOjjpjfF
-	 Y53vyXPGRcmeA6K2s6hJ8sxeQAlekhIVR/F0B4ouJUXCbwGN7C+CGdVSrnkAo9xUv7
-	 0qWyX/koKbkLClO1EZvWjrXKg76gFVVkunEPrIN1nemdIBx/9ziBfeMGMxars5k43x
-	 WhJdGxBm+R13A==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Mon, 16 Nov 2026 11:30:53 +0100
-Subject: [PATCH v2 37/64] drm/tegra: Switch to
- drm_mode_config_create_initial_state
+	s=k20260515; t=1794829473;
+	bh=KGZgtFOwBdvEiMXgivra/57xr6FQxzyBu11AFSKiqZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kI/I4yLUJ5GCvzaY57Do2Fvb9RBpacmrFuqNMgeEl13BTw/V8dLH4plt3WCUP1HfO
+	 5v2ZzBByd8Dg7f6L6/RU0anBjJGUVqOkbf91QqoMkhShDurPVqDzhCLzE1Dr2RuYDY
+	 jZ4BPYVW2zrgoTAzLTW0GP+knu7wka6lg2jNjXlimvOgoeh4pPkiZukegE9IC/LtV2
+	 IQTVVu3slHaO1xzEjkNXEx8BqE/tDgdElr135t7pvkapuChzuubfryYXixD8YwsJ4c
+	 NlOBbeVbdVqgeUhiGIJuYchrqaljR/39Hjx8rVtPo5+K1zOYu4sHUl1fTEvULQ/0o5
+	 UhPBqyj+y0qbw==
+Date: Mon, 16 Nov 2026 12:44:28 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Patrick Fischer <admin@tsv-stahl-riesa.de>
+Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Kevin Tsai <ktsai@capellamicro.com>, 
+	Svyatoslav Ryhel <clamor95@gmail.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: light: Add Capella CM3217
+Message-ID: <20261116-classy-fossa-of-grandeur-ccbc25@quoll>
+References: <20261113-upstream-iio-cm3217-v3-0-c4d5b2485dff@tsv-stahl-riesa.de>
+ <20261113-upstream-iio-cm3217-v3-1-c4d5b2485dff@tsv-stahl-riesa.de>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -53,69 +61,25 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261116-drm-no-more-config-reset-v2-37-0bb471f4d1e0@kernel.org>
-References: <20261116-drm-no-more-config-reset-v2-0-0bb471f4d1e0@kernel.org>
-In-Reply-To: <20261116-drm-no-more-config-reset-v2-0-0bb471f4d1e0@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1481; i=mripard@kernel.org;
- h=from:subject:message-id; bh=9KfsryBfQaevH9S5YYvx2NCrkjUqvlYAFlaU0VCpQaw=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFm/bgcUsKzl0eZTc3m26rn391QxIWOtJ0xz89+dEeti3
- JxuL/G0YyoLgzAng6yYIssTmbDTy9sXVznYr/wBM4eVCWQIAxenAExkgRdjvedqkynr99WVVavO
- 0Lou/qrEZPnnoFWZ8z/08Pk93dpq5N4+NV1irrF7+Tnme5pdJdcXMNZ78FYotIZGih725X52YOY
- 6p73/pldksd5t45Zv8tlana4WU6ec9bTXMom5sM5b593pAgA=
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261113-upstream-iio-cm3217-v3-1-c4d5b2485dff@tsv-stahl-riesa.de>
 
-drm_mode_config_reset() has a dual role: it creates the initial KMS
-state at probe time, and resets hardware and software state during
-suspend/resume cycles.
+On Fri, Nov 13, 2026 at 08:58:59PM +0100, Patrick Fischer wrote:
+> The Capella CM3217 is an ambient light sensor with an I2C interface but
+> without registers and without an interrupt line. It always answers on
+> the two fixed addresses 0x10 and 0x11, which are both listed in reg.
+> 
+> The sensor is used in the NVIDIA Tegra Note 7 and the NVIDIA Shield
+> Tablet.
+> 
+> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+> ---
+>  .../bindings/iio/light/capella,cm3217.yaml         | 50 ++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
 
-Since the two roles need different behaviors (notably for objects like
-drm_private_obj that must persist across suspend/resume),
-drm_mode_config_create_initial_state() was introduced to handle only
-the initial state creation at probe time.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Switch to drm_mode_config_create_initial_state().
-
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>
-Cc: linux-tegra@vger.kernel.org
----
- drivers/gpu/drm/tegra/drm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 324480c87fb1..9fdb9e70eb0a 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1243,11 +1243,13 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 
- 	err = drm_vblank_init(drm, drm->mode_config.num_crtc);
- 	if (err < 0)
- 		goto hub;
- 
--	drm_mode_config_reset(drm);
-+	err = drm_mode_config_create_initial_state(drm);
-+	if (err)
-+		goto hub;
- 
- 	/*
- 	 * Only take over from a potential firmware framebuffer if any CRTCs
- 	 * have been registered. This must not be a fatal error because there
- 	 * are other accelerators that are exposed via this driver.
-
--- 
-2.56.1
+Best regards,
+Krzysztof
 
