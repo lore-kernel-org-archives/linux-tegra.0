@@ -1,103 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.10
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794821918;
-	b=oyt2yIYFOvYzel8jRhhhkq02ZZ2L5GxpuT1t7wSc5woG/CUrtM70H5qwmSL4FjRLV86G
-	 e/v4teJcthkNpgqwO9GcjrTWzBUn2iLEcE2mH+c24P6r5KNnsR+wbYQoh/MHIxRukXUeS
-	 nGs76dNgOcZgubyn5NRTbEO0jU1YWAUc9MQRj5bQPHZya2Exv2W5Xp9cNRB6n3xBNFnPw
-	 jLzzjw5EYX+jCu/q852LvhY4vg+ZwudY9YBmRUhKNw5effjHjdsV5QsbMJEvi6Dhcz3Zf
-	 Lwdtj3Xv14bYHgTK1DJYrBVdnsTqWwrtInbgI/10OV4jY2WjoIv5w9aOSnTAN+R5pww==
+	t=1794822215;
+	b=U5UCeraD7epH43GDSwQDi0Td6mnSeHagkoPseO42A7f5/hcmVBDQbeHzWoyO0QqCkcLg
+	 dpusWlY4znwmroH6t0Yrb5t0g3IvcukUCDD2/u1Oy3yDtd1V3E7ESBAPp6KHC6kd4GoKb
+	 9O+shaCf954vULRvFeq5TVufF/cPdM5iCvU9RnWIU4ms0jweLvHsaRRO/6oDaQDk61k84
+	 Aolohhrp87puJxNtJe67d/HN62HDQV+Bx0sM/ghUApT1fK9kzgfyAFTXmlPVl4CS8eCbz
+	 3cy+51l8+gFbwT54BxHqQVgOxKNHK0oK/ZtTkZ0KwM/1BtKfni6PZc3J8wh6JDlm3jg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794821918;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=XEJwZeiN4f4Khv913TjEygDDX5wlP+VRCAErTIkXsdM=;
-	b=v4sEo1VJUuLC9Qt7j33suXWRRoKkVxRv7xtA8L3sDToO97LQSJ8x3Yrq10A0HVK2a931
-	 xQZe8Ln1Hf6Tmhp7+arP6Ues6zq631spsyr1c6phVznGpvGrL0ncxNsAVFKyeXat9dfx+
-	 fM+w6MLDc0K3ybebVIF46Io707n2rZLx6UA2CFZUfT3i+bh1F8sbZGX+JYUWPYbRcuTcZ
-	 uzheP9QUPi4J3keM1pxGReJy7ugcZW52eB3/R3ciWX14Ued/mdyRZfeoQnRmP008Jokeb
-	 nirXSetK/xGzdI4VA2MlhGjGsOgjhhNsGOOVka3F4iOahr+rFM10AMnkFdpnfYDipJA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794822215;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=r1AFOpbsqxX3uo9toBA+mdQLGQJc8KzZTyPjj6RARv8=;
+	b=MzIBoCI8avURNs1tUnkMUXtVQs2I+ydOsa3heXiFW/xAvwXG2WphTNEkwv+GOiUCpdOy
+	 atCZYrQYOmIrjYHz5G6e52LjBa8mAbbWRWqekQyC7enFYp4a4WngJxz8pI/0E3I4oOS0K
+	 eGSWGKbFNr4ikixMbtix05L2TMwWyNqRIfL/b6TLOqy/EElscoal999ayOQ2XTojuYofi
+	 9swLbL/QlWgtSeQ141isjA4/t5KSRJpd1cRDpgtwqiy/gGAbASjNDSbgRAQItMbm6R8Xm
+	 4KvcDDUy4UJT5BZ8VWkXx1A3eMPX9VLbqSnOGcF49AwRpbq5ADdIpYQ00mtTZsxD+lA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Tm1wS9a4;
-	arc=none smtp.remote-ip=209.85.218.43
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b="b/tck9XR";
+	arc=none smtp.remote-ip=192.198.163.10
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59537606A884
-	for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2026 09:38:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 59537606A884
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042A0606A32C;
+	Mon, 16 Nov 2026 09:43:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 042A0606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Tm1wS9a4
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c4d2b741ed9so512651466b.2
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Nov 2026 01:38:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794821916; x=1795426716; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=XEJwZeiN4f4Khv913TjEygDDX5wlP+VRCAErTIkXsdM=;
-        b=Tm1wS9a4UYuCII+EcsvXeDPsTPiV7JI9yMuiiTNn/6wGIib1PFVDEVuEaIAGmj+DID
-         C/ijT5qNPREzvN1EDxUagOGtSsVqfjlpj1X257vfRPT3SLVfnmE1W+PFgI03lzH4wtxj
-         TQnwvlb5yiJkY/89woinB2Mo3xNhwiH2PwUbg55KJrWO3OkEsBoEk8R3gDo1noB6P4Wg
-         8cQSoBL5hsatP25F2s9WViERcdxk7seVnq/xk3JJIazdSGMBiUwBHd/AlE3oDUWfH+r8
-         wnChsjIL+bgz+VYOaXK+pct0vGFeCgaNzrW7X8CJI9MlBNWVOf+TYZY9rZKQT/qA8d6L
-         UVhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794821916; x=1795426716;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=XEJwZeiN4f4Khv913TjEygDDX5wlP+VRCAErTIkXsdM=;
-        b=woCODm4bZtFci1bLtFpSUkZYotMHNM/RSK8p8fuyKCOELbk9vW0AxxXbidxdSByWh8
-         XwxD1121ib0ljtierNXdMiIhbwBDulYrqwkVXLQXv/u+h2tf6RYCbYdIsCyI5tUt2oHe
-         ahYWwHYwlOHNPvqHz2WgPoB5g+kzoGP0xbeqIhLGP7/kbiV5E8Z2SMG3G7o51f6U+y33
-         iCBc2QkDujPr6RY+tUFQBeMBoIszYVdO8RUIjuWp/Jydpxtd3rpNryDGkaxfTEC8+fvE
-         HhvPmvvB5NnNo0tGFKauvHlaPmXUdb+Evo1PweWuYflNdcZg7zgSR469ycqojjfxn5gE
-         gSDg==
-X-Forwarded-Encrypted: i=1; AL+hErErBZyxJ/OaQGOUDybwtrtMDFY8RB9E9lbno6l0ZSVbw2WhxHRb/I3MxnZbPd9JkIsiVEwlVSSawIPOuQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+7uz/oLKdtnaj3MLpslbRb7BdaA3qHHDpgnkxnypd31jbtaw2c
-	/laToNvREgQNf/qGak5gfoJqkZ7QTf6DL1/1VVRbeJSV4+hjsFR/RlVO
-X-Gm-Gg: AYBFou0ctcIB7Ivwlf8+JRjcEE6Asjxon+bpZvQIYVpu0qIU90TGQcEKKqy1f9svGqw
-	i0MreHqc92vTZ6o97bJzj9xjrXhsc8IXQ3o8bQ7oaTAh/2N0+RJwQK1Hm7VLxwXW+dvDV0Z8s70
-	ru7wUiHCRFb0r5UfyiGKG/l0p/4k/6GHOPEMZUNfag8A5IToj2j4DfGurXl8VOs5Zd+d6td3uga
-	0gYBkcmBTLsqOnCpNNDpKdFGGVFWpkrQPyao0J510hqp2zGWbdSahAJa0zsVnhZrH+DFWGqFksV
-	gXKpKIDifKuTPsJ1ChXCI6rVmaRUvhSZ1KDiDMD74j/qlHcb5G/CtGupeeMTnYm20fFXHjoeXCo
-	YSG142MVL5BooAuklK3TjIHsZ6nqSk96kECBTzlw4NcB4+XZqIAIV+bydVGzY7J1e39qcic1N58
-	PfNEsIWH91/OYGuD4YLMYzQGDMye/GrSWVH2okcOwcyyo9vMB4w2gUpSpfNq+zBrxd5cYZNd7Nh
-	AUAaysBTPADvOxqkJB34LWuAm63bEcaOo9ls5lIDSPRWej4WospFyUZumnfQNRmu7a+gSTg5cDP
-	EcPwa+3hfhTTvaBLenKj09/d4LZGX2y+6j7rcsgqiWXgmBcmUki8DOq1jD3HrsuwOew46y4gQfg
-	/64bRZiVlE7urWAb4QVM2MytJ2P9/1BY=
-X-Received: by 2002:a17:906:dc89:b0:c29:f5d8:9c82 with SMTP id a640c23a62f3a-c5096436f64mr828654666b.49.1794821915609;
-        Mon, 16 Nov 2026 01:38:35 -0800 (PST)
-Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c5095b72868sm379906166b.65.2026.11.16.01.38.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 01:38:35 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
-	Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v1 3/3] ASoC: tegra: Reorder the codec structures and sort the machine OF match table alphabetically
-Date: Mon, 16 Nov 2026 11:38:01 +0200
-Message-ID: <20261116093805.73715-4-clamor95@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261116093805.73715-1-clamor95@gmail.com>
-References: <20261116093805.73715-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=b/tck9XR
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794822214; x=1826358214;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZLXdMjZSdnPw4vZYqATM3k2jfuyeh2FfD2QSdsLjbkc=;
+  b=b/tck9XR27OfdXzCxEHBaTiVpnwBMZLjZmGw0GwAchwsdfLAz8+kcIpg
+   XayfDdK4jLxqnjp3tChVFDRnEd3vDntqN+p/Z4mpW09G2NsATZqWdSNwp
+   Wp3ZU9DnDsggT8JpgbpncVtlWR+JPspm42UPtaEEgrNJkFNFSpPI8Ig54
+   bxWeJoPcYNAlcfgLOSjwsnQUdYSh+LQvxcMGxPr9OdvbAj722uM+oNtZb
+   R2KejArcjC6PFqAGAIysHGxPTI1wRvmkywSeUwwAOcSulguOaM/WVZcF+
+   MCIRS+vZZqJ0tfcZamM49ib2I0RaRPiQWdqCMNZwDWx+b7DB9uDK04jcW
+   g==;
+X-CSE-ConnectionGUID: RlvhuL14T52TVU9Z6V9rYw==
+X-CSE-MsgGUID: hu6D5KkfQliTjlgXhpG5Tw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11967"; a="3444682"
+X-IronPort-AV: E=Sophos;i="6.27,216,1787036400"; 
+   d="scan'208";a="3444682"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:43:15 -0800
+X-CSE-ConnectionGUID: OSRgF9FqSTCaD1fLpmkP0w==
+X-CSE-MsgGUID: N1z6ttoJQAqeqqk9GVw/7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,216,1787036400"; 
+   d="scan'208";a="9644707"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.90])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2026 01:43:11 -0800
+Date: Mon, 16 Nov 2026 11:43:09 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: admin@tsv-stahl-riesa.de
+Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Kevin Tsai <ktsai@capellamicro.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] iio: light: Add Capella CM3217 ambient light
+ sensor driver
+Message-ID: <avrQLQyTPODd4gcZ@ashevche-desk.local>
+References: <20261113-upstream-iio-cm3217-v3-0-c4d5b2485dff@tsv-stahl-riesa.de>
+ <20261113-upstream-iio-cm3217-v3-2-c4d5b2485dff@tsv-stahl-riesa.de>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -107,557 +88,167 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261113-upstream-iio-cm3217-v3-2-c4d5b2485dff@tsv-stahl-riesa.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Reorder the codec structures and sort the "tegra_machine_of_match" table
-alphabetically by codec names and their compatible strings for cleaner
-organization and easier maintenance.
+On Fri, Nov 13, 2026 at 08:59:00PM +0100, Patrick Fischer via B4 Relay wrote:
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- sound/soc/tegra/tegra_asoc_machine.c | 366 +++++++++++++--------------
- 1 file changed, 183 insertions(+), 183 deletions(-)
+> The CM3217 has no registers and no ID. Writing a byte to address 0x10
+> or 0x11 sets command byte 1 or 2, reading a byte from 0x10 or 0x11
+> returns the high or low byte of the 16-bit light count. The driver
+> takes the second address from the second reg entry and falls back to
+> 0x11 when there is no firmware node, as with new_device.
+> 
+> Command byte 1 holds the shutdown bit and the IT_T field (1/2 T, 1 T,
+> 2 T or 4 T), command byte 2 the FD_IT field (800 ms down to 66 ms). The
+> count scales linearly with both. The driver exposes FD_IT as the
+> integration time and IT_T through the scale, so the scale list offers
+> four ranges for each integration time.
+> 
+> The datasheet is not public. The bit fields, the reserved bits that are
+> written as 1 and the startup setting of 2 T and 100 ms come from NVIDIA's
+> downstream drivers (drivers/staging/iio/light/cm3217.c in the 3.4 kernel
+> rel-tegranote-r8 and the 3.10 kernel
+> android-tegra-flounder-3.10-nougat-mr1.1). One value differs: the vendor
+> header defines 4 T as 4 << 2, which is outside the two-bit field. On a
+> Tegra Note 7 field value 3 gave four times the 1 T count, so the driver
+> uses that. For the resolution, Capella
+> gives a range of 0.01875 to 119156 lux. The driver takes 0.01875 lux
+> per count at 4 T and 800 ms. This matches both the upper end (65535
+> counts at 1/2 T and 66 ms) and the 0.3 lux per count that the NVIDIA
+> 3.4 driver uses at 2 T and 100 ms.
+> 
+> The sensor has no data-ready flag, and a new setting only takes effect
+> when the conversion in progress ends. A conversion takes IT_T times
+> FD_IT, up to 3.2 s. Leaving shutdown starts a new one at once, so the
+> driver passes through shutdown on every change and waits one conversion
+> period plus a margin before it reads the count. The timing was measured
+> on a Tegra Note 7.
 
-diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
-index ebca41a5db752..46de7c7d8762e 100644
---- a/sound/soc/tegra/tegra_asoc_machine.c
-+++ b/sound/soc/tegra/tegra_asoc_machine.c
-@@ -699,69 +699,70 @@ static int tegra_asoc_machine_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--/* WM8753 machine */
-+/* CPCAP machine */
- 
--SND_SOC_DAILINK_DEFS(wm8753_hifi,
-+SND_SOC_DAILINK_DEFS(cpcap_hifi,
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8753-hifi")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "cpcap-hifi")),
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
--static struct snd_soc_dai_link tegra_wm8753_dai = {
--	.name = "WM8753",
--	.stream_name = "WM8753 PCM",
-+static struct snd_soc_dai_link tegra_cpcap_dai = {
-+	.name = "CPCAP",
-+	.stream_name = "CPCAP PCM",
-+	.init = tegra_asoc_machine_init,
- 	.dai_fmt = SND_SOC_DAIFMT_I2S |
- 		   SND_SOC_DAIFMT_NB_NF |
--		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(wm8753_hifi),
-+		   SND_SOC_DAIFMT_CBP_CFP,
-+	SND_SOC_DAILINK_REG(cpcap_hifi),
- };
- 
--static struct snd_soc_card snd_soc_tegra_wm8753 = {
--	.components = "codec:wm8753",
--	.dai_link = &tegra_wm8753_dai,
-+static struct snd_soc_card snd_soc_tegra_cpcap = {
-+	.components = "codec:cpcap",
-+	.dai_link = &tegra_cpcap_dai,
- 	.num_links = 1,
- 	.fully_routed = true,
- };
- 
--static const struct tegra_asoc_data tegra_wm8753_data = {
--	.mclk_rate = tegra_machine_mclk_rate_12mhz,
--	.card = &snd_soc_tegra_wm8753,
-+static const struct tegra_asoc_data tegra_cpcap_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_cpcap,
-+	.card = &snd_soc_tegra_cpcap,
- 	.add_common_dapm_widgets = true,
-+	.add_common_controls = true,
- 	.add_common_snd_ops = true,
- };
- 
--/* WM9712 machine */
--
--static int tegra_wm9712_init(struct snd_soc_pcm_runtime *rtd)
--{
--	struct snd_soc_dapm_context *dapm = snd_soc_card_to_dapm(rtd->card);
--
--	return snd_soc_dapm_force_enable_pin(dapm, "Mic Bias");
--}
-+/* MAX98088 machine */
- 
--SND_SOC_DAILINK_DEFS(wm9712_hifi,
-+SND_SOC_DAILINK_DEFS(max98088_hifi,
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC("wm9712-codec", "wm9712-hifi")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "HiFi")),
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
--static struct snd_soc_dai_link tegra_wm9712_dai = {
--	.name = "AC97 HiFi",
--	.stream_name = "AC97 HiFi",
--	.init = tegra_wm9712_init,
--	SND_SOC_DAILINK_REG(wm9712_hifi),
-+static struct snd_soc_dai_link tegra_max98088_dai = {
-+	.name = "MAX98088",
-+	.stream_name = "MAX98088 PCM",
-+	.init = tegra_asoc_machine_init,
-+	.dai_fmt = SND_SOC_DAIFMT_I2S |
-+		   SND_SOC_DAIFMT_NB_NF |
-+		   SND_SOC_DAIFMT_CBC_CFC,
-+	SND_SOC_DAILINK_REG(max98088_hifi),
- };
- 
--static struct snd_soc_card snd_soc_tegra_wm9712 = {
--	.components = "codec:wm9712",
--	.dai_link = &tegra_wm9712_dai,
-+static struct snd_soc_card snd_soc_tegra_max98088 = {
-+	.components = "codec:max98088",
-+	.dai_link = &tegra_max98088_dai,
- 	.num_links = 1,
- 	.fully_routed = true,
- };
- 
--static const struct tegra_asoc_data tegra_wm9712_data = {
--	.card = &snd_soc_tegra_wm9712,
-+static const struct tegra_asoc_data tegra_max98088_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_12mhz,
-+	.card = &snd_soc_tegra_max98088,
- 	.add_common_dapm_widgets = true,
--	.codec_dev_name = "wm9712-codec",
--	.set_ac97 = true,
-+	.add_common_controls = true,
-+	.add_common_snd_ops = true,
-+	.add_mic_jack = true,
-+	.add_hp_jack = true,
- };
- 
- /* MAX98090 machine */
-@@ -799,33 +800,33 @@ static const struct tegra_asoc_data tegra_max98090_data = {
- 	.add_hp_jack = true,
- };
- 
--/* MAX98088 machine */
-+/* RT5631 machine */
- 
--SND_SOC_DAILINK_DEFS(max98088_hifi,
-+SND_SOC_DAILINK_DEFS(rt5631_hifi,
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "HiFi")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5631-hifi")),
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
--static struct snd_soc_dai_link tegra_max98088_dai = {
--	.name = "MAX98088",
--	.stream_name = "MAX98088 PCM",
-+static struct snd_soc_dai_link tegra_rt5631_dai = {
-+	.name = "RT5631",
-+	.stream_name = "RT5631 PCM",
- 	.init = tegra_asoc_machine_init,
- 	.dai_fmt = SND_SOC_DAIFMT_I2S |
- 		   SND_SOC_DAIFMT_NB_NF |
- 		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(max98088_hifi),
-+	SND_SOC_DAILINK_REG(rt5631_hifi),
- };
- 
--static struct snd_soc_card snd_soc_tegra_max98088 = {
--	.components = "codec:max98088",
--	.dai_link = &tegra_max98088_dai,
-+static struct snd_soc_card snd_soc_tegra_rt5631 = {
-+	.components = "codec:rt5631",
-+	.dai_link = &tegra_rt5631_dai,
- 	.num_links = 1,
- 	.fully_routed = true,
- };
- 
--static const struct tegra_asoc_data tegra_max98088_data = {
--	.mclk_rate = tegra_machine_mclk_rate_12mhz,
--	.card = &snd_soc_tegra_max98088,
-+static const struct tegra_asoc_data tegra_rt5631_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_6mhz,
-+	.card = &snd_soc_tegra_rt5631,
- 	.add_common_dapm_widgets = true,
- 	.add_common_controls = true,
- 	.add_common_snd_ops = true,
-@@ -833,81 +834,71 @@ static const struct tegra_asoc_data tegra_max98088_data = {
- 	.add_hp_jack = true,
- };
- 
--/* SGTL5000 machine */
-+/* RT5632 machine */
- 
--SND_SOC_DAILINK_DEFS(sgtl5000_hifi,
-+SND_SOC_DAILINK_DEFS(rt5632_hifi,
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "sgtl5000")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "alc5632-hifi")),
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
--static struct snd_soc_dai_link tegra_sgtl5000_dai = {
--	.name = "sgtl5000",
--	.stream_name = "HiFi",
-+static struct snd_soc_dai_link tegra_rt5632_dai = {
-+	.name = "ALC5632",
-+	.stream_name = "ALC5632 PCM",
-+	.init = tegra_asoc_machine_init,
- 	.dai_fmt = SND_SOC_DAIFMT_I2S |
- 		   SND_SOC_DAIFMT_NB_NF |
- 		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(sgtl5000_hifi),
-+	SND_SOC_DAILINK_REG(rt5632_hifi),
- };
- 
--static struct snd_soc_card snd_soc_tegra_sgtl5000 = {
--	.components = "codec:sgtl5000",
--	.dai_link = &tegra_sgtl5000_dai,
-+static struct snd_soc_card snd_soc_tegra_rt5632 = {
-+	.components = "codec:rt5632",
-+	.dai_link = &tegra_rt5632_dai,
- 	.num_links = 1,
- 	.fully_routed = true,
- };
- 
--static const struct tegra_asoc_data tegra_sgtl5000_data = {
--	.mclk_rate = tegra_machine_mclk_rate_12mhz,
--	.card = &snd_soc_tegra_sgtl5000,
-+static const struct tegra_asoc_data tegra_rt5632_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_512,
-+	.card = &snd_soc_tegra_rt5632,
-+	.dapm_fe_pin_name = "MICBIAS1",
- 	.add_common_dapm_widgets = true,
-+	.add_common_controls = true,
- 	.add_common_snd_ops = true,
-+	.add_headset_jack = true,
- };
- 
--/* TLV320AIC23 machine */
--
--static const struct snd_soc_dapm_widget trimslice_dapm_widgets[] = {
--	SND_SOC_DAPM_HP("Line Out", NULL),
--	SND_SOC_DAPM_LINE("Line In", NULL),
--};
--
--static const struct snd_soc_dapm_route trimslice_audio_map[] = {
--	{"Line Out", NULL, "LOUT"},
--	{"Line Out", NULL, "ROUT"},
--
--	{"LLINEIN", NULL, "Line In"},
--	{"RLINEIN", NULL, "Line In"},
--};
-+/* RT5640 machine */
- 
--SND_SOC_DAILINK_DEFS(tlv320aic23_hifi,
-+SND_SOC_DAILINK_DEFS(rt5640_aif1,
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "tlv320aic23-hifi")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5640-aif1")),
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
--static struct snd_soc_dai_link tegra_tlv320aic23_dai = {
--	.name = "TLV320AIC23",
--	.stream_name = "AIC23",
-+static struct snd_soc_dai_link tegra_rt5640_dai = {
-+	.name = "RT5640",
-+	.stream_name = "RT5640 PCM",
-+	.init = tegra_asoc_machine_init,
- 	.dai_fmt = SND_SOC_DAIFMT_I2S |
- 		   SND_SOC_DAIFMT_NB_NF |
- 		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(tlv320aic23_hifi),
-+	SND_SOC_DAILINK_REG(rt5640_aif1),
- };
- 
--static struct snd_soc_card snd_soc_tegra_trimslice = {
--	.name = "tegra-trimslice",
--	.components = "codec:tlv320aic23",
--	.dai_link = &tegra_tlv320aic23_dai,
-+static struct snd_soc_card snd_soc_tegra_rt5640 = {
-+	.components = "codec:rt5640",
-+	.dai_link = &tegra_rt5640_dai,
- 	.num_links = 1,
--	.dapm_widgets = trimslice_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(trimslice_dapm_widgets),
--	.dapm_routes = trimslice_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(trimslice_audio_map),
- 	.fully_routed = true,
- };
- 
--static const struct tegra_asoc_data tegra_trimslice_data = {
--	.mclk_rate = tegra_machine_mclk_rate_128,
--	.card = &snd_soc_tegra_trimslice,
-+static const struct tegra_asoc_data tegra_rt5640_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_256,
-+	.card = &snd_soc_tegra_rt5640,
-+	.add_common_dapm_widgets = true,
-+	.add_common_controls = true,
- 	.add_common_snd_ops = true,
-+	.add_hp_jack = true,
- };
- 
- /* RT5677 machine */
-@@ -945,136 +936,110 @@ static const struct tegra_asoc_data tegra_rt5677_data = {
- 	.add_hp_jack = true,
- };
- 
--/* RT5640 machine */
-+/* SGTL5000 machine */
- 
--SND_SOC_DAILINK_DEFS(rt5640_aif1,
-+SND_SOC_DAILINK_DEFS(sgtl5000_hifi,
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5640-aif1")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "sgtl5000")),
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
--static struct snd_soc_dai_link tegra_rt5640_dai = {
--	.name = "RT5640",
--	.stream_name = "RT5640 PCM",
--	.init = tegra_asoc_machine_init,
-+static struct snd_soc_dai_link tegra_sgtl5000_dai = {
-+	.name = "sgtl5000",
-+	.stream_name = "HiFi",
- 	.dai_fmt = SND_SOC_DAIFMT_I2S |
- 		   SND_SOC_DAIFMT_NB_NF |
- 		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(rt5640_aif1),
-+	SND_SOC_DAILINK_REG(sgtl5000_hifi),
- };
- 
--static struct snd_soc_card snd_soc_tegra_rt5640 = {
--	.components = "codec:rt5640",
--	.dai_link = &tegra_rt5640_dai,
-+static struct snd_soc_card snd_soc_tegra_sgtl5000 = {
-+	.components = "codec:sgtl5000",
-+	.dai_link = &tegra_sgtl5000_dai,
- 	.num_links = 1,
- 	.fully_routed = true,
- };
- 
--static const struct tegra_asoc_data tegra_rt5640_data = {
--	.mclk_rate = tegra_machine_mclk_rate_256,
--	.card = &snd_soc_tegra_rt5640,
-+static const struct tegra_asoc_data tegra_sgtl5000_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_12mhz,
-+	.card = &snd_soc_tegra_sgtl5000,
- 	.add_common_dapm_widgets = true,
--	.add_common_controls = true,
- 	.add_common_snd_ops = true,
--	.add_hp_jack = true,
- };
- 
--/* RT5632 machine */
--
--SND_SOC_DAILINK_DEFS(rt5632_hifi,
--	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "alc5632-hifi")),
--	DAILINK_COMP_ARRAY(COMP_EMPTY()));
-+/* TLV320AIC23 machine */
- 
--static struct snd_soc_dai_link tegra_rt5632_dai = {
--	.name = "ALC5632",
--	.stream_name = "ALC5632 PCM",
--	.init = tegra_asoc_machine_init,
--	.dai_fmt = SND_SOC_DAIFMT_I2S |
--		   SND_SOC_DAIFMT_NB_NF |
--		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(rt5632_hifi),
-+static const struct snd_soc_dapm_widget trimslice_dapm_widgets[] = {
-+	SND_SOC_DAPM_HP("Line Out", NULL),
-+	SND_SOC_DAPM_LINE("Line In", NULL),
- };
- 
--static struct snd_soc_card snd_soc_tegra_rt5632 = {
--	.components = "codec:rt5632",
--	.dai_link = &tegra_rt5632_dai,
--	.num_links = 1,
--	.fully_routed = true,
--};
-+static const struct snd_soc_dapm_route trimslice_audio_map[] = {
-+	{"Line Out", NULL, "LOUT"},
-+	{"Line Out", NULL, "ROUT"},
- 
--static const struct tegra_asoc_data tegra_rt5632_data = {
--	.mclk_rate = tegra_machine_mclk_rate_512,
--	.card = &snd_soc_tegra_rt5632,
--	.dapm_fe_pin_name = "MICBIAS1",
--	.add_common_dapm_widgets = true,
--	.add_common_controls = true,
--	.add_common_snd_ops = true,
--	.add_headset_jack = true,
-+	{"LLINEIN", NULL, "Line In"},
-+	{"RLINEIN", NULL, "Line In"},
- };
- 
--/* RT5631 machine */
--
--SND_SOC_DAILINK_DEFS(rt5631_hifi,
-+SND_SOC_DAILINK_DEFS(tlv320aic23_hifi,
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5631-hifi")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "tlv320aic23-hifi")),
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
--static struct snd_soc_dai_link tegra_rt5631_dai = {
--	.name = "RT5631",
--	.stream_name = "RT5631 PCM",
--	.init = tegra_asoc_machine_init,
-+static struct snd_soc_dai_link tegra_tlv320aic23_dai = {
-+	.name = "TLV320AIC23",
-+	.stream_name = "AIC23",
- 	.dai_fmt = SND_SOC_DAIFMT_I2S |
- 		   SND_SOC_DAIFMT_NB_NF |
- 		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(rt5631_hifi),
-+	SND_SOC_DAILINK_REG(tlv320aic23_hifi),
- };
- 
--static struct snd_soc_card snd_soc_tegra_rt5631 = {
--	.components = "codec:rt5631",
--	.dai_link = &tegra_rt5631_dai,
-+static struct snd_soc_card snd_soc_tegra_trimslice = {
-+	.name = "tegra-trimslice",
-+	.components = "codec:tlv320aic23",
-+	.dai_link = &tegra_tlv320aic23_dai,
- 	.num_links = 1,
-+	.dapm_widgets = trimslice_dapm_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(trimslice_dapm_widgets),
-+	.dapm_routes = trimslice_audio_map,
-+	.num_dapm_routes = ARRAY_SIZE(trimslice_audio_map),
- 	.fully_routed = true,
- };
- 
--static const struct tegra_asoc_data tegra_rt5631_data = {
--	.mclk_rate = tegra_machine_mclk_rate_6mhz,
--	.card = &snd_soc_tegra_rt5631,
--	.add_common_dapm_widgets = true,
--	.add_common_controls = true,
-+static const struct tegra_asoc_data tegra_trimslice_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_128,
-+	.card = &snd_soc_tegra_trimslice,
- 	.add_common_snd_ops = true,
--	.add_mic_jack = true,
--	.add_hp_jack = true,
- };
- 
--/* CPCAP machine */
-+/* WM8753 machine */
- 
--SND_SOC_DAILINK_DEFS(cpcap_hifi,
-+SND_SOC_DAILINK_DEFS(wm8753_hifi,
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "cpcap-hifi")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8753-hifi")),
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
--static struct snd_soc_dai_link tegra_cpcap_dai = {
--	.name = "CPCAP",
--	.stream_name = "CPCAP PCM",
--	.init = tegra_asoc_machine_init,
-+static struct snd_soc_dai_link tegra_wm8753_dai = {
-+	.name = "WM8753",
-+	.stream_name = "WM8753 PCM",
- 	.dai_fmt = SND_SOC_DAIFMT_I2S |
- 		   SND_SOC_DAIFMT_NB_NF |
--		   SND_SOC_DAIFMT_CBP_CFP,
--	SND_SOC_DAILINK_REG(cpcap_hifi),
-+		   SND_SOC_DAIFMT_CBC_CFC,
-+	SND_SOC_DAILINK_REG(wm8753_hifi),
- };
- 
--static struct snd_soc_card snd_soc_tegra_cpcap = {
--	.components = "codec:cpcap",
--	.dai_link = &tegra_cpcap_dai,
-+static struct snd_soc_card snd_soc_tegra_wm8753 = {
-+	.components = "codec:wm8753",
-+	.dai_link = &tegra_wm8753_dai,
- 	.num_links = 1,
- 	.fully_routed = true,
- };
- 
--static const struct tegra_asoc_data tegra_cpcap_data = {
--	.mclk_rate = tegra_machine_mclk_rate_cpcap,
--	.card = &snd_soc_tegra_cpcap,
-+static const struct tegra_asoc_data tegra_wm8753_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_12mhz,
-+	.card = &snd_soc_tegra_wm8753,
- 	.add_common_dapm_widgets = true,
--	.add_common_controls = true,
- 	.add_common_snd_ops = true,
- };
- 
-@@ -1203,22 +1168,56 @@ static const struct tegra_asoc_data tegra_wm8994_data = {
- 	.add_hp_jack = true,
- };
- 
-+/* WM9712 machine */
-+
-+static int tegra_wm9712_init(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct snd_soc_dapm_context *dapm = snd_soc_card_to_dapm(rtd->card);
-+
-+	return snd_soc_dapm_force_enable_pin(dapm, "Mic Bias");
-+}
-+
-+SND_SOC_DAILINK_DEFS(wm9712_hifi,
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()),
-+	DAILINK_COMP_ARRAY(COMP_CODEC("wm9712-codec", "wm9712-hifi")),
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()));
-+
-+static struct snd_soc_dai_link tegra_wm9712_dai = {
-+	.name = "AC97 HiFi",
-+	.stream_name = "AC97 HiFi",
-+	.init = tegra_wm9712_init,
-+	SND_SOC_DAILINK_REG(wm9712_hifi),
-+};
-+
-+static struct snd_soc_card snd_soc_tegra_wm9712 = {
-+	.components = "codec:wm9712",
-+	.dai_link = &tegra_wm9712_dai,
-+	.num_links = 1,
-+	.fully_routed = true,
-+};
-+
-+static const struct tegra_asoc_data tegra_wm9712_data = {
-+	.card = &snd_soc_tegra_wm9712,
-+	.add_common_dapm_widgets = true,
-+	.codec_dev_name = "wm9712-codec",
-+	.set_ac97 = true,
-+};
-+
- static const struct of_device_id tegra_machine_of_match[] = {
--	{ .compatible = "nvidia,tegra-audio-trimslice", .data = &tegra_trimslice_data },
--	{ .compatible = "nvidia,tegra-audio-max98090", .data = &tegra_max98090_data },
-+	{ .compatible = "ad,tegra-audio-plutux", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "ad,tegra-audio-wm8903-medcom-wide", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "ad,tegra-audio-wm8903-tec", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "nvidia,tegra-audio-alc5632", .data = &tegra_rt5632_data },
-+	{ .compatible = "nvidia,tegra-audio-cpcap", .data = &tegra_cpcap_data },
- 	{ .compatible = "nvidia,tegra-audio-max98088", .data = &tegra_max98088_data },
- 	{ .compatible = "nvidia,tegra-audio-max98089", .data = &tegra_max98088_data },
-+	{ .compatible = "nvidia,tegra-audio-max98090", .data = &tegra_max98090_data },
-+	{ .compatible = "nvidia,tegra-audio-rt5631", .data = &tegra_rt5631_data },
-+	{ .compatible = "nvidia,tegra-audio-rt5640", .data = &tegra_rt5640_data },
-+	{ .compatible = "nvidia,tegra-audio-rt5677", .data = &tegra_rt5677_data },
- 	{ .compatible = "nvidia,tegra-audio-sgtl5000", .data = &tegra_sgtl5000_data },
--	{ .compatible = "nvidia,tegra-audio-wm9712", .data = &tegra_wm9712_data },
-+	{ .compatible = "nvidia,tegra-audio-trimslice", .data = &tegra_trimslice_data },
- 	{ .compatible = "nvidia,tegra-audio-wm8753", .data = &tegra_wm8753_data },
--	{ .compatible = "nvidia,tegra-audio-rt5677", .data = &tegra_rt5677_data },
--	{ .compatible = "nvidia,tegra-audio-rt5640", .data = &tegra_rt5640_data },
--	{ .compatible = "nvidia,tegra-audio-alc5632", .data = &tegra_rt5632_data },
--	{ .compatible = "nvidia,tegra-audio-rt5631", .data = &tegra_rt5631_data },
--	{ .compatible = "nvidia,tegra-audio-cpcap", .data = &tegra_cpcap_data },
--	{ .compatible = "ad,tegra-audio-plutux", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "ad,tegra-audio-wm8903-medcom-wide", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "ad,tegra-audio-wm8903-tec", .data = &tegra_wm8903_data_legacy },
- 	{ .compatible = "nvidia,tegra-audio-wm8903-cardhu", .data = &tegra_wm8903_data_legacy },
- 	{ .compatible = "nvidia,tegra-audio-wm8903-harmony", .data = &tegra_wm8903_data_legacy },
- 	{ .compatible = "nvidia,tegra-audio-wm8903-picasso", .data = &tegra_wm8903_data_legacy },
-@@ -1227,6 +1226,7 @@ static const struct of_device_id tegra_machine_of_match[] = {
- 	{ .compatible = "nvidia,tegra-audio-wm8903", .data = &tegra_wm8903_data },
- 	{ .compatible = "nvidia,tegra-audio-wm8962", .data = &tegra_wm8962_data },
- 	{ .compatible = "nvidia,tegra-audio-wm8994", .data = &tegra_wm8994_data },
-+	{ .compatible = "nvidia,tegra-audio-wm9712", .data = &tegra_wm9712_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, tegra_machine_of_match);
+There are a few nit-picks below. But in general looks very good.
+
+...
+
+> +static int cm3217_read_count(struct cm3217_data *data, int *val)
+> +	__must_hold(&data->lock)
+> +{
+> +	s64 wait_ms;
+> +	int lsb, msb;
+
+Reversed xmas tree order.
+
+> +	wait_ms = ktime_ms_delta(data->ready, ktime_get());
+> +	if (wait_ms > 0)
+> +		msleep(wait_ms);
+> +
+> +	lsb = i2c_smbus_read_byte(data->client_lsb);
+> +	if (lsb < 0)
+> +		return lsb;
+> +
+> +	msb = i2c_smbus_read_byte(data->client);
+> +	if (msb < 0)
+> +		return msb;
+> +
+> +	*val = msb << 8 | lsb;
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int cm3217_find_avail(const int (*avail)[2], unsigned int len,
+
+This parameter is weird as we don't use at_least or so. It might be that
+compiler can test it with the static const parameters supplied, but better
+not to rely on that.
+
+> +			     int val, int val2)
+> +{
+> +	for (unsigned int i = 0; i < len; i++) {
+> +		if (avail[i][0] == val && avail[i][1] == val2)
+> +			return i;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+
+With all complexity this gives, I would rather make one helper per each case.
+
+static int cm3217_find_scale_avail(unsigned int fd_it, int val, int val2)
+{
+	for (unsigned int i = 0; i < ARRAY_SIZE(cm3217_scale_avail[idx]); i++) {
+		if (cm3217_scale_avail[fd_it][i][0] == val &&
+		    cm3217_scale_avail[fd_it][i][1] == val2)
+			return i;
+	}
+
+	return -EINVAL;
+}
+
+> +static int cm3217_write_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int val, int val2, long mask)
+> +{
+> +	struct cm3217_data *data = iio_priv(indio_dev);
+> +	unsigned int fd_it;
+> +	u8 cmd1, cmd2;
+> +	int i;
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SCALE:
+
+> +		fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
+> +		i = cm3217_find_avail(cm3217_scale_avail[fd_it],
+> +				      ARRAY_SIZE(cm3217_scale_avail[0]),
+> +				      val, val2);
+> +		if (i < 0)
+> +			return i;
+
+		fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
+		i = cm3217_find_scale_avail(fd_it, val, val2);
+		if (i < 0)
+			return i;
+
+> +		cmd1 = data->cmd1;
+> +		FIELD_MODIFY(CM3217_CMD1_IT_T, &cmd1, i);
+> +
+> +		return cm3217_write_cmd(data, cmd1, data->cmd2);
+> +	case IIO_CHAN_INFO_INT_TIME:
+> +		i = cm3217_find_avail(cm3217_int_time_avail,
+> +				      ARRAY_SIZE(cm3217_int_time_avail),
+> +				      val, val2);
+> +		if (i < 0)
+> +			return i;
+
+In the similar way here. I think it it even grown in LoC, it will be not too
+many,
+
+> +		cmd2 = FIELD_PREP(CM3217_CMD2_FD_IT, i);
+> +
+> +		return cm3217_write_cmd(data, data->cmd1, cmd2);
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+...
+
+> +	data->client_lsb = devm_i2c_new_dummy_device(dev, client->adapter,
+> +						     addr_lsb);
+
+I would make it one line.
+
+> +	if (IS_ERR(data->client_lsb))
+> +		return dev_err_probe(dev, PTR_ERR(data->client_lsb),
+> +				     "failed to register second address\n");
+
 -- 
-2.53.0
+With Best Regards,
+Andy Shevchenko
+
 
