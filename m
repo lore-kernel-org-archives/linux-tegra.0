@@ -1,42 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794919589;
-	b=zeCUc5iynQO8MN3fRLnfTosbQ2Vd99UECkms876Vt09YVDmfQIz11pZwQunGvQ0W63P2
-	 wGUsqW5u3Qni3a916on2e/Gg534vnccDxwPt8xxfeNzb8ndOcYPoiKWcWxCMZEnUO9ZY8
-	 cuYIKKW+pXW4GA8V9cvA9Er3xF0+cJGNAbjo0PiTzCAAEdBkoYguIvNlzkmmvDS+31Tj1
-	 g2VjO7ykWV8vhI/55U2zPpmjY4C9LnCO/u5J3jxk5Yz6s6K1Zj/Qq+vmLctyxDI+7E+J8
-	 lNbO5yEj8YtCQwJj2JFrUwrGhIinaRHR84GGGh2/boL8HSV+gITc8KzWlKUU20M1EFQ==
+	t=1794919853;
+	b=MYFfgZmBE5DraID0thUhSXHzyR4WVTMj+uOjoePzHqZUKwnl3wwH19RqGm1yvcEqxwO6
+	 Z+YUQfm8kmczCTttKsJt9BGYlzRKpLBTSYMD7+/qRiMi1Paqckuq+Yrj5mjysQkR4tU9Q
+	 vXr7dbZlOPvIlNXTAC7tpY4iwait2ah1617B89O7aIWgMxbOA2hCLbc6MU8vd30CLzhym
+	 10ykAugLiIz7ttGng8zO29V0JVYUSPXq7E7CC73wgNWJ30SkE7+4R4dfCrLMD9G1/ICkd
+	 7LCqM9j/MZbUYYtkO63mt6+mRqQLe/3p8GPObM3P9n+4SNoNGM9B6GZcpRII5rpdFeg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794919589;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794919853;
 	h=Received:From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=1TsdOwup66Sk6NxUR4HcjkhoK1g+FBTKhCtwSbf6eaQ=;
-	b=btFTuzqJB2RkXzYoLJOE7Bz6NRlNCMXDdGSWh0MYgYy0n92lJyJCkVdAEuGhZmz03xwk
-	 QlIwV7MEBfMPOR8wdeDRcc+ZrR3bdjALFctwxD0/55pDerEv8Ol/u9LpDtIUzmp0fCpYS
-	 8gVoCmCPaemleLBgg8FX5Dq4NTgXLxhgOfp0OHZe43LG/IYns82XXrbGDcXqJSDgS5Unh
-	 eYiw2DZoLQzmnAPrNznUhFJxGoyqFSjON9dkql7J3owmEZk2d/bDjpKiy1J5aH3HgdhTA
-	 RGUB98Na9pdHiSyrZkmkymfmLRQ7+OOlQpdQ4g7OjjfHv/vqEAtrH2ESX/JaKt6bh3A==
+	bh=Zf3MsUipeIoo9Uty4dGky+vBJxZHkD7wRzAVDmgbAyE=;
+	b=oItz3DJo9jrILkXce2CqMQJ8U65MS4ACecTTym16PoWgpyCgcO0KJs2NNJWdqrG91+Kg
+	 iuYBLC0zGqj/02SpzvoQhF1BrcATkwIZhYdJKMfQpEi2Fa5eBjUAIXVJIi/+XmUzNSUIW
+	 jOaHMtiM3xfbc5Jw6SbmrSeEYKjSB4FkugO4sE6FDmFT19M1Jx4OyNm0UoHnJtuJj9JAB
+	 tw6CeD4vJAVsUG3Y+iAB2BIfrteSWGYWK6TIAzmh1gX0PYprNeXolTQuVQXJZmLaXHmFD
+	 RGGLVShrg+ON06N4bh4GPcBLLQGPOs2tjCbVVwgdWyFXdeJZw3VS+MXKwgCHHAlPQlg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D49606A329
-	for <linux-tegra@vger.kernel.org>; Tue, 17 Nov 2026 12:46:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56F3F1F000C6;
-	Tue, 17 Nov 2026 12:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF05606A89E;
+	Tue, 17 Nov 2026 12:50:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF501F00933;
+	Tue, 17 Nov 2026 12:50:52 +0000 (UTC)
 From: Thierry Reding <treding@nvidia.com>
 To: Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Aaron Kling <webgeek1234@gmail.com>, 
  Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Antti Miettinen <amiettinen@nvidia.com>, linux-tegra@vger.kernel.org
-In-Reply-To: <20261030-b4-tegra186-ethernet-defconfig-v1-1-ea6e62086ff8@nvidia.com>
-References: <20261030-b4-tegra186-ethernet-defconfig-v1-1-ea6e62086ff8@nvidia.com>
-Subject: Re: [PATCH] arm64: defconfig: Enable DWMAC_DWC_QOS_ETH as module
-Message-Id: <179491958246.1887007.12756970940219921860.b4-ty@b4>
-Date: Tue, 17 Nov 2026 13:46:22 +0100
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20261015-b4-t210-pd_nvdec-nesting-v1-0-39a36b622eac@nvidia.com>
+References: <20261015-b4-t210-pd_nvdec-nesting-v1-0-39a36b622eac@nvidia.com>
+Subject: Re: [PATCH 0/2] Fix NVDEC boot on Tegra210
+Message-Id: <179491984070.1887007.9922722264589294895.b4-ty@b4>
+Date: Tue, 17 Nov 2026 13:50:40 +0100
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -49,31 +52,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=313; i=treding@nvidia.com;
- h=from:subject:message-id; bh=aVsEyQO7BccuHTw7uBpnUCjqE19XU9nXD0W++kOasyE=;
- b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBq/EyiSfluTzoc0SONf1ECqTx9E+IdjCrywjc2C
- SYprZ823UOJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCavxMogAKCRDdI6zXfz6z
- ochMD/kB9l3lA4P5eJ2ZpuRENUC4Ih7Xv4h97VJSl3J++KzGk/90uySatT1H47XMG03Zvh5cSIg
- mhuhZVJf4mYkfSPP0brDT4EPcBvCfke+Xs7m6XELwWfXTY2970C5hRPg6glyDMoar0EzbkAaK9p
- y54c7FfVCe2zsNb+FeEzVVexeqsk3jLnQ5mgvhBFqUp3QZed0TUdM1ZQy0r3ZUa4QXnnuas2QyD
- U8zQ/FKw2MO9rrYPt66n2EOf0yhcw2LvnWNAk2FFwAaIZzycgbTJN3mzQmTolo1vzw5VRYOlvlJ
- oKXd8isbgzwEwq8xvL3ZVYoXvVLrxahkPBdt9KJ0FEUqCkLZ8NYD4HUzC/oq4mVGGbTbZ24oNVN
- 0hADBOms6iL/RK5EUxaCkH+hApMOC1+2fjzWDvf/Hdrrw7QGhrrNr5qFKMfRlAWmY6kr8wIE3pc
- NbEkMbtGCcQjxMRRZFJN7npri5waieDRTgMaD4y45nI380BFlcSbFC/qzhMHXD3VJH4dbwvPC5D
- wznrGBztppngkml74MfAnnuJSCMw5ArKO4f09NbakeeokXPcaPXwDzANfZnRePMAYqAmI1MFJKB
- peXa7xQ+ehAbvkp6/P3t9mhq+//vLxuel8Y37G/eUbP0HRcBD5A43H/N2z0htgUXV40ZIt4IfOl
- Nt53eQdMHsLb95Q==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=674; i=treding@nvidia.com;
+ h=from:subject:message-id; bh=Xs++ydyvFmALhs3iMzQiWYDo+bq5LKMLDLtvJYzWnTc=;
+ b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBq/E2qY0svl5l3VmkOwUR0Oy9YiATSgZD2sr234
+ TFdBZ4vWnmJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCavxNqgAKCRDdI6zXfz6z
+ obrbD/0US+rXfMPpd+ydrKWerCxMSEIrUL3hF8pXAReMKKiJXNV7J7kqejcBET6235rGdaUYhVu
+ lpY1GJ3XH4j9xm8BIsPk/DbOl0mufeHKqYbf81VruIDbdljwtIGbyHLN11iteuqih++oA1l4DUY
+ W8DgPYbxSkNcR0Vi/74SU2CO7c17jnWB6A6c7HQU2Xxo20bdKKtfClMoVhu1QaILI6T6gYrlHMp
+ SJm3GY/68y76Sn0v0f2wBaFGpperPrNwrxnkannzCyHimvO8maHEEzZgeE1ZtXcSmsFXuZ3EJHo
+ bAXnWpZdzLKLwIhs5nhAkpyLrkLaPCxzMN5ZfLNsHp3Dr2uqJGs1qYXm90H6i6IdW54qJvWYtzr
+ dA0VeaLxUc9qQDzOsQJoYgiG1iGHWnWURFASQcbofGRrtvLwJ9COJTelvzcrhoDfIfY4QHiSZaW
+ 7bYs+Gv/gMup0LF2PM5qEV43sv1F3t25MnyYByFmipMZopmUw0ST31Uro77BRkTKI+asDPu/abZ
+ ipZeL8MwOf29xlqBI0hbBHrlGH7ulzafYc0sk/vnHkF8g1AfxI2vdRJxS5Qx+VpnqM8IIELQ98k
+ J6kzK90rnT/EupspuPHAXywEyrxOTekbKv+b46rlbOSc8lncjQDvT8XEnBQWQKj+EbmLR4p0Tg/
+ TYf5jr9qgAKgZaA==
 X-Developer-Key: i=treding@nvidia.com; a=openpgp;
  fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
 
 
-On Fri, 30 Oct 2026 16:02:29 +0900, Mikko Perttunen wrote:
-> arm64: defconfig: Enable DWMAC_DWC_QOS_ETH as module
+On Thu, 15 Oct 2026 18:58:01 +0900, Mikko Perttunen wrote:
+> Fix NVDEC boot on Tegra210
+> 
+> On Tegra210, parts of the NVDEC hardware unit are in the NVJPG power
+> domain. According to the TRM, the NVJPG power domains must always be
+> ungated while the NVDEC power domain is ungated. Model the dependency in
+> device tree.
+> 
+> [...]
 
 Applied, thanks!
 
-[1/1] arm64: defconfig: Enable DWMAC_DWC_QOS_ETH as module
-      commit: a2101b64218a2c7b17f6bdf79e2e23730e5a1244
+[1/2] soc/tegra: pmc: Support nested PMC power domains
+      commit: c6935858d13498f24b305aff53bd1123da6a8671
+[2/2] arm64: tegra: Make the NVDEC power domain a subdomain of NVJPG on Tegra210
+      commit: d4e7a00646df735b915273cca544db11f6dc8854
 
 Best regards,
 -- 
