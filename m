@@ -1,59 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794914692;
-	b=Nnv+qX3ALtuFbj04i/hBhHvIV6XGKt5F9UD2zyJv73MUIKjr917ycNWD2bLB0mdTWNtM
-	 +nHZP5tZRDTOyYngP1sFI+wlvISh990VEeX1ajY1HSRPW7R7K/VVp3rFlvJGhV8Tkoj9g
-	 rPD+tt5NtANGVk2K/O4zDnzxM9NVZJAw+y7kQroUhjxam91LpMLkDHCH66ei4tjTckdxf
-	 uvazvqH5Ixg1nfhwo+FVSUA9AasRthodLA57+vmqI0Qgx9S5DRFYeZcbMvB0lF09PuwrR
-	 uBzsdi0b8SSfnkaYOc1Oa+S2L57n/eTX+cvejQX4Z2ScqkRTMZogxuHepMGu5/cKnHA==
+	t=1794915204;
+	b=3h9A/fayzPBJWcLTJYSgwb3md25S/Jjlj98FNEBp1M5ntBLDEQTlYlUpkqbEbdJPOGZI
+	 sDMf4ysGoA7A0GcLtQBFmxc9fJM983tiKkMctGaGIMMZdsXu0mOnm8YrTeF0+FgnX4kDc
+	 /wblS8t7UjShwSiHrr2GqeZJNhvMt32OkcHii9CNayX7N79VTPZO2Q89XOG7/1DQKEiRP
+	 pzIKVaXRofxXZ2qSRPyodAHEvjUzLqkSzulz4rVDjdnidvKl952m5r5DtUYjVVCJjlwAz
+	 GUx+X7qQgtDONhLeVp+O0ykQM0Frv4UHZNWanJ7ScghjMjnla/eaBH0SBvMf7Kydnzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794914692;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=vWOxMHWlcWtp27VVdwB8K8C+YGb+xa1iSkIZnmlgfTA=;
-	b=jafY04Knx2txv39GnvvLtzE/nPwRPk0AHK9CKZ6dIPgwYn/RDpLXkp4rT68+VOJkRzP0
-	 a2uXDBZh5L3jaNxTcYtA2oxbyPSAuxqhm6Nfn1/FUaENkwQaZBd0s2LoivzhyfScd+gUw
-	 xGV1U9tMRdiWn0A2RxSMkNOBr3RMQTylOxYlEhgHkH4N8vEisc8rbtl1JLf57h7An/qIb
-	 XVRdV8Rgv8F37Euv7x7YfK1V8z2RTgNrvOK45P8+AMo/8y5Tn24+4uhcX799/QqE7Zz3x
-	 3ksLZEO/U6TaWwXB79bxZCvJCWZv7aB7hO8iBOeChxHlklZ7dy52X7Prteg3mgopyWA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794915204;
+	h=Received:From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=nazGYBZ6aUtBFfLrnsb8qKguiidZW3WmEeyb8xa30T4=;
+	b=mhVSeTsqUQtwmtPFGredFMkBhwMe2hYp9vFPzQ+xjhzufs7bH1ofhnq8m1y7CDLfXgJ5
+	 tclnLbRggJU0Z/X80Z0FI55Z+UdauMrXbFhDoLcFa0VxF7kcIyAYLgivGf2X6wYkeS4pl
+	 iwkdLKmb1ZZNz9D3G6FHQaLX8Z4+LB1aGWCoJUglIsxfa0AJ0hQinE2y11qwHlRBway7k
+	 QlwCJcd+m4RPABmtwhgPNYJz5zf1nzuxHC1O8dMHi5hpK0I7G/ApEYHxY4xItfQNKiSkj
+	 bnxiYOUrAXD+B7GQwGHlcdgaXkeTeTCpdNOOIO7htoVCDHgfJ365w1i0yvswGZcVyFw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DhgxR9Wo;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA228606A32A
-	for <linux-tegra@vger.kernel.org>; Tue, 17 Nov 2026 11:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DhgxR9Wo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE1B91F000C4;
-	Tue, 17 Nov 2026 11:24:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794914692;
-	bh=vWOxMHWlcWtp27VVdwB8K8C+YGb+xa1iSkIZnmlgfTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DhgxR9Wo+dUuqkYWxNm8rH7ej9OWfhE/Xv8DnoobJmZZLPkYsdBJo5fCkCZJFSl4t
-	 gwGGW5A9I9pO32K4YLEJ21S1X1QscsjDvk9tYDpyVp11eavqV0M+giyonO4WQ9luHS
-	 5AElNQ21OYGOL+Scg06kyjBswlpqwU2uTVobkQZKp/xMBI0CqlAb18JPvqRawXRLFp
-	 frySI+jf1vEbDNQ7Y7x75M3uceernjmsj2cRQuY0uX1RHS+OYO9MOFD75qofuEO9AU
-	 UUoIry2Wm88kf3dDuVi67A1d0DM7gEyQwu0X5yMLyoIdz5Getfbw0SIvcyO35O7Rh8
-	 sTzKdEBXgCMLQ==
-Date: Tue, 17 Nov 2026 12:24:49 +0100
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Simona Vetter <simona@ffwll.ch>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH RESEND 53/83] drm/tegra: Switch to
- drm_mode_config_create_initial_state
-Message-ID: <avw5LNHICh6OHpqs@orome>
-References: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
- <20261105-drm-no-more-config-reset-v1-53-1f58d1e33380@kernel.org>
- <auyjMrCi8trUahdB@orome>
- <avNBTIciv6QlEp9a@houat>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A62B606A31C;
+	Tue, 17 Nov 2026 11:33:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B3091F000C4;
+	Tue, 17 Nov 2026 11:33:23 +0000 (UTC)
+From: Thierry Reding <treding@nvidia.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jon Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20261106-tegra-for-7-3-fixes-v1-0-e62053cbda3e@nvidia.com>
+References: <20261106-tegra-for-7-3-fixes-v1-0-e62053cbda3e@nvidia.com>
+Subject: Re: [PATCH 0/3] arm64: tegra: Fix missing regulator for Jetson AGX
+ Thor
+Message-Id: <179491519712.28851.3143452577729436181.b4-ty@b4>
+Date: Tue, 17 Nov 2026 12:33:17 +0100
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -63,86 +49,49 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zcuoxflydzito32u"
-Content-Disposition: inline
-In-Reply-To: <avNBTIciv6QlEp9a@houat>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=930; i=treding@nvidia.com;
+ h=from:subject:message-id; bh=SC0M39FMoPNdeIaUGCJ//l8xoZCg6Kv50/xKH/G/wjA=;
+ b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBq/DuBOcNp+sQA5uNVK6yLiI8jZgq1FlViYIH1m
+ FM2wPi05i+JAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCavw7gQAKCRDdI6zXfz6z
+ ofFaD/98o6w/Nh3waZbZhw0Iazv3OhXhnlfg3rudBrkBdwcqjOuukKMzhZOqtcNFKa1f3Kx8dTW
+ eOPFzUTdLUXARCDhE9KD3/kKAvOMqi/aQMInOOZIip+LS9YRBNTBsJUbtqDGX9A3tsoZ+B3//CW
+ oNgOrFZIdv0pZfJpaf2mTKCxPUtv5ZY3GPBI2Y+U+jO83/f9BYH/6caDRgdl6fbOkqNuPtHrJDH
+ 8Z3y//NNbzUb7WNGsFGmqfxl6MRIoujaVt9U1yrRxlFsxR0Fm3dzzw5ofzjyjEaGK2QLRqOV0AW
+ 15K0Alup5BLp8oyr9H7uZ/AIfG/iTzaYZsdOjsXASp9mBwgSItHmuKAQC4LDJ3haFIY4jos9AHT
+ pKCZvPOV3Dly72QGl/N1E6SImSw7hkyZhuuAuDEjQzsRbDEuvLeaO0KbroBHls4YclVtTms4NGb
+ Ssz60wmKKDjk995RiLvn9lEtE5eCAemUOToJYOOU8S2pADIUdrGqz1sHsEpsPRShaasXLlBpity
+ uCQsqIKR63K60mQdzR6DrrPihk0VcPn0sVWg4bqSguOV8gEBFuWmxaCfNLHce1mqLzpMwLZnPgP
+ MtoIgc/3fpcqtZioxfXZWkQxSU7mupUdhnZAAvr6ItpkeXugiV1EtNgDbZnvgQnkOkAE0+wUw/j
+ qYUdaXoHXyTOaWA==
+X-Developer-Key: i=treding@nvidia.com; a=openpgp;
+ fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
 
 
---zcuoxflydzito32u
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND 53/83] drm/tegra: Switch to
- drm_mode_config_create_initial_state
-MIME-Version: 1.0
+On Fri, 06 Nov 2026 12:02:57 +0000, Jon Hunter wrote:
+> arm64: tegra: Fix missing regulator for Jetson AGX Thor
+> 
+> This series add some missing regulators for the Jetson AGX Thor board in
+> order to fix the following warnings:
+> 
+>  WARNING KERN at24 1-0050: supply vcc not found, using dummy regulator
+>  WARNING KERN lm90 5-004c: supply vcc not found, using dummy regulator
+>  WARNING KERN at24 1-0056: supply vcc not found, using dummy regulator
+> 
+> [...]
 
-On Tue, Nov 10, 2026 at 05:10:01PM +0100, Maxime Ripard wrote:
-> Hi Thierry,
->=20
-> On Thu, Nov 05, 2026 at 04:51:46PM +0100, Thierry Reding wrote:
-> > On Thu, Nov 05, 2026 at 04:30:02PM +0100, Maxime Ripard wrote:
-> > > drm_mode_config_reset() has a dual role: it creates the initial KMS
-> > > state at probe time, and resets hardware and software state during
-> > > suspend/resume cycles.
-> > >=20
-> > > Since the two roles need different behaviors (notably for objects like
-> > > drm_private_obj that must persist across suspend/resume),
-> > > drm_mode_config_create_initial_state() was introduced to handle only
-> > > the initial state creation at probe time.
-> > >=20
-> > > Switch to drm_mode_config_create_initial_state().
-> > >=20
-> > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > > ---
-> > > Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> > > Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> > > Cc: Thierry Reding <thierry.reding@kernel.org>
-> > > Cc: linux-tegra@vger.kernel.org
-> > > ---
-> > >  drivers/gpu/drm/tegra/drm.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >=20
-> > I'd have to check more closely since it's been a while, but I think we
-> > might depend on the reset hooks getting called during probe.
-> >=20
-> > Looking at the implementation of drm_mode_config_create_initial_state(),
-> > it ends up calling drm_mode_config_connector_create_state(), which
-> > silently exists if the connector doesn't implement atomic_create_state,
-> > which none of the Tegra connectors do, so wouldn't that lead to a NULL
-> > pointer dereference at some point?
->=20
-> AFAIK, all tegra connectors have now been converted to
-> atomic_create_state instead of reset (commits c5c0e4821938 and
-> f808d9f8e5a3 in drm-misc-next) so it shouldn't have any reset specific
-> behaviour at all and the transition to
-> drm_mode_config_create_initial_state().
->=20
-> Am I missing something?
+Applied, thanks!
 
-Ah, I don't think they were in linux-next (which is what I was looking
-at) yet when I replied. Looks like it should be fine now:
+[1/3] arm64: tegra: Add regulator for Jetson AGX Thor thermal sensor
+      commit: 168fca2ee5e60e649b3d476e451f7833633a1455
+[2/3] arm64: tegra: Add regulator for Jetson AGX Thor system EEPROM
+      commit: 17c5a5ee525da79ab1ca0a5b92190a0587604643
+[3/3] arm64: tegra: Add regulator for Jetson AGX Thor module EEPROM
+      commit: f87ba646efb4afd159a418c43b0d95062eaae1f5
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
 
---zcuoxflydzito32u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmr8OYEACgkQ3SOs138+
-s6HwgQ/9F/dU5Fwj1VmRt0XTem4o41tqgkGUsXzETd3U/l9jBb8BRnZCRYtlml/R
-oT62Ai/D0zJkNBKKhjlykcGYDf4vTd47uor5P6/VgBHbuAfJBOmsRD944bL6Mi5t
-crpiyXqWQGbzFxz+We9vGBbI6KdE6czvrb/jU8SJ2gzWMHltmP3/n++F2FOL3WHf
-yAB79ZWQYEXNgoMsC+Q8uvs2KEANEPgjZ9HNLsq4EcP8bqfPFf86DSQn/oe5Fio0
-MYrmlYsVm4qGiFHQwNVtage4A6d8djYn2szn/3D3nHvLyj4cGnsxI68XZ5tjSRAc
-rhv/pl3QgbatOqJcP4m4aNK8/adgzV+iR0s/tAB4ET3uuyL4NjFtr9rCukIo34Gq
-+6okBMrL7D0NDOTV6zgJufjcWYkTmylhWu4EjYYiros9gTzCkpcJH68qkNjN8VLF
-dwVB9iz2KOEWyCXny7bbInyp/TyUq2gQRFAYW3XrG4WI4LZFyNO/qUNE63MY9+ut
-OjhX3R7XpuSBRHJNEfQEvcbDNoiOiVdyU/MXvu8TrFLUjF5auQ4NEijJ3aLIf58M
-XAquAAilfek9lTtxHMkbvdnLwQH8ib1EcctBBx8heJRLytrcwGiWIlejoT0N1JGv
-Nsen3WczV/1YgYc6RLUc/fN9URshi5H1zm/WlH559Sk5UDGNMPc=
-=tQ8v
------END PGP SIGNATURE-----
-
---zcuoxflydzito32u--
