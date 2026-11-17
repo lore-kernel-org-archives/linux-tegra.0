@@ -1,112 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.196.68
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794897752;
-	b=Fjy54Um2RFbTKaftidzcwlvlGO8XxM92GyydIJJLk9Zfir0GBcsHiyvc0kw7xzQC4nAW
-	 vvbKv4M079VjLDnCVcEUUeQdSs027d1uBG0A0BMLXGbYS/zdh6MKqeXBudNxL5g/PDa+Y
-	 HUEDm9fLlY/YsewVpKSveFBUg6GIJNtkagRoSDFNnPxrk08T3R4V4mm8tbqNPboGuqw91
-	 b/pbop/r3HcqNdpyMK0s2uK3BFAg5k821t2YoR5+9RRnIY+fD+xfMzfybK2xOE4fHdE2J
-	 plqRydRI1POaaUZGjbURl6/EnlG9gHE4wlFqiDN91QH4hxhOJRJ0/8q/ORNMGWoDccA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794897752;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:
-	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
-	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
-	 Content-Type:X-NV-OnPremToCloud:X-EOPAttributedMessage:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=WQiT5xVdO1xOhFpbbCbp0ldMZffMEAlNq/1PkKK/ZR0=;
-	b=ps/D6bDzJYfQ7+CaGVnOgRfJGwKTA8CTCwdnCKTEHUbRp7+k+baLQD6qAja4nk9Q2jAc
-	 PIvmo2tEzdIGNnUE+JVwHeQq5kLRuyp1lClQDBG0FW0AjHiy64RMV9dA2Vf/cijPKBXR9
-	 Y22GMcNZvMVf0IaUs7rXtZNj+SFerzdjoQIcNb8PaGMIDJ5eC8vaiRlS0joQ2KCA3MlLt
-	 GNLS5NSgy55g8ZlGXOtPdBCiyZFdd5rLjV2jIj3kJvX/fQUBYR0VlAjV4IvXXpV0nBQ52
-	 W+idcM+MBTbK9ylSNmG5OCxJg1SZTt+HgFa415/x2j8A2pGelevTb+f3scCKgqgx5/g==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Gi6vfg6Z;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.196.68
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013068.outbound.protection.outlook.com [40.93.196.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.180
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794904246;
+	b=EjPQ2ijIAWxrSPiBzAwZlsTFidoPk4bBpWASrWfkdLR0IXBBgolwFX0epbDBYDP6feAb
+	 QHfB552rl/t6DHOdaISpcYjXoJCMrU6aTL44Ivf5rAoMyL7KhoXbLe9UnpeOuUPHvz5Po
+	 nbInKH6SmpCOBRoobIs0GdgGbWOv6EShua3SkG85FcPtdF0AYM4CgKgAYvnOw8ZSrqIL0
+	 kWVm2gxU+oAtL8N20PbHkflSIdg3nwi/WMwtRfSOJTwgx/xAV+RW2WYBtlQ9SbXRInouY
+	 g9P2ZwHZ/5sxl0SfFjL4MmFbK3QQBD2ItyZO6ltvQA1SxHgUrhY7LGr0D356GzoC/sw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794904246;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=zheIQktVmbZG4c834zKCy7evdo7oC0W6fMu1Q7CHhCE=;
+	b=UvSmXTHB7b27U+w01QrzxIupYJeq2LWAXcIUMQBZ6nUGh/m/BJQAuegZ+XLCOKqP7EaF
+	 VghLh+NZw9D3s4/SW8fijjOhivIkTufTyp3CzSAlfiniOiSt/9KTEzK22qfXBbLa/z87q
+	 KTkxj9hC+OfHQo/7wCmoOcXAvqJ98e12PFRIzZXwIti2WBIcnyREWk/g8l32zxVOIvZ56
+	 NebP/RSEsz1bvmbDzUF/fNA5Q3476xXW6vViB6PvTLOXVnvgx6pDA5qetZu9aJtdmgH8V
+	 QXxx8FsegORYC/Hhj9HC/OTTKjM1P1OFME6OWSEY1R5CzBfrpU5XdVOfihw1sTl34vA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	arc=none smtp.remote-ip=91.218.175.180
+Received: from mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD915606A31C;
-	Tue, 17 Nov 2026 06:42:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DD915606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Gi6vfg6Z
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c7RRnCE9RH4Osll24cDRrJydlMBxGSKxV2yilpAAZ7OFyptK3B/lawss0sIUrHSMSj2iCdnJH2ZaLd1J1Idhm02OfG/ZC7KesG7WvKkf/UebmTuYi+iXPPxYG2rnrw2fX3A9+5paHrAXU2BXEAGd9wkAdQQV980/7/A6spWOj/wf21TIQPnh5ETlvYgumwEHrDtvK+Je9E3rzySUC7M5Oz9RWQ+P40rB5OnUv49BsLk1K3G1zFhw8HVms09NcThHg1v8jrQK4W/R/nurAkgHom13lrcyvlgNJzeWtI7yjtQVaJtOV9qgvTmb+0RJDLFa0bV/6iSBuu1uwkCucG5Rmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WQiT5xVdO1xOhFpbbCbp0ldMZffMEAlNq/1PkKK/ZR0=;
- b=XwhKlUAgxNizHjptpf2NCqSM4a6euIxYy8CO5kCi36KA8Wl4wEl+FWaniTdzyoWwGVOkDSuPBiCUunAMmCpXcQfubFXKqzIHcuOCHYFW7CmLWoK3e04cyNNOcZIq2eKfSm6L6PjPJxVFckBm6bmHQwdDXyiXHhHvz+6xxi2pErVb8KSTHT48VlUeg3WKAdfdHM1YUwCNbMtWE2aP/+NpVNkHz2IOksiI7dgAQXPpQ+6c4M1+1I9mfSDkYGM/SJ+zmNyatKDdricyDxWBy2hwkOY/nN0prWqD1nfNlxKSpY3w9ZMwLvCo/+DeCiXMxhrk7Cj7ILrjDX/rLUVHwg2mnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WQiT5xVdO1xOhFpbbCbp0ldMZffMEAlNq/1PkKK/ZR0=;
- b=Gi6vfg6ZYBrWoa09gYmyamnMLXGLfyMCsotcD2tUG4dgk6xiGiWEVqtu6rxgMcGrYIw1gesZPgZjQRmc22EXiorfllSJYwz3DCD1KGEh3SwhPTMQ9LLUl62BGs6vxrowOEe27CWc+Pjo08mjHbayYAwnas8ZcSAEdMvm3854BEgm8emjf33shq6mXGv02gfVTA+0UX3wYklS4iMxbzWURp+ivz6RfPNpm0wzNPuAdfNXuT6uzjWkLyZgTBCE2m7OlGhlpfraMRa90Q0YaUCEmf0Q7vCANbgwQ+s5viyDYxgZWfZFskCF77oxTcAoAmZJWIYJ8uvtnyAS3d5pe8Lr+A==
-Received: from MW4PR04CA0113.namprd04.prod.outlook.com (2603:10b6:303:83::28)
- by DM4PR12MB6135.namprd12.prod.outlook.com (2603:10b6:8:ac::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.14; Tue, 17 Nov 2026 06:42:21 +0000
-Received: from MWH0EPF000DD310.namprd05.prod.outlook.com
- (2603:10b6:303:83:cafe::97) by MW4PR04CA0113.outlook.office365.com
- (2603:10b6:303:83::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.13 via Frontend Transport; Tue,
- 17 Nov 2026 06:42:21 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.118.232) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- MWH0EPF000DD310.mail.protection.outlook.com (10.167.249.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Tue, 17 Nov 2026 06:42:21 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Mon, 16 Nov
- 2026 22:42:04 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.57; Mon, 16 Nov 2026 22:42:03 -0800
-Received: from build-akhilrajeev-noble-20260927.internal (10.127.8.11) by
- mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.57
- via Frontend Transport; Mon, 16 Nov 2026 22:41:59 -0800
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <james.hilliard1@gmail.com>
-CC: <Frank.Li@kernel.org>, <akhilrajeev@nvidia.com>, <digetx@gmail.com>,
-	<dmaengine@vger.kernel.org>, <jonathanh@nvidia.com>, <ldewangan@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<pkunapuli@nvidia.com>, <rgumasta@nvidia.com>, <stable@vger.kernel.org>,
-	<thierry.reding@kernel.org>, <treding@nvidia.com>, <vkoul@kernel.org>
-Subject: [PATCH v2] dmaengine: tegra: only advertise supported pause operations
-Date: Tue, 17 Nov 2026 06:41:42 +0000
-Message-ID: <20261117064143.4024726-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261109-submit-tegra186-dma-pause-caps-v1-v2-1-accf568bf0cc@gmail.com>
-References: <20261109-submit-tegra186-dma-pause-caps-v1-v2-1-accf568bf0cc@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D343E606A89D
+	for <linux-tegra@vger.kernel.org>; Tue, 17 Nov 2026 08:30:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D343E606A89D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: linux-tegra@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=pyWTIi2y6JoIJ6IOmHBgjnTL/Q73eud7KJwC8hfFNgY=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1794904239; v=1; x=1795509039;
+ b=AqABhpm3NiDW2u51rSlCew3nKj/O5rKF9XyNeS2Wd+I3pWwpWLJJx9V75Bs3D697t8fZDjpr
+ DN5VoTfPu1d8qxDkgOwiKg0rDUkXd2Bwedu96VqZ0VXyo+CeeekOuk8G0w75Ebi/P41KTrtSZSf
+ s200mf5lcIomdgDsM3MGzbhE=
+X-Envelope-To: linux-tegra@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 072b8882c51a40c5;
+	Tue, 17 Nov 2026 08:30:29 +0000
+X-Mizu-Trace-ID: 072b8882c51a40c5
+X-Migadu-Flow: FLOW_OUT
+Date: Tue, 17 Nov 2026 16:30:15 +0800
+From: Peng Fan <peng.fan@linux.dev>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Frank Li <Frank.Li@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	"Joerg Roedel (AMD)" <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@kernel.org>,
+	Larisa IIeana Grigore <larisa.grigore@nxp.com>, imx@lists.linux.dev,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v6 0/9] dmaengine: add DMA channel bus and fsl-edma
+ per-channel IOMMU support
+Message-ID: <avwQl18smAW4R6ec@fedora>
+References: <20261112-edma-iommu-v3-v6-0-b038edb8ce6f@nxp.com>
+ <20261116193021.GB2452510@ziepe.ca>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -116,121 +78,59 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000DD310:EE_|DM4PR12MB6135:EE_
-X-MS-Office365-Filtering-Correlation-Id: af4f07c9-06a1-48e9-42e8-08df4475eebb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|376014|82310400026|36860700016|10067099003|11063799006|56012099006|261026121527099003|261026140227099003|261028144727099003|261022075727099003|261021123027099003|261021121427099003|261022105027099003|261102123227099003|261009223027099003|18002099003|22082099003|6133799003|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	UxR59Z3IR2fxAf4Nn/Sc6afXiJSkXn9ULbFClIhpHm1rzmKySVkhMaEZ9Zo7J3+B17oux3Leua9CYPBrbxdm2eAM2cvGK2vGKdirjUux75QJ2ey1CXLvdGD0bT7CHPdTYE31JvMPetwxPjjYjoaZUGRw1YbzIoC3reTVjMl5uiKY2i9sk8y6u0Ke4XZU01De52yLhGsKC1ra6F7Ob5KYhZNtJgbQ1Y5bOzyRhnETpOaaGfgf26B1IpUvY5d79A8bLGrWXby3Zc+mDItjCgQIWxco5BqstJ01JPNiz8MnwqDUPsO1ntOzUbqUlH0Ei26gGPAr7klS0OoNjDrSH91DdJYtoafLHW2ChDaB+Bb6jKts05tGKuRaPCgjQTdlfjGFtB6L9pduqn/mTJ6TptELbfo9wWldDPMnvEQ0iXlCrbpgjmj+AjcPB7WjpC/qrpDNDPPqw0wod4fihrFNT/IDgfEHWPEHtW3pdocjau33sDq2b5Z1wb3H7N90EUcMVHTOsZaHjeo/hiFyyHLdgovVgLpii9CV5aHrk4Pfds6oCNUEWaA/iG5XIWVZDpwsrKu+5H6733i0mAXaozvjtQ2mvISxd2QYI+0LKExvmwTQBBCyUgZ9ymFKMRObnYD6c7nPQdPN5LA+XF3CvbQ5wY28e44VxY4PohTvZmkytOd6WZFyTq5GXCcSwsiuhdqcK+hPYRvxwjQ9KX0KhzRzTD8+cQ==
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(82310400026)(36860700016)(10067099003)(11063799006)(56012099006)(261026121527099003)(261026140227099003)(261028144727099003)(261022075727099003)(261021123027099003)(261021121427099003)(261022105027099003)(261102123227099003)(261009223027099003)(18002099003)(22082099003)(6133799003)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	ZxOWg16sbrEpFWwwC+1/Ubj6wMpw0Of3g7ynQekIaSpUuc6bf+kb0UAy7lg2wUP0PbTawL7CLfWY64ZFGaH/gVe0gwXoN1daz+/wkk1gNZ6blM0ncJzsljbfPKKSfbUhiDTt7BwGAQle+Pe2ljCk3Pmv/TFSYPdfQx9y/PJxpLbRGFb1zmuB1qSb2x2lxY9rGWijxLFHf7Ptj5/W5Vm0hQRxvsL0kysQ4i/i4zjzdudGFmZxPCF++md6heueqmxOWO9JDdJtc0ZX7GLRRjrjRs6FBwgQiRm4OV2Lr8DVu1yoLSTN0sk4cytHVHz0wZmSXFS4qIqpG4XCY4sVRrBH+k4g4qx0MKVO/ypFtCh+7ZvrJhcdkoP2GAUrympauaiKwGMAuw7mTuWRiWp4t8+1y0ab1qk30ErpmRjbyO/Zr+GZKgIoYf95et8fH7Ge1Lk5
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2026 06:42:21.6487
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: af4f07c9-06a1-48e9-42e8-08df4475eebb
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000DD310.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6135
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261116193021.GB2452510@ziepe.ca>
 
-On Mon, 09 Nov 2026 20:02:14 -0700, James Hilliard wrote:
+On Mon, Nov 16, 2026 at 03:30:21PM -0400, Jason Gunthorpe wrote:
+>On Thu, Nov 12, 2026 at 03:53:03PM +0800, Peng Fan (OSS) wrote:
+>> I used iommu-map for eDMA, but iommu experts rejected it:
+>> "Using iommu-map to describe synthetic dma_chan_dev devices that the
+>> kernel creates is the same kind of DT abuse from over here:"
+>> More info: https://lore.kernel.org/all/20260917144804.GI3196566@ziepe.ca/
+>> 
+>> So I followed here [2] as Krzysztof wrote for QCOM VPU:
+>> "Thanks Jason for context and detailed arguments. Robin did not chime in
+>> yet, but from what I understood the DT-child-node approach will be the
+>> way we should go here.
+>> 
+>> I accept above point of view and I am fine with this, thus Vishnu and
+>> Vikash - please go ahead with DT-child-node solution we had some time ago."
+>> [2] https://lore.kernel.org/linux-iommu/c7b956a9-d3e8-4e18-b780-5d08f5cd2ca1@kernel.org/
+>> 
+>> This series adds per-channel DT child node support to fsl-edma and, as a
+>> prerequisite, introduces a proper bus for DMA channel devices.
+>
+>To be fair this is discouraged too, now that I've seen 3-4 people
+>trying to do exactly the same thing I'm not as positive about the
+>DT-child-node hack.
 
-> Tegra186 does not support pausing a channel, but the driver installs
-> device_pause and device_resume for every variant. Both callbacks return
-> -ENOSYS on Tegra186.
-> 
-> dma_get_slave_caps() derives cmd_pause and cmd_resume from the presence
-> of these callbacks. Clients such as generic 8250 therefore accept RX DMA
-> channels that cannot satisfy their pause requirement. A receive timeout
-> then reaches an unsupported pause operation instead of being excluded
-> when the channel capabilities are checked.
-> 
-> Only install the pause and resume callbacks when the matched chip data
-> advertises hardware support. Keep them available on Tegra194 and later,
-> and remove their now-redundant checks for unsupported hardware.
-> 
-> Fixes: ee17028009d4 ("dmaengine: tegra: Add tegra gpcdma driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+I may not describe it clear in cover-letter.
 
-Reviewed-by: Akhil R <akhilrajeev@nvidia.com>
+I understand the concern. Let me explain why I believe it is justified here
+rather than a hack.
 
-> ---
-> Changes in v2:
-> - Remove the capability checks from the pause and resume callbacks now that
->   they are registered only on hardware that supports them.
-> - Link to v1: https://patch.msgid.link/20261108-submit-tegra186-dma-pause-caps-v1-v1-1-9cc9b17a033d@gmail.com
-> 
-> To: Laxman Dewangan <ldewangan@nvidia.com>
-> To: Jon Hunter <jonathanh@nvidia.com>
-> To: Vinod Koul <vkoul@kernel.org>
-> To: Frank Li <Frank.Li@kernel.org>
-> To: Thierry Reding <thierry.reding@kernel.org>
-> To: Akhil R <akhilrajeev@nvidia.com>
-> To: Pavan Kunapuli <pkunapuli@nvidia.com>
-> To: Dmitry Osipenko <digetx@gmail.com>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Cc: dmaengine@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/dma/tegra186-gpc-dma.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
-> index e76c58f213d8..bd606b71e714 100644
-> --- a/drivers/dma/tegra186-gpc-dma.c
-> +++ b/drivers/dma/tegra186-gpc-dma.c
-> @@ -419,9 +419,6 @@ static int tegra_dma_device_pause(struct dma_chan *dc)
->         unsigned long flags;
->         int ret;
-> 
-> -       if (!tdc->tdma->chip_data->hw_support_pause)
-> -               return -ENOSYS;
-> -
->         spin_lock_irqsave(&tdc->vc.lock, flags);
->         ret = tegra_dma_pause(tdc);
->         spin_unlock_irqrestore(&tdc->vc.lock, flags);
-> @@ -445,9 +442,6 @@ static int tegra_dma_device_resume(struct dma_chan *dc)
->         struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
->         unsigned long flags;
-> 
-> -       if (!tdc->tdma->chip_data->hw_support_pause)
-> -               return -ENOSYS;
-> -
->         spin_lock_irqsave(&tdc->vc.lock, flags);
->         tegra_dma_resume(tdc);
->         spin_unlock_irqrestore(&tdc->vc.lock, flags);
-> @@ -1518,8 +1512,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
->         tdma->dma_dev.device_terminate_all = tegra_dma_terminate_all;
->         tdma->dma_dev.device_tx_status = tegra_dma_tx_status;
->         tdma->dma_dev.device_issue_pending = tegra_dma_issue_pending;
-> -       tdma->dma_dev.device_pause = tegra_dma_device_pause;
-> -       tdma->dma_dev.device_resume = tegra_dma_device_resume;
-> +       if (cdata->hw_support_pause) {
-> +               tdma->dma_dev.device_pause = tegra_dma_device_pause;
-> +               tdma->dma_dev.device_resume = tegra_dma_device_resume;
-> +       }
->         tdma->dma_dev.device_synchronize = tegra_dma_chan_synchronize;
->         tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
-> 
-> 
-> ---
-> base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+On i.MX eDMA each channel has its own interrupt, its own register region,
+and on i.MX8QM even its own power domain. Each channel may also have its
+own Stream ID, or share one when SIDs are scarce. These are genuine
+per-channel hardware resources, not software fiction.
 
-Best Regards,
-Akhil
+In dmaengine each channel is already modeled as a channel device (see
+dmaengine_chan_dev()), and this series puts those devices on a real bus
+(dmaengine_chan_bus_type) as a prerequisite. The DT child node simply
+describes that existing device, so its reg/interrupts/power-domains/iommus
+are attached per channel instead of as index-matched flat lists on the
+controller.
 
+Given that context, do you agree that a child node per channel is the
+right description here?
+
+Thanks,
+Peng
+
+>
+>Can all of you come up with a proposal that doesn't involve hacking up
+>DT just to unbundle the SIDs?
+>
+>Jason
+>
