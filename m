@@ -1,58 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794918130;
-	b=AxQxxwoHuaP9TExjJDsqlX05crRYlwZ9pj0lo8yhBluZ66H1dzBO8GyA0oNPLX5zRleo
-	 AHpcfqqcMK7w1tuvHk4ZsjqiVsYJZTun4/43XM/rZNzt8VHK//GIMEShU54ehhDn9yNn3
-	 4ztFmmwpog8fv7rjZcazCemkzouYJhecnWeXhBxMxDRn2Y1xVgX1xJ31CG+5i/LkUd4Cs
-	 mHj3uWAgTtl1OEKwhgLtPRai8R03FrFuMa5fMU3Z4k5CGDaANjEmYXsq2TsM8qv5QcKF3
-	 A9G6AdNFS+MXo8aoAGwf+mC+VDywqJQhHaSepeQSxnIRJHoux4Nbou6c67XTUHdupBg==
+	t=1794919235;
+	b=mKCsO47mTk8nEEXvVNZuDK6hINxLu52NDc6mcypX2K4zhq2YNoHEV6FDHlldNaAXGsHu
+	 cILEfYqDZsF6fL7wi7zZwj+TT0DAX6QN527FO1kHL7INttZmd96D6N5gne0ILt8xDqhVs
+	 nlM1JRIb3C30OVeFjSUjOUvMDpI9IHzrDrLy3HiUOxLQ56/mtvzMIclDiDXan1/gsoHVF
+	 WqHrFBkE0sMR592xvqSXcB/hiI9cTlsqc0JCGdtgKKkLtJ2WdjAdOkF7waKUKev6miXTS
+	 sJSsDvSeuWSkcN4XarvTOP1Hc3XKkFFh/oENQi7YMDAiDhTvCLcDFQ4XQbELt5YNamA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794918130;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794919235;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=5dU036u9J5ChMGaHb9RB5xZYrWadr4KxpK+WZRfB+g0=;
-	b=qlihzGD3yCpRHUT1VVle+eSiAdOmFk35ZLrrA6QwYoas20M4zMzRE3eTMAvdal+nejOA
-	 kxKxig0Ov+jqL1eUoT9jK5lnfJwGIu+8R+M0HKMUOvHLGqLEZJUQ483AzoQMiKOJZW2Kc
-	 dduwll5UMNYb1dj5iQKmO2UmrvjwJMDQUO2Zn/e7JfxqL9ped1q+jEeqV1kOsitbEaCZQ
-	 FtOBkN+SFwz/pcpQGqIU/2ey/etqBXKE/cRj+hYsKsTPXpKkOciPHBpG8kyl+VOgFT2BX
-	 iDw0qw9WyVwkfjJZ8fNTQYCBgAH5r1VC3l1InGUJB6R0CX+2WQBNM6zEEW2mkB0RgGg==
+	bh=PpZGP+PvnlnE+Ru0bvBoaiq99U2o1zAEk1IJID0atSs=;
+	b=S/gD0cJKAo+ObYbexEgNng3Naj0QenvVye4Lgkbxe3YPQPYbYuYaD1BxQKURnKWrHssg
+	 7WRYHONvrz3Xv7YsKyiZsvVzWAK2sDaAN2NLwmx+QT5RCZ83xt3LWAZqOVwY/0pPj7hcx
+	 CtFtO3qCBuYuoLYA4TwVTrgNV4gRnAr/ceQbhbU9HRaPWIrn7ZPKmdP4sCTrxeXqUumG8
+	 QbCMpBLFqdzvTrEN7rQseyawgle0D91+fkgZWR1Qj+pwzwuQnHZkbkkWBvNWTwflQScNW
+	 zdwR1CJ41NN5lmGEhRWpAUElzkmsZlSGSDHBtpzDvejqoA6CyCCr4/p1No4+gcE4xyQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KA5k7YDl;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kiNDRQHs;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C458606A31C;
-	Tue, 17 Nov 2026 12:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C69606A323;
+	Tue, 17 Nov 2026 12:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KA5k7YDl
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B481F000C4;
-	Tue, 17 Nov 2026 12:22:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kiNDRQHs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53CFA1F0034C;
+	Tue, 17 Nov 2026 12:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794918129;
-	bh=5dU036u9J5ChMGaHb9RB5xZYrWadr4KxpK+WZRfB+g0=;
+	s=k20260515; t=1794919234;
+	bh=PpZGP+PvnlnE+Ru0bvBoaiq99U2o1zAEk1IJID0atSs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KA5k7YDlTN/loOdKyoP6k13vortRVZqxhoL77dZ0kTcbDM6c/vf7/1k/9T+4ujhsB
-	 eHAzAi5+MuMoTOW5hRDDiK6CY1hsFBbKAzNHST8S82FL0JgViNwhRVhr+ki1Croy/7
-	 /rpEp9MxxIFpIMCfIwECjTlcHW/OddJlVsbzf7XNcXqghhZOoF50ZIhkoyqfRHdTdi
-	 KjD5eaWL+y4Xm9+MptsewRdKXsMKyibOUPhSxSePhHPZ2zF3Q/d0mCCYZs3L5Ehfzj
-	 uDD+2A0lp2NiGqYUeb4F6iIABSW6gdi3xjXH6wT1bNkZZlTjorI5AFQ71qVC2AW/bn
-	 BrPogZjwFSd1g==
-Date: Tue, 17 Nov 2026 12:22:05 +0000
-From: Lee Jones <lee@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Aaron Kling <webgeek1234@gmail.com>, linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 02/10] pinctrl: tegra186: Fix out-of-bounds register bank
- index for AON drive groups
-Message-ID: <20261117122205.GB84168@joneslee-macbookpro.roam.internal>
-References: <20261103213002.1673560-1-lee@kernel.org>
- <20261103213002.1673560-3-lee@kernel.org>
- <avw8tOcBNMPwS_z5@orome>
+	b=kiNDRQHs2N82WZA4WJqrgAs5Syi1bAJxsxR++ZWl/fOOMauVcvy5bIGSPAbkLg//t
+	 47htGszwuCHckq72O+Jau+C6bWRi2r92L0uzQbQ4oQECauSFY6bwgDuog70J5pkeIt
+	 YR5HLTH6ZXIUBRIWuk8h65TUW/eC59jE+oxpowOgayoNcjYSB2eQnBuAEpuxaWVucH
+	 +mQFrucdbvencXYvD+EOkLDpeuCHwP7N+Nb0oGfkwx/CiG45vttsBxC6uvE1dO8Rf6
+	 EEvZXmpv5mXffCkCr7ejVMXcM9xiK7O2EWs8KX8NFlTKr20z4tuITlSs8HKxIjBMUG
+	 mEMxngTerw/cA==
+Date: Tue, 17 Nov 2026 13:40:32 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jordan Viknar <jordanviknar@gmail.com>, 
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: usb: Move Tegra-specific Chipidea
+ USB properties into a dedicated schema
+Message-ID: <avxHzF-uiOAhwXIW@orome>
+References: <20261004165204.205660-1-clamor95@gmail.com>
+ <20261004165204.205660-2-clamor95@gmail.com>
+ <20261026222928.GA15139-robh@kernel.org>
+ <CAPVz0n2rkWikz1CZhkKiZnX5P+NdDH0RfJi69AyVTEV7qw_VXg@mail.gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -62,37 +64,70 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="46d2lau2pfpmds64"
 Content-Disposition: inline
-In-Reply-To: <avw8tOcBNMPwS_z5@orome>
+In-Reply-To: <CAPVz0n2rkWikz1CZhkKiZnX5P+NdDH0RfJi69AyVTEV7qw_VXg@mail.gmail.com>
 
-On Tue, 17 Nov 2026, Thierry Reding wrote:
 
-> On Tue, Nov 03, 2026 at 09:29:07PM +0000, Lee Jones wrote:
-> > The Tegra186 AON pinmux controller has only a single register bank
-> > (nbanks = 1, indexed at 0), and all PINGROUP entries in tegra186_aon_groups
-> > accordingly specify bank 0.  However, all 51 AON drive_* macro definitions
-> > pass drv_bank = 1 as the final argument to DRV_PINGROUP_ENTRY_Y, causing
-> > any drive configuration read or write on an AON drive group to index
-> > pmx->regs[1] out-of-bounds.
-> > 
-> > Update the AON drive_* macro definitions to use register bank 0.
-> > 
-> > Fixes: 542baf77f092 ("pinctrl: tegra: Add Tegra186 pinmux driver")
-> > Closes: https://sashiko.dev/#/bug/linux-a9a7165c-c5eb-463a-b7b1-24a30416b33b
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Lee Jones <lee@kernel.org>
-> > ---
-> >  drivers/pinctrl/tegra/pinctrl-tegra186.c | 102 +++++++++++------------
-> >  1 file changed, 51 insertions(+), 51 deletions(-)
-> 
-> Yeah, looks correct. It looks like this wasn't tested at all since the
-> time this was merged. I'll add this to the list of things that need to
-> have a test added.
-> 
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
+--46d2lau2pfpmds64
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 1/2] dt-bindings: usb: Move Tegra-specific Chipidea
+ USB properties into a dedicated schema
+MIME-Version: 1.0
 
-Super.  Thanks bud.
+On Tue, Oct 27, 2026 at 10:51:52AM +0200, Svyatoslav Ryhel wrote:
+> =D0=B2=D1=82, 27 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 00=
+:29 Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Sun, Oct 04, 2026 at 07:52:03PM +0300, Svyatoslav Ryhel wrote:
+> > > Move all Tegra-specific Chipidea devices and their properties into a
+> > > dedicated schema file, by analogy with i.MX.
+> >
+> > I don't really see the point given it is only 2 deprecated properties.
+> > Maybe those can be removed? Depends if they are deprecated and still
+> > used or deprecated and removed from .dts files years ago.
+> >
+>=20
+> The ci-hdrc-usb2.yaml schema contains properties that are not
+> applicable to Tegra, and conversely, Tegra-specific properties are not
+> applicable to qcom, nxp, nuvoton, etc.
+>=20
+> The 'nvidia,needs-double-reset' property is required for Tegra20 and
+> Tegra30, and it is still actively in use, as you can see here [1]. Its
+> marked deprecated state appears to be incorrect, as it should simply
+> be restricted to Tegra20 and Tegra30.
 
--- 
-Lee Jones
+For what it's worth, I looked into this a little bit to find out why
+this is only needed on USB1, whereas USB2 and USB3 don't seem to be
+affected. Turns out that USB1 is a different controller than USB2 and
+USB3 and it has this errata. In retrospect it would've been more correct
+to assign a different compatible string for it and derive the quirks
+=66rom that, but given the ABI stability it's probably not worth
+correcting it at this point.
+
+Thierry
+
+--46d2lau2pfpmds64
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmr8Sz0ACgkQ3SOs138+
+s6H2JxAAqetcrbKWLmI72r57SUOoEE1aRxGYZ3oG0t7oJ3lG2vYEuRqDddePjWG2
+VWJ441BBY4at5Ib0utYLB5zK+3yVJecPCxv1FwxBf8hyGMzlAgeWQkUXze0OkcSF
+c6Z+wVO3arETFnincediCilM8XsvNcMM/T/vDO7dFb6qigOG5qnsOAFQeNLRBA1p
+aygcSyTnR5CEzwly48u97Xlqjizur1QSYUxyNzPCenote01yFb9/yhw8QKK7IRIu
+jLVF+lKN9HqkAOLTzLiZ6SgC14cUwgG3abyVAmbbXu6KaMRNagEy29UYcFr47vhI
+ffIN5ZcM5SHmM2jIT0CZU6JF5GopNoByUYVWwYZvBM9Mq3qbYcDPmCwOSmSuVhed
+NyEdaGIGBIjw6LKzHZhfc/kjwNCJNkHWFEBHrtsf2A5aKbeogDVHGThSZx8/1/Yy
+1Dz6LF18AyzdyZdwyw2tDgEBGhHBEdcO9X+lhTmybZeqtzqZ8T+BnYui8UdvaUVN
+UaYdFyDn72Scni7Ybtv/2wIqeLmYTu1Nez6ypznJf/8h6VX+CDvEtvRhpqGPMx42
+CSjmuWJ+0/aJ5LRT2k1ndGbjWiLodnfFHBUdgGhFclyb1xqrMec70IXBOZy/Y0xZ
+DyL4KhBQrL0AK+hHLEpasWdWNU+boFRwyTOvC4zRG9a9s/Cyz18=
+=TFe/
+-----END PGP SIGNATURE-----
+
+--46d2lau2pfpmds64--
