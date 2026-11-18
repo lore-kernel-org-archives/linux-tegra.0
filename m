@@ -1,50 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.13
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794976273;
-	b=aYZdXWManfUk2Y65IGjH8XXgLwxWcDMXcHCMLDdQAbp+Tdayx6jpqxHpQIf3YBhR8YR8
-	 rZOG/e+5MesMfnrZ6hoxPg59KvXI+k8W7RCPUB0CH4u5xVKQBuzsZpY2Qt1l2Xb7oggl3
-	 ChGjMBLs77Ood6a69XphIw2h0+1YIUDq4TkJKAbrKh3bwP+LMf021qqoksetdpDhe4iJR
-	 cVkY5ZLXfE1lQ2bpCsP7aegOowFVwfBwBrK0z+O109Mv9IPv6QC913Scd0iD2KCALLGSo
-	 /foySmt4c3htFEwG/er7xwRXUx/BePrXP6duuXrQF/opzL0pYjOnof2odfISqTQ1fgA==
+	t=1794984757;
+	b=rhM+C+G3FdEK8LFoTnRoALOguXi1GZMgMXdFUbIU6lBxmyCJxjd2L7J22/zJCDjoFZ61
+	 mD2RQ+EAchNWUIJaUMoFslN4Nyk6DZqUKpVfo8HITUl4KnKWIWz+id1p3z/DROaZbjr0j
+	 kZadgUJysvB6gEeh0Kg1YSFgdh79M3JyG0k5K0z0EFFqyQ3lqCMZI0g+4Mkpv+pj6LsZJ
+	 7wGbGbQJhXznDY3Ui5MevJ9mLG9Z/I4et2KOZ2K6Bfxcy1MLIyBfvFvBUnB8DcC2LeSM4
+	 4yPOc9oDHrAB4z6DcdVy81PK9ouWdHGpkwHbIANQ3KUM88MF0EFedWZR7Sx0v6zxBWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794976273;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding:X-CM-TRANSID:
-	 X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
-	bh=aJYpWdcwgjtrJCmjq6LAdZfDq9Q8xYW3XVZLxaRVNPA=;
-	b=eefkXWrIkYjuaSQTFrkCyEP1i86d8nKLpDHXvk1SIKoFDL5m68IRJ4HCUgUxJrknaZIh
-	 qZ2IZfe7V8RCemFNXcm0BvxdBnJETPHH830L7135ISDbg24rw1zBy+2EXXHcuskgdavEN
-	 IoNxJElqzGRy4XkO255zXZYcQXpC9tKf/nVurOq0BwvaRikTkFRK49R/sljSYkusHxQUz
-	 SViuW2ERxa3mbCBUGXpAebt9eaMuTFWLj6ueIok038tKDaM/WgJCSyKeL0YcsnFrvdFnH
-	 3lVKHowOdhFUaTp7YbSQnpvkjGbJhDS82SB0q/SxPhK3niwZw53b2pl+euS/yiMVPaQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794984757;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=FKkYWihfdRNCMKKO6J64hBPhG+NVMAKKX6FQ+i+pK6Q=;
+	b=MtpgiH0bND+fdJTL6xVq5KtSukTO9t6P/akMu+GcRK23l4kghHD+5R2dnDz5nxF3E+jJ
+	 SlMmyfP64a55kr9EHslPYXtgRb3pwc1/wctohbj5a4CaU1KZBeo+n4PapGYoG2nrI3BlQ
+	 xAWb6ViJSkn/UCHHCJiJhcBF3PFllyfEroPnWlc+NGsMCh1BlnZnoID+7PacawVdbP5yH
+	 LfaDz7pLQtjCrkolz4+0gUXUaQaQRRvV6BUKABkJxUGwHZB1p4b5/MiiCxKiTHQFtvWry
+	 n9XVNOgBoQ/ABJKzpo/SMHAancQNY/8ZST1tD+eCjD9ivFn71dWVO0PKgvcCUTR5sEg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=iscas.ac.cn;
-	spf=pass smtp.mailfrom=iscas.ac.cn;
-	arc=none smtp.remote-ip=159.226.251.81
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ND+sDlQ1;
+	arc=none smtp.remote-ip=192.198.163.13
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCE7606A31C;
-	Wed, 18 Nov 2026 04:31:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ACCE7606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [36.110.52.2])
-	by APP-03 (Coremail) with SMTP id rQCowAAXJpcMKv1qe_tFAQ--.33934S2;
-	Wed, 18 Nov 2026 12:31:08 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A76606A325;
+	Wed, 18 Nov 2026 06:52:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 16A76606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ND+sDlQ1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794984757; x=1826520757;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DrEUIZ3qyU/ux7WrUPR07gul8fRUSWl1kJJN3nWoEdY=;
+  b=ND+sDlQ1SgVvOGT1uui8wzCpLkaEnnH1xv1++l+pEDes1pC9gkWEd1NH
+   kjWa1QEc5uSCegSWV04Tch0hMS4f6zI4GqUVhfBZie20JyMfn781i45WB
+   7I5yKhAFWp29h3GgiHK21aspdHZ262c3Nt0Cx5pLJmTjwnWAK43lm82wk
+   w41fRP5/Fx4ax/GvBacWhKbe1ZrMyjqD9GiXWZDZHwHIuIDBw83XHWQwY
+   CO4RVgDUp6aF5lENeMG0DKDu/gzkzMQbalNchXahciHetgw5UiD2zxcv2
+   Vqhy9Jf/SpGTBdZJXBMRxZe8odGBBLOXBZUbGZqxuE0dDIYFgh6F4rvyU
+   g==;
+X-CSE-ConnectionGUID: kFckTLHpTRm4hmKu5Wjaxw==
+X-CSE-MsgGUID: 6ZTND1IlQ+i7BIGwUjMBuA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11969"; a="3772242"
+X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
+   d="scan'208";a="3772242"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2026 22:52:36 -0800
+X-CSE-ConnectionGUID: T9CVNhvrRNOyjSE6/SDleg==
+X-CSE-MsgGUID: tRAtyKlLR/y4UDhkKRsFDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
+   d="scan'208";a="9988327"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.47.46])
+  by orviesa007.jf.intel.com with ESMTP; 17 Nov 2026 22:52:28 -0800
+Date: Wed, 18 Nov 2026 14:43:32 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Cc: linux-coco@lists.linux.dev, Alex Williamson <alex@shazbot.org>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jacob Pan <jacob.pan@linux.microsoft.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Cameron <jic23@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-sound@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ASoC: tegra: AHUB: Remove unneeded semicolon
-Date: Wed, 18 Nov 2026 12:30:43 +0800
-Message-Id: <20261118043043.616702-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	Kevin Tian <kevin.tian@intel.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Lukas Wunner <lukas@wunner.de>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Steven Price <steven.price@arm.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Vasant Hegde <vasant.hegde@amd.com>, Will Deacon <will@kernel.org>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>, iommu@lists.linux.dev,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v9 02/13] virt: coco: tsm: Remove the device from lookup
+ before PCI teardown
+Message-ID: <av1JFH8W63T37bK6@yilunxu-OptiPlex-7050>
+References: <20261116081935.85372-1-aneesh.kumar@kernel.org>
+ <20261116081935.85372-3-aneesh.kumar@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -54,47 +103,114 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAXJpcMKv1qe_tFAQ--.33934S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXFy7tFyUuF18Grg_yoWxCrg_Cw
-	40gw4xX345CFZIkF98Jr4Iyw1UZ3y3GF4fKryjvFsrW34UuF4rZryDWr17urWUZw4vyFy8
-	Xa4jqry5Ar4agjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUHpBfUUU
-	UU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261116081935.85372-3-aneesh.kumar@kernel.org>
 
-Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
-semantic patch at scripts/coccinelle/misc/semicolon.cocci.
+On Mon, Nov 16, 2026 at 01:49:24PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> PCI connect looks up a TSM by ID under pci_tsm_rwsem. Previously,
+> pci_tsm_unregister() released that lock after tearing down PCI state
+> while the TSM was still in the class lookup. A racing connect could then
+> attach a new PCI context that the teardown would never see.
+> 
+> Remove the device from the class lookup first, then take the PCI write
+> lock to drain in-flight operations and destroy their contexts. Drop the
+> device reference only after PCI teardown completes.
+> 
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Cc: Alexey Kardashevskiy <aik@amd.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: linux-coco@lists.linux.dev
+> Fixes: 3225f52cde56 ("PCI/TSM: Establish Secure Sessions and Link Encryption")
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+>  drivers/virt/coco/tsm-core.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/virt/coco/tsm-core.c b/drivers/virt/coco/tsm-core.c
+> index 03894c5663f1..57db3f14cf46 100644
+> --- a/drivers/virt/coco/tsm-core.c
+> +++ b/drivers/virt/coco/tsm-core.c
+> @@ -56,23 +56,22 @@ static struct tsm_dev *alloc_tsm_dev(struct device *parent)
+>  	return no_free_ptr(tsm_dev);
+>  }
+>  
+> -static struct tsm_dev *tsm_register_pci_or_reset(struct tsm_dev *tsm_dev,
+> -						 struct pci_tsm_ops *pci_ops)
+> +static int __tsm_register(struct tsm_dev *tsm_dev, struct pci_tsm_ops *pci_ops)
+>  {
+>  	int rc;
+>  
+>  	tsm_dev->pci_ops = pci_ops;
+>  	rc = pci_tsm_register(tsm_dev);
+>  	if (rc) {
+> +		tsm_dev->pci_ops = NULL;
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- sound/soc/tegra/tegra210_ahub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Previous comment shows this can't solve any racing connect problem.
+And with your next patch, the racing connect is solved. So I think
+remove it.
 
-diff --git a/sound/soc/tegra/tegra210_ahub.c b/sound/soc/tegra/tegra210_ahub.c
-index 7abfa07f227a..3deaa599f53a 100644
---- a/sound/soc/tegra/tegra210_ahub.c
-+++ b/sound/soc/tegra/tegra210_ahub.c
-@@ -2448,7 +2448,7 @@ static bool tegra268_ahub_wr_reg(struct device *dev, unsigned int reg)
- 			return true;
- 		default:
- 			break;
--		};
-+		}
- 	}
- 
- 	return false;
--- 
-2.25.1
+>  		dev_err(tsm_dev->dev.parent,
+>  			"PCI/TSM registration failure: %d\n", rc);
+> -		device_unregister(&tsm_dev->dev);
+> -		return ERR_PTR(rc);
+> +		return rc;
+>  	}
+>  
+>  	/* Notify TSM userspace that PCI/TSM operations are now possible */
+>  	kobject_uevent(&tsm_dev->dev.kobj, KOBJ_CHANGE);
+> -	return tsm_dev;
+> +	return 0;
 
+I really don't think we need this wrapper. In next patch we move uevent
+out, so this wrapper is just:
+
+	tsm_dev->pci_ops = pci_ops;
+	pci_tsm_register();
+
+Open code it, as Alexey and I suggest before. All kinds of xxx_tsm_register()
+are really confusing.
+
+>  }
+>  
+>  struct tsm_dev *tsm_register(struct device *parent, struct pci_tsm_ops *pci_ops)
+> @@ -96,15 +95,22 @@ struct tsm_dev *tsm_register(struct device *parent, struct pci_tsm_ops *pci_ops)
+>  	if (rc)
+>  		return ERR_PTR(rc);
+>  
+> -	return tsm_register_pci_or_reset(no_free_ptr(tsm_dev), pci_ops);
+> +	rc = __tsm_register(tsm_dev, pci_ops);
+> +	if (rc) {
+> +		device_del(dev);
+> +		return ERR_PTR(rc);
+> +	}
+> +	return no_free_ptr(tsm_dev);
+
+I think none of the above changes belongs to this patch. They don't
+solve any problem mentioned in the changelog.
+
+They belong to the next patch.
+
+>  }
+>  EXPORT_SYMBOL_GPL(tsm_register);
+>  
+>  void tsm_unregister(struct tsm_dev *tsm_dev)
+>  {
+> +	/* Remove the class lookup first. */
+> +	device_del(&tsm_dev->dev);
+>  	if (tsm_dev->pci_ops)
+
+The patch 1 rejects NULL pci_ops, so is this check still needed? Can we
+remove this check in your Patch 1?
+
+>  		pci_tsm_unregister(tsm_dev);
+> -	device_unregister(&tsm_dev->dev);
+> +	put_device(&tsm_dev->dev);
+>  }
+>  EXPORT_SYMBOL_GPL(tsm_unregister);
+>  
+> -- 
+> 2.43.0
+> 
+> 
