@@ -1,55 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.7
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795011849;
-	b=TKEY6UXdfP3vc14JLZVuDBwick/DI2kbogK8YvS1Go30cKUTH8SmoNvpF1sdwnQ44D+J
-	 qbTKaoOrxdMQrRBt9uDylQYoQNEHRQjQXhu5J/p1g/ArakViwHJCI6R+80K/qDuxe4AZ+
-	 6QG18kRMR+MMGsmsCcoEZoUTAa1NzjWGghqIohlXNi6hEyybgYa2uFCczkgeHW3C4SIyi
-	 1caDwt6sGwQEIkUFDlshOd1gbotQXBZDZjTmwo7AzS7R917yPxxAgKTllgVQvbZe0Ibzi
-	 T2qMzL0h3HbDDmNxzjRz+T2xK2Ed9Jwyt1wSMe9X6UOnGuaP9cgvPzdaM5jJKXnMdOw==
+	t=1795020681;
+	b=IFRmScdadAgYEfr428N8CgaYMjqNItjjij+bZ04+Az4J2WCPg60lAEqPX1iJYYRjkoHX
+	 tl96Dhp5CuECaJVhrxIPfh1395j/TvOuqSAyPp3jnelCVUOklo39FuxP2ZKkKp9LYwB5l
+	 YH++c1vLiWME/j3CliA7IE7sVQXg2YXWs3aJaUr7Xmi3U3ndpPJsCMSoxtR7mZvi6vl3R
+	 QD4NalvCP4u7Ha5RX6JMqULDyAQuCWmPELvnP6aWLFaz4C4FgQqjE1Lnmd+HVxhWBduFX
+	 yYpUMXnfldFLGga30Oz5gWNfjVsUaUbwjFJBPfHFLbtsVrzGR6EqStt0HSFMEnytrnQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795011849;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-HM-Tid:
-	 X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=qcG22THrX1tBMFAvrDOfvEwAgm6z3zDwUorQZyGxp1E=;
-	b=IRRPGGBuy5GwHyV8dLH20TW81PHqiBDkHbm6HcJA0u4rzB0lhD7WPAfQ6t04uuIRsiBs
-	 LtNzPt4CAjn005TDtJnRgtZr0aEttNfdijfkzPAFPWYXnr/cEv+jdZ3CiR5a5u4LefHKM
-	 0r+EtYyufa3Is1etGDGHogYSwYxWBDuajB6q0VCJ0zvRkbo+1m/tw+bsPtb5mRSPAuJNC
-	 /GzKGyLHouAPedKk3VFERSWdm+LnLB04xYZha/uRGP2sbu6uu5toT+PdzkpzEdUZrduVs
-	 C49tJjOCdaS16ZPFzCU5QohUs7z1v8FvkyLIHM/8LGMrvMPZkCmzy47zg0tu0Z4bg5g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795020681;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
+	 In-Reply-To:Organization:References:Date:Message-ID:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=/cUldU1e2XAI/ZxV0Ch4uDE5FUyxfirjC3SAjGA4JrA=;
+	b=CyUbE72caLUy1bK+i/tGIMqgbB4C9eQZC8V54OesqUNiJaecwMt1Llqbg03BeRgApxUJ
+	 j5KX6AAcw7EfGzVrQiRh43jAxqDnvIxAPFKTf4MgXhJ+cEWO41Nt6HbWkH80tStujoAd3
+	 TrSOIDEtexhCU7KMsQRAwHG7Uh+7/HfAGcbH+1+nayv34pWKfCPwTtpGnhHu46YYq0omm
+	 3CvDtkPvBsklccnHYYtxrDdAkAHm1EjsgLbc2SnbZImyJfPjWHAgTbZpTbLN3mLVgUK/M
+	 Ga2IYVm7nwKutvhryEd6PElEv40UePKPI+yPxGhNq0VQxj2h3VXxrQb23G35EDj2RfQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mail.sdu.edu.cn;
-	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
-	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=P3jKiZeA;
-	arc=none smtp.remote-ip=45.254.49.198
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=mP4DwPyz;
+	arc=none smtp.remote-ip=192.198.163.7
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832FF606A32F;
-	Wed, 18 Nov 2026 14:24:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 832FF606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CC8606A31C;
+	Wed, 18 Nov 2026 16:51:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67CC8606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=P3jKiZeA
-Received: from lgs.. (unknown [101.76.249.61])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5526d79a1;
-	Wed, 18 Nov 2026 22:24:02 +0800 (GMT+08:00)
-From: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
-To: Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-i2c@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] i2c: tegra: Fix potential use-after-free on DMA provider unbind
-Date: Wed, 18 Nov 2026 22:24:01 +0800
-Message-ID: <20261118-324f82bd41-i2c-tegra-0@mail.sdu.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=mP4DwPyz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795020681; x=1826556681;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=ajDnh0zw+64dcFPrEUfvS5sWfWZYQWJZbcQwO+AcVNs=;
+  b=mP4DwPyzA12OflFAs7cqsLyFUlGk851Vd/gqVwVcN25x8BrQL+i7AmOL
+   8mYJpmast9tqACSNx8lBA4jZ4/q1QzUvavsA4vMpmrO4kXPI5tmgD7UvX
+   RIKZkYtrXgFcDgMSDp8+RxF/Qsk0Pdt1zP/11+VRi9zgvwFg2kn0/zAaJ
+   juFRnpN5gAXJQ16xhWq2lvyYTb3qIRMVB9Yj0aB5dYr71LMGSI/TCUXfu
+   Q/vbbt3vkm3f9HlNHt84ek7qFjbaO9159QwvU9BrlJgluRx7ACzWJzJJs
+   wtZ+6YyX/GEjAKJa7Ohka54I7IWU1FNw+PjgE6WXf82fCJhvvI5wWCOY1
+   w==;
+X-CSE-ConnectionGUID: yYAGCVSMTg6M25CjyfDLmA==
+X-CSE-MsgGUID: LYFLKgNuRWmddYtKFddu0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11970"; a="3699707"
+X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
+   d="scan'208";a="3699707"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 08:50:31 -0800
+X-CSE-ConnectionGUID: k/DCmaX/Qp2q9S20vakyDw==
+X-CSE-MsgGUID: YVFQiz1BSVmcIhLrCJbvrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
+   d="scan'208";a="9985477"
+Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.187])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 08:50:21 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sasha
+ Finkelstein <k@chaosmail.tech>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, dri-devel@lists.freedesktop.org,
+ asahi@lists.linux.dev, linux-aspeed@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-riscv@lists.infradead.org, etnaviv@lists.freedesktop.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, imagination@lists.freedesktop.org,
+ linux-mips@vger.kernel.org, lima@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 9/9] drm: Unify coding style for *_device_id arrays
+In-Reply-To: <av2rKJQ0AKU9CFZI@monoceros>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
+ 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
+References: <cover.1795002467.git.ukleinek@kernel.org>
+ <a2d5ce256b8ec150de4a6494c177b19693a33222.1795002467.git.ukleinek@kernel.org>
+ <7692c160e418e7ad0528739fcc879b11fbac8ab0@intel.com>
+ <av2rKJQ0AKU9CFZI@monoceros>
+Date: Wed, 18 Nov 2026 18:50:19 +0200
+Message-ID: <8ebe3b7219ffd963a498cccbcfe6cefc92717f0c@intel.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,56 +101,92 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa1ef0b100403a1kunm01520eaa1a13db
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaGh9KVkwYTENDTBodT0JJGlYeHw
-	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlKS0pVTE1VSU9CVU1KWVdZFhoPEhUdFFlBWU9LSFVKS0lCQ0
-	NMVUpLS1VLWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=P3jKiZeAgwDA1ZgAVhnFZvBg0T8mZO4fQa6+REDhUANGT8mnxnmlLAm/FhCHFoy78l2zkSGfrhCIwHTxAMKiv+H7u0CnyAVUMPOP7WZns9vFtdyeAvuw5nxIM4WZRhPJcJAl3bbkH0nJXt4g+7uO0+E9CgFEHda1VG7i7tZ1x+E=; c=relaxed/relaxed; s=default; d=mail.sdu.edu.cn; v=1;
-	bh=qcG22THrX1tBMFAvrDOfvEwAgm6z3zDwUorQZyGxp1E=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Unbinding the DMA provider can free the channel while the I2C driver
-still owns it. I2C removal then accesses the freed channel in
-dma_release_channel().
+On Wed, 18 Nov 2026, Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> w=
+rote:
+> Hello Jani,
+>
+> On Wed, Nov 18, 2026 at 03:27:40PM +0200, Jani Nikula wrote:
+>> > [...]
+>> >  drivers/gpu/ipu-v3/ipu-common.c               |   8 +-
+>> >  drivers/gpu/ipu-v3/ipu-pre.c                  |   4 +-
+>> >  drivers/gpu/ipu-v3/ipu-prg.c                  |   4 +-
+>> >  254 files changed, 1155 insertions(+), 940 deletions(-)
+>>=20
+>> How do you expect a patch of this size be merged?
+>
+> Using b4 am :-) Honestly, in the cover letter I wrote about an immutable
+> branch and offered to rebase to 7.4-rc1. When trying to apply this
+> series on top ov 7.4-rc1 there are only 6 conflicts (1x modify/delete
+> and 5x content); these are all not so hard to resolve (and even dropping
+> the respective hunks (i.e. resolving using `git checkout HEAD`) is fine
+> for me.)
+>
+>> > diff --git a/drivers/gpu/drm/i915/i915_pci.c b/drivers/gpu/drm/i915/i9=
+15_pci.c
+>> > index 84a7dc6ab5db..faceb3de4fa3 100644
+>> > --- a/drivers/gpu/drm/i915/i915_pci.c
+>> > +++ b/drivers/gpu/drm/i915/i915_pci.c
+>> > @@ -870,7 +870,7 @@ static const struct pci_device_id pciidlist[] =3D {
+>> >  	INTEL_ATS_M_IDS(INTEL_VGA_DEVICE, &ats_m_info),
+>> >  	INTEL_ARL_IDS(INTEL_VGA_DEVICE, &mtl_info),
+>> >  	INTEL_MTL_IDS(INTEL_VGA_DEVICE, &mtl_info),
+>> > -	{}
+>> > +	{ }
+>>=20
+>> Personally, I would *always* use {} instead of { }, and would rather not
+>> change.
+>>=20
+>> Across the tree, {} is slightly more common than { }. IMO changing them
+>> is pointless churn.
+>
+> It depends on how you count. My statistic looks as follows (on top of
+> next-20261117):
+>
+> 	$ git grep -l device_id | xargs -n 1 perl -g -n -e 'print "$1\n" if m/de=
+vice_id\s*[a-zA-Z_0-9]*\[\]\s*=3D\s*{(?:\s*{[^}]*},\s*({\s*}))/' | sort | u=
+niq -c
+> 	      2 	}
+> 	      2 {
+> 	      6 {  }
+> 	   2598 { }
+> 	   1262 {}
+>
+> So over all *_device_id { } is more common by a factor of > 2. This
+> series fixes one {  } and reduces the number of {} by 37. For only
+> pci_device_id it's:
+>
+> 	$ git grep -l pci_device_id | xargs -n 1 perl -g -n -e 'print "$1\n" if =
+m/pci_device_id\s*[a-zA-Z_0-9]*\[\]\s*=3D\s*{(?:\s*{[^}]*},\s*({\s*}))/' | =
+sort | uniq -c
+> 	    159 { }
+> 	     32 {}
+>
+> Without the context of an array initializer there are many empty
+> code blocks (function bodys or `do {} while (0)`), empty dt nodes, and
+> {} in Rust code, which IMHO have to be considered off-topic for this
+> statistic.
 
-Add a managed device link after DMA setup so the I2C driver is removed
-before the provider, even without firmware device links. If the link
-cannot be created, release the DMA resources and use the existing PIO
-fallback.
+I realize my phrasing was careless.
 
-This issue was found by our static analysis tool under development.
+My point was not so much about one being more common than the other, but
+rather that there are *thousands* of instances of both, specifically as
+C compound literals with empty initializer list. I think it's pointless
+to convert one to other, regardless of whether you're adding or removing
+a space.
 
-Fixes: 86c92b9965ff ("i2c: tegra: Add DMA support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
----
- drivers/i2c/busses/i2c-tegra.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+I mentioned my preference, because if I were to go on a style fixing
+spree, I'd go the other direction. But I think that too would be
+pointless.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 76d21bc51c61..306658e40d4b 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -731,6 +731,12 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
- 	i2c_dev->dma_buf = dma_buf;
- 	i2c_dev->dma_phys = dma_phys;
- 
-+	if (!device_link_add(i2c_dev->dev, i2c_dev->dma_chan->device->dev,
-+			     DL_FLAG_AUTOREMOVE_CONSUMER)) {
-+		err = -ENOMEM;
-+		goto err_out;
-+	}
-+
- 	return 0;
- 
- err_out:
+I suggest to just accept either.
 
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
--- 
-2.43.0
 
+BR,
+Jani.
+
+
+--=20
+Jani Nikula, Intel
