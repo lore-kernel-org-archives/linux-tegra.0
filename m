@@ -1,59 +1,106 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795010001;
-	b=sVbXGFc/nOGVN04eOO1+wktj2afE3kUIPNUh+yqOrbjH5lPlYEU7Zy5UnKVrDrTx8Z9m
-	 iSEH2qCkmfEI1UzQlJRuxf5eLeQ/UBG13BhZVUJEk4bkw6AxLqv5HPPw+zyq/wvDEmta0
-	 lXDA+p1BiNxQ10Eq9rGaVAAGhjupSnVjw9uR3wSuHmmkKJYHzRoB3snKji9jmNNhg1b5K
-	 TdEejVmUngEdoKSDZihW2j1yKqZHxFGyzniAnPasAw9BwjROTS9ABvSm/XTHdicDPb1A5
-	 mjT+E4Va+DehTGxR2pXJE/osi5EdzH5fsktN2Ll6aMisZP18xhXWQ+WQVBqZdUS8mUw==
+	t=1795010806;
+	b=F2N5bQXeByFfJqZigkVBpI7gpTkhSs+YB333wWeb6sai79KXNHBufcP08++zcHgBqY0u
+	 HOGQ1hB2WKUlFfqjFWbfUaDUYGNfiavqIYmHkiWhWIiEBS3fQqeIjKwFu6rklU1omw/qT
+	 u9W4LFzOPWR5ctCzTNm9iQmkd6prsgWm9U0MuFJtCgubu2JIMBuO0AOu1xHevzvYYrpGI
+	 jGQlPgBzvxH2IlTcsaj6o/FvwpiKdaJAEuPYZgXMUrhbJfVOyuVoX9EhEtVr6lVRuRlH8
+	 P4n6hgU+u1QzV6Q025NkAA3PCXoQf0xKcwdXVEd5sAjzd52eJ+LC0mE6cfvdPejbFAw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795010001;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding:
-	 X-CM-TRANSID:X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
-	bh=NLeu6B84TB3cba6KWMiNe9d0rCfS3RkNAZ9oG5NH2D4=;
-	b=eWyQ3DpjtaNAWdh0fSojv3yKZcH4DiH9h3kUy8851cTD+j49fQA5Ax4DMw1tHcNnAVi8
-	 bhfGHgaQU3rgNnTSzura66H9HEYUzEtRLQNOANI35oeqQiF3rA8X3zL8XcrNyk4mBueiK
-	 wdYQzezhXZPbI4bWyzj+Ur7VipavVr0inOQr5GaXVV1IS5A1z9TnAqtERr3XONY6s34Is
-	 EMCWCLoMxgkRvAe9nhYnr4G9IPCik/bDA7TkOQISP+w6z4bDGJQ2GBKv5aKI0Wo/GtGxi
-	 9EWZ+epXEIMEMvhOUBcW96lAEnwx4XN3YYViQjbZRItBXMFq5kp7zFkyKuG8zjV0VDA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795010806;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=O8kUxWwNMGGKdJF+2JBGIvhWCx8VFS9Gq0fs2XPEP3c=;
+	b=CgkKwUMOOe3nCoeLLPzBinvYNJgZEuVHtidinJ4J356dqc4zPSmLrqyl/glu6Bc8RJeT
+	 T2p+QiJJe8nBfAD/LLyGtDV9xYKlq8eq0+gChvtihYu8PpP1j6zUmyRhJA32v7eS9G/jj
+	 djc6K3xmyN+eGrM+x4SPlLY/ph5Uk6Hu/+O/FNMCEmZcl6cQdyuFodUwXp8eClNus4qaF
+	 2r6kAzTJIjxXEvjSn+9Q3TCN9B8vrD39nbv1w3peIPsLb49JyPvss+Sglhen3joHat2P8
+	 U2npcUlGCD95RiguEnGrMumQw4ft9ltzNAAesWwE+a5ix5vZHNd7yIr8yt2Ydbbxd8g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=163.com;
-	spf=pass smtp.mailfrom=163.com;
-	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=b+InCj1k;
-	arc=none smtp.remote-ip=117.135.210.3
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=hvB4iIuS;
+	arc=none smtp.remote-ip=209.85.128.42
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A82606A31C;
-	Wed, 18 Nov 2026 13:53:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B1A82606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96599606A333
+	for <linux-tegra@vger.kernel.org>; Wed, 18 Nov 2026 14:06:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 96599606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=b+InCj1k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=NL
-	eu6B84TB3cba6KWMiNe9d0rCfS3RkNAZ9oG5NH2D4=; b=b+InCj1kq1glkgtETQ
-	deHvCrkodl+W+e8CfkCjqfSR4qeKpa825YdhbiUYv8m0qmEcYCuOqm8tQrZXZjJy
-	/zhme7egAhNfi659q0w9FWIvwOunW56MmIbqpEQpep/NbtINW59TQyGpHUpJ0aU8
-	UrBEKuesCooZOJXuEA5pr4djw=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgAnJTy6rf1qx_EVGw--.1930S2;
-	Wed, 18 Nov 2026 21:53:00 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: thierry.reding@kernel.org,
-	jonathanh@nvidia.com,
-	kees+treewide@kernel.org,
-	pdeschrijver@nvidia.com
-Cc: linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>
-Subject: [PATCH] firmware: tegra: bpmp: Free SRAM on channel initialization failure
-Date: Wed, 18 Nov 2026 21:52:58 +0800
-Message-Id: <20261118135258.2368093-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=hvB4iIuS
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so8953165e9.2
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Nov 2026 06:06:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1795010804; x=1795615604; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=O8kUxWwNMGGKdJF+2JBGIvhWCx8VFS9Gq0fs2XPEP3c=;
+        b=hvB4iIuS8DtMM18Ur596rOV7xllkzUpzo4bnzWY5k0fD7sJ/BrV+0/KQ18Tb6pH2GQ
+         Nn2XziESA7mgE+1ydj355M2ewaMPCB3cmzRLaf+4expSmHER9hyZhW0nCxUr2loegpzU
+         v2vTQH5dENOkhb4kscIg+aakWJcGbF9MAAkh4SZJI6rGEXhJQVQlImPEQVZy9D/uWfuh
+         lDrFchgZk3gMfEELQRtJ9+u3oShBMhztuAghg2t6cw5GK+Z0k/4AVTMUC4iL1yw8I5bG
+         i/Xdt4P+65LHR2xp+JkHPJ1b0MAuBhDHUI3DZNZG14O9PuuXWHSk3/UrorTKJtCBmPfK
+         xItw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795010804; x=1795615604;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=O8kUxWwNMGGKdJF+2JBGIvhWCx8VFS9Gq0fs2XPEP3c=;
+        b=ANK69WQakV3Mdo62ZdA8UujgHdcVg2D/bJMyrXicFZ0j1vBD10RBkS8YltLZ01iakv
+         MT4QwiYwwkFq8eIuyM+N/OMHm+SXNf/rdoqZHn4A+TJftd9/m4lDYRRy6uYSdOil9CR0
+         dh8/1yQGSt3H66kBWnShr+HZLJpu5v3KfcBG50ROKm8sBCsB0h9kZbfkXJeZKpMZNbN4
+         Vntz+qe5sco0Db26yUDURnUuAPhGOqShMcu4Np07rl/KrZbRaKq0LLP4gyUZmfos6O0V
+         8vHrLMCk3d3kbJo1Xp0cYfoz1FqfEK+kOsKhsoege7POxN75bowsu9Vug02BH7dGEMqE
+         isQA==
+X-Forwarded-Encrypted: i=1; AL+hErHLO7CEwy2oA2pMI9CcTP7gi53rAVZ9VJB8IY9qo22DQvk0WxvPziDWqTZndPhIoxerm87KJll2+o4cqA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+3v3ahhlO7uwwrFVK+4ccqNzbv0V7ZCtkcErUHOlILgyxvSpx5
+	WTqZr3D/l3FwqPnZWCThWKnLlV3MEP+gKN266ITTd1ZJsRCb29IoNO90DTinnyhsd/E=
+X-Gm-Gg: AYBFou128zbNXiGrk0bFvaS8JEdDsgYQEfhzyWeM/LH+GbaKCD+4UuCVfwjZZ0t7MXn
+	QTpuA5yBcxpEvdAZNKUpiIbehRMRM90/XgKTjQCU6/JUhM6VAfuntwiIjRCXsC05BdB/STprJYa
+	SrKRELRPOW5kBpl5h/nNVPO4qDlW5DDO4g0LVZwMUU7cz6Kvpzse6t7fTmVp77a94LYGEn3lDYp
+	VVMO0T3HZa/vKAE3rgF/0bReDjpOtCrTtgyt2jvpnYIVWj5ndZhGWUElzAZfRs3Md75QfziAsmu
+	XconxiN+q4Y+aN3yU2QaziJkyIO0r3Nk76l+l7RgXe1DSYEqOXOm3q7Fb+1deTdyFf66crRqVEm
+	EWtcUNC/RSGgQTlOpyXopqNgRQjHGB4MBO1Xs4/DN5BgWIMbB+tktReGQk6rO6gf8U9P+zjFMF0
+	wwWta3dDp3jyvlBEZT8Ib8O8GXf3emZCTRrL5HzLkkSRpqc/CeRfRQsg9wyXTlvEmQ6FisizHLB
+	TeeHdMDQRDFTVs0n6MqBI0GBy5BLql73JTFnuUFYUUUXeZ1IOy9YQdTXDE5YKOMOOiS5WmtAbdS
+	j2pOTNA4z8PJhYR30gzZOXHwe8vGd6BQgnw=
+X-Received: by 2002:a05:600c:3509:b0:4bb:68b9:f610 with SMTP id 5b1f17b1804b1-4bb7da03954mr52120315e9.9.1795010803953;
+        Wed, 18 Nov 2026 06:06:43 -0800 (PST)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4bb7d256f64sm61534715e9.1.2026.11.18.06.06.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Nov 2026 06:06:43 -0800 (PST)
+Date: Wed, 18 Nov 2026 15:06:41 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sasha Finkelstein <k@chaosmail.tech>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+	linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	imagination@lists.freedesktop.org, linux-mips@vger.kernel.org, lima@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 9/9] drm: Unify coding style for *_device_id arrays
+Message-ID: <av2rKJQ0AKU9CFZI@monoceros>
+References: <cover.1795002467.git.ukleinek@kernel.org>
+ <a2d5ce256b8ec150de4a6494c177b19693a33222.1795002467.git.ukleinek@kernel.org>
+ <7692c160e418e7ad0528739fcc879b11fbac8ab0@intel.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -63,81 +110,98 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgAnJTy6rf1qx_EVGw--.1930S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJrW3Cw17urW7Aw4UWryfJFb_yoW5Jr43pr
-	WxG3yUuFs3JFs3Aa4xXw45AF48JF48G3W7GasIk3WkAw4DCr9rAr15Ka4Yga15JrZ2yr43
-	t3W3JryrW3W7GF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pR3CzAUUUUU=
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbC7hy0I2r9rbwRDgAA38
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5c6ped4sw6nigwko"
+Content-Disposition: inline
+In-Reply-To: <7692c160e418e7ad0528739fcc879b11fbac8ab0@intel.com>
 
-If TX or RX channel initialization fails after SRAM allocation
-succeeds, tegra186_bpmp_setup_channels() returns without freeing
-the two SRAM buffers.
 
-Route all channel initialization failures through the existing
-teardown path. Check the bpmp field before cleaning up the TX
-and RX channels so that teardown skips channels that were not
-successfully initialized.
+--5c6ped4sw6nigwko
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 9/9] drm: Unify coding style for *_device_id arrays
+MIME-Version: 1.0
 
-Fixes: 2abd484ca48f ("firmware: tegra: bpmp: Add support for DRAM MRQ GSCs")
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
- drivers/firmware/tegra/bpmp-tegra186.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+Hello Jani,
 
-diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/firmware/tegra/bpmp-tegra186.c
-index 5a97496600ac..d0a865ad604c 100644
---- a/drivers/firmware/tegra/bpmp-tegra186.c
-+++ b/drivers/firmware/tegra/bpmp-tegra186.c
-@@ -179,8 +179,10 @@ static void tegra186_bpmp_teardown_channels(struct tegra_bpmp *bpmp)
- 		tegra186_bpmp_channel_cleanup(&bpmp->threaded_channels[i]);
- 	}
- 
--	tegra186_bpmp_channel_cleanup(bpmp->rx_channel);
--	tegra186_bpmp_channel_cleanup(bpmp->tx_channel);
-+	if (bpmp->rx_channel->bpmp)
-+		tegra186_bpmp_channel_cleanup(bpmp->rx_channel);
-+	if (bpmp->tx_channel->bpmp)
-+		tegra186_bpmp_channel_cleanup(bpmp->tx_channel);
- 
- 	if (priv->tx.pool) {
- 		gen_pool_free(priv->tx.pool, (unsigned long)priv->tx.sram, 4096);
-@@ -283,14 +285,12 @@ static int tegra186_bpmp_setup_channels(struct tegra_bpmp *bpmp)
- 	err = tegra186_bpmp_channel_init(bpmp->tx_channel, bpmp,
- 					 bpmp->soc->channels.cpu_tx.offset);
- 	if (err < 0)
--		return err;
-+		goto err_teardown;
- 
- 	err = tegra186_bpmp_channel_init(bpmp->rx_channel, bpmp,
- 					 bpmp->soc->channels.cpu_rx.offset);
--	if (err < 0) {
--		tegra186_bpmp_channel_cleanup(bpmp->tx_channel);
--		return err;
--	}
-+	if (err < 0)
-+		goto err_teardown;
- 
- 	for (i = 0; i < bpmp->threaded.count; i++) {
- 		unsigned int index = bpmp->soc->channels.thread.offset + i;
-@@ -298,11 +298,13 @@ static int tegra186_bpmp_setup_channels(struct tegra_bpmp *bpmp)
- 		err = tegra186_bpmp_channel_init(&bpmp->threaded_channels[i],
- 						 bpmp, index);
- 		if (err < 0)
--			break;
-+			goto err_teardown;
- 	}
- 
--	if (err < 0)
--		tegra186_bpmp_teardown_channels(bpmp);
-+	return 0;
-+
-+err_teardown:
-+	tegra186_bpmp_teardown_channels(bpmp);
- 
- 	return err;
- }
--- 
-2.25.1
+On Wed, Nov 18, 2026 at 03:27:40PM +0200, Jani Nikula wrote:
+> > [...]
+> >  drivers/gpu/ipu-v3/ipu-common.c               |   8 +-
+> >  drivers/gpu/ipu-v3/ipu-pre.c                  |   4 +-
+> >  drivers/gpu/ipu-v3/ipu-prg.c                  |   4 +-
+> >  254 files changed, 1155 insertions(+), 940 deletions(-)
+>=20
+> How do you expect a patch of this size be merged?
 
+Using b4 am :-) Honestly, in the cover letter I wrote about an immutable
+branch and offered to rebase to 7.4-rc1. When trying to apply this
+series on top ov 7.4-rc1 there are only 6 conflicts (1x modify/delete
+and 5x content); these are all not so hard to resolve (and even dropping
+the respective hunks (i.e. resolving using `git checkout HEAD`) is fine
+for me.)
+
+> > diff --git a/drivers/gpu/drm/i915/i915_pci.c b/drivers/gpu/drm/i915/i91=
+5_pci.c
+> > index 84a7dc6ab5db..faceb3de4fa3 100644
+> > --- a/drivers/gpu/drm/i915/i915_pci.c
+> > +++ b/drivers/gpu/drm/i915/i915_pci.c
+> > @@ -870,7 +870,7 @@ static const struct pci_device_id pciidlist[] =3D {
+> >  	INTEL_ATS_M_IDS(INTEL_VGA_DEVICE, &ats_m_info),
+> >  	INTEL_ARL_IDS(INTEL_VGA_DEVICE, &mtl_info),
+> >  	INTEL_MTL_IDS(INTEL_VGA_DEVICE, &mtl_info),
+> > -	{}
+> > +	{ }
+>=20
+> Personally, I would *always* use {} instead of { }, and would rather not
+> change.
+>=20
+> Across the tree, {} is slightly more common than { }. IMO changing them
+> is pointless churn.
+
+It depends on how you count. My statistic looks as follows (on top of
+next-20261117):
+
+	$ git grep -l device_id | xargs -n 1 perl -g -n -e 'print "$1\n" if m/devi=
+ce_id\s*[a-zA-Z_0-9]*\[\]\s*=3D\s*{(?:\s*{[^}]*},\s*({\s*}))/' | sort | uni=
+q -c
+	      2 	}
+	      2 {
+	      6 {  }
+	   2598 { }
+	   1262 {}
+
+So over all *_device_id { } is more common by a factor of > 2. This
+series fixes one {  } and reduces the number of {} by 37. For only
+pci_device_id it's:
+
+	$ git grep -l pci_device_id | xargs -n 1 perl -g -n -e 'print "$1\n" if m/=
+pci_device_id\s*[a-zA-Z_0-9]*\[\]\s*=3D\s*{(?:\s*{[^}]*},\s*({\s*}))/' | so=
+rt | uniq -c
+	    159 { }
+	     32 {}
+
+Without the context of an array initializer there are many empty
+code blocks (function bodys or `do {} while (0)`), empty dt nodes, and
+{} in Rust code, which IMHO have to be considered off-topic for this
+statistic.
+
+Best regards
+Uwe
+
+--5c6ped4sw6nigwko
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmr9sOcACgkQj4D7WH0S
+/k4vggf+PQfM4MkbLgaQRCdXRWWsc4/Fa0tTMBQAl4gjx2p5NE/N7TDUO571o3+N
+oWcelzY5O1uRcc2qHZVnu3vAxFqzk4YHfGjsbGHsxQAibxnIFW7ttYTzt0w5a9NH
+v65V6+sebCdwLrPVE5ilcqzFFSgmnv1wTNm2vCEUxdKGacifySaGRmg4+ax+fLb1
+CL+RS7fM2EkQxG1k4iDEPv1Onrm9S4DtwTts0wxkK780rWYD9FoSLjHyX/x21Y8x
+SZKaXeNZlxtHJpQLq8ub8AL/t6k82nC020wYZOUbUmvPyqxhNoUuuS0/RVlz9xT6
+kXiliIwWzcMtAKt4ik8nbTRO5JERhQ==
+=0alU
+-----END PGP SIGNATURE-----
+
+--5c6ped4sw6nigwko--
