@@ -1,61 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=57.103.76.221
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795022200;
-	b=1EReR1UHMTyGj9eYQFNNpBQsL7iGr0vKnxgGiuvo4QQGfO6S+BcDJIRNBe0NfS6eWLnh
-	 UBpY60FRMdTnahCLUyr/YGKbGZKnAesWdqUG5z+0wrHgp+fCTBzOOyR/ZtmpGEiRYu+pM
-	 5ZH/DX1LH3sSNyVSg6goq94uh/Dd1HfTlxn0erJZmnVwa0Vd5CUPyQglnCSyo89yEkA8u
-	 eqZz+mjHbP9jKaiT0+dgG/CMiYETZePSUFJExnj4q4w2HgmzT6rHO/dtbBfbuDTYs/4Dw
-	 58Sb4XlX7GcL9kn7rpsDg/6cV7g8H3G5Bz0QA8esqimwkoBas5U6RUJX7fXf5AGO20g==
+	t=1795027090;
+	b=ukuawCJCJQteTM6MH4g+4LCpB3J/TgXXnNnTc8xviWT3zPlaycqWYaX5OHUqDpmIk4WB
+	 Q//JlTFBtYgUtzyasA0b3j7GMG0TROEuSIMgax1ApP1r44GBaXs33wPFcITx1F3eOt1AK
+	 sZs7jeH/kP/5XICK1ZWs7LGwIPDWN9nBeHKsgXf6Ms8D+k+sRnKrOjcwLbjz3HloqD/Mh
+	 /q34Ow6pAHiUeQh3kovVqIdBoUQ6H7O0vJLiaRKNktz7ps9MrxkIWoL87QvtEDhKM28Xn
+	 k5AmmmWwOcs470CeyBZIBeCGRvA2OWhZaRe0HVI/AquisjOs61jpTqIU4g03JsMwaLA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795022200;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=SAzJmY4FCeji/qIKXkz3wy9NVv0twgE5M8r/Ajd4Jqk=;
-	b=vSokR6NYMvDo8LVDEJbgSWyVvBUDoVrcxwLxhhzyDtOD/YYwnU7ghRwRS1fQFIlXux0/
-	 KPmYlMNzwDOIAUa3JzFYH1AKwrGeFR50/vSfDhqDlKo8M8afO5DWY8hhpWfmOMbGzIBSr
-	 hii7RvgzsRYuFJjc+qY6JaOzUA7oxBWG9wkUkO9huV6vTIoQp6yB7GeExLqNGtnH7TD+h
-	 /tuKnybRtS9rhYPkYbVSCiuuvDOI22G06s3SI91U4sI5eLmbJ3xuerVhXn9WUCjTpQXuK
-	 D5xitLw0YdtEaCDLPwIpTVGApJ6OkA43/jQW65s3FBwB8ikiS398iH62E3elnhzvy0A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795027090;
+	h=DMARC-Filter:Received:X-ICL-RepId:Dkim-Signature:
+	 mail-alias-created-date:Received:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
+	 X-Authority-Info-Out:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:X-JNJ;
+	bh=G/lIww7et98viW/5VX21jdn8thD7SKB2sXXE7AmwGI0=;
+	b=2FUwWhI9+SA4cHevPyewyo/Awtw3uiwQ1Wg2pf3iJOp9ePDeYpTg/mdgOQbkYL7BnC95
+	 LMtGwHfHSZeA+ytRJUnpjt95nKpqNzlPQdKRs6xAYjTMx9pmxTYKcasPEeXxkXZcJ4z5L
+	 D/lgpacj59r3A3pLTJrPRm+K3HpXAxJ4NRijcAIvy7ZscwdCKsXSDOxv43Uw7ocmSQ2l8
+	 VTPpFHQSYHoPIiWMAN7nrIa3zxBI3DDEky0pfIEBoD/TpXPQmmzdTpmp1IJBmUzOzu77s
+	 wPBHacBrYqEG9euvKR1kg/ori40rwWpebj0LW/W49a0JSTwh1ydOx4jhILYqA3Yq3Hg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GSY98f4K;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=putintsev.com;
+	spf=pass smtp.mailfrom=putintsev.com;
+	dkim=pass header.d=putintsev.com header.i=@putintsev.com header.a=rsa-sha256 header.s=sig1 header.b=PiJ91MqF;
+	arc=none smtp.remote-ip=57.103.76.221
+Received: from outbound.st.icloud.com (st-2006e-snip4-11.eps.apple.com [57.103.76.221])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DD9606A325;
-	Wed, 18 Nov 2026 17:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B9A606A331
+	for <linux-tegra@vger.kernel.org>; Wed, 18 Nov 2026 18:38:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 45B9A606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=putintsev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=putintsev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GSY98f4K
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA67C1F000C9;
-	Wed, 18 Nov 2026 17:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795022200;
-	bh=SAzJmY4FCeji/qIKXkz3wy9NVv0twgE5M8r/Ajd4Jqk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GSY98f4Ki8nRSlVBffIV0exkJgfRM+bfH+yHeRlifszVzSumzm3erhIwdDMLB/7fj
-	 WYuGsz1NZdAkTUpBQDVls9xrw/8a/b2zIh2E9iwDTSk/UdaOZ6G4RAu4okEn0/Iu3N
-	 PJK36e3rQ6ZMubzstA7P42bQv4InxsVDiwfyLcrkXDLMTLJsa1f2OdGsiuFs/eK8cc
-	 0xDRMW5MlS7weCJc+GkV9gA0+XTylYdYwIWF+9JpPxZ8uChYBQFDHWx430nhbIh/aM
-	 nvv3ELf1bpOhmGuYgnz+6ZywpXW9x8G7RX8orGBpDFxfyco7VwG5X2VR5hlL8SaClI
-	 VJ9UXFPiPAtFw==
-Date: Wed, 18 Nov 2026 17:16:36 +0000
-From: Lee Jones <lee@kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sandipan Patra <spatra@nvidia.com>, linux-pwm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/8] pwm: tegra: Prevent 32-bit period truncation and
- division by zero
-Message-ID: <20261118171636.GD98456@joneslee-macbookpro.roam.internal>
-References: <20261105143847.2559586-1-lee@kernel.org>
- <20261105143847.2559586-2-lee@kernel.org>
- <auykeNit2S4e7axg@monoceros>
+	dkim=pass (2048-bit key, unprotected) header.d=putintsev.com header.i=@putintsev.com header.a=rsa-sha256 header.s=sig1 header.b=PiJ91MqF
+Received: from outbound.st.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-east-1a-60-percent-11 (Postfix) with ESMTPS id E1BA918000B7;
+	Wed, 18 Nov 2026 18:38:07 +0000 (UTC)
+X-ICL-RepId: 01a1eff3-b201-73db-8d19-b6c5140059aa
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=putintsev.com; s=sig1; t=1795027088; x=1826563088; bh=G/lIww7et98viW/5VX21jdn8thD7SKB2sXXE7AmwGI0=; h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme; b=PiJ91MqFpdxmQyWy79KVTkWt/mrrLM/gylkSMC25V30MFSGkmqm1uhpYxXzPQE0KYRu7MVP68XxlmwyOlNQURvtF5zIWKM266T7XLIckPfQmbPVt7et5+hW9c21GmJtM3KtZTgd3RVO8gNqIw8UMN9C9CBXOqmDEt5m8W9Sh4iV9dcHX1vmxyRjLSeeutR+6CpZgHVA7oe+PCpY7NSanUlq3yzVr4D2Bl8V+6krsiDlrXMGw/xIQwJD29jTEDA3161UUhz73OexXt1ddHRwwGGQ6jsXr2Ge7I4kl9wqrRcT45K3pXoDwWqFyKny8pSJTjPsg+uMDHbZpQX3Ws/NnhQ==
+mail-alias-created-date: 1771854267065
+Received: from macbookpro.lan (unknown [17.156.216.30])
+	by p00-icloudmta-asmtp-us-east-1a-60-percent-11 (Postfix) with ESMTPSA id 331A91800108;
+	Wed, 18 Nov 2026 18:38:07 +0000 (UTC)
+From: Roman Putintsev <roman@putintsev.com>
+To: ldewangan@nvidia.com,
+	broonie@kernel.org
+Cc: linux-spi@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thierry.reding@kernel.org,
+	jonathanh@nvidia.com,
+	skomatineni@nvidia.com,
+	Roman Putintsev <roman@putintsev.com>
+Subject: [PATCH] spi: tegra114: re-assert CS after a mid-message cs_change
+Date: Wed, 18 Nov 2026 13:38:05 -0500
+Message-ID: <20261118183805.25461-1-roman@putintsev.com>
+X-Mailer: git-send-email 2.50.1
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -65,37 +67,86 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <auykeNit2S4e7axg@monoceros>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA3NCBTYWx0ZWRfX44dALubhyGVm
+ W02cJJuiIXnbLrDttWSgCnCg5bRrsSaGr6US77TUqddKUQphDPeazfVJhc7X6f649mLouoxH7B4
+ h2dbB9fdR569BSUBX9G6y0ATmCc22YphpMyi2BsK6hluw/PJxjeOpvSUr30inNAQHlM8jcnuW3C
+ wsL81wepCe6MwCxd2qgd0Hj0EXUOEzqLnGTPc+SAQlEuXP3elKfIy5AtS7gSfq4grLkgGiv8RgU
+ cocz52tq7Hk/Rshra3L6GN8NVCSptaL++6+TXEGufwOdTR3xL7r7MM+VrebB64fJJBu2XUkuJmc
+ w0yAu1keHCezxdjjP2GLZkmw0zutdTQknbcBREKAXscnMN1mrH6NuerVZn0g3c=
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA3NCBTYWx0ZWRfX6sbyOs6a/9i9
+ w/4XLjucXN8Br2it7Ez/QC7wdDJGnuu1X7xPO9J/LBUBSv7yAwhBRqVBSgoYyEqCT5WlrHtLw28
+ qACMK9nKRca69m/Mjzwjn+GX3Onp6Jo=
+X-Authority-Info-Out: v=2.4 cv=UsH2pOwB c=1 sm=1 tr=0 ts=6afdf090
+ cx=c_apl:c_pps:t_out a=oyWFxbOnq+dmhQrAPgaJYA==:117
+ a=oyWFxbOnq+dmhQrAPgaJYA==:17 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=51JdnUhQRHFq8RItG6ly:22 a=XqUgTU364RIWfhS-Fj-h:22 a=VwQbUJbxAAAA:8
+ a=gNxGhvmwAAAA:8 a=7g2LsxMrY8pxi2ky23YA:9 a=O8hF6Hzn-FEA:10
+ a=yjIKAdwAKDrTRT0yDhyo:22
+X-Proofpoint-ORIG-GUID: R_gCKmEIytyiTga0pDaPDDNPFjQVL90U
+X-Proofpoint-GUID: R_gCKmEIytyiTga0pDaPDDNPFjQVL90U
+X-JNJ: AAAAAAABpmt4HQEMGo56imYTeWQrIr/RKOhydgnHkeT3ryUCLVqrdya/8vXldJaF0JddAX
+ Zz5JvYZpkxq4RGhpAbM+XKQKHTBTDjh88xxJYJMVWb0LYzdOsfJuj/RGpa1QRqD66pLIZ6
+ iYBU2ag67GNaL7rzbP8owmmz7zX+685T37oQPWp6/awJNjwZgAr28X5YyvBRQTey+T0IiM
+ qYs5UpepKx3wr//USxdbeOcxsnxNjbVkITtL9pi1yfJl5aAt+Ne0ZrE7hFiDe/TfBzC7lj
+ t0SfRl0h1gKMdtc5XlUf06LDXjID+HFGJ5UucdEI+1wMft9KAQwdxnkzAYkXYHIiyQwaJJ
+ xr1cmQpSQaAKCgP6YmZ/FHAgzFX5Bqng43BSRMKVQpoZARXzZFWuUmG/R52c//dC8AFGky
+ 5KTbd+xYdQMWT3TslUg4oVMMzgOrqnx6kRx8mdzSdAEJWzmOgy9iNGTPiiAs/1lBjZ8ovF
+ b55K0/if7TjgGs6UNUddEHQmOMcQA9On+u2wr70koRIY0ASAO/H5fWoXYV+eByPybNSS3v
+ JcfCsBlc7jh86XdcuOLmmpgsBanIFk9qqiWwDOI5w4DguDLn/XpvTzW/eC/P6KXhHpLAj9
+ phqWLWLUdmqpsovdPGeAnHgqVB86NkAOAQSOcqWE/Qdq6VmzQl7zYVJY1q6yleolZGYsZi
+ lu78CdQqWa6+cnzRcJcFq1mxzpCErT69iZABVGQ/xQjBTd2+MIDyTcK3PwKSlZ6U5eTxSv
+ CS/imZyMoFibOkezHDfC4GoQkDi6Lf4bjP4G6svu8b7vXGUKKycQf5tvpyvTcB/LPmYY3J
+ mTpk/3kTr8mCb70SWSyelRKgrLgSMaZViwVzHOodHxuAoPLAtJmIgQwgcDjS7weyfuyC/v
+ 0GVY3vN/66uK/aaC+LOiMMRdUetpl/KVrwouX3vJtthIz6FfoC18w96oHWY+UQ2d1crr2j
+ c4IG/fqY4Qx2jPCzRa8ExCxah/iml6djrzmml7LfYUzv9cs0HIFcxkwvsLmAW99HltfTzT
+ JfzOR8c4b0FkCeGfHxmYSiTwKcqvbbo5CjXwR299obuUQcpG2/nkRM3nqvi+Qxq4YyoQxi
+ v9XL9bWH93kMc2mSOxvMstW6lwEM9TwUlqiYSpzfmZ1Gj6Egn2LXmRp8VERAaqScxlItTt
+ IrsZPoUDXXe3pJHRdNozifPVISU7xJhAqay7lw0bxDXLTdkwLYSVykW723/Ni8Gja2SUUB
+ VtnjIF34x6LO7Kv6NyXCSfJQoxuhiQuXpNu5+55NKy2lQQ1SANLn1C7jmHWweQ==
 
-On Thu, 05 Nov 2026, Uwe Kleine-König wrote:
+When a transfer has cs_change set and is not the last one of a message,
+tegra_spi_transfer_one_message() ends it with tegra_spi_transfer_end().
+That function deasserts CS and stores the deasserted state in
+tspi->command1_reg (SPI_CS_SW_VAL). The next transfer is not the first one
+of the message, so tegra_spi_setup_transfer_one() reuses command1_reg
+unchanged: the controller clocks that transfer out with CS inactive. The
+slave never sees the data and no error is reported.
 
-> Hello Lee,
-> 
-> On Thu, Nov 05, 2026 at 02:38:03PM +0000, Lee Jones wrote:
-> > tegra_pwm_apply() passes the 64-bit state->duty_cycle and state->period
-> > values into tegra_pwm_config(), which accepts signed 32-bit int
-> > parameters and performs DIV_ROUND_CLOSEST_ULL(c, period_ns) before
-> > validating period_ns against pc->min_period_ns.  If a consumer requests
-> > a period that is a non-zero multiple of 2^32 nanoseconds, period_ns
-> > truncates to zero and triggers a divide-by-zero panic.
-> > 
-> > Widen duty_ns and period_ns to u64 and validate that period_ns lies
-> > within [pc->min_period_ns, U32_MAX] prior to dividing by period_ns.
-> > 
-> > Fixes: 1d7796bdb63a ("pwm: tegra: Support dynamic clock frequency configuration")
-> > Fixes: fd3ddd4355c0 ("pwm: tegra: Implement .apply() callback")
-> > Closes: https://sashiko.dev/#/bug/linux-5c5b97d6-4da6-4d06-9dc7-957419dcd832
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Lee Jones <lee@kernel.org>
-> 
-> This is already addressed in
-> 9ad5602d4943 ("pwm: tegra: Fix value discarding for duty and period")
-> which is next-20261102 and later.
+Every driver that splits a message into "write payload, toggle CS, write
+trigger" hits this. mcp251xfd does it for every CAN frame, so an MCP2518FD
+never transmits: the frame reaches the chip's RAM, but the write that sets
+UINC|TXREQ in the TX FIFO control register is lost. Reception uses
+single-transfer messages and still works.
 
-Would you like me to resubmit the set without this or can you omit it?
+Before commit f3e182c33e53 ("spi: tegra114: de-assert CS before SPI mode
+change") the deassertion did not touch command1_reg and the next transfer
+asserted CS on its own. Mark the following transfer as the first one of a
+message again, so that it takes the setup path that asserts CS.
 
--- 
-Lee Jones
+Tested on a reComputer Orin J40 Mini with an MCP2518FD on spi1.0. No frame
+was transmitted before this change; with it CAN traffic runs in both
+directions with no errors.
+
+Fixes: f3e182c33e53 ("spi: tegra114: de-assert CS before SPI mode change")
+Cc: stable@vger.kernel.org
+Signed-off-by: Roman Putintsev <roman@putintsev.com>
+---
+ drivers/spi/spi-tegra114.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index f43f2df..d2fda21 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -1116,6 +1116,8 @@ complete_xfer:
+ 		} else if (xfer->cs_change) {
+ 			tegra_spi_transfer_end(spi);
+ 			spi_transfer_delay_exec(xfer);
++			/* CS was deasserted, assert it for the next transfer */
++			is_first_msg = true;
+ 		}
+ 
+ 	}
+
+base-commit: 20eef29b7c8465ac98d7dd6d6f2ac07a8d8056ca
