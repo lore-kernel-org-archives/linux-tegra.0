@@ -1,56 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795124206;
-	b=nWdDhsjI3kBwGAZ6q/BpSKR9AlahGLqXpVPaBA/Efl7vXCr3FqBs5mzYhxAvsS6r+5Kg
-	 xTrnKK4gtw4UFnq/GolATMj7EWIzGa6YnpUe314MKMmyOQxR/75bGgbkvjk7KsxkRNuW8
-	 DWX5jymKMt5pVN6XyaIlM02yVxPkjj7/2R1hnB3DuDrAbSi9nom3CAcTGOUi+Xs1xFfoR
-	 3bruxt55oB34YdnAthEAfCTYCW/OOfKOeDGByDKoc+2B54Rypd49heN+J15gGsnRrMq/l
-	 LmwOh2S22uNdgID6dBOiyWJJCndn0QJc1oem5CvD3ZueTSbHWEBJJilajJKvUV82cNw==
+	t=1795124945;
+	b=vWU2Vs3tbOqyxCFmm8DrRafSrHg2EL5KtMoUTz5x7wR4wtPvk0i8Nx9ZBK4aHcJYa1tk
+	 ZKYbY6KEnbD77Ptfw36eKB+UtBTHyM3pSMuLutHjVY7p5dLahFdl1PR4MfggjnVL7dffe
+	 SJcnvMPdwaAfJU+Yp847/m1yRL87CY2mTxSBf95zSukf6YcADTA9TVQi3AD+TUKJH+2Ak
+	 kOLFbwNCNsmHU6ZP0QSBTUrgvdWkjKnqhZztR7DsKkBU1fJlpqJrHfrfMwAnC1nEOov3U
+	 55UChsoE4Mjv/dcVwOTy5UlVlQAKaWQa6PW2V8A/zLuT9gvGqLVAVaZWUzR1reBWWwg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795124206;
-	h=Received:DKIM-Signature:Date:From:To:cc:Subject:In-Reply-To:
-	 Message-ID:References:MIME-Version:Content-Type;
-	bh=LML88oLR/JHS1tEWSCvh0L02QsPi7WMgIFrwWVKms/M=;
-	b=KY3ArKph8LLOGacZUSc/QDnJeOWGKGYahVE7zfFgjmjeizeo/su9CFatkuOzPY88qi4W
-	 Z23Z+2W+z2oOdKMFIVlI504bm0A8eDPImCuh4KiQH+7KhXoonC/sHKnQwrECP35q2X4gL
-	 rJwDmItuLe63NCJtAbp7oY8kvQ/Ks1mGdf9HxC946jtJrKo9uoFQJlhbmRQbqIPR9rflF
-	 knkPbjtevX0PeMrbbW2JXjFjDrEvcbxGT9HDVwHWtlKtk1VCE+kjUPw1lRxSUciNAAoDW
-	 JwfaHLZEp+DZRWgt4HM1qsE0z/Hui3E78w50/tGcWo3h8k4vWa3p7SWpR2ZYnt9ZmSQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795124945;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Dci2ELC1DesZ7oTDqh8J2thAlLwSnm+SSTMRCxSUyxU=;
+	b=hvB7t91BgBpM9poxhA0cIDSDNSxRYgcVrX6mufg7JaXF0rJ6jo4HrdqqCjrw2/SZ2p1W
+	 BOXN+EVn2IBKhSljjATWfKADkf1V+Llvfgxc6a9MYSYAuX47++2hSix/BeIBEL6TIhfVH
+	 VpZAlWp74hA8vMg445RkKP3jIqxQFajnt/bQ7DBxXLKylFx4F8vPpDDJ83M2BPZtAUghU
+	 brt36Q7euvwoFjomAfAo1jvCgQaFDJZd0YiUaoR9t1yVm4OnEqnJRZDljHdD9WGbBy6cD
+	 ClqmW/mFKwqq2f8IZy5bep0QDoW+RRDPuTrftDEmFyQ3NCYJtu4jAH5Er2utCjfni5Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="O/TgTy+s";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Iskk6tVz;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CD9606A324;
-	Thu, 19 Nov 2026 21:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7993E606A339;
+	Thu, 19 Nov 2026 21:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=O/TgTy+s
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDFC1F000CA;
-	Thu, 19 Nov 2026 21:36:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Iskk6tVz
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D91481F000C0;
+	Thu, 19 Nov 2026 21:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795124206;
-	bh=LML88oLR/JHS1tEWSCvh0L02QsPi7WMgIFrwWVKms/M=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=O/TgTy+sLb1MSXnkpbF0WehAIrZR/vY7UOJEHvHD5p0QO8fdODWxouMv2mzEQSyiW
-	 lNUVvMwCYR4R13NMdQR/0BXYNtJzyges6Vg+8rthsGRY9630gqarqIdywRLMhqQQag
-	 cujl1vNX9cLs8Qh9cSL+zER2pvFOMBKOqlUp6gGb71/R2CFZDu4i7wlueGTJ0o3WiY
-	 kQ+5wtmGBFjrYI8Lyo6KON+RPWUT/UszrF28D2QBPZUorbX4frCaTQK47msynr7QnK
-	 py6IgYLUl30n77eQ24+joDBTNbcjUXeV1Umm/XzLZCUtTaafKX48JecML6gQP2U5jq
-	 Ew/G02yAO5low==
-Date: Thu, 19 Nov 2026 22:36:43 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: David Cemin <dcemin@nvidia.com>
-cc: Benjamin Tissoires <bentiss@kernel.org>, 
-    Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-    linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] HID: asus: map Consumer brightness usages on I2C
- keyboards
-In-Reply-To: <20261020220919.611287-1-dcemin@nvidia.com>
-Message-ID: <99s8sr4o-0498-824o-n90p-2rs7o0r40s87@xreary.bet>
-References: <20261020220919.611287-1-dcemin@nvidia.com>
+	s=k20260515; t=1795124945;
+	bh=Dci2ELC1DesZ7oTDqh8J2thAlLwSnm+SSTMRCxSUyxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Iskk6tVzcfj77tkTVddt1LIM5/0OM1iG00kmjxL3iwzsfBO7koQ7OD0y2FMhO2YSA
+	 iRcp8mjK8wruj9dO04nAgcRVy+Bay48d9nyEzIuVyDVlmipcCMobhvNGKtcXigIlw7
+	 4MjmAfQJgChPSwHFtpizx5aCucJ38YMFYma3VdGf3DLw7nPpHYUhP595kcjSnQdFm0
+	 6+ZHy4g6WHq7tqdTh4tYJoddmSrQ7TwQ0vlCGZXVNPnN1qS1LvocKyiWL+7/puFTNm
+	 zViksj3rQm+wv9Yl9n5MRy6MzjQLQ50s7YBpBaeBwwCC3SER+dDCdOSX0OREAbgIpw
+	 aM7Nk0xrD3U/A==
+Date: Thu, 19 Nov 2026 15:49:02 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sheetal <sheetal@nvidia.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sameer Pujar <spujar@nvidia.com>, linux-tegra@vger.kernel.org,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Anupama Kunkulagunta <akunkulagunt@nvidia.com>,
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+	Frank Li <Frank.Li@kernel.org>, linux-kernel@vger.kernel.org,
+	Vinod Koul <vkoul@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mohan Kumar <mkumard@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 1/3] dt-bindings: dma: nvidia,tegra210-adma: Add Tegra268
+ support
+Message-ID: <179512494227.783763.1329720459172434228.robh@kernel.org>
+References: <20261104110932.1097294-1-sheetal@nvidia.com>
+ <20261104110932.1097294-2-sheetal@nvidia.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -60,36 +66,23 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261104110932.1097294-2-sheetal@nvidia.com>
 
-On Tue, 20 Oct 2026, David Cemin wrote:
 
-> Several ASUS laptops carry their keyboard on an I2C-HID device with ID
-> 0B05:4B42, the same ID as the Zenbook A16 (UX3607OA), so they bind to
-> hid-asus with I2C_KEYBOARD_QUIRKS since
-> commit 206107536018 ("HID: asus: support the Zenbook A16 (UX3607OA) keyboard").
+On Wed, 04 Nov 2026 11:09:30 +0000, Sheetal wrote:
+> From: Anupama Kunkulagunta <akunkulagunt@nvidia.com>
 > 
-> Unlike the A16, which reports its brightness hotkeys on the ASUS vendor
-> page, these keyboards report them as the standard Consumer usages
-> Display Brightness Decrement (0x70) and Display Brightness Increment
-> (0x6f) on report 3. I2C_KEYBOARD_QUIRKS includes QUIRK_NO_CONSUMER_USAGES,
-> whose input mapping ignores every Consumer usage except mute and volume,
-> so the brightness keys never produce input events. The keys work when
-> the keyboard happens to be bound to hid-generic, which maps those usages
-> by default, and stop working as soon as hid-asus claims the device.
+> Add the Tegra268 ADMA compatible. Tegra268 has 10 ADMA channels,
+> so set the interrupt limit accordingly.
 > 
-> Let the two display brightness usages through the filter so hid-input
-> maps them to KEY_BRIGHTNESSUP and KEY_BRIGHTNESSDOWN. Keyboards that do
-> not report them are unaffected.
+> Signed-off-by: Anupama Kunkulagunta <akunkulagunt@nvidia.com>
+> Signed-off-by: Sheetal <sheetal@nvidia.com>
+> ---
+>  .../bindings/dma/nvidia,tegra210-adma.yaml          | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
-> Tested on two ASUS laptop models with this keyboard: with the keyboard
-> bound to hid-asus, the brightness keys now adjust the panel brightness.
-> 
-> Signed-off-by: David Cemin <dcemin@nvidia.com>
 
-Applied, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
