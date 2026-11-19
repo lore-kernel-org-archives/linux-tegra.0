@@ -1,63 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=57.103.76.221
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795027090;
-	b=ukuawCJCJQteTM6MH4g+4LCpB3J/TgXXnNnTc8xviWT3zPlaycqWYaX5OHUqDpmIk4WB
-	 Q//JlTFBtYgUtzyasA0b3j7GMG0TROEuSIMgax1ApP1r44GBaXs33wPFcITx1F3eOt1AK
-	 sZs7jeH/kP/5XICK1ZWs7LGwIPDWN9nBeHKsgXf6Ms8D+k+sRnKrOjcwLbjz3HloqD/Mh
-	 /q34Ow6pAHiUeQh3kovVqIdBoUQ6H7O0vJLiaRKNktz7ps9MrxkIWoL87QvtEDhKM28Xn
-	 k5AmmmWwOcs470CeyBZIBeCGRvA2OWhZaRe0HVI/AquisjOs61jpTqIU4g03JsMwaLA==
+	t=1795051628;
+	b=dpOL32XfVf/EtmO4SNdO8yLQv3+6nGKL6PjiwsEa8lNWQyh1LCv/aYpgv+wdBGeF9FH2
+	 pqBfP9mf8Zwf+sMRd3m+0+8jFPF8FmukKe+Tn8KfRWvy0hEh0tT1JiEdGD75VLGi8HdBQ
+	 4FXojbigUNKR8dbk5BzsQRq/BJ2nwJoGBTNJ/tvkKRw5oLEwioioWQuz2odMRiavHZ5T2
+	 5vfDM4Fd8gm4coYYCiQ+nMk1QTW1zHK9XklGqPtLGVZytidbRdimFa4KGkYURMpF0GfMH
+	 sq7NYXLso1jLKuDjS2U/BgaJkD3YccnxlHcSfz7uS2A9tTuN4FumE+OMritUvbpsMXw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795027090;
-	h=DMARC-Filter:Received:X-ICL-RepId:Dkim-Signature:
-	 mail-alias-created-date:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
-	 X-Authority-Info-Out:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:X-JNJ;
-	bh=G/lIww7et98viW/5VX21jdn8thD7SKB2sXXE7AmwGI0=;
-	b=2FUwWhI9+SA4cHevPyewyo/Awtw3uiwQ1Wg2pf3iJOp9ePDeYpTg/mdgOQbkYL7BnC95
-	 LMtGwHfHSZeA+ytRJUnpjt95nKpqNzlPQdKRs6xAYjTMx9pmxTYKcasPEeXxkXZcJ4z5L
-	 D/lgpacj59r3A3pLTJrPRm+K3HpXAxJ4NRijcAIvy7ZscwdCKsXSDOxv43Uw7ocmSQ2l8
-	 VTPpFHQSYHoPIiWMAN7nrIa3zxBI3DDEky0pfIEBoD/TpXPQmmzdTpmp1IJBmUzOzu77s
-	 wPBHacBrYqEG9euvKR1kg/ori40rwWpebj0LW/W49a0JSTwh1ydOx4jhILYqA3Yq3Hg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795051628;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=OprzOyo9+JassEd1TEvafiLmaglW2JAX08bz3qXzH+M=;
+	b=bPcM+Wq6+nK5atDs9dGVQjX4yfaN0vq8niEp2j8+ehNdev+lxf0PU2rxJvSiqKOIYG9L
+	 kOFw5RWEEMCH6qJfQpi6QXvNP5lZR0Y8KE3FnDjU+s1tbgdR3u7RUU9DIgnek9wHkEQm/
+	 HXnkYx2dIXX7ZhvtPIv82Xmg66XObjzRKXup6zXP7ZVGB7iTRHiWgCntYpovV3RpGsiJN
+	 LFBe+9e8lfY01uY4aqkhyLiQe468JbQL9GzN9PlE0ZGzxQ+1ffmEduitlxEfu7HB3h1KA
+	 QbugR0Ro/GWDcMp38O+j598QAdpV9Ho/bgVL9wIf7yuCNLtdvKVzUVYQqZi6s+JV+Mw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=putintsev.com;
-	spf=pass smtp.mailfrom=putintsev.com;
-	dkim=pass header.d=putintsev.com header.i=@putintsev.com header.a=rsa-sha256 header.s=sig1 header.b=PiJ91MqF;
-	arc=none smtp.remote-ip=57.103.76.221
-Received: from outbound.st.icloud.com (st-2006e-snip4-11.eps.apple.com [57.103.76.221])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n5rcT0Zl;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B9A606A331
-	for <linux-tegra@vger.kernel.org>; Wed, 18 Nov 2026 18:38:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 45B9A606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=putintsev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=putintsev.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EAE606A320;
+	Thu, 19 Nov 2026 01:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=putintsev.com header.i=@putintsev.com header.a=rsa-sha256 header.s=sig1 header.b=PiJ91MqF
-Received: from outbound.st.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-east-1a-60-percent-11 (Postfix) with ESMTPS id E1BA918000B7;
-	Wed, 18 Nov 2026 18:38:07 +0000 (UTC)
-X-ICL-RepId: 01a1eff3-b201-73db-8d19-b6c5140059aa
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=putintsev.com; s=sig1; t=1795027088; x=1826563088; bh=G/lIww7et98viW/5VX21jdn8thD7SKB2sXXE7AmwGI0=; h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme; b=PiJ91MqFpdxmQyWy79KVTkWt/mrrLM/gylkSMC25V30MFSGkmqm1uhpYxXzPQE0KYRu7MVP68XxlmwyOlNQURvtF5zIWKM266T7XLIckPfQmbPVt7et5+hW9c21GmJtM3KtZTgd3RVO8gNqIw8UMN9C9CBXOqmDEt5m8W9Sh4iV9dcHX1vmxyRjLSeeutR+6CpZgHVA7oe+PCpY7NSanUlq3yzVr4D2Bl8V+6krsiDlrXMGw/xIQwJD29jTEDA3161UUhz73OexXt1ddHRwwGGQ6jsXr2Ge7I4kl9wqrRcT45K3pXoDwWqFyKny8pSJTjPsg+uMDHbZpQX3Ws/NnhQ==
-mail-alias-created-date: 1771854267065
-Received: from macbookpro.lan (unknown [17.156.216.30])
-	by p00-icloudmta-asmtp-us-east-1a-60-percent-11 (Postfix) with ESMTPSA id 331A91800108;
-	Wed, 18 Nov 2026 18:38:07 +0000 (UTC)
-From: Roman Putintsev <roman@putintsev.com>
-To: ldewangan@nvidia.com,
-	broonie@kernel.org
-Cc: linux-spi@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thierry.reding@kernel.org,
-	jonathanh@nvidia.com,
-	skomatineni@nvidia.com,
-	Roman Putintsev <roman@putintsev.com>
-Subject: [PATCH] spi: tegra114: re-assert CS after a mid-message cs_change
-Date: Wed, 18 Nov 2026 13:38:05 -0500
-Message-ID: <20261118183805.25461-1-roman@putintsev.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n5rcT0Zl
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3471F000C5;
+	Thu, 19 Nov 2026 01:27:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795051628;
+	bh=OprzOyo9+JassEd1TEvafiLmaglW2JAX08bz3qXzH+M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=n5rcT0Zl/SE9jHWi65HwpiTbSdysgFWjql0ekarf62v72raja8OOgMi+64tXtTKOa
+	 M5ygoG/bvHgzz8ZIeXIs2ivMgUwHgIEgn7GOBgW3ty0l2awMnvQY9owfOlmYKZD2uU
+	 2IaJgO1zVeoXLDsLzuDkE2VXP7vdpkj0WzaTyH9BUuFigeLVhYz3ZCFE4AeDGyxyAR
+	 U67BOybTOTaQp+T1SaHwEyeHtKvyxjFWydFbtpqNlmTQHU1xt3xlJ8+WoBg8WNChOH
+	 xTcGI0Ji3/zNwyOnhcai3ZPaEx93fKbvlJNQHZs67FMZkQmqfPD+REcBrIBi9qpXuS
+	 REEkUUwWsOnzw==
+Date: Thu, 19 Nov 2026 01:27:00 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sunil Khatri
+ <sunil.khatri@amd.com>, Vitaly Prosyak <vitaly.prosyak@amd.com>, Prike
+ Liang <Prike.Liang@amd.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>, Tvrtko Ursulin
+ <tvrtko.ursulin@igalia.com>, David Rosca <david.rosca@amd.com>, Timur
+ =?UTF-8?B?S3Jpc3TDs2Y=?= <timur.kristof@gmail.com>, Maxime Ripard
+ <mripard@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel
+ Maintenance <kernel-list@raspberrypi.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, imagination@lists.freedesktop.org,
+ lima@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-usb@vger.kernel.org,
+ rust-for-linux@vger.kernel.or
+Subject: Re: [PATCH v2 1/3] dma-buf: dma-fence: Add flags parameter to
+ dma_fence_init()
+Message-ID: <20261119012700.2980cbe3@jic23-hlaptop>
+In-Reply-To: <20261118134522.1646892-3-phasta@kernel.org>
+References: <20261118134522.1646892-2-phasta@kernel.org>
+	<20261118134522.1646892-3-phasta@kernel.org>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -67,86 +81,28 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA3NCBTYWx0ZWRfX44dALubhyGVm
- W02cJJuiIXnbLrDttWSgCnCg5bRrsSaGr6US77TUqddKUQphDPeazfVJhc7X6f649mLouoxH7B4
- h2dbB9fdR569BSUBX9G6y0ATmCc22YphpMyi2BsK6hluw/PJxjeOpvSUr30inNAQHlM8jcnuW3C
- wsL81wepCe6MwCxd2qgd0Hj0EXUOEzqLnGTPc+SAQlEuXP3elKfIy5AtS7gSfq4grLkgGiv8RgU
- cocz52tq7Hk/Rshra3L6GN8NVCSptaL++6+TXEGufwOdTR3xL7r7MM+VrebB64fJJBu2XUkuJmc
- w0yAu1keHCezxdjjP2GLZkmw0zutdTQknbcBREKAXscnMN1mrH6NuerVZn0g3c=
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA3NCBTYWx0ZWRfX6sbyOs6a/9i9
- w/4XLjucXN8Br2it7Ez/QC7wdDJGnuu1X7xPO9J/LBUBSv7yAwhBRqVBSgoYyEqCT5WlrHtLw28
- qACMK9nKRca69m/Mjzwjn+GX3Onp6Jo=
-X-Authority-Info-Out: v=2.4 cv=UsH2pOwB c=1 sm=1 tr=0 ts=6afdf090
- cx=c_apl:c_pps:t_out a=oyWFxbOnq+dmhQrAPgaJYA==:117
- a=oyWFxbOnq+dmhQrAPgaJYA==:17 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=51JdnUhQRHFq8RItG6ly:22 a=XqUgTU364RIWfhS-Fj-h:22 a=VwQbUJbxAAAA:8
- a=gNxGhvmwAAAA:8 a=7g2LsxMrY8pxi2ky23YA:9 a=O8hF6Hzn-FEA:10
- a=yjIKAdwAKDrTRT0yDhyo:22
-X-Proofpoint-ORIG-GUID: R_gCKmEIytyiTga0pDaPDDNPFjQVL90U
-X-Proofpoint-GUID: R_gCKmEIytyiTga0pDaPDDNPFjQVL90U
-X-JNJ: AAAAAAABpmt4HQEMGo56imYTeWQrIr/RKOhydgnHkeT3ryUCLVqrdya/8vXldJaF0JddAX
- Zz5JvYZpkxq4RGhpAbM+XKQKHTBTDjh88xxJYJMVWb0LYzdOsfJuj/RGpa1QRqD66pLIZ6
- iYBU2ag67GNaL7rzbP8owmmz7zX+685T37oQPWp6/awJNjwZgAr28X5YyvBRQTey+T0IiM
- qYs5UpepKx3wr//USxdbeOcxsnxNjbVkITtL9pi1yfJl5aAt+Ne0ZrE7hFiDe/TfBzC7lj
- t0SfRl0h1gKMdtc5XlUf06LDXjID+HFGJ5UucdEI+1wMft9KAQwdxnkzAYkXYHIiyQwaJJ
- xr1cmQpSQaAKCgP6YmZ/FHAgzFX5Bqng43BSRMKVQpoZARXzZFWuUmG/R52c//dC8AFGky
- 5KTbd+xYdQMWT3TslUg4oVMMzgOrqnx6kRx8mdzSdAEJWzmOgy9iNGTPiiAs/1lBjZ8ovF
- b55K0/if7TjgGs6UNUddEHQmOMcQA9On+u2wr70koRIY0ASAO/H5fWoXYV+eByPybNSS3v
- JcfCsBlc7jh86XdcuOLmmpgsBanIFk9qqiWwDOI5w4DguDLn/XpvTzW/eC/P6KXhHpLAj9
- phqWLWLUdmqpsovdPGeAnHgqVB86NkAOAQSOcqWE/Qdq6VmzQl7zYVJY1q6yleolZGYsZi
- lu78CdQqWa6+cnzRcJcFq1mxzpCErT69iZABVGQ/xQjBTd2+MIDyTcK3PwKSlZ6U5eTxSv
- CS/imZyMoFibOkezHDfC4GoQkDi6Lf4bjP4G6svu8b7vXGUKKycQf5tvpyvTcB/LPmYY3J
- mTpk/3kTr8mCb70SWSyelRKgrLgSMaZViwVzHOodHxuAoPLAtJmIgQwgcDjS7weyfuyC/v
- 0GVY3vN/66uK/aaC+LOiMMRdUetpl/KVrwouX3vJtthIz6FfoC18w96oHWY+UQ2d1crr2j
- c4IG/fqY4Qx2jPCzRa8ExCxah/iml6djrzmml7LfYUzv9cs0HIFcxkwvsLmAW99HltfTzT
- JfzOR8c4b0FkCeGfHxmYSiTwKcqvbbo5CjXwR299obuUQcpG2/nkRM3nqvi+Qxq4YyoQxi
- v9XL9bWH93kMc2mSOxvMstW6lwEM9TwUlqiYSpzfmZ1Gj6Egn2LXmRp8VERAaqScxlItTt
- IrsZPoUDXXe3pJHRdNozifPVISU7xJhAqay7lw0bxDXLTdkwLYSVykW723/Ni8Gja2SUUB
- VtnjIF34x6LO7Kv6NyXCSfJQoxuhiQuXpNu5+55NKy2lQQ1SANLn1C7jmHWweQ==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-When a transfer has cs_change set and is not the last one of a message,
-tegra_spi_transfer_one_message() ends it with tegra_spi_transfer_end().
-That function deasserts CS and stores the deasserted state in
-tspi->command1_reg (SPI_CS_SW_VAL). The next transfer is not the first one
-of the message, so tegra_spi_setup_transfer_one() reuses command1_reg
-unchanged: the controller clocks that transfer out with CS inactive. The
-slave never sees the data and no error is reported.
+On Wed, 18 Nov 2026 14:45:21 +0100
+Philipp Stanner <phasta@kernel.org> wrote:
 
-Every driver that splits a message into "write payload, toggle CS, write
-trigger" hits this. mcp251xfd does it for every CAN frame, so an MCP2518FD
-never transmits: the frame reaches the chip's RAM, but the write that sets
-UINC|TXREQ in the TX FIFO control register is lost. Reception uses
-single-transfer messages and still works.
+> Currently, there are two init functions for dma_fence, dma_fence_init()
+> and dma_fence_init64().
+>=20
+> Since more future user options for dma_fence initialization would
+> require distinct init functions, too, it is better to do this in a
+> unified way.
+>=20
+> Add a flags field to dma_fence_init(). Adjust all affected drivers,
+> preserving the old behavior.
+>=20
+> Support the SEQNO64 flag, and add a check-function so that the user only
+> sets valid bits.
+>=20
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> Reviewed-by: Timur Krist=C3=B3f <timur.kristof@gmail.com>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+For IIO,
 
-Before commit f3e182c33e53 ("spi: tegra114: de-assert CS before SPI mode
-change") the deassertion did not touch command1_reg and the next transfer
-asserted CS on its own. Mark the following transfer as the first one of a
-message again, so that it takes the setup path that asserts CS.
-
-Tested on a reComputer Orin J40 Mini with an MCP2518FD on spi1.0. No frame
-was transmitted before this change; with it CAN traffic runs in both
-directions with no errors.
-
-Fixes: f3e182c33e53 ("spi: tegra114: de-assert CS before SPI mode change")
-Cc: stable@vger.kernel.org
-Signed-off-by: Roman Putintsev <roman@putintsev.com>
----
- drivers/spi/spi-tegra114.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index f43f2df..d2fda21 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1116,6 +1116,8 @@ complete_xfer:
- 		} else if (xfer->cs_change) {
- 			tegra_spi_transfer_end(spi);
- 			spi_transfer_delay_exec(xfer);
-+			/* CS was deasserted, assert it for the next transfer */
-+			is_first_msg = true;
- 		}
- 
- 	}
-
-base-commit: 20eef29b7c8465ac98d7dd6d6f2ac07a8d8056ca
+Acked-by: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
