@@ -1,112 +1,117 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795088501;
-	b=CKpWIT34/XTY1SVwuEooHMqO/+aOZyO8INH8zQZth4BTk+pRnbZhHL+cDrPHjoIfY4dR
-	 dfdHsCrSBU0OhgWseskfjtL6JsGY7/2a72e2phvtwDf/YuUjDUm4tlTQ5XgctU/k5pkwH
-	 HFNiYrj68QEC4fT+aR+1bTVboCHD74nxkmU/jVC2BFVX/XCXB4JNpwWo4I361jS9Pf/tb
-	 3V3Cd1QYxwwL6xKlgeT/ukCbnlxZQKHAjYeEJ93is6eI8/sO6hzXzU3WmqlRxHaVBWNHP
-	 jYnkAqGlIVr8/8T0x+BiEDRPgQcsqP0m98eQAWtTpQHZRnI+gOc6gmHFEGyfC9hBsRw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795088501;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-Spam-Info:X-Authority-Analysis:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=VCII3XX/ebKpfvWD6KeCp48twovV+5/57+Y9fRp2vzk=;
-	b=EsaLRR6AZtQPcq79UDU9/S6TO5nyllz12x0dPXxPJSOee+fdCTI/clPttel1i2QEQ6g/
-	 lg3pK+oswUvvp0XP64ZM0jMfCrkspIH7TDOCTnz79LJAYjyckEluuXyFKIyx3SRpQwIhc
-	 kbtn6yhBPLKC5z2P4S+i/Ul0GcoVonr+oJo7BcvlMHhkL9O+V6CDgJuzqrbDwrghre2Ob
-	 B5j2S2EZlsf9EcYmGc1JcD6b4KwWL2CBLG54B3n3OHJxoTTLrdzKdtj8m5vhr8IhHu1+c
-	 3e2neg+aBiTV9g3JBUJ8hInX5msE1kLyIb+4mfwPSqZQqVVq+LR6IgCKbnMR9CrmZXQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=EMzUx5FJ;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=IQao0rhy;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.29
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795091191;
+	b=g6OQ9iTejBFhqyIrtNwTniW6BU2PyUBMwkLHIqPLMta6t9+MSV4KQG7d775u30pgp3fC
+	 gI2ncvK7Omx22FwKTU0Ua6M6KJC3654hjewJF5DfoNM1mm1Ez7LzmhFCR1is5/yxP44rp
+	 LkbXOEFHAw/I6IHErWAJ6XtcxMjwcJ9s/uQbTh76aK/YO4AuRL82z89Q0NjpaBAbuszcT
+	 1IYqPO64y5Mxe+FMZ5M+X3pp2ieLgKTlm7g8wf9Pzt8l0g+GIS4XnNvf1yUmNqiK9xViu
+	 GLk1CTAplzhTr1OCrQl+WUmL8qGQrqX8Qf8jf59VpHwdBVDZbN6G6ZF2yOiK9Nl9B8w==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795091191;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
+	 Content-Type:X-NV-OnPremToCloud:X-EOPAttributedMessage:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=4D55MCKWsw9qDFfs9GN7nl+ThDhpENVTTNnbDqbZuKs=;
+	b=lOoZ3vqelELu4VqPXic3ZncjsBIX92GhGpv98/S3LWPrCauHdeoHmMHTXJndMqTztCLt
+	 wSkkogqKzBef2fsSTO8m+F/sXvxIclH8DgPCKTZEQ+X7tvoBtRAZYowoAJWFX4dLs7kPZ
+	 Mzr6ca5aLNWdexbPJjkkqRO+bsTs598B5t/rTw+zuNbSYnmnBYJMiep0Q9NUy6rwgl1Vy
+	 5SowegcHIY5EJDB6LonuRYWwcRjObX9Mux1H4hhOi0/imtXyjVQfiInA6OuxKOnlN6HoZ
+	 jlexlxZ+D0xLLXFG/ax1V7oLuqSKWyjem8tWiiTUaJdTZWaArYR1B84aVLILQ9G4qkQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Z9qZWe3o;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.29
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011029.outbound.protection.outlook.com [52.101.57.29])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719A3606A320
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Nov 2026 11:41:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 719A3606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404FA606A320;
+	Thu, 19 Nov 2026 12:26:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 404FA606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=EMzUx5FJ;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=IQao0rhy
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AJAuNBH1546454
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Nov 2026 11:41:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VCII3XX/ebKpfvWD6KeCp48twovV+5/57+Y9fRp2vzk=; b=EMzUx5FJsZPwXonV
-	qMvhlpaPfvRT2YQbRmsY/ZrX/OZnOAKLCxdwu+9eTRFgbtaMb5Ny+XuvsmaXrC3/
-	i2zK0VZisTWo492QWv39hKnIsY1IFwXhZT/NdfmMeZMpX9/g3wJVOfKFOXojv+2E
-	2k0Htmzi8l6toB0fgSbLP4LKHuKlxVYULIa28Un9yE1DcEHz2RH2VeWXIk0Aptkk
-	vnOOhxFAOsdA7LrFY1A4dLlm6oykJayRyOudgONhaHc9r2TwjuE3mMDrOznrECHD
-	oyDZ/LCZOdh7graKgFZAdHQNwif0SV411nELOOm05+zdb/SZ8kwk4afwOrkDLtgn
-	nY1OZw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j1yghg81h-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Nov 2026 11:41:40 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2ee184a2474so18476675ad.2
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Nov 2026 03:41:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795088500; x=1795693300; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=VCII3XX/ebKpfvWD6KeCp48twovV+5/57+Y9fRp2vzk=;
-        b=IQao0rhy7TsQVGfFQahNkFb7lXuGyUaKMaUivVbZkLt6+LIr9bPLlCfGUoOUfHklBs
-         pf+ibBqzjJFU06mmRumoMHJc7cXGTXqZCoEuwnofxE+MX2UoxfBSJmpoH1tP1NKwdE9C
-         z8m0mkUuwQyx1ePunP2npvYhGbTm0v6sbKSGmTMMR86PjlC4arO9fZ/rtEmzOOne8aWS
-         ITvAx6AD5POoXKgK4WOLdTXG5KraVfzDgNRq7AsH+HJB7OWHwZdBALH5D7vPAKNq2nnp
-         2XuYkBzUHFsyyYCphz2vVvpzImvLcfG/5y+J2YErt7m26He/1zp17DHLQOI4daqa/xgH
-         AWFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795088500; x=1795693300;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=VCII3XX/ebKpfvWD6KeCp48twovV+5/57+Y9fRp2vzk=;
-        b=TELIRXq7O9a5jUdbWFVsDC2FwuCMuIVoHaeqhWa+YBMuHB1Opk27Xd3Lv0Ug82ioWf
-         b/ZMUambc3otcg6bTRGCD8ik/2ySURCGVd5tPBmuylAsuXe6MFxdYE34oC0mrul1MDOC
-         wJHMxu2imBNYgBelpedSe006/otw2tmg9fNF84TOQrAMtgNmWTV+YJlWV9ZVU7XLVrpb
-         3aV1Zd+DmG/SYlRjx+xAcKtRV/9V+9pJQg9RbvOk9WaLx1HaMWkL3J5CcSHawCJvGT45
-         aqtngeJ7XvMfFhh6+vLjgCa7HiWjYZNqeLi66QEJDg69xB0dFOYcw8PIe+h2Q8he6zde
-         k2Gg==
-X-Forwarded-Encrypted: i=1; AL+hErHiwpLUyJSlHUGAzgBiZVKzdU1D2P7YzfLExKyJgNpYB2QBtd+poYKXwLXXeHY67GKvNy/y7uRnoPGOtw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9FI9dlXna/gKrwNcWQyz1mlaSrkEGRw7IY75lfSV0J9RqBQ0Mz
-	bmqflYmiJ7D1JRF1AUp6LczfDecEhBBDkuYr6NMLbSsX3RlpTaruDttQXcwnvxSp+5QcgfD2XuA
-	hWmkQ5HOV3U4LIPGa6Bu875YSLlbadMgVDUKktbwUjiFfKvMVKz5O0xC4tW35dd3fMg==
-X-Gm-Gg: AZFdTZd6UYUZIrapOz+BwVI7aPt5PjLvIZYt2xlWTGaKx+A/ffqrRb8ErjgBCKnrmez
-	f2V+mgE4EubFWmhY8dEe0F49a1xlr5QV2Y+gB+lPEk6DA4bGTacmAako8959DGaV3rTJgmxoVFi
-	pJV1nhxR3xNQ0JPT7M/mskmbKzRxkQSB0JwiVpeYwPEWylXgf1LHwhoqeOEr770u4t254zZJ6cZ
-	26sIwPkoTqA87qICPPK5Z8sARUia/LQsRIOFQ1XU1xBgvcPId8dlbgC8NEYVLmc4OKCFeIPezxC
-	h+y+JNddcDAFpar7IzlDjPwxj8MUhhT0o7C/Xtn7rEfhMHyHj1KzxUrDvrDlgMdjwZpdO8Pje9d
-	AkA1dyhadik1H05zMWdBgkhLugZNdD/7zf3WyXnwMJTIX1gjXi+jkHL9ZZx6QOwInI9HHRqHNWN
-	UNUaxaQQd3NT3EWFZA63+s7ySobSFURjZumeh5dqflmw==
-X-Received: by 2002:a17:903:2b06:b0:2e6:136e:f264 with SMTP id d9443c01a7336-2eff753ce5cmr53624345ad.50.1795088499952;
-        Thu, 19 Nov 2026 03:41:39 -0800 (PST)
-X-Received: by 2002:a17:903:2b06:b0:2e6:136e:f264 with SMTP id d9443c01a7336-2eff753ce5cmr53624135ad.50.1795088499431;
-        Thu, 19 Nov 2026 03:41:39 -0800 (PST)
-Received: from [10.133.33.68] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2f021fdf305sm11054485ad.5.2026.11.19.03.41.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Nov 2026 03:41:39 -0800 (PST)
-Message-ID: <2698e091-17e9-4a1d-acf1-19981ee604da@oss.qualcomm.com>
-Date: Thu, 19 Nov 2026 19:41:34 +0800
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=Z9qZWe3o
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WFZ66UnTr4MIXQwEEpDP+NcdE8ZJe1fdHAoss4FZVT/5zcHNDJ/73DJPpKzo6nz5VHJzLW3q22eMO/rAMT97aJyXmLXCmEJpm8BzA/FEzOswhe3erv83TsukgdHk1R/wwP1lndIYTerSroAhrLJUS9hVYW+Qu9fSwQYqMjpC7+ZdgcNXZevccWeJha2d1ijKXRERuLARSIB6i+VjelJBqqPX5x8nfeiKsFFin/I/ABvdrn8IaWY7Rw+hML6nFGF4eHyRwDl53nKKLjwBLXG92v43CoUMVwriQbEScOqoI5xfxJ3/TjPMbcmBhztMEVQst3QfFJNtoJEENeXHiRHErA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4D55MCKWsw9qDFfs9GN7nl+ThDhpENVTTNnbDqbZuKs=;
+ b=dio+uAoaa+nhJeH7FX4ECOFELj5lPKOJD62/H1sjWEzLb0j8GIbUdIBANJHw+nVCrhDiJXjGjfSKUn5cGY34wTLVRDyNzlOHGljgYSSHs4eqoF2qALxpSb1ADVToTHHgoNNnEokU4FBkq7P0YuOkqaZU8lAVes/myD9F5+eSXrUzQ6pKHSThJNqeFDerPkiJjJVEIlx6JDTNSE7oftwHn+kcR2IeRkxvSxChoJK6Ot81aos1+Jn3sE0W2XaprSX3vShsTCzk1mz25Mt9Pb0gA0XRpQVWDvgDMPeyjwMSoVZxuzwebxQjok1pYGoXrJ9IJxvb1odBp2q1SojmPnMACA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4D55MCKWsw9qDFfs9GN7nl+ThDhpENVTTNnbDqbZuKs=;
+ b=Z9qZWe3o6Qtipy0HJj0mi4SJb07wiHl2+JCKe4U+7dG5pZSUzW8b5ndu2NDF9dV/jm05bnfwLbh/OkuaoyvyMUgZm2LSoE0LGNCUdJ0f3fndQu/VbPfFM013HvUlHvwGyZiGnqVX4mtXoLuGSGokPtRDFPwuG/ZGXsLVHLHDZh3HGD+WWzhkwFgr5nLuEf0mHDGtNVjimroz8C+QxssUCOvB5gmifongJmv0JAOKlbFyhzjdenat58zbXBhAxEfiqq13Uy81ZrWkgXAOJU2n3q6c/Kz3qhbjbtYSbVMOvv+ZuH6GSA7IbXGy0w4G+y2aMqqACUYMzKt9aIF81ovXyw==
+Received: from CH0PR07CA0025.namprd07.prod.outlook.com (2603:10b6:610:32::30)
+ by MN0PR12MB5977.namprd12.prod.outlook.com (2603:10b6:208:37c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Thu, 19 Nov
+ 2026 12:26:25 +0000
+Received: from CH2PEPF00016D4E.namprd02.prod.outlook.com
+ (2603:10b6:610:32:cafe::6) by CH0PR07CA0025.outlook.office365.com
+ (2603:10b6:610:32::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.10 via Frontend Transport; Thu,
+ 19 Nov 2026 12:26:25 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.118.232) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CH2PEPF00016D4E.mail.protection.outlook.com (10.167.244.123) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.639.5 via Frontend Transport; Thu, 19 Nov 2026 12:26:24 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Thu, 19 Nov
+ 2026 04:26:12 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.57; Thu, 19 Nov 2026 04:26:11 -0800
+Received: from build-sheetal-noble-20261014.internal (10.127.8.14) by
+ mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.57
+ via Frontend Transport; Thu, 19 Nov 2026 04:26:11 -0800
+From: Sheetal <sheetal@nvidia.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>
+CC: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "Thierry
+ Reding" <thierry.reding@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
+	"Mohan Kumar" <mkumard@nvidia.com>, Sameer Pujar <spujar@nvidia.com>,
+	"Anupama Kunkulagunta" <akunkulagunt@nvidia.com>, Sheetal
+	<sheetal@nvidia.com>, <linux-sound@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/2] ASoC: dt-bindings: tegra: Add Tegra268 ADMAIF support
+Date: Thu, 19 Nov 2026 12:25:10 +0000
+Message-ID: <20261119122511.1324643-2-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261119122511.1324643-1-sheetal@nvidia.com>
+References: <20261119122511.1324643-1-sheetal@nvidia.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -116,123 +121,90 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/9] cpufreq: tegra194: add Tegra264 support
-To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
-        viresh.kumar@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: bbasu@nvidia.com, Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-References: <20261119111217.902071-1-sumitg@nvidia.com>
-Content-Language: en-US
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-In-Reply-To: <20261119111217.902071-1-sumitg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE5MDA0NiBTYWx0ZWRfXzbGcrsO2c/k5
- nFDkKEWVkmvOAV2ts1AlUxqrve1hV0a/2eCJqGUPIAtXbKNycCHqKKn/GEWHX6Nk/SZnvDP0SSF
- jGBnDyHV3urIVQP99q+owu6nYaDJLzL1fQ9nRf4SBu34LJnhGldJ2hk17orPCI6IaUBdX76OLSX
- Z+QVHRNL5zkaf5MfmLKTG82SRaT0cIp6mPMp1ABk7SSDvz8Q9yg46UUVxXEWiXb8LHF2eJPtw+r
- Ld/fztgxLHpTcGjEiA74juBHzoG9TTlY9umS6zbEbmTV0O47f3oyrwWMTXT/QdhyLv3pCUaM9Jb
- Wp/bHGRUlXImKxyIYIHDacsnIkNz1TjUZ7U9BiHf8zZv711su+H93c5WpTvoSMrihN7sLcLEmaJ
- DUQvAnAsPoBJ6YjaeS7GO3+j1tuYq9CNnOFiFErWWMIBPJX5n2KEOacH2U+uiFSYMjbFezPl69n
- 3lWqwGOGHfnDVq2OohA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE5MDA0NiBTYWx0ZWRfX6wNZu7c1gG/3
- 7u7p81Cx2RCMUukDPV/QZA7BUQwAB1PJ6IFil4SwRTZcMJTRI/39mR1tBp6ONYJ02HOgHdiuAlC
- 8DEuxVfC63I4NVH3AwMah6T1jrFlTK0=
-X-Authority-Analysis: v=2.4 cv=Vvi2kO2n c=1 sm=1 tr=0 ts=6afee074 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=VwQbUJbxAAAA:8 a=Ikd4Dj_1AAAA:8 a=EUspDBNiAAAA:8 a=I7BNmAFbTgjmseqQuzQA:9
- a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-GUID: S7iHHU5VIOxkDnYtpgzeyvLBD3Shok_N
-X-Proofpoint-ORIG-GUID: S7iHHU5VIOxkDnYtpgzeyvLBD3Shok_N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-19_03,2026-11-16_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 malwarescore=0 phishscore=0 spamscore=0
- bulkscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611190046
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00016D4E:EE_|MN0PR12MB5977:EE_
+X-MS-Office365-Filtering-Correlation-Id: bcc9912d-81d8-41d5-1a45-08df463853f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|1800799024|36860700016|376014|82310400026|7416014|10067099003|11063799006|56012099006|261026140227099003|261028144727099003|261021121427099003|261022105027099003|261026121527099003|261102123227099003|261009223027099003|22082099003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	NZvdBNIwCy/NDl6F433B+nSSioCEV0Cg2peJU58wZ2dGlpPd/0mhBPbbWlJKcmPbfImmCNZqhSn9TCA+6N7Raa8UaCdLpqs7qmD0sLkTPayO29eRczRn4RwcFVNUckFnwVKa458eulS+iRcKzJM62m56itTwC5YAcZT+gxexeeMJNqEUAU9g4V0xRjt5gsz0db8VeDfMrh2qFvZRX4e7gIJUConHwvXRcKYtr/tatkZt3zWSWCXzB+q8sqjkkkqPyMGVIgeuWJMo3y36q/p1shPUyZjiHbP1bkgpVJTNfbgqoRfGo58ZQeIApms2LJKA+6TSIIbtdBNo8x3EjwStYSlfdizTwYFnZbb47B7Uc162WKQV0QE4JUJeRaz1hizq99i0yzonOQoZfpZW3b+NwG6AmokvM/Sob3nhAiDws9hgacZfmUE3B39D10IFOnwAF45t0lLxQENUuqnQrsb7oF1tVj69MVFk/Sc4TFIxnrBqqWzmhAd5UNUHuDk/ocNSc2ajyal5oFQta+3d8cysSef5UHm9gaHrPr3flX19tUbY7VHx5KwE0mKBdBncZJ+imno+aYhd19o7lPNAn6hcLAFpjQ9y1UEjsv/7xiwDnEwkXlcBAJQ9y1MjtPC49wwJQRIXuaq57zgYZ4wUW2VJcdbFOpN/cQp1ISq5aS3KN8FBRTYagu0/S67mrxNOrfTeKnK4XnXqoGJ1BwUDRSiBrg==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(36860700016)(376014)(82310400026)(7416014)(10067099003)(11063799006)(56012099006)(261026140227099003)(261028144727099003)(261021121427099003)(261022105027099003)(261026121527099003)(261102123227099003)(261009223027099003)(22082099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	rd7DzLGCECpQ0zpg0yEQ7CH27W6580fB/u2O4E82mZFoQxypo5an9XZPwzUXrfMZKsTuRYGMermQuEwvj7x3EEvz9FXQKBtcvX19+bhmeiqECSVvu9zQ+ntbHel0LP479kByzujpKUju+uRIYoL82qECvdMKrYFmbplIqpUJGhdc1JR/gwrsREFkKWxqy6hMPaDydTV+09JglRGKJGjtDbk+IEoc+OoYwMem14VjgECVrSUyb/errCPsZcLFw8T/RDdrh8NwcP5dH2CLb2breKbqtAnmBrmVMl8Kpdr/93scPgRjiczNjUsuQxWAL/CBqT67zDaDbK6iRReuvL/VD6PLppuiuxGH0H7P6J3S+n1RAOpGpsuo0LGFOpeIcaKz/XBj3odBpeyCEQDVuhAqnXtCGlB3J6qvjLsmP6ECBk6dFFgf758f6voU6r607Mr0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2026 12:26:24.8813
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcc9912d-81d8-41d5-1a45-08df463853f0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00016D4E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5977
 
-On 11/19/2026 7:12 PM, Sumit Gupta wrote:
-> This series adds cpufreq support for Tegra264, which joins the SoCs
-> already supported by the tegra194-cpufreq driver.
-> 
-> Tegra264 keeps the existing model, where BPMP provides the NDIV limits.
-> The driver derives the current frequency from the core clock and
-> reference counters.
-> 
-> The main differences are:
->   - Frequency read: through system registers, as on Tegra194, but from
->     the 64-bit architected AMU counters. The reference counter ticks at
->     the system counter rate (CNTFRQ).
-> 
->   - Frequency request: through MMIO, as on Tegra234. The driver writes
->     NDIV to a core_freq_req register in the CCPLEX register space. Each
->     register controls a clock shared by two single-CPU clusters, so both
->     CPUs form one cpufreq policy.
-> 
-> The patches fall into four groups:
->   - Fix (patch 1): read each CPU's MPIDR from a CPU hotplug callback
->     instead of at probe. A CPU that is offline at probe then also gets
->     valid cluster and core IDs.
-> 
->   - Preparation (patches 2 to 5): cleanups, mostly of the counter code,
->     to make room for a 64-bit counter and for an MMIO mapping without
->     ACTMON counters.
-> 
->   - Improvement (patches 6 and 7): group CPUs by the generic
->     "performance-domains" property, which cluster-based grouping cannot
->     express on Tegra264. Device trees without it keep the existing
->     grouping.
-> 
->   - Tegra264 support (patches 8 and 9): the driver support, followed by
->     the device tree changes it relies on.
-> 
-> v2[2] -> v3:
->   - Patch 8: read the AMU counters with interrupts disabled (Zhongqiu).
->   - Add Reviewed-by from Zhongqiu to patches 1-7 and 9.
+From: Anupama Kunkulagunta <akunkulagunt@nvidia.com>
 
-For patch 8/9:
+Add the Tegra268 ADMAIF compatible. Tegra268 ADMAIF supports five
+RX and five TX channels.
 
-Reviewed-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Signed-off-by: Anupama Kunkulagunta <akunkulagunt@nvidia.com>
+Signed-off-by: Sheetal <sheetal@nvidia.com>
+---
+Changes in v2:
+- Use the ASoC DT-binding subject prefix; no schema changes.
 
+ .../sound/nvidia,tegra210-admaif.yaml         | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-> 
-> v1[1] -> v2:
->   - Patch 1: drop the cpu argument of get_cpu_cluster_id() (Zhongqiu).
->              Check for a bad MPIDR in tegra194_get_speed() (Sashiko).
->   - Patch 7: check the BPMP table in tegra194_get_speed() (Sashiko).
->   - Patch 8: fail probe if AMU is not available (Zhongqiu).
-> 
-> Sumit Gupta (9):
->    cpufreq: tegra194: move MPIDR read to CPU hotplug callback
->    cpufreq: tegra194: remove duplicate counter sampling loops
->    cpufreq: tegra194: add tegra_counter_delta helper
->    cpufreq: tegra194: add per-SoC counter mask
->    cpufreq: tegra194: split MMIO mapping from ACTMON offset
->    dt-bindings: arm: nvidia: Document the Tegra264 CCPLEX cluster
->    cpufreq: tegra194: derive frequency domain from device tree
->    cpufreq: tegra194: Add support for Tegra264
->    arm64: tegra: Add CCPLEX cluster node for Tegra264
-> 
->   .../tegra/nvidia,tegra-ccplex-cluster.yaml    |  27 +-
->   arch/arm64/boot/dts/nvidia/tegra264.dtsi      |  21 +
->   drivers/cpufreq/Kconfig.arm                   |   4 +-
->   drivers/cpufreq/tegra194-cpufreq.c            | 456 +++++++++++++-----
->   4 files changed, 387 insertions(+), 121 deletions(-)
-> 
-> [1] v1: https://lore.kernel.org/lkml/20261104181521.3003578-1-sumitg@nvidia.com/
-> [2] v2: https://lore.kernel.org/lkml/20261117154954.625126-1-sumitg@nvidia.com/
-> 
-> base-commit: e8017d29067fd1310a65c3494ce1a1b492adbac6
-
-
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+index 2ce4049f94ac..054bacf60234 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+@@ -27,6 +27,7 @@ properties:
+           - nvidia,tegra210-admaif
+           - nvidia,tegra186-admaif
+           - nvidia,tegra264-admaif
++          - nvidia,tegra268-admaif
+       - items:
+           - enum:
+               - nvidia,tegra234-admaif
+@@ -134,6 +135,27 @@ allOf:
+           minItems: 1
+           maxItems: 64
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra268-admaif
++    then:
++      properties:
++        dmas:
++          description:
++            DMA channel specifiers, equally divided for Tx and Rx.
++          minItems: 1
++          maxItems: 10
++        dma-names:
++          items:
++            pattern: "^[rt]x[1-5]$"
++          description:
++            Should be "rx1", "rx2" ... "rx5" for DMA Rx channel
++            Should be "tx1", "tx2" ... "tx5" for DMA Tx channel
++          minItems: 1
++          maxItems: 10
++
+ required:
+   - compatible
+   - reg
 -- 
-Thx and BRs,
-Zhongqiu Han
+2.43.0
+
