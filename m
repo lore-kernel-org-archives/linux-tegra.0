@@ -1,99 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.63
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795072395;
-	b=P6dQoQjVFz7YDL1ofyelsxj/YhnxmzzGArTWxBkWH2Cs/FXH8Fz4ulSPy7jXjf4i8sUq
-	 EYJsA/v1OCnDC/zwSnbacc/wD0FRTGCGxUQgHpcfsJpCuFMfb6zwZpMKHwfz2svOp22G5
-	 3dAVdAwaUe5kJVnPpq9M+oLhtnpculgY+gN6qnteKyfh4Q5xgHIYalYIwqfzrFR+uK+br
-	 qvV8UnZiYbbfGeW6dbrehP63lHren2mubrZSlpSnDUzCgM8Tn2llue3p8PXceJlecarBa
-	 K3YXs2twLx99w5hPzAmAetQbiATsKWGvPthbLnNtQd8FLixSlyoXjEMaD4J+zMxiYdQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795072395;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
-	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:
-	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=7dL4re9DEqSnqw99TLcitQybmEBP2IIlgYQs3U1O+7M=;
-	b=ebHvMdWRU3Zm1XNVdNukhYUd659kFzMV1PBqgE/iffkGi+2Z1SxMXfqsvZUI/+30YYWA
-	 vfRfsCU+/tBTCWAXr6GR7whYfkMxc5Ev1ArsZDVlKTg7Dg1vwu1LrjNtf5a+G8LnkHQoN
-	 zRFSQ7HXx32yV6D5hdA6JDQm0rWcqJrWINi9XsJFqwkJGn17PmkpHQLp7Nz3Xp+zauGDe
-	 GXkRUIO8U7vGy/c8eS4GaHqEM2v8vD+ui1T/Ua6IFHBiv2YSFzoHDHl3RrZuoFcPRV/1t
-	 2OHMaCbpWTlO16YOn3sX3sVkGSfNZzDtmjCERRFL/tQz2mYab70oTz6UnioMvZASeng==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=nvidia.com;
-	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=ggfkpnNB;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.46.63
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010063.outbound.protection.outlook.com [52.101.46.63])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.21
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795072747;
+	b=2Zjx/nbAjOZACuwKttclDxXjCZdVfTO1hdYfJaczMisR6J/vaq3L0RNs0vTx+s14zqjI
+	 LDcOrgQA8/PaXuTTtGuflstH0+bHngws3C2dBRnQlcpf1XrLHdwolR4I8o3a2xK27IcWd
+	 zEUNfouf3B3hQYiKF6dM2b1dZZac8UO4r2CW3LX5HP2ifV2+Q/XiRnpJYlBEqnmXijYMr
+	 zxysOq6y/WkHaDbd6EOiWsTg3wXCThZmOQnV4iC8W/fI4oWLZulpF/oqkuzyj0bxGJtQc
+	 SFWOJKBbMQ2+ztz7zHaPLfKs3ZFry1wQ8ACQI3WVQiqogEA/CMbMMknrNwHJjgadQ0g==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795072747;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Message-ID:Date:
+	 MIME-Version:User-Agent:Cc:Subject:To:References:Content-Language:
+	 From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=E7h8y9q5NeM+rdkgTl7ssLz1V6qUb/C0JHpQHZ+0bxs=;
+	b=Ffk2YWrnmb8jar0LITwxh7zlrxj+USiLTza4YEF+Rp1Hj6iMnTKUjr2fBaV7XkF0BRTH
+	 p3mLdBAcOl8z9eFoVbzUaV0mT9Drd7RsZYzvVromqF6DHxIvQ6y8ABOYxR6gIqGZbdSlw
+	 xUj+axykA8hvkSkz308iwOcj06KO0+Zc0IYLll4/qfZU/cjO0W+yiSjQEsZh4IMxDvVPk
+	 t0m5KNSuKzIKLGveJeDrhJnOh1U1gmZ+Q2o6P9jmiuD34S85muuWiicWnetAU/mBef1mX
+	 7e206/uoZoFQO+boAEU0aovcY/t+KJ8TTyttJG0pB6UeZeG5st1opwgZGfI6BRKHffA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PZ0zE6AQ;
+	arc=none smtp.remote-ip=198.175.65.21
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23384606A320;
-	Thu, 19 Nov 2026 07:13:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23384606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2273A606A333;
+	Thu, 19 Nov 2026 07:19:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2273A606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=ggfkpnNB
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ySuS0ucWY26/g3k0DOhQKuc5xfJqrb8V4BUikEiC/x3DRsM5C56iACw8mHXa5vtiMRNuALz7b5haGc6Omri3dVJXiYuXAOvKn1Fc74HVzXMo1YEIArNhD8E2aP8b5OFBvsc09RAKjFwepZfLgIZ9CGZ8jJpJL1tYaY6nHZQi2fKRQVZQq1FoX8p3Iv41zV3FWzlBnLp3YMuHCWhmQGcxI5f7ShK6u7ucsOPMKb9UEB8KI9PibNjC0EjciuIz7meOa2ClXO+O2WWDdDz4D8vH/PjZiiQY5HyR7926M8VVOz3quzxJOgB2HUIEr2IX+uTMmxQTsWWA0D7Gf4Xp0mG06g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7dL4re9DEqSnqw99TLcitQybmEBP2IIlgYQs3U1O+7M=;
- b=dB099lMUyNPXzDSC25w82ofKnwlaH8ev6zEJImmHdaw41R1cLyN3EY8+8cDSGOp+uquRJ9b1yKvqNpHcn/7EPoSzLqa8OwsoULyp6HxrMr1BLJw9Sd4evdDO6QRW6w5kjQ0PcbalKhPGvgAGJUM9JUNL3X5NMRB0Wv3cJJ9zp1BWzYlNpowtZNMRZiyJ7p0mir2F3fYeRwIZmORZUSTRgTXUS6iGQilTWP0gwQOZXWRQEjOyBt+gVBQF3UhI8c108/cOwwx1kKwnsGXzLsErcKsSZFL+OwXywRpEBrCgG+rlmMbfasmN/4PzqBIKHPWfs1XJjxFHobiTX8kzekvOHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7dL4re9DEqSnqw99TLcitQybmEBP2IIlgYQs3U1O+7M=;
- b=ggfkpnNBQDagi/2RZVFUhjceIJJskxzt7tR6n4tmDCqlopNwc2ItZoTFH2sU083anyY0YuGMVLUmWUHbR+jEo0SfBXGeHV0B6SGI85RoUQSVlpnUeVTgTnsG5laRdc7UPJFeh6rLMnzHWtnR0pNzED21/gbSjirxzm1DgvcKVEkQ/Av1ReTfXeANqrAdoqpSLzXcyFjh3rVn6C0kzdf9JtLgCCWiRqBBZjk4z5TKq6e/QOeBg7OTV2700BVbxmSVrCJUzKEFGOwI+53jv2AhaO1siPDG4sOO6Ln77LRRtrxyZu9Ft7dpsDfETkJ9tIt24FW3eMIPKTbt3ljmr9ivOA==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by SN7PR12MB7370.namprd12.prod.outlook.com (2603:10b6:806:299::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Thu, 19 Nov
- 2026 07:13:11 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0615.013; Thu, 19 Nov 2026
- 07:13:11 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Joshua Crofts <crofts@kernel.org>,
- Joshua Crofts <crofts@kernel.org>
-Subject:
- Re: [PATCH] drm/tegra: remove redundant pm_runtime_dont_use_autosuspend()
- calls
-Date: Thu, 19 Nov 2026 16:13:07 +0900
-Message-ID: <GqcGePzkRVaM7zcZlGfZHQ@nvidia.com>
-In-Reply-To:
- <20261110-tegra-remove-dont-use-autosuspend-v1-1-f37453d0e441@kernel.org>
-References:
- <20261110-tegra-remove-dont-use-autosuspend-v1-1-f37453d0e441@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0304.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:38b::12) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=PZ0zE6AQ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1795072747; x=1826608747;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3DN1/OgZfO6kqe/noeYjCjobh7lUNxQjvfpeYc0fl00=;
+  b=PZ0zE6AQUr7rSBE2UfbYoC68H7paaWqJGSO4qi3nTvPeqaeU6XyM+kIC
+   p0J6V40KWpUqUxhiCdFSM2Eg5KSBJ4658BjdpmA3ZIKPrLbpPOqUF80+W
+   /yHCVzC04/Sl9hh8cERH83ie2B/z7hiDAZp/bvI450e/4wMpoOwrgyKp4
+   3rVCbFZltMLEpJQuntX61CRgbeI47TPV5IASkVhbGL8QkDwBOaG/cZjzs
+   B3JFvK3kdVfvlmXgCBKikOdJcg/yANTVjcgVsxLQVdsiuK2WSsiyzNYyW
+   umkF+IWWjvvdGY4DiySzUQmuP23hA+4JynRwC9jnujTTR7II84HgeFeMw
+   w==;
+X-CSE-ConnectionGUID: NgG+aoPnQMKyQtRM75okpw==
+X-CSE-MsgGUID: pU1lUkqKS+WFmTV2li4feQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11970"; a="3991642"
+X-IronPort-AV: E=Sophos;i="6.27,220,1787036400"; 
+   d="scan'208";a="3991642"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 23:19:06 -0800
+X-CSE-ConnectionGUID: iHQUrNNQQoW2AgElOEgTwA==
+X-CSE-MsgGUID: 4Ehj8R4lSQCZoiG7usmh1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,220,1787036400"; 
+   d="scan'208";a="10453034"
+Received: from unknown (HELO [10.238.1.144]) ([10.238.1.144])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 23:18:56 -0800
+Message-ID: <a594edd6-6184-4381-9b48-004c18efa56f@linux.intel.com>
+Date: Thu, 19 Nov 2026 15:18:54 +0800
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -103,142 +72,52 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SN7PR12MB7370:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3818c397-5733-469a-1ba9-08df460c91cd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|10070799003|366016|1800799024|376014|18002099003|22082099003|261009221227099003|261009223027099003|56012099006|11063799006|261026121527099003|261021135927099003|261022075727099003|261021123027099003|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	QZQHQ2ymCBUYkeFgf9lVYML2TRIhKW0V8jsZpnOlEA17oLjKVDSXRakqHZcLp8CqBrHGOC1IGR8XZE66yd+R6EYdRePnq19D8g4nS75WyWCWr8BY/rKghFulv0/n8igEdIWnYfP7LXDopSKtD2yWznPYAVB33FQUzUACEKKK7S4HqS5w1iKQ1N7ybX93yGcSObFpiwQWZH/ER7RKz3CNnpyVsjiXT0C3/kZfTz24gMa3Vl7K1dRQoXatt5Df15e8cncT3g7R3UJQ73oiQ/vnDhtpUspNGj6TRr7hVOJz8cL4JPFlcO00MecguSrzfHuTQ18D961L/3i6TRmo7hJeIF3GMpbqEmW3BtNdof/1CLJqYOTcaBTpE5Fx9aTRFsGtNQ1Wol3FWJ9QEm0n5TEWIRyBvYVI83u52Mya00Vv9fI1+ZUCujzaZR/GZRrA5SxxJ3TxXwlAbLL8hMJbj7//PI/Uyn27PlArf368hARuHBIVJWKzSLfkcojUn3/juy9Q0yMU4njG+gpdFycqxNgmlhtG6cHq+OYJsyF4lCIn8J2/32XTBSrlc0ALG5at2nk8HTMvuuwMSq4fP0abjxf8B3IJTZVwnjisD8Ov1dRxkwpEHhURkTO/b45p3LOXyDErCl9i/Z6kMrIiQ5V3VXoa/jq3T1hSe6XXIrctzHjJK4c=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(10070799003)(366016)(1800799024)(376014)(18002099003)(22082099003)(261009221227099003)(261009223027099003)(56012099006)(11063799006)(261026121527099003)(261021135927099003)(261022075727099003)(261021123027099003)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YS80OTBHZW5kSDFZazdZWWlQdEpUYzBpRnRxVjlpVHREdGUxVmlqMzFWMHBy?=
- =?utf-8?B?RER5YkhGYWpnazJUSUdpcUhQTFRZZFN1QlNkZ21IaENuMFhKaFpNZ1ZRakFm?=
- =?utf-8?B?RUVRNWQrV3JOeUZObzgvaTVXNnVwMzU5eXJxQ3F3NlhZbW56U0x5NjZ1ZlU5?=
- =?utf-8?B?VU1vOGo3bkpZK2J3WE94SVBCWndEQmtQOWdQQlNRMEZITzUySkdQa2J1c2cw?=
- =?utf-8?B?N290N3JzTDFjTERzUkFQYmRQYmpuaytaUHorZXBadGhNTk9IY0Q3STFWSnhZ?=
- =?utf-8?B?UU5LKzNSNHBzYjcyd1RoMnJFZE1TZng4dEhFOG5uTFduckpjTndDWlYzVW1o?=
- =?utf-8?B?c0l3OURCWS9FWEpOM1BkR25zaEFOeWhiWFlDWlV2aCtSeUhQbWFzYUFocTkz?=
- =?utf-8?B?aW9PNGpuRUU2VUNsNkMxRTh4bWs3SWtVUjYyaU1mbXc5SVBuQzg1SHZTeVpn?=
- =?utf-8?B?VVV4OXU1elB2LzhuT1BleWFWMEVXS29rWm5XK0lJZlhnMWJlQWUyZ2JMUHJl?=
- =?utf-8?B?Vmk0VjdlcWpFaUJJWmRLKytMZ3Z5a0tlWHhRcms5MFQ0by9FajRTaU9KSmR1?=
- =?utf-8?B?OFJWbDlTYkdGcGw3ZUNoVm5TL3FFYjV5NGtCYVdYWjZrRXlTNWdLK0xtcFJ4?=
- =?utf-8?B?WjFGRjlRUWFYcTdVRWNGV0hFY24wQTZrd1VIY2hJSDQzOEVDSWE2SW5wQ2xM?=
- =?utf-8?B?THRJRFBXQXVNVVJ0Y1dvcERyNmFmV29wd1oyQ0FEVm4rNzd3cmdVK0lCOUZD?=
- =?utf-8?B?bXFOSkdrQnVTdXRmd3pwL2N4MVY5Q3hPU0xCeEZQeWh3QUJDNFVRQWpoOFNY?=
- =?utf-8?B?aDR0aW13MHUxL1pQelpYc3hnaG1FMk9TV0JoZFNUMFpmZFZWVllyN0UveUZa?=
- =?utf-8?B?YzAvQkpsUzFUSjdCeHVtS2pXbWN1bTltUStobnRLb2tZK2FMSXZHOWFybW5h?=
- =?utf-8?B?MlZjTGIramhOR1lmSmZZVStVb1dzUjMzQUQ5VTgwRjJNRFd0QXF5MUNnQW1K?=
- =?utf-8?B?SDZKYjZLdkgwR0daMU0vclB2eS94TS9IUUFMaG9GOUc5Y0lPdlUvczdER1Fo?=
- =?utf-8?B?WmhhWFVhcXVoSWp4UWVrZXFhaEI1ckNWNkVOWXNwVEZYVmFOQnNxUDhkOHhF?=
- =?utf-8?B?Z3E0WmZlZVJOL1Ava0xSZktMTWV4UlkyaURDMlA0dWdTRXVHRGJkSXFmRHZW?=
- =?utf-8?B?aVAyQXN6TVJ0ODEwY3ZBYzZTY21qSFVlZjRldG9MTU9SK1NDeVVrSFEvOGVy?=
- =?utf-8?B?cnhrbFEyc3F4WFNGSE1jNnlQb1UySG00SDh1aHFQdW9laUZ3bkJwMFdhd3du?=
- =?utf-8?B?M3J0MXpEL0RsSXhKSHZIV1RETGcxSEVRRVEwMXoxZjZ1RDRJazhoOHpkSnZy?=
- =?utf-8?B?eGxYOGtsSVZZaVFPTVprc0JvMjVSUTFhdWsxbnlNL3cyRTY4d2hKVU5mYkRT?=
- =?utf-8?B?TW1YMC83VVNrcnppZUdQc09sbzcxMGxLVzcyYnRSTkV4U2JVbVd0L0ZhN21N?=
- =?utf-8?B?S0RocmdCYW8wU0NxN0Z6WjBMcTdMY2ozZDMzTTRwdFUvOVVWdFBORGtSeHdQ?=
- =?utf-8?B?Q044QlFlT0FyZVFCcXVrYkRNZi9JRG1KdysydUwvM3dveW9BK2lSam1uOVZq?=
- =?utf-8?B?QzFCdkRpcGhLZE1vS2lDem9PUTBieWdWMlgzT2Vub1BDVDY5UU93TkN2Mm5Z?=
- =?utf-8?B?d1Z4T0ljTGlTbGRJY3BvYitwZzNYMUZXempOdlJHMi8wZkh5VlV2TWFXcnUv?=
- =?utf-8?B?MEllWmhBRFRxN1ZkQUZjMDVCdnhnaElXc1VXQjhsaUpzR0FUNjJ2aWFCd0dB?=
- =?utf-8?B?OUpZQ0NMVlUvdDZuTyt0blBKei9QV2RpdnI5VVFkQUI3ZEFQaCsrR0krcXU4?=
- =?utf-8?B?TDRlSi9wUHkvSnc0ZmUrVHRZV3pxYW9DNXpUM2MybDhjR0c3SUl0WG1PVkZR?=
- =?utf-8?B?MHRQc09Ta1FUckI5dGxBR3FNMTRiZEw0Z1VyKzJhQ1JGcm5BRjRNVklvcytK?=
- =?utf-8?B?NGVtY2VpVDhuL3BKUU5kclg0SExpR1dSUXlJZnFDT3JmWWJhRG9xTU5VRW5P?=
- =?utf-8?B?ZnFlMjdqQ3p2SjdQS1JCVFQwLzNZSU52ZEhFL05NZEFTQXZhSDVINzBmTS9E?=
- =?utf-8?B?ZERWbFdBVWxpL2FMcXNjb0FSU1R6MzFHRndvS0c3YXJBS3F4WFVmVktaNUZP?=
- =?utf-8?B?bzFnK1NucDBobGdRSDRCY2VnMUYxSlZNV0JmVUFiMUVadnVkZWtNWEZjam5Y?=
- =?utf-8?B?YWxwbFA0bW5UQytqUHIybU9PQklDL0IvdjdtcjhBdUhPMXZTWW1UTGYxakxG?=
- =?utf-8?B?OVkzWHdDVDJMTEVsV1lCT01QVGxTTjhYc0FsT1lzNWxTKzFBU2RqQUk3a3VV?=
- =?utf-8?Q?L8uTpgpt3gb2WfQZ1+C3/Nk0xUY138dRQVkAT5kWDlyDY?=
-X-MS-Exchange-AntiSpam-MessageData-1: J5MgCywsTnd//w==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3818c397-5733-469a-1ba9-08df460c91cd
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2026 07:13:11.1625
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QROUOl226OrLp6tpQdPIY6RXsgD5OV4Snbg0aOATTUR3TJAq42zuL7OwVm81tTnV18A8jKBtvdM6UHBWjtkveQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7370
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Alex Williamson <alex@shazbot.org>,
+ Alexey Kardashevskiy <aik@amd.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Jacob Pan <jacob.pan@linux.microsoft.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Joerg Roedel <joro@8bytes.org>, Jonathan Cameron <jic23@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Kevin Tian <kevin.tian@intel.com>,
+ Krishna Reddy <vdumpa@nvidia.com>, Lukas Wunner <lukas@wunner.de>,
+ Nicolin Chen <nicolinc@nvidia.com>, Robin Murphy <robin.murphy@arm.com>,
+ Samuel Ortiz <sameo@rivosinc.com>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Steven Price <steven.price@arm.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Vasant Hegde <vasant.hegde@amd.com>, Will Deacon <will@kernel.org>,
+ Xu Yilun <yilun.xu@linux.intel.com>, Ashish Kalra <ashish.kalra@amd.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, iommu@lists.linux.dev,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>, kvm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-tegra@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v9 01/13] virt: coco: tsm: Require PCI operations when
+ registering a TSM
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+ linux-coco@lists.linux.dev
+References: <20261116081935.85372-1-aneesh.kumar@kernel.org>
+ <20261116081935.85372-2-aneesh.kumar@kernel.org>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20261116081935.85372-2-aneesh.kumar@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wednesday, November 11, 2026 12:19=E2=80=AFAM Joshua Crofts wrote:
-> Since commit d1706f9da9f4 ("PM: runtime: call pm_runtime_dont_use_autosus=
-pend() on reinit()"),
-> driver core is now responsible for undoing any
-> pm_runtime_use_autosuspend() calls on driver exit.
->=20
-> Remove the redundant function calls.
->=20
-> Signed-off-by: Joshua Crofts <crofts@kernel.org>
+On 11/16/2026 4:19 PM, Aneesh Kumar K.V (Arm) wrote:
+> Reject a NULL pci_ops argument in tsm_register(). Every registered TSM
+> then has PCI operations, so registration no longer needs separate paths
+> for TSMs without them.
+> 
+> Cc: Alexey Kardashevskiy<aik@amd.com>
+> Cc: Jason Gunthorpe<jgg@ziepe.ca>
+> Cc: Lukas Wunner<lukas@wunner.de>
+> Cc:linux-coco@lists.linux.dev
+> Signed-off-by: Aneesh Kumar K.V (Arm)<aneesh.kumar@kernel.org>
 > ---
->  drivers/gpu/drm/tegra/nvdec.c | 1 -
->  drivers/gpu/drm/tegra/nvjpg.c | 1 -
->  drivers/gpu/drm/tegra/vic.c   | 1 -
->  3 files changed, 3 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/tegra/nvdec.c b/drivers/gpu/drm/tegra/nvdec.=
-c
-> index 18a8f6e4ced083ee94cf1611223b7ef507e0b7f6..98a94423b0e2099b9f8330f73=
-dee8f534564078f 100644
-> --- a/drivers/gpu/drm/tegra/nvdec.c
-> +++ b/drivers/gpu/drm/tegra/nvdec.c
-> @@ -212,7 +212,6 @@ static int nvdec_exit(struct host1x_client *client)
->  	if (err < 0)
->  		return err;
-> =20
-> -	pm_runtime_dont_use_autosuspend(client->dev);
->  	pm_runtime_force_suspend(client->dev);
-> =20
->  	host1x_syncpt_put(client->syncpts[0]);
-> diff --git a/drivers/gpu/drm/tegra/nvjpg.c b/drivers/gpu/drm/tegra/nvjpg.=
-c
-> index e302a8d1f6e7fdbcd7f14881525b4a2e1a422361..09679bb0c75767ff1471134a4=
-78b5985b2c0ee5c 100644
-> --- a/drivers/gpu/drm/tegra/nvjpg.c
-> +++ b/drivers/gpu/drm/tegra/nvjpg.c
-> @@ -82,7 +82,6 @@ static int nvjpg_exit(struct host1x_client *client)
->  	if (err < 0)
->  		return err;
-> =20
-> -	pm_runtime_dont_use_autosuspend(client->dev);
->  	pm_runtime_force_suspend(client->dev);
-> =20
->  	host1x_client_iommu_detach(client);
-> diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-> index 3c2b1ff55deb7f407d2a5995a5dff302cf37f7d5..9648c3d0176bbfd9efbb3c49c=
-8bd9c74e3df9d0e 100644
-> --- a/drivers/gpu/drm/tegra/vic.c
-> +++ b/drivers/gpu/drm/tegra/vic.c
-> @@ -205,7 +205,6 @@ static int vic_exit(struct host1x_client *client)
->  	if (err < 0)
->  		return err;
-> =20
-> -	pm_runtime_dont_use_autosuspend(client->dev);
->  	pm_runtime_force_suspend(client->dev);
-> =20
->  	host1x_syncpt_put(client->syncpts[0]);
->=20
-> ---
-> base-commit: b3dfbde62cf1981c4638939c159dfd087b7a72e9
-> change-id: 20261110-tegra-remove-dont-use-autosuspend-caaf082f8c2f
->=20
-> Best regards,
-> --=20
-> Joshua Crofts <crofts@kernel.org>
->=20
->=20
+>   drivers/virt/coco/tsm-core.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 
-Nice cleanup, thank you!
-
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-
-
-
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
