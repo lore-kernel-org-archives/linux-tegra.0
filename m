@@ -1,79 +1,61 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795121276;
-	b=cprLyAnKDQMY+6WNFvf/vcYqdRmryllnjGLlZ9/QHHWlfKBQPr8VWajEtrFyEbFvWpei
-	 FhsKO5ZG64bY4IZlpQTYfD2T8sRo7IZyFa1U58NbeKjHpgvxrx8Vi95vZkCdmLiFHFunX
-	 Yi80rI2Fmnzi8othm2k/j63cNc7U1P5WR4lxiKgNbDDoQPkufDS8H2bAbDa1yASAJk/3t
-	 zNlA0G4IpG2H+2gMxqhXzg6BURaldjQek5yVXUVY8UofIY8YG7ZfxcoaVVzUKP52Tvy+g
-	 4Z5ktDQBL/e7jUBC1vwxv7HULFvsrYCJaMoIm5IE6kok99Cc4EOqYwNdGCQ3rmVohfg==
+	t=1795121282;
+	b=h8O/LJsvJHy5Txef4AQOsi8vGvGj9OGH/4QkWkOGFuMz6qo2cCVaeCUug/2EWyoU45MF
+	 zVe5/5Rw+D1cuiLsXb6Ine/42MrK9Fl4GI4zy0ymiUzQAeBXfz3lqgj+yYFSSV6AT0lKS
+	 bmik7Fdod00GtBzNQH3W/8jTAhhI+SHD7tV1LvidZBTkLGfw+EArspy9icWUH65biSaqh
+	 4xx/dTBo/LQfKnQNrISOjsVIWjBa65u03QF9MiySarEh/oNLLScauE1E4bqAoUrnpSbtL
+	 eclnf+Ys4PHiUJeyMSU1Zq/4I0csX7MKV63JxN3oBj/kdwiLOMTBr7/erlqjre5J07A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795121276;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795121282;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=fjP62IC7BY5+fCteY4TlTF+5AyEq5vMalnJjs0i2F0k=;
-	b=Sfb0vrlhZw6Lq5CFyL+5lfJhD1jL9K/bCO/CBI3EUE5AFYxxZpJ5rkxy8T5qot6Zgwn8
-	 4XUIBqoZ1vRtiGK3g7KKYpUkGxJhkQpTx7lP6H8bM1Vhgz5CJsQO0nKt6ZnkMs76jp5q+
-	 7DRq7l3/G8EsFMRoOwzqhNE+x4JYGNknP9xvtuKLYqQ/gBjjRW7vej3mQV1aTrl8e/9F5
-	 DdPtrEewTjl90Q5VssV4pbd57ZWvoL2AVIWJsUI94eyS1pcQTmQJ61/Y/Tf1lHr721b6v
-	 2nsMy7CHNETi6bgFLW6bEDnyDW9Vb+iVMneUEBZdu9nXR/9bl572EOzg5wetwzlAtQg==
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=1mlA8OrVLWfc5xZg92jISDkujcu2DdE0uHEU7ARJgRA=;
+	b=lQ/uNPRS4gFOvhQz1D7Y6XzBNfPqQn6xdpPsFkpiWyKKH3yGsZ4KBTgzpx9UQsuE+mMj
+	 ESeHEyxUE5vnL26VRewQnjBewV0YQYjCN8y30q3+Cl+Yz0jKb0c7tlP/5kZ+GjE7byGzc
+	 VdTeUYUHZalra2rmnXS9mtKYszePrqr5trf/m+C9IRhaX3Sv59mEvxPyg8Lp+V2RDRD3L
+	 KBR/yXCmxdJDMkdtBGUKoN1J6agkIJrz9j9sN/wfwlX8axewefHJn/YenAa4XEr2ITU+h
+	 Z3/N+0qY+T8eu6HWe1IETEo5r+7dlac1XsuaYjU+yUItDFnfDn8YRtpoX7nX3bKv3ew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XGzroEby;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eaWjpSEx;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DF6606CC5E;
-	Thu, 19 Nov 2026 20:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96896606CC5E;
+	Thu, 19 Nov 2026 20:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XGzroEby
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34BE11F000C0;
-	Thu, 19 Nov 2026 20:47:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eaWjpSEx
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D5851F000C4;
+	Thu, 19 Nov 2026 20:48:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795121275;
-	bh=fjP62IC7BY5+fCteY4TlTF+5AyEq5vMalnJjs0i2F0k=;
-	h=From:To:Cc:Subject:Date;
-	b=XGzroEbyIqfu1F020pLEYGri2yRna/SmU4yPDMxz2Wqj/z1KN7rGZn0GSOLhpYq7L
-	 QSg6SjYUgyDMhMEKCg3+aNqudcIsmhBZDWrpZF0/t0mzfhT9gfQZo+Cs/wFoWTSu9x
-	 9EBLqWQ5E+u3MaXNR+uRwGns1MurwMZswQqv+e2FBKtY5mGdGDHx2vU3exEwnSoWZs
-	 juXbrdCssWoAxWX/jyKVWruN+nXmB6x1c/fHuySNxbYGVJn6HPlyDFlIslXaTWVP7x
-	 3no91nBAFXMzjJvLMlgGs9DhKqw8GAlTDwBGfufKDHr6XkdwkYPu2iLKJAmq7Ov3Dl
-	 egQy1lD7u+OLw==
+	s=k20260515; t=1795121282;
+	bh=1mlA8OrVLWfc5xZg92jISDkujcu2DdE0uHEU7ARJgRA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=eaWjpSExdfAoDZNO9WAlneZcI0I0SmkpsgQnvp8glwsSCwMGDpQUTXTHEvw2Y38Fz
+	 CnqpJs7/l3tyYZnXX4bZ9TnRiCr0s08iclQNjo8Qal3KncFa8imBKsEyKTJUAasQY4
+	 8yxpU9OD9enMt/ZF2O8XqkOKGUtItBvJ7baKLmvMXRod+w+B6ENtp6nSc7Nbp9hLyq
+	 Pc7DOnVpYmbVq8wfQK/f97LNKtOeHZWnvqEGxazoRz548QITqb7lozhWUsgRjUaXF6
+	 Q4YcmBu7Xrt2tL41g1YvVQIMYwAnzd4E5m/eMtgsL0FkN8CPdZE6A5UL98yUQAIR40
+	 2csE3k0FwWL/w==
 From: Lee Jones <lee@kernel.org>
 To: lee@kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: Aaron Kling <webgeek1234@gmail.com>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Hao Chang <ot_chhao.chang@mediatek.com>,
-	"H. Nikolaus Schaller" <hns@goldelico.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
 	Linus Walleij <linusw@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	Maoguang Meng <maoguang.meng@mediatek.com>,
-	Nicolas Boichat <drinkcat@chromium.org>,
-	Olivier Louvignes <olivier@mgcrea.io>,
-	Paul Boddie <paul@boddie.org.uk>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Qingliang Li <qingliang.li@mediatek.com>,
-	Rob Herring <robh@kernel.org>,
-	"Ryder.Lee" <ryder.lee@mediatek.com>,
-	Sam Shih <sam.shih@mediatek.com>,
-	Sean Wang <sean.wang@kernel.org>,
 	Thierry Reding <thierry.reding@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	zhouyanjie@wanyeetech.com
-Subject: [PATCH v2 0/6] pinctrl: Fix out-of-bounds accesses, divide-by-zero, and error handling
-Date: Thu, 19 Nov 2026 20:47:15 +0000
-Message-ID: <20261119204748.2558209-1-lee@kernel.org>
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Aaron Kling <webgeek1234@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v2 1/6] pinctrl: tegra186: Fix out-of-bounds register bank index for AON drive groups
+Date: Thu, 19 Nov 2026 20:47:16 +0000
+Message-ID: <20261119204748.2558209-2-lee@kernel.org>
 X-Mailer: git-send-email 2.56.1.750.gf70dc682cf-goog
+In-Reply-To: <20261119204748.2558209-1-lee@kernel.org>
+References: <20261119204748.2558209-1-lee@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -83,68 +65,142 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-These issues were reported by Sashiko.
+The Tegra186 AON pinmux controller has only a single register bank
+(nbanks = 1, indexed at 0), and all PINGROUP entries in
+tegra186_aon_groups accordingly specify bank 0.  However, all 51 AON
+drive_* macro definitions pass drv_bank = 1 as the final argument to
+DRV_PINGROUP_ENTRY_Y, causing any drive configuration read or write on
+an AON drive group to index pmx->regs[1] out-of-bounds.
 
-v1 => v2:
- - Drop patches 05/10, 06/10, 07/10, and 10/10, already applied to pinctrl
-   for-next
- - Drop patch 01/10 (sunxi) in favour of the broader Allwinner IRQ-bank
-   rework in flight (Andre, Sashiko)
- - mediatek: Guard against NULL eint in mtk_eint_do_suspend() and
-   mtk_eint_do_resume() before resetting hw->eint to NULL on error (Sashiko)
+Update the AON drive_* macro definitions to use register bank 0.
 
-v1: https://lore.kernel.org/all/20261103213002.1673560-1-lee@kernel.org/
+Fixes: 542baf77f092 ("pinctrl: tegra: Add Tegra186 pinmux driver")
+Closes: https://sashiko.dev/#/bug/linux-a9a7165c-c5eb-463a-b7b1-24a30416b33b
+Cc: stable@vger.kernel.org
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Lee Jones <lee@kernel.org>
+---
 
-Cc: Aaron Kling <webgeek1234@gmail.com>
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Daniel Golle <daniel@makrotopia.org>
-Cc: Hao Chang <ot_chhao.chang@mediatek.com>
-Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: Maoguang Meng <maoguang.meng@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Nicolas Boichat <drinkcat@chromium.org>
-Cc: Olivier Louvignes <olivier@mgcrea.io>
-Cc: Paul Boddie <paul@boddie.org.uk>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Qingliang Li <qingliang.li@mediatek.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: "Ryder.Lee" <ryder.lee@mediatek.com>
-Cc: Sam Shih <sam.shih@mediatek.com>
-Cc: Sean Wang <sean.wang@kernel.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: zhouyanjie@wanyeetech.com
+v1 => v2: Collect Thierry's Reviewed-by
 
-Lee Jones (6):
-  pinctrl: tegra186: Fix out-of-bounds register bank index for AON drive
-    groups
-  pinctrl: ingenic: Fix element type of x1600_sfc_funcs array
-  pinctrl: mediatek: mt7981: Add missing entries to mt7981_ant_sel_funcs
-  pinctrl: mediatek: Guard against NULL eint in mtk_eint_do_suspend()
-    and mtk_eint_do_resume()
-  pinctrl: mediatek: Clean up partially initialised hw->eint on error
-  pinctrl: mediatek: Prevent divide-by-zero for pins with fixed drive
-    strength
+ drivers/pinctrl/tegra/pinctrl-tegra186.c | 102 +++++++++++------------
+ 1 file changed, 51 insertions(+), 51 deletions(-)
 
- drivers/pinctrl/mediatek/mtk-eint.c           |   6 ++
- drivers/pinctrl/mediatek/pinctrl-mt7981.c     |   2 +-
- .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |  24 ++++-
- drivers/pinctrl/pinctrl-ingenic.c             |   2 +-
- drivers/pinctrl/tegra/pinctrl-tegra186.c      | 102 +++++++++---------
- 5 files changed, 79 insertions(+), 57 deletions(-)
-
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra186.c b/drivers/pinctrl/tegra/pinctrl-tegra186.c
+index 4a1d6476af9b..3bf1814dbd24 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra186.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra186.c
+@@ -1585,57 +1585,57 @@ static const char * const tegra186_functions[] = {
+ #define drive_qspi_comp                 DRV_PINGROUP_ENTRY_N(no_entry)
+ 
+ /* AON drive pin groups */
+-#define drive_touch_clk_pee2            DRV_PINGROUP_ENTRY_Y(0x2004,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_uart3_cts_pw5             DRV_PINGROUP_ENTRY_Y(0x200c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_uart3_rts_pw4             DRV_PINGROUP_ENTRY_Y(0x2014,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_uart3_rx_pw3              DRV_PINGROUP_ENTRY_Y(0x201c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_uart3_tx_pw2              DRV_PINGROUP_ENTRY_Y(0x2024,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gen8_i2c_sda_pw1          DRV_PINGROUP_ENTRY_Y(0x202c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gen8_i2c_scl_pw0          DRV_PINGROUP_ENTRY_Y(0x2034,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_uart7_rx_pw7              DRV_PINGROUP_ENTRY_Y(0x203c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_uart7_tx_pw6              DRV_PINGROUP_ENTRY_Y(0x2044,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen0_pv0             DRV_PINGROUP_ENTRY_Y(0x204c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen1_pv1             DRV_PINGROUP_ENTRY_Y(0x2054,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen2_pv2             DRV_PINGROUP_ENTRY_Y(0x205c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen3_pv3             DRV_PINGROUP_ENTRY_Y(0x2064,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen4_pv4             DRV_PINGROUP_ENTRY_Y(0x206c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen5_pv5             DRV_PINGROUP_ENTRY_Y(0x2074,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen6_pv6             DRV_PINGROUP_ENTRY_Y(0x207c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen7_pv7             DRV_PINGROUP_ENTRY_Y(0x2084,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen8_pee0            DRV_PINGROUP_ENTRY_Y(0x208c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sen9_pee1            DRV_PINGROUP_ENTRY_Y(0x2094,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_can_gpio7_paa7            DRV_PINGROUP_ENTRY_Y(0x3004,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can1_dout_pz0             DRV_PINGROUP_ENTRY_Y(0x300C,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can1_din_pz1              DRV_PINGROUP_ENTRY_Y(0x3014,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can0_dout_pz2             DRV_PINGROUP_ENTRY_Y(0x301c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can0_din_pz3              DRV_PINGROUP_ENTRY_Y(0x3024,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can_gpio0_paa0            DRV_PINGROUP_ENTRY_Y(0x302c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can_gpio1_paa1            DRV_PINGROUP_ENTRY_Y(0x3034,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can_gpio2_paa2            DRV_PINGROUP_ENTRY_Y(0x303c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can_gpio3_paa3            DRV_PINGROUP_ENTRY_Y(0x3044,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can_gpio4_paa4            DRV_PINGROUP_ENTRY_Y(0x304c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can_gpio5_paa5            DRV_PINGROUP_ENTRY_Y(0x3054,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_can_gpio6_paa6            DRV_PINGROUP_ENTRY_Y(0x305c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	1)
+-#define drive_gpio_sw1_pff1             DRV_PINGROUP_ENTRY_Y(0x1004,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sw2_pff2             DRV_PINGROUP_ENTRY_Y(0x100c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sw3_pff3             DRV_PINGROUP_ENTRY_Y(0x1014,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_sw4_pff4             DRV_PINGROUP_ENTRY_Y(0x101c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_shutdown                  DRV_PINGROUP_ENTRY_Y(0x1024,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_pmu_int                   DRV_PINGROUP_ENTRY_Y(0x102C,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_safe_state_ps3            DRV_PINGROUP_ENTRY_Y(0x1034,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_vcomp_alert_ps4           DRV_PINGROUP_ENTRY_Y(0x103c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_soc_pwr_req               DRV_PINGROUP_ENTRY_Y(0x1044,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_batt_oc_ps2               DRV_PINGROUP_ENTRY_Y(0x104c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_clk_32k_in                DRV_PINGROUP_ENTRY_Y(0x1054,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_power_on_pff0             DRV_PINGROUP_ENTRY_Y(0x105c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_pwr_i2c_scl_ps0           DRV_PINGROUP_ENTRY_Y(0x1064,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_pwr_i2c_sda_ps1           DRV_PINGROUP_ENTRY_Y(0x106c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_dis0_pu0             DRV_PINGROUP_ENTRY_Y(0x1084,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_dis1_pu1             DRV_PINGROUP_ENTRY_Y(0x108c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_dis2_pu2             DRV_PINGROUP_ENTRY_Y(0x1094,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_dis3_pu3             DRV_PINGROUP_ENTRY_Y(0x109c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_dis4_pu4             DRV_PINGROUP_ENTRY_Y(0x10a4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
+-#define drive_gpio_dis5_pu5             DRV_PINGROUP_ENTRY_Y(0x10ac,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
++#define drive_touch_clk_pee2            DRV_PINGROUP_ENTRY_Y(0x2004,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_uart3_cts_pw5             DRV_PINGROUP_ENTRY_Y(0x200c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_uart3_rts_pw4             DRV_PINGROUP_ENTRY_Y(0x2014,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_uart3_rx_pw3              DRV_PINGROUP_ENTRY_Y(0x201c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_uart3_tx_pw2              DRV_PINGROUP_ENTRY_Y(0x2024,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gen8_i2c_sda_pw1          DRV_PINGROUP_ENTRY_Y(0x202c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gen8_i2c_scl_pw0          DRV_PINGROUP_ENTRY_Y(0x2034,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_uart7_rx_pw7              DRV_PINGROUP_ENTRY_Y(0x203c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_uart7_tx_pw6              DRV_PINGROUP_ENTRY_Y(0x2044,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen0_pv0             DRV_PINGROUP_ENTRY_Y(0x204c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen1_pv1             DRV_PINGROUP_ENTRY_Y(0x2054,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen2_pv2             DRV_PINGROUP_ENTRY_Y(0x205c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen3_pv3             DRV_PINGROUP_ENTRY_Y(0x2064,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen4_pv4             DRV_PINGROUP_ENTRY_Y(0x206c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen5_pv5             DRV_PINGROUP_ENTRY_Y(0x2074,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen6_pv6             DRV_PINGROUP_ENTRY_Y(0x207c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen7_pv7             DRV_PINGROUP_ENTRY_Y(0x2084,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen8_pee0            DRV_PINGROUP_ENTRY_Y(0x208c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sen9_pee1            DRV_PINGROUP_ENTRY_Y(0x2094,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_can_gpio7_paa7            DRV_PINGROUP_ENTRY_Y(0x3004,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can1_dout_pz0             DRV_PINGROUP_ENTRY_Y(0x300C,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can1_din_pz1              DRV_PINGROUP_ENTRY_Y(0x3014,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can0_dout_pz2             DRV_PINGROUP_ENTRY_Y(0x301c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can0_din_pz3              DRV_PINGROUP_ENTRY_Y(0x3024,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can_gpio0_paa0            DRV_PINGROUP_ENTRY_Y(0x302c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can_gpio1_paa1            DRV_PINGROUP_ENTRY_Y(0x3034,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can_gpio2_paa2            DRV_PINGROUP_ENTRY_Y(0x303c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can_gpio3_paa3            DRV_PINGROUP_ENTRY_Y(0x3044,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can_gpio4_paa4            DRV_PINGROUP_ENTRY_Y(0x304c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can_gpio5_paa5            DRV_PINGROUP_ENTRY_Y(0x3054,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_can_gpio6_paa6            DRV_PINGROUP_ENTRY_Y(0x305c,	-1,	-1,	-1,	-1,	28,	2,	30,	2,	0)
++#define drive_gpio_sw1_pff1             DRV_PINGROUP_ENTRY_Y(0x1004,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sw2_pff2             DRV_PINGROUP_ENTRY_Y(0x100c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sw3_pff3             DRV_PINGROUP_ENTRY_Y(0x1014,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_sw4_pff4             DRV_PINGROUP_ENTRY_Y(0x101c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_shutdown                  DRV_PINGROUP_ENTRY_Y(0x1024,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_pmu_int                   DRV_PINGROUP_ENTRY_Y(0x102C,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_safe_state_ps3            DRV_PINGROUP_ENTRY_Y(0x1034,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_vcomp_alert_ps4           DRV_PINGROUP_ENTRY_Y(0x103c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_soc_pwr_req               DRV_PINGROUP_ENTRY_Y(0x1044,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_batt_oc_ps2               DRV_PINGROUP_ENTRY_Y(0x104c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_clk_32k_in                DRV_PINGROUP_ENTRY_Y(0x1054,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_power_on_pff0             DRV_PINGROUP_ENTRY_Y(0x105c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_pwr_i2c_scl_ps0           DRV_PINGROUP_ENTRY_Y(0x1064,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_pwr_i2c_sda_ps1           DRV_PINGROUP_ENTRY_Y(0x106c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_dis0_pu0             DRV_PINGROUP_ENTRY_Y(0x1084,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_dis1_pu1             DRV_PINGROUP_ENTRY_Y(0x108c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_dis2_pu2             DRV_PINGROUP_ENTRY_Y(0x1094,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_dis3_pu3             DRV_PINGROUP_ENTRY_Y(0x109c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_dis4_pu4             DRV_PINGROUP_ENTRY_Y(0x10a4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
++#define drive_gpio_dis5_pu5             DRV_PINGROUP_ENTRY_Y(0x10ac,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
+ 
+ #define PINGROUP(pg_name, f0, f1, f2, f3, r, bank, pupd, e_io_hv, e_lpbk, e_input, e_lpdr, e_pbias_buf, \
+ 			gpio_sfio_sel, e_od, schmitt_b, drvtype, epreemp, io_reset, rfu_in)		\
 -- 
 2.56.1.750.gf70dc682cf-goog
 
