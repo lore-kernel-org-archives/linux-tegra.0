@@ -1,77 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795164330;
-	b=36lb0kTHftIMAvjX4t6Txc9nTJuaS/xh9HrpZ4gS3GdRdGzcn1EjDe0uB+MZRnJ/zJ8L
-	 NRKl4XK3ZvPH56xfnrFWmTDbhpFgam1E0mYoBiEXWGDTjlKjFdBX5OrMhlaApmVFHCtkS
-	 NggqWE0bKqiASUsRiHevtbbgS8dtu30g4r5+s9bO1EhUVkD/GdByweCCsCQr3H4n2Borf
-	 EMgAtllwPfuarwfpo4ezR3nGh9Tr+Ew7zIWiF8dy/JyW6UoBnEIxYnOkYxLzg6yZiBUmy
-	 s2NI5P5IPvy6IQc9bOUQahIDIJsvVPpDAY378iAZIxkWMyg32fHRA+MrPV7AazmSfjQ==
+	t=1795177053;
+	b=ar4cPuDElgxlFj5/3j5jSDtSa5gZH74I1atZ/2MtrNQ2hYwCydcexj7Qu5/5MBsOBzJn
+	 nOU0BUmyHV6vulhaZJUuXkSqaG3w0DxSw1Vw1KSEaji2p+2pmn6Yyrku5pXcCvVKtcpTS
+	 nrhFdL7mxV7EOXio12q2TFhiLgelH4TfZQYu2VP69oD63EI/kiGXZ5mk6ZpzCKLFuH77J
+	 KNXm/vWx+zBobqLTo0eSY5pfWN1als9ghIi7iud6ILV5J6/k7I2+LXEm/byPJlsiy43yA
+	 wla4im2Y7N+JP8EBXo4Tswv4gyfbBmK7BUED/lRx+a8bkCwAJRvTCXZTXe5+R63pV9w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795164330;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
-	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=kKe/4cMcpovlVlLqvT7qtlmn5xNAbW7n/dTNm3KFNs8=;
-	b=msUvZospIGQ1hQfXbT3lKfsn5aCULX1VaTf2sIzcE5RZji70ORSC6EpVWNxgTYkARD0+
-	 5WFtQV0Xoclg9ye7FgtzFsEPRZxcuRcVdzeVueVxJoqdcTG6jHZqBF9++1QvuvK9YxeGa
-	 NfhdivKjJEGW1saKpwvUDmEyKez1bq51y9CfinJZryetUIQ/LThRUhKdy11LC0YtiC2KL
-	 EkHKqBkIU9vbKgilLE/fspCGEM+3e9MVOtC0j9nFfTVvKlwllrkRNkalmcut50bEHKE9i
-	 M+/zTAVKDcOYmZ1MFnAZTK5Iy913RewbaSQm5L1BlYnZnzasj9fkr+022Cjuz3tX2Ww==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795177053;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=AxXqgCeXal65+AfazlQec+YPsjLlcdM7scYBIZf41Bo=;
+	b=ngT3sFDHYLZoNS70ZSuOg3sVd6ZeI4M5xctmfUw9r4+lMQ5pzL6PHSpsV61DJwfL90gj
+	 rWBGDtBszMFy5jqCxl3W6bycUcQcV81OfPzJTjGETnSEKd1BDX6OGdgKFfKIzPd1tIpag
+	 9Jz0Z1VxuDEKP7A++31RfDUz5DV4UPo3Grc2h4X1gModwHjfWKSEm7j+oHym9Y/N522Mv
+	 NsYa+YyCBOtW090gJ2RZa3Rc8WyZqS0Ka1IUxhTgUXs46wT9CyVdwABhm/0+uHoju+k1z
+	 WltbXFJ5NFkLPwJ3e2afrmZOdg9pUVVx1tz2QRM59vZdAWsOWdoF7A6On+gMvT658yQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=fail header.from=linux-m68k.org;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.217.48
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XVBLMlN2;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D8B606B4A3
-	for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2026 08:45:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D2D8B606B4A3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-7d2b25786d9so336275137.0
-        for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2026 00:45:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795164329; x=1795769129;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=kKe/4cMcpovlVlLqvT7qtlmn5xNAbW7n/dTNm3KFNs8=;
-        b=0lcJhUGHUDyZ1sILO1p/ev+cFZfFphqPHLWRFeIHkepel8qz5mVZicxqZfsjbilGn/
-         +3tgOCnooG8Fi+iLYyFUMLgEiu1SrnplduvsSeTwv3MCAY+LrXVnMuCVePxtSgAS/PY3
-         YJ/dKJtMoAJCbs3TG/d/vL0M3Io+ft5uO4QUi4QnHRz4PDWyE5/89/rlxLXgUX+Z/9E5
-         JAY8nktvZVrwy4MuMc5Nop5S7P9BBN+DeEo0DctzrqxZfbFKqtFv18CIdIW4jXjykzMx
-         E1Q/8kxTTtJZ7GRXeZ8s7Kto0pisB/Z17MhE6XzhensxXJi/9eQ68EFEQFUQRose35ik
-         pKMg==
-X-Forwarded-Encrypted: i=1; AL+hErGkTodGha32p0yjn49uQiEmKOd6TDTplIJq4vOqQ79m/0kIYqfWMzhFSE6+DDOJHkIpIBBIF4WkLdZqbA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/MR/j2WwFWs7GlsB+D1N4rrjMVV+fPD7Lb6Hd9zePmQfnIMhXl
-	QjqTs6udUy6LEZO0zL5UKnydijx5E8L2xhPS47LbFawzLoMhZx/hng2myzcfnwXf
-X-Gm-Gg: AZFdTZf9/ryrvTUS5dzRtK5Z5HlbVkaDzazqR9I3ScVvxhf40D0dq/X0edQbM4vwo+a
-	MQ2jRzyLV9XB4mnjVcNi2eZ0PxNHADiFbs4sNYpiaZO1WTPBiOb9kqrZKFeI+Z/LdNOw6ykTpzE
-	6ySBH6wAFVqFPeGUPTELbIo9EEofy8gwHImMAgy7j2iyQp9u/FictlQrKIGg+RoHYGmjOKhaJZ+
-	hrhFpVoT4PawWSeNnl1xT1zdbMQlTWa76GPWcSlSkkzmTbuS7NKv5WXg/TJVSanXSTInHylJJ7A
-	6AAeUpmj8sI1MMdgP11ImeAN3L3yTejncYq1F2Rgmx3LiOEJ5ArVmEWvYH0/TCk5iCEvS6dtaf5
-	QCKCN7lVcOkSH3ukL3VBg9oJd01LrabzMcbyGlDRam64PwYHJ0V504KSvkAJ+fzxtWJZC8t+Vt+
-	BXzKaWgr87XgDkUY3Eql/WkgxHFS/TtVURfUOZr9l35RWcRcWU3qUcILpV9fcrJrKxJAoKKPG6w
-	eflXenHjGulFWezVsU8JuZbqPzDR9qlskp7MuPYCHPoeawPBtXp5ftoAuDSI9eSJUFF2TIXO8Q4
-	BipcWxxhMO3Q9oXMBnr4K/o1JuPZSrBBGICroUZaLQK2QtQ7zJXD5rNEfKU93AHKqOk=
-X-Received: by 2002:a05:6102:5811:b0:7c3:9982:67d7 with SMTP id ada2fe7eead31-7d7393d4009mr1058509137.16.1795164328800;
-        Fri, 20 Nov 2026 00:45:28 -0800 (PST)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d6e822a085sm2264457137.10.2026.11.20.00.45.28
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Nov 2026 00:45:28 -0800 (PST)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-9950a7530d9so373305241.2
-        for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2026 00:45:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErFVdQpwGWdMLDqkcNAXY7u6y1G2AIcvv1BhPvpNp+h+MQXxyGCWMG1h2LJ/lAUXWNCYKixIzfgMw5I3lQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:6a83:b0:7cc:2c52:47aa with SMTP id
- ada2fe7eead31-7d71e35b5demr961144137.0.1795164327788; Fri, 20 Nov 2026
- 00:45:27 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 2A8C1606A320;
+	Fri, 20 Nov 2026 12:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XVBLMlN2
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 80AA01F000C0;
+	Fri, 20 Nov 2026 12:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795177052;
+	bh=AxXqgCeXal65+AfazlQec+YPsjLlcdM7scYBIZf41Bo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=XVBLMlN2rDwXEqWI9EpkZOKZOMAka7OKzB/f815QnjXrzl2oTHsRFDq8fkiT6vLaA
+	 fgMuNuz3hFQ0LH9A756xzsAmUmCzfaC6trbvjTicc6iiK+AbU1sB8A4vW0utw19goY
+	 3nu5fgPlRnvS3N4T6C6Z5V00sbFuPGMME0232q5zxO7v92Ls42JwuDUBDD/lIeUcGe
+	 fe+q+Jq2/14m8j/+3b9hPxsuJo2hVxDi/TQ4X4iFbP6s35zFJ1Cv27MuYk8Lfmo8uk
+	 mUKM/Y+wEBsrNYcTGv6CXv7UtR4DDMph5LERxOcWkt+3chyvUUgO1lFgH4FHqsEYKT
+	 Iyxy4QJXZZfZg==
+Date: Fri, 20 Nov 2026 13:17:29 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+	Andrew Bresticker <abrestic@chromium.org>, Binbin Zhou <zhoubinbin@loongson.cn>, 
+	David Lechner <dlechner@baylibre.com>, Drew Fustini <dfustini@baylibre.com>, 
+	Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+	Grant Erickson <marathon96@gmail.com>, Huacai Chen <chenhuacai@kernel.org>, imx@lists.linux.dev, 
+	Joachim Eastwood <manabian@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Juxin Gao <gaojuxin@loongson.cn>, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, Lokesh Vutla <lokeshvutla@ti.com>, 
+	Michael Hennerich <michael.hennerich@analog.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Naidu Tellapati <naidu.tellapati@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	NeilBrown <neil@brown.name>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, "Philip, Avinash" <avinashphilip@ti.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sai Masarapu <Sai.Masarapu@imgtec.com>, 
+	Sandipan Patra <spatra@nvidia.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, Shawn Guo <shawn.guo@linaro.org>, 
+	Shenwei Wang <shenwei.wang@nxp.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, Vaibhav Bedia <vaibhav.bedia@ti.com>, 
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Xiubo Li <Li.Xiubo@freescale.com>
+Subject: Re: [PATCH 0/8] pwm: Fix various bugs reported by Sashiko
+Message-ID: <awA6F830Ve_-vXBg@monoceros>
+References: <20261105143847.2559586-1-lee@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -81,69 +72,61 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1795095742.git.geert+renesas@glider.be> <CAPVz0n1+qXrO5P+rOBKOSOE86+WcmjNF0taWDZoWqerKrjVgJQ@mail.gmail.com>
-In-Reply-To: <CAPVz0n1+qXrO5P+rOBKOSOE86+WcmjNF0taWDZoWqerKrjVgJQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Nov 2026 09:45:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWPvKop0KAg_nff29ZeAELKprfmDtp8hDU2KPvJH5VVMQ@mail.gmail.com>
-X-Gm-Features: Aa3M54rOiSTOIwRhd7pOhxBlMhXD66QjrOqwvbGtlwpHt8JjwbFg6d-mZpwSDxY
-Message-ID: <CAMuHMdWPvKop0KAg_nff29ZeAELKprfmDtp8hDU2KPvJH5VVMQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Improve MFD_ASUS_TRANSFORMER_EC dependencies
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
-	Ion Agorria <ion@agorria.com>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, mfd@lists.linux.dev, 
-	linux-input@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ziscyeot6fs5noin"
+Content-Disposition: inline
+In-Reply-To: <20261105143847.2559586-1-lee@kernel.org>
+
+
+--ziscyeot6fs5noin
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/8] pwm: Fix various bugs reported by Sashiko
+MIME-Version: 1.0
 
-Hi Svyastoslav,
+Hello Lee,
 
-On Thu, 19 Nov 2026 at 15:51, Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> =D1=87=D1=82, 19 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 15=
-:52 Geert Uytterhoeven <geert+renesas@glider.be> =D0=BF=D0=B8=D1=88=D0=B5:
-> > This patch series improves dependencies for the MFD_ASUS_TRANSFORMER_EC
-> > MFD driver and its various subdrivers:
-> >   - The first patch adds a missing dependency for the MFD driver,
-> >   - The other patches enable compile-testing for the input, serio, and
-> >     battery subdrivers.
-> >
-> > Note that compile-testing cannot be enabled for the LED and charger
-> > subdrivers, as they have a hard dependency on the MFD driver.
-> >
-> > Thanks for your comments!
-> >
-> > Geert Uytterhoeven (4):
-> >   mfd: MFD_ASUS_TRANSFORMER_EC should depend on ARCH_TEGRA
->
-> Though this EC is designed for Tegra based devices, it does not have
-> any Tegra specific parts. It can be used by any other SoC.
+On Thu, Nov 05, 2026 at 02:38:02PM +0000, Lee Jones wrote:
+> These issues were reported by Sashiko.
+>=20
+> Lee Jones (8):
+>   pwm: tegra: Prevent 32-bit period truncation and division by zero
+>   pwm: mxs: Return early when disabling and fix error-path clock leak
+>   pwm: loongson: Fix 32-bit control register truncation in
+>     pwm_loongson_set_polarity()
+>   pwm: axi-pwmgen: Enable clocks before accessing hardware registers in
+>     probe()
+>   pwm: fsl-ftm: Enable ipg_clk around regcache_sync() during resume
+>   pwm: omap-dmtimer: Handle negative error codes from get_pwm_status()
+>   pwm: tiehrpwm: Enable runtime PM before registering PWM chip
+>   pwm: img: Unregister PWM chip before disabling runtime PM and clocks
 
-Sure, the dependency can be extended once the hardware appears in
-devices with other SoCs.  The question to ask is: does it make sense to
-ask about this driver when configuring a kernel for e.g PA-RISC or S390?
+I applied patches #3 and #4 to
 
-> >   input: keyboard: Enable compile-testing for
-> >     KEYBOARD_ASUS_TRANSFORMER_EC
-> >   input: serio: Enable compile-testing for SERIO_ASUS_TRANSFORMER_EC
-> >   power: supply: Enable compile-testing for BATTERY_ASUS_TRANSFORMER_EC
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
 
-As pointed out by Sashiko, I forgot to take into account the transitive
-dependency on I2C, so there will be a v2.
+, for the others there is feedback to address on your side.
 
-Thanks!
+Thanks for your patches, very appreciated!
 
-Gr{oetje,eeting}s,
+Best regards
+Uwe
 
-                        Geert
+--ziscyeot6fs5noin
+Content-Type: application/pgp-signature; name="signature.asc"
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmsAOlcACgkQj4D7WH0S
+/k5nKQf7BqdPQSazSO1K+yijinQelR1WIDWTGkr07M3GrZ3fE2uXEcC13bL2YOiN
+7TqrdYEnutbLKMX623WYz1plfEsGkYbCTpey8GFx/i6mTwyzANsfRenSL5oOnQW6
+p7GYp7eeYpG4c3qZF4rfTVamKqYs0CVGBlhdot/pHEKmdez+Q8G3Rgd0Iax/z0fg
+PIi39hqy53xR/5ZrzTYWSIDPCLZLFk/HpkbjUjBHZfNsrLU/6xf0Drraf+BIYHx4
+7NNE6/x7z63mP9ZwwUxkj/Odw+Dm1v37p/Z+Sfs4lq1SWU+bVOsbr37tmNskHg41
+GUpO28qdynyg7dNXgTUHdCqNVivLNw==
+=w9m6
+-----END PGP SIGNATURE-----
+
+--ziscyeot6fs5noin--
