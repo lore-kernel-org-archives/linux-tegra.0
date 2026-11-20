@@ -1,101 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.176
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.170
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795187701;
-	b=RMQ6n5WvCielDSvL8yu6NN4YAUzx/9rV/hp1Ncw7dQydl88uuS0cbkH2G2EgIlKlZ5n5
-	 Y0z7DQBWXcY1SdT+vHM6mz0VZqGicbAdrzA8UwXavPQfXcuEfSMabHI38TYc/kT/Im55C
-	 ZqduGLKj4bzXhPfuJuzt2T01MeqPw4qy3ojkeRe1JqTVv/BNldEvwzopFO2RWwtMpReMA
-	 6k0oKdJLZzriR/wFvCpOvRnzRbT49GJhpWh7nqU7C+akb0oa992ulUb5NidNQlPwQqheI
-	 f6uhJxEdllpXWApiL7mGlIEGfmZMhVNBMOxh7i3GB3UWcVokB4hWYofAb0WK/z6xSww==
+	t=1795188690;
+	b=zB/kpLuQ9bRGuo/mJHwsEw4JGOdMdN6FQH63uHXW4+NRW+FMdIu2QJgsa5wBKZuU2UHJ
+	 i8dQyoNLtj11XpnM64D2VzUTUXVZmMjlk4FF/YLHD5ZLc7fh7sYwZRaMEdiqjOe0gR/1X
+	 I2/K0EAlXViZyx+dDzkhPa0m4H53L6eD8cRjZBDFbDFDXmsO1W4Oh5G5d4MM/AHrCMsgP
+	 tfTihyn3OnusZlDuNZMYkhFpEph23rKe5y4wnlVLgs/nlBCs6dm+5l7lmRUrLEqEuH7iZ
+	 9Njb8pOgRjzeV7Ij8hz/gLLg+Z7WXSc8EChR1SjusqTs9VaaslEmh3JxLceBDYnCDNg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795187701;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795188690;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=BTVg64Op0q6C9ndfjZSeyDDbPDPodfwIL2/3SvvfmEM=;
-	b=OOESmgRKDSZyPgqg5eUaarFP84YnM5pySYsfrm830egXid8tctU6o4PV7ovaacVKETPt
-	 OQ8Igl68rbL10qi4+UWDTswOe+JEwxCc+Z9tYOogpkf3lmA9GtD9VxUSzJCczbI21sLY8
-	 qP+2wLJ6OzW7YvkCoSVSflk+8MlijrjS19CdthtbsXaaeV5hvhkKlFxvmAhcPlSCgAEZT
-	 AOHwWUkW/3sCFC6xJhl1I9LC0wBBis5mSGawpamE50XueS02IlpjQD6rXGXe0t9FM2f6m
-	 9Oq84ZBZ1dqktnZtzw6933v9vvHckSIv4EXW96BiXLiIwa/L1u2GBLNnqYUeCOlxwYw==
+	bh=FJdGxpeLcA+HNojMQbXEX8uXEAU5T/sehUXMK1DtacQ=;
+	b=coKs/JWdDjbQ22Kj+4ZdTat+2QqMgQpGw+9A96Z4q3rx0A4TnpD1/0Ju9PeiEsd4I6To
+	 hhdnk/bNf6pipYqrzSuh7Tfpfp3X0RAwjLd1IPyctikR41rLZVoakj1nCNmPgVGbsO41x
+	 fgWxdW9vld75e0JbSxdBe6gbV4X2CkCu/DCqxpWZ9UvNa3/47YHXquqF9LI3YjO8OUUnn
+	 lMLm4lqsVduhKRiD8XtIMSZ5WydGWCWJY//qMtrApnp/tGG6JuEYeaOyBfvJeua9K/BEy
+	 mJEnT7pQRWlU/irhVd8Bmq4GVx/lwqREbR7onq1w1OW6HNcP5g49I56+hpqa9T3oqAg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WuTp10tM;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.176
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rYiUfnZS;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.170
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1919606A33E
-	for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2026 15:15:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C1919606A33E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99101606A325
+	for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2026 15:31:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 99101606A325
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WuTp10tM
-Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-38587f3de36so1155493eec.0
-        for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2026 07:15:00 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795187700; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rYiUfnZS
+Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-3712b6d9843so970993eec.1
+        for <linux-tegra@vger.kernel.org>; Fri, 20 Nov 2026 07:31:29 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795188689; cv=none;
         d=google.com; s=arc-20260327;
-        b=Y6Yvt7NCz6+aHOf9jsFQlBC1k35QjwF28UW5JTnvAheWAyxuSstwmBfJtVTdsgFjlC
-         uYMrCWBQG7+EDN+bIMLydts39kyqi8oB+tQs6bwN4pnaWh0GUaoykDMWta7z2pjCaO0D
-         BM23ZjgOqrhySb//SCrAl0Suc6czMkOkJxw9DvN4gvq6kj1G1FFnoq0/k+1LSdgTZM1R
-         fPVrJJNdlvidsuYw5pghCRwx/4j5+bMho1m0dHReDzb7Pb1/3N2b85Phrkp+sFeRZ5G1
-         xooCTsRRQXYzMgIz8C1zExFaUBQ2joktexvYh/0BF2UcAxtoEz6AaFqGt5mla1hNRPvF
-         1Xlw==
+        b=RCssuZpKgP0XmzWbL1P/wVAPFSUr8/MsDmHUN5GsAnSQGAFtn0aXYo7mvng80o+QeO
+         a3LFZhC9auTebGiA2DxiRl30fCvktAObOBTXAkAfuuw8CQm1dRdeBrTo32tBZK2LPI+4
+         KrDDflsYpyXKYsogR6iolr8OQrbLuB1C4CWiHK50lQts1I+/xVdzIPcJoxmCxgrGfBpe
+         3dqae4m8Frr1895Z4NwdAlGgz+ksssWVhsnLY+n4h69iLMkZAR/moQ/0VsthGViRq2Fg
+         4GNaj59Azqc+yecwBDkq00eqVbV+3N1LwVpqIyljv3Nwuv0OVnFJ7ebnJ09v/Kg0iHDJ
+         vOkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=BTVg64Op0q6C9ndfjZSeyDDbPDPodfwIL2/3SvvfmEM=;
-        fh=XaTXD1dlrK1Jpgmz29BrMA6LRM1eYbI6xQRoFU8mCDk=;
-        b=QBkfaLdSf9Nyq/OcliaazlT6CnHzu8CWoO/BfAPCQpmI++8r28iMnZoSk1EvsRoRmv
-         xdK3UK+Wg7EHZStI+axp5xLaim6pCwfoCGVFN3wV/CbJOz0OC3Pympc2XPVQsfE6vHnz
-         4UH6R0OWioHzIfs1phDWN2FAUbnkPTdrPF6T8VYcgotR8HrHs+UmXv2r9FsctMAQVwmQ
-         HnyeFYM69yoqz/RKC84DuekkgZN2MFqnrqwqM89m7mm1w2T21yDx+A/z6664qywOV+5f
-         wymfBvlW60T9kbG6mGWAnImiKl5TiVCM7XJxhhUxjR3Fn48waP9vJ41wNLAux+b2J7Af
-         QN3w==;
+        bh=FJdGxpeLcA+HNojMQbXEX8uXEAU5T/sehUXMK1DtacQ=;
+        fh=CR0m5UwEJA+IXBfMi4zlkMi+7lKeOURR2HBvpb8jFk8=;
+        b=Vi60Qdo7vxg1FBM8ORA7lPBHCl/QZPfRch+eMAsrVcy0q/4Uw1ZAVeNGwKH2J/SG1z
+         pHOv7vzVEUYBL1LGoYSokC1nq1phBWQZXn1+42sKdiRDoWDjY4mGzkqU0w+DNa2iNc+B
+         RAksGz4s+oPz7PSetgX+z4avVKaGngndEDbOGyNB9kRKFY/K6dMbUyHRrkm8eRPocxJ7
+         Yaf+8t2tZgxh56/qAMrYqFIqGfEhjNBdkJ575cFbY2tEP94GCRdlKwbmISLs+HZWMh+H
+         WtBJAN4zVXT0FbHA+IIF8Gq9Iw12O21BNaaiwe4Y9FJKyaID+Wrjxt9HilGoM/3d2v9o
+         0tHw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795187700; x=1795792500; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795188689; x=1795793489; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=BTVg64Op0q6C9ndfjZSeyDDbPDPodfwIL2/3SvvfmEM=;
-        b=WuTp10tMLt6quTLDUoIPlzwBypkOMQJNj+vf4TTfECZ/GqWqCsgs3AYI8wpAJ4SZx4
-         MUuOzaDkO5uh5MZbFAOlrs8i8pZPQ6DS5JytlD7LMXxu+MjlhfSaM1gl+n6M3xhybkAz
-         I6DVJtTZlrfQFu4Xj33bsQAhE3hVTCEvGP2suhCDp6l/8JKo8WXlhqEJCBun9SGSSXvC
-         r0DI1bP62/E6NgoLI+h1+Hc3gmBR55Of/S0qPGWtxsE7gMYMn30DJ1Z4qnVOEeN4u9FM
-         h2RpwA3/3BbD66QkA+HQkuuO0twdCZOWGVATOmbIEmdhKik1BikdQ6l8YXriWEXupjBK
-         SKmQ==
+        bh=FJdGxpeLcA+HNojMQbXEX8uXEAU5T/sehUXMK1DtacQ=;
+        b=rYiUfnZSuaoielxLAtDf6tRtT09b3z0BbTf3Snshk09+yIK85WTu2JSCR8wJWNFFyE
+         BONIXUlNMREfqT8nZtaskrOX9zSYxi5AXvSf30rqFA66oJ3LYHi7J3Mvj5THz6yVbEDE
+         iK5wnp8bWy13CPECQBGqxn+SElETm1hRIy5Qam6OqXUD78v+dd6R5PcUnhTiC4ynJ+6T
+         ZwdF3ery1c9v5wDocw5m2zc0VAUoNmiEaKySbXM1G28Z5oMGiNN++MUS0Fq9qykbeQuj
+         AIBkQy/5BAYptgfXI0Au85iL2L2BqDxHptajlHv8Jnbkj6e3aibZBPHiotbwD8DmFSVd
+         qCuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795187700; x=1795792500;
+        d=1e100.net; s=20260707; t=1795188689; x=1795793489;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=BTVg64Op0q6C9ndfjZSeyDDbPDPodfwIL2/3SvvfmEM=;
-        b=jtCXRqzwVfsc2t6MGshnjKv9KsbkCCbkpQPYemmODJwJukD87F+mvpavxUiYtrh3fP
-         VBmodjM/fqvl5bQ6eQlbkkW1msLWVT7Ny2fcsYnjiadzYrrcdjWyxtqMdh7zEBpblCxL
-         +1E/9U/nj5bp6oJrVW8Q12f3xeJ+gZUJU/EVxeKpMdKXIQ/Ebf0ynpDsjwjKUf0yPlpw
-         W64HrlVhDR20W618y2DFefuP3cBKtetImj0Fl9d8pPuAhHoOfmKgLXA/x7u7xGfdLj5m
-         m8YApuyjdnmygBGySzMIhtltCDPaYJP4C/hch7mo819PuHadjHIehj8nIFgK5a1KTilB
-         A68Q==
-X-Forwarded-Encrypted: i=1; AL+hErEGGptL4HxkofNunPdJHiq4HgKDfHYIwe9s3Md6WwWapsJFzoXi+w5xKEWaX8PwyyERG54EpEGmhisrmw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/JWf6rpUkVyit1ckMfs7GTd/7bxDMJR8pUyRIG6pP5UDzP5dw6
-	PGRXR3RCt6XxfuDSth1eG8mm1eFdYC43Id9NW8O7byU4SrQt8P67mECSwKRyBGs1R9K8VrufRhn
-	F6u7tMAVkLQUTpmshh9QzdGpyk8PxF+M=
-X-Gm-Gg: AZFdTZemAme6phDJsU+ncqm+EJmnNIsrIKY1bcWMTL4hL5YwzNudKOgfz9xC2iTXiGz
-	DjMAZMdAo1aQlpsF+hCiwslv8a3mNu3Pi+T0yZPFn43dW7iQb0F1BsJ+U8P6L58sDMxPmuc9Q/B
-	Mk7/4h0qnKChH4Me/FEhZMHiozXw2/keJkvJP2bul/VJnTQ9P66wcN3KcsZLAfBT3gcPmTfFobs
-	WtwMgaGKIjhOQGKB4M6oV6KOfxwlbCZU5i7Cla//Ilg7VpR2lVNsunwg/qGyGLAPAw0hLnpjEL2
-	3adnjm/Vt1BvIAuN9/rtib/vtAZO4zRU1QTggxqcw87fyZ+9+nkO09gKOP7i9dLk+hnsX7sjA1m
-	oYk5tsI/j/zbf0+eZWrtbdqlUJDwoIGCoonKWWcFlfTQAc2sBNnKSvajuLuj1zSmVkwYkNq6782
-	TgMddUnULv65VUFacRppz5ULwbdcGL5/yNfZ9eiq/xS/c/c+sGxj8=
-X-Received: by 2002:a05:693c:4091:b0:384:483f:2ea0 with SMTP id
- 5a478bee46e88-3856f65af07mr3934775eec.17.1795187699638; Fri, 20 Nov 2026
- 07:14:59 -0800 (PST)
+        bh=FJdGxpeLcA+HNojMQbXEX8uXEAU5T/sehUXMK1DtacQ=;
+        b=FjwwbDCaFeHy+cNTwxkx1RG+QhGcMFULU2dci45iHU6zeaF3U8Anllf5tP1mECJr1f
+         da/TuZIGEune9ptCxlKtFq7DGcI+QXqCuZJItY0WmNLinLMEfq0zuiPaTDaZ04n89a4z
+         Venx6K2gLAe/xmjlQbT1aWBz6dPsG7+SDNyUFAAtC5M58anqQVHRgPyIR9itaisczDaw
+         7JFFDSibzwu8vPsgNyEaoJj09HfWMcoWclI9w/GsAHmWKXsxFpNyVELtxWV4rB+EKmtj
+         s7Y/RkcuSRNKH8svWuM8PjrayvuRxNMOnJJ7k1U+PzthiSy1E+416Q1Q5mP264uqIobi
+         H5MA==
+X-Forwarded-Encrypted: i=1; AL+hErE8WW3sxFvpjR1fccJwYmkZC/i+yiXWg9l0qJOefHB5BzH/IPIoHU+OOSaGeuSs1oTO29aE1J5yXd6PqQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+GTFxxkHtprf6CXsPHMalAbjuxqhR4Ugu6RirSlYtU6Hr9I8KB
+	kIocAp0NUIAJHrZhszqvpdFRAh0PObh4rVypgxkW87wxFmGCIjPyZIC/QLMt2yD+ugtTRcj7r9Y
+	Kj6mEg5Ob69tRawcYRKELQCOCk2fZfmM=
+X-Gm-Gg: AZFdTZeZiJcRJnlvyztDAy20/giYHqi+eQ8mZU+6P/II8JDuOFIe4P6VmB5VUlWKmZg
+	XG6qikhQDNDTQ2Jc31w+vv98h90O3p9Bfs0j5eykx76/LbPLF7lOT0B7i9ptXV1NDgar9w8GodM
+	HK1+uXePvWCZ/Qa5uY1tfOfhB98ia+wuEj7Ym9PUqO/pCaUI8srYYmsybn1mhX92/bGxGqO4soS
+	ga8c1ww6Zk6Kk8ToVKHhPixPFErFSyyAGFm3S9VixZvtM3p/4DzTF46P0IApERqFjAD8eCHWfb/
+	PDVues9AD0WT544S8u+0nhOkqcw6vY571X0l9tsqDLpfme0HIcN7Kzp9zofFggObyprsaQhv6KE
+	kqts2Da4rkNyZuibeNPDzju23VrLJcSMBVp3KRsw0+5tJxRbk5Ac1rHLl4Vq8HWW/m1HBa/u/NY
+	GD1HUfic3bQNmHjSo8YWTH58nvfMyBZIdXE1QQg9JbN5tHMXc9fOs=
+X-Received: by 2002:a05:7301:6408:b0:383:1bfc:f1c0 with SMTP id
+ 5a478bee46e88-38570f27a56mr3129077eec.32.1795188688670; Fri, 20 Nov 2026
+ 07:31:28 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -105,83 +105,109 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <cover.1795095742.git.geert+renesas@glider.be> <CAPVz0n1+qXrO5P+rOBKOSOE86+WcmjNF0taWDZoWqerKrjVgJQ@mail.gmail.com>
- <CAMuHMdWPvKop0KAg_nff29ZeAELKprfmDtp8hDU2KPvJH5VVMQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWPvKop0KAg_nff29ZeAELKprfmDtp8hDU2KPvJH5VVMQ@mail.gmail.com>
+References: <20261113161819.36847-1-clamor95@gmail.com> <20261113161819.36847-2-clamor95@gmail.com>
+ <20261120143147.GA2466366@killaraus.ideasonboard.com>
+In-Reply-To: <20261120143147.GA2466366@killaraus.ideasonboard.com>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 20 Nov 2026 17:14:48 +0200
-X-Gm-Features: Aa3M54q53xAAi2-NE6j4-zP1TXb277cEgD_-5pZDZArGHR0nuFBgm3EHI75NcY8
-Message-ID: <CAPVz0n3zsUixggHgKNzWsxtxDZ20GecHGa7qQf2RmzkoJ792KA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Improve MFD_ASUS_TRANSFORMER_EC dependencies
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
-	Ion Agorria <ion@agorria.com>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, mfd@lists.linux.dev, 
-	linux-input@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
+Date: Fri, 20 Nov 2026 17:31:17 +0200
+X-Gm-Features: Aa3M54rmNUuNZyda5qhpJslp9i1jTMK9Hg275DVhPVt4wZMMMc9yhIUe9r0PTkY
+Message-ID: <CAPVz0n3u3oe1+H_w9jE2afb9PQT0VLtYVqfHeVNc3D+tLN6NDQ@mail.gmail.com>
+Subject: Re: [PATCH v1 01/10] staging: media: tegra-video: Move driver to media/platform/nvidia
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Hans Verkuil <hverkuil+cisco@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Cong Nguyen <congnt264@gmail.com>, 
+	Faisal Mukhtar <mukhtarfaisal03@gmail.com>, Dan Carpenter <error27@gmail.com>, 
+	Hungyu Lin <dennylin0707@gmail.com>, Hao-Qun Huang <alvinhuang0603@gmail.com>, 
+	Yury Norov <ynorov@nvidia.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D1=82, 20 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 10:4=
-5 Geert Uytterhoeven <geert@linux-m68k.org> =D0=BF=D0=B8=D1=88=D0=B5:
+=D0=BF=D1=82, 20 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 16:3=
+1 Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Hi Svyastoslav,
+> On Fri, Nov 13, 2026 at 06:18:10PM +0200, Svyatoslav Ryhel wrote:
+> > The Tegra Video Input drivers are mature and developed enough to be mov=
+ed
+> > from staging into the media subsystem. No other changes are introduced.
 >
-> On Thu, 19 Nov 2026 at 15:51, Svyatoslav Ryhel <clamor95@gmail.com> wrote=
-:
-> > =D1=87=D1=82, 19 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE =
-15:52 Geert Uytterhoeven <geert+renesas@glider.be> =D0=BF=D0=B8=D1=88=D0=B5=
-:
-> > > This patch series improves dependencies for the MFD_ASUS_TRANSFORMER_=
-EC
-> > > MFD driver and its various subdrivers:
-> > >   - The first patch adds a missing dependency for the MFD driver,
-> > >   - The other patches enable compile-testing for the input, serio, an=
-d
-> > >     battery subdrivers.
-> > >
-> > > Note that compile-testing cannot be enabled for the LED and charger
-> > > subdrivers, as they have a hard dependency on the MFD driver.
-> > >
-> > > Thanks for your comments!
-> > >
-> > > Geert Uytterhoeven (4):
-> > >   mfd: MFD_ASUS_TRANSFORMER_EC should depend on ARCH_TEGRA
-> >
-> > Though this EC is designed for Tegra based devices, it does not have
-> > any Tegra specific parts. It can be used by any other SoC.
->
-> Sure, the dependency can be extended once the hardware appears in
-> devices with other SoCs.  The question to ask is: does it make sense to
-> ask about this driver when configuring a kernel for e.g PA-RISC or S390?
+> The driver should at least be converted to be MC-centric before being
+> moved out of staging. I haven't checked if other changes would also be
+> needed.
 >
 
-Restricting this device to Tegra, even though it is not part of the
-Tegra SoC or Tegra-specific, seems plain wrong. If you want to
-restrict it by architecture, restrict it to arm/arm64 instead. Your
-logic is strange.
+Does the media subsystem deny video-centric devices from even being
+moved into it? I have not seen this restriction imposed; could you
+please point me to where this is stated in the media subsystem
+documentation?
 
-> > >   input: keyboard: Enable compile-testing for
-> > >     KEYBOARD_ASUS_TRANSFORMER_EC
-> > >   input: serio: Enable compile-testing for SERIO_ASUS_TRANSFORMER_EC
-> > >   power: supply: Enable compile-testing for BATTERY_ASUS_TRANSFORMER_=
-EC
->
-> As pointed out by Sashiko, I forgot to take into account the transitive
-> dependency on I2C, so there will be a v2.
->
-> Thanks!
->
-> Gr{oetje,eeting}s,
->
->                         Geert
+I would like to convert this device, but that may take quite some time
+and may case regressions if not done carefully. This patchset apart
+from moving to media is mostly fixes to work correctly with mt9m114
+and tegra114 bring-up which is quite simple and straight forward
+change.
+
+BTW, may you ack mt9m114 get_fwnode_pad change[1]. I have updated it
+to your liking, Sakari seems to ignore it.
+
+[1] - https://lore.kernel.org/lkml/20261006153619.304520-1-clamor95@gmail.c=
+om/
+
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  drivers/media/platform/nvidia/Kconfig                           | 2 ++
+> >  drivers/media/platform/nvidia/Makefile                          | 1 +
+> >  .../media =3D> media/platform/nvidia}/tegra-video/Kconfig         | 0
+> >  .../media =3D> media/platform/nvidia}/tegra-video/Makefile        | 0
+> >  .../{staging/media =3D> media/platform/nvidia}/tegra-video/TODO   | 0
+> >  .../{staging/media =3D> media/platform/nvidia}/tegra-video/csi.c  | 0
+> >  .../{staging/media =3D> media/platform/nvidia}/tegra-video/csi.h  | 0
+> >  .../media =3D> media/platform/nvidia}/tegra-video/tegra20.c       | 0
+> >  .../media =3D> media/platform/nvidia}/tegra-video/tegra210.c      | 0
+> >  .../{staging/media =3D> media/platform/nvidia}/tegra-video/vi.c   | 0
+> >  .../{staging/media =3D> media/platform/nvidia}/tegra-video/vi.h   | 0
+> >  .../media =3D> media/platform/nvidia}/tegra-video/video.c         | 0
+> >  .../media =3D> media/platform/nvidia}/tegra-video/video.h         | 0
+> >  .../{staging/media =3D> media/platform/nvidia}/tegra-video/vip.c  | 0
+> >  .../{staging/media =3D> media/platform/nvidia}/tegra-video/vip.h  | 0
+> >  drivers/staging/media/Kconfig                                   | 2 --
+> >  drivers/staging/media/Makefile                                  | 1 -
+> >  17 files changed, 3 insertions(+), 3 deletions(-)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+Kconfig (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+Makefile (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+TODO (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+csi.c (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+csi.h (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+tegra20.c (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+tegra210.c (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+vi.c (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+vi.h (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+video.c (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+video.h (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+vip.c (100%)
+> >  rename drivers/{staging/media =3D> media/platform/nvidia}/tegra-video/=
+vip.h (100%)
 >
 > --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
+> Regards,
 >
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+> Laurent Pinchart
