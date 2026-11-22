@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1795378484;
-	b=Uk0YdbMNLcgPRLDoex/W0Q3BJIImhdiuy5A198HnKOo0q/LqTId8YUPqKB6V4WZKgLFb
-	 XP5H8NewU+a1ty0/gy6ZocVz2W71Fk1X5eazlcyTgRUwsmX5p7Fa+vUYo9vdni+Uruogs
-	 KxhXaRzOyjUoDNmYlhH1cUlKR6XcJBoWx80mA2se2zIr7oOBh8bi30eWXYzViqy/rJe1D
-	 coibyriBVhLrv3PuHDQg/e40CFdlfhPCQiixfMoJrWLSd3LlrgEAoMo9IStmSx7nY3uOy
-	 dEmCmK9tDh65jS2eLKCMEGfuA7NZSRBmgxNj6vxmzsc0TkCKPcom29AE0MpevcPQRnA==
+	b=W2ooXjlgcebuSaZegBRU7NInvowaPszU024gzJkMl3rProMkR+YuuhuHp9fgwM7hWWHI
+	 7oghBgrvo/MEFMApM+cCiSYy1YQ5+ZLqqm+lLxjYvDo5bvsS1CWa6AVm5La/XL8RgWKbU
+	 ZGJYvjzrame7k6lxGZbVyxTJnm1iHeIskwQqm5YvKrIivNstdO+JL1A4bg7kJkNWw2Wwm
+	 LWEOuGgiqIFM9J0hRjK3cRO/w4vQ5xHwyPELVGYZZpSmF7iJDeDOe5zhwyHNBIBxayN7A
+	 2UKeFrn/xvfcpxUjI6jkxCbLuNFGsHroFieZwEux5hENWILxWCHpljm0I1H7eqaDaHw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795378484;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=avCVUDrooB22hMBb4h+eP/HEoR+1Ep1WqePqDENU9wo=;
-	b=orCQK7U1rF0tBjQ5jxOtbWN9VmVqTu55AN2PY+Zu4H8gf0HGcwVCZruGnTB/YrtjLmJN
-	 iJoROohab0AoaGep2zmSaO8cB5KsdFege6Rp+685w9nGZtkoC+kAu+EFwhIhIh8fxGjpu
-	 wvP6R5wonbWMuqevCx5k19uVH8c4aK9Q/CrWk5cSC8OnbXxmKl4yhUTF5CQ/1TMALC/lL
-	 uIdY9adDlsBB5Z77o4iQZhQPm8qZc877qc5Gi6E9GANhXWsokvcAQ1ua5It5/N1fLkwyc
-	 H2mp7SmZYFjtLy/nw7wWZda4w4ZY4vlB8ImJYDQaJcmdaqh383lAZG4+UJVSk2Zs+Wg==
+	bh=SFXSMcHcVJkmYFbJzBFz4HPTepM54SZHk3SlIxX3SZk=;
+	b=ehtQXqrok7375lLGcsmAVh1pzceuoJhQA++Wgf2s4aXWxYmzm9gx8EOVi8KnCI1x8Fqo
+	 xo0htPj9vBmt75kbIoLjvI6qwgCsmohcfcVkZ/PUGRlVECHmyIqRzX3Ea6Y0UwIEHRoSb
+	 BtHHWSGliDj4IRqKOKaQNotPe3H4LQhCHSQ63nKm81xDTs80xPHy/rPCKhyeDit9VDnQO
+	 yaDTIl68dklrHo2ykKT0aH+B4vUXwSrBKnXUBPErUjdnYEvjEatvbkGuAryUL80ZA4ILO
+	 G2PlJELuyWjOj5uATcx2x6ZfANREuMEDroJG8msgACTGr6RtFW9l5OtSVewHdXuN/RA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wWuRdJOL;
-	arc=none smtp.remote-ip=209.85.208.42
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Q5v0tZRI;
+	arc=none smtp.remote-ip=209.85.208.54
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB53C606A697
-	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 20:14:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB53C606A697
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0105A606A33C
+	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 20:14:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0105A606A33C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wWuRdJOL
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6b86fcbd647so4178973a12.1
-        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 12:14:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Q5v0tZRI
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6b4bd3d98bfso3142867a12.1
+        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 12:14:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795378481; x=1795983281; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795378482; x=1795983282; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=avCVUDrooB22hMBb4h+eP/HEoR+1Ep1WqePqDENU9wo=;
-        b=wWuRdJOLTWSRrG1GN35fu/fJ3O+5Fiywjt/Z/wNz4rBYs8psR24yswJzDPArrOAuGW
-         yrTcDQt63ubedRyHEupTeThX9GRQxRhcu3x/qbroPQEG63NPA6BkfyRqEwgMxsNXB0Wd
-         ezkaosIDpVWcEMV0PxcnNci8R3TUTGT6GiBig5Ubn3xP77Ai9VzNGyK6DVmn73muH4vq
-         NehEO1oQfHb0M2nyfyo5Jr4kAs+vTRP4oMqYhD3J/IvpiVxIGNu6GUUlATBrUSkboeS9
-         6kNDEX4AQRD8wBE0NcbM1e1WCEzbkwaktRYLUmlLg7+/WZuh6Dovp2vXNr55YI0RzKyo
-         nmOw==
+        bh=SFXSMcHcVJkmYFbJzBFz4HPTepM54SZHk3SlIxX3SZk=;
+        b=Q5v0tZRIUKu5FfuMA0WHjv+4y7OME8e13al3F655WqumlxdAsuBho9J5fjY9oSETzn
+         u61qF89lyEUxgkv+HMDUrf6fQto1lWNA63NNwHinVZq5upgD4tw7cAR5sVGrCPlDIKi+
+         0zHOHOBnoXNBpBs5YGKDjZff/L6aQdsKI0YXrIZQlE+fbob2+hmXPCqjQvFHGYe6BLhy
+         FF3iUj6VpVVxKhOtqmE5aap2FfW+FUT8AAEBdxBtERTlWrcM2nUA/XMDFEyH1QpnbMkK
+         L8H9o5YsPcs6eJWgBDZ4J78O5w/M5DB9fXOEwClUCWUVmzxwZolWWl0Dk+JsnuS2rnP8
+         GQ0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795378481; x=1795983281;
+        d=1e100.net; s=20260707; t=1795378482; x=1795983282;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=avCVUDrooB22hMBb4h+eP/HEoR+1Ep1WqePqDENU9wo=;
-        b=PPrX6xj98ZEdOW10aqwUB4FqLBuKS4NYZ8tWnP5h1rEQMCBp+Nb6zzBt8phr/PG/nn
-         Agf6H1Jcmzs387Y7dmqlKR+m5SjcORX+gkqYojYnH6pcVeAwj+FeNbMkNgBPS+XMdBJu
-         tGYhW353q4+nctKYE8Du1fAgX7zFhOLIUBmbxCgwHI7iKqeO5jP3fU7XN893NvtfzvRk
-         CZHpE8375HhphREAu6pruEUmUBFWV+DPmwcgqVaxykHz3FLHAa5uxvCAKGF562NnWVuL
-         I87hcYm1dZgiCwaEoSAmha5T0JAR3FjbfK9MIGmGiHUnTpvoML1BH7cpUt3PhHIQZZp0
-         W0fw==
-X-Forwarded-Encrypted: i=1; AL+hErGSaysQhx57M/cGwCGVkFBY362Z2uh5VvUft5X6AWnCzRJPex/LEPQTPan+O1IaOJSyWrHFYjZvQL/Nug==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/BLxbfNH4IOQu//sL+sab7/16uMr+eyHDe+bY+Fdr8LGzi5WCc
-	6AHPH+z8Ze3KKSfCAeVXkEQY+tvaA5xVZ+KMAm0kn4Ww3k0YKBmQI9YcmScuDg==
-X-Gm-Gg: AZFdTZe+6CAqwBoVV2PLmZzGCoUQd/MkNmSTdKIf0ZUnGjFTWYun6KJ4KZruafeOGT6
-	yzDRzMdSncqmEDIVT8sjUMVQ5nySN71W7t7Q4MY/luvKSx55IjVV5XnzhpbB9RmMCa3fLb5iJNH
-	02ozG9jSGEQItuI4WgnqtkQIkzfHJQHhNwO8qpxD4zdnglV321myJgwBQMZYfvdTfMy1RUy5DKq
-	HIG90UmLC3dBQ5zCnfaXonsGYhU6t94RLtwzmoQJnzUzWDRqKai3mAHErz3UlPYYGdGNkxcuIJk
-	BDzLNxPMELQvJHsZOWBr6kPbh29YMbkJoDs8B6+rcHpwSkRDV2WLVBSERozVYWGc4yf2Jb+U6OP
-	d2kDtVRD0uu3yDRtn9gg4UfOYFxgcbYVv38H2tTA6IHbSUdJGcixV0RYz4Rg0IDpPttTq/uusoG
-	8hK+HmAq0iwHg4DqAsckpq4mCzodgGDivDW8FsD2djNMO+Do89+a6jmaEqpkzwgYdnxFZakhjDd
-	dlVIHTPi8o1qQ+gWdWkIzjZzIwm0yPN1fHez4JtBcKTP2KnHy9/mdhDse5311TeVaqrk/0aD++N
-	+GW50uyExdNh9VVvp9KhdupFjTFAb2KLsBeeP62ZRNBk4s7uhT3eTrs8AlzV9m4FWrAgWQTZJb/
-	ItCCisBVOxOiZeVufLEaDYyja4RWQ4k4=
-X-Received: by 2002:aa7:c513:0:b0:6b7:f00e:5e56 with SMTP id 4fb4d7f45d1cf-6ba37c788f3mr5002752a12.1.1795378481168;
-        Sun, 22 Nov 2026 12:14:41 -0800 (PST)
+        bh=SFXSMcHcVJkmYFbJzBFz4HPTepM54SZHk3SlIxX3SZk=;
+        b=KGAG1f72o1CB8nyY4Kp6ViV68uMNTmGZXCEjVn7QLFMfWEO04FM8PqiOtOKCG/LPYo
+         4bs12NyTlIRk6JFxkb1dK96OXmZWtvsmYYy375HNl7WU7oyScIQTfg0k6B1ou002XjjD
+         sCOdpho+JkdW9wG1nZalhAtgnNi20ZAgXe1ylzTmELJYmZOYbNaFLUaWul3KKinIA7mC
+         Z8TuoShj11YW+uh9xION8X12fz4ZHUoR2nb/L5C+YgqE2MmUxvn4i+tbnkLSI7eYFdBI
+         UtKwu0QyEQJqGn05WJ1N24yDU0HdEgT2AmIy994VpbbCvicSwzSdYW9I7Ku5qdCgdty4
+         3nkw==
+X-Forwarded-Encrypted: i=1; AL+hErEtZl21ijGgIgkq1k6dhchprYksMtRTwbazUo5IGFBZQdfxTwptGzdIAzwTGepPUtWMQ+ZbBuVMA8Ieag==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+trxMq4i/jHpFZc9rWF29eOYEnZU+3QYKiLqI+qNNJd9RPjTeR
+	ETScU7Ny+OSqiFxol8wNXVxnuJq56ybwJg6RTvPuPWoh/IBQ2OebZj3W
+X-Gm-Gg: AZFdTZf6qBPzJI1hwdLEYUdHGIpp9fCLnrtee8tIseO8pSmcixQQMTM2Ac+IErAy50y
+	T2eQCceTaBZtkvbTqVykuV0h/A3PrgspJoF2kZNeGMz2vFIg2UgAuZuiKWZi5MXulXSvXVI50NC
+	saQ0/Mz0gMI1j8/iXuxzWYc1lBNQHMvkEdjb1eKtaiYszNVE7c6vfZ6ZuI/hyA+J0UpgWAgr3fX
+	BDVYR3kdEUxHei4SiybnJv2+fHabZtoWxCBtcf8L2C9aiSal5ddvcUGHeFKSypfyriE3hVx3FKJ
+	hUK5oaA2giR31/9RmcLSoaquL5fwU1u2ewc6mhctMnto961eji5CrR8pVg1Uxzu5WRfAcGhClKV
+	g1YBZBA5yzX6S3YVyz8vW3ZVeXzmG5kzRVhRk84U3lHEBbUnf8CP9fw25q5OyyTLkQ7qXCEplEI
+	Cc9tMuF5zb6ql4KTDh2vHegMftWXQq/CoAwsJlCBVdgNFotDC9CLYfoe/zQpzOB44hcJnMSA/9x
+	aIAeUDFns5SfMrWKODlQf7p7+veWMdzNhsCHRsKyhOoArw8/QwFi1zexYW3Y6V+UOM4GF0dAwMc
+	ePv0sXE6et60DllB5whtYbOOm9GVBKfZkB6T1cwmkJ5LQzN9cROxVEfF+1rcUyuKX2xJdZTFrrA
+	q97VBfTuhMD0=
+X-Received: by 2002:a05:6402:434c:b0:6ba:2a44:8ed0 with SMTP id 4fb4d7f45d1cf-6ba37e97bd6mr6781529a12.23.1795378482319;
+        Sun, 22 Nov 2026 12:14:42 -0800 (PST)
 Received: from xeon ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fa8basm4424074a12.20.2026.11.22.12.14.37
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fa8basm4424074a12.20.2026.11.22.12.14.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 12:14:39 -0800 (PST)
+        Sun, 22 Nov 2026 12:14:41 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -90,9 +90,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 06/18] ARM: tegra: tegratab: Configure USB and power supply
-Date: Sun, 22 Nov 2026 22:13:55 +0200
-Message-ID: <20261122201407.23742-7-clamor95@gmail.com>
+Subject: [PATCH v1 07/18] ARM: tegra: tegratab: Configure MMC devices
+Date: Sun, 22 Nov 2026 22:13:56 +0200
+Message-ID: <20261122201407.23742-8-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261122201407.23742-1-clamor95@gmail.com>
 References: <20261122201407.23742-1-clamor95@gmail.com>
@@ -107,168 +107,96 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously, USB was partially broken on the Tegra Note 7, as it supports
-OTG and requires proper configuration of both the power supply and the
-USB controller/PHY.
+The tegratab board uses three MMC controllers of four that Tegra SoC has
+(the second one is unused).
 
-Configure the power supply by adding and linking the battery cell,
-charger, and fuel gauge nodes. Configure the USB controller for OTG
-support using the Palmas extcon for ID pin detection and the charger for
-VBUS, and add the usb-connector node.
-
-The device now works in both peripheral and host modes as expected.
+The first is used for Wi-Fi SDIO, the third for microSD card support, and
+the fourth for the internal eMMC device. Configure all controllers
+accordingly.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../tegra114-nvidia-tegratab-common.dtsi      | 98 ++++++++++++++++++-
- 1 file changed, 94 insertions(+), 4 deletions(-)
+ .../tegra114-nvidia-tegratab-common.dtsi      | 56 ++++++++++++++++++-
+ 1 file changed, 55 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
-index 26f1f7dbcc4c7..2ccee3b70aac9 100644
+index 2ccee3b70aac9..b7a14e24df79b 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
 +++ b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
-@@ -940,6 +940,48 @@ pwm@7000a000 {
- 		status = "okay";
+@@ -13,6 +13,10 @@ chosen {
  	};
  
-+	gen1_i2c: i2c@7000c000 {
+ 	aliases {
++		mmc0 = &sdmmc4; /* eMMC */
++		mmc1 = &sdmmc3; /* uSD slot */
++		mmc2 = &sdmmc1; /* WiFi */
++
+ 		serial0 = &uartd;
+ 	};
+ 
+@@ -1254,11 +1258,61 @@ i2c-thermtrip {
+ 		};
+ 	};
+ 
++	/* Wifi */
++	sdmmc1: mmc@78000000 {
 +		status = "okay";
-+		clock-frequency = <100000>;
 +
-+		fuel-gauge@36 {
-+			compatible = "maxim,max17048";
-+			reg = <0x36>;
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(Q, 5) IRQ_TYPE_EDGE_FALLING>;
++		assigned-clocks = <&tegra_car TEGRA114_CLK_SDMMC1>;
++		assigned-clock-parents = <&tegra_car TEGRA114_CLK_PLL_P>;
++		assigned-clock-rates = <82000000>;
 +
-+			monitored-battery = <&battery>;
-+			power-supplies = <&bq24193>;
++		max-frequency = <82000000>;
++		keep-power-in-suspend;
++		cap-power-off-card;
++		bus-width = <4>;
++		non-removable;
 +
-+			maxim,alert-low-soc-level = <10>;
-+			maxim,double-soc;
++		sd-uhs-ddr50;
++		sd-uhs-sdr104;
 +
-+			wakeup-source;
-+		};
++		nvidia,default-tap = <0x2>;
++		nvidia,default-trim = <0x2>;
 +
-+		bq24193: charger@6b {
-+			compatible = "ti,bq24193";
-+			reg = <0x6b>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(J, 0) IRQ_TYPE_EDGE_FALLING>;
-+
-+			ce-gpios = <&gpio TEGRA_GPIO(I, 4) GPIO_ACTIVE_LOW>;
-+
-+			monitored-battery = <&battery>;
-+
-+			omit-battery-class;
-+			ti,system-minimum-microvolt = <3100000>;
-+
-+			usb_otg_vbus: usb-otg-vbus {
-+				regulator-name = "usb_otg_vbus";
-+				regulator-min-microvolt = <5000000>;
-+				regulator-max-microvolt = <5000000>;
-+			};
-+		};
++		vmmc-supply = <&vdd_3v3_com>;
++		vqmmc-supply = <&vdd_1v8_vio>;
 +	};
 +
- 	i2c@7000d000 {
++	/* MicroSD */
++	sdmmc3: mmc@78000400 {
++		status = "okay";
++		bus-width = <4>;
++
++		sd-uhs-ddr50;
++
++		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
++		power-gpios = <&gpio TEGRA_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
++
++		nvidia,default-tap = <0x3>;
++		nvidia,default-trim = <0x3>;
++
++		vmmc-supply = <&vcore_emmc>;
++		vqmmc-supply = <&vddio_usd>;
++	};
++
+ 	/* eMMC */
+-	mmc@78000600 {
++	sdmmc4: mmc@78000600 {
  		status = "okay";
- 		clock-frequency = <400000>;
-@@ -954,6 +996,15 @@ palmas: pmic@58 {
- 
- 			ti,system-power-controller;
- 
-+			palmas_extcon: extcon {
-+				compatible = "ti,palmas-usb-vid";
+ 		bus-width = <8>;
 +
-+				ti,enable-vbus-detection;
-+				ti,enable-id-detection;
-+
-+				ti,wakeup;
-+			};
-+
- 			palmas_gpio: gpio {
- 				compatible = "ti,palmas-gpio";
- 				gpio-controller;
-@@ -1210,19 +1261,34 @@ mmc@78000600 {
++		mmc-ddr-1_8v;
++		mmc-hs200-1_8v;
  		non-removable;
++
++		vmmc-supply = <&vcore_emmc>;
++		vqmmc-supply = <&vdd_1v8_vio>;
  	};
  
-+	/* Micro USB */
- 	usb@7d000000 {
-+		compatible = "nvidia,tegra114-udc";
- 		status = "okay";
-+		dr_mode = "otg";
-+
-+		hnp-disable;
-+		srp-disable;
-+		adp-disable;
-+
-+		usb-role-switch;
-+		extcon = <&bq24193>, <&palmas_extcon>; /* vbus, id */
-+		vbus-supply = <&usb_otg_vbus>;
-+
-+		port {
-+			usb_in: endpoint {
-+				remote-endpoint = <&usb_connector_out>;
-+			};
-+		};
- 	};
- 
- 	usb-phy@7d000000 {
- 		status = "okay";
-+		dr_mode = "otg";
- 		nvidia,xcvr-setup = <7>;
- 		nvidia,xcvr-lsfslew = <2>;
- 		nvidia,xcvr-lsrslew = <2>;
--		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
--		/* Should be changed to "otg" once we have vbus_supply */
--		/* As of now, USB devices need to be powered externally */
--		dr_mode = "host";
-+		vbus-supply = <&avdd_usb>;
- 	};
- 
- 	backlight: backlight {
-@@ -1235,6 +1301,19 @@ backlight: backlight {
- 		power-supply = <&vdd_3v7_bl>;
- 	};
- 
-+	battery: battery-cell {
-+		compatible = "simple-battery";
-+		device-chemistry = "lithium-ion-polymer";
-+
-+		charge-full-design-microamp-hours = <4100000>;
-+		energy-full-design-microwatt-hours = <15100000>;
-+
-+		precharge-current-microamp = <256000>;
-+		charge-term-current-microamp = <256000>;
-+
-+		operating-range-celsius = <0 45>;
-+	};
-+
- 	clk32k_in: clock-32k {
- 		compatible = "fixed-clock";
- 		clock-frequency = <32768>;
-@@ -1242,6 +1321,17 @@ clk32k_in: clock-32k {
- 		#clock-cells = <0>;
- 	};
- 
-+	connector-usb {
-+		compatible = "usb-b-connector";
-+		type = "micro";
-+
-+		port {
-+			usb_connector_out: endpoint {
-+				remote-endpoint = <&usb_in>;
-+			};
-+		};
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
+ 	/* Micro USB */
 -- 
 2.53.0
 
