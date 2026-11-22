@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795378499;
-	b=AQeLLj99TWwZk0PEN6rFx/vmS0O7AiCizXccsR9q+3ZX63KMH5NWjroFw2GpxzyXrxdh
-	 vRT8U+bZoHNHGhcMBzPEz/EkhNU7DrW51hdbBnjh/cm5OjCdlh0gqWEs9vYWLwzN4JHdl
-	 3gtjmLbSw+Iu/ejFmV4z91k4HaindYolRzLKlXLBTleh2Ps4HiIU/mBxdAKt0Pan06Opo
-	 W8/ZQ1Y0/O67Tjz83c2+jG3JzgUOdlL2s/E/yg45S2/++NoQmw4PKd9xBKZ1XkAB+kqeP
-	 6/tZoebZbvSOTujq+01MWKQBLVT4rqB3mXz7aTKTPAuN8M+rw9Er1aKPE+5S2oYov6w==
+	t=1795378501;
+	b=aBmj/8rON5aQlpMImKsqWKM4wk6pxRAEcHi30w4HNZdSzrN25U7Ew8TgS0iNeG7lqjfv
+	 eU7uAmSPVFXHla6w3ZuTfHmKKVT7Qn2e5VNsGFNgQTvZQ30GdzIwV9pd8D/Se90ZsCb64
+	 hLf32sGn2zjONmgVJKtdN7pvypBjavXnuubtanif0ECZIS3Oc3yuNROVVNIR39/rR3CBL
+	 RejBNYF55oQtvhU6GYIU4zu1z5/jweyt2CrTAalHOsQrFT9e6f6qatAuUaQ2ti3+XLVpT
+	 DPuR84jrcvsh9YuA8tUg7vz3BOJLMNjEbDI8hyTrHjqslR/k42aQwT0kgB6zgzZ4Wcg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795378499;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795378501;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=0/AroVXg+wKJ6uFX9onZDHbggt+VRwYm3F0cMN9wqxg=;
-	b=g5CjrXzPFqC0LqQcBgfUOFY7SX+zJEWvNipqmti2+l4wGdEhJqzqbXrjhQgiuVU9wH6M
-	 okkR+/5UBsZTtUEpiJezAen2i7JFP0wLfFSev088HIRVocf+0Qg67Ihi6Uyf/Ti9OP6vw
-	 r/o78RVTgLq2YcDHBCR6+r9uIGn+FTVGw/7P6mCy3ilJcdb8d5/BtKwCCHaL7qeQ0NKcd
-	 s3Vn7/alH00IMvJlgEQMamzeElkmB7vmnJUmvDvHgqEarP5ogeHUPxL6tcHyTRehMBOMo
-	 oxmpP+mM0WUVyzAZzoZaSVZ6lAHzgBC7ncAUCtWrs9sT5wH9SGNgkxDTDgUWYYRZt5Q==
+	bh=Y+TVwTlX7c3XctTEzScMeDWLIyBaOAtPHRcEpBS/ezk=;
+	b=d+KjpnUTCF/1V4iYh78IbyCG5CzS6dw3KmsZ8wi4C0RCsBAR71zjWNG2238uwq1rpRp0
+	 kVW/1sO6ShCpzBu0OtjCY8wi3CosFgnskuMxjvC1Or57tJsD1clWNhC8lG1Cfv6Z8lKAB
+	 z1Qmb/GGbeMmqpjSrTyp6v5LO4tdE2R999sS1N/Hx9dgOC/RVbT4Xj4PjKMM/G8AsI+dz
+	 auFgTR5JlH2h+oZwy0e4WHHEicDKZg6pmGOY84ua4Pdm4NGg8XgRzfAHLWkQuND7QxSes
+	 4RHS+Rt0rZDet0ma8vraSANF9CfV2B/tFrT9R7lQ0BtiZz+xsd3X5igcPfKaBIQrXJQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oMNnYhvk;
-	arc=none smtp.remote-ip=209.85.218.42
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=mV4S7s0F;
+	arc=none smtp.remote-ip=209.85.208.51
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F9A606A331
-	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 20:14:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 84F9A606A331
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA00606A33F
+	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 20:15:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9DA00606A33F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oMNnYhvk
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c51373ae637so397518166b.3
-        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 12:14:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=mV4S7s0F
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6b8786bb305so3218471a12.0
+        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 12:15:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795378498; x=1795983298; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795378499; x=1795983299; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=0/AroVXg+wKJ6uFX9onZDHbggt+VRwYm3F0cMN9wqxg=;
-        b=oMNnYhvkB8Cvof2QHWD3pgxxbWR+ocjTtM4HIZWTIWD+DqfWGYxSmoSbKccTDAi5wY
-         VwEV7mbsNh6r/Bvei+D1b6LANI22rW6gIYszhPwAxhAuddFkog6x2Rdo9dLgjwiOghZs
-         tf38d5D9vbNP3sfyiNxKr6xz7ZA3bXA688n/gf+2zsSqWLws7H0peXw8OtQ0SCKU+6i5
-         ILB0cNn7Ip6uuUqpro4IS2BmihFYNj9hAkHZN+o/lqnhjorF3huc/AYKRm98+nmhFQto
-         Zfyi3MuYOC5zpIp94kbaXcj8pfZ3mfvcsuL5eVyFsAFZz/hbvkrfEERI0zbR8ghY3+/u
-         dgwA==
+        bh=Y+TVwTlX7c3XctTEzScMeDWLIyBaOAtPHRcEpBS/ezk=;
+        b=mV4S7s0FSBQ8EhKjdIitZA7eBN6Dv6QzdU0jpu0+5ZnD+DDNounbp+Lj7QZXks6ho/
+         CkkKf4eSnlEVxiOHTa+q/f7D2TYvG45nAJFDDBwKxskEDV7JXZHfdhg11gVqpd26xlET
+         aXP/QHgoZL5/6uRwJEqwDzmx1Or/iKhzJdpiaBR2sFldJlww/vtWzeCJ7KCHR/ahnGFj
+         5ETgU9nDYRb13y20bff1n0VbzUl2QXB9kWuXpyaE8HQI4Rtg9nHmROccUGs8s+z508dR
+         XTQOpLrMZHy95JZMvZjn4QndHdNWHlfd7z9UpZVS7GU4CHhflfL7sT7TZ9AIJ+ocNx9G
+         fI8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795378498; x=1795983298;
+        d=1e100.net; s=20260707; t=1795378499; x=1795983299;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=0/AroVXg+wKJ6uFX9onZDHbggt+VRwYm3F0cMN9wqxg=;
-        b=rTAvh37rl8TjrHeKvPM8gyNibbLQlX+Nm3UYC0L7ftAEYzIvgMFiZ+IN2JKMGt1p1J
-         zBrAv99LmAHUhyqQnG4OpS4P21f2KzYeivH20QEHzJdRv3rqXN6FFc+6VItgAoQyO3uc
-         9xTrLz5BW0JiZVud3QbBAt0B0Yqf6zBp0qjdMZiCsmxNkGjW7y66wYb/Rt2ytZd6P5Xf
-         /nQn3+KtEUC/jgaWYFNOmaAVBN6EGXCvzfeu7Mz5Do4zbw74Q6hQE6EAZd/iu7vXJ4Qq
-         brkEn5rbuLMIle/swhliAdJoeqY3SESQcwE62+8itwKpz9+pR/kusa3R6EJRiWSHDdtM
-         PtrQ==
-X-Forwarded-Encrypted: i=1; AL+hErFmQnEL2HhcjVvzJjfORUMiz3DMw1JUdO7ee2zsb9UdoHu6DZ+mWgSG86f4TISUwroYf9mM+gDCs6ojkQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z87kcMh4+yS3HNupfWGIoH2DZSd65HRzwQiHj+p4kc1HiMsI7af
-	sNkfsWnOK9nth/8YvCwm2SanUBWrFTMTJWfq3LY+73SnBK7dPpSCEjei
-X-Gm-Gg: AZFdTZdqVy/vXggJ0Z7uPwDYGhbEo+ZdN/4wGdX4vYa4W8zOjflh0u6an2Mwdr2tQKI
-	PO519OHuiySloMGDAF+XBy5wmDn5pG4MySASsTmK1jU/w2LkLZWAEqHP32+dKx0wptW0w1pzDjm
-	qi7yNtCZ3S8vjv/zSJeqtgn2JWTYN4I1RgXvIYeW9TsfBaOslJV9wfbgUOSk8P3nbjU3+yP56z9
-	hn8pxGVlesyFZX4qwKETG3ebzjD45WkQzwgrv7QLun2RjCCYHec/M3lQEnuZIiwFGIOzxLTH7Rn
-	bL9jGaPFJEQ6exSS9W1zS2YzdXr+qFALARrY3FaB16SVcLti7JHq2rUdyIkhwsPf8h3MW0govqN
-	zR0uCF41rOTVLfLzSLiXeJUi3Di8UrUnRtsO7ND2YhRHly9M5BHqLfPEch0uaDtAidRtjPtYgB+
-	ViH0LMzOmrFcWqy5UhlrDigti+n5lcS/pYTCQLpNQg3ebVFVsSha5THtJiKLvszmVKyuPp2lpEw
-	h4M541GR6CnmW72xKMgCnDeioPHfEUBwHPysBrUBGSo20H83YZGQR1wmkYy/w5JoL8pQTopgljk
-	9CZ2TiZx5igjHAltuWQO2xsd39GQi82GEsMjP0SJKXO/L6vW0EJSEaHphVnEX5+86oYNzZfb5sy
-	ExztRV2azPg==
-X-Received: by 2002:a17:907:7f9f:b0:c31:c767:ae0b with SMTP id a640c23a62f3a-c513a274be7mr837483266b.0.1795378497880;
-        Sun, 22 Nov 2026 12:14:57 -0800 (PST)
+        bh=Y+TVwTlX7c3XctTEzScMeDWLIyBaOAtPHRcEpBS/ezk=;
+        b=qlvJUp/wAP6vdh2RyrqWG09wceXLZy/wJxOHBe6JyuY1tokXQGpbGVYL0NJJWJf7A9
+         9JhVMUe5zkOAHCT6a689HZb21fqKqMJ6LuMztbgg/pwJm52Z0bWVtcnxx0K0VbqtNThz
+         0Djgete9EoidCcwQ8vArF+tbZrOiLqIzFn9/n6GELyQLeht/HPk0PdZtlNUbIwN9rZAr
+         3ceg/4wqEB/aP3ezDL4LQJRD49uNFzuRw7tG2iappFGjGC+9KWxDUjnDf9KGdj6yj3Tj
+         FP37OpLob8oVqDw8molSLg+MSXHc4T4vK23Zr3OmEeILxim6j4p4IxLll13NQwp73SU1
+         7uQQ==
+X-Forwarded-Encrypted: i=1; AL+hErEBqM9aNF5U3ZBzg2Mu6J/6hdgSFajXnNhXzliAGq6eRprv3UdcI0K3LnfVMjKDeeiT+AlYRAqOkI8XWg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z++yX2eSLP5WdMVWA4vPe82iKjcc/I94k+ySmp5kfS1DMzO2C3k
+	xVCKfu7o7C/fH0FF2zHpbe375T5bjlQx6CR0bevySxOkr17GKyfILvo+
+X-Gm-Gg: AZFdTZfZ8GJldp5W3o9PjYAskAG0LqA8e2ATa030o921fl+OWlbRvzgNk1G+goVbIAv
+	iLv7TzWBj+KegLsNQYjgcve+Ne4E3hTCnoSAoq32gqxq3RECj99vk7TinhGzRF4lyx4icouffVx
+	YxnRhb7Vz+C7iPLpOiMuHoqDY9t/+GoV1uhzXQvGpBd3xd7AwTzaIvGH2zJXkkmRbjSdsUIoTJ6
+	15jZN0nb085YOGgHOfvpJdami86gc7JOcfbn7TyuOfasJMGYYqJolPf0ephr/PWb3P0ldIM7Qjn
+	Yxc3C46Lt8WfP6QDNlMbE+8NJUe/Yhi0GWGFIBgZYUV4hq9b3jWyoUcVSdWNGuYmFB3p/jwr8vt
+	yHQMX9vv75pHakhJ3YVx6GSxTjSdFdD7ck7bVAnHrcn9S2uhv1VaMJkPRQjy7iphUkLGdXRM6rx
+	dY4yeRvR98Typpi9zifW0pZkbNDF/CIYCvBLE4dH4Yt8yY0zj8bZm7FtMtqikOv4cAt6o//i+ii
+	T88YmSu9QhqKb+BM4wwtqiBGU6Yqfjeva5hAEJ5I8/vXQ7cc+D0k6HRuC3jfPCmaZgKbUEOeeqa
+	qqhbimMqpkPtF4RcD7qj8BrOVs8PD3YSWRB+bba1J5CtdUGNP7vA83CH2N70pDmV8dRjOyX/Xnw
+	y1GXgY6eojA==
+X-Received: by 2002:a05:6402:1d4f:b0:6ba:95c2:750e with SMTP id 4fb4d7f45d1cf-6ba95c27ab5mr1629135a12.16.1795378499006;
+        Sun, 22 Nov 2026 12:14:59 -0800 (PST)
 Received: from xeon ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fa8basm4424074a12.20.2026.11.22.12.14.55
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fa8basm4424074a12.20.2026.11.22.12.14.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 12:14:57 -0800 (PST)
+        Sun, 22 Nov 2026 12:14:58 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -90,9 +90,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 14/18] ARM: tegra: tegratab: Add CPU DFLL clock node
-Date: Sun, 22 Nov 2026 22:14:03 +0200
-Message-ID: <20261122201407.23742-15-clamor95@gmail.com>
+Subject: [PATCH v1 15/18] ARM: tegra: tegratab: Update GPIO keys and switches
+Date: Sun, 22 Nov 2026 22:14:04 +0200
+Message-ID: <20261122201407.23742-16-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261122201407.23742-1-clamor95@gmail.com>
 References: <20261122201407.23742-1-clamor95@gmail.com>
@@ -107,32 +107,66 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable DFLL for Tegra Note 7 since it is now supported by Tegra114.
+Update the debounce-interval for GPIO keys and add hall sensor and tablet
+mode switches.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi  | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../tegra114-nvidia-tegratab-common.dtsi      | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
-index 42a10ec5ad4ee..cf8cd037a732a 100644
+index cf8cd037a732a..f6b167dc8d338 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
 +++ b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
-@@ -2133,6 +2133,14 @@ i2s@70080600 {		/* i2s3 */
+@@ -2295,6 +2295,24 @@ usb_connector_out: endpoint {
  		};
  	};
  
-+	/* CPU DFLL clock */
-+	clock@70110000 {
-+		status = "okay";
-+		nvidia,sample-rate = <11500>;
-+		nvidia,i2c-fs-rate = <400000>;
-+		vdd-cpu-supply = <&vdd_cpu>;
++	extcon-keys {
++		compatible = "gpio-keys";
++
++		switch-hall-sensor {
++			label = "Hall Sensor";
++			gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>;
++			linux,code = <SW_LID>;
++			wakeup-source;
++		};
++
++		switch-tablet-mode {
++			label = "Tablet mode";
++			gpios = <&gpio TEGRA_GPIO(O, 5) GPIO_ACTIVE_LOW>;
++			linux,code = <SW_TABLET_MODE>;
++			wakeup-source;
++		};
 +	};
 +
- 	/* Wifi */
- 	sdmmc1: mmc@78000000 {
- 		status = "okay";
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 
+@@ -2302,6 +2320,7 @@ key-power {
+ 			label = "Power";
+ 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
++			debounce-interval = <30>;
+ 			wakeup-source;
+ 		};
+ 
+@@ -2309,12 +2328,14 @@ key-volume-down {
+ 			label = "Volume Down";
+ 			gpios = <&gpio TEGRA_GPIO(Q, 2) GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_VOLUMEDOWN>;
++			debounce-interval = <30>;
+ 		};
+ 
+ 		key-volume-up {
+ 			label = "Volume Up";
+ 			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_VOLUMEUP>;
++			debounce-interval = <30>;
+ 		};
+ 	};
+ 
 -- 
 2.53.0
 
