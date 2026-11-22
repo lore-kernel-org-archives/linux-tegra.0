@@ -1,84 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795378484;
-	b=W2ooXjlgcebuSaZegBRU7NInvowaPszU024gzJkMl3rProMkR+YuuhuHp9fgwM7hWWHI
-	 7oghBgrvo/MEFMApM+cCiSYy1YQ5+ZLqqm+lLxjYvDo5bvsS1CWa6AVm5La/XL8RgWKbU
-	 ZGJYvjzrame7k6lxGZbVyxTJnm1iHeIskwQqm5YvKrIivNstdO+JL1A4bg7kJkNWw2Wwm
-	 LWEOuGgiqIFM9J0hRjK3cRO/w4vQ5xHwyPELVGYZZpSmF7iJDeDOe5zhwyHNBIBxayN7A
-	 2UKeFrn/xvfcpxUjI6jkxCbLuNFGsHroFieZwEux5hENWILxWCHpljm0I1H7eqaDaHw==
+	t=1795378486;
+	b=pxpeNvc8yf0R6U1Qtnvb2I3wQXJqVe7a7oGNLn6M4hO1UwhClkeJgD9dEIKiq4LzIY6I
+	 tL5tXmF/ZSg3u/TOTClt+cVb1VwGAd1CH1qwp2b8S2IxpmrOO82CbKQcYouc04I7OubI2
+	 JhrwHQVW+YMWtZQecGo8vnC6ywMKlsGv5/ksvn9R0j1Zd50f7cFAZL/IeRKYXW+GQIDhN
+	 34p6YpxeCHsTOjC6VftAvMuOLMeSpc5FEmir9+iDS2aAwQt9rJeyeaVxvv0o9XuY1gEWA
+	 s0l0ry7rrm9htaoJLjyn60Wl+EKwOtape7+fTgwoQhMKsc+v2P86uSPuaRFzuKseOkw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795378484;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795378486;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=SFXSMcHcVJkmYFbJzBFz4HPTepM54SZHk3SlIxX3SZk=;
-	b=ehtQXqrok7375lLGcsmAVh1pzceuoJhQA++Wgf2s4aXWxYmzm9gx8EOVi8KnCI1x8Fqo
-	 xo0htPj9vBmt75kbIoLjvI6qwgCsmohcfcVkZ/PUGRlVECHmyIqRzX3Ea6Y0UwIEHRoSb
-	 BtHHWSGliDj4IRqKOKaQNotPe3H4LQhCHSQ63nKm81xDTs80xPHy/rPCKhyeDit9VDnQO
-	 yaDTIl68dklrHo2ykKT0aH+B4vUXwSrBKnXUBPErUjdnYEvjEatvbkGuAryUL80ZA4ILO
-	 G2PlJELuyWjOj5uATcx2x6ZfANREuMEDroJG8msgACTGr6RtFW9l5OtSVewHdXuN/RA==
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=tqLwe6+0JoMMxyiooOlwMvbknZ3XaI9g0cAtNiC83UI=;
+	b=emhcWszYax7ut5INjXG57OOxmVWRzyUqstVKru6qOIFMCgtianbppz8+a/l4KlU2RFT5
+	 m9wJ6sYvOjn2yNojwLE/dpb2kbjFiyLiGfg8v/ynmtEu/4ZqKMgcmH6NOBwJVYAAnyqG4
+	 icx+4x3g77YilBzRxznpMuWUgnS/i40JIms+UPUj8+IpDGYUJZUIM52lYYhi+Hu6ob825
+	 9xwiKotyCisZn4wlqN6roqOEqwCteRR9M9On/OYZ6wmerzuXoXw/eXSKkqb86hGnm+l0m
+	 UoafB+FFs3IWd+zu7Bn8Q/49DjRkz4Aezs234vl5IDqIxE+IOt6unbjxQE8ni1xw+gw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Q5v0tZRI;
-	arc=none smtp.remote-ip=209.85.208.54
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yppbj1xt;
+	arc=none smtp.remote-ip=209.85.208.49
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0105A606A33C
-	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 20:14:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0105A606A33C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E77B606A334
+	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 20:14:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4E77B606A334
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Q5v0tZRI
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6b4bd3d98bfso3142867a12.1
-        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 12:14:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yppbj1xt
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6b47c1a3c74so3446973a12.3
+        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 12:14:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795378482; x=1795983282; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=SFXSMcHcVJkmYFbJzBFz4HPTepM54SZHk3SlIxX3SZk=;
-        b=Q5v0tZRIUKu5FfuMA0WHjv+4y7OME8e13al3F655WqumlxdAsuBho9J5fjY9oSETzn
-         u61qF89lyEUxgkv+HMDUrf6fQto1lWNA63NNwHinVZq5upgD4tw7cAR5sVGrCPlDIKi+
-         0zHOHOBnoXNBpBs5YGKDjZff/L6aQdsKI0YXrIZQlE+fbob2+hmXPCqjQvFHGYe6BLhy
-         FF3iUj6VpVVxKhOtqmE5aap2FfW+FUT8AAEBdxBtERTlWrcM2nUA/XMDFEyH1QpnbMkK
-         L8H9o5YsPcs6eJWgBDZ4J78O5w/M5DB9fXOEwClUCWUVmzxwZolWWl0Dk+JsnuS2rnP8
-         GQ0Q==
+        d=gmail.com; s=20260707; t=1795378485; x=1795983285; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=tqLwe6+0JoMMxyiooOlwMvbknZ3XaI9g0cAtNiC83UI=;
+        b=yppbj1xtN75l6P8tn83PjOJ+DLOquw9vfG2lxjJU6n5f3ReTDp4ci37K+B/XDneFhD
+         LLhMUDlQf4scGGD/ovVz6/K49f7XpVv0s6vMhDIbHwU61h0zMJb7qLd7r+QrzLrL47Rx
+         85KjLrfTeR8WXAr/Ic/cpkIAkATh7teZpGgrlwxn2aOQVRVVWL/TeU/NcQMqxXY+MXsa
+         egDDPEekksEMoLWpMJhCfWhdXogMWeB5EBWDdQsOe0c5ve82c8u60DAGmQN47aPQMlcQ
+         qokJXzr8b7EfqBgVequ8+UsRj7L+i1QsV0NMrlJw4yMLUMlMB0ZnOs9jH4p3Lm1AXlGQ
+         9diw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795378482; x=1795983282;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=SFXSMcHcVJkmYFbJzBFz4HPTepM54SZHk3SlIxX3SZk=;
-        b=KGAG1f72o1CB8nyY4Kp6ViV68uMNTmGZXCEjVn7QLFMfWEO04FM8PqiOtOKCG/LPYo
-         4bs12NyTlIRk6JFxkb1dK96OXmZWtvsmYYy375HNl7WU7oyScIQTfg0k6B1ou002XjjD
-         sCOdpho+JkdW9wG1nZalhAtgnNi20ZAgXe1ylzTmELJYmZOYbNaFLUaWul3KKinIA7mC
-         Z8TuoShj11YW+uh9xION8X12fz4ZHUoR2nb/L5C+YgqE2MmUxvn4i+tbnkLSI7eYFdBI
-         UtKwu0QyEQJqGn05WJ1N24yDU0HdEgT2AmIy994VpbbCvicSwzSdYW9I7Ku5qdCgdty4
-         3nkw==
-X-Forwarded-Encrypted: i=1; AL+hErEtZl21ijGgIgkq1k6dhchprYksMtRTwbazUo5IGFBZQdfxTwptGzdIAzwTGepPUtWMQ+ZbBuVMA8Ieag==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+trxMq4i/jHpFZc9rWF29eOYEnZU+3QYKiLqI+qNNJd9RPjTeR
-	ETScU7Ny+OSqiFxol8wNXVxnuJq56ybwJg6RTvPuPWoh/IBQ2OebZj3W
-X-Gm-Gg: AZFdTZf6qBPzJI1hwdLEYUdHGIpp9fCLnrtee8tIseO8pSmcixQQMTM2Ac+IErAy50y
-	T2eQCceTaBZtkvbTqVykuV0h/A3PrgspJoF2kZNeGMz2vFIg2UgAuZuiKWZi5MXulXSvXVI50NC
-	saQ0/Mz0gMI1j8/iXuxzWYc1lBNQHMvkEdjb1eKtaiYszNVE7c6vfZ6ZuI/hyA+J0UpgWAgr3fX
-	BDVYR3kdEUxHei4SiybnJv2+fHabZtoWxCBtcf8L2C9aiSal5ddvcUGHeFKSypfyriE3hVx3FKJ
-	hUK5oaA2giR31/9RmcLSoaquL5fwU1u2ewc6mhctMnto961eji5CrR8pVg1Uxzu5WRfAcGhClKV
-	g1YBZBA5yzX6S3YVyz8vW3ZVeXzmG5kzRVhRk84U3lHEBbUnf8CP9fw25q5OyyTLkQ7qXCEplEI
-	Cc9tMuF5zb6ql4KTDh2vHegMftWXQq/CoAwsJlCBVdgNFotDC9CLYfoe/zQpzOB44hcJnMSA/9x
-	aIAeUDFns5SfMrWKODlQf7p7+veWMdzNhsCHRsKyhOoArw8/QwFi1zexYW3Y6V+UOM4GF0dAwMc
-	ePv0sXE6et60DllB5whtYbOOm9GVBKfZkB6T1cwmkJ5LQzN9cROxVEfF+1rcUyuKX2xJdZTFrrA
-	q97VBfTuhMD0=
-X-Received: by 2002:a05:6402:434c:b0:6ba:2a44:8ed0 with SMTP id 4fb4d7f45d1cf-6ba37e97bd6mr6781529a12.23.1795378482319;
-        Sun, 22 Nov 2026 12:14:42 -0800 (PST)
+        d=1e100.net; s=20260707; t=1795378485; x=1795983285;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tqLwe6+0JoMMxyiooOlwMvbknZ3XaI9g0cAtNiC83UI=;
+        b=g+W4DR3Is5NqoljCpP12wz79wChVZg9pbullkzXlCxvgHqS7E1pgun2CjKIduYuqXA
+         GMLeSswm/7DNKoRSw0wgXTiu3cm3xf2jagp5A4IyPDzFrEsIDM85Nm1FwttiJOXgAqbr
+         IneXtIjYFpy8uNi0M7MJyr7mrNekTutX+W86VA/DVrMBRUa3yQchVRj8pCttk09NsPUg
+         bKOzLf9WS4MrERMhc7WhBagwft/kwkSf/oSMsneiMtQm6Rkzs3lyV/0qg1PtWgDuWRoK
+         8MK6S+98ohPegKtNzPn4/3YQXD3b8EZcOtUemUvaCEmWRCRpHm1KfZ02sYiYnOXjS0+o
+         kPcg==
+X-Forwarded-Encrypted: i=1; AL+hErFrlLNkLIxvoX3X55h/os2XqTePMRzZLJvZZx3HMtHPGQyEp3Y3q8xLxRJkOKxhevju2J2VogtZ83Tnrw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+y3fa5bzLCDjsOfF8DhnMe3O+ZFuiCDlSw4MfzkoqULG151p4C
+	J2/Krq5hBvW0If7A9+zNhIlS2KCi52dRBp+baJUyvTMhHVo86s8t7+YT
+X-Gm-Gg: AZFdTZdIirwYaPkdo7M7iAOHVkK94dSvHnRQ5aGTFT11PAkMwtwZnjMcWyO3iOcKP5K
+	N87YE6WcvZ5GmRDDIdyGc4geueG22YSuZ7Co27/L8RUbxApVTDbrKNSvdPA7VNsG/Akmzk1gNQj
+	VjslN0Lf/QB4Zwwbl8ei2csa9onTK/u2tdDJU8ISXhVGHGTVY/gutA59ZREMiJq0sV+WfO4Kcu7
+	/WEEP2/fB2Fu4wDR1syvNuEgzQgfeE1HZanApol/c3oWjAXVGBwYAhpgTgVAjz34vw6vHUgZS79
+	OTeSZeMZbQDdN4aJruJdHIMgtN2afTQIwqZyI+pZ1xjooM2M1YBLkXHthEHSZ/F/DRg6DAS3LeR
+	ok41RPyEbK4BEJ/tyeXGwTLlS0JT6zqSciyyORKO+8QXgXSrfbDd5OX8aZov1KACIzxRXh37twt
+	2/8jvbg1NiI4K6F402+5pHHmMT6QGWB9zliL379F0QIIzME2odSJaL35seAwdEIwAIrOVxw7H7j
+	LvJrEa5PrjgZtYsmcGGzM/2PovJ7vzmFV6wG7LpAjeSsVhA3/NtZXrnlTqGARChlLkDFvC0k3s+
+	6B4ySvKXBUHPbRA1NyFtiic9dcg+uYP2Ki4DCll9naaVo41oJofFN/N2cvk0GUDIjWCGxJvgbeO
+	853nZgTH9tQ==
+X-Received: by 2002:a05:6402:3222:b0:6b8:7e86:3e90 with SMTP id 4fb4d7f45d1cf-6ba654bcff6mr3922317a12.38.1795378484595;
+        Sun, 22 Nov 2026 12:14:44 -0800 (PST)
 Received: from xeon ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fa8basm4424074a12.20.2026.11.22.12.14.41
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fa8basm4424074a12.20.2026.11.22.12.14.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 12:14:41 -0800 (PST)
+        Sun, 22 Nov 2026 12:14:44 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -90,9 +91,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 07/18] ARM: tegra: tegratab: Configure MMC devices
-Date: Sun, 22 Nov 2026 22:13:56 +0200
-Message-ID: <20261122201407.23742-8-clamor95@gmail.com>
+Subject: [PATCH v1 08/18] ARM: tegra: tegratab: Configure wireless devices
+Date: Sun, 22 Nov 2026 22:13:57 +0200
+Message-ID: <20261122201407.23742-9-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261122201407.23742-1-clamor95@gmail.com>
 References: <20261122201407.23742-1-clamor95@gmail.com>
@@ -105,98 +106,153 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The tegratab board uses three MMC controllers of four that Tegra SoC has
-(the second one is unused).
+The tegratab uses the Texas Instruments WL1801 (WiLink 8) single-band
+combo module — providing Wi-Fi, Bluetooth, and Bluetooth Low Energy (LE)
+for wireless communications. Additionally, the tegranote7c variant
+incorporates an Icera i500 modem for LTE support.
 
-The first is used for Wi-Fi SDIO, the third for microSD card support, and
-the fourth for the internal eMMC device. Configure all controllers
-accordingly.
+The Wi-Fi interface is connected to MMC1 (SDIO), and Bluetooth is linked
+to UART-B.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../tegra114-nvidia-tegratab-common.dtsi      | 56 ++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
+ .../tegra114-nvidia-tegratab-common.dtsi      | 51 +++++++++++++++++++
+ .../nvidia/tegra114-nvidia-tegratab-p1640.dts | 12 +++++
+ .../nvidia/tegra114-nvidia-tegratab-p1988.dts |  5 ++
+ 3 files changed, 68 insertions(+)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
-index 2ccee3b70aac9..b7a14e24df79b 100644
+index b7a14e24df79b..bb5788b2539cd 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
 +++ b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
-@@ -13,6 +13,10 @@ chosen {
- 	};
+@@ -18,6 +18,7 @@ aliases {
+ 		mmc2 = &sdmmc1; /* WiFi */
  
- 	aliases {
-+		mmc0 = &sdmmc4; /* eMMC */
-+		mmc1 = &sdmmc3; /* uSD slot */
-+		mmc2 = &sdmmc1; /* WiFi */
-+
  		serial0 = &uartd;
++		serial1 = &uartc; /* Bluetooth */
  	};
  
-@@ -1254,11 +1258,61 @@ i2c-thermtrip {
+ 	firmware {
+@@ -934,6 +935,30 @@ drive-gma {
  		};
  	};
  
-+	/* Wifi */
-+	sdmmc1: mmc@78000000 {
++	serial@70006200 {
++		compatible = "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart";
++		reset-names = "serial";
++		/delete-property/ reg-shift;
 +		status = "okay";
 +
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++		nvidia,adjust-baud-rates = <0 9600 100>,
++					   <9600 115200 200>,
++					   <1000000 4000000 136>;
 +
-+		assigned-clocks = <&tegra_car TEGRA114_CLK_SDMMC1>;
-+		assigned-clock-parents = <&tegra_car TEGRA114_CLK_PLL_P>;
-+		assigned-clock-rates = <82000000>;
++		bluetooth {
++			compatible = "ti,wl1801-st";
++			max-speed = <3000000>;
 +
-+		max-frequency = <82000000>;
-+		keep-power-in-suspend;
-+		cap-power-off-card;
-+		bus-width = <4>;
-+		non-removable;
++			clocks = <&palmas_clk32k>;
++			clock-names = "ext_clock";
 +
-+		sd-uhs-ddr50;
-+		sd-uhs-sdr104;
++			enable-gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_HIGH>;
 +
-+		nvidia,default-tap = <0x2>;
-+		nvidia,default-trim = <0x2>;
-+
-+		vmmc-supply = <&vdd_3v3_com>;
-+		vqmmc-supply = <&vdd_1v8_vio>;
++			vbat-supply = <&vdd_3v3_com>;
++			vio-supply = <&vdd_1v8_vio>;
++		};
 +	};
 +
-+	/* MicroSD */
-+	sdmmc3: mmc@78000400 {
-+		status = "okay";
-+		bus-width = <4>;
+ 	serial@70006300 {
+ 		/delete-property/ dmas;
+ 		/delete-property/ dma-names;
+@@ -1015,6 +1040,11 @@ palmas_gpio: gpio {
+ 				#gpio-cells = <2>;
+ 			};
+ 
++			palmas_clk32k: palmas_clk32kg@0 {
++				compatible = "ti,palmas-clk32kg";
++				#clock-cells = <0>;
++			};
 +
-+		sd-uhs-ddr50;
+ 			pinmux {
+ 				compatible = "ti,tps65913-pinctrl";
+ 				ti,palmas-enable-dvfs1;
+@@ -1281,8 +1311,20 @@ sdmmc1: mmc@78000000 {
+ 		nvidia,default-tap = <0x2>;
+ 		nvidia,default-trim = <0x2>;
+ 
++		mmc-pwrseq = <&wl18xx_wifi_pwrseq>;
+ 		vmmc-supply = <&vdd_3v3_com>;
+ 		vqmmc-supply = <&vdd_1v8_vio>;
 +
-+		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
-+		power-gpios = <&gpio TEGRA_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
++		wifi@2 {
++			compatible = "ti,wl1801";
++			reg = <2>;
 +
-+		nvidia,default-tap = <0x3>;
-+		nvidia,default-trim = <0x3>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(U, 5) IRQ_TYPE_LEVEL_HIGH>;
 +
-+		vmmc-supply = <&vcore_emmc>;
-+		vqmmc-supply = <&vddio_usd>;
-+	};
-+
- 	/* eMMC */
--	mmc@78000600 {
-+	sdmmc4: mmc@78000600 {
- 		status = "okay";
- 		bus-width = <8>;
-+
-+		mmc-ddr-1_8v;
-+		mmc-hs200-1_8v;
- 		non-removable;
-+
-+		vmmc-supply = <&vcore_emmc>;
-+		vqmmc-supply = <&vdd_1v8_vio>;
++			ref-clock-frequency = <26000000>;
++			tcxo-clock-frequency = <26000000>;
++		};
  	};
  
- 	/* Micro USB */
+ 	/* MicroSD */
+@@ -1409,6 +1451,15 @@ key-volume-up {
+ 		};
+ 	};
+ 
++	wl18xx_wifi_pwrseq: pwrseq-wifi {
++		compatible = "mmc-pwrseq-simple";
++
++		reset-gpios = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
++
++		post-power-on-delay-ms = <100>;
++		power-off-delay-us = <100>;
++	};
++
+ 	vdd_5v0_sys: regulator-5v0-sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd_5v0_sys";
+diff --git a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-p1640.dts b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-p1640.dts
+index 409df3de17a82..8177e4f7db489 100644
+--- a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-p1640.dts
++++ b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-p1640.dts
+@@ -6,4 +6,16 @@
+ / {
+ 	model = "Nvidia Tegra Note 7 (P1640)";
+ 	compatible = "nvidia,tegratab", "nvidia,tegra114";
++
++	pwrseq-wifi {
++		clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_3>;
++		clock-names = "ext_clock";
++
++		assigned-clocks = <&tegra_car TEGRA114_CLK_EXTERN3>,
++				  <&tegra_pmc TEGRA_PMC_CLK_OUT_3>;
++		assigned-clock-rates = <32768>;
++
++		assigned-clock-parents = <&tegra_car TEGRA114_CLK_CLK_32K>,
++					 <&tegra_car TEGRA114_CLK_EXTERN3>;
++	};
+ };
+diff --git a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-p1988.dts b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-p1988.dts
+index f461a2c492b1f..9447203eeda36 100644
+--- a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-p1988.dts
++++ b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-p1988.dts
+@@ -19,6 +19,11 @@ ldo4 {
+ 		};
+ 	};
+ 
++	pwrseq-wifi {
++		clocks = <&palmas_clk32k>;
++		clock-names = "ext_clock";
++	};
++
+ 	regulator-gyro {
+ 		gpio = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
 -- 
 2.53.0
 
