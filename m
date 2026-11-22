@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795378488;
-	b=i2aB/jE970tVBk4wMLvNKemDdmGzPKchbg/AMBXgpBocSre3nUs2UZffeOIYcFCOyws1
-	 d//dMtbz5KHxnyqQfPtI13LWBWZ1rou1NNkOAoeut+hJp41SuWn9BPTuF9EuSCPDwr7I3
-	 Q+Jbz71rYTiJIh2P49lxUW6p3IRRfIB3U1HJdEjGiA5/VZ02HV3tnybnNaD774TYqucyL
-	 nGF3OhBmF+eUyFZx6vmW/U3oRLOgoAJAJhcP/WNqBcm1UMRIHyUsWQniaWkYBhpaOWfDt
-	 OFCvEHGlcthBDEOl8qFL2vCusYuGEQef72Ez9W10aqbiW7vu99JnGrC1KS6M+ld3jiQ==
+	t=1795378490;
+	b=nPQtXnHfVS5z9joJdF2J1IabyAbaAMKShwKjnw8eLUgLyNA6HIP4/olAbWSC5u42C2Fv
+	 rzThrImlrZQrBHUnxrK7k3xvLr9KQyyJho1Y1P7q/8S6+jG9CMHVx3bszcB24G9tpNokM
+	 1PyBKS6wbCQ8osoEDySvrSL8l2r9f5xpQkJHL9e1ovUo7JnvPStGjO1YlpEePUYhmN2sN
+	 4xiAL1Rw4fxtuRZZy1agmLJ9mOMTaJ+VPTKyVOXqtOAcmbZbshzBu/Js91wQ0/MgbZUsj
+	 d28MPyZH93PcBBWzderce5zBw8rrKicRzp737HUEV5hQUio3bP9oHlkOfIfIVKzKKYA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795378488;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795378490;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=qzgTBfgxIfUP5W7y/eXEWnvcFhXPlfOZGJqPedmbfKI=;
-	b=BtmtnE3idoY2FbsR/y8cn910fl5wx3H+feWpVdvdrb1gQ258FHDJXps8f91ipyX/pi4p
-	 M+il0mbFztFMaHohTEnUqQZ4MehAWm4WeFSBE65NvrJMr10XGkLq2OAsGGNcH4TV4lk7K
-	 yLqdfnFGdotC5kD7LX2ZOOGNGV6GAIgKvjB49ikrtvSf+NYrQXvH2cj2Vt7GJqb4XrVI7
-	 lT9axzCjOzv+A3XjjPmOP30YiCCSRVUZEheY/Jlrn8x+Rg5KR5WTYeEkLKj070T8PXnH0
-	 MFC1tOB/pXR2krrUXIZCRo12YZ/vPmXPXl4Wtw9SOKYVWBzUzyZeDhWiuj5lyBIxC6w==
+	bh=92wTwsZt+a+f9W/sasx/pGyJEXje2AlPj8V3sVGhxus=;
+	b=OzeQ+yUp+5QLzYXOGjq8VmEzniZcEYJqNvAANaJMJFaof/dJUuthzO8DrU7AiQu6mI67
+	 LO5iz1HXmSVIY/A77TnAjADOkQZl6XXg2d77ktkfiNw4i0vybLNyaaowZs4ZKuqceZwXD
+	 pJgxxHk7YVz41LhL/JGuTbatL2XOkqvpvILsitxDRKZr5IbPB4YdXWVvXT/HQAyrXRIQ1
+	 9dC1dOvSYrwr+RRMbcaR/LPSJfSXGm0TVDoaDQFdKtbgzW2qCYLnVACJD8YUPsuyXfCip
+	 0O25GMENbsRmdo4b6WBcuBa/RA03X47RokVU9iG355+7m1grJ6KbsbpCGkw8aXYOEog==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DoI2Aywa;
-	arc=none smtp.remote-ip=209.85.208.41
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TDqZuRao;
+	arc=none smtp.remote-ip=209.85.208.46
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B61F606A33C
-	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 20:14:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8B61F606A33C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147D1606A333
+	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 20:14:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 147D1606A333
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DoI2Aywa
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6b8c60e0d39so3231068a12.2
-        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 12:14:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TDqZuRao
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6b87408c797so3186080a12.1
+        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 12:14:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795378487; x=1795983287; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795378488; x=1795983288; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=qzgTBfgxIfUP5W7y/eXEWnvcFhXPlfOZGJqPedmbfKI=;
-        b=DoI2AywanOkTCcmIL9RteRdrA8iencCXt5BORqBbjeF/aQe3YOz5KZ+oPsQLZkqhLY
-         7jPMKjFOYN39WbScEPYG5GaWztTBBc7qW6RoAOnpFqYFRHgAVR0R8h1BpBWug86oP5AA
-         iVXFk00n3wJw+JEn0LMJDYFKCicaTA/eeZTKOtDXLAaA0vvZ78dhTAkSLU86/j5vjq9O
-         /NvkJU3dIX4fTb4zGf47qyET+ypuP5MVAVeHcLeExijC87ClmXzuMNRDzUrqlESQ0W0m
-         rt3BsUidLg8dXW4tQKzIe98w3vVU5QxAZDOJYUX7NUF+SjQYQqc5Ww6EvNwQNjt0eKkD
-         yKoQ==
+        bh=92wTwsZt+a+f9W/sasx/pGyJEXje2AlPj8V3sVGhxus=;
+        b=TDqZuRaoquGiGZvATVP8pSlepL2t8A0gvwLUfyOmbcP10HP7Qhn1od0ZyvZde3LLJ8
+         qEnIiKoKBRd3YFaXpALugXXywd+cit4w2y1wnsJ6FC9JtBKTCoEjFOImrmIJS7RnqYyL
+         hctyJ3WTseAMn/0RbdoYzLF3GIHyYT/y5pgpdZv7SL8iVEFyy9M8p2wp8KAc/vanlhBy
+         5um1WX0Ojr46IqnNW+3utS/Nf+h4fwGq90VhprWiOg0S9fDa8xIqtVkHKRT45HCbD1R4
+         35XII89NyqHbAm1zaj04Ll3qxe822TvzczULj59a7Ku0RbsTULMJc6RvicEBa/ka658Z
+         rKFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795378487; x=1795983287;
+        d=1e100.net; s=20260707; t=1795378488; x=1795983288;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=qzgTBfgxIfUP5W7y/eXEWnvcFhXPlfOZGJqPedmbfKI=;
-        b=Wm3C84sETNCU3puoSglvJo5HurFGLf4ZUDv71hcPduQB9cgNIpve+tFzvq+toF300P
-         mUt0hQe5JlDy0ukg1FaxNVJQ/p3lVr/SC1mtI8Upanda5TAoflaxYqkSmuCiCTwiKPoq
-         Zvs8Ed3ckCaFCZ3VGhjH2B4gO/Y687neEi9/OWrzhn8a5IiiHGgyUUYcqzqBOgz86dBc
-         vl+r9k5zmBBkuDqbMicfdWN32+Y7s1uLDi44HytKGaBeSacAl3Zjtf0X491ivFAts2S5
-         NUN6SE0TZIchFLCJA2ly4Mm2qOuxfwunoegfgnQCBCDKD8T5gbHJWNOqSAGubyQVpDcT
-         5VNg==
-X-Forwarded-Encrypted: i=1; AL+hErFEShy5o027lgaSeJuum4gzicB4Cih8kkE+zFZMloT/LSHnKUm7vd3I8lgKzjHUp/065SKiLEIxkx23VQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9XHcFfSIz/weQNt4h3XZL9IeAcGNyODoUAcB1EE/Vh2EWfLsFz
-	fy2RQDgdSqp9RLCYKK+9qFv/HKZdDtHBMLG/RJMGurEmoZS2YRfa0hTT
-X-Gm-Gg: AZFdTZccUxriYtktxNw1doIv53VTB+5wd3LuFIR8SWJOGU/SIcAgKZzCDwjY4lLmkL5
-	jEVW+VWxAoPYJdcFyjGvovV/Z04xglYqPBZqRnOckAfuQ5e7O5ihst1JtAQDtJliLo6h19ss/2M
-	TAKPEEqEN2xSRMbAZ9nMIA6V60al3CZgRlE8q3VW5y1ARXVcssxLR46nKfBlM1gNLScBnXPyR9n
-	GIMBVScO3MW3Uo8IfPXSzOCiTO+lkuMYuUreqekMxjTVa8u4HKPDU0mfjv1SqaKZKtYDLwpgRos
-	/dBpJK6ji306VVH6h9n0DGNByaW6mHesA77KKbf/hjYr238D/QYM1sJr/V86oidQICWd1QMVRxx
-	+MGze74zvSyw0cv0IP/bw5XwF7Fe6kIMih33B/9MVxIXMRFNewFBQGqN818pxfqnQXrG+Jx3np0
-	14HWgibcglZLV/HTNRsD6WDIZWlLMbLqt9FRh67MQ4Pb3KpYjscCL8ruPjdEy/bDNPKmNewQf++
-	U/5ltY4X03wlxOUPUbzOFfLj2sKmZwtUqMGY9XV5nhAXtrZ49kMJI7vntdcQ6c2s9SyWxm+s9Ki
-	rAqiFOdkU6yIvnMHSF5Uo2n4N7TW2N2ipwpnadaiYoR3OFE1GKjVnCutp4cTwjuN7jZA4pTNuF9
-	8OPwCHgQxpg==
-X-Received: by 2002:a05:6402:23d0:b0:6b7:a2d1:b2e8 with SMTP id 4fb4d7f45d1cf-6ba37e69e00mr5979617a12.17.1795378486939;
-        Sun, 22 Nov 2026 12:14:46 -0800 (PST)
+        bh=92wTwsZt+a+f9W/sasx/pGyJEXje2AlPj8V3sVGhxus=;
+        b=1z1GbY3mCw8IJGKuN7tDEEi8SXv8bvnUD+MrPBZ9WgF3ef181ZoPjEIbhMzAVkzRl9
+         //9OxhJgfIUMv0KUaqGROvDfim6e2Z06pawY/bywsyZl27p1aBWPMgv8TRhgy4sny4hG
+         qdWv4CDvYLO1pdK+VafcOUzJuyzXz7i4ya0PMQ8hyZy5cImUKF1EgxbFSLsQ7zOtCJZA
+         I4ePdpzOPYlQLexCxQT9NEtyEfrmt6bmH6IMfkbUkl7vqnL3GcY3c7zPl5+gMTqIH4tG
+         S/DVeN4i9Je8ZQZX+ygGwXiQuErbYQs6Aef8cmYZ4EdrBL8W9BhiJ7VGpU0kmlXldL+k
+         WRHw==
+X-Forwarded-Encrypted: i=1; AL+hErEj5M9VcpEj69LElVzQMJUd7U5Ocxzb5XmlB3JtBKc+uAAw3Bs0YkJe8K8O73ZuyKyt04/Xtee4WmZvdQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8z4cjgyAG9wyTtIoXGCVRNum2yznDQ0S3+08xvMCOFIxNnYcBB
+	QvxhKVyzK/A6iRuwbfynmZau//BsqWnrFL7PL683AVJoZq47s4xgK/3o
+X-Gm-Gg: AZFdTZfQOsJuTFIX5izC8VwTywvOSGUtPDNuOa8+lu80Lp8NUnvPBfQBh9MK+DBaMAh
+	iRKjQc2zGlzDERriSaBzdJV+ERBtDrfc4iP9dq4ScdqYsKJeAW1Ze39mhQ/LK3a7NiW5Sal/dso
+	8YVw/rHUUDFukejSvE7m+GdyCap6dbq2fhpct4f518gJuynNDphK1MHw+Q4z+f8oRo8vqce9+Yj
+	1DoeuAU5Cz1Y3mRnFL3mqXzZ6cAbFG41+DuzThC/++FK/Q/Wp2p6c9VQGFEOdcgVfQNklriau/A
+	WMlz3rAjmNuxSIPT9DujbPof579kcjRPtzykPRtiTy1XFZWV2W+oyiJEJeJZclTL8lukq38s414
+	+vVtMS+gSJ2PwFfpWrf4MPtUpzPI5ermi5nxVJH+9rOmFxGgen5hdEwxL7Uq2DMbPM+X6bCPxza
+	JVkIod4XeHm/AB1JlgEKmBGagkSy8IWG3yNeHYyKCFmZJnPxxKIL86jLdlVKTJnntYT7P+lzdJD
+	eLyrz0QFLA6/jN+gutCTuTNuIzEGYNN5ztd1of1BtScssdG/SpUyur649+DAgKarBt6W3osmsKE
+	ZADOnVPZ4dLZ/CU1MW6K/j/O0T86Lc/o4siIjBJCgFuu49xVBjbPkKHvIgDLXin/8NswKLpob/U
+	rAlohMu5JIGbzMIZ4zsvJCsOlVhQkvqE=
+X-Received: by 2002:aa7:d794:0:b0:6ac:bd53:d29a with SMTP id 4fb4d7f45d1cf-6ba37c7a764mr4696990a12.3.1795378488047;
+        Sun, 22 Nov 2026 12:14:48 -0800 (PST)
 Received: from xeon ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fa8basm4424074a12.20.2026.11.22.12.14.44
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fa8basm4424074a12.20.2026.11.22.12.14.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 12:14:45 -0800 (PST)
+        Sun, 22 Nov 2026 12:14:47 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -90,9 +90,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 09/18] ARM: tegra: tegratab: Add thermal configuration
-Date: Sun, 22 Nov 2026 22:13:58 +0200
-Message-ID: <20261122201407.23742-10-clamor95@gmail.com>
+Subject: [PATCH v1 10/18] ARM: tegra: tegratab: Configure HDMI
+Date: Sun, 22 Nov 2026 22:13:59 +0200
+Message-ID: <20261122201407.23742-11-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261122201407.23742-1-clamor95@gmail.com>
 References: <20261122201407.23742-1-clamor95@gmail.com>
@@ -107,176 +107,82 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add thermal monitoring setup based on Palmas GP ADC sensors.
+Add nodes required for HDMI support.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../tegra114-nvidia-tegratab-common.dtsi      | 126 ++++++++++++++++++
- 1 file changed, 126 insertions(+)
+ .../tegra114-nvidia-tegratab-common.dtsi      | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
-index bb5788b2539cd..cbf9b45284033 100644
+index cbf9b45284033..911e5e9d8a0db 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
 +++ b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab-common.dtsi
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
+@@ -37,6 +37,20 @@ memory@80000000 {
+ 	};
  
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/thermal/thermal.h>
+ 	host1x@50000000 {
++		hdmi@54280000 {
++			status = "okay";
 +
- #include "tegra114.dtsi"
- 
- / {
-@@ -983,6 +985,9 @@ fuel-gauge@36 {
- 			monitored-battery = <&battery>;
- 			power-supplies = <&bq24193>;
- 
-+			io-channels = <&thermistor>;
-+			io-channel-names = "temp";
++			hdmi-supply = <&vdd_5v0_hdmi>;
++			pll-supply = <&avdd_hdmi_pll>;
++			vdd-supply = <&avdd_hdmi>;
 +
- 			maxim,alert-low-soc-level = <10>;
- 			maxim,double-soc;
++			port@0 {
++				hdmi_out: endpoint {
++					remote-endpoint = <&hdmi_connector_in>;
++				};
++			};
++		};
++
+ 		dsi@54300000 {
+ 			status = "okay";
  
-@@ -1011,6 +1016,21 @@ usb_otg_vbus: usb-otg-vbus {
+@@ -1031,6 +1045,11 @@ power-sensor@44 {
  		};
  	};
  
-+	i2c@7000c400 {
++	hdmi_ddc: i2c@7000c700 {
 +		status = "okay";
 +		clock-frequency = <100000>;
-+
-+		power-sensor@44 {
-+			compatible = "ti,ina230";
-+			reg = <0x44>;
-+
-+			shunt-resistor = <5000>;
-+
-+			vs-supply = <&vdd_3v3_sys>;
-+			#io-channel-cells = <1>;
-+		};
 +	};
 +
  	i2c@7000d000 {
  		status = "okay";
  		clock-frequency = <400000>;
-@@ -1025,6 +1045,21 @@ palmas: pmic@58 {
- 
- 			ti,system-power-controller;
- 
-+			palmas_gpadc: adc {
-+				compatible = "ti,palmas-gpadc";
-+
-+				interrupt-parent = <&palmas>;
-+				interrupts = <18 IRQ_TYPE_NONE>,
-+					     <16 IRQ_TYPE_NONE>,
-+					     <17 IRQ_TYPE_NONE>;
-+
-+				ti,channel0-current-microamp = <5>;
-+				ti,channel3-current-microamp = <400>;
-+				ti,enable-extended-delay;
-+
-+				#io-channel-cells = <1>;
-+			};
-+
- 			palmas_extcon: extcon {
- 				compatible = "ti,palmas-usb-vid";
- 
-@@ -1546,4 +1581,95 @@ vdd_3v3_com: regulator-com {
- 		enable-active-high;
- 		vin-supply = <&vdd_3v3_sys>;
+@@ -1323,6 +1342,10 @@ i2c-thermtrip {
+ 		};
  	};
-+
-+	thermistor: thermal-sensor-thermistor {
-+		compatible = "generic-adc-thermal";
-+		#thermal-sensor-cells = <0>;
-+
-+		io-channels = <&palmas_gpadc 1>;
-+		io-channel-names = "sensor-channel";
-+		#io-channel-cells = <0>;
-+
-+		temperature-lookup-table = <
-+			(-40000) 2726  (-35000) 2708  (-30000) 2683  (-25000) 2649
-+			(-20000) 2605  (-15000) 2547  (-10000) 2475   (-5000) 2386
-+			       0 2279      5000 2154     10000 2012     15000 1857
-+			   20000 1691     25000 1521     30000 1351     35000 1187
-+			   40000 1032     45000  889     50000  761     55000  648
-+			   60000  549     65000  464     70000  392     75000  330
-+			   80000  279     85000  235     90000  199     95000  168
-+			  100000  143    105000  121    110000  103    115000   88
-+			  120000   76    125000   65 >;
+ 
++	hda@70030000 {
++		status = "okay";
 +	};
 +
-+	tdiode: thermal-sensor-tdiode {
-+		compatible = "generic-adc-thermal";
-+		#thermal-sensor-cells = <0>;
+ 	/* Wifi */
+ 	sdmmc1: mmc@78000000 {
+ 		status = "okay";
+@@ -1452,6 +1475,20 @@ clk32k_in: clock-32k {
+ 		#clock-cells = <0>;
+ 	};
+ 
++	connector-hdmi {
++		compatible = "hdmi-connector";
++		type = "d";
 +
-+		io-channels = <&palmas_gpadc 3>;
-+		io-channel-names = "sensor-channel";
-+		#io-channel-cells = <0>;
++		hpd-gpios = <&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
++		ddc-i2c-bus = <&hdmi_ddc>;
 +
-+		// TODO: add a table here -25C to 125C
-+	};
-+
-+	thermal-zones {
-+		thermistor-thermal {
-+			polling-delay-passive = <1100>; /* milliseconds */
-+			polling-delay = <15000>; /* milliseconds */
-+
-+			thermal-sensors = <&thermistor>;
-+
-+			trips {
-+				thermistor_trip: thermistor-alert {
-+					/* throttle at 55C until temperature drops to 53C */
-+					temperature = <55000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				thermistor-crit {
-+					/* shut down at 60C */
-+					temperature = <60000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map-thermistor {
-+					trip = <&thermistor_trip>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+
-+		tdiode-thermal {
-+			polling-delay-passive = <1100>; /* milliseconds */
-+			polling-delay = <15000>; /* milliseconds */
-+
-+			thermal-sensors = <&tdiode>;
-+
-+			trips {
-+				tdiode_trip: tdiode-alert {
-+					temperature = <60000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map-tdiode {
-+					trip = <&tdiode_trip>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
++		port {
++			hdmi_connector_in: endpoint {
++				remote-endpoint = <&hdmi_out>;
 +			};
 +		};
 +	};
- };
++
+ 	connector-usb {
+ 		compatible = "usb-b-connector";
+ 		type = "micro";
 -- 
 2.53.0
 
