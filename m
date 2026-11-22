@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795335524;
-	b=O67n46foDbyUrjKLrk5LFHUANmtLGBMTxhqoWCuGynVOTGbZa4/vXygcv7pkObZ6Xrf8
-	 zcSG2hKYEVxkwUA6zWlqU7K11aY5eEYuLcBRPDptqUTZysvbkUM/yXEeHhvKKS4+PKeKd
-	 NQ3aH2fG7F4P90KC203/itpOysYbLIqyN4gXtt5gshVzhCTNEmiSLZ4CUFWEV9hKmv/Bl
-	 Z3urK4vf8HIDV43bSB4Kl/MExcs0xMaWGVpPJGYQRYyrCexgFLCYhRKv5mwGDWuyZxDuc
-	 Q0n/DKkBsQIXCwF+NsrdukJ5iJ8zEOn09ZioQ1UjDLtwNBcoaIEVIsn8PjVaAZn0sjg==
+	t=1795335528;
+	b=2ABN4VOYJ9an18j6K+f23esxU9TWb8VGCVYwfd4vgJbvTx/j+jMIKDegxFK32eltKoGx
+	 cJm3vt50h9vjyp5LqA7rKL6EpPVXDXtrk6K1cqHEWLQZJdfdUNCphjpH9W7ML9gTfF9xl
+	 qR0HN2F6/TRqBJ8ZyPY8mRTGhn8wziM1AbeO7H191eqLY95kGxFurKyRHUkijIpDWTiTh
+	 tKNrsGmJGR6TYd1vZ8s3EfcVuiIFtj0sZ1XlA8qUg+2a5y8lbWVyFRs2eXKYtrYlv1Xj8
+	 cjSEJxQx2+jyAwxlsASsw8RZ7rZvtGLqfSaSPm+pOO3133EcoxAs93Y8dmrouFT6e/Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795335524;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795335528;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=sCblpvWCEGWSGmqyLTXb89MP/KfXdJ6wTD0eb//JjLg=;
-	b=aXyNO3h8VQlB8uR37W/vMFomuOPBp+Fw+j77H0a8WbQrHTbqgJSzYz4euLmuuoVkQ028
-	 ddp2bTNOBwcnHNhRVyE8m3HTuKZFtzYwOO4G0qUw/hTuvZSLzmaF45IIWaa5jw4w9D5y0
-	 G3TNhnjN3RvxYk/L/3ijM6c9ZQTDryYUONLaHUK3IqPAF8m3BKMT+oCW5OeaVyP6EQnhl
-	 QYO2zF4LuWby7K6C6ygTyXewDRExbjU13XDFQaCfSTEj2AygvbUhzkTkX/WHPURunZNQw
-	 AeSxJWI/Np9Uw18+YS4TuXY6YV+6W42lyDAB7bqa+ZDzh5tskq1bxm8u+dnIKaNdLpA==
+	bh=JbXjqMfnvt4YseLHRKZimZ/QrsGIK2yqJbgIKnZOfks=;
+	b=TMW/2fsb6E+bH7eXwsu/6pznZThrg9ik04/bF7VzhKoChOnZLb3Frs76dG7YZmQRhnpU
+	 zOTRyFRxIv1LNLwSBFxW4pK6PIFwns6NNg8dU+cwl9YQ/wwRD6z/aQrj83LJnWba+awt/
+	 mqKKG+y87h0vpwI+BGV6r3whfkLuCMelG7KRlXE30/YnvsDFxevgEJelaoOOiJOPMDF5x
+	 aiOTbeWfZCey+qRiAZL0jYsEAk+X6I1AcYPpDciuCsbZ87F6C+NcijQwuV2o4Wa0FCKMa
+	 ZwVTM/GCjwVWI7NO6t/fV8QXGA2YcCy5PP4d/Wdcl9jPS+XBu4/U7wn/eBhz3mj/ssA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kxgHJVt7;
-	arc=none smtp.remote-ip=209.85.208.51
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TCwcJTrv;
+	arc=none smtp.remote-ip=209.85.208.45
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC16606A338
-	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 08:18:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5BC16606A338
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6438E606A32A
+	for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 08:18:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6438E606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kxgHJVt7
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6b8784a3284so3294572a12.1
-        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 00:18:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TCwcJTrv
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6b8627e0eb2so2891332a12.2
+        for <linux-tegra@vger.kernel.org>; Sun, 22 Nov 2026 00:18:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795335522; x=1795940322; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795335526; x=1795940326; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=sCblpvWCEGWSGmqyLTXb89MP/KfXdJ6wTD0eb//JjLg=;
-        b=kxgHJVt7FC7OGHNAwXHpSuQyyJcAEB0fLEUL/KRqeJ5wNrfNQnUCxQkW/P1m5dBYTx
-         rMoWnNqF5532YzfFEm7O8Wb6/IEHXkBlaaHTZ6szRBtBpgvt18sOBPyuDQYtmH9M1gWo
-         KJBbvpOnFEsmo5ozXwP8ZB0AlE+KkeZawbh8MHACZthtk+ds9qa9cR44r/cCLSwxDiaG
-         iFtzqdkYZj7xlFsGjH3hpxLZZ3pdGY4IWxGFfdZ/b1BFjFU7nd7PNC5rKa3c99oQWT4G
-         ZrTy4+4cyVsvXJURC1XdaY73hY4PGV1jYZAzscOX+Wbyf1XSuYYoY59KEzU4R2ae9LGK
-         s8bg==
+        bh=JbXjqMfnvt4YseLHRKZimZ/QrsGIK2yqJbgIKnZOfks=;
+        b=TCwcJTrvH8ER+Hj9H6iA4IasGf/NpB/Q5n7Dzzv0fA+hi2E0zTz/9yvZ7Pl6vScSjq
+         akgBguBRJ/ziNXNkHMZWeTUppoxwX15C6E2NLBKfC+lu9sSsv8pVhTzIzc2xUN5PsXi0
+         Bvid60IATLP5cyNb8A0fXc2n2lUYcvo+kj8+toPKaRuu1b/KyDG4+NDJHPhAUissZZVF
+         gJuvf8hmY8UdEBdh84LO4is1NzQjsldbivjP4tWuSMmq9S9wvaMpxCIWmniroggzOIis
+         /C4/FSpl9/llRAdjVsdZ3oJ817EcCCTRiOkDfONM2Xu60cN+j+s7cddzG4z3yyC02Z/w
+         gDzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795335522; x=1795940322;
+        d=1e100.net; s=20260707; t=1795335526; x=1795940326;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=sCblpvWCEGWSGmqyLTXb89MP/KfXdJ6wTD0eb//JjLg=;
-        b=liu06Ht/OZOFlJLf3i7C7sobMfgavnueS0fvj5NP6WcWPYk4UlAJSNunFFWhsF48WN
-         uOyIHFkAUm9XqTvnCdTQOGLwlRqWIQsjvlxsua7WtALRnBVl+751OLzZlu4yjZhtBgnU
-         uulgw7E2hi7zSjdSBhM9R9r1b5guiijFWHfcx8v0e36GbmvVnWPFCYMyaI1N0P/Ptr/u
-         AKY0QB6gdsCfdeEGhafvjQoJVJd4S6iK7BWNljQSn6TLTU6GRrBD0aS9uQ1IKy3wVQob
-         q+5O6DF/EDKN1ytvaVHLCqdAOng6RuqA6GIc31FyqJyjc0yix1NS0Mw+A4HbWi7gBRWk
-         +3Xw==
-X-Forwarded-Encrypted: i=1; AL+hErGjKbsE+rNwyu94rbb+gTTBsJqCqlO1SL32ePOeJpt5GaE6LcjSg2e8HeXQ0ZWVO3XGY7FOGzOY5QYYNg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/+ys+Cv3FwME2RC7VIIOlqj8o0ivJPxThDnMxDQfweGCLMnyq2
-	WHoS6jrzNtVu3v21PSIi/mZ4ruPVqVgxPaS55FOCgbJAKYFf0fhWCOAm
-X-Gm-Gg: AZFdTZeKeWSXagEdfT7r6i+Ko9hhgEgQdBiSRZefKxY5KPL/8mjN9KXr+eyFYLeIW+O
-	j6H0VxaaTomBxOkeCPz5GKiS+h9jNEORtAp2UHrja5CD4s1Jqpm39T4/bzl79QQsvogxluApFGr
-	vAkcKVw67/6aBbk1/iM7PZumUjJNVjRki6+8uDxNMyM4R/CTgI+Gy8Ovu8o6ScEOpvmeNQvu9nW
-	897aMXd09sJvFendPW/TkdgluwURVhOtw088Tm/yrz3eMuM33W8mZOb+iA6hxzjtm3VF0b1AZnO
-	mBz//zdcpI0om2D5Yr7GBjE1vgtuY/fa29exswebeK4Fy/pcXJ1rugONROmbhPScEtRWee03fN1
-	7HbEeS7NYrMTyJ1/2n8fyTDW2YJhH2j0dUDkHC2reV37M+t6yfoQRXYKqrILWSgQZE4xPjdYZkO
-	lbNIoHdq+5iyMfyzgvR8LyhC+UHwiVcVdrNCu/08W80efF+oHriWlMEEuCCPVVlkxc63cq9xWtb
-	AWHL4OdmVi/85iAKnizjYh71md39JqqdJEO/gllaK/m0EyEffCphgGGVaEofg7jyKnDRuQRmPP8
-	zMbR+M8OQ5uSVYl8x15ra8DHNcoKs+X5amoSE9NuyLma6/2XTE1X9n4tIw7zHtU+fDS0rSgdENh
-	BQlNZAsaZzw==
-X-Received: by 2002:aa7:c4d9:0:b0:6b5:9731:90fa with SMTP id 4fb4d7f45d1cf-6ba37cc0ad9mr3980018a12.6.1795335521825;
-        Sun, 22 Nov 2026 00:18:41 -0800 (PST)
+        bh=JbXjqMfnvt4YseLHRKZimZ/QrsGIK2yqJbgIKnZOfks=;
+        b=tAKW6DrkGewrpeWHhse6oE5Urc3ObMECltTEcgmirR4RT8AIUiDaTAn+IwjFd7JlKG
+         L6mZi3g2B5PpBmiVYV5bCepSWsFydgW4N/A/tL1E2C99f/aiP+9A41xKYRKVML6vc4g4
+         aRlvyuXaHQ7ocwkcuz/TkZdyAIbY5+rQmTeMOLMaOStIFDH35aa7+7Sa/lPFu2AsKxMh
+         XbOD29aQnchONae5m07NoW9OVAbokY8VhYDOsHiRo19f37i6IemWJt9MsZ4RKb/X5Jaj
+         3Mo6/oRqxX0K38hYdUP4jBxGYR42qcnn5aS4PCspcfnoqgZfdfZ+t92jO3kCcU0jVRKe
+         XpxQ==
+X-Forwarded-Encrypted: i=1; AL+hErEJP5kyI0hdCkEkKifbl3QaCYCRUhRjWooh5w0AJCbuO53bkxSc/IvUtoKPRmu1J4jPoqezldsuLGnxgg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8WxDH2ODwmfEf/lzJRWpKqdUlz3GeEcP1DsOzLgnVqcWYkv45i
+	CQQomga9z8Ptn80rXCtDJNebnVC4p8MnhiNHvVku6myvoSz2Sk53Koop
+X-Gm-Gg: AZFdTZdz7oRLrl9j4eW/DvtHDEVdJS6NxR8dBK7HVejetN/kWp9dInNZjYPxFuvHRdl
+	aM6k0XCmLLnFPka1qG9nsHuWL7sv8DjPtAhphfBctLmAsmskDaoDhwEHCSx5PFCSLWMWdeSFsvC
+	QUWids2acrf+JWvaOcfNGPXQ2AFI22V6VejJylYt19IQ0HRJ5X+kJ/bXMvCwVCTEBj/fLuExNNs
+	GnkzXygoduUaUILYUBbx7v6wu+vKdPB0LShVQbr1UF00ddl4RPWz8rwVW2rcyfNSqyhJxF30/op
+	TFyLzcWo2UwHoCsntokwFsp0PyAm4WJBC0AjvN32U24rVFE3TTTDWzEw2tXhKpIgM1NjAlJtCYd
+	cmKgMWNwnDcS3U1Cbioza1OsQQ1KJgd9N2qMmbbXl8/BdtVqJMUWhWDmks94i1fSpxFyCb0vZoN
+	oY/oIyYNzeSjrHRwkwWmPxMl/2BjYzt309x83pbMll8sGf8uFJSIrSpaJmjEDmgn8Jj54fWMsuN
+	AxNh1GajS8Od2HJ3O2LH14YOewqjpiQJStD61RrFMPhsQIGa7XkRGS98rYJgO1gMstqHB78QtvG
+	jzcjfzqOPKDuwUU/5tVNMPNeB3Ms00SqIdqZc580eMJekZ2xPiurNkyF/GM9ODoSgmB1tHobmLj
+	vwZhhgk9EjA==
+X-Received: by 2002:aa7:d842:0:b0:6b6:e808:9703 with SMTP id 4fb4d7f45d1cf-6ba37c774camr4105257a12.4.1795335525661;
+        Sun, 22 Nov 2026 00:18:45 -0800 (PST)
 Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370e8ad0sm3617167a12.18.2026.11.22.00.18.39
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370e8ad0sm3617167a12.18.2026.11.22.00.18.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 00:18:40 -0800 (PST)
+        Sun, 22 Nov 2026 00:18:43 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -98,9 +98,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v8 02/12] drm/panel: panel-hitachi-tx10d07vm0baa: Convert to use MIPI DBI bus
-Date: Sun, 22 Nov 2026 10:18:10 +0200
-Message-ID: <20261122081820.53199-3-clamor95@gmail.com>
+Subject: [PATCH v8 03/12] drm/panel: panel-hitachi-tx10d07vm0baa: Convert to mipi_dbi_write_seq_multi()
+Date: Sun, 22 Nov 2026 10:18:11 +0200
+Message-ID: <20261122081820.53199-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261122081820.53199-1-clamor95@gmail.com>
 References: <20261122081820.53199-1-clamor95@gmail.com>
@@ -115,108 +115,258 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Switch from a generic platform driver to a dedicated MIPI DBI Type B
-driver.
+Switch from the internal panel command-sending macro to a generic one
+to improve code reuse.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../drm/panel/panel-hitachi-tx10d07vm0baa.c   | 25 +++++++++----------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ .../drm/panel/panel-hitachi-tx10d07vm0baa.c   | 213 +++++++++---------
+ 1 file changed, 101 insertions(+), 112 deletions(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c b/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
-index 83c2af1be9755..318ece68b7806 100644
+index 318ece68b7806..c5b59a7341d8e 100644
 --- a/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
 +++ b/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
-@@ -14,6 +14,7 @@
- #include <video/mipi_display.h>
- 
- #include <drm/drm_mipi_dbi.h>
-+#include <drm/drm_mipi_dbi_bus.h>
- #include <drm/drm_modes.h>
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
-@@ -25,7 +26,7 @@ static const struct regulator_bulk_data hitachi_tx10d07vm0baa_supplies[] = {
- 
- struct hitachi_tx10d07vm0baa {
- 	struct drm_panel panel;
--	struct mipi_dbi *dbi;
-+	struct mipi_dbi_device *dbidev;
- 
- 	struct regulator_bulk_data *supplies;
- 	struct gpio_desc *reset_gpio;
-@@ -40,9 +41,10 @@ static inline struct hitachi_tx10d07vm0baa *to_hitachi_tx10d07vm0baa(struct drm_
- ({ \
- 	const u8 d[] = { seq }; \
- 	struct drm_panel *panel = &(priv)->panel; \
-+	struct mipi_dbi_device *dbidev = (priv)->dbidev; \
- 	struct device *dev = panel->dev; \
- 	int ret; \
--	ret = mipi_dbi_command_stackbuf((priv)->dbi, cmd, d, ARRAY_SIZE(d)); \
-+	ret = mipi_dbi_command_stackbuf((dbidev)->dbi, cmd, d, ARRAY_SIZE(d)); \
- 	if (ret) \
- 		dev_err_ratelimited(dev, "error %d when sending command %#02x\n", ret, cmd); \
- 	ret; \
-@@ -54,10 +56,6 @@ static int hitachi_tx10d07vm0baa_prepare(struct drm_panel *panel)
- 	struct device *dev = panel->dev;
- 	int ret;
- 
--	priv->dbi = dev_get_drvdata(dev->parent);
--	if (!priv->dbi)
--		return -ENODEV;
--
- 	gpiod_set_value_cansleep(priv->reset_gpio, 1);
- 
- 	ret = regulator_bulk_enable(ARRAY_SIZE(hitachi_tx10d07vm0baa_supplies), priv->supplies);
-@@ -243,9 +241,9 @@ static const struct drm_panel_funcs hitachi_tx10d07vm0baa_panel_funcs = {
- 	.get_modes = hitachi_tx10d07vm0baa_get_modes,
- };
- 
--static int hitachi_tx10d07vm0baa_probe(struct platform_device *pdev)
-+static int hitachi_tx10d07vm0baa_probe(struct mipi_dbi_device *dbidev)
- {
--	struct device *dev = &pdev->dev;
-+	struct device *dev = &dbidev->dev;
- 	struct hitachi_tx10d07vm0baa *priv;
- 	int ret;
- 
-@@ -264,6 +262,9 @@ static int hitachi_tx10d07vm0baa_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(priv->reset_gpio),
- 				     "Failed to get reset gpio\n");
- 
-+	priv->dbidev = dbidev;
-+	mipi_dbi_set_drvdata(dbidev, priv);
-+
- 	ret = drm_panel_of_backlight(&priv->panel);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to get backlight\n");
-@@ -272,9 +273,7 @@ static int hitachi_tx10d07vm0baa_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to add panel\n");
- 
--	platform_set_drvdata(pdev, priv);
--
--	return 0;
-+	return devm_mipi_dbi_attach(dev, dbidev);
+@@ -37,19 +37,6 @@ static inline struct hitachi_tx10d07vm0baa *to_hitachi_tx10d07vm0baa(struct drm_
+ 	return container_of(panel, struct hitachi_tx10d07vm0baa, panel);
  }
  
- static const struct of_device_id hitachi_tx10d07vm0baa_of_match[] = {
-@@ -283,14 +282,14 @@ static const struct of_device_id hitachi_tx10d07vm0baa_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, hitachi_tx10d07vm0baa_of_match);
+-#define panel_dbi_command(priv, cmd, seq...) \
+-({ \
+-	const u8 d[] = { seq }; \
+-	struct drm_panel *panel = &(priv)->panel; \
+-	struct mipi_dbi_device *dbidev = (priv)->dbidev; \
+-	struct device *dev = panel->dev; \
+-	int ret; \
+-	ret = mipi_dbi_command_stackbuf((dbidev)->dbi, cmd, d, ARRAY_SIZE(d)); \
+-	if (ret) \
+-		dev_err_ratelimited(dev, "error %d when sending command %#02x\n", ret, cmd); \
+-	ret; \
+-})
+-
+ static int hitachi_tx10d07vm0baa_prepare(struct drm_panel *panel)
+ {
+ 	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
+@@ -76,118 +63,120 @@ static int hitachi_tx10d07vm0baa_prepare(struct drm_panel *panel)
+ static int hitachi_tx10d07vm0baa_enable(struct drm_panel *panel)
+ {
+ 	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
+-
+-	panel_dbi_command(priv, MIPI_DCS_SET_PARTIAL_ROWS, 0x00, 0x00, 0x03, 0x1f);
+-	panel_dbi_command(priv, MIPI_DCS_SET_SCROLL_AREA, 0x00, 0x00, 0x03, 0x20,
+-			  0x00, 0x00);
+-
+-	panel_dbi_command(priv, MIPI_DCS_SET_ADDRESS_MODE, 0x0a);
+-	panel_dbi_command(priv, MIPI_DCS_SET_SCROLL_START, 0x00, 0x00);
+-
+-	panel_dbi_command(priv, MIPI_DCS_SET_PIXEL_FORMAT, MIPI_DCS_PIXEL_FMT_24BIT);
+-	panel_dbi_command(priv, MIPI_DCS_SET_TEAR_SCANLINE, 0x00, 0x00);
+-
+-	panel_dbi_command(priv, 0x71, 0x00);		/* Ex_Vsync_en */
+-
+-	panel_dbi_command(priv, 0xb2, 0x00);		/* VCSEL */
+-	panel_dbi_command(priv, 0xb4, 0xaa);		/* setvgmpm */
+-	panel_dbi_command(priv, 0xb5, 0x33);		/* rbias1 */
+-	panel_dbi_command(priv, 0xb6, 0x03);		/* rbias2 */
+-
+-	panel_dbi_command(priv, 0xb7, 0x1a, 0x33, 0x03, 0x03,
+-			  0x03, 0x00, 0x00, 0x01, 0x02, 0x00,
+-			  0x00, 0x04, 0x00, 0x01, 0x01, 0x01);	/* set_ddvdhp */
+-	panel_dbi_command(priv, 0xb8, 0x1c, 0x53, 0x03, 0x03,
+-			  0x00, 0x01, 0x02, 0x00, 0x00, 0x04,
+-			  0x00, 0x01, 0x01);			/* set_ddvdhm */
+-
+-	panel_dbi_command(priv, 0xb9, 0x0a, 0x01, 0x01, 0x00,
+-			  0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgh */
+-	panel_dbi_command(priv, 0xba, 0x0f, 0x01, 0x01, 0x00,
+-			  0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgl */
+-	panel_dbi_command(priv, 0xbb, 0x00, 0x00, 0x00, 0x00,
+-			  0x01, 0x02, 0x01);			/* set_vcl */
+-
+-	panel_dbi_command(priv, 0xc1, 0x01);		/* number of lines */
+-	panel_dbi_command(priv, 0xc2, 0x08);		/* number of fp lines */
+-	panel_dbi_command(priv, 0xc3, 0x04);		/* gateset(1) */
+-	panel_dbi_command(priv, 0xc4, 0x4c);		/* 1h period */
+-	panel_dbi_command(priv, 0xc5, 0x03);		/* source precharge */
+-	panel_dbi_command(priv, 0xc6, 0xc4, 0x04);	/* source precharge timing */
+-	panel_dbi_command(priv, 0xc7, 0x00);		/* source level */
+-	panel_dbi_command(priv, 0xc8, 0x02);		/* number of bp lines */
+-	panel_dbi_command(priv, 0xc9, 0x10);		/* gateset(2) */
+-	panel_dbi_command(priv, 0xca, 0x04, 0x04);	/* gateset(3) */
+-	panel_dbi_command(priv, 0xcb, 0x03);		/* gateset(4) */
+-	panel_dbi_command(priv, 0xcc, 0x12);		/* gateset(5) */
+-	panel_dbi_command(priv, 0xcd, 0x12);		/* gateset(6) */
+-	panel_dbi_command(priv, 0xce, 0x30);		/* gateset(7) */
+-	panel_dbi_command(priv, 0xcf, 0x30);		/* gateset(8) */
+-	panel_dbi_command(priv, 0xd0, 0x40);		/* gateset(9) */
+-	panel_dbi_command(priv, 0xd1, 0x22);		/* flhw */
+-	panel_dbi_command(priv, 0xd2, 0x22);		/* vckhw */
+-	panel_dbi_command(priv, 0xd3, 0x04);		/* flt */
+-	panel_dbi_command(priv, 0xd4, 0x14);		/* tctrl */
+-	panel_dbi_command(priv, 0xd6, 0x02);		/* dotinv */
+-	panel_dbi_command(priv, 0xd7, 0x00);		/* on/off sequence period */
+-
+-	panel_dbi_command(priv, 0xd8, 0x01, 0x05, 0x06, 0x0d,
+-			  0x18, 0x09, 0x22, 0x23, 0x00);		/* ponseqa */
+-	panel_dbi_command(priv, 0xd9, 0x24, 0x01);			/* ponseqb */
+-	panel_dbi_command(priv, 0xde, 0x09, 0x0f, 0x21, 0x12,
+-			  0x04);					/* ponseqc */
+-
+-	panel_dbi_command(priv, 0xdf, 0x02, 0x06, 0x06, 0x06,
+-			  0x06, 0x00);					/* pofseqa */
+-	panel_dbi_command(priv, 0xe0, 0x01);				/* pofseqb */
+-
+-	panel_dbi_command(priv, MIPI_DCS_SET_DISPLAY_BRIGHTNESS, 0xff);
+-	panel_dbi_command(priv, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x40);
+-
+-	panel_dbi_command(priv, 0xe2, 0x00, 0x00);		/* cabc pwm */
+-	panel_dbi_command(priv, 0xe3, 0x03);			/* cabc */
+-	panel_dbi_command(priv, 0xe4, 0x66, 0x7b, 0x90, 0xa5,
+-			  0xbb, 0xc7, 0xe1, 0xe5);		/* cabc brightness */
+-	panel_dbi_command(priv, 0xe5, 0xc5, 0xc5, 0xc9, 0xc9,
+-			  0xd1, 0xe1, 0xf1, 0xfe);		/* cabc brightness */
+-	panel_dbi_command(priv, 0xe7, 0x2a);			/* cabc */
+-	panel_dbi_command(priv, 0xe8, 0x00);			/* brt_rev */
+-	panel_dbi_command(priv, 0xe9, 0x00);			/* tefreq */
+-
+-	panel_dbi_command(priv, 0xea, 0x01);			/* high speed ram */
+-
+-	panel_dbi_command(priv, 0xeb, 0x00, 0x33, 0x0e, 0x15,
+-			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r pos */
+-	panel_dbi_command(priv, 0xec, 0x00, 0x33, 0x0e, 0x15,
+-			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r neg */
+-	panel_dbi_command(priv, 0xed, 0x00, 0x33, 0x0e, 0x15,
+-			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g pos */
+-	panel_dbi_command(priv, 0xee, 0x00, 0x33, 0x0e, 0x15,
+-			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g neg */
+-	panel_dbi_command(priv, 0xef, 0x00, 0x33, 0x0e, 0x15,
+-			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b pos */
+-	panel_dbi_command(priv, 0xf0, 0x00, 0x33, 0x0e, 0x15,
+-			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b neg */
+-
+-	panel_dbi_command(priv, MIPI_DCS_EXIT_SLEEP_MODE);
++	struct mipi_dbi_multi_context ctx = { .dbidev = priv->dbidev };
++
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_PARTIAL_ROWS, 0x00, 0x00, 0x03, 0x1f);
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_SCROLL_AREA, 0x00, 0x00, 0x03, 0x20,
++				 0x00, 0x00);
++
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_ADDRESS_MODE, 0x0a);
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_SCROLL_START, 0x00, 0x00);
++
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_PIXEL_FORMAT, MIPI_DCS_PIXEL_FMT_24BIT);
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_TEAR_SCANLINE, 0x00, 0x00);
++
++	mipi_dbi_write_seq_multi(&ctx, 0x71, 0x00);		/* Ex_Vsync_en */
++
++	mipi_dbi_write_seq_multi(&ctx, 0xb2, 0x00);		/* VCSEL */
++	mipi_dbi_write_seq_multi(&ctx, 0xb4, 0xaa);		/* setvgmpm */
++	mipi_dbi_write_seq_multi(&ctx, 0xb5, 0x33);		/* rbias1 */
++	mipi_dbi_write_seq_multi(&ctx, 0xb6, 0x03);		/* rbias2 */
++
++	mipi_dbi_write_seq_multi(&ctx, 0xb7, 0x1a, 0x33, 0x03, 0x03,
++				 0x03, 0x00, 0x00, 0x01, 0x02, 0x00,
++				 0x00, 0x04, 0x00, 0x01, 0x01, 0x01);	/* set_ddvdhp */
++	mipi_dbi_write_seq_multi(&ctx, 0xb8, 0x1c, 0x53, 0x03, 0x03,
++				 0x00, 0x01, 0x02, 0x00, 0x00, 0x04,
++				 0x00, 0x01, 0x01);			/* set_ddvdhm */
++
++	mipi_dbi_write_seq_multi(&ctx, 0xb9, 0x0a, 0x01, 0x01, 0x00,
++				 0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgh */
++	mipi_dbi_write_seq_multi(&ctx, 0xba, 0x0f, 0x01, 0x01, 0x00,
++				 0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgl */
++	mipi_dbi_write_seq_multi(&ctx, 0xbb, 0x00, 0x00, 0x00, 0x00,
++				 0x01, 0x02, 0x01);			/* set_vcl */
++
++	mipi_dbi_write_seq_multi(&ctx, 0xc1, 0x01);		/* number of lines */
++	mipi_dbi_write_seq_multi(&ctx, 0xc2, 0x08);		/* number of fp lines */
++	mipi_dbi_write_seq_multi(&ctx, 0xc3, 0x04);		/* gateset(1) */
++	mipi_dbi_write_seq_multi(&ctx, 0xc4, 0x4c);		/* 1h period */
++	mipi_dbi_write_seq_multi(&ctx, 0xc5, 0x03);		/* source precharge */
++	mipi_dbi_write_seq_multi(&ctx, 0xc6, 0xc4, 0x04);	/* source precharge timing */
++	mipi_dbi_write_seq_multi(&ctx, 0xc7, 0x00);		/* source level */
++	mipi_dbi_write_seq_multi(&ctx, 0xc8, 0x02);		/* number of bp lines */
++	mipi_dbi_write_seq_multi(&ctx, 0xc9, 0x10);		/* gateset(2) */
++	mipi_dbi_write_seq_multi(&ctx, 0xca, 0x04, 0x04);	/* gateset(3) */
++	mipi_dbi_write_seq_multi(&ctx, 0xcb, 0x03);		/* gateset(4) */
++	mipi_dbi_write_seq_multi(&ctx, 0xcc, 0x12);		/* gateset(5) */
++	mipi_dbi_write_seq_multi(&ctx, 0xcd, 0x12);		/* gateset(6) */
++	mipi_dbi_write_seq_multi(&ctx, 0xce, 0x30);		/* gateset(7) */
++	mipi_dbi_write_seq_multi(&ctx, 0xcf, 0x30);		/* gateset(8) */
++	mipi_dbi_write_seq_multi(&ctx, 0xd0, 0x40);		/* gateset(9) */
++	mipi_dbi_write_seq_multi(&ctx, 0xd1, 0x22);		/* flhw */
++	mipi_dbi_write_seq_multi(&ctx, 0xd2, 0x22);		/* vckhw */
++	mipi_dbi_write_seq_multi(&ctx, 0xd3, 0x04);		/* flt */
++	mipi_dbi_write_seq_multi(&ctx, 0xd4, 0x14);		/* tctrl */
++	mipi_dbi_write_seq_multi(&ctx, 0xd6, 0x02);		/* dotinv */
++	mipi_dbi_write_seq_multi(&ctx, 0xd7, 0x00);		/* on/off sequence period */
++
++	mipi_dbi_write_seq_multi(&ctx, 0xd8, 0x01, 0x05, 0x06, 0x0d,
++				 0x18, 0x09, 0x22, 0x23, 0x00);		/* ponseqa */
++	mipi_dbi_write_seq_multi(&ctx, 0xd9, 0x24, 0x01);		/* ponseqb */
++	mipi_dbi_write_seq_multi(&ctx, 0xde, 0x09, 0x0f, 0x21, 0x12,
++				 0x04);					/* ponseqc */
++
++	mipi_dbi_write_seq_multi(&ctx, 0xdf, 0x02, 0x06, 0x06, 0x06,
++				 0x06, 0x00);					/* pofseqa */
++	mipi_dbi_write_seq_multi(&ctx, 0xe0, 0x01);				/* pofseqb */
++
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_DISPLAY_BRIGHTNESS, 0xff);
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x40);
++
++	mipi_dbi_write_seq_multi(&ctx, 0xe2, 0x00, 0x00);		/* cabc pwm */
++	mipi_dbi_write_seq_multi(&ctx, 0xe3, 0x03);			/* cabc */
++	mipi_dbi_write_seq_multi(&ctx, 0xe4, 0x66, 0x7b, 0x90, 0xa5,
++				 0xbb, 0xc7, 0xe1, 0xe5);		/* cabc brightness */
++	mipi_dbi_write_seq_multi(&ctx, 0xe5, 0xc5, 0xc5, 0xc9, 0xc9,
++				 0xd1, 0xe1, 0xf1, 0xfe);		/* cabc brightness */
++	mipi_dbi_write_seq_multi(&ctx, 0xe7, 0x2a);			/* cabc */
++	mipi_dbi_write_seq_multi(&ctx, 0xe8, 0x00);			/* brt_rev */
++	mipi_dbi_write_seq_multi(&ctx, 0xe9, 0x00);			/* tefreq */
++
++	mipi_dbi_write_seq_multi(&ctx, 0xea, 0x01);			/* high speed ram */
++
++	mipi_dbi_write_seq_multi(&ctx, 0xeb, 0x00, 0x33, 0x0e, 0x15,
++				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r pos */
++	mipi_dbi_write_seq_multi(&ctx, 0xec, 0x00, 0x33, 0x0e, 0x15,
++				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r neg */
++	mipi_dbi_write_seq_multi(&ctx, 0xed, 0x00, 0x33, 0x0e, 0x15,
++				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g pos */
++	mipi_dbi_write_seq_multi(&ctx, 0xee, 0x00, 0x33, 0x0e, 0x15,
++				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g neg */
++	mipi_dbi_write_seq_multi(&ctx, 0xef, 0x00, 0x33, 0x0e, 0x15,
++				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b pos */
++	mipi_dbi_write_seq_multi(&ctx, 0xf0, 0x00, 0x33, 0x0e, 0x15,
++				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b neg */
++
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_EXIT_SLEEP_MODE);
+ 	msleep(110);
  
--static struct platform_driver hitachi_tx10d07vm0baa_driver = {
-+static struct mipi_dbi_driver hitachi_tx10d07vm0baa_driver = {
- 	.driver = {
- 		.name = "panel-hitachi-tx10d07vm0baa",
- 		.of_match_table = hitachi_tx10d07vm0baa_of_match,
- 	},
- 	.probe = hitachi_tx10d07vm0baa_probe,
- };
--module_platform_driver(hitachi_tx10d07vm0baa_driver);
-+module_mipi_dbi_driver(hitachi_tx10d07vm0baa_driver);
+-	panel_dbi_command(priv, MIPI_DCS_SET_DISPLAY_ON);
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_DISPLAY_ON);
  
- MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
- MODULE_DESCRIPTION("HITACHI TX10D07VM0BAA MIPI DBI Type B panel driver");
+-	return 0;
++	return ctx.accum_err;
+ }
+ 
+ static int hitachi_tx10d07vm0baa_disable(struct drm_panel *panel)
+ {
+ 	struct hitachi_tx10d07vm0baa *priv = to_hitachi_tx10d07vm0baa(panel);
++	struct mipi_dbi_multi_context ctx = { .dbidev = priv->dbidev };
+ 
+-	panel_dbi_command(priv, MIPI_DCS_SET_DISPLAY_OFF);
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_DISPLAY_OFF);
+ 	msleep(35);
+ 
+-	panel_dbi_command(priv, MIPI_DCS_ENTER_SLEEP_MODE);
++	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_ENTER_SLEEP_MODE);
+ 	msleep(50);
+ 
+-	return 0;
++	return ctx.accum_err;
+ }
+ 
+ static int hitachi_tx10d07vm0baa_unprepare(struct drm_panel *panel)
 -- 
 2.53.0
 
