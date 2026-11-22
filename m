@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795361688;
-	b=tSlGPI7ca3q84AD1HschN73qon2j8e17ULj0A6Pw/9ItBRAgJ3kuaMSydyinxCLkDcq4
-	 vLJatuxQesI1I5AuDlstPBISljiha4Poh8lP+zt2tq5dL3y3RjUncnN/nFS7aefqo9bvK
-	 nb7MjkRrteYN6qJ10NnzVYI/iix2v78wb3eAKeK0uErmA+Nrvz57+TYgWZ+l641Dyh06S
-	 R9EVj7YHOTrpwk8I/IC0JIf3mctlZhtmy3G7Ti10tnut4ku5zLA8ZcudgsLG1R08ksSVl
-	 YD4jEOTFidf4PO0G5kr7/yntLtWPnynfy/hF8izkUJspao1JwDNOkhf9VE2B6xRHq1g==
+	t=1795366415;
+	b=yPOpkmKZsF8T1oMagEod0un3vtokdMjj8P57ELyXD+U0yYsJCZHCu0uwJLPSqO9ggpGB
+	 EES8fAW/No8IrD3ckvu5RPuPGebgNtVWfXPauTBzWhuqAu1Y9dmWLqeW2c2lOca6kR8KC
+	 REHjiyeyE5ulO3fhg3hZ3SMg3gA0l+oxvXB0UvOyM63qV4djeCHjy2iNdyLLMNQ9DOug2
+	 RMqeFIlU/oF3fW8mVb+VeRQ/vXofJqAWmi6Jq8/3EOyRO8gwZSINhPFkE7jJ9d1C6ZONI
+	 KAPT+dvtRB1DkkjJHCH5DLK16ot9YO+36sTZe982ObizV4EgUnWrIU0FUb+N0gwVPWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795361688;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795366415;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=L43f1kBqOYb+3obxiloeu9TGeNNR8aeSo1E51+NquNQ=;
-	b=SvVGzRQyQAWJ1e4Lgt0fuwOmpSLqBHYgP42pugbebCSS/l0yJEaVkqDdF1rXjCpSOwvO
-	 SaGJeaJVQjjSsVrRRpe++lkBnS5kHJ/d9KqWTx0AUU4qPxTwLXyPrb/jHjyCzBfzlTfCl
-	 m+UB6X5Y+IhQAibiBxSq28qPM9txnde7mu0uHF6wKGrbHJ3VvN0gZjdwSqKVFgLdh4BQ/
-	 Lr0lq70Ha14l9GT66cc08L/SdtwZLPsDLYMZU93XxNYvP+cDEwClCWBJETNMV5A0bvXp5
-	 l43DXLWVGjNmTj0xJMeLU/nNFRgievYwwjqPQ1EE1djE48G5PLopp7FqZDCweld9EkQ==
+	bh=/15f6ZjHF8yYj2UrtTX7/aYIK6eHyTuu6zxtnLvBfIc=;
+	b=KGiojQBHYgIvpQw2o+N6C8oG1bPs2ukkTJK+o6EmR0eBCVqbSwuzF1HJkpXuZgZwvvIi
+	 a29UVql6NHfmyvXglH3JLUtlRPOM0EmWJGz2NbU0uXwQsJkm7ZPQX8NcFu3Bn8TEm0Ts0
+	 JpJJPrKL0pxB2pan445M++ImGZsY2Q9KA7PgCWt+WzWqfcV2vpPdrlnFgAWjsC7pzRO1+
+	 oRJj9DPd3pprBwX6gKH39jTcmqhQISGAHDTHA6lqFxYay4P/eyg5cFFGzWFyvvl22yXVT
+	 B9a96vqf8ov6tC7B4s57wgZelaA/G/zxdXMBLqV3fnuQ70mSNC6X3CKLPJLYtVebARg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=linuxfoundation.org header.i=@linuxfoundation.org header.a=rsa-sha256 header.s=korg header.b=hQ2bx52H;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WIeLH4Tz;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F62606A32A;
-	Sun, 22 Nov 2026 15:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41347606A320;
+	Sun, 22 Nov 2026 16:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.a=rsa-sha256 header.s=korg header.b=hQ2bx52H
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F6A81F000D1;
-	Sun, 22 Nov 2026 15:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1795361687;
-	bh=L43f1kBqOYb+3obxiloeu9TGeNNR8aeSo1E51+NquNQ=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WIeLH4Tz
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB2491F000C4;
+	Sun, 22 Nov 2026 16:53:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795366414;
+	bh=/15f6ZjHF8yYj2UrtTX7/aYIK6eHyTuu6zxtnLvBfIc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=hQ2bx52HR2OhOL0XHQLuCkn1fsTOISQ1wU5RgGZprSRVAL59Y7e/mvD0Fc4+o6nzH
-	 vLIHtFoGUadgT8gFeHnpsELbqx2h9FKUK+9J1BpcJizhDyYOfFnJPuigVmbiCfcyfT
-	 O8MPJ3SWx7B03hopO0qr9ewbRJarJKzdAaekmWoY=
-Date: Sun, 22 Nov 2026 16:34:43 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: EMCP333 <emcp@enser.io>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-	linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial: tegra: do the baud tolerance math in 64 bits
-Message-ID: <2026112258-hesitancy-passable-902c@gregkh>
-References: <20261122-b4-serial-tegra-baud-tolerance-v1-1-39907382281f@enser.io>
- <2026112253-salute-epilogue-67b4@gregkh>
- <CAOY-3nCEb=fMMwHyecpvs5jVTod90tG7L8HvbDWZ+OgBfSJY0A@mail.gmail.com>
+	b=WIeLH4TzFoWaI01pl7wgjBHBkB4uyIz/V+xYss1hYNEQdHzpI3E3i3hi9OVmN9idL
+	 bDHkcaoss5HmKfI/t8JNXmj6gOafoauIlCr26vmDVlCX/PdsN6bVtEayE37cTBtiDT
+	 4FByEoIFx7CnKsyBxlmvQkLhwrUQlE3ereYLyfx/VD/XFnPk+woMMGig+UzVg5VIrf
+	 QWbipiwaqUJC2ImbRPxoRHAtLcel0Jz7WtkZTDeU0wkl1qvQBIKWl/vJUY4DP6hZ/1
+	 oAdN77hqnqsjdAgT5qXKckrf+SXULNENsEIhQGNv7Kaf3dYaC81DqQ2hSuQWfLDGMf
+	 2FnYu84SbQXLg==
+Date: Sun, 22 Nov 2026 17:53:30 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Cc: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org, 
+	viresh.kumar@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	treding@nvidia.com, jonathanh@nvidia.com, linux-pm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	bbasu@nvidia.com
+Subject: Re: [PATCH v3 0/9] cpufreq: tegra194: add Tegra264 support
+Message-ID: <20261122-elfish-amusing-muskox-d6cdef@quoll>
+References: <20261119111217.902071-1-sumitg@nvidia.com>
+ <2698e091-17e9-4a1d-acf1-19981ee604da@oss.qualcomm.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -60,37 +60,57 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOY-3nCEb=fMMwHyecpvs5jVTod90tG7L8HvbDWZ+OgBfSJY0A@mail.gmail.com>
+In-Reply-To: <2698e091-17e9-4a1d-acf1-19981ee604da@oss.qualcomm.com>
 
-
-A: http://en.wikipedia.org/wiki/Top_post
-Q: Were do I find info about this thing called top-posting?
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
-
-A: No.
-Q: Should I include quotations after my reply?
-
-http://daringfireball.net/2007/07/on_top
-
-On Sun, Nov 22, 2026 at 07:07:00AM -0800, EMCP333 wrote:
-> Hi Greg
+On Thu, Nov 19, 2026 at 07:41:34PM +0800, Zhongqiu Han wrote:
+> On 11/19/2026 7:12 PM, Sumit Gupta wrote:
+> > This series adds cpufreq support for Tegra264, which joins the SoCs
+> > already supported by the tegra194-cpufreq driver.
+> > 
+> > Tegra264 keeps the existing model, where BPMP provides the NDIV limits.
+> > The driver derives the current frequency from the core clock and
+> > reference counters.
+> > 
+> > The main differences are:
+> >   - Frequency read: through system registers, as on Tegra194, but from
+> >     the 64-bit architected AMU counters. The reference counter ticks at
+> >     the system counter rate (CNTFRQ).
+> > 
+> >   - Frequency request: through MMIO, as on Tegra234. The driver writes
+> >     NDIV to a core_freq_req register in the CCPLEX register space. Each
+> >     register controls a clock shared by two single-CPU clusters, so both
+> >     CPUs form one cpufreq policy.
+> > 
+> > The patches fall into four groups:
+> >   - Fix (patch 1): read each CPU's MPIDR from a CPU hotplug callback
+> >     instead of at probe. A CPU that is offline at probe then also gets
+> >     valid cluster and core IDs.
+> > 
+> >   - Preparation (patches 2 to 5): cleanups, mostly of the counter code,
+> >     to make room for a 64-bit counter and for an MMIO mapping without
+> >     ACTMON counters.
+> > 
+> >   - Improvement (patches 6 and 7): group CPUs by the generic
+> >     "performance-domains" property, which cluster-based grouping cannot
+> >     express on Tegra264. Device trees without it keep the existing
+> >     grouping.
+> > 
+> >   - Tegra264 support (patches 8 and 9): the driver support, followed by
+> >     the device tree changes it relies on.
+> > 
+> > v2[2] -> v3:
+> >   - Patch 8: read the AMU counters with interrupts disabled (Zhongqiu).
+> >   - Add Reviewed-by from Zhongqiu to patches 1-7 and 9.
 > 
-> It's Erik Peterson
+> For patch 8/9:
 > 
-> Been my first attempt to work on the kernel with NURA (formerly
-> postmarketOS, which doesn't take AI submissions directly) and I think it
-> clearly stated when to indicate AI use which I believe I did.
+> Reviewed-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
 
-The issue is you need to sign off and put From: using your real name,
-there was not any issue with using a LLM here at all.
+Why you cannot respond to specific patch? Tags applied to cover letter
+work completely different!
 
-Please fix up and resend.
+Best regards,
+Krzysztof
 
-thanks,
-
-greg k-h
