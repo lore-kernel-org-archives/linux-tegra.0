@@ -1,57 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795430658;
-	b=AtWcRQwMilChv8E83ZdX+l/oUPLhSmR5mobBlIbVF6Gl6Gfixo8ahI0bU000TBytdxvu
-	 nKfz529+q4KMdmnlfwiytmo6mXa7RLAvz/f2EpSTncNQdZ9aeA4ui0oVlNTVsjdP46mkJ
-	 oY/w3ai6XqXl/7YMqAWSp0C4ev42kOZj+Da21wgxxs42Jg4rxG++/gBzEV3ixTdQBUxC6
-	 qkMsP2avzYD/keO1JNz9ia70lvrysWdxg7rboolduCYlUg7QZOBcJgJntDCn6UafIDerE
-	 9cOhbt/DTVR0Sr6zEUv5AE1jJ0Vul8gtiM8EaG5SYrDzTgI9hpynCa1JHgzqmXydaKw==
+	t=1795434112;
+	b=Ry9i4sdhIEnYniUwdTSIawfcACeOH0SKXCHlPRnowMG0AM+9ywOdzVhmqR+WjfZhEKqR
+	 IJ05NWE8R5Nejlul6Bu7orvHou6lqTF8wtRYGnFmFFG/28UNsCmkSkJIanIhH6Dcs94zc
+	 2wgo2RwmTB1WLGJfWvTrusk96oGQfuKhULAIe6FQHr2d94CUrjhLnl50cGmnWqCbbQZAm
+	 SE6jJwMcuwYyJf25TgNHN3wnJo85ILZUGYgdCVbQmJsXpE9oCcSWxlpH19UTdGi2sjDEO
+	 AwUUhGqW06zdcxED7bR3A2c8+tULLyb44wc4jMpIu6iHTZj0Q4WHfLhD9W9L3zCgMIw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795430658;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795434112;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=IEvSzgaTb0EsAPJo4txWV1vZ42VPFNhu9tHaCps/Jl8=;
-	b=f9mF/Yaczy9HyLJ9tfDYvmfTKiD7i4xJGj2uM77qGPJxgeBGMrrN48kbsIrCPbWDxjKn
-	 WQ+0PhcxcXTDPQzwc26khY1POShZkuSt+anTo91ntgsA4dW0/IMoNSyFZMNk1D4nsy+O8
-	 5Q41fLK4nN3ySm0XGXf57XEdgxQvfMi2n+PAsNqlmPCvTsAeozvGk+qZ7+BJnPcZ0awtd
-	 xbFW/pfZGS3lebNJ0FyGFChbY48EzDa4TvANohyDtSEvYZS6gCjjpj1fvJwpL/gZjpFJZ
-	 S3TtmYGxoil/y8dG+M1g9nem2njf6+EXrYGdh/RjBOEnv9k+nl51xnCgtpa9rmlcaIw==
+	bh=Fso6q+b21aJTsaUC5ezM2VGzAQ/UhrVbM+Mobeho73E=;
+	b=VZxNRv6CQuB3wVXjmF8HXUc+MSASTaRbI/vmDNmCqovwVJ19StJ2QpQ1JkaczM/kepgI
+	 oPtBEJ7SJVtbPkgyOHmTEKAvDL5mny4Y5Xh7ZZG2aAxASY+cMILEHPsdbNGyPwXLMY0jY
+	 5PbKHHjN8teo9mz4HJthgQmsw2jdYzgJZaCtnJJ1PNMjvKDEiusi6K6MISNwLL1ZHwpys
+	 6Lbt1fwWMRwgN8NknkHEdIsu1MlLEO5x62RCfQzi/sKyiWzxIR4j+o+ZWIE2gs4CayOiD
+	 2Fi9nEUaN/gnEWYbd72+RFuczeeJEiyCnc5YWa//Uwx7rmkn4ajnYUbgYRIw/xi7zkA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GtMCcIyS;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XjnSiy8D;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC55606A31A;
-	Mon, 23 Nov 2026 10:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80173606A321;
+	Mon, 23 Nov 2026 11:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GtMCcIyS
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D04D1F000C0;
-	Mon, 23 Nov 2026 10:44:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XjnSiy8D
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E1AD1F000CF;
+	Mon, 23 Nov 2026 11:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795430657;
-	bh=IEvSzgaTb0EsAPJo4txWV1vZ42VPFNhu9tHaCps/Jl8=;
+	s=k20260515; t=1795434111;
+	bh=Fso6q+b21aJTsaUC5ezM2VGzAQ/UhrVbM+Mobeho73E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GtMCcIySEuVpz5Gj0Ej8deYIbGF9iuC3ljoq7aAbZw4wFKT4y9PZZWJONrli8F8oj
-	 zBiByiQWgiq7x6Nea0FrDylYJeQwQYwgw2Szb3wpdfiC7IB2zXk7EfOhmDKrQo+fjM
-	 9CKsIhHGkWxgFaRgTaDIzJgZ74/PMm5MjWYJX4HPT00Nun1DupiVbIoRjy8Ty7/Ao3
-	 zotBxHfA7qc/J+IoGR0eORqh0228COO97Crv5jLMgr+ikR3nXX5IBurNBeeTX1BEfM
-	 BZC+kTLBr9td9e4wzzwL5dHn/WTY41c+tCqRBL9TK5fE0ESrustrRVIBewimV+lvbT
-	 vpim7Oa5WtO0A==
-Date: Mon, 23 Nov 2026 11:44:14 +0100
+	b=XjnSiy8DeIcpItdaI7x+pn4YPE63DMt35QdLHbJrOfo4OzsEiqQdPspSN/SWXoWut
+	 bizvACZe9GXOARCdH14R9b1dapVdhwrBiOkyW0oyabt+SyBtxGQPz/EdUWlIHD8Omx
+	 jxdU5LtcExrD9zQgORR3AUO/YEWX1HpEfyXMasufKhoT0Sd1itNKKvDPGsPhVWBbTe
+	 10pAGsqrgJpBIXG7DO5aDxEwAqYGv5wisYWZxJo1P3nUqvoJeTTNI9WfKZRJo7cymq
+	 LQAnFmxOrHgG7EblmIgFIJftGb4lf/nM8HFUVZgkcHoSDlVSS0ZF7q6EtvVuD+2GuF
+	 PKRefM7h6CnjA==
+Date: Mon, 23 Nov 2026 12:41:48 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marc Dietrich <marvin24@gmx.de>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: Add Tegra20 I2C target
- controller
-Message-ID: <20261123-normal-resourceful-cockatoo-acdd68@quoll>
-References: <20261115204522.360063-1-marvin24@gmx.de>
- <20261115204522.360063-2-marvin24@gmx.de>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Nagarjuna Kristam <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>, 
+	Mathias Nyman <mathias.nyman@intel.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	Thierry Reding <treding@nvidia.com>, Wayne Chang <waynec@nvidia.com>
+Subject: Re: [PATCH v2 01/12] dt-bindings: usb: tegra234-xusb: Add required
+ properties
+Message-ID: <20261123-urban-belligerent-vole-6c7ac2@quoll>
+References: <20261116-tegra-usb-v2-0-42efc03a9700@nvidia.com>
+ <20261116-tegra-usb-v2-1-42efc03a9700@nvidia.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -63,22 +65,22 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261115204522.360063-2-marvin24@gmx.de>
+In-Reply-To: <20261116-tegra-usb-v2-1-42efc03a9700@nvidia.com>
 
-On Sun, Nov 15, 2026 at 09:45:21PM +0100, Marc Dietrich wrote:
-> +      - description: Tegra20 has 3 instances of a generic I2C controller.
-> +          It supports controller and target mode of I2C communication.
-> +          The i2c-tegra driver only supports master mode of I2C communication.
-> +          Driver of I2C controller is only compatible with "nvidia,tegra20-i2c".
->          const: nvidia,tegra20-i2c
-> +      - description: The i2c-tegra-target driver supports the target mode of
-> +          the generic Tegra20 I2C controller. Driver of the I2C target
-> +          controller is only compatible with "nvidia,tegra20-i2c-target".
-> +        const: nvidia,tegra20-i2c-target
+On Mon, Nov 16, 2026 at 03:23:58PM +0000, Jon Hunter wrote:
+> The Tegra234 XUSB binding does not specify any required properties, so
+> nodes missing the resources needed by the controller can pass validation.
+> 
+> Add a required list for the registers, interrupts, clocks, pad
+> controller, PHYs and power domains described by the Tegra234 device
+> tree.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../devicetree/bindings/usb/nvidia,tegra234-xusb.yaml       | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 
-This looks like the same device as nvidia,tegra20-i2c. Plaese document
-hardware differences on the SoC. I see no DTS in the patchset, so not
-sure if you are duplicating hardware or adding new instances.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
