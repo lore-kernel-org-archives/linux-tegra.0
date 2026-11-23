@@ -1,98 +1,157 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795428170;
-	b=haDfaWM9X0wrFJZl15NQ0Pf3pksVUoJSUBNyguyCRI4qtU2sB7SFqTCFct6bReQ5bEVe
-	 yppeFH4OcFQLq/7/uHDsArdtKmC6wSuM3kfI5cdOANy26FUBOSbo1eNSU7jesSpPyxHPT
-	 /dvLthT5b4qXEgNFyVlzB4Ph9Pah9bM8WtzZND3YG7bA3XThUeGSAh9azOFRHnQ9ISbKc
-	 1J9JKsnnSEyONlvCVMgxyRJSIHbdQ1RhTrwnU2xhW11otX1VZc73gfpBy+tvRqXJrQwR5
-	 +KAYom2/D1HaSbSdTAgdBVH3gstX0ApohDrDDjiNoKdXKH+KxDXx4w/jtlYlhXFg9YQ==
+	t=1795428688;
+	b=YY+cZR/mlj+j5WrprgRpVDF/rfwuJjmd4NvICT3uLzx6Jr8+1L9HCMLMxplyck/WJfhH
+	 idV2f2c6cPbtetgwrNMpQoboPbtSHkx8D3nxe/tgPrLCyPMBjtvLq+Rc4n/3qlkp0moZV
+	 +xiuWgz1U7FCuGsdsHudqv4Tq43vbKWtha+Zgbz06Ai54BEJw566N2SChUkS4uAmale8F
+	 1nbJgC24Y4mQuGStirJwscZ0aQ2cVigvDE5m/YzYadBKMPP5RktADKzpUVfGaGzXw0vPc
+	 i0PrQahie7c22UmW+qbfHFOw9YTWugjMFNBrsgueP7eiV8WCKQ+tJiX89jF36atOZDg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795428170;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	a=rsa-sha256; c=relaxed/relaxed; t=1795428688;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=U5fmRl7VLOuEYCBD7EtGXC6AhEnchrAVlkeohL5NfGk=;
-	b=uyESDvBNDq8rdz+czR+E82qribB9bWxJnoohtQEn6gP+nyNJbLdxLfuDZgATqHuN2QdO
-	 zhR455qSrBMBh3HV9JEuwvrkYgj5L+JNsS/JMEmprl8deCL6mn71yxCGxNiRyppnQOpqs
-	 5YXS0E4ETWJZNCxcHC3B4P5+bPAKuMNRqWZ+CIn4iVfKdarhaPeHie1HH2QHb0HiteN7L
-	 UoSNb7nV9ptEbXz84yLtkI/izTnwiXXHnPgwCR9S2nCHAeKjtqvgyMl2fFwb69yNkOWrx
-	 o9SbiB5eT4caF7J7BoJAl2VY/deTptmJQQopyxZRmEg6pRc/z0HrGCKzBhPb0fl7ZIw==
+	bh=rDFRLPy40I79JiGWrVFkLz2U4fAoPpBfu86dL+TJWTw=;
+	b=wF09ddiZSJOCZSpZuYWULsNgnWNyEA13/d0WOXLKPQ3G6GYKr9fKP0AN9ukVPozF8vxg
+	 H2UdjocQLh/GcI6ypJGSmCH+bJ5nJmwDQJOQJJRGfL5IB1dP/JOmpiCJ+Izx/jpE1KA05
+	 0rE56Lxi1Eccw6v5L8Ym9VBo8KvvTS96nyBq7Z+4kcsbB26GqJ2ls9AlXkJ46zzmxVVb2
+	 ZAZyD1YpPeqiUcS4u20aWDe6OfwGO1JmwYXAt9M7hvK3T6AMU7F8JQZ/3dggB3LQTOQnb
+	 CJeSP25XmrH1cajEcVEGlOPZSSLS4VZltqBVzSGe3WdKZqCSNVe6tWXI0rW6NJ/RmkQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=li0sHq2m;
-	arc=none smtp.remote-ip=209.85.208.42
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQv8DoiR;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B60606A31F
-	for <linux-tegra@vger.kernel.org>; Mon, 23 Nov 2026 10:02:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E4B60606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B836D606A331;
+	Mon, 23 Nov 2026 10:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=li0sHq2m
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6b894a5ce3dso4062122a12.2
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Nov 2026 02:02:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795428168; x=1796032968; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=U5fmRl7VLOuEYCBD7EtGXC6AhEnchrAVlkeohL5NfGk=;
-        b=li0sHq2mCmwwRFH+LLFzvwWgCT9ZJMjiSXz8Q8lvN8eXtk1T7jXaLFbWt1kW4dE5GL
-         4cIDkGnzjMOWhPDb7+65owWaa47Xxmn9XL+HE8Yh7CvJxOWKsicn1ViWpxFBRAmM6afn
-         C4A6P8BtCvTV2qKms4AZztZ1ruFalyZ0JpSrQqKOX3G6gCo0j5izFoDbDV2gcl4igG9J
-         qoHyPm/nRwaelbzuiW61pIus+rjpJcBku4wOi8ORO0pKx1pK3JS3pRywjB6Ca8crHVxH
-         FqY3CMwE4gaEf6r5+PekFhkfyNQqlUOfo9ziml38HdJetVMAf1uvPh4dfCq65UThWQ9r
-         iCuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795428168; x=1796032968;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=U5fmRl7VLOuEYCBD7EtGXC6AhEnchrAVlkeohL5NfGk=;
-        b=qsZeLhYxev6W9IZYL0aWo5w3c/o4jEDW4Z93HYspQAz5UVK2RAATxybo+zuswR+uRP
-         oTySdCBonyKrEcT2mJnYcbOg0dbbxCKW8k3L7L0lVodQVB5BwZGeTqYC/HDpOKoFVqSI
-         8yWbNizPZUyZILPW08XqWQzfOHoFPNaf9qBsBJNTU6T5DUwIkk35CAQ00u7s9HUz1WHN
-         MPcKaSKF9NlkgOX5RXJZcrxidnTyY/246BuaTJuQTyDoQku4rCHMtUCp34ufQtiAgnm0
-         25d4gsKbPm5CrlhjkDFESfRFdycFS5XjRNTrOBDbxqZk+2Fqs+gcYRcs+Qcw0vZViiET
-         lNKg==
-X-Forwarded-Encrypted: i=1; AL+hErHbiwK6K4DH+Jount1VRACMlJdcDNU82cPWCF3jrhH/UbR+rPfdQmzDaTD5S1XKUNI5rgxnYP+DzWCgsQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z88qMPLYJKnxflKE8PSdf3HasZXj/tN/hq0euCGa4Btri+wgASE
-	etHODiPORTzLJuiAtNUKl/xOxs6LUS3I/IoSL3o2oM5nX1cfMunNQxAY
-X-Gm-Gg: AZFdTZfkHkTAWNhbgRQSK2UWnU0PRni1cDevzIsSqhQdqIMENofhpHIS9W2sGD0BnGr
-	V/zR9xww1wKwKwGV2HwfVJvyCi1eYrcDjhfsFsobT2KTCFySPEALj6XPOvvati7dwV0PmgRkfaf
-	ZGyJk/lqCqbEHuiRw/dTmijT/t2dESd8C9oCIqErAZoY8AHOfgUv/IIuPrfn3/INyUZrdbhTZmo
-	Kk1C/9vGDhbjeIGl7VmUa28TIpqn4NAEFWRHRiSwWuVpcA6XE+QXKuADcdzAFWDYqQnpFzxfLf5
-	qT+bMIiqCJbC1eT6hWV2M5lT5nCj0vHJK5lru8Uxk6bqBvb+iKjULislS6FyZ8Hq4MjvtznTk8A
-	Y3BW3YcCJCMgqq89MnTp4z1DcNjLzESJ9QDOYyxUrKW6Z1aAvHgqCxvDrxYm/lO2zDVFOMJvrqy
-	um10nK7/o8+JH6qMpmnwN/mNYoQ6oEJpeYpH8dPnDHGsf0EtLKCeVVXuw/GFuzyoXoAxkvXEQGu
-	gcmVUR+kDq4Kt+f/QNwixKy3xMJ/Pf8IqD7f13rUcrLwSRYcOirPKw+yBU543jMt9W4hQ5v+9L0
-	pnBvwUhHOX/uvomEKwKMuiVkDQyWX42/rOuElGXcqtQBhpz9TsfT34jdeXAtaiBrTWh6s7O3p8W
-	HsOwTqljvEA==
-X-Received: by 2002:a17:906:397:b0:c41:26b8:c49d with SMTP id a640c23a62f3a-c513aab9965mr692564366b.38.1795428168018;
-        Mon, 23 Nov 2026 02:02:48 -0800 (PST)
-Received: from xeon ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae8dc60sm379265766b.34.2026.11.23.02.02.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 02:02:47 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQv8DoiR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC1141F000EF;
+	Mon, 23 Nov 2026 10:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795428688;
+	bh=rDFRLPy40I79JiGWrVFkLz2U4fAoPpBfu86dL+TJWTw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=EQv8DoiRck3gy8xgpS3BEeZCIVXlC+5twIrYuAJPvxyh+T6hLul9ehLPpI0/H8Ena
+	 EoHPb6kv2Z1NRHkQj923ovInemiLOUPSnbRP19n0hmOl3DYyi/0U2zQnqNlsdAYgQX
+	 yfIeKn1+n9OIoTJRvbp7rjlMj4wIsTr/xKlt8/kIiAVX5xbKrEtXbYSnqm7V+dLOrM
+	 VyoI9JSIUfP6xwxXeJf8XGivEo78xSGLAZFRbS/S+K2EDg0EQWkh2mc7W/lQNIsXSv
+	 CCH9QPsnErU7JRjGcCJBhGjJ2f+Q+uo3Lw7ckrw1kCFyKD4FZnZKjrPIy1KnGsdlwY
+	 rf74RydNSb3kw==
+From: Maxime Ripard <mripard@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	Janne Grunau <j@jannau.net>,
+	Sasha Finkelstein <k@chaosmail.tech>,
+	asahi@lists.linux.dev,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	sashiko-bot@kernel.org,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Dave Airlie <airlied@redhat.com>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Alison Wang <alison.wang@nxp.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Tian Tao <tiantao6@hisilicon.com>,
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+	Yongbang Shi <shiyongbang@huawei.com>,
+	Dexuan Cui <decui@microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	imx@lists.linux.dev,
+	Paul Cercueil <paul@crapouillou.net>,
+	linux-mips@vger.kernel.org,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Jianmin Lv <lvjianmin@loongson.cn>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Qianhai Wu <wuqianhai@loongson.cn>,
+	Xi Ruoyao <xry111@xry111.site>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>,
+	freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	nouveau@lists.freedesktop.org,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	spice-devel@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	David Lechner <david@lechnology.com>,
+	Iker Pedrosa <ikerpedrosam@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-sunxi@lists.linux.dev,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-sound@vger.kernel.org,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] ASoC: tegra: Add support for mono channel to Tegra20/Tegra30 I2S DAIs
-Date: Mon, 23 Nov 2026 12:02:28 +0200
-Message-ID: <20261123100228.77797-1-clamor95@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
+	Alex Lanzano <lanzano.alex@gmail.com>,
+	LiangCheng Wang <zaq14760@gmail.com>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+	Michal Simek <michal.simek@amd.com>
+Subject: Re: (subset) [PATCH v2 00/64] drm: Switch drivers to drm_mode_config_create_initial_state
+Date: Mon, 23 Nov 2026 11:11:22 +0100
+Message-ID: <179542861006.1136573.1196433498269800463.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.56.1
+In-Reply-To: <20261116-drm-no-more-config-reset-v2-0-0bb471f4d1e0@kernel.org>
+References: <20261116-drm-no-more-config-reset-v2-0-0bb471f4d1e0@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -102,166 +161,125 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-According to the TRM, both Tegra20 and Tegra30 I2S should be able to
-support a mono channel for non-DSP formats, while the number of channels
-for the DSP (FSYNC) format should remain restricted to a minimum of two
-for Tegra30+.
+On Mon, 16 Nov 2026 11:30:16 +0100, Maxime Ripard wrote:
+> drm_mode_config_reset() has a dual role: it creates the initial KMS
+> state at probe time, and resets hardware and software state during
+> suspend/resume cycles. However, the two roles need different
+> behaviors, notably for objects like drm_private_obj that must persist
+> across suspend/resume and are excluded from drm_mode_config_reset()
+> by design.
+> 
+> [...]
 
-Implement support for mono audio by adjusting the I2S clock and divider
-calculation logic for both Tegra20 and Tegra30+.
+Applied to misc/kernel.git (drm-misc-next)
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
-I2S clock calculations were adjusted to match those found in downstream
-sources for Tegra20 up to Tegra124. This change was tested on the LG
-Optimus Vu (P895), and sound was consistent with both mono and dual
-channels, with no distortion.
----
- sound/soc/tegra/tegra20_i2s.c | 21 ++++++++++++++++-----
- sound/soc/tegra/tegra30_i2s.c | 31 +++++++++++++++++++++----------
- 2 files changed, 37 insertions(+), 15 deletions(-)
+[01/64] drm/adp: Switch to drm_mode_config_create_initial_state
+        commit: d636d17d3b8ecda8a3db6a77874e652aabac4eb2
+[02/64] drm/amdgpu: Switch to drm_mode_config_create_initial_state
+        commit: 064bc83ffc6eb72ec8af2973517f130d81bcd9bb
+[04/64] drm/hdlcd: Switch to drm_mode_config_create_initial_state
+        commit: 18becfe9b42cb828fc7fcf9703319d34675cd9f1
+[05/64] drm/armada: Switch to drm_mode_config_create_initial_state
+        commit: 69cecb2d921b7ae098c2800cbfa67590c436c3c4
+[06/64] drm/ast: Switch to drm_mode_config_create_initial_state
+        commit: 76dacf729a8dd4a954a5a8457ca49b221055d346
+[07/64] drm/exynos: Switch to drm_mode_config_create_initial_state
+        commit: cbe6da900d937f0de4c73eb574c409c9e2f4a7e8
+[08/64] drm/fsl-dcu: Switch to drm_mode_config_create_initial_state
+        commit: 6a294a6bf06ed0d71a505998bd0fd3abe1e9ea87
+[09/64] drm/hisilicon/hibmc: Remove hibmc_unload() from the load error path
+        commit: f830550f85cd0f5bd955d5b9abdb795f95a25ff8
+[10/64] drm/hisilicon/hibmc: Switch to drm_mode_config_create_initial_state
+        commit: f935c8d2f8c6de0c4b95c5f63874ced18efe1de6
+[12/64] drm/imx/ipuv3: Switch to drm_mode_config_create_initial_state
+        commit: 8799786a618d2a56b8e3dc998b64fb28cb648ca6
+[13/64] drm/ingenic: Move the private object creation before the reset
+        commit: 5cc203c0dcd3352196d8ede54531afc2175193b0
+[14/64] drm/ingenic: Switch to drm_mode_config_create_initial_state
+        commit: 8636f44eb77f5f738708423a104ee2f225f84b97
+[15/64] drm/kmb: Switch to drm_mode_config_create_initial_state
+        commit: f4f4fd2ae13175ef7aa851cdeaa08bf29a0f38b1
+[16/64] drm/logicvc: Switch to drm_mode_config_create_initial_state
+        commit: 7f84f99fa2d9b068e4a51514df0e1f32ad3247aa
+[18/64] drm/mediatek: Switch to drm_mode_config_create_initial_state
+        commit: 333cf2d79ee32c5590787eeb6df1c3c1a9ad6a48
+[19/64] drm/mgag200: Switch to drm_mode_config_create_initial_state
+        commit: 2fb1383d1aed812e4830aec34b890547fe8d496e
+[20/64] drm/msm: Switch to drm_mode_config_create_initial_state
+        commit: 53556096b6e5e07a8c58fe19cfdf5f3d4e1197ab
+[21/64] drm/nouveau: Switch to drm_mode_config_create_initial_state
+        commit: 960f6b7c64cb9536c37e7995262fd465f2fc623b
+[22/64] drm/omap: Switch to drm_mode_config_create_initial_state
+        commit: cf34a54e91f99b80623fee78ad334871a7f39858
+[23/64] drm/qxl: Destroy the monitors object on the modeset init error path
+        commit: bf50dc68880788f9ad85f4411f2d3fa575139ceb
+[24/64] drm/qxl: Switch to drm_mode_config_create_initial_state
+        commit: f364abef006d3867174f9defa5f79c4c6585cead
+[26/64] drm/rz-du: Switch to drm_mode_config_create_initial_state
+        commit: 938dfe76a15263c5fac77ea1f99c265848c219f8
+[27/64] drm/shmobile: Switch to drm_mode_config_create_initial_state
+        commit: 588132787e6df07f0267983881f437990d56c5e8
+[28/64] drm/st7571: Switch to drm_mode_config_create_initial_state
+        commit: e03927d29003912052c64aad83df169243d43484
+[32/64] drm/sprd: Switch to drm_mode_config_create_initial_state
+        commit: 1af982780216d568a4e8ff6790b87de29e52ab90
+[33/64] drm/sti: Fix drm_atomic_helper_shutdown() on the bind error paths
+        commit: d3047688f4bc35ca827ee2994a014c81898d73cc
+[34/64] drm/sti: Move drm_mode_config_create_initial_state() before drm_dev_register()
+        commit: 2798c8d86bf4e4853cbc1b3e2a248d55e714a649
+[36/64] drm/sun4i: Switch to drm_mode_config_create_initial_state
+        commit: ad5e714a08a6d5f6fa39b589a438b40aaac9e2bf
+[38/64] drm/tests: drm_atomic_state_test: Switch to drm_mode_config_create_initial_state
+        commit: 019bfdeb119dc616303a173323fd69853fe99858
+[39/64] drm/tests: drm_atomic_test: Switch to drm_mode_config_create_initial_state
+        commit: 53f0931d45c029f97c611837b8f853c9fad7a82c
+[40/64] drm/tests: drm_bridge_test: Switch to drm_mode_config_create_initial_state
+        commit: 45472c059ac76f982e31f67ef87f9db3caef1f88
+[41/64] drm/tests: drm_hdmi_state_helper_test: Switch to drm_mode_config_create_initial_state
+        commit: 3db9197bbe3fc859fd5b7521d1f4cedd9d62cb8c
+[42/64] drm/tidss: Switch to drm_mode_config_create_initial_state
+        commit: d771b7c8577c0b847d401a22f49a6abc18680ed3
+[44/64] drm/arcpgu: Switch to drm_mode_config_create_initial_state
+        commit: 620165b05363bea94b72970884f6f27ccf7cee3f
+[45/64] drm/bochs: Switch to drm_mode_config_create_initial_state
+        commit: c67548948d8c5ebb422fa03fb5dd89e44e458f20
+[46/64] drm/cirrus-qemu: Switch to drm_mode_config_create_initial_state
+        commit: 10e37ab94f0f10a7fd729a063c26bf1a94e7f2b0
+[47/64] drm/gm12u320: Switch to drm_mode_config_create_initial_state
+        commit: ce7e27979d41b94bb9a1ed66b6957a300a5a8c0a
+[48/64] drm/hx8357d: Switch to drm_mode_config_create_initial_state
+        commit: d9abdda3a6bd4903af87a1ed6d02c1897035cf4e
+[49/64] drm/ili9163: Switch to drm_mode_config_create_initial_state
+        commit: 6fc964d0567e8303cf72adc45dad29e9415fe76c
+[51/64] drm/ili9341: Switch to drm_mode_config_create_initial_state
+        commit: 75269393962354820792fddfe3da359b3be85ca3
+[52/64] drm/ili9486: Switch to drm_mode_config_create_initial_state
+        commit: c4f2890c815c5ac8d68668a072806edf4f466a7e
+[53/64] drm/mi0283qt: Switch to drm_mode_config_create_initial_state
+        commit: dfa078305c262eae2b0449814392e429b6bd58ee
+[54/64] drm/panel-mipi-dbi: Switch to drm_mode_config_create_initial_state
+        commit: 38b37ce4bc5fc406f1e93a90ce9b2b8531c6f5cb
+[55/64] drm/pixpaper: Switch to drm_mode_config_create_initial_state
+        commit: d3cb39a976745195d2d388b5b9194d47bfd2eb41
+[56/64] drm/repaper: Switch to drm_mode_config_create_initial_state
+        commit: ce380404a74260b6bb178b24dfd4125a591e1069
+[57/64] drm/sharp-memory: Switch to drm_mode_config_create_initial_state
+        commit: d4b8b6e920779d568a085eb611c75dc4bb5805a8
+[58/64] drm/udl: Switch to drm_mode_config_create_initial_state
+        commit: 6358c0da712b0170a3f1470c5eb75ec95340875c
+[59/64] drm/vboxvideo: Switch to drm_mode_config_create_initial_state
+        commit: a932fa029dad6b23b4ff5b7fdb44e5819c098b6e
+[60/64] drm/verisilicon: Switch to drm_mode_config_create_initial_state
+        commit: f3b23268607094ff4461119d623a235a2bdc8608
+[61/64] drm/virtio: Switch to drm_mode_config_create_initial_state
+        commit: eb2c77198187b0283f12be28bdb770703da59dca
+[63/64] drm/xen: Switch to drm_mode_config_create_initial_state
+        commit: 51b3e01a42db6100976907b95d224636e6551c98
+[64/64] drm/xlnx: Switch to drm_mode_config_create_initial_state
+        commit: bb8391a1a8d00b11661ab692313a991456d391dd
 
-diff --git a/sound/soc/tegra/tegra20_i2s.c b/sound/soc/tegra/tegra20_i2s.c
-index 2978c9d6f4839..285923e6aeffa 100644
---- a/sound/soc/tegra/tegra20_i2s.c
-+++ b/sound/soc/tegra/tegra20_i2s.c
-@@ -144,7 +144,12 @@ static int tegra20_i2s_hw_params(struct snd_pcm_substream *substream,
- 	struct device *dev = dai->dev;
- 	struct tegra20_i2s *i2s = snd_soc_dai_get_drvdata(dai);
- 	unsigned int mask, val;
--	int ret, sample_size, srate, i2sclock, bitcnt;
-+	int ret, sample_size, srate, i2sclock, bitcnt, i2sclk_div, is_dsp;
-+
-+	is_dsp = regmap_test_bits(i2s->regmap, TEGRA20_I2S_CTRL,
-+				  TEGRA20_I2S_CTRL_BIT_FORMAT_DSP);
-+	if (is_dsp < 0)
-+		return is_dsp;
- 
- 	mask = TEGRA20_I2S_CTRL_BIT_SIZE_MASK;
- 	switch (params_format(params)) {
-@@ -174,18 +179,24 @@ static int tegra20_i2s_hw_params(struct snd_pcm_substream *substream,
- 	/* Final "* 2" required by Tegra hardware */
- 	i2sclock = srate * params_channels(params) * sample_size * 2;
- 
-+	/* Additional "* 2" is needed for DSP mode */
-+	if (is_dsp)
-+		i2sclock *= 2;
-+
- 	ret = clk_set_rate(i2s->clk_i2s, i2sclock);
- 	if (ret) {
- 		dev_err(dev, "Can't set I2S clock rate: %d\n", ret);
- 		return ret;
- 	}
- 
--	bitcnt = (i2sclock / (2 * srate)) - 1;
-+	i2sclk_div = is_dsp ? srate : params_channels(params) * srate;
-+
-+	bitcnt = (i2sclock / i2sclk_div) - 1;
- 	if (bitcnt < 0 || bitcnt > TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US)
- 		return -EINVAL;
- 	val = bitcnt << TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT;
- 
--	if (i2sclock % (2 * srate))
-+	if (i2sclock % i2sclk_div)
- 		val |= TEGRA20_I2S_TIMING_NON_SYM_ENABLE;
- 
- 	regmap_write(i2s->regmap, TEGRA20_I2S_TIMING, val);
-@@ -330,14 +341,14 @@ static const struct snd_soc_dai_ops tegra20_i2s_dai_ops = {
- static const struct snd_soc_dai_driver tegra20_i2s_dai_template = {
- 	.playback = {
- 		.stream_name = "Playback",
--		.channels_min = 2,
-+		.channels_min = 1,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
- 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.capture = {
- 		.stream_name = "Capture",
--		.channels_min = 2,
-+		.channels_min = 1,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
- 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index e5e648d00621b..433a7eb873b43 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -137,10 +137,16 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 	struct device *dev = dai->dev;
- 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
- 	unsigned int mask, val, reg;
--	int ret, sample_size, srate, i2sclock, bitcnt;
-+	int ret, sample_size, srate, i2sclock, bitcnt, i2sclk_div, is_dsp;
- 	struct tegra30_ahub_cif_conf cif_conf;
- 
--	if (params_channels(params) != 2)
-+	is_dsp = regmap_test_bits(i2s->regmap, TEGRA30_I2S_CTRL,
-+				  TEGRA30_I2S_CTRL_FRAME_FORMAT_FSYNC);
-+	if (is_dsp < 0)
-+		return is_dsp;
-+
-+	/* For DSP format min amount of channels is still two */
-+	if (params_channels(params) != 2 && is_dsp)
- 		return -EINVAL;
- 
- 	mask = TEGRA30_I2S_CTRL_BIT_SIZE_MASK;
-@@ -157,10 +163,15 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 
- 	srate = params_rate(params);
- 
--	/* Final "* 2" required by Tegra hardware */
--	i2sclock = srate * params_channels(params) * sample_size * 2;
-+	i2sclock = srate * params_channels(params) * sample_size;
-+
-+	/* Additional "* 4" is needed for DSP mode */
-+	if (is_dsp)
-+		i2sclock *= 4;
-+
-+	i2sclk_div = is_dsp ? srate : params_channels(params) * srate;
- 
--	bitcnt = (i2sclock / (2 * srate)) - 1;
-+	bitcnt = (i2sclock / i2sclk_div) - 1;
- 	if (bitcnt < 0 || bitcnt > TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US)
- 		return -EINVAL;
- 
-@@ -172,14 +183,14 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 
- 	val = bitcnt << TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT;
- 
--	if (i2sclock % (2 * srate))
-+	if (i2sclock % i2sclk_div)
- 		val |= TEGRA30_I2S_TIMING_NON_SYM_ENABLE;
- 
- 	regmap_write(i2s->regmap, TEGRA30_I2S_TIMING, val);
- 
- 	cif_conf.threshold = 0;
--	cif_conf.audio_channels = 2;
--	cif_conf.client_channels = 2;
-+	cif_conf.audio_channels = params_channels(params);
-+	cif_conf.client_channels = params_channels(params);
- 	cif_conf.audio_bits = TEGRA30_AUDIOCIF_BITS_16;
- 	cif_conf.client_bits = TEGRA30_AUDIOCIF_BITS_16;
- 	cif_conf.expand = 0;
-@@ -323,14 +334,14 @@ static const struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
- static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
- 	.playback = {
- 		.stream_name = "Playback",
--		.channels_min = 2,
-+		.channels_min = 1,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
- 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
- 	},
- 	.capture = {
- 		.stream_name = "Capture",
--		.channels_min = 2,
-+		.channels_min = 1,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_96000,
- 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
--- 
-2.53.0
-
+Thanks!
+Maxime
