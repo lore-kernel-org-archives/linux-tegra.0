@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795434244;
-	b=rJy91I0XLuWOIKBGVCbFiWVCPyH+/07dlC8isSWWVZa/tKZzzsiIRFsLlQSXXgi9fY6l
-	 b+zefpGflrd3oXSDoIWSDFR2+meE5dYR2SUPAoJ/g/Ua559CHDcDIqj7UZSieVEuP8wjD
-	 DfYG9UXuj6azqsNzNw/3wTNguB7biWOMmYleFLyE2Gr5/hUPxlUvkOXLjBIgWblN7MKih
-	 DeXtd17tdZEeLzeQMcWutrXE/QkHBI3xJ75Bl7FcViqzLI6Pu9yUlT5QQ72M0J2T+jjM9
-	 611+rPOd3i+ruF2TTbf6mIseQ3kdsOAAkWA2469DM295Klf4K/VMPbNK+SCATHhqlbQ==
+	t=1795434451;
+	b=m7m4/FGK35pX71puWfkpq+7ucrnCwLnAKbdQu/aCfvnlSqDtpqa9wmxt7L0WXXuYYcnu
+	 TKKkt1N6+xQJfFOTxSpnbrPG18mMNZVrPqIRF9Wx8Q1pQxnzBhdKz7NH3l/Pnk5oWVU2K
+	 KwTcbRWBT0Kcl3/yTXJVX/1P4ZwwXI6XqJmEVMinxZZNNaOIesBfD3zRsqM0/qhAqIdIp
+	 weQA0X1Q4dtVrkqJVG88JtF/iickyGUR+R4onGdry4gqaR5K4AUzgf8RRcSxLRtgnCVrE
+	 CrsKWMTnC3Hw+r+MAzzinpSbxwkinwHhE1CHJDE/esImiQ8DRejl+MQQHaaa6frZ2nQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795434244;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795434451;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=/0ejSNlRu4xWE52mLb4QOPKwVZHO3yqe+KvuEcrsyw4=;
-	b=q36IG1YvYttIBI0gRWze0SGTRtxHNu/Rv0WrJWSM+6m7eYAIOOZjYPkVe46c+etkfrOR
-	 Ho66s1V52QwOL1KKpURaxRh3t5BvmOw68TEI/oTLzwaT4+Uq3LZwFH9efmw4Cv/WcyUNT
-	 42Pz0rYzJI3Sry/VpNpUoa9329DVlSRkcKKd76JJWMati+iaypzOIdxcOoE3eV2Mk8jnG
-	 Oq/Xfnl2cFgyTiAdsJtp90fET9PqvqFyd/nyEL+1+vhRERHE0M+ia/PeOK9EYUra09vg/
-	 KFiygAKtxTW3yaiwCR6dPm5wRWfII6IXB+MqSCJqDxIfSWlzvaxDEeIN2PsHq8tTiwA==
+	bh=PHZKX0qOJM28Tj2hbs7mNGtiUK/YIMY2xT+aqEo5P2s=;
+	b=bVs/BLIdsZG1a9hNTnHA/ByLyUPCv7H3k8EPmzO9RGOD9Zf2UyxDgEPZ1j1+lz2h9793
+	 l5MhoRFjPgExA+Y/ErXbMtsyjlMvtoeowOmYT+nQuBpXfxZDZX+HL+2r8P5pm6/ewqotF
+	 f/RogMUxnEUOxPpRinQq1z3FigwTK9tSZjBVjunvUIYgkehoK+uxM9Jak49Vtj60h3z/Z
+	 e8VjxgiNp4shhDXD4302eTD5D35nlGzg5ZZqMfUfZqqQZz29VmMlAiKLmZOyTC2DVF6XZ
+	 JJvggoYTw6OXqRjkbP4yzKUGPpiDWiZKPOZCumFIuhQGF8t3AoU3mJsJddV2jqy8ByQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bqaClvdG;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K9fOUlYs;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED4D606A31F;
-	Mon, 23 Nov 2026 11:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DB9606A31A;
+	Mon, 23 Nov 2026 11:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bqaClvdG
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A19E1F000E1;
-	Mon, 23 Nov 2026 11:44:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K9fOUlYs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 359981F000C6;
+	Mon, 23 Nov 2026 11:47:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795434244;
-	bh=/0ejSNlRu4xWE52mLb4QOPKwVZHO3yqe+KvuEcrsyw4=;
+	s=k20260515; t=1795434451;
+	bh=PHZKX0qOJM28Tj2hbs7mNGtiUK/YIMY2xT+aqEo5P2s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=bqaClvdG17qxe31niDjuLqC93mYbiPqKiy4NrXeDv+F9TcsPaXZCynlxfG/oxEyyy
-	 88Vz9jxPF+iov1xZnuUqbx1dg0cI7Z82amexQdgd6SFEfGXBnN12sL7DsqEDn6DCI/
-	 uUEQSi3ieHmT74Hh72+JMM0QNu3sGlUylc2FeYNo3VPnXQL+WcDtPjYjBxqgqLNlL9
-	 TW4Fb4P2I6ktrVlmmkJWUULkqM03tvlgzdZ86FIo0JrVW+XyooGKnfTnHL+1hl5a4s
-	 INNCtokjuxi7Tl2MI3lmlDKx1yz+VoeF0oH3tCS2uJ5NqpxEalPUjhTtXOQ8tQ57fT
-	 2GWhbIbSHBKvg==
-Date: Mon, 23 Nov 2026 12:44:00 +0100
+	b=K9fOUlYsb+WrusosJHD4/uwBPqsBY10DS7tlWJEQNUAm689/4wUAd4SbmVg3U+Vgc
+	 fOgXpLsYsgsfRfB3Nhhohf1YTN+OZXWiAIfNisD7QjPB6Hecf76Qwep5nWfd7pKDBR
+	 TmFyLOTbwkYv2oviTuYXYnmURUtB3eUa4GX0VtjumRBmuAsRCqS/nlbdZWV4KIgRDo
+	 tMMF5jnXPx8A5Gdan0Effq5wbuYhxU5teFoogYopaJ6AA4VFbPkFYYjgi5748uEeob
+	 XcMSibP6cjEIQaa8mTQtdTop3UySiyeDLnG5D4bCVB4paNqjjkqQw8RvFWVtnwDfCr
+	 4iidKS5SY8EyA==
+Date: Mon, 23 Nov 2026 12:47:27 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -51,9 +51,10 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thierry Reding <treding@nvidia.com>, Wayne Chang <waynec@nvidia.com>
 Subject: Re: [PATCH v2 02/12] dt-bindings: usb: Add Tegra238 XUSB host
  controller support
-Message-ID: <20261123-sassy-fragrant-markhor-c6fbb3@quoll>
+Message-ID: <20261123-versatile-alpaca-of-greatness-dd6694@quoll>
 References: <20261116-tegra-usb-v2-0-42efc03a9700@nvidia.com>
  <20261116-tegra-usb-v2-2-42efc03a9700@nvidia.com>
+ <20261123-sassy-fragrant-markhor-c6fbb3@quoll>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -65,71 +66,38 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261116-tegra-usb-v2-2-42efc03a9700@nvidia.com>
+In-Reply-To: <20261123-sassy-fragrant-markhor-c6fbb3@quoll>
 
-On Mon, Nov 16, 2026 at 03:23:59PM +0000, Jon Hunter wrote:
->    reg:
-> @@ -140,6 +141,16 @@ properties:
->          - usb3-2
->          - usb3-3
->  
-> +  resets:
-> +    items:
-> +      - description: XUSB host controller reset
-> +      - description: XUSB SuperSpeed reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: xusb_host
-> +      - const: xusb_ss
+On Mon, Nov 23, 2026 at 12:44:00PM +0100, Krzysztof Kozlowski wrote:
+> > +      properties:
+> > +        interrupts:
+> > +          maxItems: 8
+> > +        iommus:
+> > +          maxItems: 1
+> > +        power-domains: false
+> > +        power-domain-names: false
+> > +        phys:
+> > +          maxItems: 6
+> > +        phy-names:
+> > +          maxItems: 6
+> > +          items:
+> > +            enum:
+> > +              - usb2-0
+> > +              - usb2-1
+> > +              - usb2-2
+> > +              - usb3-0
+> > +              - usb3-1
+> > +              - usb3-2
+> 
+> This should be rather fixed for this device, so without enum, just:
+> items:
+>   - const: ...
+>   - const: ...
+>   ....
+> 
 
-Drop xusb_ prefix, that's the name of this device.
-
-> +
->    power-domains:
->      items:
->        - description: XUSBC power domain (for Host and USB 2.0)
-> @@ -162,11 +173,44 @@ required:
->    - nvidia,xusb-padctl
->    - phys
->    - phy-names
-> -  - power-domains
-> -  - power-domain-names
->  
->  allOf:
->    - $ref: usb-xhci.yaml
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra238-xusb
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          maxItems: 8
-> +        iommus:
-> +          maxItems: 1
-> +        power-domains: false
-> +        power-domain-names: false
-> +        phys:
-> +          maxItems: 6
-> +        phy-names:
-> +          maxItems: 6
-> +          items:
-> +            enum:
-> +              - usb2-0
-> +              - usb2-1
-> +              - usb2-2
-> +              - usb3-0
-> +              - usb3-1
-> +              - usb3-2
-
-This should be rather fixed for this device, so without enum, just:
-items:
-  - const: ...
-  - const: ...
-  ....
-
+Although I see now we talked about this - this supports *up to 6* phys,
+so the list is not fixed per given IP block instance?
 
 Best regards,
 Krzysztof
