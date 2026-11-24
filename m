@@ -1,83 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795498012;
-	b=pPthI92b3qzluXXGIdoSfYxJRm5UqJs7zTr+lY6b6xZUuFgT8XxyBBxeY45Kfk1/po2W
-	 9IvOJfNiOcCS+76/scjgFmd7LZhr/er3M5isQySgeyXdzv/240m16PosF7jLvaIRMx0sI
-	 +/AdPsL8VqQygYdKXexXYaUJvImWaY7lwi3xegZ8p3vI97/HZty9M75BHeFZUoUlvJaxa
-	 9pwH7JYA0Xca7ncZ8Uz+TNZayoobBMbFzOmmN3X6uHq8aFuxiZYMTKcs3JoQvECUyyAqZ
-	 cna91O3wEvdoP6bG/Q4m88EtJTWWow1OGiyGSrWWdHOYhne3EOQYVepemPO/F3uhi5A==
+	t=1795503604;
+	b=rLJHWNjqq1Vzl4R6uGL72hb7fhky2zYEPepHZmW0yBg8jE0UzAVmg3eOG/51Poni0sM1
+	 xaDPVKGbwtN0TQn3Q0gPT564i9RkNMX1CfyTHFFnniuzO1j68zn7pDkmj/WBmkTwlCnb4
+	 B1Rlc/tTyKlE9k/5t2N9zdSxoDnxOrz4no3invQYzWeXQ09k/3SanleuT/rxtNxKWLoX3
+	 dLu2hqUznDYvlDt8dsMfahJq/HokiY029CkB8TTpftDsZCcHYd6HaqmPRrTq2Qkaw+4WX
+	 Hnq0RGSUlN7ZItFPGhP7kJB/2M/K5sBryrFyFWohebshMgGt+8fh3n8u4ZdSzOC7scg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795498012;
-	h=Received:DKIM-Signature:X-Mailer:From:To:Cc:Subject:In-Reply-To:
-	 References:Date:Message-ID:MIME-Version:Content-Type;
-	bh=6hEHnZ4sfgUflRbEhxUh0CD0ylQZFIJ15GBUvc4I5mw=;
-	b=RWu6+8mDD4Imsj342o6Rf1I0UeOPluHc2YYbvZknoYoQBiZT3Sli9WP2Y0yb9oCB4nBy
-	 /oy0K1Btz4ajSa7q2aEc1izhQW14bKhxiohi9Gqh2t9pD3vAL75UQvlkVXsrXsSA94Yqx
-	 6y22he+J0DbJ974scaC/gGS25UOKW2VwAgPWM4uatmxIsP2jFRVO7kMyRk8ZJx6ZGcrT5
-	 dWqtJx2IC7iepb+Tdj0ebE8lVxMqvwU/9emajjLPQh3wI/rYzNy3w5E/ImJqlV+THrbtK
-	 MOhDkD1vqEtZaLDTh1fG0dN4LJXaN144oKhaXm7oc71pteB6GJOZ+QADHGakQ1kNa+g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795503604;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=VoHveLWNPeBOCpzoJQa7hKH+0T1iDM3QuPlPNaPBhoA=;
+	b=dOLjlrpEvehFAI3LmRMex+2iUCyHF3sdUTiBSHcL2p45h8MOUQJd4yGt4WML6PKv+/HW
+	 vv190iSbF/5+bdJ39Xnom8FTbBOgLIuWGGuSafu7/6xHaXG7F4ynmcPFlLIxnv4QTXDue
+	 CU6LIGEVpu8JWwlTTky+lGME0kF2LJnF4ycf02MX83thiw2qm9M6aj5Ll83sHY81focmc
+	 nWz6YHCThuZVZ8mo5ZeEnPtBxn4AyW+gX5U5Pw4aOyU5xu6nZohy6JGCpjQZ8mCrxJj+z
+	 SRNN9ssab6W+ujFO1MN7ORiK4TBM0wlRy6KJVEN/OtmDBgCtrp7R3pEkRSxYuih8SnA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="bMuZ/82I";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NGegiZv5;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC80606A31E;
-	Tue, 24 Nov 2026 05:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53477606A321;
+	Tue, 24 Nov 2026 07:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bMuZ/82I
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC0C21F000C4;
-	Tue, 24 Nov 2026 05:26:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NGegiZv5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED60E1F000C4;
+	Tue, 24 Nov 2026 07:00:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795498011;
-	bh=6hEHnZ4sfgUflRbEhxUh0CD0ylQZFIJ15GBUvc4I5mw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=bMuZ/82I+vs+8NKsF31D7nQhBoDtC/vh+MdJDEQFc6RfLu9u4tc1iXSnh9tQUIt1R
-	 7B4aBvaDLvXRLuiTN1J7kRllSEWDL5FAyMso3WrOUo3yd+gxajeQWfNT+SPnw1JR85
-	 nBowKBVgT76oli9zpQaDZRhbQAs8+j2FbwhIxOTktb7YTs9tvpPqUQff1wyBXBTqZX
-	 UWpTbmZiOBunZB6QKAj5MxB+n26rmgEzueQlO0KVhXTYiGVNLPvsfiB8Qz9ab3ckww
-	 3NiPz4iKGto4wg14EG/cvFr3KsGIznEulrKB1dyBb+9p9Y/pw05d9hw5P8rcLwFQCN
-	 Ocw7AG9iUNzXQ==
-X-Mailer: emacs 31.1 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Alexey Kardashevskiy <aik@amd.com>, linux-coco@lists.linux.dev
-Cc: Alex Williamson <alex@shazbot.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jacob Pan <jacob.pan@linux.microsoft.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Steven Price <steven.price@arm.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Will Deacon <will@kernel.org>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	iommu@lists.linux.dev,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v9 00/13] iommufd: TSM-backed virtual IOMMUs for
- confidential guests
-In-Reply-To: <3573001a-24b8-49f3-97c8-7a414c88deb4@amd.com>
-References: <20261116081935.85372-1-aneesh.kumar@kernel.org>
- <3573001a-24b8-49f3-97c8-7a414c88deb4@amd.com>
-Date: Tue, 24 Nov 2026 10:56:40 +0530
-Message-ID: <yq5ah5h6by0f.fsf@kernel.org>
+	s=k20260515; t=1795503603;
+	bh=VoHveLWNPeBOCpzoJQa7hKH+0T1iDM3QuPlPNaPBhoA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NGegiZv5LDFoZMqOGefFW/AkVByod02tKCRhbKz8ds0jAyRYhZIMIOnJjih5ji0Zr
+	 CDQ7PaEnx1yCJQUHzqXCXDtp7XtrsMtCbHTNTINWVt8kF0RQFTPoEJa31jWW4DzKbv
+	 WPq+gIjFiArH9AtccPahpezRqGds1VfHLGlXz6aTCiOjcQkdqaNl4r5s0oJPGULIUO
+	 d6cEimywuPEPduSwvdOY/f3Mj6079QisY/av+bwOG0ASbZ6Oyj2XbvzqgaRgWhAVNc
+	 G4ahCezPnSJ6uiBz5Xt71fgqjXl/XfPmPvxtGoewNFwTzx1Fo5RY/jYrv9LnrLcTpv
+	 1zFY4M1qS27xw==
+Date: Tue, 24 Nov 2026 08:00:00 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: display: nvidia,tegra20-dc: Move 'rgb' node
+ properties
+Message-ID: <20261124-steel-eagle-of-focus-b8c4b1@quoll>
+References: <20261102142802.2742565-1-robh@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -87,60 +62,40 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261102142802.2742565-1-robh@kernel.org>
 
-Alexey Kardashevskiy <aik@amd.com> writes:
+On Mon, Nov 02, 2026 at 08:28:01AM -0600, Rob Herring (Arm) wrote:
+> Properties are supposed to be defined in the main schema and not in
+> conditional schemas. Move the properties for the 'rgb' node to the main
+> schema.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../display/tegra/nvidia,tegra20-dc.yaml      | 43 ++++++++++---------
+>  1 file changed, 22 insertions(+), 21 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
+> index 69be95afd562..a42bf7ed37a2 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml
+> @@ -77,8 +77,27 @@ properties:
+>      description: A list of phandles of outputs that this display controller can drive.
+>  
+>    rgb:
+> +    description: Each display controller node has a child node that represents the
+> +      RGB output associated with the controller.
+>      type: object
 
-> On 16/11/26 19:19, Aneesh Kumar K.V (Arm) wrote:
->> This series adds IOMMUFD and PCI/TSM infrastructure for assigning PCI
->> devices to confidential guests. A TEE Security Manager (TSM) can provide a
->> virtual IOMMU (vIOMMU), and an IOMMUFD vDEVICE object represents a physical
->> device within that virtual IOMMU.
->> 
->> The series adds a common framework for operations on vDEVICE objects and
->> updates lifetime management to keep the VM and device-security resources
->> available while those objects are in use.
->> 
->> The Arm CCA backend is provided in a separate series, together with
->> operations for TEE Device Interface Security Protocol (TDISP) state changes
->> and access to cached device-attestation objects.
->> 
->> The full series, including the Arm CCA backend, is available at:
->
-> nah, it is not :(
->
->> 
->>    https://git.gitlab.arm.com/linux-arm/linux-cca.git cca/topics/7.4/tdisp-host-rc3
+This needs proper fix in general:
+1. "port" child (e.g. arch/arm/boot/dts/nvidia/tegra30-asus-lvds-display.dtsi)
+2. additionalProperties: false
 
+The change is correct though as it does only one thing, so:
 
-Can you use https://git.gitlab.arm.com/linux-arm/linux-cca.git cca/topics/7.4/cca-da-integration-v1
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
+Best regards,
+Krzysztof
 
->> 
->> Notes:
->> * Codex was used to assist with commit message formatting and code
->>    rearrangement.
->> 
-
- [ ... 148 lines skipped ... ] 
-
->>   include/linux/tsm.h                           |  41 +-
->>   include/uapi/linux/iommufd.h                  |  36 +-
->>   25 files changed, 880 insertions(+), 462 deletions(-)
->> 
->> 
->> base-commit: aebb7274476403040d582c61478df8f4a7bf9cd3
->
-> This is v7.4-rc3.
->
->> prerequisite-patch-id: 121492d71cc22b2adbfdedd668868c5a449ad764
->> prerequisite-patch-id: ed31fd728f0adba3d60dcd6f3bae8da1a2193bcc
->
-> What are these two? Cannot find them any tree... I really want try this all but also trying to eliminate guessing...
->
-
-Those prerequisite patches are from this series:
-
-https://lore.kernel.org/all/20261116075420.76205-1-aneesh.kumar@kernel.org
-
--aneesh
