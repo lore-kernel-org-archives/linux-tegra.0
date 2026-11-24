@@ -1,96 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.69.52
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795550881;
-	b=mIvlc6W9GeJ5PI3sGsS9RJQAOi/9VOnJlAt242l3YekRV7zGvVdnmdmk6ans0n7Qdcoq
-	 42wwGsPUeaE7he9eaL3rIaIDIR1h6QQbVCM0F6jxDXvgAIjmDJj5HcoxXOV1d/HPSLpRC
-	 nTtQiwWjLDeQgXNBVnFoslZ+ZCHtA/w2sc3gg8BZ9iSxpiC+eppAy38vja8eFSFnh+sxP
-	 KyPYEQgE9R9NS4JmwH7IbeegD1ug041ANrKbueC3Du/lF2IgMazlAgODv22GaGft0aGaa
-	 k3+GDvLGXke1xb7TadXFaenEVnqxKLAUZL/V5OMZldMIybpqwac4Dv+DgV29erMCEsQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795550881;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=PzUMsOWqv2KflZxlxCUcnvi0KWwUa4H7CNQwM3ltAr0=;
-	b=OhcVjZWmna/zk2jRHYZc2b/tEhCYDP4lq/JTZz88oR8twCM08GrNFjiUezm/f4VVhUXC
-	 LALBQck6Gt97lMf/ITGmjt0C+cy29HIX2omhqGGswoUkrWJT23vyhzy7Dms1R0lfQJLqA
-	 H5vm7SCxXYEUV+LtLEBo990K98wauwKAFglY8NDLjX+fbe8kXrGFUAUorZqQcvGhyeEX7
-	 x0Pb3e08RDaQOILcjjzSZO9keaDn6e8Sz08OG5NnsG5HRNINW1SDQmnDJNkzYsGQuFNI9
-	 jr3tOK8dGEcZsRZMYE0+uiC1dVrXdkjQUvTRjmM9g8mBgGqGDa+qcpdRt/sogpKjydQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=HMjwcuhM;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.69.52
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010052.outbound.protection.outlook.com [52.101.69.52])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.51
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795554376;
+	b=h4JKN1jiW+o085zbMe50uxN+qDzQZ3j+j3CJoBS6Zl0KCMT9y91MTdFJm1SrEhZjwa4K
+	 oL4/L2fxmlrDELCsoB3Wcw8NFc1j1hC7VvoPadumiqumWPKQ+F84smo3dTSCqtKDRT43W
+	 GCrBo16x79eriNvqydoTPRZbysOomYWGVktFUr9AMxX7cBZ8oyuphSNyywTwA2gdCg0Cs
+	 jNDoULlufKtBlXM4komuMbAZ2MnksYB/91uYSnZLZh5JqHaJBQiMzpprddE439sh9fKwO
+	 W93gg01p++VkcX5syYSbXiN3UfZx0RGKwMY2iptDddh3DDXYbQcPYxf8QIToItwQd7g==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795554376;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=rz9cXwSdrIyJkGKwTLKEziA5VeFet9zhVgH+uApk5dg=;
+	b=XNTi0evwY2qI3wqVmdBT86dbVoKHeZSLWxMzZHPWVFe67NNyOqJrwc2ub1kJ4yVFlcCW
+	 1+hVzCaZMTSOrGCvLWTQAtqfYWReNqxxa/uWFBWWWapaNzURMJzRRgN/dm4dnH7JTo1gB
+	 fwrSU9mFWoBNuSMbkRikw9lBm9lWBC8oLgYZHPo/THJb9fVWgLhpsLZOXzT1g9CxTkBKL
+	 x6A3XuaBnJXH4K7NndCnpoJH8bzYBVbfb06bKufMDqqv81RS167IMqjUHP9huXZDvqXEj
+	 oBKozDtjL3Ws6OZVPTomNpPTnbnlu1/WTgly8sBiRlW04Rgj8/yhI5/yRlWgwvetohw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DBMx8mG4;
+	arc=none smtp.remote-ip=209.85.167.51
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F5C606A31E;
-	Tue, 24 Nov 2026 20:08:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 11F5C606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F996606A321
+	for <linux-tegra@vger.kernel.org>; Tue, 24 Nov 2026 21:06:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F996606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=HMjwcuhM
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Fm1KCnkN1+XVWiJ2jOI9lClXNr4nDBXtt8L48Rl/Qr5YARIUAFd/9s+LtumchM+ZuWyXK0SAxGuijnJiC/NHwpAFwwYzHdh99gFeY/cW/ajPvYGKF9MZcsl3aAQF/Q4A8qqUl5Dbr0nSG7iBPjH+mp+i6YOEIWWQwJWJpyU0gz8a83CBDzi/x8bzbkAEhETCSuE6stG64QqcUHA2wpiUtLIVicJZzCWBVV/XwfexfgyiKYdxyMDtGtgng6Bn+rUXuvIXbwg3ENvOiqEK8bz90Wi2LfRCh/z5Z9rJhoY6gIlkHw3Y+TxgsNMQuyUEbwM+K4RG0FsZumgs0rZSKroD1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PzUMsOWqv2KflZxlxCUcnvi0KWwUa4H7CNQwM3ltAr0=;
- b=QmKBhWqFAOM6Gd57AhEpi26WqsU+ka1BOQfnoMeG7UhYjp2pLXd+rMmAHKJQjSUn6eiNBhSwR4TsHCSE2ikAfGiJXDVFLQei9kf7mJIH+k52V0jQa8/REhZj9ua273v0qfrLMhAcwE2nqOHd+MS123oBOGbh6SHIbLUeEbKwlXQueagFzbYaulbw4miqtsZMugQZbYfwKGPtaPwAIb5h2wG7gb4Xdee9uN0O3mzJo/BD77rGuNjJgSUFsnHET4BKZ96NihA2RU7u/SEpG1QtlB5tBqja5ZerF78LqyTDEc3I+qLpam3UbRiLOGt/dsNzFtiZeXNNQpTop43uNXSY9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PzUMsOWqv2KflZxlxCUcnvi0KWwUa4H7CNQwM3ltAr0=;
- b=HMjwcuhMSSsmqHSsZ6YRrxZ0FXyhylRGbGlYvmvjWIQ4XEhCW1aZAHZOBgKL9PCbbdmp4RqFCt6mA9gxgqo9lnoPgCahsJa13zV4i2G8X6erAVzYy80wHHKFL+ELS9VbhMrXEMxZ0Z0i6zP5CpJ82O/TQVJco7cd57lJikXQTHtvlCi9diE3/ssYufnH1/47D2hoiFYZ06ZCDX/+3TT89vfPkci4CpSvNJ/GS3EA6jN/KVH7tyT3WH68z5xNugbsdwbqTdgencvABsr6hmWCMifuV9FilM2NRw2BBvfsL4h7wPQiWigU2iGXDrrodKRstUHKxm092+fBcXbDlGd6hw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
- by VI0PR04MB10511.eurprd04.prod.outlook.com (2603:10a6:800:23a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.13; Tue, 24 Nov
- 2026 20:07:57 +0000
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b%4]) with mapi id 15.21.0662.004; Tue, 24 Nov 2026
- 20:07:57 +0000
-Date: Tue, 24 Nov 2026 15:07:50 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Sheetal <sheetal@nvidia.com>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, Frank.Li@kernel.org, ldewangan@nvidia.com,
-	jonathanh@nvidia.com, thierry.reding@kernel.org, mkumard@nvidia.com,
-	spujar@nvidia.com, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dmaengine: tegra210-adma: Make Tegra264 FIFO size
- explicit
-Message-ID: <awXulkfUW7rvYeFe@lizhi-Precision-Tower-5810>
-References: <20261120050254.1343679-1-sheetal@nvidia.com>
- <20261120050254.1343679-3-sheetal@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261120050254.1343679-3-sheetal@nvidia.com>
-X-ClientProxiedBy: CPAP307CA0010.DNKP307.PROD.OUTLOOK.COM (2603:10a6:380:3::9)
- To MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DBMx8mG4
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5c1465bbbdaso4347160e87.3
+        for <linux-tegra@vger.kernel.org>; Tue, 24 Nov 2026 13:06:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795554374; x=1796159174; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=rz9cXwSdrIyJkGKwTLKEziA5VeFet9zhVgH+uApk5dg=;
+        b=DBMx8mG4eYblBXo/XBW6v/IeuxqOAFfzjTNYQexTVYZaEvGSIOooL9Qey+mRSD4ve1
+         2UPPuq0TOyt4yZrh92966E5Pn+LVARENCz+Cp7LeBuGkbXPbd2PHax9NqlakbHIHcirW
+         S3EJ4AcgFr1rvvYxrAoi0ozfiUkpzHznANVBM7iPNu5XpZ3bMcjGcmWSy8lqteJny2//
+         1eYoL25MVWny0JgncZI1quQUjp4DnK3ZPCtuC/oarxBWmQtgTJDyzasMmlbo/no1BEmI
+         V2Gu4UBlaoP6SsfD/vNK/wmCjAVtRzkVHSZvpELWdFIBG1uDjwk8BN5bkINvxbjtyQio
+         UYbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795554374; x=1796159174;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=rz9cXwSdrIyJkGKwTLKEziA5VeFet9zhVgH+uApk5dg=;
+        b=Rj/yURfOK++egI8HJInqC38WS+rISNGLGulIBMAipHR/NkekstooDM9bt+1r4N/kvH
+         AgFjdX4ZlkOoFCvlBzRDAUvc146LOygI4OuEgd9HG22fLf4mp2ZVyZb+JSllxI1y65OM
+         n1COx5211p/MDpvvh0MSSP4K//bXjU19kCSyiWIZgm+O1YfSlJJx9BvSOIHgtFjZDixI
+         x5JBasqPwuHQi2vEDwgWBs6xAYIk8Nv2F8cOP0eN0Jeeo9YOCChJKVJGdeZyi4nEVcYC
+         qR9gmxq7qz/E0qJCfO116PpniEueuzLLSHXb9mD8cafxuL6n1JvhEYA/H5gifEO5hkbM
+         NGxg==
+X-Forwarded-Encrypted: i=1; AL+hErGMnYdr7mKIuIPN90XOCJNo5CUzeX+m8UhHNckZbEk8WdNNMRWHYgtM2K+woCxjnGoDrFo5YEEOHe/6gw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/k2f95I81jL6+L27WPMKqjKOcxk1AOvVReC52amjE+2cUbW9yi
+	NypKuqCo8a8FcPc1UTDfvk9VB7orEbGbhPYaIytls77c46jCRCQm4ngVKs8Nogj4
+X-Gm-Gg: AZFdTZc9Zus4bfSUA4wkF8wQ3QYVkhCHZZq/WG36wCDw43bbdY2lvYKknBUO6V8IR6i
+	apYVSkOET4iu3nSPIZRLaalTxOWu0C9UxBuB2S2dhIP5AY2IaDhH1BkcYZKNpEeNb+VMm1t844f
+	dkq760jGPn+bWiZZST655YjnbaRZnK/JxEyzJ2/bv5FW2ZksZ7UyXnKyvsLfvoa9motnQVJL/nT
+	JAGzsslY0g72Qw8NahL5lclHVg9yaFSO68L/6o6Tb4LOu4+Cpr0iDfNijigE3DIwzlPXku6hBWf
+	F/QrG6FNpOneFCwD6d3bag3Kec3qIwzAaayJU7YKDF39woUwzdJeDpRL7plKEpnBv6CAzW7XA6D
+	18KFtK3PDgiOy2e82LzWBpKgR5VT78tNz18Eg8fLmHayT+gx4Rbcl4qCNSh6KFH0rY4XR2nUSAW
+	l04S3i8/ARDCP3c3CyapIcbllvJpdCdM6qUT9Toph5d8uaOyGMJOuyqMvV+LaZk3eblp0vuwFus
+	wnWfg+dKXsWipGy+mH3SEdliP1C1LaEUfK9UXhUY/Gc385oWJoi0SLhbBTdRfy6xd36NAJc1BD7
+	g7F30O89uygJa/JkC8Nr27/2sM5/7brWukVlSW1E
+X-Received: by 2002:a05:6512:1585:b0:5c1:4cd0:16d6 with SMTP id 2adb3069b0e04-5c1bc9055eemr4215243e87.65.1795554373444;
+        Tue, 24 Nov 2026 13:06:13 -0800 (PST)
+Received: from [192.168.0.15] ([2a02:a312:c59b:a180:251a:f25f:80fa:af1d])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bd041813sm4099045e87.53.2026.11.24.13.06.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2026 13:06:12 -0800 (PST)
+From: Artur Kowalski <arturkow2000@gmail.com>
+Subject: [PATCH v2 0/6] watchdog: Add Tegra20 watchdog driver
+Date: Tue, 24 Nov 2026 22:05:58 +0100
+Message-Id: <20261124-t20-for-upstream-v2-0-440116846f97@gmail.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -100,142 +92,183 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|VI0PR04MB10511:EE_
-X-MS-Office365-Filtering-Correlation-Id: acb9dac5-2b32-4a92-cbaa-08df4a66a1ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|23010399003|19092799006|56012099006|11063799006|10067099003|261028144727099003|261102123227099003|4143699003|261026140227099003|261021123027099003|261022105027099003|261021121427099003|261009223027099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	67O3qmuIN04Pf7C28H5DZz+S26FKjj1Sn+DxFYz1n5MVEpJjGVWPRtuvhujpluvE8Ov/lX74iYDkKQ8osQNy41l+nuu/rA5jwBLAbERh0ipwVy+oY7YDQBGoM47uT/ICspJqjY2AVdvH2Kn3M0NB8eCrrxiLT59BJRsBubFirCAWK4cQip58ofJzhz7ov9IRhsyaW5iHSMMfaZn7WbDdL9lJGxFCG8QMxDwBjLfcyAlpe1VhPiq4BzJ1A5Ndro+mS1IsQGssOyhH0DKW+9gIPN5IuhwBp2Cj09XEip/8IPZALlamgSYdYAgagP+zL/mFrLLzkt6LlsZKPMwUfarjQrTLIsWUb+1IBzXEoq3dpWC9TJdfgVMVj9CDK5Cz+EDzzKL8ShIfQgG6JtYX7tDYEqz6zQJOcnhfmWhX2ENY8KWEqdJE1Mvxt0lT9DlrQXl4VXegzV2AK7DRfGA3Q2p67USg7mnyxj+wS1AO0BRYXV7Lz1sEuno/K0EMPKa6YH2N01FD0zJjkZomLq6ENxuhysNm5Ley2gdAYW+/O6kk+Ma4YriUcfouKU8EbPXaKOXR3LtZNbPZvoBtdYZVgKWgVIVVzk1ai0LShJaazwMADwvUAaTJM2PRds3XeVoYSZ/6Rgko71/fjk2yqULlRVf5w4DIr5OyQPVkrgOJ9bPdO+s=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(23010399003)(19092799006)(56012099006)(11063799006)(10067099003)(261028144727099003)(261102123227099003)(4143699003)(261026140227099003)(261021123027099003)(261022105027099003)(261021121427099003)(261009223027099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yRh/5pXNE4Tr+oUYxBOiw5OzQONswu3NokC712k/gXskEb9Ubr5dj2yeUUVF?=
- =?us-ascii?Q?JMBLv+MzC3DkuQYYdPtQSh6tfTjE5kp/IKAz0sDRkPYnsPUBUWzQBHoaI+go?=
- =?us-ascii?Q?f5XbcQeSfZcXvAGJW7iKghq96DeOzTUD9M9NBCJHkvYG4I/TxP2YNedk2uJV?=
- =?us-ascii?Q?z/TFNHTp6G9FpQsZlhguEWFGf3+ptXDa2y4B76YJ5nWDbg+KgtnUc66Yr6gp?=
- =?us-ascii?Q?qLfVjHoqG1hV7B3yf1srU4fCjXT+YHqtwlwDwObSiS9KtolN0Ak+J/Zqzz6n?=
- =?us-ascii?Q?KUHtXZfTns3icK5tXbyHe4th1pZxOOhuPvMdn3G12tiqZcPRMbD5tIBFNU67?=
- =?us-ascii?Q?iSJFOnCP3CFk/rmuZ+BI9e2L8kyxN0ObX/h3UuRg8RJloT8CkYZqG2ZVZDPs?=
- =?us-ascii?Q?fmp6Yl9yXyw8/CvGk4e3WzE8KqP3CfEKwG0OeIxdxghfsqABwW0atiSFIPPH?=
- =?us-ascii?Q?Eq/R3+NbMfO/cxgaJlqObNj0kL4U6rx2e27ptuOAg+gupz7ZCJ28/LvRnV84?=
- =?us-ascii?Q?UdiOB//zYbXH0cqIQJ6jJpf4mjOzkoLfV5GrJKWAKkAItB4BZC/urVZnbjX7?=
- =?us-ascii?Q?4srB2zntk3Jr+vJMgg3sRUDw8wNruHmrsjDch9xEDpUBsDU3lb5HMZoUhXQA?=
- =?us-ascii?Q?KWfNvD9HccHNP7YJl3mppk1WSPTKv8EHB1m0lOsp0sMf5rPGBRj48+xWW8Ak?=
- =?us-ascii?Q?cvmN09Fk+Tbn/iWVRPj8L+u3JfAp8k/Nwqf74pXkt97O/NK664pHO5VF8zzM?=
- =?us-ascii?Q?l66YWoI1EoRHHlqoWI9u9ByJGy8RbzHN29Fwi2zqT9F0FZz6BOhALkoSIpdO?=
- =?us-ascii?Q?VJg5nWUqtx7ukkKF87V11Fy7i2ILaYYPd1CZt8SofNvzzClXihK+IUI2WWJq?=
- =?us-ascii?Q?xWqA+IP5wkEPBCaSCvUUgLZPYp4NtkLWIkfWjSPggea4/CdHKGi/f5Gx6x30?=
- =?us-ascii?Q?6ToQ0koaO5bQEfnB7OLKSkxyYmjq/jS8fKEpm+WLILdVhLUpk3gYl08c6c57?=
- =?us-ascii?Q?V/lOcymwtfUOsTPrFr5dFZz2ST4L1CCuSKFSZvJRhvCnJeTcq1ld+nOKvGaG?=
- =?us-ascii?Q?1Bvtss5kLBz/Gu4yDIbsj/reMb6k5k0TAWMhzneqtc4WdLBrViBuDJ/Sp9AF?=
- =?us-ascii?Q?gD3EHgY8guk+OdccWIibTVlhRu3q5bf07Am9iCf0PdI9Az32zJS31kKAIZPI?=
- =?us-ascii?Q?Ejtvn8oXiaUq3Hgas4t6z+hJA4C2uwsL5TbfUl5JOHKxR9hLVKiv1LuN6h9t?=
- =?us-ascii?Q?KSRO2fzqiWa+LfdACCy8SGsUurQpX9rfy0zdyWEiIiEGJyzJazsajy3SK6z8?=
- =?us-ascii?Q?k6SP9oh3L6OUk4LViOmpsFqKT6fqLpVNA0Dmwk0caSC1ZWwiaMbuJr/InL+M?=
- =?us-ascii?Q?duac7fSWmO61rnIt0O5Jpq8si2yyb25MbvIWjPmOXPMHXrcWC0vdl0iMTC1N?=
- =?us-ascii?Q?yckCPemudBwSq8Zu6597KWCdPk4cRsattxVLRjho6nOXCv67joClz8DLA0aQ?=
- =?us-ascii?Q?+fPhKfpqivYqKIHZjuCZ8MxQVlVKaGlq2y2/yOUi+CM56Ur8oCFj/CVZFlXE?=
- =?us-ascii?Q?lkpfr37yup4BF8cYIqfA0c6APd079PrFbNoniMXI4NFE2DiOSZ7aRQi/govz?=
- =?us-ascii?Q?nX7K7TBfiH0OEHtfr3r0VM7pAobsndiEQ2fpcctkzRdpBdO+Mgxfqpg8EPRO?=
- =?us-ascii?Q?NudWxexyX4ldX4N/3oV4+V5POtBWWaGVK9lpGHaYwnRhvYfB15hwW9SmTqH9?=
- =?us-ascii?Q?vS/mPs7FX1N27mpN/a52RffBUE+k1XblKnJV63WQB9qpEUD4RTTN?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: acb9dac5-2b32-4a92-cbaa-08df4a66a1ad
-X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2026 20:07:57.0652
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SP7gMLHcbIxd9EY6CcMYmqbOS3zCPKtIP46s5n44VhHmx2RbarNr/DXIReFcRjIbcqT6f3PxyablyYldRsAaCxdHtjamELf/mA/Ci64+pabe+flnYUCATYpdxd6cSUnK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10511
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAA/2XNyw6CMBCF4VdpZm1Np3IrK9/DsIA6wBihpC1EQ
+ 3h3A7pzeZI/31khkGcKUIoVPC0c2I1QCn0SYPt67EjyHUoBWukMURUyaiVb5+U8heipHmRi8sb
+ mWYpFYeEkYPLU8usgb9V3h7l5kI27sxc9h+j8+/hccO9+PKp/fkGpZGr0JUmMSbGlazfU/DxbN
+ 0C1bdsH9xERBcIAAAA=
+X-Change-ID: 20261108-t20-for-upstream-497bc765188c
+To: Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ Thomas Gleixner <tglx@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Randy Dunlap <rdunlap@infradead.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org, 
+ clamor95@gmail.com, Artur Kowalski <arturkow2000@gmail.com>, 
+ linux-clk@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6648;
+ i=arturkow2000@gmail.com; s=default; h=from:subject:message-id;
+ bh=DR/VcPZhN2+mqYyrN5IGtMQShQopJZHsyrrHEo9QXW8=;
+ b=owGbwMvMwCVmYeTc/TaVxZzxtFoSQzbrH6c3kW8X68xaHdSycdqJ0On/Ez9vjne6eOU82++Kj
+ Lf1Jq//d5SyMIhxMciKKbKYPRT6wjPP6/2Gl1s7YeawMoEMYeDiFICJNFkyMsx6fkp+X+vses2c
+ YPZ3T6PybFXF7RP+HIr0vq/c87v13meGP/z8H2slrj5s+Sr98tvPx3z/tQ7L2zc8O2HyNq+Gc97
+ bCg4A
+X-Developer-Key: i=arturkow2000@gmail.com; a=openpgp;
+ fpr=F60710C8D69E03A01A2801CD87A47D20C2709637
 
-On Fri, Nov 20, 2026 at 05:02:53AM +0000, Sheetal wrote:
-> Tegra264 uses the same ADMA FIFO size for every ADMAIF request. The
-> driver currently obtains this by setting sreq_index_offset to zero,
-> which makes every valid request select a FIFO size of 2.
->
-> Add a SoC data field for the uniform FIFO size and set it to 2 for
-> Tegra264. Retain the request-index-based FIFO selection for earlier
-> SoCs. This preserves existing FIFO programming and allows devices
-> with a different uniform FIFO size to specify it in their SoC data.
->
-> Signed-off-by: Sheetal <sheetal@nvidia.com>
-> ---
+The motivation is to improve recovery from kernel hangs, which have been
+steadily driving me to the doorstep of a psych ward for a few months.
+They are rare: some happen at boot, others while using the tablet for
+something real, like reading PDFs, browsing the web (to the extent
+possible without working GPU accel), or just using it as a thin client for
+another device.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+All my attempts to find even the slightest hint of what went wrong have
+come to nothing (the device just refuses to hang with UART connected),
+so this series is born in the hope that it will finally enable me and
+others to catch those bugs (using the watchdog and pstore).
 
-> Changes in v2:
-> - Retain .sreq_index_offset = 0; omit the unrelated cleanup.
->
->  drivers/dma/tegra210-adma.c | 25 +++++++++++++++++++------
->  1 file changed, 19 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-> index 21a381d022cf..2640ea7d6ff2 100644
-> --- a/drivers/dma/tegra210-adma.c
-> +++ b/drivers/dma/tegra210-adma.c
-> @@ -101,6 +101,7 @@ struct tegra_adma;
->   * @ch_reg_size: Size of DMA channel register space.
->   * @nr_channels: Number of DMA channels available.
->   * @ch_fifo_size_mask: Mask for FIFO size field.
-> + * @ch_fifo_size: FIFO size for devices with uniform channel FIFO size.
->   * @sreq_index_offset: Slave channel index offset.
->   * @max_page: Maximum ADMA Channel Page.
->   * @set_global_pg_config: Global page programming.
-> @@ -125,6 +126,7 @@ struct tegra_adma_chip_data {
->  	unsigned int ch_reg_size;
->  	unsigned int nr_channels;
->  	unsigned int ch_fifo_size_mask;
-> +	unsigned int ch_fifo_size;
->  	unsigned int sreq_index_offset;
->  	unsigned int max_page;
->  	void (*set_global_pg_config)(struct tegra_adma *tdma);
-> @@ -725,18 +727,28 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
->  	 *
->  	 * ADMA FIFO size is set as per below (based on default ADMAIF channel
->  	 * FIFO sizes):
-> +	 * For Tegra264:
-> +	 *    fifo_size = ch_fifo_size
-> +	 * For devices prior to Tegra264:
->  	 *    fifo_size = 0x2 (sreq_index > sreq_index_offset)
->  	 *    fifo_size = 0x3 (sreq_index <= sreq_index_offset)
->  	 *
->  	 */
-> -	if (tdc->sreq_index > cdata->sreq_index_offset)
-> +	if (cdata->ch_fifo_size) {
->  		ch_regs->fifo_ctrl =
-> -			ADMA_CH_REG_FIELD_VAL(2, cdata->ch_fifo_size_mask,
-> -					      fifo_size_shift);
-> -	else
-> -		ch_regs->fifo_ctrl =
-> -			ADMA_CH_REG_FIELD_VAL(3, cdata->ch_fifo_size_mask,
-> +			ADMA_CH_REG_FIELD_VAL(cdata->ch_fifo_size,
-> +					      cdata->ch_fifo_size_mask,
->  					      fifo_size_shift);
-> +	} else {
-> +		if (tdc->sreq_index > cdata->sreq_index_offset)
-> +			ch_regs->fifo_ctrl =
-> +				ADMA_CH_REG_FIELD_VAL(2, cdata->ch_fifo_size_mask,
-> +						      fifo_size_shift);
-> +		else
-> +			ch_regs->fifo_ctrl =
-> +				ADMA_CH_REG_FIELD_VAL(3, cdata->ch_fifo_size_mask,
-> +						      fifo_size_shift);
-> +	}
->
->  	ch_regs->tc = desc->period_len & ADMA_CH_TC_COUNT_MASK;
->
-> @@ -1018,6 +1030,7 @@ static const struct tegra_adma_chip_data tegra264_chip_data = {
->  	.ch_reg_size		= 0x100,
->  	.nr_channels		= 64,
->  	.ch_fifo_size_mask	= 0x7f,
-> +	.ch_fifo_size		= 2,
->  	.sreq_index_offset	= 0,
->  	.max_page		= 10,
->  	.set_global_pg_config	= tegra264_adma_global_page_config,
+Tegra20 has no dedicated watchdog block. Instead, the clock and reset
+controller can reset the system when timer 1's interrupt fires while the
+previous one is still pending. This series adds a tegra20_wdt driver for
+it, which takes over a watchdog left running by the bootloader.
+
+Tegra20's boot ROM hangs after a watchdog reset if the VDE partition is
+off (for normal reboots, this is handled by 8f0c714ad9be). The series
+offers two mitigations:
+
+- By default, tegra20_wdt stops the watchdog for good before the
+  partition is powered off for the first time, using a new PMC power
+  off notifier (patches 5 and 6). A watchdog started by the bootloader
+  still covers early boot, until the PMC driver comes up. After that,
+  opening the device, keepalives and timeout changes fail with -EBUSY.
+  Booting with tegra20_wdt.stop_on_vde_off=0 keeps the
+  watchdog running instead, at the risk of the system hanging instead
+  of rebooting.
+
+- Booting with tegra_pmc.vde_always_on=1 keeps the partition powered
+  on, so the watchdog is fully usable, at the expense of higher power
+  consumption.
+
+This has been tested on ASUS TF101:
+
+- with tegra_pmc.vde_always_on=1, the watchdog stays on. The device has
+  been running for several hours with no issues. Suspend/resume works,
+  and the watchdog keeps working after resume, both when only the
+  watchdog core pings it and when user space has it open. The watchdog
+  resets the system both when user space stops pinging it and when the
+  kernel crashes, and U-Boot and Linux boot normally after the warm
+  reset.
+- with the default settings, the watchdog taken over from the
+  bootloader is stopped when the PMC driver powers off the VDE
+  partition. After that, opening the device fails with -EBUSY, and the
+  system keeps running without resets.
+
+Another series for fixing some other issues with warm reboots (not
+related to watchdog itself) will follow shortly.
+
+Patch 5 is flagged by checkpatch (WARNING: ENOSYS means 'invalid
+syscall nr' and nothing else). I kept it as-is for consistency with the
+existing stubs. If this is not desirable, just tell me.
+
+---
+Patch 3 depends on patches 1 and 2 and must not be merged before them:
+otherwise the watchdog driver conflicts with the clocksource driver over
+timer 1, and the clock driver helpers it uses are missing. Patch 6
+depends on patch 5.
+
+To: Daniel Lezcano <daniel.lezcano@kernel.org>
+To: Thomas Gleixner <tglx@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+To: Jonathan Hunter <jonathanh@nvidia.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>
+To: Guenter Roeck <linux@roeck-us.net>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Shuah Khan <skhan@linuxfoundation.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-watchdog@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: clamor95@gmail.com
+Signed-off-by: Artur Kowalski <arturkow2000@gmail.com>
+
+---
+Changes in v2:
+- Add Tegra20 support as a separate tegra20_wdt driver instead of
+  extending tegra_wdt, and drop the tegra_wdt match data refactor
+  (Guenter)
+- Access RST_SOURCE through helpers exported by the clock driver
+  instead of mapping the clock and reset controller's registers
+  (Krzysztof)
+- Validate the heartbeat parameter with watchdog_init_timeout()
+- vde_always_on now has effect only on T20
+- Leave the watchdog core's state alone in the VDE power off notifier,
+  which raced with the core and leaked its references (Sashiko)
+- Refuse timeout changes after VDE power off before changing the
+  timeout (Sashiko)
+- Fail pings after VDE power off, so that user space finds out
+  (Sashiko)
+- Document that stop_on_vde_off takes precedence over nowayout
+- Document the parameters of tegra20_wdt in watchdog-parameters.rst
+- Link to v1: https://patch.msgid.link/20261110-t20-for-upstream-v1-0-5923449951fe@gmail.com
+
+To: Daniel Lezcano <daniel.lezcano@kernel.org>
+To: Thomas Gleixner <tglx@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+To: Jonathan Hunter <jonathanh@nvidia.com>
+To: Prashant Gaikwad <pgaikwad@nvidia.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Brian Masney <bmasney+clk@redhat.com>
+To: Jerome Brunet <jbrunet+clk@baylibre.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>
+To: Guenter Roeck <linux@roeck-us.net>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Shuah Khan <skhan@linuxfoundation.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-watchdog@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+
+---
+Artur Kowalski (6):
+      clocksource/drivers/timer-tegra: Keep Tegra20's watchdog timers free
+      clk: tegra20: Add watchdog reset control helpers
+      watchdog: Add Tegra20 watchdog driver
+      soc/tegra: pmc: Add an option to keep the VDE partition on
+      soc/tegra: pmc: Add a partition power off notifier
+      watchdog: tegra20_wdt: Stop on VDE power off
+
+ Documentation/admin-guide/kernel-parameters.txt |  12 +
+ Documentation/watchdog/watchdog-parameters.rst  |  14 +
+ drivers/clk/tegra/clk-tegra20.c                 |  60 ++++
+ drivers/clocksource/timer-tegra.c               |  40 ++-
+ drivers/soc/tegra/pmc.c                         | 160 ++++++++-
+ drivers/watchdog/Kconfig                        |  11 +
+ drivers/watchdog/Makefile                       |   1 +
+ drivers/watchdog/tegra20_wdt.c                  | 413 ++++++++++++++++++++++++
+ include/linux/clk/tegra.h                       |  16 +
+ include/soc/tegra/pmc.h                         |  19 ++
+ 10 files changed, 733 insertions(+), 13 deletions(-)
+---
+base-commit: 8d7fe9885c62fc9a95bf55d9db244d9672a8aadc
+change-id: 20261108-t20-for-upstream-497bc765188c
+
+Best regards,
+--  
+Artur Kowalski <arturkow2000@gmail.com>
+
