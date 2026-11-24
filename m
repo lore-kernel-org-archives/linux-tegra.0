@@ -1,71 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795495322;
-	b=0+vEiuPA/RCU+syA5A/d3MC/gReklACNn5PNZu8KTHxtqNOUZE8veOe2mPyqsy7P3TJj
-	 Y3f2G2BIrbo+Kto2H/ByCrwaQnavhj40x2mS4JqhW1n7erF6oAUw/0SFUvyYBxqeRvfFT
-	 gWIL351X1WZSZ2YOQPIRNMrb0fMXvUm/ddl5jgxNcB9g6eauj/nHBHBV0fE57a4eW3Crv
-	 KLI4HnHjDmLgxLF8GvxkVDiVu/VwEFl9tjWB8hECUTpCsrsSaIuyaNtZxfQ3duQ0K3Hg9
-	 tnoJwc0yVuc5QjJmux3k4sxQmwteV5y45Y2M3f8wEESB/obECUWoFZTa/3dKFL0KJdA==
+	t=1795496711;
+	b=bsZyK9D1+di1EiUtbSH6sJ1yJpR8GVcSnL18EXolhqVKPlk7ye+1ZZbRuMzZ2GyECHyu
+	 FLdhBI9hND/ZY5ZS0rmIhei/yJpCv/6r13IevZAc8Mt3wbtJY5ZtVdgqBji74KAoBsT3a
+	 1oH+p2UXoYgOnuRVibNDf+tMuwTFM3Cj5Mt9g2tXGJpajEDN7c8rHrFSd4+K/mAI5VzqX
+	 dmZWdx37e0As8TK14KCguKipprfOvpfsbxkVrdKWtekPoq4h9+m8HLA2AoxlhTModOzyk
+	 xgRxCdq3vVN4OtzdGrDTVccTKih9ez420Ib8/AGIDvqbSFkClwhzFOQxzoDwH1iQNlw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795495322;
-	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
-	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=NcBOF6PXpp09IwMziSX0kwNANxSfYEQCGrMesY0eIsk=;
-	b=bYjjr86bN5VvikuSHSahOJQhpvauBcYiF3+zyD6MEStwrokXlzMwQ9jsFbZKP0XK/F9T
-	 m7I1xPcyawuYaOLkCxlsOI/EWxvFwkwTbv0TSD64l9GeLm8i3xGjSOj1Aue/eOj4keyoU
-	 XOF5Q0gDa+abzhBvKX7kLM8Y331v8IX/FV1FWW/GPxnD+c26SVlsVttzUk27U0kgdlbmw
-	 IczK3UysytHYIhYsWjvbh1Se0V5nak7c+S426aV8jEpuJRfMLsGFF1FTUTorKAPky7xsr
-	 5uGSug4EnC4bwEvO+mkg53dLXWya/pFkx3Mwfbr9ahJCK3QRfS8QbUrY7y92vNZWxdw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795496711;
+	h=Received:DKIM-Signature:X-Mailer:From:To:Cc:Subject:In-Reply-To:
+	 References:Date:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=GCQiR5Lx2UKMEtsK+gSKSdJH4PY2fbRO9XAcb5R+0z8=;
+	b=D0rxZn3r1Ly0fDqCe2xS06VIWhTcPlRPLoq8xbEjbOA+9YWxhuRpGEumsuHAhzblXQbE
+	 VQoTlGBb2TJlx4IFXWgn4XpMOs0MzhUWV61XGmdBP87EnIlOKz/MJ2ausOqsqjx2PC4jL
+	 MTgb+ZAzAtz/vs20/ZVH2ZJOX3Bpb84wEL4KcKGHPqfJsACWOhcZkKqR+2k3QCDqkEXPG
+	 lUmC3zu9XrIjloBJxlaFGw4BektCrE72aP7R64vOaeZT5U1Bb6B+/kVMViJ+u15zi8hfN
+	 3VJBUKMOrslyEDjRW+9GL/lZkuPRtlBZztRJveq4669rrEzJTGscSSZ1o6g3OC/RtLQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=cmss.chinamobile.com;
-	spf=pass smtp.mailfrom=cmss.chinamobile.com;
-	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=wc3lcipV;
-	arc=none smtp.remote-ip=111.22.67.139
-Received: from cmccmta6.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC26606A31E;
-	Tue, 24 Nov 2026 04:41:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CFC26606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Sf4jeTTU;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E69606A31E;
+	Tue, 24 Nov 2026 05:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=wc3lcipV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=cmss.chinamobile.com; s=default; l=0;
-	h=from:subject:message-id:to:cc:mime-version;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=wc3lcipVFh6bJnNTgKIFdZ5LzsBhmG4Bg5H5Xw2bXdJotKnP3pCpvlQ6kBhwid31u+YKqYG523/u8
-	 Y1ugxKx6hOrpfdDAWlXKulJ+eytanHZfxPe4kZCDUKKu37EhDleGWgZcylowBCnWY6rDYxo/Kw0beu
-	 1U2eLHMcFy+9Q9Pw=
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee96b05159497d-495e3;
-	Tue, 24 Nov 2026 12:41:57 +0800 (CST)
-X-RM-TRANSID:2ee96b05159497d-495e3
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from DESKTOP-3K8GUTQ (unknown[223.108.79.98])
-	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee36b0515935ca-13776;
-	Tue, 24 Nov 2026 12:41:57 +0800 (CST)
-X-RM-TRANSID:2ee36b0515935ca-13776
-From: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Sf4jeTTU
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E35D1F000C4;
+	Tue, 24 Nov 2026 05:05:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795496710;
+	bh=GCQiR5Lx2UKMEtsK+gSKSdJH4PY2fbRO9XAcb5R+0z8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=Sf4jeTTUeyNECnDrWH/zHQwCweqyr3ICg/XJr7Dn7sQUhHdZSBrQSD52eyo6OmH0Q
+	 zU8gOnX247GPxo4ufgj/OAOJ3DoOsgjDn3NaJ1x3hgmutbUe9OpgE/loVkCo79kJxR
+	 oRohNM3MgCe0WDqEpWRyv1fw3lRIHaMTei8SLBUsVYDEYEzjNDq10xh+T1xQ/nzrLg
+	 tI3D+xn/LzxZQ6MvVEHtySmqi/Zejda2tFa6wKh82wHIoDZ2wN/DlM4JuRjYn5fp3M
+	 baPqje+9fvFyJGEsSLy0k2u6v7W42SrhJUxFg2/zy9paZ5C6Ektd1wsCp1zwiH30CK
+	 H2nILDRrxSQqQ==
+X-Mailer: emacs 31.1 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Baolu Lu <baolu.lu@linux.intel.com>, linux-coco@lists.linux.dev
+Cc: baolu.lu@linux.intel.com, Alex Williamson <alex@shazbot.org>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jacob Pan <jacob.pan@linux.microsoft.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jonathan Cameron <jic23@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: dpaux: Fix VDD supply and AUX channel leak on attach failure
-Date: Tue, 24 Nov 2026 12:41:55 +0800
-Message-ID: <20261124023000.1211-1-laixiangwu@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
-In-Reply-To: <20261110065254.1211-1-laixiangwu@cmss.chinamobile.com>
-References: <20261110065254.1211-1-laixiangwu@cmss.chinamobile.com>
+	Kevin Tian <kevin.tian@intel.com>,
+	Krishna Reddy <vdumpa@nvidia.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Steven Price <steven.price@arm.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Will Deacon <will@kernel.org>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	iommu@lists.linux.dev,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v9 10/13] iommufd/viommu: Allow PCI TSM backends to
+ provide vIOMMU operations
+In-Reply-To: <2d8af908-4dd5-43a9-b618-d1ee4189f6ba@linux.intel.com>
+References: <20261116081935.85372-1-aneesh.kumar@kernel.org>
+ <20261116081935.85372-11-aneesh.kumar@kernel.org>
+ <2d8af908-4dd5-43a9-b618-d1ee4189f6ba@linux.intel.com>
+Date: Tue, 24 Nov 2026 10:34:58 +0530
+Message-ID: <yq5ao6bebz0l.fsf@kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -75,26 +90,60 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello Thierry, Mikko,
+Baolu Lu <baolu.lu@linux.intel.com> writes:
 
-A gentle ping on this patch, sent two weeks ago on Nov 10:
+> On 11/16/2026 4:19 PM, Aneesh Kumar K.V (Arm) wrote:
+>> In confidential-computing configurations, a vIOMMU may be implemented by
+>> a TSM driver rather than by the physical IOMMU driver. Such an
+>> implementation also needs the TSM identity when creating and validating
+>> vdevices.
+>>=20
+>> Allow VIOMMU_ALLOC to first query the TSM associated with the target PCI
+>> device for vIOMMU operations. Fall back to the physical IOMMU driver
+>> when the TSM does not provide operations for the requested vIOMMU type.
+>>=20
+>> Resolve the PCI TSM association under pci_tsm_rwsem, take a TSM device
+>> reference, and pin the module providing the operations. Store the TSM
+>> device in the vIOMMU. Release the device reference and module pin on
+>> allocation failure, fallback to the physical IOMMU driver, or vIOMMU
+>> destruction. Drop the device reference before releasing the module pin,
+>> since the final put may call into the backend module.
+>>=20
+>> The device reference preserves the TSM allocation. Backends providing
+>> vIOMMU operations must not unregister their TSM while the module is pinn=
+ed,
+>> since the reference does not prevent backend resource teardown.
+>>=20
+>> Cc: Jason Gunthorpe<jgg@ziepe.ca>
+>> Cc: Kevin Tian<kevin.tian@intel.com>
+>> Cc: Joerg Roedel<joro@8bytes.org>
+>> Cc: Will Deacon<will@kernel.org>
+>> Cc: Robin Murphy<robin.murphy@arm.com>
+>> Cc: Bjorn Helgaas<bhelgaas@google.com>
+>> Cc: Alexey Kardashevskiy<aik@amd.com>
+>> Cc: Lukas Wunner<lukas@wunner.de>
+>> Cc: Xu Yilun<yilun.xu@linux.intel.com>
+>> Cc:iommu@lists.linux.dev
+>> Cc:linux-pci@vger.kernel.org
+>> Signed-off-by: Aneesh Kumar K.V (Arm)<aneesh.kumar@kernel.org>
+>> ---
+>>   drivers/iommu/iommufd/viommu.c | 35 +++++++++++++++++++++++++++-----
+>>   drivers/pci/tsm/core.c         | 22 ++++++++++++++++++++
+>>   drivers/virt/coco/tsm-core.c   | 37 ++++++++++++++++++++++++++++++++++
+>>   include/linux/iommufd.h        |  2 ++
+>>   include/linux/pci-tsm.h        | 24 ++++++++++++++++++++++
+>>   include/linux/tsm.h            | 25 +++++++++++++++++++++++
+>>   6 files changed, 140 insertions(+), 5 deletions(-)
+>
+> This change spans both PCI/TSM and IOMMUFD. Could it be split into
+> separate patches for each subsystem=E2=80=94for example, one adding the T=
+SM
+> lookup interface and another updating IOMMUFD to use it?
+>
 
-  drm/tegra: dpaux: Fix VDD supply and AUX channel leak on attach failure
-  https://lore.kernel.org/all/20261110065254.1211-1-laixiangwu@cmss.chinamobile.com/
+Sure, I'll split it into separate patches.
 
-The patch fixes tegra_dpaux_probe() error paths after drm_dp_aux_attach():
-when the channel AUX lookup fails or drm_dp_aux_register() fails, the VDD
-supply and the AUX channel acquired earlier are never released, leaking
-one regulator and one AUX channel reference on each deferred/failed probe.
-
-It applies cleanly on top of the current drm-misc tree. Please let me
-know if anything else is needed, or whether the patch is queued somewhere
-I missed.
-
-Thanks,
-Xiangwu Lai
-
-
+-aneesh
