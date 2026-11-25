@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795604910;
-	b=XVJ09pwyZ/T5wsbyKKHmy39/2jPo0XBNPYsCDIj8qWxBBvjqSUaVOxRydnQyPtF8tAWj
-	 wap+1DWskTkBM1b5h0D8wLvH37wNokiAPYXovpIz2oD/GbLVQar6xdMgkN9plDxbMWDhH
-	 UpFu2HMsVqpjG/LjUtOYmvbeo4u1hq56VJcWxhKrU0H/XhpowJrlM/k+5NCR4q+S9weub
-	 VB/qlv+N+cx1/l4Ez7yH/517uXigMKefHOjkdbDbHwwqKYCQViuzEx5WCj3g7hfleAM5A
-	 W9Gexw6vSIUOjQ9c480JjYL1EaeK71JC0TfBxdtFJnCOTgl8FZnLHlBduu6cy2+lYLA==
+	t=1795604912;
+	b=WuwGXKDVocr4GAczUgtT9ZfNRcCSgv99iqxJP37V7kd1ohMXw6zdamPmDzNG9QjDOD7K
+	 iUX4/qEV8v8YXcNMQ6Y0p+BU7HUVbp3Eldj32mPXW5qyECdTBIxKdYFbweq8zezu12rJb
+	 KUerzmNuId2sJvKiLxIMSKk9/geGR60mqqboLKAOh9Ey2hp2L3AnHTQVD2COX4cIBqkD+
+	 UcMuUI8VZnDy1iYNlPuNrefrIWvmXLkMfl2oASyUPBsZf841wbVVv3F7zQsKREmeZKdgO
+	 1qxtQ7ZYwzeUbmLTXqLJaopvNCkVxkhH7VetLyZZoDzC/1z3JCUfD6bwYzlPY0TFrDA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795604910;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795604912;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=clKaolZwkMSTHm0nujES/qrJKyQ4xfGXj1/wJaiLO4U=;
-	b=2uAJX8Xa4+dcR7/mRVK2nBBo0n6AdOoWGWKZwH9UZFmjF5z0StB7qCf75bYyY21HmLmV
-	 LPv1D1NOhzJAwfCSsl03+Y4QM+IRtRA4xEsZBj+zW1jS6OfRANvXPRAATc0Fl2Le9Pte+
-	 sWPL6me7Xx/xEvUGJWryQDliOgwlcIgZbjen8+9+GBNpdHQpLDBmcvRd18+yp+r4AKcY8
-	 ZVjTo0pO+r3mrpfWe/Jq/8WwOgQEBEvi9o6WKlgkwliQB/PEhSurA0hkQtmJk8xKRX3lL
-	 8E1UZ22Di2SdqkizB7Y+TlvaxvClpXtfqKxSSSnJ4CdSxKdkX+Npqz6QEyJ0YseWd3A==
+	bh=LbKQrYeSQQjIG8o4PeFfuBxBDq4T+YpBKC3L5X8LsTY=;
+	b=q42IsPDdPy+jClHOu0k3cYM5f0C1frlcQyF4EwAQl2WQmoE9DWKeMai9zsT9RxQom1+F
+	 tIhSJZV17lFwVBgqG7zRXXvReh0188SMcKYvTI++IhU/EdpT5kPJeL3z2o59bnUDG62Oj
+	 vcbw5+xgUJCsxIMXoDkrei0sZUNynFIXmjVA2CGnQycp7ziCfPPdT9LmNi7tYfBeJ5mC+
+	 QWFpbx9Vc0IuYt7fRtZTWFH8tNZ2dXKKbZmew9SVVFrzMGiRt1rSiG0uPvcQfPEuUpVjh
+	 F6ZMNumyxbbjdVYVXNVMNPnTDTuU+cNBbGwCbEIsMPEb0Mr/UOOtZPVd3zm6uZ/ADjw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IBou19Mo;
-	arc=none smtp.remote-ip=209.85.218.44
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jDl04GM0;
+	arc=none smtp.remote-ip=209.85.218.49
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE72606A695
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 11:08:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4BE72606A695
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EEB606A31E
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 11:08:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A1EEB606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IBou19Mo
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c4d581da0aaso782716366b.2
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 03:08:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jDl04GM0
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-c4d427836e9so763895666b.1
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 03:08:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795604909; x=1796209709; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795604910; x=1796209710; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=clKaolZwkMSTHm0nujES/qrJKyQ4xfGXj1/wJaiLO4U=;
-        b=IBou19MoNJhHBzcnjeTmjt1iLOWwMh1OzaZrEsNG8sh6DYvjqkPE6gI3wxRGYuXI89
-         mMyQFjqi08s+pf9gAua3Jb57rHechtgGBaMTT5tn0sEMry+5g+++mFOiyFm4ooO9pV7h
-         MvaB975h6cxsJnYfRr4KWWWtCQKOcKnE2u0ZeKqN2kbZvqBr1LPPb9YB5UblHfMsqaQD
-         pJqD8g/CIoaNIO86aSuTew8fZsfclVIsEIlyGnMDy5lDSyg4Z/6wNCn0ZhrDqesG/vvZ
-         e0UzfSQXVvnTQsoopE6SHb55DYTQe+uqibhtOAycIN0IWP5gzdMaEznY8z0qkFr5zzXQ
-         Eq2Q==
+        bh=LbKQrYeSQQjIG8o4PeFfuBxBDq4T+YpBKC3L5X8LsTY=;
+        b=jDl04GM04SUvczo1Inokqv8zZl1+LPyhzAvzrssrJVHMKh5h4HAtetz5THXEN9r5Jl
+         23djp7SiAZKlGJ4msE9uSBT7Vy4yf3Vl2P/5w9iaVr5b/O0p58q1DTB7zFue0Rcd435W
+         zDgdn0wg91yg+0r1tZhw/UJEE4wHT9QYY5VJApULT++uryUXC40omFv6GxVSWvh83g4P
+         C89jpRezO0P3Edi3WQInmgAfTZGCXX4Xd6GXJ5BpAegvevJsaPas5TySxpkasLb/5JuG
+         RQ/1usTNG7/my5XvbZZ7ALJ1sr/Gw8ew/4LwvE6kBHjJT9M8P8JYrshgkoQywQ4hTa/e
+         is1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795604909; x=1796209709;
+        d=1e100.net; s=20260707; t=1795604910; x=1796209710;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=clKaolZwkMSTHm0nujES/qrJKyQ4xfGXj1/wJaiLO4U=;
-        b=XPoYFxGQZVqMByvSHIoyQX6Q5JxdUyjioHmWhq47ZxrmpjoWqLF+Bk6BQoxzZPh/WC
-         GTb7ctIdgB7ijxbdUjWypIrATnCsFBtcttxgX7s8jH4YCP3kOw3OyAVNvmcgtC+d8/Dj
-         1Hs6SRZwTceWT5DesFpizmCv0gt5UCoaZyWAGXSZyl1d5/GrOlG8hZZnYlwa5b14YTIu
-         yQ3+LyI7wueuGLYwvSj95VxPaCA3NxWaBM/vi2ujZe19SlXNXAOtyLWMNdIPmA+NGohO
-         UiFsGVOjCSQZWsV3rtiO2J/vICvE5F9kUCZ743DvGm1snEFPnJGse0X7dl9hf94ehEcG
-         /+vQ==
-X-Forwarded-Encrypted: i=1; AL+hErG2MC0LEO7urLNhEXPvSssklE1F0AjtmkSTAS6NcyXJfCFXbKG2yo+dLnTZkiaItAlfR76yRf/jp8tGUw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8ovTcOOLOK1DfZKq4nD5jP+eqGN8zJOcrHtYPJfJPuFulNZx88
-	dhJJRl/kvK/20rVl2Vq/dklAlAyJCj6nw2d96P9ykfKfHq4UAXOgzi7R
-X-Gm-Gg: AZFdTZeEGDTOPTe1uoNtWrtZTbHFB2WLyi9mEwKGf9+OveLAHp4GIv5DYgItNDYg3hD
-	PHdZPrXpiwCsVNm3qMi5ynvRuACKzdcQc42Uucgc+lZyD607rAj/lQ64VCzc5HxBcM4VBAMHq7R
-	sAVMLSMVTkzjMdt5Cc/8yFlRLesXEZC2nYYMzQrgXZFPaArbwm9T43Kvw4oWSgyNnrT6/uAGG9M
-	kljT9vodxmHBXgfEKEszG2/8wSQ6YrKFBqe/a3Nbx7E1XJvEI3s0lUoA+br7Y0atCpUG0OHe6Np
-	MmDOrLAnEoCNJldt8NJpCne47Xu3I9E/tyWj7/NKNW/2GetaP8fkYXwlUzQzOqtceN7+itDH87M
-	GpP3t4jRG4txQdwQ0VWaez1uU1otYGciHFkeq9zzA4FXEelTaiPqHbvTfwTAF9Cx7kIw0TPOPS0
-	dpPmhOYpBB9oEHqNVRrGbelX9WinnUgJh1LZ7CTtwRLSjaYJNH09NsE/R94qFf6dduNze6LZZjK
-	IUJswr2cIUx0Jp+445JMsGoJcy3VuNQQXd5dGCge8dxiDyGGotIfDWgg5BBsJWbRcvwxsgX1Wls
-	FktIDxbAEyi/edqUzEmm7f7pzrE+E2SSCx+9oMtJmJZdkSI8B5Z1+BNPntjduWhqY12Vvl6pd1k
-	g92sJKSkNlw==
-X-Received: by 2002:a17:907:1c81:b0:c3f:7e8:235d with SMTP id a640c23a62f3a-c513a4b0ca4mr1423432066b.5.1795604908565;
-        Wed, 25 Nov 2026 03:08:28 -0800 (PST)
+        bh=LbKQrYeSQQjIG8o4PeFfuBxBDq4T+YpBKC3L5X8LsTY=;
+        b=nAqwXkarmGbZnIiD/xNESqGxscu//lfry5BsQZWnM99ExVnskPQDk3jmNrk8vX6RAK
+         HzSvrDc6AusUSFZZj0e/BCOUmR7iPieUkvTUXTELeFJ3JCOXbOYOZAAXxqBNWpj93azL
+         OeGfM+AqGfqDMu3SysUL+IymK8kDfqoV8Q++9GLDvc3Dzt77+pHKdLX6E3Da17LNv0B/
+         M/jFfuKN2FlGSMdqM7KxxIdyaiBjikZIUgXsfX1N6UgD7KYIeLrDyZz+h/HDmI2jChAP
+         Eyz8zmmPIJxAJ8RM/5t8TtOBSe5hSyhvF1Msldgz8XHy2Wvev/wtkHpf9bFUIq5l3u9W
+         1lXw==
+X-Forwarded-Encrypted: i=1; AL+hErFCcPUED1IrTtL5kuezVG6XrwsP7ko14oq13djGMqIePyvyDlbO2FfLkWAYZd43NveOSho14qEBQUyqrw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8rWd4vOV+pwc1UWLjGAK8OEQnafNvOJf1ZItYqpc7V7Y1Pjf8F
+	k2ZkIhWiDhq9zQsnq1HWrdHvIZnVCEpf2DPSCqCR0Tfsrpo+YUy/y/u2
+X-Gm-Gg: AZFdTZeGtMP3UhMtWrqq0703Rw1HA8AnCpAllWRMIsmQHEb0w65MW6Q85vvdD8THQ/J
+	10YQpFt4bOGER2REB/7GoxCzdTMc74mw9Z07O7NfHRIXOtkXWyxAvIxyaRJFK6px2whUCcDJdUi
+	xi773IH5vG4hiGYT6psAQPxXQf/SSNI4ZpHHy1I0+xzhtPNpC1JJ8rSO11CkvScys1eHpFDxn5Q
+	05mdXUU9sz2YdNH1Wrwqoywfm977OWaXkOVBLWoXhQcH+wviL3Lwsm7W+thXJNYk2S3jmsns9Nx
+	4v4+HBYlj4ULRWnS1SyC6m1kB5AiAHPLl81AX1pjSeacVu9mQaA+3z1QafqdZLI5gSxb5SyfM5/
+	Nuq4Dn3I3pMeU62loZuzDfv9bVshQmsTWwY170cJH/ECGQQjQZbEkSxUvG6MCu5KLxOgL1LpPRo
+	TznBfR5QY3/T//d7qTvXyCLFaU8mL2ydKQx43BePbkBQX6L0GjGw85bQ1YRRef5DHK4IXDhTUAX
+	1a2sXtgta/cluh+NVjw5B8Aj4cSH9GOJsjBSUPyl0E7IyVP/GRquLWoGmlfA6l7TcUxcP3l8Sbi
+	OTBA135KbsVk2XhXRKqPPlzUczjW2l7F+o1fDFabj5S6eWuJwb28EcVzQfRDXNiCbCXE6iRXQhe
+	DTY/8mM0pJQ==
+X-Received: by 2002:a17:906:5593:b0:c40:91fb:b76 with SMTP id a640c23a62f3a-c513ab48008mr1115543266b.33.1795604910057;
+        Wed, 25 Nov 2026 03:08:30 -0800 (PST)
 Received: from xeon ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513acfeda1sm654562066b.6.2026.11.25.03.08.27
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513acfeda1sm654562066b.6.2026.11.25.03.08.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 03:08:27 -0800 (PST)
+        Wed, 25 Nov 2026 03:08:29 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Thierry Reding <thierry.reding@kernel.org>,
@@ -93,9 +93,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-media@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v1 06/13] media: tegra-video: vi: Populate stepwise frame sizes via vi_fmt_align
-Date: Wed, 25 Nov 2026 13:07:43 +0200
-Message-ID: <20261125110750.223628-7-clamor95@gmail.com>
+Subject: [PATCH v1 07/13] media: tegra-video: vi: Report stepwise frame sizes instead of querying subdev
+Date: Wed, 25 Nov 2026 13:07:44 +0200
+Message-ID: <20261125110750.223628-8-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261125110750.223628-1-clamor95@gmail.com>
 References: <20261125110750.223628-1-clamor95@gmail.com>
@@ -110,154 +110,54 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extend tegra_vi_ops.vi_fmt_align() with a struct v4l2_frmsize_stepwise
-pointer so tegra20_fmt_align() and tegra210_fmt_align() can report
-SoC-specific minimum/maximum dimensions and step alignment directly
-instead of duplicating limits.
-
-This will be needed later when converting the remaining ioctl operations.
+Update tegra_channel_enum_framesizes() to return frame sizes supported by
+VI instead of forwarding enum_frame_size to the remote source subdevice.
+This also requires switching to V4L2_FRMSIZE_TYPE_STEPWISE with a step of
+2, since Tegra VI requires sizes to be divisible by 2.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../platform/nvidia/tegra-video/tegra20.c      | 18 +++++++++++++++++-
- .../platform/nvidia/tegra-video/tegra210.c     | 18 +++++++++++++++++-
- drivers/media/platform/nvidia/tegra-video/vi.c |  8 ++++----
- drivers/media/platform/nvidia/tegra-video/vi.h | 11 ++++++++---
- 4 files changed, 46 insertions(+), 9 deletions(-)
+ .../media/platform/nvidia/tegra-video/vi.c    | 23 ++++---------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/media/platform/nvidia/tegra-video/tegra20.c b/drivers/media/platform/nvidia/tegra-video/tegra20.c
-index cdadff98eae75..f8d2b5e1b4131 100644
---- a/drivers/media/platform/nvidia/tegra-video/tegra20.c
-+++ b/drivers/media/platform/nvidia/tegra-video/tegra20.c
-@@ -447,8 +447,24 @@ static void tegra20_channel_host1x_syncpt_free(struct tegra_vi_channel *chan)
- 	host1x_syncpt_put(chan->frame_start_sp[0]);
- }
- 
--static void tegra20_fmt_align(struct v4l2_pix_format *pix, unsigned int bpp)
-+static void tegra20_fmt_align(struct v4l2_pix_format *pix,
-+			      struct v4l2_frmsize_stepwise *stepwise,
-+			      unsigned int bpp)
- {
-+	if (stepwise) {
-+		stepwise->min_width = TEGRA20_MIN_WIDTH;
-+		stepwise->min_height = TEGRA20_MIN_HEIGHT;
-+
-+		stepwise->max_width = TEGRA20_MAX_WIDTH;
-+		stepwise->max_height = TEGRA20_MAX_HEIGHT;
-+
-+		/* Size must be div2 */
-+		stepwise->step_width = 2;
-+		stepwise->step_height = 2;
-+
-+		return;
-+	}
-+
- 	pix->width  = clamp(pix->width,  TEGRA20_MIN_WIDTH,  TEGRA20_MAX_WIDTH);
- 	pix->height = clamp(pix->height, TEGRA20_MIN_HEIGHT, TEGRA20_MAX_HEIGHT);
- 
-diff --git a/drivers/media/platform/nvidia/tegra-video/tegra210.c b/drivers/media/platform/nvidia/tegra-video/tegra210.c
-index 82d054c9c34c5..90d984790696f 100644
---- a/drivers/media/platform/nvidia/tegra-video/tegra210.c
-+++ b/drivers/media/platform/nvidia/tegra-video/tegra210.c
-@@ -229,12 +229,28 @@ static void tegra210_channel_host1x_syncpt_free(struct tegra_vi_channel *chan)
- 	}
- }
- 
--static void tegra210_fmt_align(struct v4l2_pix_format *pix, unsigned int bpp)
-+static void tegra210_fmt_align(struct v4l2_pix_format *pix,
-+			       struct v4l2_frmsize_stepwise *stepwise,
-+			       unsigned int bpp)
- {
- 	unsigned int min_bpl;
- 	unsigned int max_bpl;
- 	unsigned int bpl;
- 
-+	if (stepwise) {
-+		stepwise->min_width = TEGRA210_MIN_WIDTH;
-+		stepwise->min_height = TEGRA210_MAX_WIDTH;
-+
-+		stepwise->max_width = TEGRA210_MIN_HEIGHT;
-+		stepwise->max_height = TEGRA210_MAX_HEIGHT;
-+
-+		/* Size must be div2 */
-+		stepwise->step_width = 2;
-+		stepwise->step_height = 2;
-+
-+		return;
-+	}
-+
- 	/*
- 	 * The transfer alignment requirements are expressed in bytes.
- 	 * Clamp the requested width and height to the limits.
 diff --git a/drivers/media/platform/nvidia/tegra-video/vi.c b/drivers/media/platform/nvidia/tegra-video/vi.c
-index 5b38bae648686..b523750725254 100644
+index b523750725254..ed3e1e91baf12 100644
 --- a/drivers/media/platform/nvidia/tegra-video/vi.c
 +++ b/drivers/media/platform/nvidia/tegra-video/vi.c
-@@ -441,7 +441,7 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 		goto out_free;
+@@ -311,29 +311,14 @@ static int tegra_channel_querycap(struct file *file, void *fh,
+ static int tegra_channel_enum_framesizes(struct file *file, void *fh,
+ 					 struct v4l2_frmsizeenum *sizes)
+ {
+-	int ret;
+ 	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-	const struct tegra_video_format *fmtinfo;
+-	struct v4l2_subdev_frame_size_enum fse = {
+-		.index = sizes->index,
+-		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+-	};
++	struct tegra_vi *vi = chan->vi;
  
- 	v4l2_fill_pix_format(pix, &fmt.format);
--	chan->vi->ops->vi_fmt_align(pix, fmtinfo->bpp);
-+	chan->vi->ops->vi_fmt_align(pix, NULL, fmtinfo->bpp);
+-	fmtinfo = tegra_get_format_by_fourcc(chan->vi, sizes->pixel_format);
+-	if (!fmtinfo)
++	if (sizes->index != 0)
+ 		return -EINVAL;
  
- out_free:
- 	__v4l2_subdev_state_free(sd_state);
-@@ -495,7 +495,7 @@ static int tegra_channel_set_format(struct file *file, void *fh,
- 		return ret;
- 
- 	v4l2_fill_pix_format(pix, &fmt.format);
--	chan->vi->ops->vi_fmt_align(pix, fmtinfo->bpp);
-+	chan->vi->ops->vi_fmt_align(pix, NULL, fmtinfo->bpp);
- 
- 	chan->format = *pix;
- 	chan->fmtinfo = fmtinfo;
-@@ -531,7 +531,7 @@ static int tegra_channel_set_subdev_active_fmt(struct tegra_vi_channel *chan)
- 	chan->format.bytesperline = chan->format.width * chan->fmtinfo->bpp;
- 	chan->format.sizeimage = chan->format.bytesperline *
- 				 chan->format.height;
--	chan->vi->ops->vi_fmt_align(&chan->format, chan->fmtinfo->bpp);
-+	chan->vi->ops->vi_fmt_align(&chan->format, NULL, chan->fmtinfo->bpp);
- 	tegra_channel_update_gangports(chan);
+-	fse.code = fmtinfo->code;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	ret = v4l2_subdev_call(subdev, pad, enum_frame_size, NULL, &fse);
+-	if (ret)
+-		return ret;
+-
+-	sizes->type = V4L2_FRMSIZE_TYPE_DISCRETE;
+-	sizes->discrete.width = fse.max_width;
+-	sizes->discrete.height = fse.max_height;
++	sizes->type = V4L2_FRMSIZE_TYPE_STEPWISE;
++	vi->ops->vi_fmt_align(NULL, &sizes->stepwise, 0);
  
  	return 0;
-@@ -845,7 +845,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
- 	chan->format.height = TEGRA_DEF_HEIGHT;
- 	chan->format.bytesperline = TEGRA_DEF_WIDTH * chan->fmtinfo->bpp;
- 	chan->format.sizeimage = chan->format.bytesperline * TEGRA_DEF_HEIGHT;
--	vi->ops->vi_fmt_align(&chan->format, chan->fmtinfo->bpp);
-+	vi->ops->vi_fmt_align(&chan->format, NULL, chan->fmtinfo->bpp);
- 
- 	ret = vi->ops->channel_host1x_syncpt_init(chan);
- 	if (ret)
-diff --git a/drivers/media/platform/nvidia/tegra-video/vi.h b/drivers/media/platform/nvidia/tegra-video/vi.h
-index 46328e488aa38..ac86f11588f95 100644
---- a/drivers/media/platform/nvidia/tegra-video/vi.h
-+++ b/drivers/media/platform/nvidia/tegra-video/vi.h
-@@ -45,8 +45,11 @@ struct tegra_vi_channel;
-  * @vi_enable: soc-specific operations needed to enable/disable the VI peripheral
-  * @channel_host1x_syncpt_init: initialize synchronization points
-  * @channel_host1x_syncpt_free: free all synchronization points
-- * @vi_fmt_align: modify `pix` to fit the hardware alignment
-- *		requirements and fill image geometry
-+ * @vi_fmt_align: if @stepwise is passed, it is filled with SoC-specific
-+ *		alignment restrictions and maximum/minimum frame dimensions,
-+ *		while other parameters are ignored. If @pix and @bpp are
-+ *		passed, @pix is modified to fit the hardware alignment
-+ *		requirements and fill the image geometry.
-  * @channel_queue_setup: additional operations at the end of vb2_ops::queue_setup
-  * @vi_start_streaming: starts media pipeline, subdevice streaming, sets up
-  *		VI for capture and runs capture start and capture finish
-@@ -58,7 +61,9 @@ struct tegra_vi_ops {
- 	int (*vi_enable)(struct tegra_vi *vi, bool on);
- 	int (*channel_host1x_syncpt_init)(struct tegra_vi_channel *chan);
- 	void (*channel_host1x_syncpt_free)(struct tegra_vi_channel *chan);
--	void (*vi_fmt_align)(struct v4l2_pix_format *pix, unsigned int bpp);
-+	void (*vi_fmt_align)(struct v4l2_pix_format *pix,
-+			     struct v4l2_frmsize_stepwise *stepwise,
-+			     unsigned int bpp);
- 	void (*channel_queue_setup)(struct tegra_vi_channel *chan);
- 	int (*vi_start_streaming)(struct vb2_queue *vq, u32 count);
- 	void (*vi_stop_streaming)(struct vb2_queue *vq);
+ }
 -- 
 2.53.0
 
