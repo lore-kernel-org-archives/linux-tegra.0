@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795604906;
-	b=zs0f/I1ijWPlb4JLLTShS4/Xf2qsm9FEHzqHxqE6sma+Sq6gF8utzZXyKlMulIW/WCSz
-	 EXRgwwjEl7vdC3ioLcwaLiMOIwu8SFsGz/psoOghflcgwfUxhj8weVQMXHl1Q30QqDcc+
-	 cu1eGhh9s+ow6A9tgNfeHgMpYA4YNuaUqdHd9BSe4HoBxpbM6I/cU1UnqBo9DH04UzPSO
-	 A4MxTYdH3Xu3uenaQ1qnyuJdiEtRZJBF/AoBlyc8DWMqb001ODpzCL+Hi7mk94O+DTFdL
-	 8xH1aGZEHn6woy3M4TT/0EWjmF/2Vt22csKBRe2a9Q3huBllzYQf8m2SEM66/4rqB6A==
+	t=1795604908;
+	b=I7sCC5aWXsGiDvlk1qpHjHqopG4rzuHToTIjfrigxjIpa/Z5YDk1NkImVNEqyzLGBYfx
+	 IOLnlXVRZ+tTJL4JnSB33qhV7guP8CD8Kh9ec6Msy4r9VD4l/JGikZREQ3gT35akRBJCY
+	 IGjeSE0pRkh0EhOxqnbFZeigTHTVUT4DRoZIGf+0NpVG/M3w2OO8telHBRFxu/HhaMtAy
+	 woqKrW58yTTX/7+NrJCeuySg+gC9RWtsS8LAusYq1avlv87yqf1FL2uwen9TbBddaXp2g
+	 XZxmoSxFUS/bsZiS14V1hq+sJif5oLjJkoB4SmDiWJ1fzh95jTSueaWvwilyeQS8/JA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795604906;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795604908;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=FPC7WvKQPOHddTcCwt5ZfmTpugqnrOt4y+DtQtGxVhA=;
-	b=AVAWsaYNypwT91fMIIdoExl7ahyYTGSexCRFgunvvy7JJLePsAa77gz1ZSZ9MpVr0kf2
-	 WF5CP38kvUDzpAl3eMP1U5SYvMea/A6uhyZ26950d+AaggVZ45jT26Z9fGPIKn4nWkSeW
-	 y9pOeKsIJPkPDSwRdosUhnhN2UR3vSBYjBNMKYwtPcGyV+46M0EEuQLr6H7H7XexmBWmq
-	 CSOvIMORZqZVxFyRnEGfeYm5ggKsUCO7FLPGY0GUGQDHjGaiHsV0QgDcbl9Zi8Uqu0waT
-	 9Fqd6BykbPyqfoeUz2k5THS2Llfw8mSjI7p1EKcT94a+A5dKGCuEiefTW16GyfB68uA==
+	bh=haW7qmNelcE/ou/Uj8IWT9VFF3pqmX9E8iBlrPLkLL8=;
+	b=T3tKP4PXipL5o/3WjsekAkpwHPE9ELzuDztWQ1QaH8VdbnrKIzZ3ztgMPd7aqDoeqVQC
+	 VmWb/q3fcSe6Bc6kBJ7tqzHqYcdfC7Y+0HVzbDW2Zh1Brz0fXqpGHs3PbgbLoxsYrDxJA
+	 i9feI9XBk+vvuaGbkJMlHGAnD6PeAWWhpyTxerxDHU/9PYAOQYcJcI3mGh4bWMA9C6Wke
+	 8BbemshAOCVun43ifznR3HskGaR8toYpTL3u2uRVRg0lPobrJlzo9uMlzwJcoZGgjY9Y1
+	 jM2hfwfeX7BE5lEfdSKRlfDrMb162avPEOGSLjupWMy/JpeR6e1FNglWMN8DI4M4J1Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Ev60ytHr;
-	arc=none smtp.remote-ip=209.85.218.47
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jpOgfnre;
+	arc=none smtp.remote-ip=209.85.218.48
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2788606A690
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 11:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C2788606A690
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52122606A339
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 11:08:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 52122606A339
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Ev60ytHr
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-c4395d31228so949346666b.1
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 03:08:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jpOgfnre
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c4d21051042so52995866b.0
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 03:08:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795604904; x=1796209704; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795604906; x=1796209706; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=FPC7WvKQPOHddTcCwt5ZfmTpugqnrOt4y+DtQtGxVhA=;
-        b=Ev60ytHrSQHBeKtyq7piY+87HV9Q/sxLiGTZ4oeWGaolpSyEaW6VlnhSpdTzUIwDQb
-         ls+ObkI2VjYUuIecEQDlc/xVy6VwW8JODj3Kgxd3HgYN2P4sTiktqjPLgWuXa4tbKb74
-         LumBod3hO3BHfEdEVC6IUqpTWtBa6+7rPObDTH6wg2KGrJz9vK0Rb2Cp6DjJZRWtJrXo
-         kCh7JB40eZsAZj4QhwPeBbi20BJCV5991KT93D9PpNUQSpEkG+hgehgX9aHmIpDZGdqD
-         r/EswOL3D1tYb3v6VnwdntKheFyeO88MHO2rVo0YZXlANKrvVCgXLYj3JJAU/OZq5iOZ
-         qWfQ==
+        bh=haW7qmNelcE/ou/Uj8IWT9VFF3pqmX9E8iBlrPLkLL8=;
+        b=jpOgfnreY4YbG981dBS5QD6xgOEJR227vYdIVQPp8xSszwWQ6+p9btxNfAYJI1657U
+         bV9Lfk/Kbs8wDluAQ/ZlCl+RkDs/DVkb3dLjAwU8a7NtJqRe0AJw1o9bu/t6QEEywoye
+         52wYFrEVpANYcRT6wScWvdYwhgD6+hWhiZ/7xm2fo5ZRTf5vRFlFVkf3wWS+3NPElODY
+         IvwtzBECG+JQQij6ckQnLNPnnRrQ2i9GDC/ZavgYnbXLn0GjSLUehNG5WImRqkNkRSFy
+         wh7CYalKRe/Gh6pG2grxOTwv1kq3ObucQU3axF7GgWOy6DemnR8l5MVLOXKut75aSNtU
+         F8gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795604904; x=1796209704;
+        d=1e100.net; s=20260707; t=1795604906; x=1796209706;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=FPC7WvKQPOHddTcCwt5ZfmTpugqnrOt4y+DtQtGxVhA=;
-        b=ghyVFZDuRrfSjI7yZirwapzpsQeCfCaaAUG5q6PX8rt6M4yd8g6ioyeuhtOPuQM8QU
-         sHR0VPGXlutdXUTh364SimlZE2xwhUTUj4AxvDJ0ZTIb9c5bTq9KfgmCPgUNxBvJ2x78
-         RDbYTlWHkJ4G4GTxVW8s8TbOBV+lCqvxKNdRuPwRUU+ZPH79CRx90QtE9IvoZmZaGgxA
-         mm6sKDA3uboJk/JtMRwtcTSdHwLLAw7SY1e4TMVySRwzJTA78oNJhCXCneN4d+U8HpK5
-         ehOoaSiA/9hZUdQnJX815pIGOTT9bs49W62+tPPigRR1EUFAR5wMdxmJC/I+dj6NGxlF
-         /MFg==
-X-Forwarded-Encrypted: i=1; AL+hErHmPK9Pr5dkpWsBPnZ0xkpRZ+QGJFnTzX4VQqESRfiU/t9gFXL4INEd++E/sDfxARZHJsgQyUYn+R3lWg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+zW2V4Qv6PmYr7DGUIikdf43Botr/aeI/Cu+1rnqlWvRXvoTSi
-	vDQluq6iatqpZuBAW1rjvgwzFgYNL7VAqKyEIY8NqikEdVxE0tfJQzaQ
-X-Gm-Gg: AZFdTZdYRl7bXiN81zdcS0pxtjBeglnT4+OkT3WJQNxsoy3c8UwvOKuwX9Lo7/ALnlQ
-	2CdhEmCxwm1N2u3Da5S/Nb5LpvCn3m95aUxzmRgJFqhCR37FZlBGG2t61t0vXMOJsE8Akc3E8T/
-	Fx4E8Ng79q4da7Y4ZAf/JOrCHxRbPFZnDdpcPIk2UoV88CnN0lbXYMWpvD/uj9uy9KrAfSXLiD+
-	uidJvDqyRFCFBtsZGEwkAU9C0GpzjWYd0r3HO9APsimy4Y0YeABjkLtMSFEv6/vXVySmMNNmmgP
-	yEW3jvit7AoZ6iCz4B/Uwap5X8gvjD50ZAdAA/d5M0jGPQwDqfajl4+ftmtCmleUm0gTY8aEEvO
-	DnpCTmS3roEGdybMf7MH2VRB8gxdBqpQ9ARrDrsCde+zfU7OOs2hXlxXsqLQnPxIMgZid5Scxcl
-	f0M6fL1XNHQuyS2neuh5w8o02EfUi2fW7u6lxRO1iO3/xUYq0v+biWpb7n2WXUbdq6m5ZpLsifl
-	J6M8ukJPxRGEYfUwSgu581iIkd4mZcFFGL0ClmWK+QqlgkSrcDHczNJxr2qSFML+luNEYlxYvKQ
-	jTEdOBo0dRk7jhBzcCbM4s+YgJzkMjrDn3/q9EFpjN+sPTUj1Rpi1cL2umGydxFcDp7sUmwKxDl
-	E3sd3WtPaAQ==
-X-Received: by 2002:a17:906:5006:b0:c50:5e10:71ae with SMTP id a640c23a62f3a-c513a5e2124mr1216666866b.17.1795604904078;
-        Wed, 25 Nov 2026 03:08:24 -0800 (PST)
+        bh=haW7qmNelcE/ou/Uj8IWT9VFF3pqmX9E8iBlrPLkLL8=;
+        b=gOJLZQ7Kg8g0UE110utJFaWPZUci+JkNwKDlsVK7v14a2R369574xlWc2w1DP1U9e7
+         +wwai6lsM9JjG5xRV7pOIgIYaA6EO0RPi5DRncL2+GLpvea/BT/eWnpY2LNtBRT1LG4a
+         awnywBff+J4FLXB2jzOxIHSTOYL3338PwYeCctxHU53XwYgEEYgpJZA0O/jy3GdDngdT
+         bu95T+p9i4W+hHvkb9Bk8vuEgQ6DugQuxqVFshS/ySD1EUebNlHFoBcvFxzBJrCUroQx
+         owSlDYLiEKvFt0YwFixZmtGuGAIEZH1XRuyzhkc3b2zQu2kfITgPvYMnVuC5iaE9xilR
+         v0VQ==
+X-Forwarded-Encrypted: i=1; AL+hErFtOJ5gahKU4Ogm+OMOLgbyNTr2QeaYnhcLRLQqDCbgsfBUeOZNetrwGLS0eTTzIlivcfEj1VDbtKtXsQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+1ozUJ8Iff3rSRMiExKSXfL6OCIXMkXE694lpA9nfcmIx/SEDF
+	oY9bPy6jyuvOWl7aMSKxMa0X8d3x0zbPwvVeoEaHc9bawTW3QdvJKvQN
+X-Gm-Gg: AZFdTZfnkwXA4onFiabO7cj8zqlbw307g1Gn9QRNRVPC5iZUgxl/hX26zQawGVozkDA
+	UpgNiYNh6DE57PS4mGEF3kVA+yPE84gM1SU5ROGE2aPY1jRJIqm7ZLoFmrwfByNFk98RyHSAr5t
+	bbPcBBuMl1FdlSbjUV/SqAjVK9oe3+Qfg7VMF8JMwMywXbI5SF5pJteCG6x0FlBwo6smCho3ioq
+	wYgsFIEhGR81eFDFQm2ZSoluasG7jdeu8X6SiuQqcVs9v4Z1ITMYEi8VIS830F/m+y8zPEZNWHe
+	RBEYtQ/OCzhUq4w0Ceelzsh/UzZjZmzf1pRtDm+hzda7kqbH7A8kGVuxjOU6hjPKCm7xpISVc5y
+	iUPTgGrC5adRI/PI5I9Mwy0zpipt02ZERCkSIgMvSnuJEN5ro5XtT21ViLdCDCHwCMhIQLWEsMN
+	b7GxTAt6Q17xIiYCYDJHrxToyCDxL5wYOMX3ZrSm7/WpA/0n5+4LyQgHOUxNt5tKAQD3Sk9vsOC
+	Rdz6Wo/3w838ClPhnHfsvXwa2/fO1x0iQvJKHnm8Jzu3/KAzJuGHtgLrfehLYH0ImwHi+QJD78f
+	IgTDejiiLZAvFCdyMpi1QtQkHBBe4qmvz9QxnSlZtbfBrPBd16JtSawrid3Y8FiaAT1E+JAHuDC
+	Y214FtIxPqA==
+X-Received: by 2002:a17:906:99d4:b0:c46:ca2b:84bd with SMTP id a640c23a62f3a-c513a8929c4mr1454092366b.30.1795604905625;
+        Wed, 25 Nov 2026 03:08:25 -0800 (PST)
 Received: from xeon ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513acfeda1sm654562066b.6.2026.11.25.03.08.22
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513acfeda1sm654562066b.6.2026.11.25.03.08.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 03:08:23 -0800 (PST)
+        Wed, 25 Nov 2026 03:08:24 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Thierry Reding <thierry.reding@kernel.org>,
@@ -93,9 +93,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-media@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v1 03/13] media: tegra-video: vi: Expose all sub-devices in the pipeline
-Date: Wed, 25 Nov 2026 13:07:40 +0200
-Message-ID: <20261125110750.223628-4-clamor95@gmail.com>
+Subject: [PATCH v1 04/13] media: tegra-video: vi: Drop subdevice passthrough and input ioctls
+Date: Wed, 25 Nov 2026 13:07:41 +0200
+Message-ID: <20261125110750.223628-5-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261125110750.223628-1-clamor95@gmail.com>
 References: <20261125110750.223628-1-clamor95@gmail.com>
@@ -110,70 +110,362 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for exposing /dev/v4l-subdev* nodes for the CSI and VIP bridge
-sub-devices to userspace by setting V4L2_SUBDEV_FL_HAS_DEVNODE flag. Call
-v4l2_device_register_subdev_nodes() in the async complete notifier
-callback to expose all devices in the pipeline, including auxiliary ones.
+Drop V4L2 video device ioctl callbacks in tegra_channel_ioctl_ops that
+simply proxy stream parameters, frame intervals, selection, EDID, or DV
+timings to the remote source subdevice, along with the single-input
+enumeration and selection stubs, as part of moving the driver to a
+media-controller pipeline model.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- drivers/media/platform/nvidia/tegra-video/csi.c | 1 +
- drivers/media/platform/nvidia/tegra-video/vi.c  | 4 +++-
- drivers/media/platform/nvidia/tegra-video/vip.c | 1 +
- 3 files changed, 5 insertions(+), 1 deletion(-)
+ .../media/platform/nvidia/tegra-video/vi.c    | 299 ------------------
+ 1 file changed, 299 deletions(-)
 
-diff --git a/drivers/media/platform/nvidia/tegra-video/csi.c b/drivers/media/platform/nvidia/tegra-video/csi.c
-index 44bd53dbbf7fd..add526de536f9 100644
---- a/drivers/media/platform/nvidia/tegra-video/csi.c
-+++ b/drivers/media/platform/nvidia/tegra-video/csi.c
-@@ -680,6 +680,7 @@ static int tegra_csi_channel_init(struct tegra_csi_channel *chan)
- 	v4l2_set_subdevdata(subdev, chan);
- 	subdev->fwnode = of_fwnode_handle(chan->of_node);
- 	subdev->entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
-+	subdev->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
- 
- 	/* initialize media entity pads */
- 	ret = media_entity_pads_init(&subdev->entity, chan->numpads,
 diff --git a/drivers/media/platform/nvidia/tegra-video/vi.c b/drivers/media/platform/nvidia/tegra-video/vi.c
-index 71921931457be..4753ca89666ae 100644
+index 4753ca89666ae..376f53f44b90d 100644
 --- a/drivers/media/platform/nvidia/tegra-video/vi.c
 +++ b/drivers/media/platform/nvidia/tegra-video/vi.c
-@@ -1548,12 +1548,14 @@ static int tegra_vi_graph_notify_complete(struct v4l2_async_notifier *notifier)
- 	struct tegra_vi_graph_entity *entity;
- 	struct v4l2_async_connection *asd;
- 	struct v4l2_subdev *subdev;
-+	struct tegra_video_device *vid;
- 	struct tegra_vi_channel *chan;
- 	struct tegra_vi *vi;
- 	int ret;
+@@ -308,26 +308,6 @@ static int tegra_channel_querycap(struct file *file, void *fh,
+ 	return 0;
+ }
  
- 	chan = container_of(notifier, struct tegra_vi_channel, notifier);
- 	vi = chan->vi;
-+	vid = dev_get_drvdata(vi->client.host);
+-static int tegra_channel_g_parm(struct file *file, void *fh,
+-				struct v4l2_streamparm *a)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	return v4l2_g_parm_cap(&chan->video, subdev, a);
+-}
+-
+-static int tegra_channel_s_parm(struct file *file, void *fh,
+-				struct v4l2_streamparm *a)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	return v4l2_s_parm_cap(&chan->video, subdev, a);
+-}
+-
+ static int tegra_channel_enum_framesizes(struct file *file, void *fh,
+ 					 struct v4l2_frmsizeenum *sizes)
+ {
+@@ -358,38 +338,6 @@ static int tegra_channel_enum_framesizes(struct file *file, void *fh,
+ 	return 0;
+ }
  
- 	dev_dbg(vi->dev, "notify complete, all subdevs registered\n");
- 
-@@ -1610,7 +1612,7 @@ static int tegra_vi_graph_notify_complete(struct v4l2_async_notifier *notifier)
- 	subdev = tegra_channel_get_remote_source_subdev(chan);
- 	v4l2_set_subdev_hostdata(subdev, chan);
- 
+-static int tegra_channel_enum_frameintervals(struct file *file, void *fh,
+-					     struct v4l2_frmivalenum *ivals)
+-{
+-	int ret;
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-	const struct tegra_video_format *fmtinfo;
+-	struct v4l2_subdev_frame_interval_enum fie = {
+-		.index = ivals->index,
+-		.width = ivals->width,
+-		.height = ivals->height,
+-		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+-	};
+-
+-	fmtinfo = tegra_get_format_by_fourcc(chan->vi, ivals->pixel_format);
+-	if (!fmtinfo)
+-		return -EINVAL;
+-
+-	fie.code = fmtinfo->code;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	ret = v4l2_subdev_call(subdev, pad, enum_frame_interval, NULL, &fie);
+-	if (ret)
+-		return ret;
+-
+-	ivals->type = V4L2_FRMIVAL_TYPE_DISCRETE;
+-	ivals->discrete.numerator = fie.interval.numerator;
+-	ivals->discrete.denominator = fie.interval.denominator;
+-
 -	return 0;
-+	return v4l2_device_register_subdev_nodes(&vid->v4l2_dev);
+-}
+-
+ static int tegra_channel_enum_format(struct file *file, void *fh,
+ 				     struct v4l2_fmtdesc *f)
+ {
+@@ -601,203 +549,6 @@ tegra_channel_subscribe_event(struct v4l2_fh *fh,
+ 	return v4l2_ctrl_subscribe_event(fh, sub);
+ }
  
- unregister_video:
- 	vb2_video_unregister_device(&chan->video);
-diff --git a/drivers/media/platform/nvidia/tegra-video/vip.c b/drivers/media/platform/nvidia/tegra-video/vip.c
-index b73ba0eab5573..040776775aacc 100644
---- a/drivers/media/platform/nvidia/tegra-video/vip.c
-+++ b/drivers/media/platform/nvidia/tegra-video/vip.c
-@@ -165,6 +165,7 @@ static int tegra_vip_channel_init(struct tegra_vip *vip)
- 	v4l2_set_subdevdata(subdev, &vip->chan);
- 	subdev->fwnode = of_fwnode_handle(vip->chan.of_node);
- 	subdev->entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
-+	subdev->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+-static int tegra_channel_g_selection(struct file *file, void *priv,
+-				     struct v4l2_selection *sel)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-	struct v4l2_subdev_format fmt = {
+-		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+-	};
+-	struct v4l2_subdev_selection sdsel = {
+-		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+-		.target = sel->target,
+-	};
+-	int ret;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	if (!v4l2_subdev_has_op(subdev, pad, get_selection))
+-		return -ENOTTY;
+-
+-	if (sel->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-	/*
+-	 * Try the get selection operation and fallback to get format if not
+-	 * implemented.
+-	 */
+-	ret = v4l2_subdev_call(subdev, pad, get_selection, NULL, NULL, &sdsel);
+-	if (!ret)
+-		sel->r = sdsel.r;
+-	if (ret != -ENOIOCTLCMD)
+-		return ret;
+-
+-	ret = v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
+-	if (ret < 0)
+-		return ret;
+-
+-	sel->r.left = 0;
+-	sel->r.top = 0;
+-	sel->r.width = fmt.format.width;
+-	sel->r.height = fmt.format.height;
+-
+-	return 0;
+-}
+-
+-static int tegra_channel_s_selection(struct file *file, void *fh,
+-				     struct v4l2_selection *sel)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-	int ret;
+-	struct v4l2_subdev_selection sdsel = {
+-		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+-		.target = sel->target,
+-		.flags = sel->flags,
+-		.r = sel->r,
+-	};
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	if (!v4l2_subdev_has_op(subdev, pad, set_selection))
+-		return -ENOTTY;
+-
+-	if (sel->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+-		return -EINVAL;
+-
+-	if (vb2_is_busy(&chan->queue))
+-		return -EBUSY;
+-
+-	ret = v4l2_subdev_call(subdev, pad, set_selection, NULL, NULL, &sdsel);
+-	if (!ret) {
+-		sel->r = sdsel.r;
+-		/*
+-		 * Subdev active format resolution may have changed during
+-		 * set selection operation. So, update channel format to
+-		 * the sub-device active format.
+-		 */
+-		return tegra_channel_set_subdev_active_fmt(chan);
+-	}
+-
+-	return ret;
+-}
+-
+-static int tegra_channel_g_edid(struct file *file, void *fh,
+-				struct v4l2_edid *edid)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	if (!v4l2_subdev_has_op(subdev, pad, get_edid))
+-		return -ENOTTY;
+-
+-	return v4l2_subdev_call(subdev, pad, get_edid, edid);
+-}
+-
+-static int tegra_channel_s_edid(struct file *file, void *fh,
+-				struct v4l2_edid *edid)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	if (!v4l2_subdev_has_op(subdev, pad, set_edid))
+-		return -ENOTTY;
+-
+-	return v4l2_subdev_call(subdev, pad, set_edid, edid);
+-}
+-
+-static int tegra_channel_g_dv_timings(struct file *file, void *fh,
+-				      struct v4l2_dv_timings *timings)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	if (!v4l2_subdev_has_op(subdev, pad, g_dv_timings))
+-		return -ENOTTY;
+-
+-	return v4l2_device_call_until_err(chan->video.v4l2_dev, 0,
+-					  pad, g_dv_timings, 0, timings);
+-}
+-
+-static int tegra_channel_s_dv_timings(struct file *file, void *fh,
+-				      struct v4l2_dv_timings *timings)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-	struct v4l2_bt_timings *bt = &timings->bt;
+-	struct v4l2_dv_timings curr_timings;
+-	int ret;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	if (!v4l2_subdev_has_op(subdev, pad, s_dv_timings))
+-		return -ENOTTY;
+-
+-	ret = tegra_channel_g_dv_timings(file, fh, &curr_timings);
+-	if (ret)
+-		return ret;
+-
+-	if (v4l2_match_dv_timings(timings, &curr_timings, 0, false))
+-		return 0;
+-
+-	if (vb2_is_busy(&chan->queue))
+-		return -EBUSY;
+-
+-	ret = v4l2_device_call_until_err(chan->video.v4l2_dev, 0,
+-					 pad, s_dv_timings, 0, timings);
+-	if (ret)
+-		return ret;
+-
+-	chan->format.width = bt->width;
+-	chan->format.height = bt->height;
+-	chan->format.bytesperline = bt->width * chan->fmtinfo->bpp;
+-	chan->format.sizeimage = chan->format.bytesperline * bt->height;
+-	chan->vi->ops->vi_fmt_align(&chan->format, chan->fmtinfo->bpp);
+-	tegra_channel_update_gangports(chan);
+-
+-	return 0;
+-}
+-
+-static int tegra_channel_query_dv_timings(struct file *file, void *fh,
+-					  struct v4l2_dv_timings *timings)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	if (!v4l2_subdev_has_op(subdev, pad, query_dv_timings))
+-		return -ENOTTY;
+-
+-	return v4l2_device_call_until_err(chan->video.v4l2_dev, 0,
+-					  pad, query_dv_timings, 0, timings);
+-}
+-
+-static int tegra_channel_enum_dv_timings(struct file *file, void *fh,
+-					 struct v4l2_enum_dv_timings *timings)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	if (!v4l2_subdev_has_op(subdev, pad, enum_dv_timings))
+-		return -ENOTTY;
+-
+-	return v4l2_subdev_call(subdev, pad, enum_dv_timings, timings);
+-}
+-
+-static int tegra_channel_dv_timings_cap(struct file *file, void *fh,
+-					struct v4l2_dv_timings_cap *cap)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	if (!v4l2_subdev_has_op(subdev, pad, dv_timings_cap))
+-		return -ENOTTY;
+-
+-	return v4l2_subdev_call(subdev, pad, dv_timings_cap, cap);
+-}
+-
+ static int tegra_channel_log_status(struct file *file, void *fh)
+ {
+ 	struct tegra_vi_channel *chan = video_drvdata(file);
+@@ -807,54 +558,13 @@ static int tegra_channel_log_status(struct file *file, void *fh)
+ 	return 0;
+ }
  
- 	err = media_entity_pads_init(&subdev->entity, TEGRA_VIP_PADS_NUM, vip->chan.pads);
- 	if (err)
+-static int tegra_channel_enum_input(struct file *file, void *fh,
+-				    struct v4l2_input *inp)
+-{
+-	struct tegra_vi_channel *chan = video_drvdata(file);
+-	struct v4l2_subdev *subdev;
+-
+-	if (inp->index)
+-		return -EINVAL;
+-
+-	inp->type = V4L2_INPUT_TYPE_CAMERA;
+-	subdev = tegra_channel_get_remote_source_subdev(chan);
+-	strscpy(inp->name, subdev->name, sizeof(inp->name));
+-	if (v4l2_subdev_has_op(subdev, pad, dv_timings_cap))
+-		inp->capabilities = V4L2_IN_CAP_DV_TIMINGS;
+-
+-	return 0;
+-}
+-
+-static int tegra_channel_g_input(struct file *file, void *priv,
+-				 unsigned int *i)
+-{
+-	*i = 0;
+-
+-	return 0;
+-}
+-
+-static int tegra_channel_s_input(struct file *file, void *priv,
+-				 unsigned int input)
+-{
+-	if (input > 0)
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
+ 	.vidioc_querycap		= tegra_channel_querycap,
+-	.vidioc_g_parm			= tegra_channel_g_parm,
+-	.vidioc_s_parm			= tegra_channel_s_parm,
+ 	.vidioc_enum_framesizes		= tegra_channel_enum_framesizes,
+-	.vidioc_enum_frameintervals	= tegra_channel_enum_frameintervals,
+ 	.vidioc_enum_fmt_vid_cap	= tegra_channel_enum_format,
+ 	.vidioc_g_fmt_vid_cap		= tegra_channel_get_format,
+ 	.vidioc_s_fmt_vid_cap		= tegra_channel_set_format,
+ 	.vidioc_try_fmt_vid_cap		= tegra_channel_try_format,
+-	.vidioc_enum_input		= tegra_channel_enum_input,
+-	.vidioc_g_input			= tegra_channel_g_input,
+-	.vidioc_s_input			= tegra_channel_s_input,
+ 	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
+ 	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
+ 	.vidioc_querybuf		= vb2_ioctl_querybuf,
+@@ -866,15 +576,6 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
+ 	.vidioc_streamoff		= vb2_ioctl_streamoff,
+ 	.vidioc_subscribe_event		= tegra_channel_subscribe_event,
+ 	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
+-	.vidioc_g_selection		= tegra_channel_g_selection,
+-	.vidioc_s_selection		= tegra_channel_s_selection,
+-	.vidioc_g_edid			= tegra_channel_g_edid,
+-	.vidioc_s_edid			= tegra_channel_s_edid,
+-	.vidioc_g_dv_timings		= tegra_channel_g_dv_timings,
+-	.vidioc_s_dv_timings		= tegra_channel_s_dv_timings,
+-	.vidioc_query_dv_timings	= tegra_channel_query_dv_timings,
+-	.vidioc_enum_dv_timings		= tegra_channel_enum_dv_timings,
+-	.vidioc_dv_timings_cap		= tegra_channel_dv_timings_cap,
+ 	.vidioc_log_status		= tegra_channel_log_status,
+ };
+ 
 -- 
 2.53.0
 
