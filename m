@@ -1,118 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795620331;
-	b=TPai1Fe/TLtHLFtrB4hseqI0HPKTz/RLE9Gsl3hbSwfBMPyT75RdMqaRtvTCwQR/S02g
-	 /56QbBZG27pQDa+pLhZ9EZqpk1t09TOWs1pmu5vPPZoMnmBnaKjKAaNR8FeDHgRzFV8fr
-	 TlOmQbvn5mtQREw7TbyAyarpT/CaGe0uPiqUM+bUZ5MRV4/QlDdVt9gIn+VPeYM/9ltbh
-	 MFdIM7fvjvsgSia/5U38LIAvmK6VoaPRQCuAkVcIxUH/sTSnfv0FPdIQsKleICxYpOReh
-	 XDYgZ/lbM4+tT+/wS5lteu9D2GTHGaL4UXObWdEn97cNGybSZriBaOfFxiNBPv8fe/A==
+	t=1795624118;
+	b=IX/2rq6P0q5nDz6svBpbFHUM8kNzcxXfeeSDJmbXqmAUOtGxOPQXK4baKx11ku8MsoLd
+	 WI9CKAnx5VhOxnElpkXYhl5v6zuB/zuQqEtfTw2NZiZysixuk/EBIgJhdBKuY4cKHJsHB
+	 Ek2zQF0vd2r1974ZFiJS5PDhifBYwU1qkz3gbEIJdLjxOMx4v5ZPRAmn13RQDdinGV37v
+	 kzFErddJz9g0YVRIyXQ/ZJ9JlolFuyROMoIwQKJLCCAqTCoV1w5U3Dl1/rl/yV4oMjIlp
+	 a9RzWrU4dg37E6oqy0QWEI6QHe16Eqyr8wl518hXyOwN7KgHJXFvM2xVgxW0w+gu5fg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795620331;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795624118;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=8twhPZWezouYqnEgR9F+FlFfS4vpJ/v0U2VffsuCrB0=;
-	b=nLJ6o/MzJp44Uw0IfGaZuG2SKjhjiP5xqBdVIN7e13RLiqwjUYKcucfFrEqR8vFAG2eg
-	 djvg7YpQ/bxqjs49aaaYvAnzYB07M41Gk1riSj8FV1iMu1kgRdv+qSi/O5hsEf5RMjUPI
-	 2t+lMb6UDqvWNCKweU9NSWRvCBuIW4QJ78E4KqW5cnThYJwkefDTgjD530IIr6TRj1DWT
-	 mxG8MaB/ZG11PeY6dqUYjOl9UENgbLDA29WU/VpL6T30YLx/BVzSEUttKMWv57k+lqmOQ
-	 fFo4a+r9e8vxuVMzUBsxadMxdUpE0zQWvYfsJlzB5AccnYESeGeBFDrNOM/D85SHcOA==
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=F33PfOK0msjzeBxtvP6gRqlD2SQxJhJCJJqwD2eVgsE=;
+	b=GgAl5ZTWwT4IozvQVszXOvz3xnQTe+Rz1iKrmq/h3NnWIk3J2iksoR+WmsoEocp+acH0
+	 g9Kb4nRar2z6dEwisdBIc6y8lgnx22cQRB1fRDiYkoKosnp/gJqGVcnWpNbNzEF6PSh+i
+	 D3P0Fxmf2DplViGEhwD2d8PIVSAfUWbAwI/kuwnGtZE3O4qya70oX3J1ByceICstRUqLP
+	 uArxR6SDneTGVwUKb9Jx7xj1zVNFqSO8V4yY4pcxLpctDy2+oPtHQHW4Y3PfRqeMPr/uN
+	 Dn+N+dc389U/zVP75viK0Ux6kQvc9qmgNUac344s2dchiT9v0murFZjww5YOqaIqhQQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=ziepe.ca;
-	spf=pass smtp.mailfrom=ziepe.ca;
-	dkim=pass header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=iFk419Bq;
-	arc=none smtp.remote-ip=209.85.222.53
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dmarc=none header.from=thegoodpenguin.co.uk;
+	spf=pass smtp.mailfrom=thegoodpenguin.co.uk;
+	dkim=pass header.d=thegoodpenguin-co-uk.20260707.gappssmtp.com header.i=@thegoodpenguin-co-uk.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=h+qqryqR;
+	arc=none smtp.remote-ip=209.85.128.41
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7797A606A323
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 15:25:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7797A606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B798D606A333
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 16:28:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B798D606A333
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=iFk419Bq
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-99071945aa7so3264621241.3
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 07:25:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20260707.gappssmtp.com header.i=@thegoodpenguin-co-uk.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=h+qqryqR
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4bb70074ab2so64609555e9.0
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 08:28:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1795620330; x=1796225130; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8twhPZWezouYqnEgR9F+FlFfS4vpJ/v0U2VffsuCrB0=;
-        b=iFk419BqbfBi/6ObNDUZ2vsXpKfzRGG8soL1vwWsfo3s0278JXjr9iY8LX249svZsi
-         r6zCWgQOJswtMqBkGndgaQ0IvnnCAjGp65TR4XQNdfZ5sZPg0BgeutzGHAq8cM2f0LQv
-         k79Pa3Mi31cvvRuTHw0jZ0595qcyP7Hk6uoobP2Z5yd2mn/yT4hXNKxz8+kfBrSxNLDf
-         QHFAAQ74iOvDW0Lv4NLZloAJyTvOPgRcIasINF2MuVmMIVyHVBduWP93wMPTk4SQT8Wq
-         iiMNt8SR9mbCr9h27gdplCbxaAkt1KGPe3OqaB/mp7PDl4S4WFrxi6Ipq3bM+f7oWh6E
-         wrCQ==
+        d=thegoodpenguin-co-uk.20260707.gappssmtp.com; s=20260707; t=1795624116; x=1796228916; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=F33PfOK0msjzeBxtvP6gRqlD2SQxJhJCJJqwD2eVgsE=;
+        b=h+qqryqR1Ovck0gRlo++6eEZTK5bo9GLe5NEQZqXoHrOhbgTMx+7+kLiM7oJ82hjcJ
+         T1Bje06ySXgrgS3zSGaElO5atTz+DzRWGZPZyH5sJ2pPJmegu+FS5Iv1IVsGrtBa1A0Z
+         Mv2Lh1Ae1rqgL01kuX84mfvtSyTRGwEe6BNCEZY8vWhFBwRQf3K9Eu/x5NLCJ93GgxUC
+         46radye/pBMsLpvuJKyy3jDA+P2lKff1EKXIo57raii3ROeQ36SckuZUSKC6DST1raiJ
+         nWXWw9vvLUFiduK7SCy0Qh5sm0m70KZMMnwXOYyA7lh7qNwmKFBqXZY/GGDKfHoQBhMI
+         yUEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795620330; x=1796225130;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=8twhPZWezouYqnEgR9F+FlFfS4vpJ/v0U2VffsuCrB0=;
-        b=VMQFgx8/BmGL44XBD5x8s+BW86da12+qTlzFj+ISSaUL0HBq/3k8Y8uvu1gGW7Njhx
-         zNJ1nV62/qXwuI/cMYwz9TflzM5kLtSx/RYe0o/TiuQMw/NN3yT6Cp11N/sOEy8Bx8qB
-         /6UAdLM3QgbZhQLuIziQjHWS3Z8GmNtImEhOfQAn6mG9vXswMxsaLnulZl6N61zjiY76
-         adlOBaK8stal99re0SJ0z/+KL4OS/EEU9PPX+6NuP1UCH+gaxMPclmNlvtcwYQ4p5Ca6
-         tKP4Kw2gBwfLnqAGSKf9QEhFgCQWY/yNo4RMrLNaJTuKBV8xwHVgMLSSgYu+YWYbcJb/
-         TwQQ==
-X-Forwarded-Encrypted: i=1; AL+hErE0DWqT7Q+HESlREcPQHfIR6v5bp9xeM+hrjkbV1KOrVmHM/K0OBqYduu+r5Ej0FmvfrC5LKwULSqKe6Q==@vger.kernel.org
-X-Gm-Message-State: APuU4Z93wgCOdP289t/LJmcyfbIZXh9kfmF3Ut2uO0X5Eoo8ASrS+xNb
-	z6Q69H7Ul9uEVYX+KaoFC+1DN4rBWoc+ueGPwrL+kSYwqW4lwUzxpqCtISoNjCjEn9A=
-X-Gm-Gg: AZFdTZdBPuxJIy/WjJ+GAPsEVTQZtaJ68N6MU+swMkIb0yJRGTa9UrniFtwdbo2H3Qw
-	g2MjTGb2Dgy3i/4mlHVC9Dxfn4As4BHgzvt04dE2OXeoyEZul4kPDiqigcTbIPovE+8ty9+X62d
-	P3WF8XjDNUPKT/Ldw94xSUmM4ABcapwBkQ8DT+p9IJ5tAgMpnSi+DcYwrXlD8IxUP53NSEQ/IcE
-	c3jayDCJx6TAVWmmabtIquICfnPUpYtbN+r3s4IDvNCGOt55N+Z1TqMvlrzGo17CmHzdSUrmbkQ
-	pkUGIVZ2BaVYwtjCKKnXw6jw8WIAj8LFNYPzLuEzp9mP60aKxLtVqE6FNW8UdX77TWk1I1yTQfv
-	PGaPaE7C7hvrdezj3+huS87YQObSYLw0tt/eQIEY3LgP7VbaqNi6CBpODwMQAvFSFuhHwZuBrU/
-	cdw4N4xOlwNbffFws+F62EaMgYtsN2MrfkPwBpEGaVZFmL9lgc8LncjbabfcU3MZUx7sZhUfGmP
-	rptaWKo1T3nWtwbFpRT3q0TQPiJ4t8DNLa99Es4jWxuftac6KkehLc52SW2iSDOtYcqt7ivce5a
-	KgQBowDTV2z/ezxZb9nDnidPLXE=
-X-Received: by 2002:a05:6102:3e8d:b0:7c3:fcb:180c with SMTP id ada2fe7eead31-7d739572406mr10710273137.20.1795620330327;
-        Wed, 25 Nov 2026 07:25:30 -0800 (PST)
-Received: from ziepe.ca ([142.177.118.84])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9213479655asm165007476d6.4.2026.11.25.07.25.29
+        d=1e100.net; s=20260707; t=1795624116; x=1796228916;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=F33PfOK0msjzeBxtvP6gRqlD2SQxJhJCJJqwD2eVgsE=;
+        b=mF7Fx6Zpvne6guf9GEPCHt9NiqScI4auTGXevOudCahfeE3IH7KrUJ1vk1fmurjUdN
+         YXx2SGi3qhwgR9PHgiyvY07e6erHBWhRDRfj3MbTWzmnzErCie6eFLh+V7TwO6D3zLsR
+         tb18Qa7oDFc49yjI+2gk5rE8icryEiz4kpu91nvLiG7kL+t1ZmKD9R+ggpTZoFmAW1Jl
+         fKqU/jd5WCKxQtj5CQVWhc6vO+RFIRXnwVmnkVX5/Sa3cZYAtLk13JbEM9F/qBWoisHS
+         jK3x45WUu2dqOBcGiMS+rh1N7p0mnFyIvVXYf5z5w294cOabMSRe3ERKbQuteHtSk0SM
+         LjhQ==
+X-Forwarded-Encrypted: i=1; AL+hErEaY/JPKLA2m20fQY/D/wOKOTrTV4Vjhsh/HoTV64yAYJfn9dHoOO9MMVXKn1BCyk4xgYizxml7EvroGQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/YHnHX5TnPdcfnCJZXTAexeVu8FwrTmN/oehZ8FLkt7DgCNTsD
+	Ze5tPB86somgmkyK0/p/aQY2YWWszphmQEQu8QWik2ztd/EzNFNliG7azW54yv0Zzhk=
+X-Gm-Gg: AZFdTZdEbWFhiGvHE8sjzM9O+n72j8ZuJLpq9fcEcqSCVmUJIJVi6QRC9tXWIk7Jmma
+	u819DEoE2rKlPupEwctIU3uIcg5dP0T6unOez8QLepiN9CCPjl6MMH88QkvDgLrpD5/wSf7Xdxe
+	qMKGlZc/NkOlh7UTQMc4LYSZQ5CWt9/aFXNyVMvf7QitBdp4HPmKx+urqXwJlKzxOQKxAV76TYm
+	PUL9AwJzd2vsIEP4PTsKVUnsNe9zMQYKBsFC7MWKGTERYaNwnM28lWDyB588BcARRWTZtSAMK7C
+	AlXKHgfrmpFi3iUzHYNCqv56pxHNjI0K68JdLIb3+Of5xhuQmdQeMHzYhsC2RiaICoIWIg8Qlgq
+	7Ik+PG2+W0VSIRfyEn4jJgnLhER5KCb0mj/FcJR9owRd7n9mFsQNxYzdcE9yP3YrsK+0hVdIFMV
+	qGaiZGwRYBv/7I/23EjSE668RL10JTYwEWHF7vp2HvbuPlm9PGk9wQxLQOyTdYgZOri/ojgIGK3
+	xzpkHuULJnAwyTlcI7mDseqCb6MnPCmMYRNCcaM4iXniw6I43EiOb4kHK/eALOZsIW+4zoo7l0q
+	LVL3yEnveCZi9U1YxM/vLbvV8F0fnVOJtMxJAX1AR/tBaLhSKEiuSUV5Jkopx8tlj1g=
+X-Received: by 2002:a05:600c:5395:b0:4a3:5a98:c279 with SMTP id 5b1f17b1804b1-4bb8880e599mr376023745e9.8.1795624116009;
+        Wed, 25 Nov 2026 08:28:36 -0800 (PST)
+Received: from [10.42.0.1] ([2a00:23c7:1d1a:9c01:f716:ba19:8aaa:f1c2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853368d3sm527336375e9.1.2026.11.25.08.28.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 07:25:29 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1xWEsD-00000001rUc-0W0U;
-	Wed, 25 Nov 2026 11:25:29 -0400
-Date: Wed, 25 Nov 2026 11:25:29 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Peng Fan <peng.fan@linux.dev>
-Cc: Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	"Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@kernel.org>,
-	Larisa IIeana Grigore <larisa.grigore@nxp.com>, imx@lists.linux.dev,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v6 0/9] dmaengine: add DMA channel bus and fsl-edma
- per-channel IOMMU support
-Message-ID: <20261125152529.GK246011@ziepe.ca>
-References: <20261112-edma-iommu-v3-v6-0-b038edb8ce6f@nxp.com>
- <20261116193021.GB2452510@ziepe.ca>
- <avwQl18smAW4R6ec@fedora>
- <20261117130005.GC2606445@ziepe.ca>
- <awGWcq_nKWShC81B@fedora>
+        Wed, 25 Nov 2026 08:28:35 -0800 (PST)
+From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Subject: [PATCH 00/10] mtd: use desginated initializers in *_device_id
+ arrays
+Date: Wed, 25 Nov 2026 16:28:26 +0000
+Message-Id: <20261125-acpi-mtd-v1-0-42ad2f645bee@thegoodpenguin.co.uk>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -122,48 +93,216 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <awGWcq_nKWShC81B@fedora>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqAIBCF4avErBPUSqirRAvTqSbIQi2C6O5ZL
+ T/437sgoCcM0GQXeDwo0OoSRJ6BmbQbkZFNBsmlEkIWTJuN2BIt4zgoXXHLy9pCyjePA53fVdv
+ 9Dns/o4nvHu77AVc++4JsAAAA
+X-Change-ID: 20261123-acpi-mtd-0ef6a50d049d
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Takahiro Kuwano <takahiro.kuwano@infineon.com>, 
+ Vladimir Zapolskiy <vz@mleia.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+ Alexander Usyskin <alexander.usyskin@intel.com>, 
+ Joern Engel <joern@lazybastard.org>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
+ "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+ Shrikanth Hegde <sshegde@linux.ibm.com>, 
+ Michal Simek <michal.simek@amd.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Brian Norris <computersforpeace@gmail.com>, 
+ Kamal Dasu <kamal.dasu@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ William Zhang <william.zhang@broadcom.com>, 
+ Anand Gore <anand.gore@broadcom.com>, 
+ Kursad Oney <kursad.oney@broadcom.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Han Xu <han.xu@nxp.com>, Paul Cercueil <paul@crapouillou.net>, 
+ Harvey Hunt <harveyhuntnexus@gmail.com>, 
+ Keguang Zhang <keguang.zhang@gmail.com>, 
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+ Liang Yang <liang.yang@amlogic.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Stefan Agner <stefan@agner.ch>, 
+ Lucas Stach <dev@lynxeye.de>, Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Jacky Huang <ychuang3@nuvoton.com>, 
+ Shan-Chun Hung <schung@nuvoton.com>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Linus Walleij <linusw@kernel.org>, 
+ Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev, 
+ linux-mips@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+ linux-tegra@vger.kernel.org, 
+ Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795624113; l=7528;
+ i=pzalewski@thegoodpenguin.co.uk; s=20260430; h=from:subject:message-id;
+ bh=5meG2QA5zHmWMtBw+F49CrqQgn4FVKx2LdaJonRgfn8=;
+ b=VsRd3x/iYztgIPcpTxO4VQupjJr1Sy2+c/9eTKQar8LJIPG9KJ1ebtAJORbrWf8vSzuEg1YpX
+ faQork5qqUYCOdbRXiu56hLw5mIk8BvbvFb2W3hRkqwPWXFxr+5Gj8A
+X-Developer-Key: i=pzalewski@thegoodpenguin.co.uk; a=ed25519;
+ pk=vHq4n9IonORH2GTzLv8r6CWAFHzgfBuNkQPXA8NSly0=
 
-On Sat, Nov 21, 2026 at 09:02:42PM +0800, Peng Fan wrote:
+This series is converting lists that contain the *_device_id structs,
+to make use of named initializers (which they do not use currently).
+This work is part of the on going effort in the kernel associated with
+device-ids [1]
 
-> Do you think it is reasonable to have chan device(not platform device) do dma
-> allocation? 
+The plan is to convert *_device_id::driver_data to have an anonymous
+union, like it was introduced for PCI and I2C device ID tables.
+The goal is to increase type-safety (most of the existing casts are gone),
+to improve readability and to make use intent a bit more clear:
 
-?
+```
+union {
+	kernel_ulong_t driver_data;
+	const void *driver_data_ptr;
+}
+```
 
-Any struct device that works with the DMA API should be able to do
-memory allocation consistent with its DMA parameters. That's an
-integral part of having a working DMA API.
+But for that to work all lists containing the structs need to use named
+initializers first to avoid triggering -Wmissing-braces for that field.
+This effort is split per every subsystem into:
+- pre-clean-ups that convert the lists to use named initializers
+  (which is this series)
+- actual implementations that make some of the modules use the new
+  driver_data_ptr member (which is not needed in the mtd subsystem)
 
-If you are asking if a struct device that can't do DMA should be able
-to do DMA allocation, then no, obviously it should not be able to do
-that.
+That way the task can be fragmented into manageable and independent chunks
+of work and makes this effort easier to review.
 
-AFAIK the main issue in most of these cases is the need to get a DMA
-capable struct device for a particular SID because of a confluence of
-decisions the HW designer has made and the Linux limitation of struct
-device baaed DMA.
+Patches 1-3 implement the named initializer change.
+Patched 4-10 are just churn to unify the list termination and can be dropped.
 
-> I ask because if we allow chan device to do dma allocation, we need
-> to provide a dma channel bus for iommu_buses to fix tegre186(TBH, I
-> am not familar with this platform, it even has iommu-map for the dma node).
+[1] https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre.com
 
-If your question is 'should I be able to have a "board file" that
-creates DMA capable struct devices from C code" then I think that is a
-pretty "smells bad" solution. Especially if you have to then create
-fake busses and add them to iommu discovery.
+Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+---
+Pawel Zalewski (10):
+      mtd: maps: pismo: Use named initializers for i2c_device_id
+      mtd: spi-nor: Use named initializers for spi_device_id
+      mtd: maps: int0800: Use named initializers for acpi_device_id
+      mtd: spi-nor: Unify of_device_id list terminator
+      mtd: devices: Unify *_device_id list terminator.
+      mtd: nand: raw: Unify list terminator for *_device_id lists
+      mtd: hyperbus: Unify list terminator for *_device_id lists
+      mtd: maps: Unify list terminator for of_device_id lists
+      mtd: nand: Unify list terminator for *_device_id lists
+      mtd: parsers: Unify list terminator for of_device_id lists
 
-The DT should create the iommu devices as platform devices.
+ drivers/mtd/devices/docg3.c                        |  2 +-
+ drivers/mtd/devices/mchp23k256.c                   |  4 +-
+ drivers/mtd/devices/mchp48l640.c                   |  4 +-
+ drivers/mtd/devices/mtd_dataflash.c                |  8 +--
+ drivers/mtd/devices/mtd_intel_dg.c                 |  4 +-
+ drivers/mtd/devices/phram.c                        |  2 +-
+ drivers/mtd/devices/powernv_flash.c                |  2 +-
+ drivers/mtd/devices/spear_smi.c                    |  2 +-
+ drivers/mtd/devices/st_spi_fsm.c                   |  2 +-
+ drivers/mtd/hyperbus/hbmc-am654.c                  |  2 +-
+ drivers/mtd/hyperbus/rpc-if.c                      |  2 +-
+ drivers/mtd/maps/int0800.c                         |  2 +-
+ drivers/mtd/maps/lantiq-flash.c                    |  2 +-
+ drivers/mtd/maps/physmap-versatile.c               |  4 +-
+ drivers/mtd/maps/pismo.c                           |  4 +-
+ drivers/mtd/maps/sun_uflash.c                      |  2 +-
+ drivers/mtd/nand/ecc-mtk.c                         |  2 +-
+ drivers/mtd/nand/ecc-mxic.c                        |  2 +-
+ drivers/mtd/nand/ecc-realtek.c                     |  2 +-
+ drivers/mtd/nand/onenand/onenand_omap2.c           |  2 +-
+ drivers/mtd/nand/onenand/onenand_samsung.c         |  3 +-
+ drivers/mtd/nand/raw/ams-delta.c                   |  7 +-
+ drivers/mtd/nand/raw/arasan-nand-controller.c      |  2 +-
+ drivers/mtd/nand/raw/atmel/nand-controller.c       |  4 +-
+ drivers/mtd/nand/raw/atmel/pmecc.c                 |  4 +-
+ drivers/mtd/nand/raw/brcmnand/bcm6368_nand.c       |  2 +-
+ drivers/mtd/nand/raw/brcmnand/bcmbca_nand.c        |  2 +-
+ drivers/mtd/nand/raw/brcmnand/brcmnand.c           |  2 +-
+ drivers/mtd/nand/raw/brcmnand/brcmstb_nand.c       |  2 +-
+ drivers/mtd/nand/raw/brcmnand/iproc_nand.c         |  2 +-
+ drivers/mtd/nand/raw/cadence-nand-controller.c     |  3 +-
+ drivers/mtd/nand/raw/davinci_nand.c                |  2 +-
+ drivers/mtd/nand/raw/denali_dt.c                   |  2 +-
+ drivers/mtd/nand/raw/fsl_elbc_nand.c               |  2 +-
+ drivers/mtd/nand/raw/fsl_ifc_nand.c                |  2 +-
+ drivers/mtd/nand/raw/fsl_upm.c                     |  2 +-
+ drivers/mtd/nand/raw/fsmc_nand.c                   |  2 +-
+ drivers/mtd/nand/raw/gpio.c                        |  2 +-
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c         |  2 +-
+ drivers/mtd/nand/raw/hisi504_nand.c                |  2 +-
+ drivers/mtd/nand/raw/ingenic/ingenic_nand_drv.c    |  2 +-
+ drivers/mtd/nand/raw/ingenic/jz4725b_bch.c         |  2 +-
+ drivers/mtd/nand/raw/ingenic/jz4740_ecc.c          |  2 +-
+ drivers/mtd/nand/raw/ingenic/jz4780_bch.c          |  2 +-
+ drivers/mtd/nand/raw/intel-nand-controller.c       |  2 +-
+ drivers/mtd/nand/raw/loongson-nand-controller.c    |  2 +-
+ drivers/mtd/nand/raw/lpc32xx_mlc.c                 |  2 +-
+ drivers/mtd/nand/raw/lpc32xx_slc.c                 |  2 +-
+ drivers/mtd/nand/raw/marvell_nand.c                |  4 +-
+ drivers/mtd/nand/raw/meson_nand.c                  |  2 +-
+ drivers/mtd/nand/raw/mpc5121_nfc.c                 |  2 +-
+ drivers/mtd/nand/raw/mtk_nand.c                    |  2 +-
+ drivers/mtd/nand/raw/mxc_nand.c                    |  2 +-
+ drivers/mtd/nand/raw/mxic_nand.c                   |  2 +-
+ drivers/mtd/nand/raw/ndfc.c                        |  2 +-
+ .../mtd/nand/raw/nuvoton-ma35d1-nand-controller.c  |  2 +-
+ drivers/mtd/nand/raw/omap_elm.c                    |  2 +-
+ drivers/mtd/nand/raw/orion_nand.c                  |  2 +-
+ drivers/mtd/nand/raw/pasemi_nand.c                 |  2 +-
+ drivers/mtd/nand/raw/pl35x-nand-controller.c       |  2 +-
+ drivers/mtd/nand/raw/plat_nand.c                   |  2 +-
+ drivers/mtd/nand/raw/qcom_nandc.c                  |  2 +-
+ drivers/mtd/nand/raw/rockchip-nand-controller.c    |  2 +-
+ drivers/mtd/nand/raw/sh_flctl.c                    |  2 +-
+ drivers/mtd/nand/raw/socrates_nand.c               |  2 +-
+ drivers/mtd/nand/raw/stm32_fmc2_nand.c             |  2 +-
+ drivers/mtd/nand/raw/sunxi_nand.c                  |  2 +-
+ drivers/mtd/nand/raw/technologic-nand-controller.c |  2 +-
+ drivers/mtd/nand/raw/tegra_nand.c                  |  2 +-
+ drivers/mtd/nand/raw/vf610_nfc.c                   |  2 +-
+ drivers/mtd/nand/raw/xway_nand.c                   |  2 +-
+ drivers/mtd/nand/spi/core.c                        |  4 +-
+ drivers/mtd/parsers/afs.c                          |  2 +-
+ drivers/mtd/parsers/bcm47xxpart.c                  |  2 +-
+ drivers/mtd/parsers/bcm63xxpart.c                  |  2 +-
+ drivers/mtd/parsers/brcm_u-boot.c                  |  2 +-
+ drivers/mtd/parsers/parser_imagetag.c              |  2 +-
+ drivers/mtd/parsers/parser_trx.c                   |  2 +-
+ drivers/mtd/parsers/qcomsmempart.c                 |  2 +-
+ drivers/mtd/parsers/redboot.c                      |  2 +-
+ drivers/mtd/parsers/scpart.c                       |  2 +-
+ drivers/mtd/parsers/tplink_safeloader.c            |  2 +-
+ drivers/mtd/spi-nor/controllers/hisi-sfc.c         |  2 +-
+ drivers/mtd/spi-nor/controllers/nxp-spifi.c        |  2 +-
+ drivers/mtd/spi-nor/core.c                         | 77 +++++++++++++++-------
+ 85 files changed, 153 insertions(+), 123 deletions(-)
+---
+base-commit: b6a9fa34ce4187cb69d3c588a4bbffc31ce5db8f
+change-id: 20261123-acpi-mtd-0ef6a50d049d
 
-There was yet another thread about this, so we are at like 5 drivers
-now with this kind of need? This was my suggestion on what an API
-could look like to solve this general problem:
+Best regards,
+--  
+Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
 
-https://lore.kernel.org/r/20261119143151.GH3115493@ziepe.ca
-
-I recognize it would not be so easy to make, but it would be easier
-and safer to use.
-
-Jason
