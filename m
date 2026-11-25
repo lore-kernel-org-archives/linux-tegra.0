@@ -1,86 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795594527;
-	b=YHWEXD7q/aYSk4EAQiR+HSZir64SBprY9C/tP4mmxmCbPG19zJOXEBpBAzb61wFU8zhY
-	 fxclfULIb5z9PmCRgpgiGhO5rQ4gg5aC3TsLTkV5DrhI6rdQ22XJ0m7p9scaUtlns/nYp
-	 vGcqd59+Uw23SoECOKNGV3odU9bbFxu7lOK/2E4x26NyOQTaYF9w8dcxFn6qY0e44/jE7
-	 bVvOaqPdjSGAc2zc9L+J4QmX+5g8d71Y8ZaMWblOyAPh0wqkZJDcwH9wDCXoZopF3r5sJ
-	 JwuqDKN4DZHaLIyZWZzi+m+BbumkfZTZTwByd3wOY/O7ZgdGQpi3zXXtysMxbkbJKsg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795594527;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=yw2JeHZ6Q5+LLfRJSgS7z2YlzRwc0Hl4EWtHv9aR7BA=;
-	b=imLyOas4SMVDKnirYtCxECttEspHWmGBHOytkfpuRQic2bflx2LVEQBECnO8/TUe6dRJ
-	 unyWKTaUSqUsK70zwQm3s4cD9xfCW6Ln6zHGoHyJpH+YRjGQaxAkY2ecs9mGye0NtDzC4
-	 PpS3ntSFnNdMzkahh/jWcvitYwUivzOK8jaDX5Cd+KQhsd14+dDtEeLkgYp2PGv2JhhHQ
-	 nznaqSTWwgU99nEASGlpGGJ6Oznr8t7ZClPdpGKp4yKmdQfjnVfp0sRPVqtLzTbMeBHgy
-	 jVctdh/Aspm+q72fMBt0uSCPHM7Q8Ul9Y73r21qWkAcnTN1b0g/SMwNZMTZxB8BYMUw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dfPfgulU;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.48.53
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795602534;
+	b=Totf/eERMwGwRV8Z30b0bxTR5Y3VWrhJlE+LfAYtl5orh4N/0HLeS/dhMbMf59tVoWB0
+	 2Es9H17K+JpXNKh0FjYWYNvFvtPjWlmUCRnoMTv7bQOrQqqKVSseksqyVY+WuIRLqLYu6
+	 lqx2CK2w76iW47l8ZWddNx/8blqWO52ZUZGBscy40+uYi2ZgZ8j8j/ejs29HiOWG5/1e9
+	 g7s05d8YE8K0SBDUVR0K9yKe1GCkyl/Q4FMX2Xnr1U1tLaJwgTFZ3V0b0+9Qv+z0WAT3p
+	 3hQAujemV/6b8aExZ8jvhiEJtvl+d+bxLYV4Yw+FjQpfSWJUp8/8jY1pKV1rPHmNY7A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795602534;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:X-NVConfidentiality:References:Content-Type:
+	 Content-Disposition:In-Reply-To:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:
+	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=AqQ4eTjbgqwtpHsHeMRrnzBGnXPuleS3AQRZw8Ziw2g=;
+	b=0O7qyOx0k8UT3hQHYKdntywvfeKsH4Cr850q+WZj8gTk4F87EVmkU2eriORkkamL36rI
+	 kxHVLPHL6yzo+w2OPzc0Nbl+QlfmkQvTuiLGHX/B0q1BOUmBaGLTn49OmckvYk6raIX+w
+	 02b18FMdOAIchNKJDCdHUBo8BWUK0v66CpWMkkGy5YyV9zCYnflQErwBO0sHHl+m6+2YD
+	 5RmkCwCa1Z5a0SRE57y7vd7dH3o/NQk+v0U4l1kAFsY9dZCdaG9fJlCwtBm/fwB+2Oyct
+	 ZtohHO0tOW2pxFvlEm2lPSq8T0mOv8UWS9srmvI1/HXeSRpbZ4L4AblmdDIIjXeqZ+Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=j30iQSjQ;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.48.53
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012053.outbound.protection.outlook.com [52.101.48.53])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD88606A31E;
-	Wed, 25 Nov 2026 08:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819CD606A323;
+	Wed, 25 Nov 2026 10:28:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 819CD606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dfPfgulU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 657111F000D3;
-	Wed, 25 Nov 2026 08:15:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795594526;
-	bh=yw2JeHZ6Q5+LLfRJSgS7z2YlzRwc0Hl4EWtHv9aR7BA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dfPfgulUdVCqaV7SC/L0Pw9L50I3jyvIbcXXX2/zp+OONchuE/GCT86lvBsFDGASS
-	 BXsq30WEVPcf6+KfmhIalvabIo7Aq3VGiVc8HNw9P0GUdHR3YwB/bOw2d+99sm0iqU
-	 oqDHs8hG2sapOirw69moVawt+tYqMJ6yoLd+XAJrM6dq4QLi4rfV22OvD6stqjvmHW
-	 zuinV9fO3owm08uLqZa1ley8WENUL6p6WHl/xjKoVq7de5kEgn4N9QGx9opfxihaxx
-	 madPFI6fgyj0KylqKjk2nNtqekUhRpE3mH8A1QUO+/c5DWPzEr0tOuTK5A1EKg7Hhi
-	 kHCoN33GsjhBQ==
-From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-To: linux-coco@lists.linux.dev
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	Alex Williamson <alex@shazbot.org>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jacob Pan <jacob.pan@linux.microsoft.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Steven Price <steven.price@arm.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Will Deacon <will@kernel.org>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	kvm@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH v10 18/18] PCI/TSM: Wait for vIOMMUs to release the TSM before unregistering
-Date: Wed, 25 Nov 2026 13:41:21 +0530
-Message-ID: <20261125081121.379481-19-aneesh.kumar@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261125081121.379481-1-aneesh.kumar@kernel.org>
-References: <20261125081121.379481-1-aneesh.kumar@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=j30iQSjQ
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hm9t/qX75tfygjkt5OJnHcCww8xBkOSylloZaRHJfp/0k1Ei4uzEaF9LWsAXQrIVV+D0tuZaaZn/9IDypu+ahvjoZKIwUHWZ6FVVidRu2k60jxEiB2+d4OISJKElDWHja30tplBvp3ROzc4MY7ltWRvmkGa8uAEl7toB70ILKMAQfcwmKptDe5bFoXCW9TDp/e968zQFhQpC32xCwycop4NAqoBDIja8Yf5mWy3HWpzpi26v3j19C7VXdQFgCFpv95GkheypsU4w97RFeTNUuyXeU5AM504iI2Qdg1DylECYEwwHJffEqzl+OQhiMhg0pCWp+cQGA27JIP7IcZxa7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AqQ4eTjbgqwtpHsHeMRrnzBGnXPuleS3AQRZw8Ziw2g=;
+ b=CwZgWGEnJqVnSJjpth+NeadEznzMs1agqf2GtDz2r75UgdU1YvvoU4o2tXH+k+h2FxZ+pevWeCQ8KgiE98/P5XxJ9Cmx59PvZ73iZjl93NW4HXZclcRW+dzRJY3CkD/Sw7ES4x7KeEq7rtNxqS1RfISYkSg2Jfj4g9CCQiIXVA+2YxO7fsUi2qad3avx2kWArpuFNKj4CeEZozR2fpPKLBZruVAINWRw8jqeBXDu0OUaR40/uNGNdYFVRCbLzi4fZcoq2hifkuWAwHVW3MrnvovhYjTJjMBUKtRwtRQVi/M7Xagf1v+fwDMgIplS5ZdhhiVyIYlB5/Hes9kZm51ZhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AqQ4eTjbgqwtpHsHeMRrnzBGnXPuleS3AQRZw8Ziw2g=;
+ b=j30iQSjQ49jhjEcT7MaZX6JBgA0AEuK6jM+Re5oim4qSAtBQPRKVoXrGFh7sp9E+DGCWkY3Vyw+vovhZe59XL8ec5+o7WrJsIfuo1bPibJoCCgttokhD407xSBGgaSIRKTpmYBR7Y+qQ9cEmEd2Lai3K8MGQamlol+p11uBaLjOhAq7gaTHNR6ziPUKXMziXOosiouwUwRlnjx0mnJLW72+SCqOFg9S1b6+2LQluBsoKDrxJ4Er+Scsrq+LLGew0P57BtGRi3v6muBYyr2U2B0YPWMqCxGmlkfWtJC3jPEy/XAjcZHUpaMIhT5e4xcTChWbkw1kzhMCjNgS5lhNlNg==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB6022.namprd12.prod.outlook.com (2603:10b6:8:86::7) by
+ IA1PR12MB8312.namprd12.prod.outlook.com (2603:10b6:208:3fc::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.13; Wed, 25 Nov
+ 2026 10:28:48 +0000
+Received: from DS7PR12MB6022.namprd12.prod.outlook.com
+ ([fe80::ed94:5edb:3834:5a3c]) by DS7PR12MB6022.namprd12.prod.outlook.com
+ ([fe80::ed94:5edb:3834:5a3c%4]) with mapi id 15.21.0662.004; Wed, 25 Nov 2026
+ 10:28:48 +0000
+Date: Wed, 25 Nov 2026 11:28:40 +0100
+From: Thierry Reding <treding@nvidia.com>
+To: admin@tsv-stahl-riesa.de
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Svyatoslav Ryhel <clamor95@gmail.com>, Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable+noautosel@kernel.org
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Skip timings whose parent rate
+ cannot be set
+Message-ID: <awa1pk-vFb_zq75r@orome>
+X-NVConfidentiality: public
+References: <20261111-upstream-clk-emc-parent-v1-1-636eea572572@tsv-stahl-riesa.de>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="p36q2hw2h56swyuu"
+Content-Disposition: inline
+In-Reply-To: <20261111-upstream-clk-emc-parent-v1-1-636eea572572@tsv-stahl-riesa.de>
+X-ClientProxiedBy: FR4P281CA0011.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c8::8) To DS7PR12MB6022.namprd12.prod.outlook.com
+ (2603:10b6:8:86::7)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -90,607 +103,216 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6022:EE_|IA1PR12MB8312:EE_
+X-MS-Office365-Filtering-Correlation-Id: de012adb-8245-462c-2cb8-08df4adee3c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|10070799003|366016|376014|1800799024|7416014|18002099003|6133799003|22082099003|3023799007|11063799006|261021121427099003|56012099006|261102123227099003|261022105027099003|261026121527099003|261026140227099003|261009223027099003|261021123027099003|261021135927099003|261022075727099003|261028144727099003|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	s1GNVJsPcXCxZVmHJFVbhyEfe6JFHaR/FB5AIgNg4OLEc5zRiYRD5Wr9QmdVzvDImJW1apub/cwirBUnuegjMS8mx5EtnypEJDKiWA9aJcXVl+uOsKw6ATzpwJPiO9ZyrwZiXZuAQMB07CgMzweNrvayODAKjcyvOyXKW++3uHQrl8cTbU5WICi4+hiYFVIIiIhbmo5KNQCbLxjxPAMc12n1EUM/aC/TuLP4Q3yD+NpOVzd/C9pSFN5mfNORSRpHGPIq6Ezmf4MQBbGxBNpUEqohn6QXbo6IDqh6WJoZcnL1uDk3uyTu4c1f9pDZeXX8Rwm9e8/qErUh56Fh+oWQWpEkU7YH1HfDbKYgK+9Q2IcJCB3GelafqnWmnq2u34tV3x73AyzX20Z/o06vUSQYSWgugMKaULAXKcUXuyMloNO1JpikGAcG7gUPL9sZvxhNtfzWz97FiezCkmBcGBsE0KfP9CCocFk01aStBw5KwUagkwj97UkzC9GNNLWynR2EfaYOKR+p4ZF/mN3qxL2wwkSwSxUuBXFznxVuwr4XIB0FkQSjZqreLSvG/C6fgEvas4aJ9qeMTG5Iv3Xcq38LubwLtu+U0dn/B+Yd3EMwFvreCSjCKGwun3k+/9xH7cnprrycPXA9becd/RMwSmqydHeblTaxi1d4IM83Fci+RHw=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6022.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(10070799003)(366016)(376014)(1800799024)(7416014)(18002099003)(6133799003)(22082099003)(3023799007)(11063799006)(261021121427099003)(56012099006)(261102123227099003)(261022105027099003)(261026121527099003)(261026140227099003)(261009223027099003)(261021123027099003)(261021135927099003)(261022075727099003)(261028144727099003)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vF8xqbActM0JMlrNPd4LVnBY7Kr+H/JcmtLPa332mX3DgjwskjecDGUrLiJD?=
+ =?us-ascii?Q?ufFdbKhh3PLMPk+wsYEm6MmESt5IHHbMoQPd6djQaI6oMzGz9lWNQYRexeKx?=
+ =?us-ascii?Q?XIKoZ6gDgrFIQztsl08+6i8XqPeCZDRptagnfdnJOUThXIS7Hu3k1HZcMSOp?=
+ =?us-ascii?Q?xDwiONBVcLLJDRHpdg8PP7H9IJtVCe69fK14yUYUK6IoCB/S+bO0LNOAZlqy?=
+ =?us-ascii?Q?VvVX8TWC/TE2j53cwgecSMkhpS4gYc9CZlgXJaS85eo/ZKO62t7ZDqZjC2gf?=
+ =?us-ascii?Q?oo49MdAcsCgCSQSLy/HS5GAMxSaMtnEEYbYpX4A8C29wElYa4J+/11TsIslp?=
+ =?us-ascii?Q?eB3C6z8AJsAG1mImsfJJFnMC1k58Ie57t6lVJ4aQ3qHFnYs6hXGYIOn+NUKF?=
+ =?us-ascii?Q?ekbPDrvJ9GrEiatRvtjTPWlZkpPYneetOSkrmIk/ZTZtjPTa6mrSiv8LKA8+?=
+ =?us-ascii?Q?s6E/ap8OKc46cGuZPpaucmvCxG0PNGImrbYT5XA9bdJsI3kzl0OQD/x4mazc?=
+ =?us-ascii?Q?rCe3lQbyk1w81mDB8/xPvMAv3e/3p4StGxo1XUNLjIdsHuA3H2dW4TQ3i82G?=
+ =?us-ascii?Q?NeVaYKSpIBdbLa/Iv/hOjN+FGZmflcDukFNCzccgJhWPUmDwbvYq2uCQPpI7?=
+ =?us-ascii?Q?L2QwkM4Vaa6QdpDBWft0TphaS5/saSNefsB16pmsHejBDwLEyoTC3rdxuhYr?=
+ =?us-ascii?Q?7sfHTOAIfyxXGCylXF7LKyILPWoGtFPoGRCUPlYkBdEAmnWs75jNPyuWIpkG?=
+ =?us-ascii?Q?eoWj7jIBFqZCXzOIuIQmgvrAWuyBWoFGorvrudOjEnTZGDYy++6NJlQ9KASs?=
+ =?us-ascii?Q?28Z67RKuglkny1yRS3mJmt0LPONxD0vzjDEJp7FIzU24l0l3wz2xrrygJ0A7?=
+ =?us-ascii?Q?8/9OCtU64PJ3LsugGrQmVN2M1wwAT56TlIwUbLB0+XSEjphMg3A+8PEiljWE?=
+ =?us-ascii?Q?xnRHT26ZkUHGmwRh5O2GGypWJ3E2mvPyC03zYQ15GXYXnwITdR6T9Yrg52Id?=
+ =?us-ascii?Q?xVTbL0/ptzln+K+ApEK8++K0uN81d3nVwc1GHmLsg1HhACcnhDYB1GqJrB0F?=
+ =?us-ascii?Q?pSavyfCu6xFcw3N71PiKqrDDbccIoif6X6uNEs3uV8z71wIjjjuvKd7hqnLu?=
+ =?us-ascii?Q?jSZOWaw7hFYBDciyoHko3xVjNU1YuSL8I4BoInWMA5fffaGgSrLbshQQDNfS?=
+ =?us-ascii?Q?D6cB+OEV89NbufMwe4z24rBjDArlWs4weS9Gi/SmloW5Odgx6yvwMetphPq2?=
+ =?us-ascii?Q?nZGNYgJujDH7X+yVouvTKyILbLSpVizPLBl8RWGL5wDubSad2159J7pbiOs0?=
+ =?us-ascii?Q?RTxjb1pt3VTKHn7VWKHDwh4RTGANDIx5xyvdK0cP/Qjgfnbf0OXu2dRsp08K?=
+ =?us-ascii?Q?rSeAlFpjmgXriZdRfpgU+LZeb7iT6gp+xlaIIpeESe67JmekyLetmSQA4Ep/?=
+ =?us-ascii?Q?gEgbnCJI8sWFZylnZzOXZezhpo3VXApad4YBYsj3ZDVgCqJXDomztx47Yza5?=
+ =?us-ascii?Q?UZKcI9TGzM4Wgr7BYoJhZyY6ptnnms2+woyngJkBGCL09/3p7s+2tNAfyZGS?=
+ =?us-ascii?Q?gnyb98elnIvUupDS+Nz01lfOxWPVpFbLlLQBA5slFES/nilOHRQydVQxgksa?=
+ =?us-ascii?Q?qvGMrHUSa0WQDa2AphvzGRHNIRLsBta1A7a/b8Go4EIt8rXUvaczBGyMl9fv?=
+ =?us-ascii?Q?xKAp+l++38GrsFD4S5E2Os16EvWPq59misE3BVKb8rhrOOn2+yI/p/y51+X6?=
+ =?us-ascii?Q?PViRYWNN/bTe6cafJgvQ3yg3aeADHNp+fpFyG7xp8uDdZ50fRQkbYlFSkc10?=
+X-MS-Exchange-AntiSpam-MessageData-1: 7Q/UAm1PPX5NCg==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: de012adb-8245-462c-2cb8-08df4adee3c4
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6022.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2026 10:28:47.7394
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QWLyozIiEomTkm9oKjo8L8WXX+dGtIDxDpd0+MKjWF/Sp2ombmA4xjBYKXEXoBDeWyXZiLShm9wO56lRXHd3aQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8312
 
-An IOMMUFD virtual IOMMU (vIOMMU) implemented by a TEE Security Manager
-(TSM) uses the TSM driver's resources throughout its lifetime, including
-during destruction.
+--p36q2hw2h56swyuu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Skip timings whose parent rate
+ cannot be set
+MIME-Version: 1.0
 
-A reference to tsm_dev keeps that structure allocated. Pinning the TSM
-driver module keeps its code loaded. Neither prevents an explicit
-tsm_unregister() call from disconnecting devices and removing driver
-resources while the vIOMMU still needs them.
+On Wed, Nov 11, 2026 at 11:14:10AM +0100, Patrick Fischer via B4 Relay wrot=
+e:
+> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
+>=20
+> Each EMC timing names a parent clock and the rate that parent has to run
+> at. On Tegra114, PLLM is registered with TEGRA_PLL_FIXED, so its rate
+> cannot be changed, but the Tegra114 device trees still contain timings
+> on pll_m at rates the bootloader did not set up, e.g. 792 MHz on a
+> Tegra Note 7 where the bootloader leaves PLLM at 408 MHz.
+>=20
+> emc_set_timing() calls clk_set_rate() on the parent, which succeeds
+> without changing anything, and then loads the 792 MHz timing while the
+> EMC runs at 408 MHz. On the Tegra Note 7 that gives a refresh interval
+> of about 15 us instead of 7.7 us (DDR3 allows 7.8 us), and the clock
+> core then reports 408 MHz, so later requests for 408 MHz keep the
+> 792 MHz register values.
+>=20
+> Skip timings whose parent cannot be rounded to the requested rate when
+> loading them, so that the highest reachable timing is used instead.
+> On Tegra124 PLLM is not fixed, so its timings should all stay; this was
+> not tested on Tegra124.
+>=20
+> Fixes: cf561283254d ("clk: tegra: set up proper EMC clock implementation =
+for Tegra114")
+> Cc: stable+noautosel@kernel.org # needs the Tegra114 EMC auto-calibration=
+ fixes
+> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
+> ---
+> Tested on a Tegra Note 7 (Tegra114, P1640) with Svyatoslav's tegratab
+> device tree on top of v7.3: both 792 MHz timings on pll_m are skipped at
+> boot ("pll_m cannot run at 792000000 Hz, skipping"), the EMC goes up to
+> 624 MHz on pll_c instead, and the timing registers match the table at
+> each rate. Actmon requests for 792 MHz now end up at 624 MHz without
+> errors; a memory test of 3 h 20 min with mostly such requests ran
+> without errors, together with the EMC series below. Before, an actmon
+> request for 792 MHz left the EMC at 408 MHz with the 792 MHz register
+> values.
+>=20
+> This came up together with a series for the Tegra114 EMC driver,
+> "memory: tegra114-emc: Fix bus width and pad auto-calibration" [1],
+> which I sent to the memory controller tree earlier today. This patch
+> builds without it, but please do not let it land in a release without
+> "memory: tegra114-emc: Stop clearing EMC_AUTO_CAL_CONFIG" from that
+> series: this patch moves the EMC from 408 MHz with the wrong register
+> values to a real 624 MHz on pll_c, and both kernel panics I saw on a
+> change to 624 MHz were with the pad auto-calibration cleared. For the
+> same reason it is not marked for stable and asks to be left out of
+> AUTOSEL, despite the Fixes tag: I could not show that the wrong register
+> values cause failures, while 624 MHz without calibration did.
+>=20
+> [1] https://lore.kernel.org/r/20261111-upstream-emc-t114-v1-0-54d9e1bceb6=
+a@tsv-stahl-riesa.de
+>=20
+> As Svyatoslav confirmed, PLLM does not have to be fixed on Tegra114, so
+> the proper fix would be to make it scalable, as the downstream kernel
+> does. Until then, this keeps the EMC from running with register values
+> for another rate.
+>=20
+> Tool use (see Documentation/process/generated-content.rst): the patch,
+> its changelog and this note were prepared with an LLM coding assistant
+> (Claude Code). It traced the rate change through the EMC clock code,
+> read the EMC registers on the device, wrote the code change and drafted
+> the texts from my measurements and instructions. I reviewed the change
+> and ran the tests on the device.
+> ---
+>  drivers/clk/tegra/clk-tegra124-emc.c | 23 ++++++++++++++++++++---
+>  1 file changed, 20 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk=
+-tegra124-emc.c
+> index 0fc74808fe39..2f4d39922b73 100644
+> --- a/drivers/clk/tegra/clk-tegra124-emc.c
+> +++ b/drivers/clk/tegra/clk-tegra124-emc.c
+> @@ -458,7 +458,7 @@ static int load_timings_from_dt(struct tegra_clk_emc =
+*tegra,
+>  	tegra->num_timings +=3D child_count;
+> =20
+>  	for_each_child_of_node_scoped(node, child) {
+> -		struct emc_timing *timing =3D timings_ptr + (i++);
+> +		struct emc_timing *timing =3D timings_ptr + i;
+> =20
+>  		err =3D load_one_timing_from_dt(tegra, timing, child);
+>  		if (err) {
+> @@ -466,11 +466,28 @@ static int load_timings_from_dt(struct tegra_clk_em=
+c *tegra,
+>  			return err;
+>  		}
+> =20
+> +		/*
+> +		 * The register values of a timing are only valid at its rate.
+> +		 * If the parent cannot provide the parent rate, for example
+> +		 * because the PLL has a fixed rate, the EMC would run at a
+> +		 * different rate with these values. Skip such a timing.
+> +		 */
+> +		if (clk_round_rate(timing->parent, timing->parent_rate) !=3D
+> +		    timing->parent_rate) {
+> +			pr_warn("timing %pOF: %s cannot run at %lu Hz, skipping\n",
+> +				child, __clk_get_name(timing->parent),
+> +				timing->parent_rate);
+> +			clk_put(timing->parent);
 
-Add a TSM user count for references acquired through tsm_get_device()
-and released through tsm_put_device(). Reject new references once
-unregister starts, then wait until the vIOMMUs using the TSM have
-finished destruction and released their references before removing the
-driver's resources.
+The clk_put() here might warrant a comment because it undoes something
+that load_one_timing_from_dt() does and hence it looks asymmetric. Now
+that I think about it, should we perhaps move this check into the
+load_one_timing_from_dt() function? It's all just dealing with that one
+timing anyway, so makes sense within that function. That'd get rid of
+the asymmetry, too.
 
-Also coordinate removal of physical function 0 (PF0), which hosts the
-PCI Device Security Manager (DSM), with TSM unregister. PF0 removal
-waits for DSM users on a completion stored inside PF0. Hold
-registration_lock for read through that wait and removal, so unregister
-cannot free PF0 underneath it.
+> +			continue;
+> +		}
+> +
+>  		timing->ram_code =3D ram_code;
+> +		i++;
+>  	}
+> =20
+> -	sort(timings_ptr, child_count, sizeof(struct emc_timing),
+> -	     cmp_timings, NULL);
+> +	tegra->num_timings -=3D child_count - i;
 
-If unregister already holds the write lock, wait for all TSM users to
-release their references instead of waiting for dsm_context_users to
-reach zero. Use the completion stored in tsm_dev, and retain a tsm_dev
-reference throughout the wait so that completion cannot be freed.
+This seems a bit weird now. should we just remove the tegra->num_timings
+increment all the way above and just do:
 
-Cc: Ashish Kalra <ashish.kalra@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Alexey Kardashevskiy <aik@amd.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Xu Yilun <yilun.xu@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: linux-pci@vger.kernel.org
-Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
----
- drivers/crypto/ccp/sev-dev-tsm.c |   4 +-
- drivers/pci/tsm.c                | 180 +++++++++++++++++++++----------
- drivers/virt/coco/tsm-core.c     | 142 ++++++++++++++++++++++--
- include/linux/pci-tsm.h          |   7 +-
- include/linux/tsm.h              |  15 ++-
- 5 files changed, 281 insertions(+), 67 deletions(-)
+	tegra->num_timings +=3D i;
 
-diff --git a/drivers/crypto/ccp/sev-dev-tsm.c b/drivers/crypto/ccp/sev-dev-tsm.c
-index 45f2995c3e4d..b405025b1c00 100644
---- a/drivers/crypto/ccp/sev-dev-tsm.c
-+++ b/drivers/crypto/ccp/sev-dev-tsm.c
-@@ -393,8 +393,8 @@ void sev_tsm_init_locked(struct sev_device *sev, void *tio_status_page)
- 
- void sev_tsm_uninit(struct sev_device *sev)
- {
--	if (sev->tsmdev)
--		tsm_unregister(sev->tsmdev);
-+	if (sev->tsmdev && WARN_ON(tsm_unregister(sev->tsmdev)))
-+		return;
- 
- 	sev->tsmdev = NULL;
- }
-diff --git a/drivers/pci/tsm.c b/drivers/pci/tsm.c
-index b10bf0b2d5b7..8b3f6d1513c6 100644
---- a/drivers/pci/tsm.c
-+++ b/drivers/pci/tsm.c
-@@ -41,19 +41,11 @@ static const struct pci_tsm_ops *to_pci_tsm_ops(struct pci_tsm *tsm)
- 
- struct tsm_dev *pci_tsm_get_device(struct pci_dev *pdev)
- {
--	const struct pci_tsm_ops *ops;
--	struct tsm_dev *tsm_dev;
--
- 	guard(rwsem_read)(&pci_tsm_rwsem);
- 	if (!pdev->tsm)
- 		return NULL;
- 
--	tsm_dev = pdev->tsm->tsm_dev;
--	ops = tsm_dev->pci_ops;
--	if (!try_module_get(ops->owner))
--		return ERR_PTR(-ENODEV);
--	get_device(&tsm_dev->dev);
--	return tsm_dev;
-+	return tsm_get(pdev->tsm->tsm_dev);
- }
- EXPORT_SYMBOL_GPL(pci_tsm_get_device);
- 
-@@ -205,16 +197,16 @@ static int probe_fn(struct pci_dev *pdev, void *dsm)
- 	return 0;
- }
- 
--static int pci_tsm_connect(struct pci_dev *pdev, struct tsm_dev *tsm_dev)
-+static int __pci_tsm_connect(struct pci_dev *pdev, struct tsm_dev *tsm_dev)
- {
- 	int rc;
- 	struct pci_tsm_pf0 *tsm_pf0;
- 	const struct pci_tsm_ops *ops = tsm_dev->pci_ops;
--	struct pci_tsm *pci_tsm __free(tsm_remove) = ops->probe(tsm_dev, pdev);
- 
- 	/* connect() mutually exclusive with subfunction pci_tsm_init() */
- 	lockdep_assert_held_write(&pci_tsm_rwsem);
- 
-+	struct pci_tsm *pci_tsm __free(tsm_remove) = ops->probe(tsm_dev, pdev);
- 	if (!pci_tsm)
- 		return -ENXIO;
- 
-@@ -249,6 +241,18 @@ static int pci_tsm_connect(struct pci_dev *pdev, struct tsm_dev *tsm_dev)
- 	return 0;
- }
- 
-+static int pci_tsm_connect(struct pci_dev *pdev, struct tsm_dev *tsm_dev)
-+{
-+	int rc;
-+
-+	if (!tsm_trylock_registration(tsm_dev))
-+		return -ENODEV;
-+
-+	rc = __pci_tsm_connect(pdev, tsm_dev);
-+	tsm_unlock_registration(tsm_dev);
-+	return rc;
-+}
-+
- static ssize_t connect_show(struct device *dev, struct device_attribute *attr,
- 			    char *buf)
- {
-@@ -323,31 +327,49 @@ static int remove_fn(struct pci_dev *pdev, void *data)
-  * Each successful call requires a matching pci_tsm_context_put() for @pdev.
-  * The caller must prevent removal of @pdev until that put, for example by
-  * keeping the VFIO device open.
-+ * The caller must also retain its tsm_get_device() reference until that put.
-  *
-  * Return: 0 on success, or a negative error code on failure.
-  */
- int pci_tsm_context_get(struct pci_dev *pdev, struct tsm_dev *tsm_dev)
- {
- 	struct pci_tsm_pf0 *pf0;
-+	int rc = 0;
- 
--	guard(rwsem_read)(&pci_tsm_rwsem);
--	if (!pdev->tsm || !is_link_tsm(pdev->tsm->tsm_dev))
--		return -EOPNOTSUPP;
-+	down_read(&pci_tsm_rwsem);
-+	if (!pdev->tsm || !is_link_tsm(pdev->tsm->tsm_dev)) {
-+		rc = -EOPNOTSUPP;
-+		goto out_unlock;
-+	}
- 
- 	/* The device must be connected to the TSM requested by the caller. */
--	if (pdev->tsm->tsm_dev != tsm_dev)
--		return -EXDEV;
-+	if (pdev->tsm->tsm_dev != tsm_dev) {
-+		rc = -EXDEV;
-+		goto out_unlock;
-+	}
-+
-+	if (!tsm_trylock_registration(tsm_dev)) {
-+		rc = -ENODEV;
-+		goto out_unlock;
-+	}
- 
- 	pf0 = to_pci_tsm_pf0(pdev->tsm);
--	guard(mutex)(&pf0->lock);
--	if (pf0->removing)
--		return -ENODEV;
-+	mutex_lock(&pf0->lock);
-+	if (pf0->removing) {
-+		rc = -ENODEV;
-+		goto out_unlock_mutex;
-+	}
- 
- 	if (!pf0->dsm_context_users)
- 		reinit_completion(&pf0->dsm_context_drain_complete);
- 
- 	pf0->dsm_context_users++;
--	return 0;
-+out_unlock_mutex:
-+	mutex_unlock(&pf0->lock);
-+	tsm_unlock_registration(tsm_dev);
-+out_unlock:
-+	up_read(&pci_tsm_rwsem);
-+	return rc;
- }
- EXPORT_SYMBOL_GPL(pci_tsm_context_get);
- 
-@@ -728,52 +750,93 @@ static void __pci_tsm_destroy(struct pci_dev *pdev, struct tsm_dev *tsm_dev)
- 
- void pci_tsm_destroy(struct pci_dev *pdev)
- {
--	struct pci_tsm_pf0 *pf0 = NULL;
--	struct completion *drained;
--	bool interrupted = false;
--	long rc;
-+	struct tsm_dev *tsm_dev = NULL;
-+	bool registration_locked = false;
- 
- 	down_write(&pci_tsm_rwsem);
--	if (pdev->tsm &&
--	    is_link_tsm(pdev->tsm->tsm_dev) && is_pci_tsm_pf0(pdev)) {
--		pf0 = to_pci_tsm_pf0(pdev->tsm);
--		drained = &pf0->dsm_context_drain_complete;
-+	if (pdev->tsm && is_link_tsm(pdev->tsm->tsm_dev) &&
-+	    is_pci_tsm_pf0(pdev)) {
-+		struct pci_tsm_pf0 *pf0 = to_pci_tsm_pf0(pdev->tsm);
-+
- 		mutex_lock(&pf0->lock);
- 		pf0->removing = true;
--
- 		mutex_unlock(&pf0->lock);
--		/* An unused DSM may never have completed dsm_context_drain_complete. */
--		if (pf0->dsm_context_users)
--			rc = try_wait_for_completion(drained);
--		else
--			rc = 1;
--
--		/* Context release needs the read side of pci_tsm_rwsem. */
--		up_write(&pci_tsm_rwsem);
--		while (rc <= 0) {
--			if (interrupted) {
--				rc = wait_for_completion_timeout(drained, HZ * 10);
-+
-+		if (pf0->dsm_context_users) {
-+			struct completion *drain_complete;
-+			const char *users;
-+			bool interrupted = false;
-+			long rc;
-+
-+			tsm_dev = pdev->tsm->tsm_dev;
-+			/*
-+			 * Retain tsm_dev and its users_drain_complete while waiting
-+			 * without the TSM registration lock.
-+			 */
-+			get_device(&tsm_dev->dev);
-+			registration_locked = tsm_trylock_registration(tsm_dev);
-+			if (registration_locked) {
-+				/* The TSM registration lock prevents freeing PF0 here. */
-+				drain_complete = &pf0->dsm_context_drain_complete;
-+				users = "IOMMUFD device assignment contexts";
- 			} else {
--				rc = wait_for_completion_interruptible_timeout(drained,
--									       HZ * 10);
--				if (rc < 0) {
--					interrupted = true;
--					pci_warn(pdev, "Task \"%s\" (%d) blocked until vdevices are released\n",
--						 current->comm, task_pid_nr(current));
-+				/*
-+				 * The DSM completion is embedded in PF0.
-+				 * If unregister runs while pci_tsm_rwsem
-+				 * is dropped, it may free PF0 after the
-+				 * last context signals the completion but
-+				 * before this waiter finishes accessing
-+				 * it.
-+				 *
-+				 * Without the registration lock, wait on
-+				 * the TSM's users_drain_complete completion
-+				 * instead. The device reference keeps that
-+				 * completion allocated even if unregister
-+				 * finishes before this waiter resumes.
-+				 */
-+
-+				drain_complete = &tsm_dev->users_drain_complete;
-+				users = "virtual IOMMUs and other TSM users";
-+			}
-+
-+			/* Context release needs the read side of pci_tsm_rwsem. */
-+			up_write(&pci_tsm_rwsem);
-+			rc = try_wait_for_completion(drain_complete);
-+			while (rc <= 0) {
-+				if (interrupted) {
-+					rc = wait_for_completion_timeout(drain_complete, HZ * 10);
-+				} else {
-+					rc = wait_for_completion_interruptible_timeout(
-+						drain_complete, HZ * 10);
-+					if (rc < 0) {
-+						interrupted = true;
-+						pci_warn(pdev, "Task \"%s\" (%d) removing Device Security Manager; waiting for %s\n",
-+							 current->comm, task_pid_nr(current),
-+							 users);
-+					}
- 				}
-+
-+				if (!rc)
-+					pci_warn(pdev, "Device Security Manager removal blocked; waiting for %s\n",
-+						 users);
- 			}
--			if (!rc)
--				pci_warn(pdev, "TSM connection is in use, waiting for vdevices\n");
-+
-+			down_write(&pci_tsm_rwsem);
- 		}
--		down_write(&pci_tsm_rwsem);
- 	}
-+
- 	__pci_tsm_destroy(pdev, NULL);
- 	up_write(&pci_tsm_rwsem);
-+	if (registration_locked)
-+		tsm_unlock_registration(tsm_dev);
-+
-+	if (tsm_dev)
-+		put_device(&tsm_dev->dev);
- }
- 
- void pci_tsm_init(struct pci_dev *pdev)
- {
--	guard(rwsem_read)(&pci_tsm_rwsem);
-+	down_read(&pci_tsm_rwsem);
- 
- 	/*
- 	 * Subfunctions are either probed synchronous with connect() or later
-@@ -781,27 +844,36 @@ void pci_tsm_init(struct pci_dev *pdev)
- 	 * connect() raced initial bus scanning.
- 	 */
- 	if (pdev->tsm)
--		return;
-+		goto out_unlock;
- 
- 	if (pci_tsm_link_count) {
- 		struct pci_dev *dsm = find_dsm_dev(pdev);
-+		struct tsm_dev *tsm_dev;
- 
- 		if (!dsm)
--			return;
-+			goto out_unlock;
- 
- 		/*
- 		 * The only path to init a Device Security Manager capable
- 		 * device is via connect().
- 		 */
- 		if (!dsm->tsm)
--			return;
-+			goto out_unlock;
-+
-+		tsm_dev = dsm->tsm->tsm_dev;
-+		if (!tsm_trylock_registration(tsm_dev))
-+			goto out_unlock;
- 
- 		if (is_link_tsm(dsm->tsm->tsm_dev) &&
- 		    to_pci_tsm_pf0(dsm->tsm)->removing)
--			return;
-+			goto out_unlock_registration;
- 
- 		probe_fn(pdev, dsm);
-+out_unlock_registration:
-+		tsm_unlock_registration(tsm_dev);
- 	}
-+out_unlock:
-+	up_read(&pci_tsm_rwsem);
- }
- 
- void pci_tsm_unregister(struct tsm_dev *tsm_dev)
-diff --git a/drivers/virt/coco/tsm-core.c b/drivers/virt/coco/tsm-core.c
-index 8cb6fdaf8a84..fa717e070208 100644
---- a/drivers/virt/coco/tsm-core.c
-+++ b/drivers/virt/coco/tsm-core.c
-@@ -7,7 +7,10 @@
- #include <linux/device.h>
- #include <linux/module.h>
- #include <linux/cleanup.h>
-+#include <linux/jiffies.h>
- #include <linux/pci-tsm.h>
-+#include <linux/pid.h>
-+#include <linux/sched.h>
- 
- /* The caller must hold a tsm_get_device() reference for the entire use. */
- const struct iommufd_viommu_ops *tsm_viommu_get_ops(struct tsm_dev *tsm_dev,
-@@ -27,15 +30,87 @@ static const struct class tsm_class = {
- };
- static DEFINE_IDA(tsm_ida);
- 
-+/**
-+ * tsm_trylock_registration() - protect an operation against TSM unregister
-+ * @tsm_dev: TSM whose allocation is protected by the caller
-+ *
-+ * Never wait for the read lock: unregister holds the write lock while
-+ * draining users. * tsm_get() takes a user reference before releasing the
-+ * read lock.
-+ *
-+ * Return: true with the read lock held, or false if unregister prevents use.
-+ */
-+bool tsm_trylock_registration(struct tsm_dev *tsm_dev)
-+{
-+	if (!down_read_trylock(&tsm_dev->registration_lock))
-+		return false;
-+
-+	if (tsm_dev->unregistering) {
-+		up_read(&tsm_dev->registration_lock);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+void tsm_unlock_registration(struct tsm_dev *tsm_dev)
-+{
-+	up_read(&tsm_dev->registration_lock);
-+}
-+
-+static void tsm_put_user(struct tsm_dev *tsm_dev)
-+{
-+	if (refcount_dec_and_test(&tsm_dev->users))
-+		complete_all(&tsm_dev->users_drain_complete);
-+}
-+
-+/**
-+ * tsm_get() - acquire a user reference to a TSM found by a bus lookup
-+ * @tsm_dev: TSM whose lifetime is protected by the caller
-+ *
-+ * The caller must protect @tsm_dev against removal until this returns.
-+ * A successful call takes a device reference, pins the backend module and
-+ * adds a user that tsm_unregister() will wait for. Release it with
-+ * tsm_put_device().
-+ *
-+ * Return: @tsm_dev on success, or ERR_PTR(-ENODEV) if the TSM is unregistering
-+ * or the backend module cannot be pinned.
-+ */
-+struct tsm_dev *tsm_get(struct tsm_dev *tsm_dev)
-+{
-+	if (!tsm_trylock_registration(tsm_dev))
-+		return ERR_PTR(-ENODEV);
-+
-+	/* Keep the backend code and operation tables loaded while in use. */
-+	if (!try_module_get(tsm_dev->pci_ops->owner)) {
-+		tsm_unlock_registration(tsm_dev);
-+		return ERR_PTR(-ENODEV);
-+	}
-+
-+	/*
-+	 * Keep tsm_dev allocated through tsm_put_device(), including after
-+	 * dropping the user reference wakes tsm_unregister().
-+	 */
-+	get_device(&tsm_dev->dev);
-+	/*
-+	 * Make explicit unregister wait before tearing down backend
-+	 * resources.
-+	 */
-+	refcount_inc(&tsm_dev->users);
-+	tsm_unlock_registration(tsm_dev);
-+	return tsm_dev;
-+}
-+
- /**
-  * tsm_get_device() - Pin the TSM attached to a device
-  * @dev: device whose TSM is to be pinned
-  *
-  * A successful lookup takes a TSM device reference and pins the backend
-- * module. Release both with tsm_put_device(). The TSM must remain registered
-- * while the module is pinned.
-+ * module. It also adds a user that tsm_unregister() will wait for. Release
-+ * these references with tsm_put_device().
-  * Return: NULL if no TSM is attached, an error if the module
-- * cannot be pinned, or the TSM device associated with the pinned backend.
-+ * cannot be pinned or the TSM is unregistering, or the TSM device associated
-+ * with the pinned backend.
-  */
- struct tsm_dev *tsm_get_device(struct device *dev)
- {
-@@ -54,6 +129,7 @@ void tsm_put_device(struct tsm_dev *tsm_dev)
- 		return;
- 
- 	owner = tsm_dev->pci_ops->owner;
-+	tsm_put_user(tsm_dev);
- 	put_device(&tsm_dev->dev);
- 	module_put(owner);
- }
-@@ -91,6 +167,9 @@ static struct tsm_dev *alloc_tsm_dev(struct device *parent)
- 		return ERR_PTR(id);
- 
- 	tsm_dev->id = id;
-+	init_rwsem(&tsm_dev->registration_lock);
-+	refcount_set(&tsm_dev->users, 1);
-+	init_completion(&tsm_dev->users_drain_complete);
- 	dev = &tsm_dev->dev;
- 	dev->parent = parent;
- 	dev->class = &tsm_class;
-@@ -137,12 +216,63 @@ struct tsm_dev *tsm_register(struct device *parent, struct pci_tsm_ops *pci_ops)
- }
- EXPORT_SYMBOL_GPL(tsm_register);
- 
--void tsm_unregister(struct tsm_dev *tsm_dev)
-+static void tsm_wait_for_users(struct tsm_dev *tsm_dev)
-+{
-+	struct completion *drain_complete = &tsm_dev->users_drain_complete;
-+	bool interrupted = false;
-+	long rc = try_wait_for_completion(drain_complete);
-+
-+	while (rc <= 0) {
-+		if (interrupted) {
-+			rc = wait_for_completion_timeout(drain_complete, HZ * 10);
-+		} else {
-+			rc = wait_for_completion_interruptible_timeout(
-+				drain_complete, HZ * 10);
-+			if (rc < 0) {
-+				interrupted = true;
-+				dev_warn(&tsm_dev->dev,
-+					 "Task \"%s\" (%d) unregistering TSM; release virtual IOMMUs and other TSM users\n",
-+					 current->comm, task_pid_nr(current));
-+			}
-+		}
-+
-+		if (!rc)
-+			dev_warn(&tsm_dev->dev, "TSM unregister blocked; release virtual IOMMUs and other TSM users\n");
-+	}
-+}
-+
-+/**
-+ * tsm_unregister() - unregister a TSM after draining its users
-+ * @tsm_dev: TSM to unregister
-+ *
-+ * Blocks new users and waits for references acquired by tsm_get_device(),
-+ * including vIOMMUs without vdevices, and pending DSM removals before tearing
-+ * down PCI connections. The wait cannot be aborted by a signal; userspace
-+ * must release the vIOMMUs and vdevices to let it finish.
-+ *
-+ * Return: 0 on success, or -ENODEV if unregistration has already started.
-+ */
-+int tsm_unregister(struct tsm_dev *tsm_dev)
- {
--	/* Remove the class lookup first. */
-+	down_write(&tsm_dev->registration_lock);
-+	if (tsm_dev->unregistering) {
-+		up_write(&tsm_dev->registration_lock);
-+		return -ENODEV;
-+	}
-+
-+	tsm_dev->unregistering = true;
-+
- 	device_del(&tsm_dev->dev);
--	pci_tsm_unregister(tsm_dev);
-+	/* No new user references can be acquired while the write lock is held. */
-+	tsm_put_user(tsm_dev);
-+	tsm_wait_for_users(tsm_dev);
-+
-+	if (IS_ENABLED(CONFIG_PCI_TSM))
-+		pci_tsm_unregister(tsm_dev);
-+
-+	up_write(&tsm_dev->registration_lock);
- 	put_device(&tsm_dev->dev);
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(tsm_unregister);
- 
-diff --git a/include/linux/pci-tsm.h b/include/linux/pci-tsm.h
-index b6830206e36f..b8bacd410b21 100644
---- a/include/linux/pci-tsm.h
-+++ b/include/linux/pci-tsm.h
-@@ -23,10 +23,9 @@ struct tsm_dev;
-  *		  or NULL if unsupported
-  * @owner: Module implementing the PCI TSM operations
-  *
-- * The vIOMMU owner holds a TSM device reference and pins the backend module
-- * before querying @viommu_get_ops, releasing both after vIOMMU destruction.
-- * A backend providing this callback must not unregister its TSM while the
-- * module is pinned.
-+ * The vIOMMU owner holds a TSM user reference, a device reference and a
-+ * backend module reference before querying @viommu_get_ops, releasing them
-+ * after vIOMMU destruction. TSM unregister waits for the user reference.
-  *
-  * This operations are mutually exclusive either a tsm_dev instance
-  * manages physical link properties or it manages function security
-diff --git a/include/linux/tsm.h b/include/linux/tsm.h
-index a1c805d6342f..0af5e9facccc 100644
---- a/include/linux/tsm.h
-+++ b/include/linux/tsm.h
-@@ -2,6 +2,9 @@
- #ifndef __TSM_H
- #define __TSM_H
- 
-+#include <linux/completion.h>
-+#include <linux/refcount.h>
-+#include <linux/rwsem.h>
- #include <linux/sizes.h>
- #include <linux/types.h>
- #include <linux/uuid.h>
-@@ -116,6 +119,13 @@ struct tsm_dev {
- 	struct device dev;
- 	int id;
- 	const struct pci_tsm_ops *pci_ops;
-+	/* Read side protects operations; write side protects unregister. */
-+	struct rw_semaphore registration_lock;
-+	/* Protected by registration_lock; prevents reuse after unregister. */
-+	bool unregistering;
-+	/* Incremented under registration_lock; unregister waits for zero. */
-+	refcount_t users;
-+	struct completion users_drain_complete;
- };
- 
- DEFINE_FREE(put_tsm_dev, struct tsm_dev *,
-@@ -124,10 +134,13 @@ DEFINE_FREE(put_tsm_dev, struct tsm_dev *,
- int tsm_report_register(const struct tsm_report_ops *ops, void *priv);
- int tsm_report_unregister(const struct tsm_report_ops *ops);
- struct tsm_dev *tsm_register(struct device *parent, struct pci_tsm_ops *ops);
--void tsm_unregister(struct tsm_dev *tsm_dev);
-+int tsm_unregister(struct tsm_dev *tsm_dev);
- struct tsm_dev *find_tsm_dev(int id);
- 
- #ifdef CONFIG_TSM
-+struct tsm_dev *tsm_get(struct tsm_dev *tsm_dev);
-+bool tsm_trylock_registration(struct tsm_dev *tsm_dev);
-+void tsm_unlock_registration(struct tsm_dev *tsm_dev);
- struct tsm_dev *tsm_get_device(struct device *dev);
- void tsm_put_device(struct tsm_dev *tsm_dev);
- const struct iommufd_viommu_ops *tsm_viommu_get_ops(struct tsm_dev *tsm_dev,
--- 
-2.43.0
+here instead?
 
+Thierry
+
+--p36q2hw2h56swyuu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmsGuFUACgkQ3SOs138+
+s6Gfaw//Z3uw5ma9cqqblA+8nu2yBkAWOBSwERHiiL4gdesj2MuLPAmXia44Urn6
+HQJPhAHWcKuzca2bDAIVvubtyB9qkmFNFtiQvb/ABLPNQQqUIEJw2QAJO0HSeXqx
+NmnOFdyp4pcq3ON6q3lD/aB0EdAVUu9bCg7m0G37F/caISWq4F9uUdnuL2aqA4hl
+zrb/oH0WvwHrQ/RAbuFHRpSUsuLDige8k6yYMi7noSJH7q/HJGsB3cIDGBYllpwF
+hVnwQEVWII55tYSUVOAZBIrTLgHg25vQNAQ1fVUfRcEemuKsaaRz8eZXmXEfUJK2
+jWNqI4Ro5wo368APpL+RVqXFCwt875N51P35FgyJQmaAR11uMQNGVTjEpjMCjtV/
+qzLUtwQrsTZ7qd7HWROKE3KbjuXklV94kkmmXRLPejCQIPKfKrxGXvBYG8kwrgDw
+0uZXNRxlXBqDmWLiFwzX2vNbrpGdVXmaIH0w27FB9SznMNZc1oHwzZ7ji+M3Scwk
+bH0krbrQ4X37XAIy1oGHJFuMazVV0/ncOaScxVMMa9SxskEqiaYR9DElfLfcEj9H
+Bq4zkSbnVODMo97WMqPPdgIfA1HBHUKKO8P2HuJNkMjlRi5r0Z18HorG0NopreAe
+acd+OoM5LSA8TE/wcbbBbfC5LbgfbJ32hfAWLxy62WB/F0p+nfU=
+=zgYi
+-----END PGP SIGNATURE-----
+
+--p36q2hw2h56swyuu--
