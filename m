@@ -1,64 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.198
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795645465;
-	b=EfGn9bcXwmt1i+kFmuKtuj3e0b+ZOZqaEf8wyq4K+E+aUxeocyvBdNfq8Roh6ZGrGkaB
-	 Pq6PiQNLxAIsquExAbgMKIacTtvtc5x6lXKfEhgrpud8I5eMASsjH9d8tqMO7wBC+ira3
-	 MqoyVblt2aRYYEz0nBInIMERJEyn263Ds92qIC98//KZTDZ9pmZ01ETiTCmPRKjsm7ZL+
-	 xZtcurb1suUGd3VNzhLKMVYeUsFAVhj3TxsF7hMtZnKZKNyRKqOFSSJp3+iFLwzCdDwlt
-	 Vob56Ma0PQ/4a4r7n6q8YWTuh4L1+IY0U1pfnh76QBe06RLqFCh7y0vU9bL2YWliD1w==
+	t=1795645484;
+	b=qpfUbKwNYlOxN5HPtjCP3mfI6wewJNZy2kQaGFa8zIryGSWff67UH1I23XpsuuICExod
+	 Z8a/oZ9F9Os4hF03uX3E8R48kPzuPoIK2IgL6hRa7b5HD/WNoN6EuKWfWWj9Jgxc73tcJ
+	 inWkfvKuQFdp+C0eihtumOfMIKK/XaL/oJZ7DYVM48P+nDC2G7f3ORlz+zVuCTJnav/aj
+	 ceYyYgcnGKcq//6ptUnubrJfiaVYsECpk/KfkicuhIMuVpLNA55NuZcvx1TB1NcRQjtWh
+	 KTjXDjJLkZH89inYVtadbxsy04drYKP9Lq+aIxvgRRQEB+qp4AxNsFagdsTArxL5JeA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795645465;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=1g3+XIdmqrnwOp9VyVcVBy6/pFcCdsbyu5huqCYHwpE=;
-	b=PxkTbHy3ZWePjhcrqVxhsciCSRyiRu8zC1TwoG+TElPwucQ1WV1Gyb+U6cYehXxHwmNM
-	 6jDvvuGGzGFQpW+SOisBmm8L0baAmbdKUY59MlFRO1KqZ7o/p2J7tAIxesJdgZr2o9ybZ
-	 Jf4KsfIzuHn8iRT91E58+0MB5RJFAZ7qHw7MEuUvGhtFE8N1dCgf2LfOex4uuBXjOQ6tr
-	 dvWIB9s/zs/8V/0NtaozmhgRaEJIRNlGRzMW0h38OLmklYXS3ZwPyYWzRl4SzZqhmhUxJ
-	 zth2vKvUztetoVT70DBoxlb0nfWSV5mzNgdEoaZmPBJcDPwlvr+7AjJ0+afkCm5aN1w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795645484;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:Mime-Version:
+	 X-Mailer:Message-ID:Subject:From:To:Cc:Content-Type;
+	bh=jDuBt5Cw+ANUexZtA4dNwo8xhQaNML2KuCiDPiA1qKE=;
+	b=HKmMFDvwZ9Uq78JJ66jHxVmCXb3Z42XkaQa4VUA0VYD+72MvkFMekgPBECAG+bOZ+fDH
+	 LDy6DMjaMseN2l6Qyz94dPGdIHyNr0Dh5WtKtKl/7YoukOfB/gorG40tHkVN+bXyJtsqN
+	 hmjLCTvzvAIltVVf2xgWrg8QaowOMN2DEgbZKFeB1MNsiOgG1q5TJwEm09AXv85TPunIx
+	 nvZp6eTirqLs2zG4FL4Up3sSsr8HYxklfrG3yks6m9t/bMMef3q6FlxKFBncZ8Fx0n+Pm
+	 +tg60IBvZh5o/MJrku2nwAw/iR25nsoevS/pO9GFYL6Pd0OR0zjDBmqcCBXhchiRGIw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oyrhY7Nb;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=flex--elkin.bounces.google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=JXRLJNAt;
+	arc=none smtp.remote-ip=74.125.82.198
+Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com [74.125.82.198])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A767606A321;
-	Wed, 25 Nov 2026 22:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FCA60A2603
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 22:24:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 36FCA60A2603
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elkin.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oyrhY7Nb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5ADA1F00A3D;
-	Wed, 25 Nov 2026 22:24:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795645465;
-	bh=1g3+XIdmqrnwOp9VyVcVBy6/pFcCdsbyu5huqCYHwpE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=oyrhY7NbZjXXvlmuTAexSr4d/2ZEfKFMymrizIaAY12hV2q5A0lgzZm/6ZHj9ClDm
-	 w8TIYZTizGFhnPfgKGmql+nIbm5n11Xywe/EFDXq6+AJzdWkVJn3jUCG/78ZRGfJrF
-	 t0Pt+bfQp4IdCj4aiCSs1axpfjpQOE6NwataK9ew7KAKqPRlCw2wxnvfyBcFTykeOX
-	 pXBP8sru/lp3uzNHeHjpZm0sU35dZM2ORurfpcLJqEEaufKfhgFd2cNgTK4BJn0Exx
-	 V0UyBWS4RAjuzR8iPJbc24rpZPSXIh87UTgYr82SXQGqXvH4nrxeWReWR4AjqZ0lwv
-	 Z8j7ksLGDwATA==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Phil Auld <pauld@redhat.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	linux-tegra@vger.kernel.org,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: [PATCH 29/47] clocksource/drivers/timer-tegra: Move CPUHP_AP_TEGRA_TIMER_STARTING post stop_machine()
-Date: Wed, 25 Nov 2026 23:22:12 +0100
-Message-ID: <20261125222230.22508-30-frederic@kernel.org>
-X-Mailer: git-send-email 2.56.1
-In-Reply-To: <20261125222230.22508-1-frederic@kernel.org>
-References: <20261125222230.22508-1-frederic@kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=JXRLJNAt
+Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-384c78aa0dbso8369459eec.0
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 14:24:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1795645482; x=1796250282; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:mime-version:date:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=jDuBt5Cw+ANUexZtA4dNwo8xhQaNML2KuCiDPiA1qKE=;
+        b=JXRLJNAtqY2xrrTdJrj1OwqP8qcbbDOO/xgOwggr4RT/JkRo7IusUASaRTFh+44RR7
+         6ti/rmoDIQtVOlH6Rnyc/zrJ0NOi88npY2ptZpdREQQrMhjNe+XisDkcxNWjNYVcsaDn
+         PeO0ABd2Qk2g5u0QB4T2RqGnFntRv+fNKY7b5R5fy+3HlisMC/d5yizhHs/5LMLe3vF8
+         29lS3FyHAN8/d0+LBtNBvuaAPYzu/fv09ZtO5X07hzvTCJ2QYxtTRVQYMonbjesh+xE+
+         oyjb0w8wV4MtzSPUsWuzGS1/lIWvH1IFXZEHfpDnR95A9mL+w9HWkD47zWmgruRR9aRm
+         fDgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795645482; x=1796250282;
+        h=content-type:cc:to:from:subject:message-id:mime-version:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=jDuBt5Cw+ANUexZtA4dNwo8xhQaNML2KuCiDPiA1qKE=;
+        b=IgWCNeXgeESOSb+AHGtBzZFDxp5XoX8gUJTJSgjD2qG1xI1ukiG0AgWzu500UZlb4P
+         iaxXJ16YZxXP+TpvWAMQtk6xV1xXVbduZoGAKniNRqCowZhKCDbu408h9EBiMChnPB6k
+         nuXyNyIB2RkK8Ckw/ZFlDDHLnZd95nWznxpHpvdDvsgBJF8bmcR2V+Soa1KS6Rl8gPJW
+         6rnZEz1pmdbMwV7VoP7RQrdvNyNJz7KjCrcez7TZVBTz5q/Od/azr5Wv3KFp61siyu5K
+         QxTjPo3f070J7V+3jVLDKWVHSH6mTknRwaNU2W/qCubu3M4ozTXE0jUQF5WCkL3crn3Y
+         1WMw==
+X-Forwarded-Encrypted: i=1; AL+hErHzNMtB1olaVe8kGluJri5xm61pa1KoU4wFAPsvUlpDQ1MSDW5UsGn1G2eCU/14m4AHSrDAJxSnIehDlQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+CnooqDOunBCXO64NC0boEgcxDGBA4/0g5eoW6/YOgv1MjxlHL
+	VjfY+PJjmzF6N+ZyBZ44/KIkEBkVP/7RYEd7V133H8fl12mu6TTKJmHcPMOvhAa3iGZ0TBv1u0c
+	3bQ==
+X-Received: from dycuf5.prod.google.com ([2002:a05:7300:105:b0:386:9be5:2d95])
+ (user=elkin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:693c:638d:20b0:375:c862:31c
+ with SMTP id 5a478bee46e88-38571816d35mr18955075eec.40.1795645482015; Wed, 25
+ Nov 2026 14:24:42 -0800 (PST)
+Date: Wed, 25 Nov 2026 22:24:33 +0000
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -67,52 +75,55 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
+Message-ID: <20261125222433.1442338-1-elkin@google.com>
+Subject: [PATCH] iommu/arm-smmu: Fix use-after-free in nvidia_smmu_impl_init()
+From: Elkin Cruz <elkin@google.com>
+To: Thierry Reding <thierry.reding@kernel.org>, Will Deacon <will@kernel.org>, 
+	"Joerg Roedel (AMD)" <joro@8bytes.org>
+Cc: Krishna Reddy <vdumpa@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, irogers@google.com, 
+	Elkin Cruz <elkin@google.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Between CPUHP_TEARDOWN_CPU and CPUHP_AP_OFFLINE, stop_machine executes
-all the teardown callbacks while temporarily stopping/pausing all CPUs
-in the system. This doesn't mix well with running RT or isolated tasks.
+In nvidia_smmu_impl_init(), smmu is reallocated with devm_krealloc() to
+embed it within struct nvidia_smmu. When devm_krealloc() moves the
+allocation, the old smmu pointer is freed, leaving nvidia_smmu->bases[0]
+dereferencing the invalid pointer.
 
-In order to transition smoothly from global stop_machine to finer
-grained synchronization between teardown callbacks and the other CPUs,
-a new stop machine post function has been introduced to be executed
-after the main one with IRQs still disabled while other CPUs can exit
-stop_machine().
+Read base from nvidia_smmu->smmu.base instead of the stale smmu pointer.
 
-The teardown callback here simply performs IRQ disablement, which can
-run concurrently with other CPUs.
-
-Move it to post stop_machine() accordingly.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Tested-by: Michael Kelley <mhklinux@outlook.com>
+Fixes: af9da91493e5 ("iommu/arm-smmu: Use new devm_krealloc()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Elkin Cruz <elkin@google.com>
 ---
- kernel/cpu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index fc29c33a03e1..27acdd9800cf 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1275,7 +1275,7 @@ void clear_tasks_mm_cpumask(int cpu)
- static int take_cpu_down(void *_param)
- {
- 	struct cpuhp_cpu_state *st = this_cpu_ptr(&cpuhp_state);
--	enum cpuhp_state target = max((int)st->target, CPUHP_AP_QCOM_TIMER_STARTING);
-+	enum cpuhp_state target = max((int)st->target, CPUHP_AP_TEGRA_TIMER_STARTING);
- 	int err, cpu = smp_processor_id();
+I am trying out new Clang static analysis checks for kernel bug
+classes, and they flagged this code as possibly buggy. The findings
+were triaged/fixed and commit descriptions were drafted with help of AI,
+then checked against linux-next (not runtime-tested on hardware).
+
+Thanks,
+Elkin
+
+ drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+index 2fce4f6d4e1b..a3884966dc29 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+@@ -319,7 +319,7 @@ struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
+ 		return ERR_CAST(nvidia_smmu->mc);
  
- 	/* Ensure this CPU doesn't handle any more interrupts. */
-@@ -1303,7 +1303,7 @@ static int take_cpu_down_post(void *_param)
- 	enum cpuhp_state target = max((int)st->target, CPUHP_AP_OFFLINE);
- 	int cpu = smp_processor_id();
+ 	/* Instance 0 is ioremapped by arm-smmu.c. */
+-	nvidia_smmu->bases[0] = smmu->base;
++	nvidia_smmu->bases[0] = nvidia_smmu->smmu.base;
+ 	nvidia_smmu->num_instances++;
  
--	WARN_ON(st->state != CPUHP_AP_QCOM_TIMER_STARTING);
-+	WARN_ON(st->state != CPUHP_AP_TEGRA_TIMER_STARTING);
- 	/*
- 	 * Invoke the former CPU_DYING callbacks. DYING must not fail!
- 	 */
+ 	for (i = 1; i < MAX_SMMU_INSTANCES; i++) {
 -- 
-2.56.1
+2.56.1.839.g22a8290db9-goog
 
