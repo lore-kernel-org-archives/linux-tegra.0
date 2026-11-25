@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795605999;
-	b=UzpnC8kJQNHv0z3KfBq0jEsmOA10TXnD3PYk5GvmFm7lEpNiFU/+Jn2CPnA2RtMf/tb7
-	 5xuDpizH6PQkRksM39vjJCxTBZt4kjD1ddIuDezC+6y16MApYPDFGe3UwS/QHSW8gtmp7
-	 J0UmHwRyxKaGjhv9qVtAcE8so7J4K+uQ5AXczMMyb66A25o/7XensZe2kQL8CzFjzxxg/
-	 N5A2qOlLyhLQuvaqvx+fzw0zVCm3CsmPm1q6LD9imjyLFc/YlSAJWeCb8NQ/LqyLdaB48
-	 2ZKacPQPOUDzDSxjoXyi8VG7l/1l2DpJV9cJM7UNti5i2jy96GTXnEMyF1UQzV+4rAw==
+	t=1795606000;
+	b=VrCFwdYF9MAbcagJ3nmxFDMPpQBiBQdRzkmEM8xD3DaofhfTVlEpWCqgbKHAy0xTruTi
+	 fxGSgizyB1dVP9kG2+vn9QiodU2l0ZZAVY3/XxJNn9ido+txwY73oiLhFNz7rBQPTYYnE
+	 DzAOW8h66gLb2mkUeNWtC/6WKa/3vABIOFtSUPCxm1fI6RrHelOCL3np4bQqCViGMNPVk
+	 f4kCQ0l4Ce/4+GEi5/YDg5IynI1ElbsmrDeRUTfo2NgHQnpp0svX6/UVDZXW4M9hb4smG
+	 xkWpu0NKYZT7x4BoNW9slESoEDVwfd62MHntvm2TfECFj99qIvMmwBkvAjGLsfZh4vQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795605999;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795606000;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=HMJ+dwPb/3PV0iTHWqAgN85Hf/aWfKjSW+f/zVf9g0U=;
-	b=XFpPkVZ33hlY02/H6dtyarn9VqfvoIzn+iW4ksy/XHm9dDDy+FpYNKy5OlbF0j/K2NMY
-	 i87V4T2GT1qW20qEgbtTZsI50dm4q0dwI7Ab/6kAf/BUZVNyV7+o+sddv4/CBXr3+Wu8o
-	 DG/blm3QNzCLECcV/KRZA3uWmyYxTtBGpfDQ2GlquiiBUIE0Jtud323a/UUbc74NhOUJf
-	 0RejnCELOBb0VwtsRhAQzr1Uw/oy7OjNSGgh+X78lppLF6zdo6xKdh32f/5Pd+0rEHhNU
-	 KBbmTrjar/lfWhiMsRTO9ELHA2aoW8Kx48fzfsBxZoAjag/5426uRUkgWRc0Z7YwCxg==
+	bh=mQWld2rf0aUSCLxpuKReQRUF3uIzkNsM8ey4gCHu/88=;
+	b=33xKmyn1Ki0noKrYN05hVt6YVlyLN0EFqY3tInLxoOmhLbNT1qKxMzGWFw0JRdqD+IPW
+	 n7rIxO0SaCRGBjDkc9GrggFtitfxdkqI+7zc5dIDPuSStKO+I6hCZ46v+sCn4iBtGKpHX
+	 Z23PYswqwFk0e2kD45k/QufAnkN3uajlBLcYSpm+n3ftlmrbbex8oC+8LCcUP5oux24c0
+	 HeQUddC+p1cVMldee0ZxzLV9qMqsxpbvtNDzkzrcYVaRvyr6//8OSUSVDqR8/mrBkzV7u
+	 v0GATMAgc+mMZvbnn71+GGsFLGfHyOD2i/Y+iv67fKuyznqQVfcQNePuTR99R0wHBPQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RVGQ8Hgq;
-	arc=none smtp.remote-ip=209.85.208.48
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TlDfi6Fz;
+	arc=none smtp.remote-ip=209.85.208.46
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C3A60A382A
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 11:26:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 21C3A60A382A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E6D60A3829
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 11:26:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 82E6D60A3829
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RVGQ8Hgq
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6b87408c797so7657586a12.1
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 03:26:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=TlDfi6Fz
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6b88bc47e23so7237234a12.2
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 03:26:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795605997; x=1796210797; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795605999; x=1796210799; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=HMJ+dwPb/3PV0iTHWqAgN85Hf/aWfKjSW+f/zVf9g0U=;
-        b=RVGQ8Hgq8nSm+KEOOWBIlYqI+TMl8HVguwqgFXbJguqc0lDwsjLI1kgYrBgUym83sx
-         Q+sNBxZzC8ENFnb720pQzCWyGyxn+F1uzf7mKSCZjksGaetzcmbIk2S5bODx01feZ7HA
-         5ChvPBgvjQKG4KB4m/LKfTYEFdGg2F+dq9vlr38mJ1ILKgdJ3gc9j753NII4BxpJ/74h
-         usfYMs3nixas1jpCb2MvtF+unJNTPEaxxu0lyJr/5jiw4tKpQjbWArt+Nhg5J1Q+heiR
-         cbU+T/8vdMOaSh3i850GylT1WTOcm73gCFEqukg7wXkHAZ0c4D9kNucePNH+MDu0cugl
-         3cIA==
+        bh=mQWld2rf0aUSCLxpuKReQRUF3uIzkNsM8ey4gCHu/88=;
+        b=TlDfi6FzLVQEOp+ixHcB5vNlbsGUZwa4mcaeOkjd0jh97u/dAQPOd+fuIXap9g6xTE
+         AwLzQC2AQVty73GXcw/9igtE6XHnnlMq9jJ4lgp+wwa99Tl5lQn/dXuLJ84uHaT/PFST
+         Egd2SPXKhqhF7vOSWOPQ+XEVOyF7I9XoxILp+628qqpwvs1XkoL/LGvq+wQbbkVdtOVt
+         38te5+rV7/JDiIkqpzLnigVcVLJsMttZn858RdW7lL2aBk9ZtNMwRkW3WNUdKbwaF1Lm
+         +tOC+jz/q1dgHHIfaPAr4ZUYHn7ha59kQ3smCkNx7N0u1KROSCXcFhJ6IJsGV3QxTAlj
+         CXog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795605997; x=1796210797;
+        d=1e100.net; s=20260707; t=1795605999; x=1796210799;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=HMJ+dwPb/3PV0iTHWqAgN85Hf/aWfKjSW+f/zVf9g0U=;
-        b=aebykLtdNzJseaTLliltm02B3g7Y1NtzpbrEMefsHuRGJPeDLrD1AMwkLJny25oNMa
-         H+inR51D+w9rL178KllRB/AFA7BmsG1ib1mi6ZcCpduMxdI5uJWi1SPPztu1s7SGvgZ5
-         1E7NycOUpv7ZOn3PI0HMRQABQaaRaFnVN0oTopZc+KPGCTmU30imU6UN1u+uFlq6SKG4
-         J8N7iEYtDYjkRWuZau5IeMDqdd3te/Yu0Y3KLW1n5Oo830yTSajYdz0l5LyPfyhuxC+f
-         vGUPAly9ZE7XNcFDiLYFisqdH8tgNyFoKiHEJAUFj0301ZN7ZQGCmbwne78k9XQbD/0Y
-         m6eg==
-X-Forwarded-Encrypted: i=1; AL+hErGqUoV13GRrdPNv1DmfkOXiggjJEBJaxT0ENaHNX9xN27cXg1fYdwyK5LNAPI1r2S0Q90RcQk8DlDorjQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+axDrVCOpJN0gesulwMr4vQm9NV05yjVn4/bMtSEjROPdB/PtV
-	fssd7nnSor4BjUPNQFQnM2SAGZPRtTWrWqeNnvb+ewtlbIpCAcnpGBXR
-X-Gm-Gg: AZFdTZe2QLYiMx8DBhIXtCRGYu5bYJAjT9x6vuHI7X7ixh310q0DC+AU3YDFb83C3b8
-	xjKGvPAszlY3GhbnXFv64ljL1vRMcvu43d6p2l7U9flkPkyepi/+EENhn8VwhKPwxdqtDcDwtQk
-	n39olGHe+6BIcPNRDX8s171obuH2dcz3u4vA/i142tTq14EaUi7zYFJgwpDxZgORa848iM8H+Lx
-	er6Jqpu74tyVZ8aY/MkjWORuV1lze+ngPHF0cHj+xxtoqRQU0eEe23G6MyIUkxzoh0eoumck4aw
-	MNslZnxCjsHFAxmGnxWJQkf2m3iE3fdWtNDpnE+CJbmAZgHVMajPEA0ROdTdHss931MdmRDzyOt
-	8kr0WioRWC9ogrghDN7t02ItD2hIqwWMgyMqZXfC8JSkmUOpwGk+Bp38Vs4a7kRbOk+p3xzxpxb
-	ZdVCc5+HUATCavgzib7KeLEqiEqvZqToN6UQQznywPgF9nrwcEjRNsYVBPWo8UVZ4nR7pcO8BBX
-	ZD2PMLDNGdir6prWeBpBHmyUOctdaxzR4jsr9d19+Uz4zQvJJ7ECYduja7iXlVvwwybVkzJWPiY
-	FlsDjbcUWBegnIIxCXwosTyYHAblSCVB6hCe6kLRPZMJPOQmwy+XyvSLg+u33AIv+wtmVHZbczX
-	2MUIBVkr4u3jtqU6/ZR2WWds18jszbJA=
-X-Received: by 2002:a05:6402:1d4f:b0:6b7:dda4:f72c with SMTP id 4fb4d7f45d1cf-6ba729046bamr8500699a12.44.1795605997391;
-        Wed, 25 Nov 2026 03:26:37 -0800 (PST)
+        bh=mQWld2rf0aUSCLxpuKReQRUF3uIzkNsM8ey4gCHu/88=;
+        b=HEj0JhRlZu7sHWG60M1Ox1lY3G428oF3V2KGBUvv8NFIkxzUCP3aRxMA1QwS7PnAdQ
+         iVUePIszlGhNrxfbkPrT2barK6jyoTQYPG7/TkqBLgxsz/5EASvxw96zEajjHJ3y79oB
+         lF3h25jxjURCDLvSSR3ku5/ssrTa0j23/ukGuyNelVx1iHbcydbQpfC4HfTWIVPaSDB5
+         1Slsc/BLbZz2eunmZxnX4EsIOObrl0VlVMypSc+IDXSea2vS6ujSutrkO1mgbk/PnlRw
+         e/5hm2V9Uicq2W1SBQL5J1+aYqGUsVgPHkbIjEdfzMITy/XXOV3s7JCMt5PGZRJebFHB
+         GtPA==
+X-Forwarded-Encrypted: i=1; AL+hErGUDwA4pdLGLPZQpNsdPqoLF22v8bZpH7L798gEFscIbTLMlZ2UtFwwKx9eSy8id21caE62bDAsL+NH5g==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8usTt5sc4RZKQPyC9KyNN0bwYtNDQKCkNyX2gU2BWQNLj6g9ME
+	LFjL4yPSNl1+EsAFKZ0k6ty+iyuy1iXcj/2QRtoNmSg32kBnJKMRPigg
+X-Gm-Gg: AZFdTZeC/6wEEcy+mYBi9Xo1g7aUB9kGfNMWa/ckXioEvyZVrV+W+83BoEihU5qqB8O
+	Ai7clTUndcJCPMvXKNc2rhmuZxCJQXel6TKxQdWa5cvsaIh/p2rWWaAKc07ws2R6wNHQET6ROgW
+	raASjcXNilPedc+pjtRhgWSNcNs/br45eexGFseYqLLvioKuwkE9/TYHGjhk3Gxx/dFHulSBmVE
+	Nx5dK9wCT47TKXlCFyFJ7owQ3qbrqCeSk7ruIsfrkD+Uy9+fjJKp7ou99MYBms4XLb8j66C+Ld/
+	7hFD6rRpHhSVtCnOrXC/sjb1wdnnsRLmSpun3u7pbCzF8ySMufCeh8GyYg5/R4GwH5ebZ/GfjfB
+	JgthngXMQkXHbIs0dYX0mcoW7nh/CpQCu4HmxPGr4kDqX6dJWnj8cb+8YueMh6FLqIGgqUf4VcO
+	no0672btQoC9Sl2h7RrZB2nKhSxRoaUnVn05kmJfxo8AXf+I+NKymcxEWvcrzkXGXd/h9br0rR0
+	wKvZzy1chYr75K7xUhiicCiStfvvt7jbPcGhf53Z0g1PgNKyXR4H6Pp5Y4hVADMlZYesSU8F8QY
+	PK5pJLQEIAQC5Uxb1vZnCoVzIAhJfTuOVJH6F7E4LQDrK1F7smRMA0G70g5Ri+KFl8OklwpwkZN
+	iC0RRseymVA==
+X-Received: by 2002:a05:6402:4009:b0:6b9:c43e:19df with SMTP id 4fb4d7f45d1cf-6ba37ed9a8bmr12269161a12.41.1795605998897;
+        Wed, 25 Nov 2026 03:26:38 -0800 (PST)
 Received: from xeon ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6bb1b93a8efsm1202907a12.7.2026.11.25.03.26.36
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6bb1b93a8efsm1202907a12.7.2026.11.25.03.26.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 03:26:36 -0800 (PST)
+        Wed, 25 Nov 2026 03:26:38 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
@@ -98,9 +98,9 @@ Cc: linux-media@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v2 6/7] ARM: tegra: Remove fallback compatible from Tegra30 VI node
-Date: Wed, 25 Nov 2026 13:26:12 +0200
-Message-ID: <20261125112613.237333-7-clamor95@gmail.com>
+Subject: [PATCH v2 7/7] ARM: tegra: Add CSI node for Tegra114
+Date: Wed, 25 Nov 2026 13:26:13 +0200
+Message-ID: <20261125112613.237333-8-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261125112613.237333-1-clamor95@gmail.com>
 References: <20261125112613.237333-1-clamor95@gmail.com>
@@ -115,28 +115,65 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Tegra30 now has its own specific compatible string for the VI. Remove the
-Tegra20 fallback, as it may interfere with the correct configuration of
-the device.
+Add CSI node to Tegra114 device tree.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra30.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/nvidia/tegra114.dtsi | 34 +++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30.dtsi b/arch/arm/boot/dts/nvidia/tegra30.dtsi
-index 1e51da329f310..e1f66240ae552 100644
---- a/arch/arm/boot/dts/nvidia/tegra30.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30.dtsi
-@@ -150,7 +150,7 @@ mpe@54040000 {
- 		};
+diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
+index f2766c11ee6c3..61120658f0687 100644
+--- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
++++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
+@@ -53,7 +53,7 @@ host1x@50000000 {
  
  		vi@54080000 {
--			compatible = "nvidia,tegra30-vi", "nvidia,tegra20-vi";
-+			compatible = "nvidia,tegra30-vi";
- 			reg = <0x54080000 0x00000800>;
+ 			compatible = "nvidia,tegra114-vi";
+-			reg = <0x54080000 0x00040000>;
++			reg = <0x54080000 0x00000800>;
  			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&tegra_car TEGRA30_CLK_VI>;
+ 			clocks = <&tegra_car TEGRA114_CLK_VI>;
+ 			resets = <&tegra_car 20>;
+@@ -64,6 +64,38 @@ vi@54080000 {
+ 			iommus = <&mc TEGRA_SWGROUP_VI>;
+ 
+ 			status = "disabled";
++
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			ranges = <0x0 0x54080000 0x4000>;
++
++			csi@800 {
++				compatible = "nvidia,tegra114-csi";
++				reg = <0x800 0x200>;
++				clocks = <&tegra_car TEGRA114_CLK_CSI>,
++					 <&tegra_car TEGRA114_CLK_CSIA_PAD>,
++					 <&tegra_car TEGRA114_CLK_CSIB_PAD>,
++					 <&tegra_car TEGRA114_CLK_CILAB>,
++					 <&tegra_car TEGRA114_CLK_CILCD>,
++					 <&tegra_car TEGRA114_CLK_CILE>;
++				clock-names = "csi", "csia-pad", "csib-pad",
++					      "cilab", "cilcd", "cile";
++				power-domains = <&pd_venc>;
++
++				assigned-clocks = <&tegra_car TEGRA114_CLK_CILAB>,
++						  <&tegra_car TEGRA114_CLK_CILCD>,
++						  <&tegra_car TEGRA114_CLK_CILE>;
++				assigned-clock-parents = <&tegra_car TEGRA114_CLK_PLL_P>,
++							 <&tegra_car TEGRA114_CLK_PLL_P>,
++							 <&tegra_car TEGRA114_CLK_PLL_P>;
++				assigned-clock-rates = <102000000>, <102000000>, <102000000>;
++
++				status = "disabled";
++
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
+ 		};
+ 
+ 		epp@540c0000 {
 -- 
 2.53.0
 
