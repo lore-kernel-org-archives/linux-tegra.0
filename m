@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795631641;
-	b=xDoqRYOrFOhW1Ef3vvkrZjNLYgf/aoKtQWrM1EG1IBAACwdrUqbEO19W4f+36Ata6mwz
-	 uJYhWsuZfnbbHMkPzxNHpP/1z7YoftTzgdauu5t7gzYOyEiIVeqg716nPxK8fpDvGY+RL
-	 uVbrXHtE2JE3eZay2fqVU0urSD0ZGYuCEgnbyv0kogSxVeZMArkBKxICW5Oq3dE4NzlUn
-	 oOwMzJfxXR/1+sHci2kXUDURyVTIPvFbIaC8YjLzqo1HUoHByNC3tQIkYmCLCh/9kmj9+
-	 DaZ6LkNgHv9Y/iKhsHkavDUAJ2aUg740m12bvpM4UcxuO5iwxFrFuoHIsYcUw5OwvCg==
+	t=1795631802;
+	b=Tfm+LBn7cxiKjsdWfgCt+4kLxQ+IozV+P0FeIAfShNFwGyVKe1NvpQwp98KYcuwy4HkQ
+	 YR7fjh3/r4AXCHZQ2Jsme2XUl/a0hlsqVuGFnMPC6Os+8rRMSUrAnsyppGOOybNJA/Qm0
+	 7HC/P7R8VD5y33PwupT9uNe0cA6CHJCh07LEpPrjwT79L/BVp6OU5SphJD8FkL6U3zRsb
+	 NxUDGw3VdkFJkmMczcyNnGciSrIX6OLYrwv+NixAxS0GRzE5guo1dFt6wx1luGPXV0fkQ
+	 7yJsqV30QUte9PGXY6zAD2oPFF1PY83oj1Ui/XPmBhC9oNooPktpetRKXMC9OfxBHuA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795631641;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795631802;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=MZOn7cbyBZCKner9Io0gV9Z7rV2XG5FimTAg+eegkQw=;
-	b=n+nWvLWiBZUSDN3/l67PzbFWTgNo0v0Gdd2IBYqiqg+Y8TZjriXqvtky02qxmn25DyyE
-	 6Tt7g2kpwKSU3oZuCQIPY4pXs5DU9oCuD/7CHB3puByR1L4Mk8tA+w6tdu9ION1C9VpCB
-	 iLe+/oBGp0eCgoyfMiHEtDOkcNLWATi/sqmKiyBZNDXHM+Wa2U14wek91tPrEzpwvcoJ9
-	 bgmgX53X4eEKrYEOheVQJSYfFiYbQGnihk7Hp2uoQl0IVWlBZSKlFL/GuVEFSxK5XCZD/
-	 Bane+HQO4ZHav0YB9gnl2K113E9lcPO5utgG1otgJMXoNwtKPt3Zh1LQ24G1EifvtYg==
+	bh=I1kqIhwTQbIYkIwvzTT4amDSc4WG19rX5HvViezhfOs=;
+	b=a/f6zoqSZzZYaUKZrXpA/ATLlmKrKfrib2ImFl9MuJIVVHCJIIL8k8yq+L4uDv5OHe8n
+	 DlqNOSYziq9PGVNMNmY4dL6ApmxGYRwY9zZPySNORirbnqN+6F4nooAfi3WxGRptCzNSE
+	 zoSZgyXcbL4JwIh0VlLcUZB9La7e7XWYlCNLU0V0MRYR4jSgpI5+gRH3Dxf8xgiYj9Zle
+	 qa+4eFhJAG8JwxZr1AocrcIGgDLKfYUhHGGpDd3BT6+mZHtMubfVPaFTygzvuMV8oK6C/
+	 JnTfnjXTraK3ixRLRTIVxg4RX5lhChP7zdHV24/NneT686HssbgaTTB2/UccduGvBBw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gMR604Vd;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iy5eNDXe;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6431A606A321
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 18:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8071606A326
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 18:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gMR604Vd
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3975D1F000D1
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 18:34:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iy5eNDXe
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 426DF1F000D4
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 18:36:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795631641;
-	bh=MZOn7cbyBZCKner9Io0gV9Z7rV2XG5FimTAg+eegkQw=;
+	s=k20260515; t=1795631802;
+	bh=I1kqIhwTQbIYkIwvzTT4amDSc4WG19rX5HvViezhfOs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=gMR604VdeK3XkdaruPCZrrWntH8ZkluWTq1UEz1VzQEDYndulZ2K0orM1LCEeXm8R
-	 Sdg6hQ97QvJsBIZUClF2b9BGXd0m/GCR3m5rsYPmmE/mX+1BK1nyneigOjCdPf4h3+
-	 OfVymgM031W1ZopRBlTAWmOC9mwIa9Yq1KpzvcUBHkqfy5yItIg4lFiW4TpakH27Vi
-	 zArSLBcTb20Mq2UFvT/fkmC0LZ78HTaLbT97cgiu3i/L3cWOfLiR5ej3uUXEQifyIO
-	 qKx+/wwLkj/3jIENXBKu4oVAdMTqfLume0cMIFm+9BsDAGFPgXwXO5QVjz4irZq6r5
-	 7H3CawIi5TT9Q==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5c14f3dab0cso3476625e87.1
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 10:34:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AL+hErHbggUhF0qLHXA91nrMSerdz1gZbeIzQBeO4v8lPMY+PsA45LHkeMcZ3vmYMTHqM3vcl5ZCFYclPtntJQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9eYBEkIdXeaczUnzj7tBa5RpKIQql23l2dF1sPdAF9DC8VV/7+
-	MMtWFsOvcYLwf93/EUu5TnGdAXAEdZv0rycOI8boU56YczySk3UdUZCi4xkK9L2fNHJHDzSdXHG
-	SdhhmAy1132qf5rH/WFAytKhJiuC/qLQ=
-X-Received: by 2002:a05:6512:3d23:b0:5bf:f76f:b5ff with SMTP id
- 2adb3069b0e04-5c1bc8c950emr6241358e87.52.1795631639987; Wed, 25 Nov 2026
- 10:33:59 -0800 (PST)
+	b=iy5eNDXeajlfmYBUi3HVw+ZOUGhwAcS9hIiWwHa7pO/9JaOtuWpfYI/RLwVEFP+he
+	 MsCg3O26VBHd/+Y0Sklk7Ge1L5580uROT71jaRSCDeXEgdGg6S+iO+ht2n8b+ATsG1
+	 DT6lbqyVjrFBOoKjwEFfDrUxkVgMpJAyHqCWTfNPCWLy2voxOxy8wG+BTMilO9QyjF
+	 oO3fltQ8TrI0PeHEl5mTbGB+xETSqFWYD89ZpwHqaa2/TCLonSH0z4/M/LVWl14tHc
+	 2Q7yobtKPVNFJWfgdtBP1G5tbQlXVgiXLfhVm4gtKkXX5rthE91pHEZamYLxadoSA3
+	 TD1odtsGC4Org==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3ae2fb3fe2fso55516821fa.2
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 10:36:42 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErHj6D7Ij4pI9YH1ayLvo/TJw+SMaVNvpT8Qz1zJBHPYaVauEPI/X0pqM+XylieGBTGzIVwyJ4QlwDoPyw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9nx41l0Nlph/oRr9fKz8xs6av0nbHVZSIGtgo8WJtnHVnDVneB
+	L0Fawcz4ZOdlR/6Jt9WX7Zng9w9eIxm2h8zA3XFfCT2093pqoKWuM11D5TUtNi8aicxI1O777Cw
+	Zj5WpuBPzCd8WQuXWeh1s5aYsvZMdkCU=
+X-Received: by 2002:ac2:4c49:0:b0:5c1:6ed3:db66 with SMTP id
+ 2adb3069b0e04-5c1bc812fa8mr6445916e87.46.1795631801074; Wed, 25 Nov 2026
+ 10:36:41 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -59,42 +59,49 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261119204748.2558209-1-lee@kernel.org> <20261119204748.2558209-2-lee@kernel.org>
-In-Reply-To: <20261119204748.2558209-2-lee@kernel.org>
+References: <20261119204748.2558209-1-lee@kernel.org>
+In-Reply-To: <20261119204748.2558209-1-lee@kernel.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 25 Nov 2026 19:33:46 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=yx_=j3Km32AqKmQ+JqKadcCEOBMBs3R3dVvhS9A2DPg@mail.gmail.com>
-X-Gm-Features: Aa3M54qJrAjbkPP_s3DSmoGNUsm5bkx7wv6GpF9Uaxblh2WXq34zjRLrGUaH3NM
-Message-ID: <CAD++jL=yx_=j3Km32AqKmQ+JqKadcCEOBMBs3R3dVvhS9A2DPg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] pinctrl: tegra186: Fix out-of-bounds register bank
- index for AON drive groups
+Date: Wed, 25 Nov 2026 19:36:28 +0100
+X-Gmail-Original-Message-ID: <CAD++jLktj_m6SzohDWE-1P2fktYy50Kq_V83gyAwvu4oHWuo0Q@mail.gmail.com>
+X-Gm-Features: Aa3M54qAGgBABpC37EY4s-xGOSAZePImEjc0mtba_-nxodKr3zcHaitgsE_JuYQ
+Message-ID: <CAD++jLktj_m6SzohDWE-1P2fktYy50Kq_V83gyAwvu4oHWuo0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] pinctrl: Fix out-of-bounds accesses,
+ divide-by-zero, and error handling
 To: Lee Jones <lee@kernel.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Aaron Kling <webgeek1234@gmail.com>, linux-gpio@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Aaron Kling <webgeek1234@gmail.com>, Andreas Kemnade <andreas@kemnade.info>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Daniel Golle <daniel@makrotopia.org>, 
+	Hao Chang <ot_chhao.chang@mediatek.com>, "H. Nikolaus Schaller" <hns@goldelico.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	Maoguang Meng <maoguang.meng@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>, 
+	Olivier Louvignes <olivier@mgcrea.io>, Paul Boddie <paul@boddie.org.uk>, 
+	Paul Cercueil <paul@crapouillou.net>, Qingliang Li <qingliang.li@mediatek.com>, 
+	Rob Herring <robh@kernel.org>, "Ryder.Lee" <ryder.lee@mediatek.com>, 
+	Sam Shih <sam.shih@mediatek.com>, Sean Wang <sean.wang@kernel.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Thierry Reding <treding@nvidia.com>, 
+	zhouyanjie@wanyeetech.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 19, 2026 at 9:48=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
+On Thu, Nov 19, 2026 at 9:47=E2=80=AFPM Lee Jones <lee@kernel.org> wrote:
 
-> The Tegra186 AON pinmux controller has only a single register bank
-> (nbanks =3D 1, indexed at 0), and all PINGROUP entries in
-> tegra186_aon_groups accordingly specify bank 0.  However, all 51 AON
-> drive_* macro definitions pass drv_bank =3D 1 as the final argument to
-> DRV_PINGROUP_ENTRY_Y, causing any drive configuration read or write on
-> an AON drive group to index pmx->regs[1] out-of-bounds.
+> These issues were reported by Sashiko.
 >
-> Update the AON drive_* macro definitions to use register bank 0.
->
-> Fixes: 542baf77f092 ("pinctrl: tegra: Add Tegra186 pinmux driver")
-> Closes: https://sashiko.dev/#/bug/linux-a9a7165c-c5eb-463a-b7b1-24a30416b=
-33b
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Lee Jones <lee@kernel.org>
+> v1 =3D> v2:
+>  - Drop patches 05/10, 06/10, 07/10, and 10/10, already applied to pinctr=
+l
+>    for-next
+>  - Drop patch 01/10 (sunxi) in favour of the broader Allwinner IRQ-bank
+>    rework in flight (Andre, Sashiko)
+>  - mediatek: Guard against NULL eint in mtk_eint_do_suspend() and
+>    mtk_eint_do_resume() before resetting hw->eint to NULL on error (Sashi=
+ko)
 
-Patch applied!
+All the v2 patches applied (for v7.5), nice work!
 
 Yours,
 Linus Walleij
