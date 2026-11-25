@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795624128;
-	b=ga4/diJkVFojnbzJIQwoqcsavY4YpHoqNagsOcPHoFY+5RmkaBhvoJM7rVxKUrKf6HCt
-	 1x8rNXq5r/VcCEydXUs7vcwJiHX8sPk+aIw3VP7miLSrdr7dmcJWNoQuurSEmagc4ueZc
-	 JbtD3+nniQKYzP6j0m5O8j+ynfrH8YBv0RkCjqTconRqxHVNfsokVHspMi5Y6HEoTGp6F
-	 10/VCzCn2OX1QLZ9h/3xXcCb7HWrWGbo81MeZ2OUQnhGmaXcEypGOsjcMkzh12Mn/7hA1
-	 pEpve13tgCIEscRStSS0zuZmNr0/X/VjLW+3qg/tSZC61us1usw4lmVp87uqjDv4dVA==
+	t=1795624131;
+	b=TRF4KXl+3q/r7UNGNYFNt9sS1JA316qDR4tUhzoTKiTCGHtTVD7eVDiW3flHY/Bc0dJ5
+	 YeuKWQXdTmMsRAJZiY1RELH7SDKC7dDwzcPgqgBPs65boL1pLy3r7Mba7DmfOeWJ2qZXv
+	 G+DObkxJKwMuaJy5j8//d3zObKPQqmNFUyKCJe1iiWOpdcwe3la39Uw98FDQOE0SW8o8k
+	 TG0Rm3PoVQSpvgKcwGEjPEWQkt9q1OFajxjCe5Ra9wQDW0fW2+6gvxdGo4BSdntG96nUW
+	 e+3OpQjVlEdKs1z9oAFhLs3Y2k6t1F/331PVEEOSq8u4HMfDPCmwKvpvMspFpQPSkyw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795624128;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795624131;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=OnNdjklB4uWYTn3msQzxTr6Lo2LMKVqTjQIZzgFKEJ4=;
-	b=m530xvgl/XPAQ6/JNtZohtOlMtRf9euTt9Rgw73jAmzRMVw5arw0bCHZY25XwuVKid5r
-	 Gr3i4naLA/ajxY4HQOyVNmSeDOup7CZwkgpGd4eDTIO1vBWz3DmfAHPO9LDpMvQcgON0o
-	 KfSYhXjuxs2WuxTcYY6M1DYoHKkkfkrnwZzKBFRsbetqUQdV30ifgqKnpWK++gyE7WXqD
-	 sxbeovYWXVefFQr7N0gczUqBxVuLg2Nji9IJdSoWWwnx7yKaM+4AYDY5NWd5OrkJZHi1g
-	 zDCAC6uCLlR8Qx1ZBa5ifC8ncQ3/r6vm2WYRt9D4p9IuIXj0YP8CMB6AehazszliVPQ==
+	bh=Jkpq3Qrv0SgVfFgdH0HjFFR4TiuDoTsfQLCdgkzvL4U=;
+	b=bqAb3oWRLXW/vqTbSLo6YRZtWHkL5Nl6DW7dJ4AOenujeOzcLhflc0RmjYQYdIlkAD/0
+	 6o4RdE2SfWguOC064ImwJO7EQYNilBGxtQEWD1paTIp6Rb0Lzhcnv+pLZIZeYoA9BieJI
+	 RlpBTO7izc43G+WcgLjgIROfeIVGCjMW7qUs2U8MVViaG2g/o5bTnAzrUqkJKOebv7GY7
+	 n3hqJYF00t2qwCuSkehzrz5ShNamuCO6RoEaLvJfpCJ6fejRm4Qviz9D6TE2XA47/bQTc
+	 kgQiqJOp/GrLFhMfCIkk/HEi63eAivnFyB8uwQY3iusqxdXkXIxyMbH5Czxq1NNIqMw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=thegoodpenguin.co.uk;
 	spf=pass smtp.mailfrom=thegoodpenguin.co.uk;
-	dkim=pass header.d=thegoodpenguin-co-uk.20260707.gappssmtp.com header.i=@thegoodpenguin-co-uk.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=NefMCsFC;
-	arc=none smtp.remote-ip=209.85.128.43
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass header.d=thegoodpenguin-co-uk.20260707.gappssmtp.com header.i=@thegoodpenguin-co-uk.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=awr2pNg6;
+	arc=none smtp.remote-ip=209.85.128.54
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2BA606A32E
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 16:28:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0B2BA606A32E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C38606A336
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 16:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 80C38606A336
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20260707.gappssmtp.com header.i=@thegoodpenguin-co-uk.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=NefMCsFC
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a3517554f7so54800905e9.2
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 08:28:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20260707.gappssmtp.com header.i=@thegoodpenguin-co-uk.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=awr2pNg6
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4b467581b98so58635285e9.0
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Nov 2026 08:28:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20260707.gappssmtp.com; s=20260707; t=1795624126; x=1796228926; darn=vger.kernel.org;
+        d=thegoodpenguin-co-uk.20260707.gappssmtp.com; s=20260707; t=1795624129; x=1796228929; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=OnNdjklB4uWYTn3msQzxTr6Lo2LMKVqTjQIZzgFKEJ4=;
-        b=NefMCsFCYDXwhFV3ueputNOzDkBj4XzJivUz2f3/HIbE1fJlAZ9HYyIAIkcjs0UXAW
-         uzT7s6u+4XuGELC2Mpc2tBhIjwM/gp9PM1WseEEcwm5yz+M4qG1dQYgRKQoMHqcUqjlz
-         8ZjjabXUmAopEHH0nRpqomLHzOVeH7IckjszkEGd0yQzVqXRhMG5BjZbc/4PlYIxzC9v
-         3NQpqlwr010/Nynz8SoNlM2e7DQRTxY54NPmjxkxxsZXV3kMPkjwMPf9Wwj9Nc5Ss3BF
-         W1d3nsV9W/vF2SSvBmEfUp6QQD6F08os+W0PL0tPlL3CykglVfWa94ZslCHWlwaLwsr1
-         dUaA==
+        bh=Jkpq3Qrv0SgVfFgdH0HjFFR4TiuDoTsfQLCdgkzvL4U=;
+        b=awr2pNg6B61ponQcYsFUADCvH5lU9aS7YUz50qeOxm6zghNI+O2L6YhkeSpjDSBPql
+         0e7RxVG85bgTVpNeja27ZIVQz8XbU8TBQowKN3p97/3B8pZ+5RN3x9PWMrEonWtTWIwL
+         MkwshXj0V10Jz+HlPhOKitXqi4n7Ql5gaO7K2Te1TApyRAvezQRYxtNbUps+mUjg0wL3
+         wjf8dBlDVfTMabksgqOx3YVnUusI2Og7yKW1bs2wcL+9hqLLbfF3rU7wbypRL1TyF7PC
+         u5+HxZBSlYfGa/Z2qtHpntkd6E0V65UkY0ObQi27L4AfxBecb8mkI/eTHBX6U95W1M6j
+         7ocw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795624126; x=1796228926;
+        d=1e100.net; s=20260707; t=1795624129; x=1796228929;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=OnNdjklB4uWYTn3msQzxTr6Lo2LMKVqTjQIZzgFKEJ4=;
-        b=Im+tK9o7ErxIyQ2Xq6R2N+EV/SabSlj3sxczV4QTjVqDIgkRXBAOowsew8fdNTh40X
-         ImFCIjaz9FG4BFFbmfxOpjcoO7FThsFwxh33BfgO6YJxDYSVtfjbih/D4Y/3pH2v6AEp
-         vkNr6j6XMy3sTlohNNDEUpwWrXy0TlNM5D1CRHMIbIZBkV+BtFWql9B+SJGogGEtXcMS
-         FEMqzEOb7ei+SWSPBLBYR3pCXEnzoXyZREAgm6/nZueNGF9sSCyW3lSXcw84cMO1NguM
-         V5FeriYq/0r2VcfCbPht/zJUt7cxHMtqmmq4Ssm9RH/eYeuKwfYJucGiiaZBWSBQpBMg
-         laOw==
-X-Forwarded-Encrypted: i=1; AL+hErEwmODPTbggwomH2wGBL/eiQqDKrZO9gDvjpgnGuVnyZgj60zLm5+F99UPqXk4kgnejtsEU6K6fDQj6FA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/ERFwkNLmiVYW0FREQtjdL4wzCXAdA1RC3OZXq83SQqQgpRIGf
-	IDyvq5Yfhz8EkzWPNf29Li8weezRSkkJgbouyaivWkibAbS2iDDa3pyev9HcuRFbnrU=
-X-Gm-Gg: AZFdTZeQfBhAw7AiVwzXN/Pda8Uf+IxhLdK/B4n1rYOXHeJH2mr6XicW6yHXt2HcmNY
-	lsqd4y4FUPLtZXoGIq0pQQooQmumjMVfjurV6NEoSKAxsfReNRYt9HLj1d3dkZuW1GcFJTwrX2C
-	oOG8RpJDhciTFEP4o+KTorDR8N6ijq9QZ/Fnx7I6Ttf9N1YPynGXrkJQEpYb4z3UTh2P87o1sCR
-	892HinWR2NMfjZ+hwtZwbIFONGOqsff6hkuy2U2oE3tWuqKP0Yhi0vsyUFH9+e5xNLStRPZr+CR
-	1sKHOIyfJ2W1X2DaGv2maM262XL1w5wKY8D7xHB8EDtzG6CMBZf8TkkUY8Vz9lYrWNjil/MSxPA
-	2tjzoDD1iiTBRBkwebGZIV1Ovrel8Yl5sNCYvwRwkTzqFOevwbL8PtErWeBSYrvQ4vYCE4To7V2
-	xRdq40Kn0xJXL9614BePz8NEWQCdafIqVCgrpcDCgCAC9PVAAjgXZW9oEE9tpCiXdYNfb3eBHv7
-	s/xaixNitLr+iDQAftszcW9cZp3HQh6nOP1cHiYQ7p9Sqrfl8BxTjozkYQ3pL4N+uZPN3PTl7uj
-	eGIRkktAh6dG584xY5d8u+PMY2QPCy/hbHR+h201c50RSw==
-X-Received: by 2002:a05:600c:34c9:b0:4a3:5d64:df91 with SMTP id 5b1f17b1804b1-4bb88810d28mr405948895e9.18.1795624126434;
-        Wed, 25 Nov 2026 08:28:46 -0800 (PST)
+        bh=Jkpq3Qrv0SgVfFgdH0HjFFR4TiuDoTsfQLCdgkzvL4U=;
+        b=ZeT9i08/pfdUEEMGJCFr51I6BrYn0oJLYpXpSXyuPLpsbS6aWLMTxiFTp8UuaTtxIn
+         vEkdrgL0uVLR3jNhIqVYMwDhWjz6kovh5tPjgCZtydfbLNhER7YsztpdLLl3KJZExnOj
+         OXfQwIQWfhIoi5JaXytj+mbljIIAS17po6lKawUznFkka/x/VzM3q3j9R2l5KxvpQf35
+         rdlPY8LSivN4UjHkmFUfJdUeIDWSNL37zwSIRxvilo1hcJf8jR2t/cuLny4XBwjxQOzz
+         zS3UUOnO+MQuwV8XWI11oiqxai6dh+Fb1OXVzNj+flbQfiZBK65IfynjE01qPO568RB8
+         uTCw==
+X-Forwarded-Encrypted: i=1; AL+hErExo72+EPLbi37B/UtTuJEi/mA5SMuQqDlCMnvl8+Vt6xqlmqzxnI/vLXqnBEG17y3wZFFULvmdbAE5WQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z98e8ynxfsmqbGn8cNLh1sMTTD9B8l85mwxgCInTmuiecZIhoaD
+	FQjl5Kyb8MboE/Lfr72YK0rpreE/xH+Sf5ux+LaHTRpcGe4bZGDRzK7vHpmF2vjBU/0=
+X-Gm-Gg: AZFdTZc5I57U1AoZkP4/b9Y8Adzgmho1GcFkHJ0WyFFZ0VZycADfxe8B6aRo16H/Yk3
+	8XWqol3PeSkJ2fOHE36Y+C0kQCD6PlZEukXyUkM+Qdh58uu3hu/rYzPMd8Wm18QM1tsFh+YVI7W
+	wYojXqCj7WajtCpS0nGeMWUKx8CSCDX5HRJsybPUM6tOiQQ/kj/3ZsdGSgyXn9kdZDZyUWY969s
+	de3YMFW8SYAqVuAruMPggHlpZaT7b/o6eX581vbmxuubl/3jamz7xSwrffqWgNKc7duhUpx2f4b
+	nZIkrdDVJofBJMB0ei/VJbOTAF7ehNnWUkpvyhxwoXCM65DmUP+EIxvvWRRccaqBUoDBLl7c24S
+	4etoZbOw10MRZ+v6us9zU+yDYIqOX0I2pUXYsKh1ZX5qIZk8tFCfloTUjHIjsTHRxSZcDeo12QA
+	rdFFF4zvcND4XK6iIQKkGpwmBrbVcsult3JF9s0e+Dg//WzErJDX1P+Shv3tMr25iv9yyX1PRNl
+	FgXYCzaH11DWg0ndHhNG7qdmtvFe0YmyUDp5FZR57Q+Eo4lVmgC0A6nAHQTeM8nlfh29DxeNj9u
+	r0QkNDHAeJmUP+RmIM2IBcevee9Py/Az9bBOriekzjcI+A==
+X-Received: by 2002:a05:600c:8b11:b0:4a2:a9:ed5a with SMTP id 5b1f17b1804b1-4bb88826835mr369069605e9.8.1795624128871;
+        Wed, 25 Nov 2026 08:28:48 -0800 (PST)
 Received: from [10.42.0.1] ([2a00:23c7:1d1a:9c01:f716:ba19:8aaa:f1c2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853368d3sm527336375e9.1.2026.11.25.08.28.44
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853368d3sm527336375e9.1.2026.11.25.08.28.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 08:28:46 -0800 (PST)
+        Wed, 25 Nov 2026 08:28:48 -0800 (PST)
 From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-Date: Wed, 25 Nov 2026 16:28:30 +0000
-Subject: [PATCH 04/10] mtd: spi-nor: Unify of_device_id list terminator
+Date: Wed, 25 Nov 2026 16:28:31 +0000
+Subject: [PATCH 05/10] mtd: devices: Unify *_device_id list terminator.
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -94,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-acpi-mtd-v1-4-42ad2f645bee@thegoodpenguin.co.uk>
+Message-Id: <20261125-acpi-mtd-v1-5-42ad2f645bee@thegoodpenguin.co.uk>
 References: <20261125-acpi-mtd-v1-0-42ad2f645bee@thegoodpenguin.co.uk>
 In-Reply-To: <20261125-acpi-mtd-v1-0-42ad2f645bee@thegoodpenguin.co.uk>
 To: Miquel Raynal <miquel.raynal@bootlin.com>, 
@@ -155,11 +155,11 @@ Cc: linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
  Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>, 
  =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795624113; l=1549;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795624113; l=5688;
  i=pzalewski@thegoodpenguin.co.uk; s=20260430; h=from:subject:message-id;
- bh=pw1yVugjZoJ1sYzSavbjoh9EtNi40KpLFcyq3KxCgNo=;
- b=kcHPBXNDukNV21LLTOphkMkZzHhEUE3GVm5MT4GkuuM2LkB9EPUAINUu71xJWBBbyUPxGyGvR
- NyJA9ZKxwfTBYz6TriU3QIhP5Egb+QnpqA24EfhtbypOZI53FKPwK0u
+ bh=e38PNjVjjK9fQET0Z5RSjQeQUR9n82Nx3ix8ylWZkAc=;
+ b=UmynCOwoYM4GS77+J2oETnIgPnWornuOiaAN1UaN6yWzj88g2jweJvGkqkw5pwk01i9dDTzKw
+ jhi+aPV+h/XAaOKJSEM/GC0voUs+NMNtgllLP1rD+cGxum6pU8i9x47
 X-Developer-Key: i=pzalewski@thegoodpenguin.co.uk; a=ed25519;
  pk=vHq4n9IonORH2GTzLv8r6CWAFHzgfBuNkQPXA8NSly0=
 
@@ -170,35 +170,164 @@ these to the common style with other *_device_id arrays.
 
 Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
 ---
- drivers/mtd/spi-nor/controllers/hisi-sfc.c  | 2 +-
- drivers/mtd/spi-nor/controllers/nxp-spifi.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/devices/docg3.c         | 2 +-
+ drivers/mtd/devices/mchp23k256.c    | 4 ++--
+ drivers/mtd/devices/mchp48l640.c    | 4 ++--
+ drivers/mtd/devices/mtd_dataflash.c | 8 ++++----
+ drivers/mtd/devices/mtd_intel_dg.c  | 4 +---
+ drivers/mtd/devices/phram.c         | 2 +-
+ drivers/mtd/devices/powernv_flash.c | 2 +-
+ drivers/mtd/devices/spear_smi.c     | 2 +-
+ drivers/mtd/devices/st_spi_fsm.c    | 2 +-
+ 9 files changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/mtd/spi-nor/controllers/hisi-sfc.c b/drivers/mtd/spi-nor/controllers/hisi-sfc.c
-index 4f6631950a5b..01048ca46a60 100644
---- a/drivers/mtd/spi-nor/controllers/hisi-sfc.c
-+++ b/drivers/mtd/spi-nor/controllers/hisi-sfc.c
-@@ -474,7 +474,7 @@ static void hisi_spi_nor_remove(struct platform_device *pdev)
+diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+index a8a77de1c6f0..1f0b1b0f4a83 100644
+--- a/drivers/mtd/devices/docg3.c
++++ b/drivers/mtd/devices/docg3.c
+@@ -2051,7 +2051,7 @@ static void docg3_release(struct platform_device *pdev)
+ #ifdef CONFIG_OF
+ static const struct of_device_id docg3_dt_ids[] = {
+ 	{ .compatible = "m-systems,diskonchip-g3" },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, docg3_dt_ids);
+ #endif
+diff --git a/drivers/mtd/devices/mchp23k256.c b/drivers/mtd/devices/mchp23k256.c
+index 05a4ebe21e4b..31c0f414f449 100644
+--- a/drivers/mtd/devices/mchp23k256.c
++++ b/drivers/mtd/devices/mchp23k256.c
+@@ -225,7 +225,7 @@ static const struct of_device_id mchp23k256_of_table[] = {
+ 		.compatible = "microchip,mchp23lcv1024",
+ 		.data = &mchp23lcv1024_caps,
+ 	},
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, mchp23k256_of_table);
  
- static const struct of_device_id hisi_spi_nor_dt_ids[] = {
- 	{ .compatible = "hisilicon,fmc-spi-nor"},
+@@ -238,7 +238,7 @@ static const struct spi_device_id mchp23k256_spi_ids[] = {
+ 		.name = "mchp23lcv1024",
+ 		.driver_data = (kernel_ulong_t)&mchp23lcv1024_caps,
+ 	},
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(spi, mchp23k256_spi_ids);
+ 
+diff --git a/drivers/mtd/devices/mchp48l640.c b/drivers/mtd/devices/mchp48l640.c
+index c6e83775638d..60dfe0980557 100644
+--- a/drivers/mtd/devices/mchp48l640.c
++++ b/drivers/mtd/devices/mchp48l640.c
+@@ -372,7 +372,7 @@ static const struct of_device_id mchp48l640_of_table[] = {
+ 		.compatible = "fujitsu,mb85rs128ty",
+ 		.data = &mb85rs128ty_caps,
+ 	},
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, mchp48l640_of_table);
+ 
+@@ -385,7 +385,7 @@ static const struct spi_device_id mchp48l640_spi_ids[] = {
+ 		.name = "mb85rs128ty",
+ 		.driver_data = (kernel_ulong_t)&mb85rs128ty_caps,
+ 	},
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(spi, mchp48l640_spi_ids);
+ 
+diff --git a/drivers/mtd/devices/mtd_dataflash.c b/drivers/mtd/devices/mtd_dataflash.c
+index e766258d76f7..607c5cbd2a83 100644
+--- a/drivers/mtd/devices/mtd_dataflash.c
++++ b/drivers/mtd/devices/mtd_dataflash.c
+@@ -99,15 +99,15 @@ struct dataflash {
+ static const struct of_device_id dataflash_dt_ids[] = {
+ 	{ .compatible = "atmel,at45", },
+ 	{ .compatible = "atmel,dataflash", },
 -	{ /* sentinel */ }
 +	{ }
  };
- MODULE_DEVICE_TABLE(of, hisi_spi_nor_dt_ids);
+ MODULE_DEVICE_TABLE(of, dataflash_dt_ids);
+ #endif
  
-diff --git a/drivers/mtd/spi-nor/controllers/nxp-spifi.c b/drivers/mtd/spi-nor/controllers/nxp-spifi.c
-index 30fe2d414f07..71ee50eb1a71 100644
---- a/drivers/mtd/spi-nor/controllers/nxp-spifi.c
-+++ b/drivers/mtd/spi-nor/controllers/nxp-spifi.c
-@@ -440,7 +440,7 @@ static void nxp_spifi_remove(struct platform_device *pdev)
- 
- static const struct of_device_id nxp_spifi_match[] = {
- 	{.compatible = "nxp,lpc1773-spifi"},
+ static const struct spi_device_id dataflash_spi_ids[] = {
+-	{ .name = "at45", },
+-	{ .name = "dataflash", },
 -	{ /* sentinel */ }
++	{ .name = "at45" },
++	{ .name = "dataflash" },
 +	{ }
  };
- MODULE_DEVICE_TABLE(of, nxp_spifi_match);
+ MODULE_DEVICE_TABLE(spi, dataflash_spi_ids);
+ 
+diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
+index 55a945c1a67a..63685615a02d 100644
+--- a/drivers/mtd/devices/mtd_intel_dg.c
++++ b/drivers/mtd/devices/mtd_intel_dg.c
+@@ -863,9 +863,7 @@ static const struct auxiliary_device_id intel_dg_mtd_id_table[] = {
+ 	{
+ 		.name = "xe.nvm",
+ 	},
+-	{
+-		/* sentinel */
+-	}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(auxiliary, intel_dg_mtd_id_table);
+ 
+diff --git a/drivers/mtd/devices/phram.c b/drivers/mtd/devices/phram.c
+index b42cadcd76b1..7c6b2852916c 100644
+--- a/drivers/mtd/devices/phram.c
++++ b/drivers/mtd/devices/phram.c
+@@ -371,7 +371,7 @@ MODULE_PARM_DESC(phram, "Memory region to map. \"phram=<name>,<start>,<length>[,
+ #ifdef CONFIG_OF
+ static const struct of_device_id phram_of_match[] = {
+ 	{ .compatible = "phram" },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, phram_of_match);
+ #endif
+diff --git a/drivers/mtd/devices/powernv_flash.c b/drivers/mtd/devices/powernv_flash.c
+index 4bd7b41a03b7..596d592a8ede 100644
+--- a/drivers/mtd/devices/powernv_flash.c
++++ b/drivers/mtd/devices/powernv_flash.c
+@@ -278,7 +278,7 @@ static void powernv_flash_release(struct platform_device *pdev)
+ 
+ static const struct of_device_id powernv_flash_match[] = {
+ 	{ .compatible = "ibm,opal-flash" },
+-	{}
++	{ }
+ };
+ 
+ static struct platform_driver powernv_flash_driver = {
+diff --git a/drivers/mtd/devices/spear_smi.c b/drivers/mtd/devices/spear_smi.c
+index dc66ed852d80..947d82bebe4a 100644
+--- a/drivers/mtd/devices/spear_smi.c
++++ b/drivers/mtd/devices/spear_smi.c
+@@ -1079,7 +1079,7 @@ static SIMPLE_DEV_PM_OPS(spear_smi_pm_ops, spear_smi_suspend, spear_smi_resume);
+ #ifdef CONFIG_OF
+ static const struct of_device_id spear_smi_id_table[] = {
+ 	{ .compatible = "st,spear600-smi" },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, spear_smi_id_table);
+ #endif
+diff --git a/drivers/mtd/devices/st_spi_fsm.c b/drivers/mtd/devices/st_spi_fsm.c
+index 94872e03a04d..abdcef3c91b0 100644
+--- a/drivers/mtd/devices/st_spi_fsm.c
++++ b/drivers/mtd/devices/st_spi_fsm.c
+@@ -2124,7 +2124,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(stfsm_pm_ops, stfsmfsm_suspend, stfsmfsm_resume)
+ 
+ static const struct of_device_id stfsm_match[] = {
+ 	{ .compatible = "st,spi-fsm", },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, stfsm_match);
  
 
 -- 
