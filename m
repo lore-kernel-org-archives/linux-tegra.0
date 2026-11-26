@@ -1,47 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.30.98
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795674684;
-	b=iE8iCj78Q0n2/jwYIlPfoVCtJdHfX5gK1O3cRZ7qiwZvo4i2rW0C5+PRNP0Kkk1Ij1Xp
-	 3t8xm2XamfaSWF+5o5+78X4+SgfKJ6E3oCkYcHvkdhg2/W/MnGDCePkw4gz/7RZxujrCy
-	 fqnIgROYKwpFkGV4QKIJMe0PreEZr5FoFj3ecaNROpbKqHRra1oSBoR9NpRBL8dIuBroO
-	 s7N3tXgx+F5udZCdkkp7dCBma6P4293sc1iuAdyytLfA2vvk0vYLE/ZxuuWK9pSPIp9CB
-	 fxmgLOnWYWl+dawSebIHF9+riJrYtOqbkYlDGpCm6XNRpv9Yzroeao1gUzLSbK+G+nA==
+	t=1795674685;
+	b=t/jGseQem9hQthohCe7/TQAaJMRI0q0X3bmX+w8wYPxT2jJLrwd73XIBZ8sAlZ+ADbbv
+	 pvJAdnhq7l9b7lVsZG7hr7QuwJ3fU2oWVkpA8DR3CM2bAGlzkj3PkDh+Y0fFjbs+uya3s
+	 zjDnXKpGSwY+6BAMTshMZs9MssxwOowKCUDVdm+g3/UOYmEFndop98ChZPTBIosb1LL0d
+	 Abg4JJzprd0ybdZJOwki/1qTZZM4Z7UAMKHnTFNIh2BV0eiy39MW+XzlyXoXA5Kd5SSzJ
+	 LyLK+5JeKy+KhU3o9s8N+Vr+A3XfF26P7b/EeZ4W96325dlSzK4UeOWn1ch4X6jYoKQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795674684;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795674685;
 	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
 	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=tuGCHJGZDlQsYx8nOFPalmGw6UDEl1qzx8nnX4g1lrU=;
-	b=eYg7fllhV4Itmggg8BZQPNNoZpNze0H8qUpzX7cstS9aw84twbYrACazkP5/kEoYMiQe
-	 dPoEqKkx6WjcxGoUnR1HlFEYrV2eWzov4Rtp3K+/MZ9PXrc4VVLU+ZPX2Rm1HI+uZim+G
-	 cge9VwtZCXPB4sm2Cv+OGEUix2psdWibBMb9iUcZxSjX43Qk+joOB6jmmGmdoeRQHxqx0
-	 vlvaeeqKL+HvwJ4vnunRAG/Jq5varRygcYSbsMMITMnyVyE/EUIHtbnc4afSUyxZIxfIF
-	 3NcjueMCy9UEsYZBqYs8q/lRNVHer8YjfQABgpvU+pfm0Ys1swvMg5WuQBYr4HyF1Pw==
+	bh=jhqkkZb1xyiTM3p5mhMdriB2MfBIObVGOLjcPnfdlLU=;
+	b=2jG9S4MSCAWIZtYrxxr7GvnLgJkwqSrk75UuaN1s+Ggo0e8+9q1G6XQipn+FvoHD8HVE
+	 pQFi/84bzbUSAKleMU+GhCIsP+bIleSxnqv8gbIUSUOY9t6TvG56/jrCBHxI10oiQEijo
+	 Dp85WnEmh1+MIrlRAvm5g+btMYKo7TyrNYAZy2FaHvFtUWOz3IbA0Yb0OuEM4JbxvMgVX
+	 7iRLWBD8KK/eg7ZCFkGKcdzaOACU96an7NhDwcFBaXZrGLhl63mN9gtUTp2mtBPIiuUMb
+	 IaN5KzZ5INANYjFjGskfDrxn4S0/1IMnpBBklfEc0asqF5E3ka8tDPnszKPbg1LKEtg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.alibaba.com;
 	spf=pass smtp.mailfrom=linux.alibaba.com;
-	dkim=pass header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=wae10APF;
-	arc=none smtp.remote-ip=115.124.30.101
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=kKdRVnMh;
+	arc=none smtp.remote-ip=115.124.30.98
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312D2606A33C
-	for <linux-tegra@vger.kernel.org>; Thu, 26 Nov 2026 06:31:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 312D2606A33C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A001606A32D
+	for <linux-tegra@vger.kernel.org>; Thu, 26 Nov 2026 06:31:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5A001606A32D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=wae10APF
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=kKdRVnMh
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1795674679; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=tuGCHJGZDlQsYx8nOFPalmGw6UDEl1qzx8nnX4g1lrU=;
-	b=wae10APFwu9tyc/lxWSfydniNsmMkrqHNm2hjBfthxUGP6s6KtfuE2Vm5OID4EfkwRiJco3Ul6dvjJSUJ1O92LWStXpy1iT5Uxia1dJnNosuoz+c1hAboMsEH2f9M57+CsejnNT+VWSi8HhOmV8RYNDo6jJ+SAME+VZ9QdC2B5U=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R251e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037009110;MF=jiangtianfeng@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0XFTbSTL_1795674676;
-Received: from h68d07384.sqa.eu95.tbsite.net(mailfrom:jiangtianfeng@linux.alibaba.com fp:SMTPD_---0XFTbSTL_1795674676 cluster:ay36)
+	t=1795674681; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=jhqkkZb1xyiTM3p5mhMdriB2MfBIObVGOLjcPnfdlLU=;
+	b=kKdRVnMhLNAx3/m8FI73thxYrji8lmbhW1Ch+uY6cOgkObVRyQkj6x12KHm/s2F5zpjiH+bedsfpbOKjTNaifsJmmJ7PpbxYtCavMm/fhcqRNFPZZL1+lXsLQuKBwx+BK38Wri3hE210PIgRW7U6A2g6KAqb09mZpDd05pWpxpI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037009110;MF=jiangtianfeng@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0XFTbSUK_1795674679;
+Received: from h68d07384.sqa.eu95.tbsite.net(mailfrom:jiangtianfeng@linux.alibaba.com fp:SMTPD_---0XFTbSUK_1795674679 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Thu, 26 Nov 2026 14:31:19 +0800
+          Thu, 26 Nov 2026 14:31:21 +0800
 From: Jiangtian Feng <jiangtianfeng@linux.alibaba.com>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>
@@ -49,9 +49,9 @@ Cc: linux-tegra@vger.kernel.org,
 	Kartik Rajput <kkartik@nvidia.com>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Jiangtian Feng <jiangtianfeng@linux.alibaba.com>
-Subject: [PATCH 2/3] soc/tegra: fuse: Clean up nvmem lookups on probe failure
-Date: Thu, 26 Nov 2026 14:30:55 +0800
-Message-ID: <20261126063057.3245315-3-jiangtianfeng@linux.alibaba.com>
+Subject: [PATCH 3/3] soc/tegra: fuse: Handle unknown platform IDs safely
+Date: Thu, 26 Nov 2026 14:30:56 +0800
+Message-ID: <20261126063057.3245315-4-jiangtianfeng@linux.alibaba.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261126063057.3245315-1-jiangtianfeng@linux.alibaba.com>
 References: <20261126063057.3245315-1-jiangtianfeng@linux.alibaba.com>
@@ -66,55 +66,55 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Lookup registration in the common probe path can be followed by a probe
-failure, leaving the entries on the global lookup list. A subsequent probe
-allocates a new array and overwrites fuse->lookups, leaking the old array
-and adding duplicate entries on every retry.
+tegra_sku_info.platform comes from either a 4-bit HIDREV field or an
+8-bit SMCCC field, but tegra_platform_name[] has only TEGRA_PLATFORM_MAX
+entries. Using the value directly as an array index can therefore read
+past the array or select an unpopulated entry.
 
-Add a devres cleanup that removes the entries and frees the array. Using
-devm_add_action_or_reset() also cleans up correctly if registering the
-cleanup action itself fails.
+Resolve the platform name once and use "Unknown" when the value has no
+valid name. Names for all existing valid platform IDs remain unchanged.
 
 The issue was identified by Kitta automated review. Qoder AI coding
 assistant was used to analyze the problem and draft this fix and changelog.
 
-Fixes: 8a3571618c2e ("soc/tegra: fuse: Register nvmem lookups at probe")
+Fixes: bebf683ba682 ("soc/tegra: fuse: Use platform info with SoC revision")
 Signed-off-by: Jiangtian Feng <jiangtianfeng@linux.alibaba.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/soc/tegra/fuse/fuse-tegra.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 04075e2b6..7d27b2aef 100644
+index 7d27b2aef..87df3ddbf 100644
 --- a/drivers/soc/tegra/fuse/fuse-tegra.c
 +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -140,6 +140,15 @@ static int tegra_fuse_add_lookups(struct tegra_fuse *fuse)
- 	return 0;
- }
- 
-+static void tegra_fuse_del_lookups(void *data)
-+{
-+	struct tegra_fuse *fuse = data;
-+
-+	nvmem_del_cell_lookups(fuse->lookups, fuse->soc->num_lookups);
-+	kfree(fuse->lookups);
-+	fuse->lookups = NULL;
-+}
-+
- static int tegra_fuse_probe(struct platform_device *pdev)
+@@ -466,20 +466,23 @@ const struct attribute_group tegra194_soc_attr_group = {
+ struct device *tegra_soc_device_register(void)
  {
- 	void __iomem *base = fuse->base;
-@@ -239,6 +248,10 @@ static int tegra_fuse_probe(struct platform_device *pdev)
- 	if (err)
- 		return dev_err_probe(&pdev->dev, err, "failed to add FUSE lookups\n");
+ 	struct soc_device_attribute *attr;
++	const char *platform_name = "Unknown";
+ 	struct soc_device *dev;
  
-+	err = devm_add_action_or_reset(&pdev->dev, tegra_fuse_del_lookups, fuse);
-+	if (err)
-+		return err;
+ 	attr = kzalloc_obj(*attr);
+ 	if (!attr)
+ 		return NULL;
+ 
++	if ((unsigned int)tegra_sku_info.platform < TEGRA_PLATFORM_MAX &&
++	    tegra_platform_name[tegra_sku_info.platform])
++		platform_name = tegra_platform_name[tegra_sku_info.platform];
 +
- 	fuse->rst = devm_reset_control_get_optional(&pdev->dev, "fuse");
- 	if (IS_ERR(fuse->rst))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(fuse->rst), "failed to get FUSE reset\n");
+ 	attr->family = kasprintf(GFP_KERNEL, "Tegra");
+ 	if (tegra_is_silicon())
+-		attr->revision = kasprintf(GFP_KERNEL, "%s %s",
+-					   tegra_platform_name[tegra_sku_info.platform],
++		attr->revision = kasprintf(GFP_KERNEL, "%s %s", platform_name,
+ 					   tegra_revision_name[tegra_sku_info.revision]);
+ 	else
+-		attr->revision = kasprintf(GFP_KERNEL, "%s",
+-					   tegra_platform_name[tegra_sku_info.platform]);
++		attr->revision = kasprintf(GFP_KERNEL, "%s", platform_name);
+ 	attr->soc_id = kasprintf(GFP_KERNEL, "%u", tegra_get_chip_id());
+ 	attr->custom_attr_group = fuse->soc->soc_attr_group;
+ 
 -- 
 2.47.3
 
