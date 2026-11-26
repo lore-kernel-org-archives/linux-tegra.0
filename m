@@ -1,71 +1,45 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795716118;
-	b=LA4xD5K7cYLXZOAsHSC80bY+wipR4lxfiPcPRVWbw+OeYLtzWafOjCsZuo06LHASo76g
-	 91rmtXD7YHxGfyopiHPphyzUJn7/+URmLoDc7KtN+ZvXS66SHbWCs6dQba/9yC1wGBYNj
-	 WdYowe8kINdQjINcZS4BlbBdHyHQEHW9btD75rmy94xxqEHtNmCyr4WpxaDFh30Qir9Yb
-	 41j5w28S6SZ37hgaWnhWTNBrIbG87VxJMCVK+ry0uK/LLjQuWniBLzl8zYUijr5VmquTj
-	 Ykn+iq5diJ0P5BfdR4r1Qd6oT1qvsFOSZLQGrmcSEaf3tJWdZtqMBmOvME7hccqO9TA==
+	t=1795731299;
+	b=vv25FnICctY/tRynectJiNXwlfwlU4554J+0vMq1kP9vVJhPakoNhF6Zx+vTGp7jQ4cM
+	 MK8Ch39UUPELhcwT5aSeVp/8Z0liTs0tabHUZ2WTeJ0YPS5Bra3+UJY6b7n1Bf8VcNQQb
+	 yaIazDEy22Q2IPimfiTuYu2wThOtsXS2VYHCHcrIEJnyC2kluZyjywL55mLAdnJ1A4+fp
+	 TsJuDagVw1Yvafmdnt8f2SQ5Xc2Ew8ip+A5gXDfrKdKk7ch7qfFKWW4ZSE+sdfqlDVVOo
+	 XEyj0WGk1KKp3r1rrf3PhNLQIk77EXJRg0S6dgW4er4N3aEaJLQ4tqm9Xsbah++dxUw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795716118;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:To:Cc:
-	 Subject:In-Reply-To:References:User-Agent:Date:Message-ID:
-	 MIME-Version:Content-Type:X-Last-TLS-Session-Version;
-	bh=kl7bg688dXQ0GAc0QXvKBX0thFl5TKdWcSAQVME7qL0=;
-	b=sIJqEOaxxk+K5MtviQBS+y7inx6bKQ9mQu1OtkN32O8I1hUKUUoeOFjgVwfPe4KyfyHd
-	 5O2E6U9a/8B55KXQlUsmp0MP5gYkzz0iJqDn7UqWai/xOzkvXdrKLYjPkvG8njdwZdNgl
-	 hxLOQiHSo83ooqQrwKHVExQjPfETsO+oEWhUdyG/BHSmbgHGg+sHHMFoZOB9YuO45SoSK
-	 6jiqcV1U+cTf92RsYLmCIkxvz9oiM6ckDJuGYrv+szAlDsqavuXrASukHpFP1s/sKIX8g
-	 W/JE1PPnTjRyogVoS6PWENhSEFsWs0Dtirhooia6pUCF+aCiwDkKHJAmXEVqsOgFWdg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795731299;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=lRS+sPalX3iPRJ04ezITgBCUZ5dvVe3IrVJM6Oq6w1g=;
+	b=Zuvlhr5rymOtRaEpZJ0ghHU1twcLxTdjEFmNS7yis+mmP9uwZl216Rkyk5DhOTUT0gZd
+	 Y8mtBr4mU8c/kb2s10t88AVeGpDeNhZdvPhU6iDvZTEP5/qKCJlbxfDKBy3oUXBy3fvH7
+	 FutWNVkjcOqVR/ElgHfsCoMcvh+uxoT2XZgMla4pOKcfz7f4zgCSD8h0Tr65hSVZaowi4
+	 TToQuKVr5tn74lR3vAsZ+wK7+QuqacxbvBEYtjPKBw/DYTQB9YmJhqtME4AOvxrYbLAgy
+	 lxRs4NDLczvQnr5jWXX5zuE1DcrXlEYHOSuTtwUv6Hi1b8g8UlSos31SNp2E9kdoyeA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=B3bSM3ji;
-	arc=none smtp.remote-ip=185.246.84.56
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WKaHfFvf;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3128C606A31C
-	for <linux-tegra@vger.kernel.org>; Thu, 26 Nov 2026 18:01:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3128C606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39569606A31C;
+	Thu, 26 Nov 2026 22:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=B3bSM3ji
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B24AE1A1824;
-	Thu, 26 Nov 2026 18:01:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7EB9660558;
-	Thu, 26 Nov 2026 18:01:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0528A11E69167;
-	Thu, 26 Nov 2026 19:01:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795716111; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=kl7bg688dXQ0GAc0QXvKBX0thFl5TKdWcSAQVME7qL0=;
-	b=B3bSM3jiUK4noIe6e1knXOQNbSpWZfGs3R1GXa6wZ3FImgsCFptNW6q0DzKt+gmqZvJQwr
-	dSDr5dkmCUujMxkPkyiCmAu5OIPMV2KCIB5nIqOnhcWe8/cpFFuLy0q5S2eyDqRrlFYASw
-	BLVGru3+EVfYM60JVxcPnUdxeTeLHvaURR2I7Jo2V2nROSta4wyy2wmxD06IUhaWbe+A/C
-	n4ZaOb7a3xXMHJ/zTBslsJw4duEKvRGRIzNtI+1kIUoRR0GvZCZ9NKhKTzCvAgPMUOh6gf
-	36MLWOi+y2LzIHyIWhRKguPoWy8G4K0y5cLjKMrqBLFbP7dAdE+j/2+nFrRqRw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: James Hilliard <james.hilliard1@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Stefan Agner <stefan@agner.ch>,  Lucas Stach
- <dev@lynxeye.de>,  Thierry Reding <thierry.reding@kernel.org>,  Jonathan
- Hunter <jonathanh@nvidia.com>,  Dmitry Osipenko <digetx@gmail.com>,  Boris
- Brezillon <bbrezillon@kernel.org>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  linux-tegra@vger.kernel.org,
-  stable@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: tegra: drain the IRQ before disabling the
- clock
-In-Reply-To: <20261108-submit-tegra-nand-irq-teardown-v1-v1-1-2c570ad4a22c@gmail.com>
-	(James Hilliard's message of "Sun, 08 Nov 2026 14:05:55 -0700")
-References: <20261108-submit-tegra-nand-irq-teardown-v1-v1-1-2c570ad4a22c@gmail.com>
-User-Agent: mu4e 1.12.12; emacs 30.2
-Date: Thu, 26 Nov 2026 19:01:45 +0100
-Message-ID: <87se0nv5di.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WKaHfFvf
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B09D1F000C1;
+	Thu, 26 Nov 2026 22:14:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795731298;
+	bh=lRS+sPalX3iPRJ04ezITgBCUZ5dvVe3IrVJM6Oq6w1g=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=WKaHfFvfGKlW3OZvIm4Q30MymZZltSs4JK2vI00I3KaXLLo9lrlSvApx2hdmv1vPR
+	 sNmFOXKRo7mGdW7sv14lNmJJXqxndZ51mYgkChoL8UMGWc7qh+te71B7nKjDHrxkQd
+	 phXFa0Am4Ch3hW8dLYzPwVh2SyJ0TgjC52RvMzsCU8M0Ravy2ciqeqxaQn160n0SWs
+	 1IotD3+Jbqc47r4+y5H9Q5TMSghO3R6aOCODnXy7oMMQ1+e5PIMjTHsjGE1lJgvKhn
+	 pK+N/KNqj7BmPmo3f9dCb0U7/c61y/uGBmhR0kfL36u3eWrHD5mJ+B6Llkh24Az9dX
+	 o2KRY2xa8HLdg==
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -75,21 +49,41 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v1 1/3] ASoC: tegra: Consolidate remaining separate
+ codec machine drivers into tegra_asoc_machine
+From: Mark Brown <broonie@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ =?utf-8?q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+ Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <20261116093805.73715-2-clamor95@gmail.com>
+References: <20261116093805.73715-1-clamor95@gmail.com>
+ <20261116093805.73715-2-clamor95@gmail.com>
+Date: Thu, 26 Nov 2026 22:14:52 +0000
+Message-Id: <179573129232.838304.962697835199951671.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=413; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=t04cI2pjFilwfzrJQHZY/pA5FFsg9MzDWsfcp+FY1Fg=;
+ b=owGbwMvMwCWm/754w+YLFp2Mp9WSGLI51sc52lf3bxGVWMCdm1+cpVB6wVZ7ycmAqC3MJVvub
+ +q44/O2o5SFQYyLQVZMkSUui/tlfcnrNXwHF7bBzGFlAhnCwMUpABNpE2T4Kxn3lMf8Muu93B2C
+ mhsr7n+Y2/DDPlS9q7tNZ/oHs0SBrYwMR0+eeL4vNr1UI6WX+ZSt5osLDrbbdv0WF7gbUZCXXB/
+ KDgA=
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 08/11/2026 at 14:05:55 -07, James Hilliard <james.hilliard1@gmail.com> wrote:
+> Merge individual machine drivers for WM8903, WM8962, and WM8994 codecs
+> directly into tegra_asoc_machine.c, removing separate driver source files
+> (tegra_wm8903.c, tegra_wm8962.c, tegra_wm8994.c) and simplifying the build
+> system. This follows the unified machine driver approach used by other
+> Tegra audio machines.
 
-> The managed IRQ handler remains installed until devres cleanup, after
-> removal or a late probe failure has suspended the controller and disabled
-> its clock. The handler can still be accessing registers at that point:
-> it signals the command and DMA completions before its final register
-> accesses, so waiting for a NAND operation does not drain the IRQ handler.
->
-> Mask controller interrupts and release the managed IRQ before dropping
-> the runtime PM reference. Apply the same ordering when chip initialization
-> fails after the IRQ has been requested.
+This needs a rebase against current code.
 
-Can we instead include power mangement in the devres logic? In general
-when one need to manually devm_remove/freee/unregister(), it means there
-is problem and the solution is incorrect.
+-- 
+Mark Brown <broonie@kernel.org>
