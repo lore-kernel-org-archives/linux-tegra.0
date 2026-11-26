@@ -1,62 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.30.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795669945;
-	b=OTK1+b3CluInUxw1JjPawB/w5I9lio3oPYEL4IPVvn5tuwX5Vza39cozz1jbFzYFohs3
-	 JRzbu/3yVgebx31A2WqGtMHzL9LJV98mzyeXEEx+8IzgMZRIZx4RTEw3KgQjHVqmcgIX0
-	 MNl/GI/yL0fF7xbeWP/kBp2ldDHK3xCMZQnfYBV8ygftNDdLyzOoci9D1nyxmLmj44Lez
-	 QAiGz3UPktHaAa3po0oiNtRfRkO+2c7j6ylpo77uUPIQFSC4nbInYYQWJIspK9hm+UrjC
-	 Et7Gdxun8AMG/xDJLsy86J0L8aTLUS8YzlehFfacwcgJNmGQKmfZjoLNdR/gerHS1mQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795669945;
-	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:From:To:Cc:
-	 Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=frAvMo+ea520KGep5xW8OKxT6oKM7N9bBISe9yCmkzU=;
-	b=MyQqXPza5hqon/AWZIBcV7MgdAsG1mvq6p2OdYESTwpjlXLVA2q7e7dvImFNUwlpggQv
-	 VRPGUpWCm/9srDHET08NFXAPakxV5bPqqf6dpLenwyMImN/CRR2ETXYgOx/BvMXJH0hC/
-	 aHELaQH9VEhBL2r4U6CkuJrD9cx1sWWAZePLCtp36J+Zzb8dzNwDGEXcellEa6lC/Jg2R
-	 aTKQf6lRswBs3T3L2SZs1MdngsH+W3pd0IYTd7mYBNHoU7wnhcWuIUk64TFplQKjNd+kp
-	 X2NmyERDV4Y4g9lflIaNJBkRWBh4KiXbWgS6akZ0kqEqBTENKIo5tyjzlR9hHLsSIoQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.alibaba.com;
-	spf=pass smtp.mailfrom=linux.alibaba.com;
-	dkim=pass header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=SPUqFbPH;
-	arc=none smtp.remote-ip=115.124.30.131
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.194.38
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795674112;
+	b=AvNYXMlxwScMuMulA0exlfqC9ykZTjDUSv04T0aqmH/rDTDE8nNVQ2FSmFRnSjvT3i7W
+	 TVbCO4Iu6zD1oFZe9E08IibQ/CVQ+bW7spH6kjmb0J6vUCCOhvuEbOGceCSrQcGQAmEFH
+	 +g+zgu0qqsNw+1ceWErjETtk2/Th1bCKYiMUbYVSL/BTk8F38AV9UqRQoLD8B1XuvDr/2
+	 5xTGyBkWEwzod7d14H8xXbCsQWXbAo4jgvLhSF5uDgPhekExIdcfjsW1Pi7I4M/Hd/qQn
+	 u7w1J5KfRir8xdVPnzt5EfVou3TiQjIyJV6sxfGopXwln3fYdd+Kb1o25uqSNWKFK2Q==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795674112;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
+	 Content-Type:X-NV-OnPremToCloud:X-EOPAttributedMessage:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=2mJslRzjBilNkDW6aK5CXBEADe+fFq691tx24B5f6Og=;
+	b=hs+v6p1STTyI2A+/xSLyUBLqu6fh/uGYtDNznRY8ov1ZQ7quHgN+1ozQAuNzSGU7yva6
+	 G/CpEC+yWnMv3cJ0Kl7uSRlajN7BBb5H4fKENYDJGwov652NxFHf3avkyMWzlStU3gwGY
+	 O/bCEmgneh+USJg/HWyCvnlR5yZKTMLhxp0Zu1SRPqWzOrJ3KBDq5ZreOqJfbrh6oYGfS
+	 7qsLOpVWibRAmDEz+IAGkIhuSIiYS8ORYFwm5LnbReShYP4ppogidnGyHlm6VuQUuabHE
+	 Sy9Y1uKSBazCQTn5+PFdKoeWeEisNHm45u5650JFfRK/uZCSq0uN+F4Wt3K2ZsFEn/A==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=qhH8UeVQ;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.194.38
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011038.outbound.protection.outlook.com [40.93.194.38])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134A1606A681;
-	Thu, 26 Nov 2026 05:12:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 134A1606A681
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20136606A31C;
+	Thu, 26 Nov 2026 06:21:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 20136606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=SPUqFbPH
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1795669940; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=frAvMo+ea520KGep5xW8OKxT6oKM7N9bBISe9yCmkzU=;
-	b=SPUqFbPH3u4WYhuOGlN/mCXkK3Zu5Prz5jU1EKxUprTdW2Eh4vnYdEav4WBFKSIU0zFmJ5Sma4tzbPwGDs+2n/JYiiYRtvVJ9FsWe6eXkr3zFrsPVPy6qRj0J8ugJAIC2887EQ57tblMdt8Xy4E+5L8PppzCKR3tLHR3cXKhy44=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R931e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045133197;MF=jiangtianfeng@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0XFTN1en_1795669929;
-Received: from h68d07384.sqa.eu95.tbsite.net(mailfrom:jiangtianfeng@linux.alibaba.com fp:SMTPD_---0XFTN1en_1795669929 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 26 Nov 2026 13:12:20 +0800
-From: Jiangtian Feng <jiangtianfeng@linux.alibaba.com>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Akhil R <akhilrajeev@nvidia.com>,
-	Kartik Rajput <kkartik@nvidia.com>,
-	linux-i2c@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	Jiangtian Feng <jiangtianfeng@linux.alibaba.com>
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=qhH8UeVQ
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nH9uKZu5fk3Hud5GeD7K8GmI9x5C+GeMbEKbJ+GCOArUQO8q/OydWxl/0UiicUQhl/QRFU4ByR8A8HpXM98I1cZ5HzkeZWz/lTC9NGhdlFRsfKqgkCw46lFyggQjtpiUm7k8MNfl+a04DzKNlI2AaDU+Qmyx5M4NGG38y3A/t+JNIhUuQLP04hEIq0WRaL84nNG75MzyP4tZ8jTuXPeMdYjF7pWWRzT7gs2juT6UcCalB34Zy5yMOGFgjkSjTMYzj5lX2pXuRCJ5DEyA8m9LCnSWmuOgaZh/MUc6G9oajRNqb84ZqW84pgbDrLjrdu/+MGDlgxA8jcxklVKN7/fVHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2mJslRzjBilNkDW6aK5CXBEADe+fFq691tx24B5f6Og=;
+ b=FK/ep8eBgMWWYRn39AOqrJr8aYddPI0WLA0xNdziSrkrnhp3ceY6SIe7VqFevLU9EzNtzRarQgAVYZW/cLsXGQF1SBcsA17/icDlPpLMgdC06p7dAnrcpXfk6iq0mgSmBMKDj80DJx9WXMxWRU3z5EphOJ6iSbtLlEUCX7Vtc25mCUlYO6QHVuwUb4t7MBvQVoCeChVoI04FnctFMkWgs3+Uvh8EP/RRIsNwyd5fKWetA0z/hZUN/WEwN5GiVIf6UNaz0RYJru1ad+W99OXCvb00QIbjAKo4SwKfYtzcE7UQzIscUxAPFBNrFgoyvvI1nRfPuwP4alpOhXwNF8pwKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linux.alibaba.com
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2mJslRzjBilNkDW6aK5CXBEADe+fFq691tx24B5f6Og=;
+ b=qhH8UeVQOmrxC6IUWt4I0Idu7tVOluiaTi2qeY72RiJGhN111nj2BqD91cEPIQ6MMhuQ+GBYfxDRelcMUDAAlVidGZkM0GRD9kk0/67viUY5BAEIyDlmyJqhSoN1AQStRlKUdpULTKCnUpbxrE5nY/1Y4b2SEzg6M53PoJoPDTPCQa0BZCAwDggfDKdAq0o/1gmiD5AmLYRNHn9gk1VbxIIBMzbWPNBm8yZrLPiS+MuSXe3wiXqtWsmGnboInb5aPKF74X4rws0qI3bBKi7pfWEILBGN2cLK4s0gAsGusWUOGZXlkiIxSLJbd4vBykVigEmfPkJHzq0A84KQAxDDoA==
+Received: from PH0P220CA0004.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:d3::22)
+ by PH7PR12MB7185.namprd12.prod.outlook.com (2603:10b6:510:201::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.6; Thu, 26 Nov
+ 2026 06:21:47 +0000
+Received: from CY8PEPF0000005B.namprd21.prod.outlook.com
+ (2603:10b6:510:d3:cafe::a8) by PH0P220CA0004.outlook.office365.com
+ (2603:10b6:510:d3::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.662.7 via Frontend Transport; Thu, 26
+ Nov 2026 06:21:47 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 216.228.117.160) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY8PEPF0000005B.mail.protection.outlook.com (10.167.247.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.662.0 via Frontend Transport; Thu, 26 Nov 2026 06:21:47 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Wed, 25 Nov
+ 2026 22:21:30 -0800
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.57; Wed, 25 Nov
+ 2026 22:21:29 -0800
+Received: from build-akhilrajeev-noble-20260927.internal (10.127.8.11) by
+ mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server id 15.2.2562.57 via
+ Frontend Transport; Wed, 25 Nov 2026 22:21:26 -0800
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <jiangtianfeng@linux.alibaba.com>, <andi.shyti@kernel.org>
+CC: <akhilrajeev@nvidia.com>, <digetx@gmail.com>, <jonathanh@nvidia.com>,
+	<kkartik@nvidia.com>, <ldewangan@nvidia.com>, <linux-i2c@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <thierry.reding@kernel.org>
 Subject: [PATCH] i2c: tegra: Fix HS mode clock calculations
-Date: Thu, 26 Nov 2026 13:12:07 +0800
-Message-ID: <20261126051207.3099199-1-jiangtianfeng@linux.alibaba.com>
-X-Mailer: git-send-email 2.47.3
+Date: Thu, 26 Nov 2026 06:21:25 +0000
+Message-ID: <20261126062125.45424-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261126051207.3099199-1-jiangtianfeng@linux.alibaba.com>
+References: <20261126051207.3099199-1-jiangtianfeng@linux.alibaba.com>
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -67,99 +116,69 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PEPF0000005B:EE_|PH7PR12MB7185:EE_
+X-MS-Office365-Filtering-Correlation-Id: adee7f81-6f9d-4527-7ae9-08df4b858cad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|23010399003|30052699003|376014|82310400026|1800799024|5023799004|10067099003|11063799006|261028144727099003|261022105027099003|261021123027099003|261021121427099003|261026140227099003|56012099006|261022075727099003|261102123227099003|261009223027099003|18002099003|22082099003|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	6NCQVWbNI7VbeKPE2euMfFU7VY1BUtooQMMNwO2nzyCb0qazdbJ/fDhfNua4remWu34ZmwU4y8octnkG5SbCe/Kmlo3fE8LyGVAAJf7iJTcLYpB7eeCkdF9aydF/15bkzH1+V0ne0CAymnGEsIEW32ywavB0cc3SqmCmAr2WVkCE0nCmG6gzyvbw2Uwxq/XIWMy3cb5zpJbfvOlbyk5jkbk/y0C0nKQw0hfWCOG03cl41LuA95yidz/+xNiDJX/ES5Ecb2paPQFwu2OufDps4YsX/rBkCfN1wxUWxIz+YqED0JD/xNWHPNpUJbLxahbA1rxDVXCWX+3qA3v32AcSu1xBUBuZ++GiN7Cybwf3ZIEP3SOZe89TdqsS1PSx6yiYD8STE2p3jSlWTAi36LOGcxnVaqu+J/cjgVZBLMOpYpNflqdtxqGLSEp+mfZP4OISbHGE0B+4cVfjKfbO6cO4Oud+nct9FbQj4iTTva8rc7x6MpmcHjLE8TCQFwWtcSsLVcDyHWtRRKBzZDKyzzDx8NCIamKqKDD+O4pBMYcYXcRZe6Udx0OupN00RBOrKGjj3DEsmMPW31Z9sQmsMKN32qvstFgh6v1IXxL4Hwg/5cDpiw06XOoWzJVSzuFWNDF1S2FLJufcm8KS0t7cXTcZqmuHqfHx0uI6oj633QwpWJTf7vl8kAWFOsQdbE/FXwCy29DRszLGlIYrfgGP8h/hqQ==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(30052699003)(376014)(82310400026)(1800799024)(5023799004)(10067099003)(11063799006)(261028144727099003)(261022105027099003)(261021123027099003)(261021121427099003)(261026140227099003)(56012099006)(261022075727099003)(261102123227099003)(261009223027099003)(18002099003)(22082099003)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	HLVjWyRjtDfoS41HoUirpgkzbqI6R4djuDAo1+pjjJtzahQxo9PB/PU5ljxvsY5Cbid0NrXacNSyqoNh/x3MxYv1E0UfxdGhhBHcu7qId49Q2dgKW6+Ip9QfLlYB5fhHQulP0yKGxe8SP0q1A6T77y3KYcFxSYWsSHZIj4uaBIdOxI4jqnEfdP8pE8nYNOI6ACz46qWevqC5z46KasFJQ0wqh+X3Bo2dZy9lYto8gTOMoJgJBTboEEb35dPg8tiRwUE7RCdJgVKT1TL7+tiudgF6shato3yz6PhqVHY3nOyyeSbosKUyehNQDogRypFt4aFZ1CCH2Dckt+45Lo3nsLI9E1ZdfeEb2uUwx14SyM09ghKYvS8sEmMk9//LcIIn9DJzXUKsRCqwLTm2LCTiCCrLsA43ePSwTnmwuaT68svbkvNFYuP9kRy7h9lF0FCL
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 06:21:47.1753
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: adee7f81-6f9d-4527-7ae9-08df4b858cad
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY8PEPF0000005B.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7185
 
-The HS mode support overwrites the selected non-HS tlow/thigh values with
-HS timing before calculating clk_multiplier. This makes Standard, Fast and
-Fast+ modes use HS timing with a non-HS divisor, while HS mode still uses
-the non-HS divisor. The resulting div-clk is incorrect and can produce an
-out-of-spec SCL frequency or make clk_set_rate() fail.
+Hi Jiangtian Feng,
 
-Keep the non-HS timing values unchanged when programming the HS registers,
-and calculate the clock multiplier for the active mode. HS mode uses its
-own timing and clk_divisor_hs_mode; other modes retain their original
-timing and divisors.
+On Thu, 26 Nov 2026 13:12:07 +0800, Jiangtian Feng wrote:
+> The HS mode support overwrites the selected non-HS tlow/thigh values with
+> HS timing before calculating clk_multiplier. This makes Standard, Fast and
+> Fast+ modes use HS timing with a non-HS divisor, while HS mode still uses
+> the non-HS divisor. The resulting div-clk is incorrect and can produce an
+> out-of-spec SCL frequency or make clk_set_rate() fail.
+> 
+> Keep the non-HS timing values unchanged when programming the HS registers,
+> and calculate the clock multiplier for the active mode. HS mode uses its
+> own timing and clk_divisor_hs_mode; other modes retain their original
+> timing and divisors.
+> 
+> The higher HS div-clk also affects the master code, which is sent using
+> Fast-mode timing. At 3.4MHz, the default Fast divisors on Tegra256 and
+> Tegra264 would result in master-code frequencies of about 457.7kHz and
+> 412.1kHz respectively. Increase the non-HS divisor when necessary to keep
+> the master code at or below 400kHz without changing the HS data rate.
+> 
+> Qoder, an AI coding assistant, helped analyze the issue, develop the fix
+> and arithmetic model, and draft this description.
+> 
+> Fixes: 978b3ccbbac3 ("i2c: tegra: Add HS mode support")
+> Signed-off-by: Jiangtian Feng <jiangtianfeng@linux.alibaba.com>
+> ---
 
-The higher HS div-clk also affects the master code, which is sent using
-Fast-mode timing. At 3.4MHz, the default Fast divisors on Tegra256 and
-Tegra264 would result in master-code frequencies of about 457.7kHz and
-412.1kHz respectively. Increase the non-HS divisor when necessary to keep
-the master code at or below 400kHz without changing the HS data rate.
+Thanks for sharing the patch, but I had a different change which should fix
+the issue - 
+https://lore.kernel.org/linux-tegra/a3616176-ba50-45d2-a0d4-46fd5f6379c2@nvidia.com/T/#t
 
-Qoder, an AI coding assistant, helped analyze the issue, develop the fix
-and arithmetic model, and draft this description.
+Hi Andi,
+Did you get a chance to check the above fix which I posted a couple of weeks
+back? Please let me know if you see any concerns with that.
 
-Fixes: 978b3ccbbac3 ("i2c: tegra: Add HS mode support")
-Signed-off-by: Jiangtian Feng <jiangtianfeng@linux.alibaba.com>
----
- drivers/i2c/busses/i2c-tegra.c | 36 ++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a81ff2c33..4da98fe4a 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -877,7 +877,8 @@ static int tegra_i2c_master_reset(struct tegra_i2c_dev *i2c_dev)
- 
- static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- {
--	u32 val, clk_divisor, clk_multiplier, tsu_thd, tlow, thigh, non_hs_mode;
-+	u32 val, clk_divisor, clk_multiplier, clk_rate;
-+	u32 tsu_thd, tlow, thigh, non_hs_mode;
- 	u32 max_bus_freq_hz;
- 	struct i2c_timings *t = &i2c_dev->timings;
- 	int err;
-@@ -957,6 +958,21 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 		non_hs_mode = i2c_dev->hw->clk_divisor_fast_mode;
- 	}
- 
-+	if (t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ) {
-+		clk_multiplier = (i2c_dev->hw->tlow_hs_mode +
-+				  i2c_dev->hw->thigh_hs_mode + 2) *
-+				 (i2c_dev->hw->clk_divisor_hs_mode + 1);
-+		clk_rate = t->bus_freq_hz * clk_multiplier;
-+
-+		/* The master code must not exceed the Fast-mode frequency. */
-+		non_hs_mode = max(non_hs_mode,
-+				  DIV_ROUND_UP(clk_rate, I2C_MAX_FAST_MODE_FREQ *
-+					       (tlow + thigh + 2)) - 1);
-+	} else {
-+		clk_multiplier = (tlow + thigh + 2) * (non_hs_mode + 1);
-+		clk_rate = t->bus_freq_hz * clk_multiplier;
-+	}
-+
- 	/* make sure clock divisor programmed correctly */
- 	clk_divisor = FIELD_PREP(I2C_CLK_DIVISOR_HSMODE,
- 				 i2c_dev->hw->clk_divisor_hs_mode) |
-@@ -978,20 +994,16 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 
- 	/* Write HS mode registers. These will get used only for HS mode*/
- 	if (i2c_dev->hw->enable_hs_mode_support) {
--		tlow = i2c_dev->hw->tlow_hs_mode;
--		thigh = i2c_dev->hw->thigh_hs_mode;
--		tsu_thd = i2c_dev->hw->setup_hold_time_hs_mode;
--
--		val = FIELD_PREP(I2C_HS_INTERFACE_TIMING_THIGH, thigh) |
--			FIELD_PREP(I2C_HS_INTERFACE_TIMING_TLOW, tlow);
-+		val = FIELD_PREP(I2C_HS_INTERFACE_TIMING_THIGH,
-+				 i2c_dev->hw->thigh_hs_mode) |
-+		      FIELD_PREP(I2C_HS_INTERFACE_TIMING_TLOW,
-+				 i2c_dev->hw->tlow_hs_mode);
- 		i2c_writel(i2c_dev, val, i2c_dev->hw->regs->hs_interface_timing_0);
--		i2c_writel(i2c_dev, tsu_thd, i2c_dev->hw->regs->hs_interface_timing_1);
-+		i2c_writel(i2c_dev, i2c_dev->hw->setup_hold_time_hs_mode,
-+			   i2c_dev->hw->regs->hs_interface_timing_1);
- 	}
- 
--	clk_multiplier = (tlow + thigh + 2) * (non_hs_mode + 1);
--
--	err = clk_set_rate(i2c_dev->div_clk,
--			   t->bus_freq_hz * clk_multiplier);
-+	err = clk_set_rate(i2c_dev->div_clk, clk_rate);
- 	if (err) {
- 		dev_err(i2c_dev->dev, "failed to set div-clk rate: %d\n", err);
- 		return err;
-
-base-commit: 8d7fe9885c62fc9a95bf55d9db244d9672a8aadc
--- 
-2.47.3
-
+Regards,
+Akhil
