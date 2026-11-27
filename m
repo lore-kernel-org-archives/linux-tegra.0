@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.68
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.201.19
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795755405;
-	b=yWHvZ5NWpe5ycDx9bPdUsK1ezl5NzwZ19W0NJuCqJ/D3HCyB0f8j3Oy83H30qPhRWVuG
-	 ih7JufDwnLMpBUKGM4ov9oSmpiF2nweB0DUMRV2O+X1YCN5EOqAAvZd2LNLiOqhvVJ3Ab
-	 4s7vZa79NCwEAEmKC5ooVW8LdJhnd1DLfZ745Tr+rUdee8XhYPe9Q+QE3qsOHGpV6Arqu
-	 bayC2aBub3B5IVBFDW6Q5l7PWEKR8EIRQGeKO6pWGX8NQfqcVv9kjVPdMsVuT0BBPz57W
-	 I7q9VOafRx70fYSPwP19Xfw4FMA3F/9Y0KtPeHwJlA+mKQZZsMZvjQ9YNSO0onaHxJQ==
+	t=1795755709;
+	b=3GWmbN2prqK607AcxtK8D/SdL2SaYOCPh/1eA3Akc2shCl8tKciutYJHxWKu11P9dfG9
+	 1gfI5ubhYlybLFiJh2B9QMbRothHmULuEeh4ko20dNAGQ/3ZJ4CRqaFvKIH8pbTxw7+xB
+	 VE6rd7Bz8YPrqR86sE7ntRrHQWSxW36pxZSAhyFnp3Jmk+UM1j5gZ6DYCoUB7EgEVUC89
+	 rLjC1CjuM3HdMbPkyzrAvOQ7IxvNxRiPB7bstzo714xyhZ2EYbm6Gr9Z2tGscJzZflPgZ
+	 SDNI3E9y2Z279J2SA/78pR9ZRXBq5UkWUFDUf0hTaz/7KHoVCp46VTIBYmdLl5FdJHw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795755405;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795755709;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
 	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
@@ -25,54 +25,54 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
 	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=irGQC7zuBG+4smKYfdjZ2ooZS2o+R8gHo7UswdRdjHA=;
-	b=3bEpC9RjVHVA2VhdRvX8XC5BQZoNztwCnJdDK3RQglk/XzlxqRoOnykHYludWAd9SSJG
-	 5S1ETrX2Yl2ZdcNw1L5zI2c9NajCDSK1EubfUXZGeMLWDXOxRtCiS1VS+CPitKK+A+xuC
-	 xXKmQKx0vZeHRiCMVE+Fmr9bOiBhJEaMnO9LVIWBocH2N3Lhcp/cvCvOSarjyyCqJxHd8
-	 P8xrD2pIDB/FMOzcOo2LqAGMQehwPyuxXqyArkgEllnJn4ADuyrAPjZi+7lfUB7NxTYDx
-	 XbGOvONQKnEJDHu8jqHWrRFfCJVQ+nQSC/Lr5oA8ElopoLD0MV6Ni8u8u/Zsa5Kjdbg==
+	bh=o/boAQSUqApmk/GkfVOs3gP+uZfLp1k59AqBna71dfY=;
+	b=Aypc7Ij7kBCqO7ENKxAOKtptjkFAv5H5FXuWvrL6m9PBUQ4Zg5GS+wEYeafhULkVoUAp
+	 wPmeZ92r5zA/K0zVdU+JM0a7URVP+outizZXUzXwiqjJ6z8Xj8Ne8ZaIIco/SkJkkjnWz
+	 jMsIqAiqLK7FRqfk3Ovv4ojaYv3i7yXJYjjSh8+5rnPU+t90PlsQ34R4GCIWaA0/AfvP/
+	 y/j8BDUCe+u34E+T5AEQEKvCvNrYPPXAKh3Dhs3owwTttncHPn0jal1izTJqJY8Vjgw3w
+	 sTjhnnayAFQ5DQkYc/dJdGL7NMnSiVGQK5Wn35tI1L7Nxy2b3Q8MPwPDq67PWZ7UV3A==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=nvidia.com;
 	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=tsYiaz6h;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.68
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011068.outbound.protection.outlook.com [52.101.57.68])
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b="jAzOV/4B";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.201.19
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013019.outbound.protection.outlook.com [40.93.201.19])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43860606A31C;
-	Fri, 27 Nov 2026 04:56:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 43860606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F008606A31C;
+	Fri, 27 Nov 2026 05:01:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3F008606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=tsYiaz6h
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=jAzOV/4B
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=klkNnOZS2tI8j7BcTt/WQ5SJ/3Z2Rln0/hkAZEQBKHbNNTWLOu5RzIzgWdTyWDyRPL7QmY5UtJTqP+JFBCQsXz4+6nQzNL0FbOq89oYLrHECatNozhskxMx97uJrTp8rhZ0nqsIkGmfPYP53ceIHCqMCJ8EvltsyH6ZkJ9QRT1o4WmVQ0i/n/HQfYRcejRU4thFNyTHKp+lRfsxjpec6YeF7mpzu4kvl0e2tD/TAyhM/F3x5++xdOYlPTRCLstRu3svNLqkdcEXpjIUZ8m91lTdQXTpcsJbEH7t8KHAzDeYOBal+kkDg39n7X+nvaatKu4eFn/LJJ6IYX0svrJk3fA==
+ b=xSWSjwKUk3sP8F8irgIw+wJk1Y7LhmE9oCPRC883pzOc3QMqf1pppmbo7XC2lIXEVGKCHuz2tnp+/VX4rhmYuiOzA8W5GIoIZiGKj+vexEwYESZanpUIlhop+46JkZ9IRFCXluM9UdL3gzKGKn8Fj2iNFRU6g+ctauQKrQCKAqSL3ltQoBWyNDeRHLhYTr8kz5f9UqOrDwI9alH3VY9d2UIFceJQSuthwoNoBAs7P+3560ZFrBnmJI4/xXCAXdaZoJgb8D0ghsNGqp0YtRXewC+A6jmmBLOOsrZy63RldFdchXDk2OyLDiYS/uyXOacvNC7BYLBORrEOpChC4dLLQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=irGQC7zuBG+4smKYfdjZ2ooZS2o+R8gHo7UswdRdjHA=;
- b=Q89rFZ8l4o7iE0FQQjrihqs/1TlvADDiTyhes0XAzQAcFEfq36tyds/o1I4eAnW+m8mvAiDCj5atU3w3gtdnORjN/B1o65YYe/0pdc9CVxeK6kTEBmAgUUF8FR9jpHoxBAivVlvVzspTAorc7THcucSpgpAK9jWZuVe5TwJg3g5DIFrFn/YJjd9ItLcqp1bCFRpIF7EULaao/4Z+aMIcb7Ng/EOJ+diiT6931YYf+SnT1pbKmPQ4AQ5qPzrja9Spul8KMt9aJ9qnwV9BbswyxmvRmUuKw2oT9U21xQnNdj/MjltuC685KtnrhhbZ2PyXv17ebXy/6IdGeTnIbCrQ1w==
+ bh=o/boAQSUqApmk/GkfVOs3gP+uZfLp1k59AqBna71dfY=;
+ b=Ks4FD8KHTkgsOrZuxMI+2ji480HwTcRCTkYeatlpu+WVdDoS2ZuObfUQcOzjYNi4gS7RLDWNKGboM+bnRqUgXktXk5T3ZBjUqC1kpdc3GpAmwlL/ikX0CzK9y5zPAwb3CE6HyviVx+WnMVGuFxvmnkgmN2sLBUzWoCKZvJTyfwKiyQOUsB465blLI6fwd4dCgUaYa5YGFZnwSNLm9ln0nuiRspABwr3PQERhTVd+nyv59Qdc8xKT662odJp1Xy5UW1gPdijANTGq0ZK3kciFFxId2IjMHQmL1DmhgzT0GVisXziDW7X9+63tqGk6kxrqw5oGjwE6E0zMwYo8faJ69g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=irGQC7zuBG+4smKYfdjZ2ooZS2o+R8gHo7UswdRdjHA=;
- b=tsYiaz6h0BsQOClzJWDkZkBKIsTRUBgmioF+A9H1FnoW3rps4oGEdhn6evHtHH5Pux6UqvlUIZIovCufBsrpH6x6/MUG2O35XTd79ciYTCrm7/UJAbIHoHRKCcX/OezwOEnlDHr0XvU1MeplnzFJxPGLTnkCgYeBrjiMU5426da4kVdul6RMjc6TeckTmcEuDZz3knvgXDKhObkOCEysCpCG9LUn/5hoCtdSpNUuBKLXVfLF6mfK4moiuntA2bHXmrRcdQqOnnV8qFiHWNWFa0LHARpY3jtCGSzI6hWSIU9ZkMCPWvqbjE9FiAArFwWdM+o9SJoeSyBUGCyOaeDmJg==
+ bh=o/boAQSUqApmk/GkfVOs3gP+uZfLp1k59AqBna71dfY=;
+ b=jAzOV/4BH3ZG7W/auvSGNBNSL+mhItFX8f0czEIwyd36u53PEPrldZUmZhSR8RnvhxlKLULajfe4USr4B4cXlDBxaM2vmc8O5zH35960Lti7j2/JhnceFPLq2RPGr4KtF8gBtiSAXrxeLLcU9HRSCgjhfVGi3q3/GV7HHX+owKgFiZHNOp3Pf/FOrlj/GXe2JgMjL8YOmQafSEaP0E/hnioKQ6/395vvJT5yxUlbClwF2mCVsLJUeAkMTfJuDHoX1rB53hmr6tyEI8Y499hbNKTEVddAaXTVJ7+81vf+DAWtFEVHBBtmidhORG8hQpBm82Nd6erQfUyNveUdbwNbGA==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
  by PH0PR12MB8098.namprd12.prod.outlook.com (2603:10b6:510:29a::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.13; Fri, 27 Nov
- 2026 04:56:41 +0000
+ 2026 05:01:45 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0662.004; Fri, 27 Nov 2026
- 04:56:41 +0000
+ 05:01:45 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
@@ -88,17 +88,17 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
  Svyatoslav Ryhel <clamor95@gmail.com>
 Subject:
- Re: [PATCH v8 06/12] drm/tegra: dc: Add elements required by Tegra MIPI DBI
-Date: Fri, 27 Nov 2026 13:56:37 +0900
-Message-ID: <CQmBXmddTJ6v1iTnbDfQLA@nvidia.com>
-In-Reply-To: <20261122081820.53199-7-clamor95@gmail.com>
+ Re: [PATCH v8 08/12] drm/tegra: output: Make panel parsing configurable
+Date: Fri, 27 Nov 2026 14:01:41 +0900
+Message-ID: <YNjEIJ2qT8OQf1jrgwTBHw@nvidia.com>
+In-Reply-To: <20261122081820.53199-9-clamor95@gmail.com>
 References:
  <20261122081820.53199-1-clamor95@gmail.com>
- <20261122081820.53199-7-clamor95@gmail.com>
+ <20261122081820.53199-9-clamor95@gmail.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYWPR01CA0018.jpnprd01.prod.outlook.com
- (2603:1096:400:a9::23) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: TYCP286CA0199.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:385::17) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -111,343 +111,241 @@ Precedence: list
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|PH0PR12MB8098:EE_
-X-MS-Office365-Filtering-Correlation-Id: f977c383-df6c-47bb-5acf-08df4c42d381
+X-MS-Office365-Filtering-Correlation-Id: 51c6c8f5-777a-47cb-0675-08df4c4388bc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|7416014|10070799003|376014|1800799024|10067099003|4143699003|261026121527099003|56012099006|921020|11063799006|261009223027099003|261021121427099003|261022075727099003|261028144727099003|261022105027099003|261021123027099003|261102123227099003|261026140227099003|18002099003|6133799003|22082099003|3023799007;
+	BCL:0;ARA:13230040|366016|23010399003|7416014|10070799003|376014|1800799024|10067099003|4143699003|261026121527099003|56012099006|921020|11063799006|261009223027099003|261021121427099003|261022075727099003|261028144727099003|261022105027099003|261021123027099003|261102123227099003|261026140227099003|18002099003|22082099003|3023799007;
 X-Microsoft-Antispam-Message-Info:
-	SW9VDjEmkl7VSL7BYLz/XDrgcb9roIs527kEqeGMDFXXZczd8qIpWEAkXPVBz7meXkNpV0GkR3GhsJa5T9rHywVEdZxiVc7kCtMu+CP2DkTeR6YMa5KOV4+g7YnI3lOBdq4JX2q7Gwu/2FZ9lDmCZi1KDUiBpAKh40PNLSnx216E9u91P01shx7G0ptUoErncnpGaJnUROLUCttiihtQMITM73F3BOQbPcqOefTdGnXvknimaX7Yh5S+CzuQYx07PY76+SLGD5jzwpsx3d9fpmJ7U2iBeLgGUGNr9ybv6dwGMifv4bCtWNoM/K3waPP13ceOTMOHv9mE8JptfQn9ye4pPGGdOR1yjWu6/WY/aHZJ/5iCXh+wdxKiSXB+Wnp2LYuAqw2krwJAJDxAILMtd8yEe4+RBKhijRIVtixMivXh7y3fEE7CQ4OZ0EZ3OH/rqjW6xN2pYD7kkhTQtytj1w0EemDnvX80b/8meUtQvRVDMmsAcqxsV9wvVYW3IWF28rFeIyVwylSx8NL/fhIFZqPDpvUor1cAAiKgUz892Orl5JhPAXbuh8d8TWZISVVFICPP3Q4naEBe7fnUebEA/KqBB/Jn15YNKc+GLLo3JqOuGqp3l2s/wgk65mfhJogWLWJQpmDS06ID3MT2fFHACc58yXPSh/OaHQLsSbFmTyQATXnuWq5t0yQZhLUFkOTbu4ujLcW12u5QQlaaIuiuRg==
+	J8Ps3Wdrj9iV7tk8kTaKFpZ8fsFfVv7jkpcTpRJt6D1rT3i3ox68eZGUXR7ziwZE5fhTrKBvu6xmV3czziM6fzYXszXkAoBwSGco+OnZx1R3HRj/+XpwKD/TTe4D0cG7MZPUQmpCGIXKXPacYQqXl+3KtcMTBGbFSYrzdIVcHXab7UFB1vqa9cIKCHjZCw8ZgH256Ah9+6MJZbHuptvMaU0WGhpHz2f1eMUmhYA4rwFt8y4o4fwWFfnD7GLqdkgsNzBCEOD9VKIFKlNy0gGSj1AtUv0KBmQrKEeJzfZboXuIH24JpVzmAkQyQfH2C2wXJGqQ/Q6y0tebYFnJOMN0UlMPMgws0TBIU5UYH9DICSRcxlje+EZ+JXHooFipk8zrPpkdZvpxDP5JMiA4NnEptGmoQInXHtlr/zo4sSYjqMQ6dtHpAoW4iXuHgArDYN7ZhdOOaONt2B47SPiBZaJt+tp0cXBk0GJFmR3AItE643Pf9J1+2SNEfc0zZt/HWhptUke+WLr9H98HfL7YJx1gPYPS6mM18ArLXb1/KBpHbJLri8aOgBw/sqE8qy887cU00bKgwQoFDy2P6rlUXLpywUWI68IpPLit5mqR5t3lyWl4Iw6tG7/UmvxR7igTwFVE7wPGPg78F9Ck/o5gQtVcUk9YNR9Btkfc+oEHP/MUhqcyZhMa9MnafJchjlFgluSxR7I4WPKc5YrHTB8z8qFDRg==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(7416014)(10070799003)(376014)(1800799024)(10067099003)(4143699003)(261026121527099003)(56012099006)(921020)(11063799006)(261009223027099003)(261021121427099003)(261022075727099003)(261028144727099003)(261022105027099003)(261021123027099003)(261102123227099003)(261026140227099003)(18002099003)(6133799003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(7416014)(10070799003)(376014)(1800799024)(10067099003)(4143699003)(261026121527099003)(56012099006)(921020)(11063799006)(261009223027099003)(261021121427099003)(261022075727099003)(261028144727099003)(261022105027099003)(261021123027099003)(261102123227099003)(261026140227099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y1c1TzhjYXRKV1Y4dkZIa0VySkJwYk91KzVneDdUN28vbjAyVnN2YmJSOHpL?=
- =?utf-8?B?emVBZW5seGRlUzIvY1NWOU1jWElUZ1dTYWNxZ1pyR0pvV2NJeXNMUUdaazZt?=
- =?utf-8?B?SDZLL2IrUmJhQ1lhR094aCttYzFuOVlSNThLUElicEtCYStGYXNxNkdEOXRJ?=
- =?utf-8?B?OU5ha3NWaEg2WHIzYVdvRTRhS0FVYXBjNDU5THpSVTRPTGludG5KVzZuZmd6?=
- =?utf-8?B?YnQ0T3JpcmFGZU5OTFVTYTBQeG94UXdXd1NrOE9yQ3N1L3QvenZYbjRoVDVo?=
- =?utf-8?B?WTVYeE5QYU4xNFhSckZQV3dka1VmWWgzakQ0ZWtGYW0zZFBSRDNkTkh3cTJ5?=
- =?utf-8?B?VWFWdEdxSjJtZWQ5NEJKODNnZE5FZHIyeWJzdXU0emh0STgyaGpVekdEV0ZG?=
- =?utf-8?B?c0FXOG9rSVQvekVYcG05YVNydUFNcXViZldLWmR6QURtREFhYVM0VHEvRnRv?=
- =?utf-8?B?SGY5Q0plV2lNK29mQzM3VFU2Y0VKcXhZR2NKVzJGSmNMQXA5UlI0ZnQzOEsx?=
- =?utf-8?B?bkFFSWxlbmZaZHNrVStNS3JrZEgxSmRrOEZCWWJNWkp2eDV0RTBrZWM3UUR1?=
- =?utf-8?B?NXpsWUNROHEwUGs5LzZmTENVNnZ3L3d2djhXZmJ5dXhDL0pZa3ppTVFWZnMw?=
- =?utf-8?B?OVNPZVhhR245aXdzNWNRK0V1OUJRUUJZcGQxRzdxM242cHZRRk5TS1ljWFdr?=
- =?utf-8?B?SVdCUElWM3ZmSHF6KzdiZGJERDRvNEhKbFlvaVBLR3hDTUFZdTVWdCs4VGoz?=
- =?utf-8?B?NFowRXpkMmZueDdUZTJweStmTUE1YURqamZNakFKak9kZXRWc2xnUzluZG9S?=
- =?utf-8?B?T3dOajByU0l5eEdIcVNlOFZoVHJjdmg0UUN0dGd1ck1LYWF1a3F2enUzcjlH?=
- =?utf-8?B?a3poZmhpYklaSE5kaElOYVlPN3kvSHprZFE0ejFUQzZZRmxIM0tRNTZJTndy?=
- =?utf-8?B?NFp1VkR3TlRzYVREdGJNWmJZa3JlQnYvMnNvUTAzVWZtaG5JTW9XdWhseUVo?=
- =?utf-8?B?VmhhbzB5aFF1NlcvM1FPTnB2VFRUUGFwRVM3d21PSmxDQ2FJb2pFZkx1dUIv?=
- =?utf-8?B?RlVKOHdScCthbndCQkZKUjExd0k1TTF1WnlQYi8xajFHRzExWE1SUnM0WkNy?=
- =?utf-8?B?bUFWSGlJSkRENU1kYm5jZTZtRjhKalQ2TFo5NTBGcmdhbjdKMGNsNis2VjVB?=
- =?utf-8?B?Rk16U1ZGYjJ3Y3FxNGxCRkwyVzVIVmhwcEdSSWtoaUhKNGpYSWNpUzVoODly?=
- =?utf-8?B?YkNoSGRiU1FvNU50NmlYNlNaUEdjYlJzQ3M4Q1hnVkRJZjJxSWY3MmIzWG9a?=
- =?utf-8?B?NFhpZzNsYTFETVY5YlBmZjV6dzNiV1YzZ0dINjUrdFlYQkx5OVJDemVuK3R5?=
- =?utf-8?B?SVZvU0VVMkpYa1lKOEF3TzV4TzJQT1JvczYvSzFUeUdnMVY1ZGdOS2M3WEJl?=
- =?utf-8?B?L1FnNVZpSW1ZY01yYXBWMzBoZFBvTlQyajBaMDVLVjViUHdsdmJlekFSUGZK?=
- =?utf-8?B?ZWpHWkVrSlJVcWptalc3cFJTSjlJT2xNL01wOWRBMC9jMVdHUFpmSTI4OWdC?=
- =?utf-8?B?L05KR01DRFdReFNnL0ZOcDl3NWQvYzRtV3lsaUxMdUlnbENHamxNTTBkOVpC?=
- =?utf-8?B?YWl1RDNSK2ptK3pNVHRZMGNRWDVvN21LMWdBbStXNkhiTnhMektxc0hlQnNv?=
- =?utf-8?B?ZW1KcG9scnB2MUNqMVI0Q2JqcU5XVDlzMW9FMmJZODhpYkw5SWNjV25VYjNV?=
- =?utf-8?B?aDVzQ1BNQUpZU2NCS3prVVNyQjBnZ2prL0w2UjREcnBwclZPY3hyN0NzbjZ6?=
- =?utf-8?B?aU16WE1nYVp1VlJGSzZLRWNRUzZnVkt4T1VvOXYrZUxncEhIRTVZNk5LTWxC?=
- =?utf-8?B?WG12bTNnVTlvWnFzU2hzMlhaNm13aVo3cklMZ2FPeFU0Z3dxb1FHTDYyNTlh?=
- =?utf-8?B?eExtTmQ4Y0o0YWZsRnp1aVBWM0I1Yld4WDc5dDBNUXV1enZRallTUko1eHMr?=
- =?utf-8?B?TG10SmZlZ0FzQ1pUT3lnV0tnRDhpcUIvR3hzQ3kwSTAwSm9sMWVPY2EyUWM2?=
- =?utf-8?B?bDFWeHl1SWhscVc3Rm83ZVFjQ0hEYWRId0N2bnF2aXR1bUswNXI4NThqS1Uv?=
- =?utf-8?B?U0MvVDBWMk1kUGdNcDBrQjFDSDBxenJBaE81R3l5UFpDNVN1VHdMYUZCY211?=
- =?utf-8?B?RmhwWW5ab0IzOVE1ckJtUzkycDl1UnhsYkZrdG5mUVlaTjlOUDQvMlJ4dkJn?=
- =?utf-8?B?ZWxCOVpaMFl1WXBjeWp4UTBLRU1MbC9PdWtoY2lpYnd2aGRtNG5EOHB3UlhY?=
- =?utf-8?B?eVpVZnh2bENJaDgvZkc1Uk9abEJJRDN1eXBYblpPdWZOM2F2RWhuMldHV1dG?=
- =?utf-8?Q?ctM9ee1L0wVzgKvhckBkn8FGG6FpI08TfzKiHo6I0VmGJ?=
-X-MS-Exchange-AntiSpam-MessageData-1: 4pEqlRzU9S/mLQ==
+	=?utf-8?B?K3Q1Sy9uOCtmbXdvVFhPRnppS1RZYWJuNm5mSjBGYkdJN1pzUm92MGl2am9p?=
+ =?utf-8?B?eXhqRmpUa0N2aFJlSzNENUZIaUcwVDBwcXVxVTJtdk9URFZMRWdXNFJvbHIx?=
+ =?utf-8?B?TENoc1FyYnROM1JaV2UzdGRXcU05czRJVlJRVUNWczJuMC9yUlhBR0pwMUJh?=
+ =?utf-8?B?Q0FuNllmaHJZSlk0N081ZDIrZXBOa2NrZVlwNmh1RGJ1MnBWeGFUbGpESGR6?=
+ =?utf-8?B?WGRRdFNYNVd3QXdhdjRST3h6Sk4reWtKMWZKY0pmUEFZcUtlYU1LdkE0YitM?=
+ =?utf-8?B?V3pTb1ZOUlVYRGhZaVM3bFRhcnhNNExqSHZpdlN5KzBpSi9FU3pWeTd5TWM0?=
+ =?utf-8?B?cGxTMmtoRnpEL09RZUlwTGVLQnNBL0czVHFMclY0SkdNZUpGcTIrM050WXhs?=
+ =?utf-8?B?TWJTMUhIQWNoVW1wS2IvWnlxc25URExBQnlzOW5HUlBXOC9SeEgzSXU2VFdv?=
+ =?utf-8?B?ejlMR0JyQ2U2ODFteld5K1ZZK2d2TmxXUGxNSjBsbCtJZWd3ZUp4ek5ucXg4?=
+ =?utf-8?B?QW1ZWURmMzBESnBCejBqZHpiZkd4Z2h4TDdWa3JkSERKUXdXcVlFd1dtV3c0?=
+ =?utf-8?B?Y29RMnhvd0ozKzhPYTAzNHJQTFF6cjN6YklGNjF0QjRaNE9yYy9lT09qa25J?=
+ =?utf-8?B?bmVEOHJFTjRiNG5SVHI2VGsxaHNiWTdNdzFpYkVLNmZUYkRjUzl5SG9DMHJt?=
+ =?utf-8?B?WXhyMktaUFhoSUJkNlFSR2tWSFZCbit3bHhza3p0Z0hYakdkZDlpK0pxRjFs?=
+ =?utf-8?B?WTlhcnhaZ1dBdGpTS0RHU1VSNGVINTk0VzBMWjIvdXNvOVphVFNPR1kyYm5I?=
+ =?utf-8?B?OVRnL2d3OXFudEt6Z3EvbVQxU0V3a24wNDZwZ1JxR1RMNTFGUlFSczN6endk?=
+ =?utf-8?B?UFFNRVd4VzVDQ1E2T2dIN0psKzUweVUxMGkrZGJpdnVscWFkWGNTQzlWU3VX?=
+ =?utf-8?B?OE9TN3ZhekZ6MmRFZjVPWWdvcWJXS05PSXhsa1AyZmkvT0xPczk1dGdFMzRP?=
+ =?utf-8?B?QU5qVUduMCswZUd2NG1PZTJ4NDBITmh1RlhyNUhxaFVSQ2J1NWtZNjNsRThY?=
+ =?utf-8?B?TEo3TEUyVXFpUDVjNm5ydi9nUUhLSnVpT3lnNGJtWlJ1QXdSVGZlTkJUMUha?=
+ =?utf-8?B?dklYSjFUSVhBcGU5RnFKWFFhU3UwZnFPWGxVdHl1S1hmeEpCSUp4M3N6cHlT?=
+ =?utf-8?B?cXVONjFiQ2NkVThNOXZwdFpCakJaZGhRaWlsMkN0MnE3alNDb3IyL2Z2SS9I?=
+ =?utf-8?B?R2N2VmdVUDZ2RjJYZHprQ0R0aUxMWEJuTkhJZE1tUWdGTnArd1NqaEZZZ29C?=
+ =?utf-8?B?cWwvU0QwS0FmamRPRURUSFBMWWFvNTdjMlF0eGxJTUFLdDA0cHBsTUQ2Wkw5?=
+ =?utf-8?B?L3l5ajNuWFhzVE5LVVo4RXplV1ljVFRiVUMyd3Z4N1JuVTFyYmNFKzNRSHpx?=
+ =?utf-8?B?aG5UbUNXdkdyY2ppWmF3K3VBRDBSMFY2LzBXTmJiQ3VGcVFkM01CWlFLK2lu?=
+ =?utf-8?B?OWZQajFJZXpFVEhSYm1vSUhtcXg3UTBtZmMvNXkzSFNWTm1scUJJdU9KYjRu?=
+ =?utf-8?B?YkZRdXZ2RkJ4aHVYMGJSd2xLU29OS2FqYWhlaURLbkZSZHcyeWNhNExKVUFC?=
+ =?utf-8?B?Zmd1THBmWTBtZy9ETDI5Z3dLaXBiSGxaYjFqcmt4dG00WnFiWUtrdXI3VFIr?=
+ =?utf-8?B?RmpmWnVzU0I4T0E4aXJQSVlKUHdSNDlYb2Y3UktlbG55SFNweGtWby9KVWhY?=
+ =?utf-8?B?eXUyMWFvUlVqTzZib3hlZTAwcXQyQkx2L0lzeDBMRTRGT0dOdlZJNVlyWHJW?=
+ =?utf-8?B?NkNYdUdlc3o4Q2xMZHB4TFFKWldCeGJzejAvMzF5a0xtV1pNK1pyMjJQYXJs?=
+ =?utf-8?B?QkJqYW16eHdPVUU4byt5NWNjVHdnYW1PcnRyV0dROWoyTGpGcHNGRkVwNnEr?=
+ =?utf-8?B?NVdxNlV0Y0VuaXYxdmVzNjVkakxwc0psbDEvRnNtUXYrL2loOThFQzZHVmhS?=
+ =?utf-8?B?MTc5RTN4bWd6ZVYxZHR4b1NkbDBwN2VYdm1pM05lb0tmb0NwOG5NaVk4UVBh?=
+ =?utf-8?B?WURvQmtJMmtRdzk0MGRyOVN6UkZmOFhXOWVIYUlxME41ZE9BTGt1a2x2ZG5J?=
+ =?utf-8?B?YUMvSUI2RFhWdllsWU90NVl1TmhaK1pYNTZQaGRCT1UzMFZOTUQ2Q3lORjRz?=
+ =?utf-8?B?UldwWXRJTWoya21YN2htNHdSOWI0SnBLcnA2SnVTSXUxTXc5OWY4SzNNSW1E?=
+ =?utf-8?B?TFppcVRBSVpQRDNicGlwalNWcC9RdWNIVmwzSndHSmRheGdLRlErZmdMK1pD?=
+ =?utf-8?B?L3NDb3Y5VnI0RWZVaGh5YkYwOVZhVS9YVXp1ZE8wQ0FWOCs3N2htTFUxSnQ5?=
+ =?utf-8?Q?yyNBoHZgjeaEEwF9zQVAWDkxkjk6UBS0tQjvA910jF9IY?=
+X-MS-Exchange-AntiSpam-MessageData-1: i/xonhDTyYCocg==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f977c383-df6c-47bb-5acf-08df4c42d381
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51c6c8f5-777a-47cb-0675-08df4c4388bc
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 04:56:41.1191
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 05:01:45.2632
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XVImXkwBfFZMBZeTbN14ae4ZsSPHLzkwq1RaCwzpvCmdtDIMegVXS/YY1cpf2FcAGk0JiLWKVzYEWKQG8Svkfw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: MRwvYqLtdGImr4pXLwHWjTA+jIMF7DrKb8PWN07faDhZugy/jV4T9GEbELdRYqGq9ya3JEUmZXCpQwOeBUliNA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8098
 
 On Sunday, November 22, 2026 5:18=E2=80=AFPM Svyatoslav Ryhel wrote:
-> Add DC register definitions with additional fields in preparation for
-> adding the 8-bit CPU interface (MIPI DBI).
-
-Maybe also mention that some whitespace cleanup has been done.
-
+> The tegra_output_probe() function performs panel parsing unconditionally,
+> even for devices that do not require it or that handle panel parsing on
+> their own (like DSI).
+>=20
+> This causes devices with dual DSI panels to fail, because they rely on th=
+e
+> OF graph to find the secondary DSI controller, whereas
+> tegra_output_probe() treats this port as a direct connection to the panel=
+.
+> An example of such a device is the Xiaomi Mi Pad. Make panel parsing
+> configurable.
 >=20
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  drivers/gpu/drm/tegra/dc.h | 194 ++++++++++++++++++++++++++++++++++---
->  1 file changed, 183 insertions(+), 11 deletions(-)
+>  drivers/gpu/drm/tegra/drm.h    |  2 +-
+>  drivers/gpu/drm/tegra/dsi.c    |  2 +-
+>  drivers/gpu/drm/tegra/hdmi.c   |  2 +-
+>  drivers/gpu/drm/tegra/output.c | 52 ++++++++++++++++++----------------
+>  drivers/gpu/drm/tegra/rgb.c    |  2 +-
+>  drivers/gpu/drm/tegra/sor.c    |  2 +-
+>  6 files changed, 32 insertions(+), 30 deletions(-)
 >=20
-> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-> index 0cb0515968b35..e8913c5530a2d 100644
-> --- a/drivers/gpu/drm/tegra/dc.h
-> +++ b/drivers/gpu/drm/tegra/dc.h
-> @@ -272,14 +272,150 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
->  #define  DC_COM_CRC_CONTROL_WAIT (1 << 1)
->  #define  DC_COM_CRC_CONTROL_ENABLE (1 << 0)
->  #define DC_COM_CRC_CHECKSUM			0x301
-> -#define DC_COM_PIN_OUTPUT_ENABLE(x) (0x302 + (x))
-> -#define DC_COM_PIN_OUTPUT_POLARITY(x) (0x306 + (x))
-> -#define LVS_OUTPUT_POLARITY_LOW (1 << 28)
-> -#define LHS_OUTPUT_POLARITY_LOW (1 << 30)
-> -#define DC_COM_PIN_OUTPUT_DATA(x) (0x30a + (x))
-> -#define DC_COM_PIN_INPUT_ENABLE(x) (0x30e + (x))
-> -#define DC_COM_PIN_INPUT_DATA(x) (0x312 + (x))
-> -#define DC_COM_PIN_OUTPUT_SELECT(x) (0x314 + (x))
-> +
-> +#define DC_COM_PIN_OUTPUT_ENABLE(x)		(0x302 + (x))
-> +#define DC_COM_PIN_OUTPUT_POLARITY(x)		(0x306 + (x))
-> +#define LVS_OUTPUT_POLARITY_LOW			BIT(28)
-> +#define LHS_OUTPUT_POLARITY_LOW			BIT(30)
-> +#define DC_COM_PIN_OUTPUT_DATA(x)		(0x30a + (x))
-> +/* Pin unmask is 1 bit above position of the pin in the OUTPUT_DATA regi=
-ster */
-> +#define PIN_UNMASK(x)				BIT((x) + 1)
-> +#define DC_COM_PIN_INPUT_ENABLE(x)		(0x30e + (x))
-> +
-> +/*
-> + * The definitions below describe pin positions in the DC_COM_PIN_OUTPUT=
-_ENABLE(x),
-> + * DC_COM_PIN_OUTPUT_POLARITY(x), DC_COM_PIN_OUTPUT_DATA(x), and
-> + * DC_COM_PIN_INPUT_ENABLE(x) registers. The comment before each group i=
-ndicates
-> + * the index of the register (the x value).
-> + */
-> +
-> +/* 0 */
-> +#define PIN_LD0					0
-> +#define PIN_LD1					2
-> +#define PIN_LD2					4
-> +#define PIN_LD3					6
-> +#define PIN_LD4					8
-> +#define PIN_LD5					10
-> +#define PIN_LD6					12
-> +#define PIN_LD7					14
-> +#define PIN_LD8					16
-> +#define PIN_LD9					18
-> +#define PIN_LD10				20
-> +#define PIN_LD11				22
-> +#define PIN_LD12				24
-> +#define PIN_LD13				26
-> +#define PIN_LD14				28
-> +#define PIN_LD15				30
-> +
-> +/* 1 */
-> +#define PIN_LD16				0
-> +#define PIN_LD17				2
-> +#define PIN_LPW0				16
-> +#define PIN_LPW1				18
-> +#define PIN_LPW2				20
-> +#define PIN_LSC0				24
-> +#define PIN_LSC1				26
-> +#define PIN_LVS					28
-> +#define PIN_LHS					30
-> +
-> +/* 2 */
-> +#define PIN_LHP0				0
-> +#define PIN_LHP1				2
-> +#define PIN_LHP2				4
-> +#define PIN_LVP0				8
-> +#define PIN_LVP1				10
-> +#define PIN_LM0					16
-> +#define PIN_LM1					18
-> +#define PIN_LDI					20
-> +#define PIN_LPP					22
-> +
-> +/* 3 */
-> +#define PIN_LSCK				0
-> +#define PIN_LSDA				2
-> +#define PIN_LCSN				4
-> +#define PIN_LDC					6
-> +#define PIN_LSPI				8
-> +#define PIN_LSDI				10
-> +
-> +#define DC_COM_PIN_INPUT_DATA(x)		(0x312 + (x))
-> +
-> +/*
-> + * DC_COM_PIN_OUTPUT_SELECT(x) is a set of 7 registers that allow select=
-ing
-> + * one of 7 functions for each pin using 3 bits. Clearing all bits sets
-> + * the pin to its primary function, while setting them to 1 configures i=
-t
-> + * as a GPIO output. Other functions are unique to each pin. For details=
-,
-> + * check "23.7.17 DC_COM_PIN_OUTPUT_SELECT0_0" in the Tegra30 TRM.
-> + */
-> +#define DC_COM_PIN_OUTPUT_SELECT(x)		(0x314 + (x))
-> +#define PIN_OUTPUT_SELECT_MASK(x)		(0x7 << (x))
-> +#define PIN_OUTPUT_SELECT_PRIM(x)		(0 << (x))
-> +#define PIN_OUTPUT_SELECT_OUT(x)		(1 << (x))
-> +#define PIN_OUTPUT_SELECT_F2(x)			(2 << (x))
-> +#define PIN_OUTPUT_SELECT_F3(x)			(3 << (x))
-> +#define PIN_OUTPUT_SELECT_F4(x)			(4 << (x))
-> +#define PIN_OUTPUT_SELECT_F5(x)			(5 << (x))
-> +#define PIN_OUTPUT_SELECT_F6(x)			(6 << (x))
-> +#define PIN_OUTPUT_SELECT_F7(x)			(7 << (x))
-> +
-> +/*
-> + * The definitions below describe pin offset in the DC_COM_PIN_OUTPUT_SE=
-LECT(x)
-> + * registers. The comment before each group indicates the index of the r=
-egister
-> + * (the x value).
-> + */
-> +
-> +/* 0 */
-> +#define PIN_OUTPUT_SELECT_LD0			0
-> +#define PIN_OUTPUT_SELECT_LD1			4
-> +#define PIN_OUTPUT_SELECT_LD2			8
-> +#define PIN_OUTPUT_SELECT_LD3			12
-> +#define PIN_OUTPUT_SELECT_LD4			16
-> +#define PIN_OUTPUT_SELECT_LD5			20
-> +#define PIN_OUTPUT_SELECT_LD6			24
-> +#define PIN_OUTPUT_SELECT_LD7			28
-> +
-> +/* 1 */
-> +#define PIN_OUTPUT_SELECT_LD8			0
-> +#define PIN_OUTPUT_SELECT_LD9			4
-> +#define PIN_OUTPUT_SELECT_LD10			8
-> +#define PIN_OUTPUT_SELECT_LD11			12
-> +#define PIN_OUTPUT_SELECT_LD12			16
-> +#define PIN_OUTPUT_SELECT_LD13			20
-> +#define PIN_OUTPUT_SELECT_LD14			24
-> +#define PIN_OUTPUT_SELECT_LD15			28
-> +
-> +/* 2 */
-> +#define PIN_OUTPUT_SELECT_LD16			0
-> +#define PIN_OUTPUT_SELECT_LD17			4
-> +
-> +/* 3 */
-> +#define PIN_OUTPUT_SELECT_LPW0			0
-> +#define PIN_OUTPUT_SELECT_LPW1			4
-> +#define PIN_OUTPUT_SELECT_LPW2			8
-> +#define PIN_OUTPUT_SELECT_LSC0			16
-> +#define PIN_OUTPUT_SELECT_LSC1			20
-> +#define PIN_OUTPUT_SELECT_LVS			24
-> +#define PIN_OUTPUT_SELECT_LHS			28
-> +
-> +/* 4 */
-> +#define PIN_OUTPUT_SELECT_LHP0			0
-> +#define PIN_OUTPUT_SELECT_LHP1			4
-> +#define PIN_OUTPUT_SELECT_LHP2			8
-> +#define PIN_OUTPUT_SELECT_LVP0			16
-> +#define PIN_OUTPUT_SELECT_LVP1			20
-> +
-> +/* 5 */
-> +#define PIN_OUTPUT_SELECT_LM0			0
-> +#define PIN_OUTPUT_SELECT_LM1			4
-> +#define PIN_OUTPUT_SELECT_LDI			8
-> +#define PIN_OUTPUT_SELECT_LPP			12
-> +
-> +/* 6 */
-> +#define PIN_OUTPUT_SELECT_LSCK			0
-> +#define PIN_OUTPUT_SELECT_LSDA			4
-> +#define PIN_OUTPUT_SELECT_LCSN			8
-> +#define PIN_OUTPUT_SELECT_LDC			12
-> +#define PIN_OUTPUT_SELECT_LSPI			16
-> +#define PIN_OUTPUT_SELECT_LSDI			20
-
-It becomes apparent here that the PIN_* and PIN_OUTPUT_SELECT_* are kind=20
-of redundant as the pins are in the same order, the stride (and thus=20
-register indexing) is just different. Hence, I think it would be cleaner=20
-to have ..
-
-#define PIN_LD0		0
-#define PIN_LD1		1
-...
-
-and then
-
-#define PIN_REGISTER_INDEX(pin)		((pin) / 16)
-#define PIN_SHIFT(pin)			(((pin) % 16) * 2)
-
-#define PIN_SELECT_REGISTER_INDEX(pin)	((pin) / 8)
-#define PIN_SELECT_SHIFT(pin)		(((pin) % 8) * 4)
-
-This will also simplify the tegra_dbi_idx tables since they can just=20
-store the pin index, and the register index (and shift) can be=20
-calculated based on that.
-
+> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+> index bc720ae8d95e1..e53fe68161cb8 100644
+> --- a/drivers/gpu/drm/tegra/drm.h
+> +++ b/drivers/gpu/drm/tegra/drm.h
+> @@ -156,7 +156,7 @@ static inline struct tegra_output *connector_to_outpu=
+t(struct drm_connector *c)
+>  }
 > =20
->  #define DC_COM_PIN_MISC_CONTROL			0x31b
->  #define DC_COM_PIN_PM0_CONTROL			0x31c
-> @@ -303,9 +439,15 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
->  #define  UNDERFLOW_REPORT_ENABLE (1 << 0)
+>  /* from output.c */
+> -int tegra_output_probe(struct tegra_output *output);
+> +int tegra_output_probe(struct tegra_output *output, bool get_panel);
+>  void tegra_output_remove(struct tegra_output *output);
+>  int tegra_output_init(struct drm_device *drm, struct tegra_output *outpu=
+t);
+>  void tegra_output_exit(struct tegra_output *output);
+> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+> index b5806a53e75ac..6d6adc485e51e 100644
+> --- a/drivers/gpu/drm/tegra/dsi.c
+> +++ b/drivers/gpu/drm/tegra/dsi.c
+> @@ -1617,7 +1617,7 @@ static int tegra_dsi_probe(struct platform_device *=
+pdev)
+>  	if (err < 0)
+>  		return err;
 > =20
->  #define DC_DISP_DISP_SIGNAL_OPTIONS0		0x400
-> -#define H_PULSE0_ENABLE (1 <<  8)
-> -#define H_PULSE1_ENABLE (1 << 10)
-> -#define H_PULSE2_ENABLE (1 << 12)
-> +#define H_PULSE0_ENABLE				BIT(8)
-> +#define H_PULSE1_ENABLE				BIT(10)
-> +#define H_PULSE2_ENABLE				BIT(12)
-> +#define V_PULSE0_ENABLE				BIT(16)
-> +#define V_PULSE1_ENABLE				BIT(18)
-> +#define V_PULSE2_ENABLE				BIT(19)
-> +#define V_PULSE3_ENABLE				BIT(20)
-> +#define M0_ENABLE				BIT(24)
-> +#define M1_ENABLE				BIT(26)
+> -	err =3D tegra_output_probe(&dsi->output);
+> +	err =3D tegra_output_probe(&dsi->output, false);
+>  	if (err < 0)
+>  		return err;
 > =20
->  #define DC_DISP_DISP_SIGNAL_OPTIONS1		0x401
+> diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+> index 3a94968bd983a..e8c4347f09e69 100644
+> --- a/drivers/gpu/drm/tegra/hdmi.c
+> +++ b/drivers/gpu/drm/tegra/hdmi.c
+> @@ -1855,7 +1855,7 @@ static int tegra_hdmi_probe(struct platform_device =
+*pdev)
 > =20
-> @@ -456,6 +598,22 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
->  #define DC_DISP_SHIFT_CLOCK_OPTIONS		0x431
->  #define  SC1_H_QUALIFIER_NONE	(1 << 16)
->  #define  SC0_H_QUALIFIER_NONE	(1 <<  0)
-> +#define  SC0_H_QUALIFIER(x)			(((x) & 0x7) <<  0)
-> +#define  SC1_H_QUALIFIER(x)			(((x) & 0x7) << 16)
-> +#define  SC_H_QUALIFIER_DISABLE			0
-> +#define  SC_H_QUALIFIER_NONE			1
-> +#define  SC_H_QUALIFIER_HACTIVE			2
-> +#define  SC_H_QUALIFIER_EXT_HACTIVE		3
-> +#define  SC_H_QUALIFIER_HPULSE			4
-> +#define  SC_H_QUALIFIER_EXT_HPULSE		5
-> +#define  SC0_V_QUALIFIER(x)			(((x) & 0x7) <<  3)
-> +#define  SC1_V_QUALIFIER(x)			(((x) & 0x7) <<  19)
-> +#define  SC_V_QUALIFIER_NONE			0
-> +#define  SC_V_QUALIFIER_RSVD			1
-> +#define  SC_V_QUALIFIER_VACTIVE			2
-> +#define  SC_V_QUALIFIER_EXT_VACTIVE		3
-> +#define  SC_V_QUALIFIER_VPULSE			4
-> +#define  SC_V_QUALIFIER_EXT_VPULSE		5
+>  	hdmi->output.dev =3D &pdev->dev;
 > =20
->  #define DC_DISP_DATA_ENABLE_OPTIONS		0x432
->  #define DE_SELECT_ACTIVE_BLANK  (0 << 0)
-> @@ -493,6 +651,20 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
->  #define DC_DISP_CURSOR_POSITION_NS		0x441
+> -	err =3D tegra_output_probe(&hdmi->output);
+> +	err =3D tegra_output_probe(&hdmi->output, true);
+>  	if (err < 0)
+>  		return err;
 > =20
->  #define DC_DISP_INIT_SEQ_CONTROL		0x442
-> +#define SEND_INIT_SEQUENCE			BIT(0)
-> +#define INIT_SEQUENCE_MODE_SPI			BIT(1)
-> +#define INIT_SEQUENCE_MODE_PLCD			0
-> +#define INIT_SEQ_DC_SIGNAL_SHIFT		4
-> +#define INIT_SEQ_DC_SIGNAL_MASK			(0x7 << INIT_SEQ_DC_SIGNAL_SHIFT)
-> +#define NO_DC_SIGNAL				0
-> +#define DC_SIGNAL_VSYNC				1
-> +#define DC_SIGNAL_VPULSE0			2
-> +#define DC_SIGNAL_VPULSE1			3
-> +#define DC_SIGNAL_VPULSE2			4
-> +#define DC_SIGNAL_VPULSE3			5
-> +#define INIT_SEQ_DC_CONTROL_SHIFT		7
-> +#define FRAME_INIT_SEQ_CYCLES_SHIFT		8
+> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/outpu=
+t.c
+> index eebf0ec0eea0a..d7d7f6ce0a8c3 100644
+> --- a/drivers/gpu/drm/tegra/output.c
+> +++ b/drivers/gpu/drm/tegra/output.c
+> @@ -93,7 +93,7 @@ static irqreturn_t hpd_irq(int irq, void *data)
+>  	return IRQ_HANDLED;
+>  }
+> =20
+> -int tegra_output_probe(struct tegra_output *output)
+> +int tegra_output_probe(struct tegra_output *output, bool get_panel)
+>  {
+>  	struct device_node *ddc, *panel;
+>  	const void *edid;
+> @@ -103,31 +103,33 @@ int tegra_output_probe(struct tegra_output *output)
+>  	if (!output->of_node)
+>  		output->of_node =3D output->dev->of_node;
+> =20
+> -	err =3D drm_of_find_panel_or_bridge(output->of_node, -1, -1,
+> -					  &output->panel, &output->bridge);
+> -	if (err && err !=3D -ENODEV)
+> -		return err;
+> -
+> -	panel =3D of_parse_phandle(output->of_node, "nvidia,panel", 0);
+> -	if (panel) {
+> -		/*
+> -		 * Don't mix nvidia,panel phandle with the graph in a
+> -		 * device-tree.
+> -		 */
+> -		WARN_ON(output->panel || output->bridge);
+> -
+> -		if (output->panel) {
+> -			drm_panel_put(output->panel);
+> -			output->panel =3D NULL;
+> -		}
+> -
+> -		output->panel =3D of_drm_find_panel(panel);
+> -		of_node_put(panel);
+> -
+> -		if (IS_ERR(output->panel)) {
+> -			err =3D PTR_ERR(output->panel);
+> -			output->panel =3D NULL;
+> +	if (get_panel) {
+> +		err =3D drm_of_find_panel_or_bridge(output->of_node, -1, -1,
+> +						  &output->panel, &output->bridge);
+> +		if (err && err !=3D -ENODEV)
+>  			return err;
 > +
->  #define DC_DISP_SPI_INIT_SEQ_DATA_A		0x443
->  #define DC_DISP_SPI_INIT_SEQ_DATA_B		0x444
->  #define DC_DISP_SPI_INIT_SEQ_DATA_C		0x445
+> +		panel =3D of_parse_phandle(output->of_node, "nvidia,panel", 0);
+> +		if (panel) {
+> +			/*
+> +			 * Don't mix nvidia,panel phandle with the graph in a
+> +			 * device-tree.
+> +			 */
+> +			WARN_ON(output->panel || output->bridge);
+> +
+> +			if (output->panel) {
+> +				drm_panel_put(output->panel);
+> +				output->panel =3D NULL;
+> +			}
+> +
+> +			output->panel =3D of_drm_find_panel(panel);
+> +			of_node_put(panel);
+> +
+> +			if (IS_ERR(output->panel)) {
+> +				err =3D PTR_ERR(output->panel);
+> +				output->panel =3D NULL;
+> +				return err;
+> +			}
+>  		}
+>  	}
+> =20
+> diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+> index 40a02cf5939aa..227a178f761bd 100644
+> --- a/drivers/gpu/drm/tegra/rgb.c
+> +++ b/drivers/gpu/drm/tegra/rgb.c
+> @@ -236,7 +236,7 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
+>  	rgb->output.of_node =3D np;
+>  	rgb->dc =3D dc;
+> =20
+> -	err =3D tegra_output_probe(&rgb->output);
+> +	err =3D tegra_output_probe(&rgb->output, true);
+>  	if (err < 0)
+>  		return err;
+> =20
+> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+> index 061c5dbb738be..ebac9068b670f 100644
+> --- a/drivers/gpu/drm/tegra/sor.c
+> +++ b/drivers/gpu/drm/tegra/sor.c
+> @@ -3803,7 +3803,7 @@ static int tegra_sor_probe(struct platform_device *=
+pdev)
+>  	if (err < 0)
+>  		goto put_aux;
+> =20
+> -	err =3D tegra_output_probe(&sor->output);
+> +	err =3D tegra_output_probe(&sor->output, true);
+>  	if (err < 0) {
+>  		dev_err_probe(&pdev->dev, err, "failed to probe output\n");
+>  		goto put_aux;
 > --=20
 > 2.53.0
 >=20
 >=20
 
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
 
 
