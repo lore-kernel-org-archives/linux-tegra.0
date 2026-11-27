@@ -1,101 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.48
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.169
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795771043;
-	b=Fcn7WuvzkLtc/b0tH7plvEOLgwIkVjbooRNhz/TnOVM3CZEUJ2of63UVVKZ3MDvoEdg0
-	 pW2NJ2bhfCYZhg/la++64tZvnzS+0oc6frk2WeYzzgBlrMHSNzVKEkNTE1X5UoYAxrOWm
-	 p69qQlL98izneHhX31l8K0yoqQ2FeTj7hN7Y8xzPVLyhNhw1zCf4r2HCy3N2rwuh45Ewu
-	 1IM4+8JydpiDkuuYq/wfRbve4WOq18Mop1fRpuPInAppVnNRKrjSAt0WVXcFRzSIGD6E+
-	 fxLqSiGJlbrwDI+WzLqfx4Ewf3Mn43hgu/Q6r3jlDTnKmmeYlatVpU88SD7JR3t83Xw==
+	t=1795771315;
+	b=DBSKakc/AkkXYmgncPC+5fKm4s/JHCqZlDP4jMmjFslGTcCcwlzqG0SvfcJIa/N8Xd+g
+	 u/VbTs9JDQlSaJ+PzHEWtdLADVG3oTrWRk9/e3rfUqv4jFZ1/qJt+hVDnLAXyEfjNMjaM
+	 20p9X3cv/e84I+bBkRVDrGaZpPCKG7anXZf8vX+86DZQEXsGaHxb68bwgjH0MmvGWoEsk
+	 SkDHUlk4SA5aGE7aeEdOmw8kbHenNnZgIK6q8F+XJ4qSbI4OeRoSA2BIUiBNxwGpBltme
+	 qZGq3HNxbnXiCt44+xOxWAf9enLhXYPtXc28WKPMxum7Oa5A9Szb5YL501I/LkyTdOg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795771043;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795771315;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=dDmS8NtuQmnyXQ7IeezSes44I1C6AREbPMXt5vLaR3Q=;
-	b=meC+bfqvzoryLJqRWydHW1WY2hhkXXUY0fd5GknR2zqoEWg0Xo9/Z2MyeN/RERJnIm8L
-	 6yFmEA39KDSPu4JekJthcOtPLqpPLZ0Q566+zEn0lxByM6jjL8Ob3TpUbHvG8Hc9xvBD+
-	 vnk1E1AxXVZVi9Jp5wRziycILurzwbyODbnXaPQ7qix3ASDZy1SSeiceJSlAWA+1K53pj
-	 s1K1ahZU0QC1vq950uTIVZH1PQ/9uck9S+pGbOGB8SPWYaJqrV4Xn4Bl493AWj0AlW8H+
-	 Y1k3AjGaqLxiIWAZo9nC9HzCtyUvhXBsbt576bhmDSZrel06mboguA05XA+rUTmQjqA==
+	bh=htV1Nze1V9TPe9ypwx86PJUFfDuF+mF97F+ZRWmyzZw=;
+	b=jX7HMfcRca+Sh/kSdbQTWZic25UQYTvpmHqEviwXWwar4Ys0G1Qwxk9UQ/emu6FmIAwi
+	 CNhG2id2gsfXH3lAX3/+m89xWLFdJ2ftZRmG2kI5CyAZ8sfbJYlt4uP6rOfSWbALG2S6E
+	 f34h92jjERV2d+O7vq/D45EHP9hzv9LFYDeuu9ELdpljq9jBaFYgQ7pKl4qIC+FUnirKb
+	 6CRSNKrHhbUDX5Qy6+Y/Adm7sRhrKBfSxwi7CTcvgfTP7KrgIwGoSKrs19Uwkaqb2s8mC
+	 Toygr3qIbyNtwmHIQAEdkxVBowJis69q4TqA+Mz4ah+f4aU/iAhN3psVoG02GYGMrLw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="p7S/4zG2";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.48
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Db4rXmoK;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.169
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D918C606A32D
-	for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2026 09:17:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D918C606A32D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2964606A321
+	for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2026 09:21:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B2964606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=p7S/4zG2
-Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-1ae58d17cd9so8938482c88.1
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2026 01:17:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795771042; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Db4rXmoK
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-386d1859e1cso2197051eec.0
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2026 01:21:54 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795771314; cv=none;
         d=google.com; s=arc-20260327;
-        b=MzvTzb0X6gngNxJ5OjB+gENWb9vo+45a7rhzOglPrKGW4WwiAwlF3iu8yysoI++EsM
-         /a/mRtI1idiIDix53F0+7hlzrAgm3ouExBfG/LUdoxoYtM7cwmHuB9jgYTLWGcn45NOv
-         j9+HwMzmEKNOv34BmN33AcBGX2lb6cWVTxzGTvd+HsVw9nhGl5pD/+V8fRHxK4JUKrMz
-         5Lc7uB8vfppbPfH8GZLVHhPxC5x0gkignmVUxhk1nEI8/ZprfCHF26KNln1RcyYcFr9p
-         uoukb8G/VXJRzjbmFTTdREDGsN494paG9/heYPn7DC/DSrayTfQuX0RRMBGTCwuR5AX2
-         ce8w==
+        b=SRPhjKWEt1df2BZpQAx97ljz9ftP1hzDOgdJnFa1CX4Ts1hGXrIAIdhFvJFm0umMG3
+         Wi6uuPRWYIcAsg7fQ8IpDANTCmsnPhZDZ2iZ9JcsN+nhcVHX/Yug3eZw1GgemhGaJVBv
+         InZ0LlrDI0E+gjewtbkjP7FqZnADelE/YLBLsRGqEtZsFlT897i2kTfcF7pT3G9QSa4H
+         7npBMSGFwXII9z2f+KUiVnvuM878N4n43Ds0Di3Y7l6UvEyUzZSlSorBMKgzNnBjdoSR
+         KuiHlVVjshPApGu0ZTBXwt/gxUR+izAdhEEhgG4GYc4ip5PCf110TRuBpONbG04A5QTP
+         yZ/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=dDmS8NtuQmnyXQ7IeezSes44I1C6AREbPMXt5vLaR3Q=;
-        fh=5viMD9gYp4uVjnNYfIFWixxT9ZxmTq7XvKcvfIgv4n0=;
-        b=iJV0bysxeYkXxuNSLdAUYypsRmj+QtNSjsPEBUyiWfZxuUJei49nlOpfwgzdJEj8ut
-         KATWUZLLDQ3As3pT6BekOaYa2cIscvjQoOINroI5m4KFuf2UdCKt3b2/9TYDQYCzhuJw
-         VuCVflfhPXrPcH8CPYI+t7ZMxidLh0DEaBNtHn0auBx7jWxw+W6LFASbPIwSBqFdF/6T
-         4DHGYXY/JwjCQGWvqIols605GU3tugDLeEUWLkeka80OUwNyV1TUjWNLlmmN/mi1MjiQ
-         lP19zAT7U3Clqg2wcK1z7tqGR2F7tRXBN9GQwYpLgy4MXYOr0m00+UhWxkafflBkPB5e
-         ajCg==;
+        bh=htV1Nze1V9TPe9ypwx86PJUFfDuF+mF97F+ZRWmyzZw=;
+        fh=nGEqdZN/5Vvna00vKkX5Q0cT2CwZfNDtwkoTj9AVya8=;
+        b=hDgAsB+MIfWEs90one7BxnDp4j8aup31RzcCZBw56FAinYVwVfWE66WRyGp5hyZ6I0
+         hCJDpT/+fDgY/rCaai2mWS8qpimM6fq+BGXsI7ueXMSNadVov8OvccOvYF9LbxM/VB/L
+         ivVItMcWx5NtGJxaqF8372RzLERyTpIyjclhjEtbO+LdkDmDYRxeR0i9nx11bbl8EsVX
+         JI6XzZdlg+woTT8e0Wiq1Whi8M2iwHgScddfmMMwnKlHo5zvgOqZ48CDeVP4eYzgRD9I
+         05ACL9HhqgUr+iDslCu9NViin9DBU5aO3SKoOlfaIeQU4y3kk9hIFvJ71j7kHzKBeR7s
+         BoPA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795771042; x=1796375842; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795771314; x=1796376114; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=dDmS8NtuQmnyXQ7IeezSes44I1C6AREbPMXt5vLaR3Q=;
-        b=p7S/4zG2/9Vk7qIZlkePdvyYBjqaCx7iIudYfN7kYJ9HMdfGushB110AKBrt5cx/+S
-         koJ54vduwPXf1Pf2paSidym4TwXao3i64k1LpeOfgz2pzw3jQLsk7fwn/ElJwiKuh+rg
-         z+TScOyn7e1hsy50LewlH+jS2+AvmY4fVmZBtLuvZvz4QcfmhL4+/twl8alRC+1RE1Zc
-         vc8sGZJ69za0pjzCPJOFeTUbXD7n2pZ3PUUZLynu5349sW62ERvSLNj+XY9j2MSbV32j
-         Q3NfvpneXVtdoD9BDA3RctB99PVOoT+vfXrZZm77HWAoYJdp5oY3Ig7I1d/el12gi4p/
-         cbsg==
+        bh=htV1Nze1V9TPe9ypwx86PJUFfDuF+mF97F+ZRWmyzZw=;
+        b=Db4rXmoKZRcliDEDP8BIj49W67I5o1jlMhpiIMdBYulpofHZDKjqiALfNz7rvLeeyP
+         TN4FKyPxCi1lEK5eWxGzaKTw/O0PcYG2PsGeweSc68Sf/jVStA9qIZ5z2QQmCTyXS8Zy
+         CsgAc5PBfBOtDOY+iY6aHufIATlpMVKdc71RzvmsTdkmsNeJt3Q//K87qDiwAMH1knJw
+         kW/EWLSVRLVAIda84zt7gHAByzyPB9ewmaFYCUTPusqiKH0R+MnEkSecPs29oRa3mPvz
+         H6TcVgsm7r1VyvF3rb4eU3zXSeIZtSTdcuSaoBPasNuQvQwTla+TY8hteC6RC+dBYvce
+         k2mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795771042; x=1796375842;
+        d=1e100.net; s=20260707; t=1795771314; x=1796376114;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=dDmS8NtuQmnyXQ7IeezSes44I1C6AREbPMXt5vLaR3Q=;
-        b=ZgZ75prYkgL8zZQYPl1UJZrocJ+BILYvYrp3U0sHgXHDZBD4QXxcRPgE/E1Hrbypb/
-         NKc2cjygoIXsXM0dds3vJjE/M0dzwQ/pxKgZXkzfKl6U/KKIh+2RlfSXLwDSHhtTD5PS
-         hTNetLPQRhZ+CQS58Neeugf03SoWWoeTVPUksp/b4nCIrycKrIX+L8afr2BBw19IlGYN
-         747g9Um+QkhUSBNipY1DSwob45NfycF4qobIS1jOJcxltpIOOFC1TTpP7RdAVxAWbFgl
-         IRxfrS9RRwHBXYZpA9K/iey83m7BXi8PoxdkNvVkfgjmGaJV8sCghOCcj3lLRZonM/oB
-         Io/A==
-X-Forwarded-Encrypted: i=1; AL+hErFl1UBvDi2lMUZUy7OOdwIZDsK+aQ29pHhWHuLru60TdobN/rwP5/amu3wS7EbYdD867/d/hlGa4gZU1Q==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/NLB/FYHhXq9BVlFWHJG+y9o0V55xDG5CAoQusMNcNLR4LxI4O
-	W6wUJ5oi9vw4VW4+aA+VBZ4FiJ572yjl40Jm2FEl9B+U8D36O5v03VahP7AjfxAIEKBmJc9lOru
-	GBXh2snQbt5d4ChtTI80E6HuAhKAdgwAgBA==
-X-Gm-Gg: AZFdTZdD0ZP6fvInqXWYGFfgi1JtCdbittKoVgvYsxQDBcz24xKZADDheoVGi2ZEujO
-	p925mtOi3PwauThQIKLG7mfE6QkIMxuBFqDyTegtfrBc2+3I5w5NrkNomMDdaqxukvMWClS2OYf
-	F9zwWaEwWJap9NM49Om+cBT2MCvTei6zMjEEeOrka4hRCiGcZ1SP2ZKj5/hNZcS+3uvioNX7US/
-	1NCLejS8aomv+d+bOv3EuaidLKYbpDRN8GqYOhEcbQLbxLTLE/IOQf6tWuZAPbP1Lh2i992Ua2Y
-	KE9uZk5x1SZ2EW3zFctuQw//BuI14G/BtT9fB+8dUatqtgE186LRfa28tUwm2Qp39JXfdx2VuyN
-	RfoEPmsmuS3mcN6QeZG06vaIcGjQ5LnDJ9WNIVnl0WLRFweBKlJbkaAaTpjThmCp1Z59fNzy6IM
-	gB34u8h0viq+dAUVPYnify922vMgYXbBI=
-X-Received: by 2002:a05:7300:ac82:b0:385:4b9:18f2 with SMTP id
- 5a478bee46e88-3857093f077mr35542915eec.21.1795771041860; Fri, 27 Nov 2026
- 01:17:21 -0800 (PST)
+        bh=htV1Nze1V9TPe9ypwx86PJUFfDuF+mF97F+ZRWmyzZw=;
+        b=jVK7NJPPHF2OPZY9ZFJepd8o3RiU0jkpoUei9SmVtPy8b0uFGYEQ1rrDlbd54H4s2n
+         8iUv2dRKMVuuo+TDhG2VRZmWpyey4CCM0ILhizZ2/TgmkErTzxfZMJhuJL5lQH9tSvuy
+         v6Y3W/Jz4tBYM13GJE1uyPkeDMe3CTgzPfRIFUFQ/oimDH7tgBp+bz9LZLfhhcdkoeoP
+         hLdm4/hZO7RUA52HDzRP2mb7t0WthPlZII42YWPyJPUvwAwN4VDVxLeNMLqCAdeyErK1
+         9X6z8XG94BWirrEaTUi5lA4um4v8DiaWEG9GhAAep2sJcHrlik6wb5+ty6Li5OSzF5lT
+         +ADg==
+X-Forwarded-Encrypted: i=1; AL+hErEq7KBrqC3qhw1cU4ClDq4t8VazPuuLjzRPwwjrjmEmWh6PTYuzYvMiKbZqhLKK68ndo/L7eExAORflpQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+ivy8iLUCe82Zo4utb8jmKT2Pq6zso2pg3z8C4xBv+oW2G8MwG
+	TlzQsQY/M6/ZFNgdeylMtfiOl3nVWxsZGUyjtG5hj5uYrD5jNTLGduHEA8sLaLNhX/Qa79ZSaSw
+	zcB3rZ3lXtuJgRRau+VyuLWAil2OBr9w=
+X-Gm-Gg: AZFdTZdlj+9IKP39ncd8FUc125j3VDHuRNQ2jQxSMlw1Cy5bgHWL/v/i5ztetSqTHLa
+	2uBDPWre0XFNkRGzeOXzyw8Re4zEwc3I6PPl6DiHx0EfZuejwpbP/TG4/E05XudI4EFm7lKR+R3
+	8eyGtuaac6ftGIGwwLYZS1PhmTrG+VWr31CV5X9hJEr1VudjrFXRevl4TXHzE//54kGY+wl0wPE
+	+FYjrNYcB8KMrkE6Fe7kO85jm4hKwpjKmBDc9t8bNk5/0ujmwMxe+TJuNfb19LlC+6GPECR80Nv
+	NzD599hk70BLF5s5nWI00QuM5BSSndH8Dwu4huEuihDQ/xhi0rDV2K+Tl6OTZkFRIC7s25CnxAZ
+	Y1tezlTClR13nv1eatT+1QyeBoa8vBJJBMYDqr2HE/eAQOGnNt0pFMLPbSPC/COJ84wg4w4V6HR
+	DRwDiU48JXOx3zwOC+JiEArRej90XyYg==
+X-Received: by 2002:a05:7301:6782:b0:385:2ea8:aac7 with SMTP id
+ 5a478bee46e88-3852ea8d7d4mr33082873eec.23.1795771313759; Fri, 27 Nov 2026
+ 01:21:53 -0800 (PST)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -105,14 +105,15 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261122081820.53199-1-clamor95@gmail.com> <20261122081820.53199-10-clamor95@gmail.com>
- <mxfdX1kqQz209wWYqFOofg@nvidia.com>
-In-Reply-To: <mxfdX1kqQz209wWYqFOofg@nvidia.com>
+References: <20261122081820.53199-1-clamor95@gmail.com> <20261122081820.53199-11-clamor95@gmail.com>
+ <XPGRUNopQCaIq1yDhISpSg@nvidia.com>
+In-Reply-To: <XPGRUNopQCaIq1yDhISpSg@nvidia.com>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 27 Nov 2026 11:17:09 +0200
-X-Gm-Features: Aa3M54qIl8HPODfyZsvmpYkFJItC2sR0jtJsUw_xe1x-dhhaz3Ej4xd6HUaecRM
-Message-ID: <CAPVz0n1ZoMfPWKXSbLENDh9f8qxZbdbnvLxbiLxo8fZS-u5Etw@mail.gmail.com>
-Subject: Re: [PATCH v8 09/12] drm/tegra: Convert to use atomic versions of drm_encoder_helper_funcs
+Date: Fri, 27 Nov 2026 11:21:42 +0200
+X-Gm-Features: Aa3M54r9PD-vpDJoY894sGmJ09TY6pWekwcQ8wsOPcIm9P2nFgYst_79Ta6LzYI
+Message-ID: <CAPVz0n3YEoq5dg4+sHfd74rT8x_R9DEv1eTzW7UHVKEABGa-BQ@mail.gmail.com>
+Subject: Re: [PATCH v8 10/12] drm/tegra: rgb: Parameterize configuration based
+ on bus flags
 To: Mikko Perttunen <mperttunen@nvidia.com>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
 	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -124,297 +125,146 @@ Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripar
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D1=82, 27 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 07:2=
-4 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+=D0=BF=D1=82, 27 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 08:2=
+2 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
 > On Sunday, November 22, 2026 5:18=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > Switch to using the atomic versions of the enable() and disable()
-> > operations.
-> >
-> > This is required for acquiring the next bridge state without causing
-> > crashes, in order to properly set up the encoder.
->
-> This is a bit vague. I'd make an explicit reference to RGB needing
-> access to the bridge state, which is not possible with the non-atomic
-> functions, and then explaining that DSI / HDMI / SOR are converted for
-> consistency.
->
-
-Noted
-
+> > Parameterize configuration based on bus flags passed from the bridge or
+> > panel. The list of supported flags includes now pixel clock polarity,
+> > display enable (DE) polarity, and data alignment.
 > >
 > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > > ---
-> >  drivers/gpu/drm/tegra/dsi.c  | 20 +++++++++++++++-----
-> >  drivers/gpu/drm/tegra/hdmi.c | 20 +++++++++++++++-----
-> >  drivers/gpu/drm/tegra/rgb.c  | 23 +++++++++++++++++------
-> >  drivers/gpu/drm/tegra/sor.c  | 18 +++++++++++++-----
-> >  4 files changed, 60 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> > index 6d6adc485e51e..cd61070072beb 100644
-> > --- a/drivers/gpu/drm/tegra/dsi.c
-> > +++ b/drivers/gpu/drm/tegra/dsi.c
-> > @@ -855,7 +855,8 @@ static void tegra_dsi_unprepare(struct tegra_dsi *d=
-si)
-> >               dev_err(dsi->dev, "failed to suspend: %d\n", err);
-> >  }
-> >
-> > -static void tegra_dsi_encoder_disable(struct drm_encoder *encoder)
-> > +static void tegra_dsi_encoder_disable(struct drm_encoder *encoder,
-> > +                                   struct drm_atomic_commit *comm_stat=
-e)
-> >  {
-> >       struct tegra_output *output =3D encoder_to_output(encoder);
-> >       struct tegra_dc *dc =3D to_tegra_dc(encoder->crtc);
-> > @@ -919,16 +920,25 @@ static int tegra_dsi_prepare(struct tegra_dsi *ds=
-i)
-> >       return 0;
-> >  }
-> >
-> > -static void tegra_dsi_encoder_enable(struct drm_encoder *encoder)
-> > +static void tegra_dsi_encoder_enable(struct drm_encoder *encoder,
-> > +                                  struct drm_atomic_commit *comm_state=
-)
-> >  {
-> > -     struct drm_display_mode *mode =3D &encoder->crtc->state->adjusted=
-_mode;
-> >       struct tegra_output *output =3D encoder_to_output(encoder);
-> >       struct tegra_dc *dc =3D to_tegra_dc(encoder->crtc);
-> > +     struct drm_connector_state *conn_state;
-> >       struct tegra_dsi *dsi =3D to_dsi(output);
-> > +     struct drm_crtc_state *crtc_state;
-> > +     struct drm_connector *connector;
-> >       struct tegra_dsi_state *state;
-> > +     struct drm_display_mode *mode;
-> >       u32 value;
-> >       int err;
-> >
-> > +     connector =3D drm_atomic_get_new_connector_for_encoder(comm_state=
-, encoder);
-> > +     conn_state =3D drm_atomic_get_new_connector_state(comm_state, con=
-nector);
-> > +     crtc_state =3D drm_atomic_get_new_crtc_state(comm_state, conn_sta=
-te->crtc);
-> > +     mode =3D &crtc_state->adjusted_mode;
-> > +
-> >       err =3D tegra_dsi_prepare(dsi);
-> >       if (err < 0) {
-> >               dev_err(dsi->dev, "failed to prepare: %d\n", err);
->
-> The function also uses encoder->crtc and tegra_dsi_get_state. Should
-> these be changed to conn_state->crtc and to_dsi_state(conn_state)?
->
-> Similarly for HDMI / SOR.
->
-
-I must have missed that. Good catch
-
-> > @@ -1059,8 +1069,8 @@ static const struct drm_encoder_funcs tegra_dsi_e=
-ncoder_funcs =3D {
-> >  };
-> >
-> >  static const struct drm_encoder_helper_funcs tegra_dsi_encoder_helper_=
-funcs =3D {
-> > -     .disable =3D tegra_dsi_encoder_disable,
-> > -     .enable =3D tegra_dsi_encoder_enable,
-> > +     .atomic_disable =3D tegra_dsi_encoder_disable,
-> > +     .atomic_enable =3D tegra_dsi_encoder_enable,
-> >       .atomic_check =3D tegra_dsi_encoder_atomic_check,
-> >  };
-> >
-> > diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.=
-c
-> > index e8c4347f09e69..a78279810dd82 100644
-> > --- a/drivers/gpu/drm/tegra/hdmi.c
-> > +++ b/drivers/gpu/drm/tegra/hdmi.c
-> > @@ -1166,7 +1166,8 @@ tegra_hdmi_connector_helper_funcs =3D {
-> >       .mode_valid =3D tegra_hdmi_connector_mode_valid,
-> >  };
-> >
-> > -static void tegra_hdmi_encoder_disable(struct drm_encoder *encoder)
-> > +static void tegra_hdmi_encoder_disable(struct drm_encoder *encoder,
-> > +                                    struct drm_atomic_commit *comm_sta=
-te)
-> >  {
-> >       struct tegra_output *output =3D encoder_to_output(encoder);
-> >       struct tegra_dc *dc =3D to_tegra_dc(encoder->crtc);
-> > @@ -1209,18 +1210,27 @@ static void tegra_hdmi_encoder_disable(struct d=
-rm_encoder *encoder)
-> >               dev_err(hdmi->dev, "failed to suspend: %d\n", err);
-> >  }
-> >
-> > -static void tegra_hdmi_encoder_enable(struct drm_encoder *encoder)
-> > +static void tegra_hdmi_encoder_enable(struct drm_encoder *encoder,
-> > +                                   struct drm_atomic_commit *comm_stat=
-e)
-> >  {
-> > -     struct drm_display_mode *mode =3D &encoder->crtc->state->adjusted=
-_mode;
-> >       unsigned int h_sync_width, h_front_porch, h_back_porch, i, rekey;
-> >       struct tegra_output *output =3D encoder_to_output(encoder);
-> >       struct tegra_dc *dc =3D to_tegra_dc(encoder->crtc);
-> >       struct tegra_hdmi *hdmi =3D to_hdmi(output);
-> > +     struct drm_connector_state *conn_state;
-> > +     struct drm_crtc_state *crtc_state;
-> >       unsigned int pulse_start, div82;
-> > +     struct drm_connector *connector;
-> > +     struct drm_display_mode *mode;
-> >       int retries =3D 1000;
-> >       u32 value;
-> >       int err;
-> >
-> > +     connector =3D drm_atomic_get_new_connector_for_encoder(comm_state=
-, encoder);
-> > +     conn_state =3D drm_atomic_get_new_connector_state(comm_state, con=
-nector);
-> > +     crtc_state =3D drm_atomic_get_new_crtc_state(comm_state, conn_sta=
-te->crtc);
-> > +     mode =3D &crtc_state->adjusted_mode;
-> > +
-> >       err =3D host1x_client_resume(&hdmi->client);
-> >       if (err < 0) {
-> >               dev_err(hdmi->dev, "failed to resume: %d\n", err);
-> > @@ -1460,8 +1470,8 @@ tegra_hdmi_encoder_atomic_check(struct drm_encode=
-r *encoder,
-> >  }
-> >
-> >  static const struct drm_encoder_helper_funcs tegra_hdmi_encoder_helper=
-_funcs =3D {
-> > -     .disable =3D tegra_hdmi_encoder_disable,
-> > -     .enable =3D tegra_hdmi_encoder_enable,
-> > +     .atomic_disable =3D tegra_hdmi_encoder_disable,
-> > +     .atomic_enable =3D tegra_hdmi_encoder_enable,
-> >       .atomic_check =3D tegra_hdmi_encoder_atomic_check,
-> >  };
+> >  drivers/gpu/drm/tegra/rgb.c | 39 +++++++++++++++++++++++++++++++++----
+> >  1 file changed, 35 insertions(+), 4 deletions(-)
 > >
 > > diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-> > index 227a178f761bd..d48d498068ac8 100644
+> > index d48d498068ac8..faecd6f94359f 100644
 > > --- a/drivers/gpu/drm/tegra/rgb.c
 > > +++ b/drivers/gpu/drm/tegra/rgb.c
-> > @@ -90,7 +90,8 @@ static void tegra_dc_write_regs(struct tegra_dc *dc,
-> >               tegra_dc_writel(dc, table[i].value, table[i].offset);
-> >  }
+> > @@ -5,6 +5,7 @@
+> >   */
 > >
-> > -static void tegra_rgb_encoder_disable(struct drm_encoder *encoder)
-> > +static void tegra_rgb_encoder_disable(struct drm_encoder *encoder,
-> > +                                   struct drm_atomic_commit *state)
-> >  {
+> >  #include <linux/clk.h>
+> > +#include <linux/media-bus-format.h>
+> >  #include <linux/of.h>
+> >
+> >  #include <drm/drm_atomic_helper.h>
+> > @@ -106,6 +107,7 @@ static void tegra_rgb_encoder_enable(struct drm_enc=
+oder *encoder,
 > >       struct tegra_output *output =3D encoder_to_output(encoder);
 > >       struct tegra_rgb *rgb =3D to_rgb(output);
-> > @@ -99,12 +100,22 @@ static void tegra_rgb_encoder_disable(struct drm_e=
-ncoder *encoder)
-> >       tegra_dc_commit(rgb->dc);
-> >  }
-> >
-> > -static void tegra_rgb_encoder_enable(struct drm_encoder *encoder)
-> > +static void tegra_rgb_encoder_enable(struct drm_encoder *encoder,
-> > +                                  struct drm_atomic_commit *state)
-> >  {
-> > -     struct drm_display_mode *mode =3D &encoder->crtc->state->adjusted=
-_mode;
-> >       struct tegra_output *output =3D encoder_to_output(encoder);
-> >       struct tegra_rgb *rgb =3D to_rgb(output);
-> > -     u32 value;
-> > +     struct drm_connector_state *conn_state;
-> > +     struct drm_crtc_state *crtc_state;
-> > +     struct drm_connector *connector;
-> > +     struct drm_display_mode *mode;
-> > +     u32 bus_flags, value;
-> > +
-> > +     /* Get mode flags */
-> > +     connector =3D drm_atomic_get_new_connector_for_encoder(state, enc=
-oder);
-> > +     conn_state =3D drm_atomic_get_new_connector_state(state, connecto=
-r);
-> > +     crtc_state =3D drm_atomic_get_new_crtc_state(state, conn_state->c=
+> >       struct drm_connector_state *conn_state;
+> > +     struct drm_bridge_state *bridge_state;
+> >       struct drm_crtc_state *crtc_state;
+> >       struct drm_connector *connector;
+> >       struct drm_display_mode *mode;
+> > @@ -117,12 +119,21 @@ static void tegra_rgb_encoder_enable(struct drm_e=
+ncoder *encoder,
+> >       crtc_state =3D drm_atomic_get_new_crtc_state(state, conn_state->c=
 rtc);
-> > +     mode =3D &crtc_state->adjusted_mode;
+> >       mode =3D &crtc_state->adjusted_mode;
 > >
+> > +     /* Get but flags from the bridge state. */
+>
+> s/but/bus/
+>
+> > +     bridge_state =3D drm_atomic_get_new_bridge_state(state, output->b=
+ridge);
+> > +     if (bridge_state)
+> > +             bus_flags =3D bridge_state->input_bus_cfg.flags;
+> > +     else
+> > +             bus_flags =3D DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE |
+> > +                         DRM_BUS_FLAG_DE_HIGH |
+> > +                         DRM_BUS_FLAG_DATA_MSB_TO_LSB;
+> > +
 > >       tegra_dc_write_regs(rgb->dc, rgb_enable, ARRAY_SIZE(rgb_enable));
 > >
-> > @@ -201,8 +212,8 @@ static const struct drm_encoder_funcs tegra_rgb_enc=
-oder_funcs =3D {
-> >  };
+> >       value =3D DE_SELECT_ACTIVE | DE_CONTROL_NORMAL;
+> >       tegra_dc_writel(rgb->dc, value, DC_DISP_DATA_ENABLE_OPTIONS);
 > >
-> >  static const struct drm_encoder_helper_funcs tegra_rgb_encoder_helper_=
-funcs =3D {
-> > -     .disable =3D tegra_rgb_encoder_disable,
-> > -     .enable =3D tegra_rgb_encoder_enable,
-> > +     .atomic_disable =3D tegra_rgb_encoder_disable,
-> > +     .atomic_enable =3D tegra_rgb_encoder_enable,
-> >       .atomic_check =3D tegra_rgb_encoder_atomic_check,
-> >  };
+> > -     /* configure H- and V-sync signal polarities */
+> > +     /* configure H- and V-sync and pixel clock signal polarities */
+> >       value =3D tegra_dc_readl(rgb->dc, DC_COM_PIN_OUTPUT_POLARITY(1));
 > >
-> > diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-> > index ebac9068b670f..45a9ea94c4355 100644
-> > --- a/drivers/gpu/drm/tegra/sor.c
-> > +++ b/drivers/gpu/drm/tegra/sor.c
-> > @@ -2203,7 +2203,8 @@ static void tegra_sor_hdmi_scdc_start(struct tegr=
-a_sor *sor)
-> >       }
-> >  }
+> >       if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+> > @@ -135,11 +146,31 @@ static void tegra_rgb_encoder_enable(struct drm_e=
+ncoder *encoder,
+> >       else
+> >               value &=3D ~LVS_OUTPUT_POLARITY_LOW;
 > >
-> > -static void tegra_sor_hdmi_disable(struct drm_encoder *encoder)
-> > +static void tegra_sor_hdmi_disable(struct drm_encoder *encoder,
-> > +                                struct drm_atomic_commit *comm_state)
-> >  {
-> >       struct tegra_output *output =3D encoder_to_output(encoder);
-> >       struct tegra_dc *dc =3D to_tegra_dc(encoder->crtc);
-> > @@ -2244,13 +2245,17 @@ static void tegra_sor_hdmi_disable(struct drm_e=
-ncoder *encoder)
-> >       host1x_client_suspend(&sor->client);
-> >  }
+> > +     if (bus_flags & DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE)
+> > +             value &=3D ~BIT(PIN_LSC0);
+> > +     else
+> > +             value |=3D BIT(PIN_LSC0);
+>
+> I think this is the wrong way around: SAMPLE_POSEDGE means that the
+> pixel data is sampled on a rising edge. That is, it should be driven on
+> the low edge so it's ready for sampling in time for the rising edge.
+>
+> LSC0_OUTPUT_POLARITY says that the value "LOW" (a bit confusingly, 1)
+> corresponds to a data transition on the falling edge, i.e. sampling on
+> the rising edge.
+>
+> Section 31.9.6 states this a bit more clearly: "an active low pixel
+> clock means that the data changes on the falling edge of the clock, to
+> be latched on the rising edge".
+>
+
+DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE =3D DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE
+
+Should I replace with DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE?
+
+> > +
+> >       tegra_dc_writel(rgb->dc, value, DC_COM_PIN_OUTPUT_POLARITY(1));
 > >
-> > -static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
-> > +static void tegra_sor_hdmi_enable(struct drm_encoder *encoder,
-> > +                               struct drm_atomic_commit *comm_state)
-> >  {
-> >       struct tegra_output *output =3D encoder_to_output(encoder);
-> >       unsigned int h_ref_to_sync =3D 1, pulse_start, max_ac;
-> >       struct tegra_dc *dc =3D to_tegra_dc(encoder->crtc);
-> >       struct tegra_sor_hdmi_settings *settings;
-> > +     struct drm_connector_state *conn_state;
-> >       struct tegra_sor *sor =3D to_sor(output);
-> > +     struct drm_crtc_state *crtc_state;
-> > +     struct drm_connector *connector;
-> >       struct tegra_sor_state *state;
-> >       struct drm_display_mode *mode;
-> >       unsigned long rate, pclk;
-> > @@ -2259,7 +2264,10 @@ static void tegra_sor_hdmi_enable(struct drm_enc=
-oder *encoder)
-> >       int err;
+> > -     /* XXX: parameterize? */
+> > -     value =3D DISP_DATA_FORMAT_DF1P1C | DISP_ALIGNMENT_MSB |
+> > -             DISP_ORDER_RED_BLUE;
+> > +     /* configure DE signal polarities */
+> > +     value =3D tegra_dc_readl(rgb->dc, DC_COM_PIN_OUTPUT_POLARITY(3));
+> > +
+> > +     if (bus_flags & DRM_BUS_FLAG_DE_LOW)
+> > +             value |=3D BIT(PIN_LSPI);
+> > +     else
+> > +             value &=3D ~BIT(PIN_LSPI);
+> > +
+> > +     tegra_dc_writel(rgb->dc, value, DC_COM_PIN_OUTPUT_POLARITY(3));
+> > +
+> > +     /* configure DATA order and alignment */
+> > +     value =3D DISP_DATA_FORMAT_DF1P1C | DISP_ORDER_RED_BLUE;
+> > +
+> > +     if (bus_flags & DRM_BUS_FLAG_DATA_LSB_TO_MSB)
+> > +             value |=3D DISP_ALIGNMENT_LSB;
+> > +     else
+> > +             value &=3D ~DISP_ALIGNMENT_LSB;
+>
+> DRM_BUS_FLAG_DATA_LSB_TO_MSB does not seem the correct thing to check
+> here. According to the TRM, DISP_ALIGNMENT doesn't swap between LSB/MSB
+> bit ordering in a classical way, instead:
+>
+>   // DISP_DATA_ALIGNMENT =3D 0 (MSB)
+>   LD[23:0] =3D {R[1:0], G[1:0], B[1:0],
+>               R[7:2], G[7:2], B[7:2]};
+>
+>   // DISP_DATA_ALIGNMENT =3D 1 (LSB)
+>   LD[23:0] =3D {R[7:0], G[7:0], B[7:0]};
+>
+> I suppose MSB is more natural for 18-bit panels and LSB for 24-bit
+> panels depending on the layout. So the correct value depends on how the
+> panel is wired to the SoC on the board. Hence, I think we should
+> describe this with a new property in device tree under rgb/dbi or
+> endpoint node. Something like 'nvidia,rgb888-wiring' for LSB? And
+> document that this means the above kind of wiring - not all RGB888
+> panels use it.
+>
+
+Ugh, why is this so confusing...
+
+> > +
+> >       tegra_dc_writel(rgb->dc, value, DC_DISP_DISP_INTERFACE_CONTROL);
 > >
-> >       state =3D to_sor_state(output->connector.state);
-> > -     mode =3D &encoder->crtc->state->adjusted_mode;
-> > +     connector =3D drm_atomic_get_new_connector_for_encoder(comm_state=
-, encoder);
-> > +     conn_state =3D drm_atomic_get_new_connector_state(comm_state, con=
-nector);
-> > +     crtc_state =3D drm_atomic_get_new_crtc_state(comm_state, conn_sta=
-te->crtc);
-> > +     mode =3D &crtc_state->adjusted_mode;
-> >       pclk =3D mode->clock * 1000;
-> >
-> >       err =3D host1x_client_resume(&sor->client);
-> > @@ -2657,8 +2665,8 @@ static void tegra_sor_hdmi_enable(struct drm_enco=
-der *encoder)
-> >  }
-> >
-> >  static const struct drm_encoder_helper_funcs tegra_sor_hdmi_helpers =
-=3D {
-> > -     .disable =3D tegra_sor_hdmi_disable,
-> > -     .enable =3D tegra_sor_hdmi_enable,
-> > +     .atomic_disable =3D tegra_sor_hdmi_disable,
-> > +     .atomic_enable =3D tegra_sor_hdmi_enable,
-> >       .atomic_check =3D tegra_sor_encoder_atomic_check,
-> >  };
-> >
+> >       tegra_dc_commit(rgb->dc);
 > > --
 > > 2.53.0
 > >
-> >
->
->
->
->
