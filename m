@@ -1,13 +1,13 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.43.12
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.68
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795754538;
-	b=hsSvgnm2Iypkjf6ETAmeSRQhriuRD5Fe9KsyeH6p4zhmYQaz2A54KFuMWvOzV+JHCvmM
-	 iWoKMpId9t76mncwUDRYRWZSo3/ZV2v+wPDL1RzoEg7N3QD+9CVmPsm2GOSiu9szCTE5h
-	 hRSiZ1q5JnVoG4j1ZMrQNwDqiNVMUiW8qGu2CIcdyLzAfasaXucvw3a1zhN0rc7ByfwRx
-	 eYPsEeqa9M8HhRiyS52BbSrMmeg/RGFYgV+YjBgPUUvBnDFj8Uunx/zuKTE5/+/1jHtHC
-	 uMpMNt7hvfttowfoZ3Msrqnz0rLM83XBgRSL6UX9IdR9CKFcodt6Cdvqd/brMSFpnCw==
+	t=1795755405;
+	b=yWHvZ5NWpe5ycDx9bPdUsK1ezl5NzwZ19W0NJuCqJ/D3HCyB0f8j3Oy83H30qPhRWVuG
+	 ih7JufDwnLMpBUKGM4ov9oSmpiF2nweB0DUMRV2O+X1YCN5EOqAAvZd2LNLiOqhvVJ3Ab
+	 4s7vZa79NCwEAEmKC5ooVW8LdJhnd1DLfZ745Tr+rUdee8XhYPe9Q+QE3qsOHGpV6Arqu
+	 bayC2aBub3B5IVBFDW6Q5l7PWEKR8EIRQGeKO6pWGX8NQfqcVv9kjVPdMsVuT0BBPz57W
+	 I7q9VOafRx70fYSPwP19Xfw4FMA3F/9Y0KtPeHwJlA+mKQZZsMZvjQ9YNSO0onaHxJQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795754538;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795755405;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
 	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
@@ -25,54 +25,54 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
 	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=fdJQM/wfYisv1aa9gNcAaTTKAbpS3pIa6xYkNd+SLh0=;
-	b=bumNZ0CfPl0NGFeakKAHAqiy1z8mW54n1Yp2zhqC4bYD2wf7A0x/3NQPjUqRg/NIB1TI
-	 czOgyYlWEKCJaoABVLL91JWyhiq6CqPPHApNOa8QAZnWNUyeySyrAMDG6w7kgbgwWYsK0
-	 ROKT8LE9mnXoWgt4QSDogLkzD3KMZ4+ZcbKi+0nt3I6Yx3BzrmtXRzvigEKCiydQ8etpV
-	 UC/2Z2el2VpvXpeRqrcTMuwQJ+qu7vknXM9iOWn7DujtaDff5ZCj56zVg5m9sXouVf6Uc
-	 4rzqSi1yoKlRNlgfgMDreS7d/Hizg5j6YpG122DlMd1liyevhDInz9qGONviYKm3erQ==
+	bh=irGQC7zuBG+4smKYfdjZ2ooZS2o+R8gHo7UswdRdjHA=;
+	b=3bEpC9RjVHVA2VhdRvX8XC5BQZoNztwCnJdDK3RQglk/XzlxqRoOnykHYludWAd9SSJG
+	 5S1ETrX2Yl2ZdcNw1L5zI2c9NajCDSK1EubfUXZGeMLWDXOxRtCiS1VS+CPitKK+A+xuC
+	 xXKmQKx0vZeHRiCMVE+Fmr9bOiBhJEaMnO9LVIWBocH2N3Lhcp/cvCvOSarjyyCqJxHd8
+	 P8xrD2pIDB/FMOzcOo2LqAGMQehwPyuxXqyArkgEllnJn4ADuyrAPjZi+7lfUB7NxTYDx
+	 XbGOvONQKnEJDHu8jqHWrRFfCJVQ+nQSC/Lr5oA8ElopoLD0MV6Ni8u8u/Zsa5Kjdbg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=nvidia.com;
 	spf=fail smtp.mailfrom=nvidia.com;
-	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=JeDTAM7d;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.43.12
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012012.outbound.protection.outlook.com [52.101.43.12])
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=tsYiaz6h;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.57.68
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011068.outbound.protection.outlook.com [52.101.57.68])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD71E606A326;
-	Fri, 27 Nov 2026 04:42:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BD71E606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43860606A31C;
+	Fri, 27 Nov 2026 04:56:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 43860606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=JeDTAM7d
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=tsYiaz6h
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nueYcvWWLqSrgXVGQr4ZmMXIDaRb88ZmWFoWuKmB1+nl31yDzQtVHHNWE7q4XafODz1v5K9uszSl8HaND4GgGGvP8cWeuZxVbHLQjRy6EHcKkF1r4UO5AQnaGjGro+hsUOHwSiU7K/j8AeIkq2dERrBuyfaFa8J0Je7/LozoVUY8U9uIWl0oDU33+1ednhil/WNKJd4R9E5Gsmpuwl709yj+haZDLpyJXwfrb/YoSxvNJxaacnx2BhXfsDdHtPC+R6cIk7J297X0lvOapo9yZNQSVivyJxUUGMxaW9PClZYjdDZNuo53vST9Rpv7Rnvrjz4CcageknUPrkpEB1TEUA==
+ b=klkNnOZS2tI8j7BcTt/WQ5SJ/3Z2Rln0/hkAZEQBKHbNNTWLOu5RzIzgWdTyWDyRPL7QmY5UtJTqP+JFBCQsXz4+6nQzNL0FbOq89oYLrHECatNozhskxMx97uJrTp8rhZ0nqsIkGmfPYP53ceIHCqMCJ8EvltsyH6ZkJ9QRT1o4WmVQ0i/n/HQfYRcejRU4thFNyTHKp+lRfsxjpec6YeF7mpzu4kvl0e2tD/TAyhM/F3x5++xdOYlPTRCLstRu3svNLqkdcEXpjIUZ8m91lTdQXTpcsJbEH7t8KHAzDeYOBal+kkDg39n7X+nvaatKu4eFn/LJJ6IYX0svrJk3fA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fdJQM/wfYisv1aa9gNcAaTTKAbpS3pIa6xYkNd+SLh0=;
- b=qI/OxPuPZABfFw7AGfR6tNIIqDeGOwM0Kce4wyiTtFkZAKUxAD7SucqNmr1iEPwwPDJrtx6KvsFeYaaf8ggGEYzsssD4GqNnNq15sPnGpkCjov8f01qg8kz9g559MJFPTYqggQW3p3jhSMAnzfKXEfx45bGkEP/lvX6+h+Zdqmy4BtHGEYtdzT7VQ6t2taJxPKHb/p5qYVvVxC/HPTASbeLmd2bhk4Fvg+xK/++aSiLOFwibxlMnCi2e9uf7SC9Q7zWsWKsnvKiMYGNnIX9o+0ZTsaTQnuwx2x12lv/SSwqjMyZw6Q34QvS4GCoInsKptexZRvFVlbpIU0uaB18wbg==
+ bh=irGQC7zuBG+4smKYfdjZ2ooZS2o+R8gHo7UswdRdjHA=;
+ b=Q89rFZ8l4o7iE0FQQjrihqs/1TlvADDiTyhes0XAzQAcFEfq36tyds/o1I4eAnW+m8mvAiDCj5atU3w3gtdnORjN/B1o65YYe/0pdc9CVxeK6kTEBmAgUUF8FR9jpHoxBAivVlvVzspTAorc7THcucSpgpAK9jWZuVe5TwJg3g5DIFrFn/YJjd9ItLcqp1bCFRpIF7EULaao/4Z+aMIcb7Ng/EOJ+diiT6931YYf+SnT1pbKmPQ4AQ5qPzrja9Spul8KMt9aJ9qnwV9BbswyxmvRmUuKw2oT9U21xQnNdj/MjltuC685KtnrhhbZ2PyXv17ebXy/6IdGeTnIbCrQ1w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fdJQM/wfYisv1aa9gNcAaTTKAbpS3pIa6xYkNd+SLh0=;
- b=JeDTAM7dgtT0qCYHg9mJSDed1Gi7C57eP0jW95oMzEhAHSo2l8cHljipr6qoJf+wdyO6pRjxFHWCiujM9FPmivVjbmPRzLuayKvXyz2Q00aaxlxiCl4qgQS0bTX5MTWAE3KfBrZQHjpnoM+newdrIyVQpCWbvkOymkFe4Oe7aYuwkBeNkdbvnJ8TcJxJCLVfR/jkzthM+QEdKlFk7LFWipTkcR3rI9LqaocDs3xUXVDID6JWml3yJicGNwAqPm4jFSB0dNP7VazwDcMQ5LooWmKBW3wveqWulbXz/41kSkRwdQLSXsFfyhSf/rqJUPrk98fUPHmat7Af0CbadI0LVg==
+ bh=irGQC7zuBG+4smKYfdjZ2ooZS2o+R8gHo7UswdRdjHA=;
+ b=tsYiaz6h0BsQOClzJWDkZkBKIsTRUBgmioF+A9H1FnoW3rps4oGEdhn6evHtHH5Pux6UqvlUIZIovCufBsrpH6x6/MUG2O35XTd79ciYTCrm7/UJAbIHoHRKCcX/OezwOEnlDHr0XvU1MeplnzFJxPGLTnkCgYeBrjiMU5426da4kVdul6RMjc6TeckTmcEuDZz3knvgXDKhObkOCEysCpCG9LUn/5hoCtdSpNUuBKLXVfLF6mfK4moiuntA2bHXmrRcdQqOnnV8qFiHWNWFa0LHARpY3jtCGSzI6hWSIU9ZkMCPWvqbjE9FiAArFwWdM+o9SJoeSyBUGCyOaeDmJg==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by DS7PPF539334D8E.namprd12.prod.outlook.com (2603:10b6:f:fc02::945) with
+ by PH0PR12MB8098.namprd12.prod.outlook.com (2603:10b6:510:29a::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.9; Fri, 27 Nov
- 2026 04:40:13 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.13; Fri, 27 Nov
+ 2026 04:56:41 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0662.004; Fri, 27 Nov 2026
- 04:40:13 +0000
+ 04:56:41 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
@@ -88,18 +88,17 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
  Svyatoslav Ryhel <clamor95@gmail.com>
 Subject:
- Re: [PATCH v8 03/12] drm/panel: panel-hitachi-tx10d07vm0baa: Convert to
- mipi_dbi_write_seq_multi()
-Date: Fri, 27 Nov 2026 13:40:10 +0900
-Message-ID: <86PXavKOQP6x9YV3szjG2A@nvidia.com>
-In-Reply-To: <20261122081820.53199-4-clamor95@gmail.com>
+ Re: [PATCH v8 06/12] drm/tegra: dc: Add elements required by Tegra MIPI DBI
+Date: Fri, 27 Nov 2026 13:56:37 +0900
+Message-ID: <CQmBXmddTJ6v1iTnbDfQLA@nvidia.com>
+In-Reply-To: <20261122081820.53199-7-clamor95@gmail.com>
 References:
  <20261122081820.53199-1-clamor95@gmail.com>
- <20261122081820.53199-4-clamor95@gmail.com>
+ <20261122081820.53199-7-clamor95@gmail.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0035.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:29d::8) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: TYWPR01CA0018.jpnprd01.prod.outlook.com
+ (2603:1096:400:a9::23) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -111,344 +110,344 @@ List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS7PPF539334D8E:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57e326d3-837a-4165-182a-08df4c4086d6
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|PH0PR12MB8098:EE_
+X-MS-Office365-Filtering-Correlation-Id: f977c383-df6c-47bb-5acf-08df4c42d381
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|10070799003|23010399003|366016|4143699003|11063799006|261009223027099003|22082099003|18002099003|921020|10067099003|56012099006|261102123227099003|261026121527099003|261026140227099003|261021123027099003|261028144727099003|261021121427099003|261022105027099003|261022113327099003|261022075727099003;
+	BCL:0;ARA:13230040|366016|23010399003|7416014|10070799003|376014|1800799024|10067099003|4143699003|261026121527099003|56012099006|921020|11063799006|261009223027099003|261021121427099003|261022075727099003|261028144727099003|261022105027099003|261021123027099003|261102123227099003|261026140227099003|18002099003|6133799003|22082099003|3023799007;
 X-Microsoft-Antispam-Message-Info:
-	BsotrAzJ56rYHq3rt8NIlSSfX+i0iQlTFiz89/zsBxT+ldBO8c8e0GL3rxVuaSbe5K9VgPYHsZh4KYqSr9ogMe6i4y7vuEEotyPnNGBUgmxGq1Al+Z20AnSq14EL6L2fEl07I9ySlzQdbKSDW3CPrVIhtgSYOOBAmohmPcchKy1FcfdJdET60HkKlBPSy496Hw67nS6jbzbW64ZhnneOL9KTmBsNRQ6Ah12wcKzh069snewAtzAROM1Vpu8g/qBR9SYaqPEMIQ3raczNvlHMxa15lv9WqhT04apXY8NqTDR1nhWpTgZ5z9ELagWV5h5hyXUt8RYr4fbE0RrpcEtoU0C7huW/lOb8pyLD5KrgUPfI7LrHUB4II9TwtnY7JW2U9UoBw7/O93ZF9SG8mN9mmMwlVw5Yw2DCDHmRlpUASFoC4/JQdnN7eNXeAWJ9ijX/F1EE8/ntAIpF3A2eIz6+/WzRy74RO74hQmRHT+9sIBZAcGC2xxxtBYPmzVPeZhJL05zRpadZlBSkomyo+SeWH3m5Q0EpWBiVK+dM9tKFxnUjEsYEoLkLOj+KcPcRPbUgY70GBmP2CE4RJHRrWDCtKv9emuJn/I9NE0jVfQtEB7PgkACxBvBbyBLsv0jzkbI+J3JxMU3tLcZafnqU9n1h/50KQ9p1vR+6tEUd9Kg4ILdpT0RbTiqsOP4UBvdiqKG0qQlvUU7PR7S/2aqfU/GYZQ==
+	SW9VDjEmkl7VSL7BYLz/XDrgcb9roIs527kEqeGMDFXXZczd8qIpWEAkXPVBz7meXkNpV0GkR3GhsJa5T9rHywVEdZxiVc7kCtMu+CP2DkTeR6YMa5KOV4+g7YnI3lOBdq4JX2q7Gwu/2FZ9lDmCZi1KDUiBpAKh40PNLSnx216E9u91P01shx7G0ptUoErncnpGaJnUROLUCttiihtQMITM73F3BOQbPcqOefTdGnXvknimaX7Yh5S+CzuQYx07PY76+SLGD5jzwpsx3d9fpmJ7U2iBeLgGUGNr9ybv6dwGMifv4bCtWNoM/K3waPP13ceOTMOHv9mE8JptfQn9ye4pPGGdOR1yjWu6/WY/aHZJ/5iCXh+wdxKiSXB+Wnp2LYuAqw2krwJAJDxAILMtd8yEe4+RBKhijRIVtixMivXh7y3fEE7CQ4OZ0EZ3OH/rqjW6xN2pYD7kkhTQtytj1w0EemDnvX80b/8meUtQvRVDMmsAcqxsV9wvVYW3IWF28rFeIyVwylSx8NL/fhIFZqPDpvUor1cAAiKgUz892Orl5JhPAXbuh8d8TWZISVVFICPP3Q4naEBe7fnUebEA/KqBB/Jn15YNKc+GLLo3JqOuGqp3l2s/wgk65mfhJogWLWJQpmDS06ID3MT2fFHACc58yXPSh/OaHQLsSbFmTyQATXnuWq5t0yQZhLUFkOTbu4ujLcW12u5QQlaaIuiuRg==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(10070799003)(23010399003)(366016)(4143699003)(11063799006)(261009223027099003)(22082099003)(18002099003)(921020)(10067099003)(56012099006)(261102123227099003)(261026121527099003)(261026140227099003)(261021123027099003)(261028144727099003)(261021121427099003)(261022105027099003)(261022113327099003)(261022075727099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(7416014)(10070799003)(376014)(1800799024)(10067099003)(4143699003)(261026121527099003)(56012099006)(921020)(11063799006)(261009223027099003)(261021121427099003)(261022075727099003)(261028144727099003)(261022105027099003)(261021123027099003)(261102123227099003)(261026140227099003)(18002099003)(6133799003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b1drK1J3ck5JcG9UQ2ZpOFV1UGlaZUpTY3gvaTd0Y3RZL1FlOUZkMnY2L1la?=
- =?utf-8?B?ZDhRK3I1UkFXdWJXbGxKVzYrMXg1UkVNdzJvUXNETGFKMVZldWo2S2JXbUNM?=
- =?utf-8?B?RFRmcENlTklvQUhRS0F2eFg4d2FNR0xlOHVZeUszYWVlc2hobDUyNkxuZzRP?=
- =?utf-8?B?VXIybkVYTlh4dWp5SXJIVUFyT05LbTZYaEZ2bkhEZnZtWkxUd1ltVVZMV0Mw?=
- =?utf-8?B?MFpacmNKelJUSFB1anVuWndid0d4dFRWYlFHL1IvbXZ1Mjh2WGRVRkxLbkRz?=
- =?utf-8?B?SWtNMVZnUkxsUVBIMlFHdVNsUEFqNWdUQ1RTQys5NkRTUVloTXJid1ZHSXRl?=
- =?utf-8?B?UTZuR2s2eDlRTTBLV2YzbGNTQytYdkNIM0ZTTUNNa0tINW5tNU1PcGplODB4?=
- =?utf-8?B?TGVLV2dOd3dPUGZWSk5xQWEwamROWkloVTZ1NXBxZkFRalZMZ0lnWGx6dGFL?=
- =?utf-8?B?TXdZWUVSQTJjKy83MUdsMkVvbUpaei9TS2tQbWYwWWdsb2ZXeUxsS2RQK2ZJ?=
- =?utf-8?B?bmgyK2YyeTQ3N0hrMXA1MklSekg1bGVZdy90N0NIOWR1WXVRbFhXdDMxek80?=
- =?utf-8?B?ZlV0V2hXRVk3R0xXWWFEZXQ4aVBhdE1yZ3JwWkU4amV6L1V4cUFuck5TcExS?=
- =?utf-8?B?RWVIOFZGc3JPV3c1Vk9XMU5jS0tqOW9tRXNNTFFpTFpSOFZ2UkpmaFdWR3hk?=
- =?utf-8?B?RjhNdVBLNFJ4VHZPVXhnSVcvWEYwbU1sVlc3YjBXYXpQR2krQm0xNVdmWDB6?=
- =?utf-8?B?ZGNVc1NleDNsbkpVNkF0Qmp2RWQ0Q0M3NHI1QnNibTg4ejhXaG11bzhEM2xX?=
- =?utf-8?B?SURwVHFvUjJNSUY4amd6eGUyUk9rQlBISURYM1RMV3RzdGRxakt4YkU4VjRq?=
- =?utf-8?B?aytpSmZ0SjJFWjFFQUVUNC9xMXdQTGZQVDZNV2xUL3gxaC9xeTBKenlJV2Zx?=
- =?utf-8?B?dW5Fa05FNU41YVJON2NnV2VxWWlXckZIYXM3enpRZTNkZysvSU9vdTRHRmlF?=
- =?utf-8?B?cEMxTGtsaGVvdlpkUE9oM0orWkRnZ3RJSzk5aC9WTzlxWjBaWHBDT0RZTEhz?=
- =?utf-8?B?aTZNTldNWm1weEJGMFptMkFiQTcrZFc0UWw2bUZpSGYvU3ZaK3AzeXoxWits?=
- =?utf-8?B?VUxJZzgxRmtKdy9LeU5rb3BFcTRhQmJKdWszc044ZWZNNjFYdTByY2FuN2p6?=
- =?utf-8?B?NUJPR3VTMFJ5OCtmVW1sMU9PSHp2MGROYXVyZjJCZmlUVWhWdlN1amt6cGxx?=
- =?utf-8?B?NENWQUhXY0E0RGZEejdzQ0lyWTNwblU0bTloOW1tZ21JTk9ielNuV2FTK1pM?=
- =?utf-8?B?NWpnZHI1VGdtMThScEp0MjhKN0pHbmljM1dta1Z2R3lwdHFSczMrK2JPMTVS?=
- =?utf-8?B?Qk5nR3FiYTVpUzlhc0gvQ25GenVUQjNGSHdyVkp4elZPVE13aFlXaDVMM044?=
- =?utf-8?B?c1VqdUR2MlkvTllCb2ROaUt1cGpQYndMTFNoUm5ZZ0dLZklyUGxNK0w4Zmlm?=
- =?utf-8?B?azhxVUVtTWszNU51YzEwK1ZhY3BrTmxxTnRNZUo2UWQ2dm11bEdzbFRGSVVa?=
- =?utf-8?B?VCtXbGd5SHpvL1l2TEt5OWtGZzhkaE5DNUlHTVRFRmM4b2xOREVxUHlTZHU5?=
- =?utf-8?B?WUJ1bnBZTjJWVTVHcFBzYVV3N2dzakVyamQ0VkRuYXZOc1ZXcG1uZ2xLVU1w?=
- =?utf-8?B?UUJiVWl4QVh5UDhUVXdBTUh5UHArZWxXYkJYL3ZjOUx6ZjFmaFhVbDI0MWc1?=
- =?utf-8?B?YnFTZEpkcTZDNE5rV2loS2pqWmhad0I0QnhIbTh5U3lYRG9XZ00rNkVtSzZv?=
- =?utf-8?B?VUlaUnlrSkhUVm5JckhmNFU3T0RWRzNvRnhPOThkSkdld1JnSkY1N1RBTjgw?=
- =?utf-8?B?bmVBcmpGVjF6ZHdGV3BJTnRudWRXNFRZRHlqNVE3TytLdHgwWmhFRlNVbGgr?=
- =?utf-8?B?UTRrbXZGNWQ2cUQ0VWc4U2cyY0dab1JWRlN1bkpSeVEyb0l0VGovaTUveVpC?=
- =?utf-8?B?bXAzWWRZY2c5TWlCQUV5anJVVzBHVHEyQnNYb3h2azh2bXJxNFRLTFk5U1lm?=
- =?utf-8?B?OVp5bzlDK0FBTlBKYlBOUmYwZ3NkbDBFTGpPWHQxOVJGait4UUtGNGdiQ3pE?=
- =?utf-8?B?UlhXSlVWOXF5cGJHQ2RWN0h2UENHWEhXOWZwOG5aZC96cG9WS1BSdlN5NC9E?=
- =?utf-8?B?RWFza2Z0Z2hVQlJqUi9mQUlhaU5vQWRLRGZqOWNaZk1RdmZIM0ZaMFMxdWJR?=
- =?utf-8?B?eXVwQlpNNGZlTlBnajU5N2dTVDNuckVCWlZMZlVQSzhRS29VUG1UWmpoVjBr?=
- =?utf-8?B?ck9WMStUVlNMRWkxZWNuT2xOcGQzNDdIL0ZxclhUS3h2aVhHbTJ0ZXAvWEcw?=
- =?utf-8?Q?T8RTD+UuNbZuNAiKmjy/kjKa8iu1nDc7h4OSAVN/W/GmO?=
-X-MS-Exchange-AntiSpam-MessageData-1: NGJdvIcxPf3b0w==
+	=?utf-8?B?Y1c1TzhjYXRKV1Y4dkZIa0VySkJwYk91KzVneDdUN28vbjAyVnN2YmJSOHpL?=
+ =?utf-8?B?emVBZW5seGRlUzIvY1NWOU1jWElUZ1dTYWNxZ1pyR0pvV2NJeXNMUUdaazZt?=
+ =?utf-8?B?SDZLL2IrUmJhQ1lhR094aCttYzFuOVlSNThLUElicEtCYStGYXNxNkdEOXRJ?=
+ =?utf-8?B?OU5ha3NWaEg2WHIzYVdvRTRhS0FVYXBjNDU5THpSVTRPTGludG5KVzZuZmd6?=
+ =?utf-8?B?YnQ0T3JpcmFGZU5OTFVTYTBQeG94UXdXd1NrOE9yQ3N1L3QvenZYbjRoVDVo?=
+ =?utf-8?B?WTVYeE5QYU4xNFhSckZQV3dka1VmWWgzakQ0ZWtGYW0zZFBSRDNkTkh3cTJ5?=
+ =?utf-8?B?VWFWdEdxSjJtZWQ5NEJKODNnZE5FZHIyeWJzdXU0emh0STgyaGpVekdEV0ZG?=
+ =?utf-8?B?c0FXOG9rSVQvekVYcG05YVNydUFNcXViZldLWmR6QURtREFhYVM0VHEvRnRv?=
+ =?utf-8?B?SGY5Q0plV2lNK29mQzM3VFU2Y0VKcXhZR2NKVzJGSmNMQXA5UlI0ZnQzOEsx?=
+ =?utf-8?B?bkFFSWxlbmZaZHNrVStNS3JrZEgxSmRrOEZCWWJNWkp2eDV0RTBrZWM3UUR1?=
+ =?utf-8?B?NXpsWUNROHEwUGs5LzZmTENVNnZ3L3d2djhXZmJ5dXhDL0pZa3ppTVFWZnMw?=
+ =?utf-8?B?OVNPZVhhR245aXdzNWNRK0V1OUJRUUJZcGQxRzdxM242cHZRRk5TS1ljWFdr?=
+ =?utf-8?B?SVdCUElWM3ZmSHF6KzdiZGJERDRvNEhKbFlvaVBLR3hDTUFZdTVWdCs4VGoz?=
+ =?utf-8?B?NFowRXpkMmZueDdUZTJweStmTUE1YURqamZNakFKak9kZXRWc2xnUzluZG9S?=
+ =?utf-8?B?T3dOajByU0l5eEdIcVNlOFZoVHJjdmg0UUN0dGd1ck1LYWF1a3F2enUzcjlH?=
+ =?utf-8?B?a3poZmhpYklaSE5kaElOYVlPN3kvSHprZFE0ejFUQzZZRmxIM0tRNTZJTndy?=
+ =?utf-8?B?NFp1VkR3TlRzYVREdGJNWmJZa3JlQnYvMnNvUTAzVWZtaG5JTW9XdWhseUVo?=
+ =?utf-8?B?VmhhbzB5aFF1NlcvM1FPTnB2VFRUUGFwRVM3d21PSmxDQ2FJb2pFZkx1dUIv?=
+ =?utf-8?B?RlVKOHdScCthbndCQkZKUjExd0k1TTF1WnlQYi8xajFHRzExWE1SUnM0WkNy?=
+ =?utf-8?B?bUFWSGlJSkRENU1kYm5jZTZtRjhKalQ2TFo5NTBGcmdhbjdKMGNsNis2VjVB?=
+ =?utf-8?B?Rk16U1ZGYjJ3Y3FxNGxCRkwyVzVIVmhwcEdSSWtoaUhKNGpYSWNpUzVoODly?=
+ =?utf-8?B?YkNoSGRiU1FvNU50NmlYNlNaUEdjYlJzQ3M4Q1hnVkRJZjJxSWY3MmIzWG9a?=
+ =?utf-8?B?NFhpZzNsYTFETVY5YlBmZjV6dzNiV1YzZ0dINjUrdFlYQkx5OVJDemVuK3R5?=
+ =?utf-8?B?SVZvU0VVMkpYa1lKOEF3TzV4TzJQT1JvczYvSzFUeUdnMVY1ZGdOS2M3WEJl?=
+ =?utf-8?B?L1FnNVZpSW1ZY01yYXBWMzBoZFBvTlQyajBaMDVLVjViUHdsdmJlekFSUGZK?=
+ =?utf-8?B?ZWpHWkVrSlJVcWptalc3cFJTSjlJT2xNL01wOWRBMC9jMVdHUFpmSTI4OWdC?=
+ =?utf-8?B?L05KR01DRFdReFNnL0ZOcDl3NWQvYzRtV3lsaUxMdUlnbENHamxNTTBkOVpC?=
+ =?utf-8?B?YWl1RDNSK2ptK3pNVHRZMGNRWDVvN21LMWdBbStXNkhiTnhMektxc0hlQnNv?=
+ =?utf-8?B?ZW1KcG9scnB2MUNqMVI0Q2JqcU5XVDlzMW9FMmJZODhpYkw5SWNjV25VYjNV?=
+ =?utf-8?B?aDVzQ1BNQUpZU2NCS3prVVNyQjBnZ2prL0w2UjREcnBwclZPY3hyN0NzbjZ6?=
+ =?utf-8?B?aU16WE1nYVp1VlJGSzZLRWNRUzZnVkt4T1VvOXYrZUxncEhIRTVZNk5LTWxC?=
+ =?utf-8?B?WG12bTNnVTlvWnFzU2hzMlhaNm13aVo3cklMZ2FPeFU0Z3dxb1FHTDYyNTlh?=
+ =?utf-8?B?eExtTmQ4Y0o0YWZsRnp1aVBWM0I1Yld4WDc5dDBNUXV1enZRallTUko1eHMr?=
+ =?utf-8?B?TG10SmZlZ0FzQ1pUT3lnV0tnRDhpcUIvR3hzQ3kwSTAwSm9sMWVPY2EyUWM2?=
+ =?utf-8?B?bDFWeHl1SWhscVc3Rm83ZVFjQ0hEYWRId0N2bnF2aXR1bUswNXI4NThqS1Uv?=
+ =?utf-8?B?U0MvVDBWMk1kUGdNcDBrQjFDSDBxenJBaE81R3l5UFpDNVN1VHdMYUZCY211?=
+ =?utf-8?B?RmhwWW5ab0IzOVE1ckJtUzkycDl1UnhsYkZrdG5mUVlaTjlOUDQvMlJ4dkJn?=
+ =?utf-8?B?ZWxCOVpaMFl1WXBjeWp4UTBLRU1MbC9PdWtoY2lpYnd2aGRtNG5EOHB3UlhY?=
+ =?utf-8?B?eVpVZnh2bENJaDgvZkc1Uk9abEJJRDN1eXBYblpPdWZOM2F2RWhuMldHV1dG?=
+ =?utf-8?Q?ctM9ee1L0wVzgKvhckBkn8FGG6FpI08TfzKiHo6I0VmGJ?=
+X-MS-Exchange-AntiSpam-MessageData-1: 4pEqlRzU9S/mLQ==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57e326d3-837a-4165-182a-08df4c4086d6
+X-MS-Exchange-CrossTenant-Network-Message-Id: f977c383-df6c-47bb-5acf-08df4c42d381
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 04:40:13.5781
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 04:56:41.1191
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BN709hvJ0vhvSzFOlLUnVl2chdw3AlCPfm06X5nUR1qM9TL/Mp7VQoA8WZRKr+HpbBriUVMBy3j0hh2cIHh1sA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PPF539334D8E
+X-MS-Exchange-CrossTenant-UserPrincipalName: XVImXkwBfFZMBZeTbN14ae4ZsSPHLzkwq1RaCwzpvCmdtDIMegVXS/YY1cpf2FcAGk0JiLWKVzYEWKQG8Svkfw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8098
 
 On Sunday, November 22, 2026 5:18=E2=80=AFPM Svyatoslav Ryhel wrote:
-> Switch from the internal panel command-sending macro to a generic one
-> to improve code reuse.
+> Add DC register definitions with additional fields in preparation for
+> adding the 8-bit CPU interface (MIPI DBI).
+
+Maybe also mention that some whitespace cleanup has been done.
+
 >=20
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  .../drm/panel/panel-hitachi-tx10d07vm0baa.c   | 213 +++++++++---------
->  1 file changed, 101 insertions(+), 112 deletions(-)
+>  drivers/gpu/drm/tegra/dc.h | 194 ++++++++++++++++++++++++++++++++++---
+>  1 file changed, 183 insertions(+), 11 deletions(-)
 >=20
-> diff --git a/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c b/driver=
-s/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
-> index 318ece68b7806..c5b59a7341d8e 100644
-> --- a/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
-> +++ b/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
-> @@ -37,19 +37,6 @@ static inline struct hitachi_tx10d07vm0baa *to_hitachi=
-_tx10d07vm0baa(struct drm_
->  	return container_of(panel, struct hitachi_tx10d07vm0baa, panel);
->  }
+> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+> index 0cb0515968b35..e8913c5530a2d 100644
+> --- a/drivers/gpu/drm/tegra/dc.h
+> +++ b/drivers/gpu/drm/tegra/dc.h
+> @@ -272,14 +272,150 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+>  #define  DC_COM_CRC_CONTROL_WAIT (1 << 1)
+>  #define  DC_COM_CRC_CONTROL_ENABLE (1 << 0)
+>  #define DC_COM_CRC_CHECKSUM			0x301
+> -#define DC_COM_PIN_OUTPUT_ENABLE(x) (0x302 + (x))
+> -#define DC_COM_PIN_OUTPUT_POLARITY(x) (0x306 + (x))
+> -#define LVS_OUTPUT_POLARITY_LOW (1 << 28)
+> -#define LHS_OUTPUT_POLARITY_LOW (1 << 30)
+> -#define DC_COM_PIN_OUTPUT_DATA(x) (0x30a + (x))
+> -#define DC_COM_PIN_INPUT_ENABLE(x) (0x30e + (x))
+> -#define DC_COM_PIN_INPUT_DATA(x) (0x312 + (x))
+> -#define DC_COM_PIN_OUTPUT_SELECT(x) (0x314 + (x))
+> +
+> +#define DC_COM_PIN_OUTPUT_ENABLE(x)		(0x302 + (x))
+> +#define DC_COM_PIN_OUTPUT_POLARITY(x)		(0x306 + (x))
+> +#define LVS_OUTPUT_POLARITY_LOW			BIT(28)
+> +#define LHS_OUTPUT_POLARITY_LOW			BIT(30)
+> +#define DC_COM_PIN_OUTPUT_DATA(x)		(0x30a + (x))
+> +/* Pin unmask is 1 bit above position of the pin in the OUTPUT_DATA regi=
+ster */
+> +#define PIN_UNMASK(x)				BIT((x) + 1)
+> +#define DC_COM_PIN_INPUT_ENABLE(x)		(0x30e + (x))
+> +
+> +/*
+> + * The definitions below describe pin positions in the DC_COM_PIN_OUTPUT=
+_ENABLE(x),
+> + * DC_COM_PIN_OUTPUT_POLARITY(x), DC_COM_PIN_OUTPUT_DATA(x), and
+> + * DC_COM_PIN_INPUT_ENABLE(x) registers. The comment before each group i=
+ndicates
+> + * the index of the register (the x value).
+> + */
+> +
+> +/* 0 */
+> +#define PIN_LD0					0
+> +#define PIN_LD1					2
+> +#define PIN_LD2					4
+> +#define PIN_LD3					6
+> +#define PIN_LD4					8
+> +#define PIN_LD5					10
+> +#define PIN_LD6					12
+> +#define PIN_LD7					14
+> +#define PIN_LD8					16
+> +#define PIN_LD9					18
+> +#define PIN_LD10				20
+> +#define PIN_LD11				22
+> +#define PIN_LD12				24
+> +#define PIN_LD13				26
+> +#define PIN_LD14				28
+> +#define PIN_LD15				30
+> +
+> +/* 1 */
+> +#define PIN_LD16				0
+> +#define PIN_LD17				2
+> +#define PIN_LPW0				16
+> +#define PIN_LPW1				18
+> +#define PIN_LPW2				20
+> +#define PIN_LSC0				24
+> +#define PIN_LSC1				26
+> +#define PIN_LVS					28
+> +#define PIN_LHS					30
+> +
+> +/* 2 */
+> +#define PIN_LHP0				0
+> +#define PIN_LHP1				2
+> +#define PIN_LHP2				4
+> +#define PIN_LVP0				8
+> +#define PIN_LVP1				10
+> +#define PIN_LM0					16
+> +#define PIN_LM1					18
+> +#define PIN_LDI					20
+> +#define PIN_LPP					22
+> +
+> +/* 3 */
+> +#define PIN_LSCK				0
+> +#define PIN_LSDA				2
+> +#define PIN_LCSN				4
+> +#define PIN_LDC					6
+> +#define PIN_LSPI				8
+> +#define PIN_LSDI				10
+> +
+> +#define DC_COM_PIN_INPUT_DATA(x)		(0x312 + (x))
+> +
+> +/*
+> + * DC_COM_PIN_OUTPUT_SELECT(x) is a set of 7 registers that allow select=
+ing
+> + * one of 7 functions for each pin using 3 bits. Clearing all bits sets
+> + * the pin to its primary function, while setting them to 1 configures i=
+t
+> + * as a GPIO output. Other functions are unique to each pin. For details=
+,
+> + * check "23.7.17 DC_COM_PIN_OUTPUT_SELECT0_0" in the Tegra30 TRM.
+> + */
+> +#define DC_COM_PIN_OUTPUT_SELECT(x)		(0x314 + (x))
+> +#define PIN_OUTPUT_SELECT_MASK(x)		(0x7 << (x))
+> +#define PIN_OUTPUT_SELECT_PRIM(x)		(0 << (x))
+> +#define PIN_OUTPUT_SELECT_OUT(x)		(1 << (x))
+> +#define PIN_OUTPUT_SELECT_F2(x)			(2 << (x))
+> +#define PIN_OUTPUT_SELECT_F3(x)			(3 << (x))
+> +#define PIN_OUTPUT_SELECT_F4(x)			(4 << (x))
+> +#define PIN_OUTPUT_SELECT_F5(x)			(5 << (x))
+> +#define PIN_OUTPUT_SELECT_F6(x)			(6 << (x))
+> +#define PIN_OUTPUT_SELECT_F7(x)			(7 << (x))
+> +
+> +/*
+> + * The definitions below describe pin offset in the DC_COM_PIN_OUTPUT_SE=
+LECT(x)
+> + * registers. The comment before each group indicates the index of the r=
+egister
+> + * (the x value).
+> + */
+> +
+> +/* 0 */
+> +#define PIN_OUTPUT_SELECT_LD0			0
+> +#define PIN_OUTPUT_SELECT_LD1			4
+> +#define PIN_OUTPUT_SELECT_LD2			8
+> +#define PIN_OUTPUT_SELECT_LD3			12
+> +#define PIN_OUTPUT_SELECT_LD4			16
+> +#define PIN_OUTPUT_SELECT_LD5			20
+> +#define PIN_OUTPUT_SELECT_LD6			24
+> +#define PIN_OUTPUT_SELECT_LD7			28
+> +
+> +/* 1 */
+> +#define PIN_OUTPUT_SELECT_LD8			0
+> +#define PIN_OUTPUT_SELECT_LD9			4
+> +#define PIN_OUTPUT_SELECT_LD10			8
+> +#define PIN_OUTPUT_SELECT_LD11			12
+> +#define PIN_OUTPUT_SELECT_LD12			16
+> +#define PIN_OUTPUT_SELECT_LD13			20
+> +#define PIN_OUTPUT_SELECT_LD14			24
+> +#define PIN_OUTPUT_SELECT_LD15			28
+> +
+> +/* 2 */
+> +#define PIN_OUTPUT_SELECT_LD16			0
+> +#define PIN_OUTPUT_SELECT_LD17			4
+> +
+> +/* 3 */
+> +#define PIN_OUTPUT_SELECT_LPW0			0
+> +#define PIN_OUTPUT_SELECT_LPW1			4
+> +#define PIN_OUTPUT_SELECT_LPW2			8
+> +#define PIN_OUTPUT_SELECT_LSC0			16
+> +#define PIN_OUTPUT_SELECT_LSC1			20
+> +#define PIN_OUTPUT_SELECT_LVS			24
+> +#define PIN_OUTPUT_SELECT_LHS			28
+> +
+> +/* 4 */
+> +#define PIN_OUTPUT_SELECT_LHP0			0
+> +#define PIN_OUTPUT_SELECT_LHP1			4
+> +#define PIN_OUTPUT_SELECT_LHP2			8
+> +#define PIN_OUTPUT_SELECT_LVP0			16
+> +#define PIN_OUTPUT_SELECT_LVP1			20
+> +
+> +/* 5 */
+> +#define PIN_OUTPUT_SELECT_LM0			0
+> +#define PIN_OUTPUT_SELECT_LM1			4
+> +#define PIN_OUTPUT_SELECT_LDI			8
+> +#define PIN_OUTPUT_SELECT_LPP			12
+> +
+> +/* 6 */
+> +#define PIN_OUTPUT_SELECT_LSCK			0
+> +#define PIN_OUTPUT_SELECT_LSDA			4
+> +#define PIN_OUTPUT_SELECT_LCSN			8
+> +#define PIN_OUTPUT_SELECT_LDC			12
+> +#define PIN_OUTPUT_SELECT_LSPI			16
+> +#define PIN_OUTPUT_SELECT_LSDI			20
+
+It becomes apparent here that the PIN_* and PIN_OUTPUT_SELECT_* are kind=20
+of redundant as the pins are in the same order, the stride (and thus=20
+register indexing) is just different. Hence, I think it would be cleaner=20
+to have ..
+
+#define PIN_LD0		0
+#define PIN_LD1		1
+...
+
+and then
+
+#define PIN_REGISTER_INDEX(pin)		((pin) / 16)
+#define PIN_SHIFT(pin)			(((pin) % 16) * 2)
+
+#define PIN_SELECT_REGISTER_INDEX(pin)	((pin) / 8)
+#define PIN_SELECT_SHIFT(pin)		(((pin) % 8) * 4)
+
+This will also simplify the tegra_dbi_idx tables since they can just=20
+store the pin index, and the register index (and shift) can be=20
+calculated based on that.
+
 > =20
-> -#define panel_dbi_command(priv, cmd, seq...) \
-> -({ \
-> -	const u8 d[] =3D { seq }; \
-> -	struct drm_panel *panel =3D &(priv)->panel; \
-> -	struct mipi_dbi_device *dbidev =3D (priv)->dbidev; \
-> -	struct device *dev =3D panel->dev; \
-> -	int ret; \
-> -	ret =3D mipi_dbi_command_stackbuf((dbidev)->dbi, cmd, d, ARRAY_SIZE(d))=
-; \
-> -	if (ret) \
-> -		dev_err_ratelimited(dev, "error %d when sending command %#02x\n", ret,=
- cmd); \
-> -	ret; \
-> -})
-> -
->  static int hitachi_tx10d07vm0baa_prepare(struct drm_panel *panel)
->  {
->  	struct hitachi_tx10d07vm0baa *priv =3D to_hitachi_tx10d07vm0baa(panel);
-> @@ -76,118 +63,120 @@ static int hitachi_tx10d07vm0baa_prepare(struct drm=
-_panel *panel)
->  static int hitachi_tx10d07vm0baa_enable(struct drm_panel *panel)
->  {
->  	struct hitachi_tx10d07vm0baa *priv =3D to_hitachi_tx10d07vm0baa(panel);
-> -
-> -	panel_dbi_command(priv, MIPI_DCS_SET_PARTIAL_ROWS, 0x00, 0x00, 0x03, 0x=
-1f);
-> -	panel_dbi_command(priv, MIPI_DCS_SET_SCROLL_AREA, 0x00, 0x00, 0x03, 0x2=
-0,
-> -			  0x00, 0x00);
-> -
-> -	panel_dbi_command(priv, MIPI_DCS_SET_ADDRESS_MODE, 0x0a);
-> -	panel_dbi_command(priv, MIPI_DCS_SET_SCROLL_START, 0x00, 0x00);
-> -
-> -	panel_dbi_command(priv, MIPI_DCS_SET_PIXEL_FORMAT, MIPI_DCS_PIXEL_FMT_2=
-4BIT);
-> -	panel_dbi_command(priv, MIPI_DCS_SET_TEAR_SCANLINE, 0x00, 0x00);
-> -
-> -	panel_dbi_command(priv, 0x71, 0x00);		/* Ex_Vsync_en */
-> -
-> -	panel_dbi_command(priv, 0xb2, 0x00);		/* VCSEL */
-> -	panel_dbi_command(priv, 0xb4, 0xaa);		/* setvgmpm */
-> -	panel_dbi_command(priv, 0xb5, 0x33);		/* rbias1 */
-> -	panel_dbi_command(priv, 0xb6, 0x03);		/* rbias2 */
-> -
-> -	panel_dbi_command(priv, 0xb7, 0x1a, 0x33, 0x03, 0x03,
-> -			  0x03, 0x00, 0x00, 0x01, 0x02, 0x00,
-> -			  0x00, 0x04, 0x00, 0x01, 0x01, 0x01);	/* set_ddvdhp */
-> -	panel_dbi_command(priv, 0xb8, 0x1c, 0x53, 0x03, 0x03,
-> -			  0x00, 0x01, 0x02, 0x00, 0x00, 0x04,
-> -			  0x00, 0x01, 0x01);			/* set_ddvdhm */
-> -
-> -	panel_dbi_command(priv, 0xb9, 0x0a, 0x01, 0x01, 0x00,
-> -			  0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgh */
-> -	panel_dbi_command(priv, 0xba, 0x0f, 0x01, 0x01, 0x00,
-> -			  0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgl */
-> -	panel_dbi_command(priv, 0xbb, 0x00, 0x00, 0x00, 0x00,
-> -			  0x01, 0x02, 0x01);			/* set_vcl */
-> -
-> -	panel_dbi_command(priv, 0xc1, 0x01);		/* number of lines */
-> -	panel_dbi_command(priv, 0xc2, 0x08);		/* number of fp lines */
-> -	panel_dbi_command(priv, 0xc3, 0x04);		/* gateset(1) */
-> -	panel_dbi_command(priv, 0xc4, 0x4c);		/* 1h period */
-> -	panel_dbi_command(priv, 0xc5, 0x03);		/* source precharge */
-> -	panel_dbi_command(priv, 0xc6, 0xc4, 0x04);	/* source precharge timing *=
-/
-> -	panel_dbi_command(priv, 0xc7, 0x00);		/* source level */
-> -	panel_dbi_command(priv, 0xc8, 0x02);		/* number of bp lines */
-> -	panel_dbi_command(priv, 0xc9, 0x10);		/* gateset(2) */
-> -	panel_dbi_command(priv, 0xca, 0x04, 0x04);	/* gateset(3) */
-> -	panel_dbi_command(priv, 0xcb, 0x03);		/* gateset(4) */
-> -	panel_dbi_command(priv, 0xcc, 0x12);		/* gateset(5) */
-> -	panel_dbi_command(priv, 0xcd, 0x12);		/* gateset(6) */
-> -	panel_dbi_command(priv, 0xce, 0x30);		/* gateset(7) */
-> -	panel_dbi_command(priv, 0xcf, 0x30);		/* gateset(8) */
-> -	panel_dbi_command(priv, 0xd0, 0x40);		/* gateset(9) */
-> -	panel_dbi_command(priv, 0xd1, 0x22);		/* flhw */
-> -	panel_dbi_command(priv, 0xd2, 0x22);		/* vckhw */
-> -	panel_dbi_command(priv, 0xd3, 0x04);		/* flt */
-> -	panel_dbi_command(priv, 0xd4, 0x14);		/* tctrl */
-> -	panel_dbi_command(priv, 0xd6, 0x02);		/* dotinv */
-> -	panel_dbi_command(priv, 0xd7, 0x00);		/* on/off sequence period */
-> -
-> -	panel_dbi_command(priv, 0xd8, 0x01, 0x05, 0x06, 0x0d,
-> -			  0x18, 0x09, 0x22, 0x23, 0x00);		/* ponseqa */
-> -	panel_dbi_command(priv, 0xd9, 0x24, 0x01);			/* ponseqb */
-> -	panel_dbi_command(priv, 0xde, 0x09, 0x0f, 0x21, 0x12,
-> -			  0x04);					/* ponseqc */
-> -
-> -	panel_dbi_command(priv, 0xdf, 0x02, 0x06, 0x06, 0x06,
-> -			  0x06, 0x00);					/* pofseqa */
-> -	panel_dbi_command(priv, 0xe0, 0x01);				/* pofseqb */
-> -
-> -	panel_dbi_command(priv, MIPI_DCS_SET_DISPLAY_BRIGHTNESS, 0xff);
-> -	panel_dbi_command(priv, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x40);
-> -
-> -	panel_dbi_command(priv, 0xe2, 0x00, 0x00);		/* cabc pwm */
-> -	panel_dbi_command(priv, 0xe3, 0x03);			/* cabc */
-> -	panel_dbi_command(priv, 0xe4, 0x66, 0x7b, 0x90, 0xa5,
-> -			  0xbb, 0xc7, 0xe1, 0xe5);		/* cabc brightness */
-> -	panel_dbi_command(priv, 0xe5, 0xc5, 0xc5, 0xc9, 0xc9,
-> -			  0xd1, 0xe1, 0xf1, 0xfe);		/* cabc brightness */
-> -	panel_dbi_command(priv, 0xe7, 0x2a);			/* cabc */
-> -	panel_dbi_command(priv, 0xe8, 0x00);			/* brt_rev */
-> -	panel_dbi_command(priv, 0xe9, 0x00);			/* tefreq */
-> -
-> -	panel_dbi_command(priv, 0xea, 0x01);			/* high speed ram */
-> -
-> -	panel_dbi_command(priv, 0xeb, 0x00, 0x33, 0x0e, 0x15,
-> -			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r pos */
-> -	panel_dbi_command(priv, 0xec, 0x00, 0x33, 0x0e, 0x15,
-> -			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r neg */
-> -	panel_dbi_command(priv, 0xed, 0x00, 0x33, 0x0e, 0x15,
-> -			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g pos */
-> -	panel_dbi_command(priv, 0xee, 0x00, 0x33, 0x0e, 0x15,
-> -			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g neg */
-> -	panel_dbi_command(priv, 0xef, 0x00, 0x33, 0x0e, 0x15,
-> -			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b pos */
-> -	panel_dbi_command(priv, 0xf0, 0x00, 0x33, 0x0e, 0x15,
-> -			  0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b neg */
-> -
-> -	panel_dbi_command(priv, MIPI_DCS_EXIT_SLEEP_MODE);
-> +	struct mipi_dbi_multi_context ctx =3D { .dbidev =3D priv->dbidev };
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_PARTIAL_ROWS, 0x00, 0x00, 0=
-x03, 0x1f);
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_SCROLL_AREA, 0x00, 0x00, 0x=
-03, 0x20,
-> +				 0x00, 0x00);
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_ADDRESS_MODE, 0x0a);
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_SCROLL_START, 0x00, 0x00);
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_PIXEL_FORMAT, MIPI_DCS_PIXE=
-L_FMT_24BIT);
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_TEAR_SCANLINE, 0x00, 0x00);
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0x71, 0x00);		/* Ex_Vsync_en */
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0xb2, 0x00);		/* VCSEL */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xb4, 0xaa);		/* setvgmpm */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xb5, 0x33);		/* rbias1 */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xb6, 0x03);		/* rbias2 */
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0xb7, 0x1a, 0x33, 0x03, 0x03,
-> +				 0x03, 0x00, 0x00, 0x01, 0x02, 0x00,
-> +				 0x00, 0x04, 0x00, 0x01, 0x01, 0x01);	/* set_ddvdhp */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xb8, 0x1c, 0x53, 0x03, 0x03,
-> +				 0x00, 0x01, 0x02, 0x00, 0x00, 0x04,
-> +				 0x00, 0x01, 0x01);			/* set_ddvdhm */
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0xb9, 0x0a, 0x01, 0x01, 0x00,
-> +				 0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgh */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xba, 0x0f, 0x01, 0x01, 0x00,
-> +				 0x00, 0x00, 0x02, 0x00, 0x02, 0x01);	/* set_vgl */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xbb, 0x00, 0x00, 0x00, 0x00,
-> +				 0x01, 0x02, 0x01);			/* set_vcl */
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0xc1, 0x01);		/* number of lines */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xc2, 0x08);		/* number of fp lines */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xc3, 0x04);		/* gateset(1) */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xc4, 0x4c);		/* 1h period */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xc5, 0x03);		/* source precharge */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xc6, 0xc4, 0x04);	/* source precharge t=
-iming */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xc7, 0x00);		/* source level */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xc8, 0x02);		/* number of bp lines */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xc9, 0x10);		/* gateset(2) */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xca, 0x04, 0x04);	/* gateset(3) */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xcb, 0x03);		/* gateset(4) */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xcc, 0x12);		/* gateset(5) */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xcd, 0x12);		/* gateset(6) */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xce, 0x30);		/* gateset(7) */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xcf, 0x30);		/* gateset(8) */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xd0, 0x40);		/* gateset(9) */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xd1, 0x22);		/* flhw */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xd2, 0x22);		/* vckhw */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xd3, 0x04);		/* flt */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xd4, 0x14);		/* tctrl */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xd6, 0x02);		/* dotinv */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xd7, 0x00);		/* on/off sequence period =
-*/
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0xd8, 0x01, 0x05, 0x06, 0x0d,
-> +				 0x18, 0x09, 0x22, 0x23, 0x00);		/* ponseqa */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xd9, 0x24, 0x01);		/* ponseqb */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xde, 0x09, 0x0f, 0x21, 0x12,
-> +				 0x04);					/* ponseqc */
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0xdf, 0x02, 0x06, 0x06, 0x06,
-> +				 0x06, 0x00);					/* pofseqa */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xe0, 0x01);				/* pofseqb */
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_DISPLAY_BRIGHTNESS, 0xff);
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x40);
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0xe2, 0x00, 0x00);		/* cabc pwm */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xe3, 0x03);			/* cabc */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xe4, 0x66, 0x7b, 0x90, 0xa5,
-> +				 0xbb, 0xc7, 0xe1, 0xe5);		/* cabc brightness */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xe5, 0xc5, 0xc5, 0xc9, 0xc9,
-> +				 0xd1, 0xe1, 0xf1, 0xfe);		/* cabc brightness */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xe7, 0x2a);			/* cabc */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xe8, 0x00);			/* brt_rev */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xe9, 0x00);			/* tefreq */
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0xea, 0x01);			/* high speed ram */
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, 0xeb, 0x00, 0x33, 0x0e, 0x15,
-> +				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r pos */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xec, 0x00, 0x33, 0x0e, 0x15,
-> +				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting r neg */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xed, 0x00, 0x33, 0x0e, 0x15,
-> +				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g pos */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xee, 0x00, 0x33, 0x0e, 0x15,
-> +				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting g neg */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xef, 0x00, 0x33, 0x0e, 0x15,
-> +				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b pos */
-> +	mipi_dbi_write_seq_multi(&ctx, 0xf0, 0x00, 0x33, 0x0e, 0x15,
-> +				 0xb7, 0x78, 0x88, 0x0f);		/* gamma setting b neg */
-> +
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_EXIT_SLEEP_MODE);
->  	msleep(110);
+>  #define DC_COM_PIN_MISC_CONTROL			0x31b
+>  #define DC_COM_PIN_PM0_CONTROL			0x31c
+> @@ -303,9 +439,15 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+>  #define  UNDERFLOW_REPORT_ENABLE (1 << 0)
 > =20
-> -	panel_dbi_command(priv, MIPI_DCS_SET_DISPLAY_ON);
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_DISPLAY_ON);
+>  #define DC_DISP_DISP_SIGNAL_OPTIONS0		0x400
+> -#define H_PULSE0_ENABLE (1 <<  8)
+> -#define H_PULSE1_ENABLE (1 << 10)
+> -#define H_PULSE2_ENABLE (1 << 12)
+> +#define H_PULSE0_ENABLE				BIT(8)
+> +#define H_PULSE1_ENABLE				BIT(10)
+> +#define H_PULSE2_ENABLE				BIT(12)
+> +#define V_PULSE0_ENABLE				BIT(16)
+> +#define V_PULSE1_ENABLE				BIT(18)
+> +#define V_PULSE2_ENABLE				BIT(19)
+> +#define V_PULSE3_ENABLE				BIT(20)
+> +#define M0_ENABLE				BIT(24)
+> +#define M1_ENABLE				BIT(26)
 > =20
-> -	return 0;
-> +	return ctx.accum_err;
->  }
+>  #define DC_DISP_DISP_SIGNAL_OPTIONS1		0x401
 > =20
->  static int hitachi_tx10d07vm0baa_disable(struct drm_panel *panel)
->  {
->  	struct hitachi_tx10d07vm0baa *priv =3D to_hitachi_tx10d07vm0baa(panel);
-> +	struct mipi_dbi_multi_context ctx =3D { .dbidev =3D priv->dbidev };
+> @@ -456,6 +598,22 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+>  #define DC_DISP_SHIFT_CLOCK_OPTIONS		0x431
+>  #define  SC1_H_QUALIFIER_NONE	(1 << 16)
+>  #define  SC0_H_QUALIFIER_NONE	(1 <<  0)
+> +#define  SC0_H_QUALIFIER(x)			(((x) & 0x7) <<  0)
+> +#define  SC1_H_QUALIFIER(x)			(((x) & 0x7) << 16)
+> +#define  SC_H_QUALIFIER_DISABLE			0
+> +#define  SC_H_QUALIFIER_NONE			1
+> +#define  SC_H_QUALIFIER_HACTIVE			2
+> +#define  SC_H_QUALIFIER_EXT_HACTIVE		3
+> +#define  SC_H_QUALIFIER_HPULSE			4
+> +#define  SC_H_QUALIFIER_EXT_HPULSE		5
+> +#define  SC0_V_QUALIFIER(x)			(((x) & 0x7) <<  3)
+> +#define  SC1_V_QUALIFIER(x)			(((x) & 0x7) <<  19)
+> +#define  SC_V_QUALIFIER_NONE			0
+> +#define  SC_V_QUALIFIER_RSVD			1
+> +#define  SC_V_QUALIFIER_VACTIVE			2
+> +#define  SC_V_QUALIFIER_EXT_VACTIVE		3
+> +#define  SC_V_QUALIFIER_VPULSE			4
+> +#define  SC_V_QUALIFIER_EXT_VPULSE		5
 > =20
-> -	panel_dbi_command(priv, MIPI_DCS_SET_DISPLAY_OFF);
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_SET_DISPLAY_OFF);
->  	msleep(35);
+>  #define DC_DISP_DATA_ENABLE_OPTIONS		0x432
+>  #define DE_SELECT_ACTIVE_BLANK  (0 << 0)
+> @@ -493,6 +651,20 @@ int tegra_dc_rgb_exit(struct tegra_dc *dc);
+>  #define DC_DISP_CURSOR_POSITION_NS		0x441
 > =20
-> -	panel_dbi_command(priv, MIPI_DCS_ENTER_SLEEP_MODE);
-> +	mipi_dbi_write_seq_multi(&ctx, MIPI_DCS_ENTER_SLEEP_MODE);
->  	msleep(50);
-> =20
-> -	return 0;
-> +	return ctx.accum_err;
->  }
-> =20
->  static int hitachi_tx10d07vm0baa_unprepare(struct drm_panel *panel)
+>  #define DC_DISP_INIT_SEQ_CONTROL		0x442
+> +#define SEND_INIT_SEQUENCE			BIT(0)
+> +#define INIT_SEQUENCE_MODE_SPI			BIT(1)
+> +#define INIT_SEQUENCE_MODE_PLCD			0
+> +#define INIT_SEQ_DC_SIGNAL_SHIFT		4
+> +#define INIT_SEQ_DC_SIGNAL_MASK			(0x7 << INIT_SEQ_DC_SIGNAL_SHIFT)
+> +#define NO_DC_SIGNAL				0
+> +#define DC_SIGNAL_VSYNC				1
+> +#define DC_SIGNAL_VPULSE0			2
+> +#define DC_SIGNAL_VPULSE1			3
+> +#define DC_SIGNAL_VPULSE2			4
+> +#define DC_SIGNAL_VPULSE3			5
+> +#define INIT_SEQ_DC_CONTROL_SHIFT		7
+> +#define FRAME_INIT_SEQ_CYCLES_SHIFT		8
+> +
+>  #define DC_DISP_SPI_INIT_SEQ_DATA_A		0x443
+>  #define DC_DISP_SPI_INIT_SEQ_DATA_B		0x444
+>  #define DC_DISP_SPI_INIT_SEQ_DATA_C		0x445
 > --=20
 > 2.53.0
 >=20
 >=20
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
 
 
