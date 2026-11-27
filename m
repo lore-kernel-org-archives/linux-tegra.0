@@ -1,85 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795797888;
-	b=tHdCla85G7ES0VG/veyUurs6sLRke4pgSMVq53P1Wu/IxXHCeZLhwW6SUgmKxpH7P14U
-	 eVTOxoPbc0GbNbcR67zx9KJEW6LCR6tvq6Qkc0YJmytMENFQVJSLPkkdUq7ar5rYoh2qJ
-	 i1YpEKk1KcmkKnOKFy/IdDhEYFymw9cEFJRsmudkgGQYUOMpLYUdlgtPzyOaWX9E/ljpu
-	 SST9SA4k+K5isqZqXK9N6hUXP4QSSvNWv8zp2G4UU0wIUxvQCSO+1WPL9TawtEOHloOqZ
-	 +KQmsKl8iTIVWA8ZjvJMfI6u4vBmRzy3fNAnJ3kM48hefOfwvHQ9nboXKMf0+qdTukA==
+	t=1795797890;
+	b=EQ8lKuU/PgQzyZJgef2az96+0XVABLwsXPl+7y5p43AtE5s3qMG5871gKXT2771dA4zF
+	 1+TtcKfKhJVnaRnG4lxwkqnNo21v/lxF0D4ODdRSIq/RqgOY8qk2HpC0rXtL0JPAxyFQ0
+	 xH5WS/e/84C/DTGyQxR339WkQqdogwwiGWLy5buIGnm+T4e656r7sKtOaenbE8UlQFMYT
+	 7ENjuTVd5AUr1d2Q7BWMRw1wXTf/MnvWp6/VYCqzopw6814M7qsNbwVG28HfeiPBwZT6C
+	 d//gKz42Z1wYbKCCqL12grpfNrtsoAHKPBPUj0/280STCXB8sGYqZCLE32OLnW6iXvQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795797888;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795797890;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=LiAU/rnvupWW4cNJ5vbhKdLQRYXgsnjzjuUc89YIVRw=;
-	b=gWvd/oJeL2V/tfFVZ1c6lUrVN5G2G4lzAebxIafyEsdiZ7IObldThLVRFXbQayJjO0hc
-	 oXIqvPuDb60YJxyh88kPkQYNqZCH+gmxZZnetC6WggtaEZGfcWXXqPuwLKFUbjTY9wyWr
-	 yvrzND4OTZAAzkolVHPqtDSGCZD7+BwNtsLnCmgIjsDikIC3xGZY1DdMeNOuMb7/RJEv8
-	 hhT9m3gWonvpZSjFevzEK+yZX3KPvZKfWUHW/KKSu1EFh0Yg052f2k6RBe4bTup1+ruBd
-	 F7347m3BOeHbmq0D2qiAgpxm3MCdMlJjwWm0c23zj/dOcX0MuT/1wC3Q57QpfsHzjsQ==
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=KTRMnPPdfeGg8LaA/1S6poYzQtNeoatW14gLT5kRLjM=;
+	b=lplp9AjTgkf3aK2n+PexgcJTrmWTtVhvtKP/oCoPoKl93XuoD5ZMRx5+3h3DNUrtcFy8
+	 YtHwR4nWdHl6w5a+aZ41z2Ur9qp5J+tl7Ibe01U8CHOgr5X4LzyQVZyQQ9AXdIeCLN5o4
+	 6hVbN6e01mqDCL43eoVxrbdelO+NqVhQnNgMlwmI2bKN6xmiYk6m5jOcCEgK0yj9SfwS/
+	 XLu3CooI4sCEcafVryiUxOsTAxxoFekBHzzkKuBhfhhtBWMlNz57flNIt8hyV73AIPkAe
+	 049F8HbFke/Nh5B+u+hkDyxPuwqHE/JMLcIPl4+VxJ6V3Ql7wLaqIH46F/jeWapc6ng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WxprPzYw;
-	arc=none smtp.remote-ip=209.85.218.42
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CcvaCvpG;
+	arc=none smtp.remote-ip=209.85.218.54
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7897606A330
-	for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2026 16:44:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D7897606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAFC606A323
+	for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2026 16:44:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EBAFC606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=WxprPzYw
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c4d28f75d62so1349222766b.0
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2026 08:44:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CcvaCvpG
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c511c0e2826so951893666b.0
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Nov 2026 08:44:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795797886; x=1796402686; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=LiAU/rnvupWW4cNJ5vbhKdLQRYXgsnjzjuUc89YIVRw=;
-        b=WxprPzYwkw9x2689hRcp7DN5tpg5BY1nLOrctIJtf36R11hymKRxT1ArkoaIOXei5f
-         FhKYY1pSK1GxAUFaA1Vs1L8NdurymBiPfLLvNeUEfUaA+VnbMdaKs83nt3ZJrAxR26oH
-         gnm5lymEm3PD/z+uLCHG5fM+CwJklR2oVCCVuqVmaBadDqSZZqnzQswBOW4xcUymD5we
-         mGz/GBgRi5B+MD38G5aYsDuCYN6G2PGDwnBiHVAJMDFga3yX4FA/YKAi8II/X6Ylimac
-         AcYstnNq+z7aHyGKBI14xeXKPPPC5U502enDGXube9Eq7NJ1/bYqXd4fzNA1Nk9h23i4
-         zjyw==
+        d=gmail.com; s=20260707; t=1795797887; x=1796402687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=KTRMnPPdfeGg8LaA/1S6poYzQtNeoatW14gLT5kRLjM=;
+        b=CcvaCvpGiGXUipVT0/85Z7tvANU3+0v4+kPLH0L4ij7Pr/TMZN38loVoqLE4ZMDJO/
+         Nf5lYJUxz66KcJKQXIIFAiUTC7/OIasBHyVNbXqx6p7Leor7KGNdYqQ4lc20YrSchsDh
+         laonFda/1s6/GXdAeyRFW7Tg1aQ0norp6Rf4SdAd5Z2d1wrV3OLM0WVpbOQkM9NikTh/
+         y0ee9G3dvU1oOQLtTCa/XkuOvaQv3HoYaKaEXredgBmNi2hiQUyNEQxuPddIsrVNEEVu
+         fU/bPuTIIxe0USI3jrQsfnCHIZzgs4W4Urm0/rE8WDbDCkPCklaPbuuQpOXuk6dCU2Kb
+         +DOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795797886; x=1796402686;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=LiAU/rnvupWW4cNJ5vbhKdLQRYXgsnjzjuUc89YIVRw=;
-        b=sQOVoAvT0Mq+Y0gO6bfTe4XxW63vtNsGRrOhgzgvlzyXHjgLV70w0m1RWD+b9bl070
-         RKES1akov8QdYLgHLD1ksijGSjra0/Sz7zCNgsOQDo6bgjMDkBrEG5xdv2zoM9HYvdME
-         6e/4PK+nvzZAuDJOi1PeU7siDtvI3Eeviz5xpsNnRzO1bYlbUR40sHS/LGUhrTxeCAa9
-         41iUkUTtfvgzng0lAfoXQRqroHfIn39/n3y279tbhp1IUZwzGtSOywYm/ZaE84acp4X6
-         dq0tAVIm3DgZQiiY7/ZDYqiYvilc0O9YtytgEbd71ziClJbVcIlDQiliSo2X80fDVM6s
-         t7kA==
-X-Forwarded-Encrypted: i=1; AL+hErEi6ejAqYtnO6JDFXHeBdC9dhgroPHZJnvPsRmTZfGMLhEIZe9NEpapkTAzyCyd8suolqOM5iyA5mJhTg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+s5p4KhpiKl869c8Tm/a3YO74mWhOAvCbBDpJJTLCUlxm2IZub
-	UzOk22jnKj1haUUn4xsperYv5gNEbTT/OmhQanBccom+McLhHHCELrUG
-X-Gm-Gg: AZFdTZfCOdPuk5fwZqOYdJ3FL6CxXx45uqdDKAZdiySTRcadv92UbKNk5CUViwWVZ1F
-	VY7PZbD7Zj9Qi5wnG8U/qxR26b19XPEIEIjuyNCPdgcZOcNDd5YN371NhgXmhI7cv4qF/CG5qOO
-	LKRaqppF17Hv8ULVzeKMQJqKNo8im3om3+kz/5RuhRybE6Eo4dZ50qdqvsDxsgs67DHSFiiZt8R
-	lU9B7IRuWzCznf5RWJfcrmNc+U3kzHlZk+DDISFT3gmRXOcFfF8ETMJ1w+0MZ1PZKTpYJfPYnhB
-	Q7k4VS10u0UNLOMgZ5fmt+95Lj774l6nH9xtoEeXbbrfkhj4SU4vdWwtHIijbgpz34touHe+F2b
-	1XecjJ2KOpRF9GAm03RxpFQeGPjbs7bfTnuz6p0xe1vbbL2MNuCzYBM7+/cz8dh2fjXLmW3s2r/
-	MES7OBGe4QbZWBj6JG9lTVEXNaFJG1kTg0xOnt7/DHHTw3xnEwpZ2aUZV1BoXGbh9Crzpweprl6
-	ozJYwA4z4ZF51Wt0AczMugBtBKMXLXxqXWO343dFBzuhim3MX1vpifLwCW1REmpCqknOMIOywSF
-	jwj/HeEJxFQhFgRRKbm5C1XJVxURhYKewioXVvA79gPeM+YQb+iw3xZQOYRnYxCuWhiudqvGe3z
-	rxxujs7NTzA==
-X-Received: by 2002:a17:907:dac:b0:c42:73df:933b with SMTP id a640c23a62f3a-c513aacec0amr2053391166b.12.1795797885963;
-        Fri, 27 Nov 2026 08:44:45 -0800 (PST)
+        d=1e100.net; s=20260707; t=1795797887; x=1796402687;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=KTRMnPPdfeGg8LaA/1S6poYzQtNeoatW14gLT5kRLjM=;
+        b=TSAADRz562M1CrOszjNHGZscr4Y3u3ncrvUZ/Xu1CqaJ1vS9gv+cd924WXK08sOh7H
+         IqFt8yOJrFqNjNZFcnuMhFh9w66iFbEOTVX9WUXRuTPhzJV1Hr6iZnHgPA3Z/GbKLI0q
+         v9e4uGiSv0IZ8tyl+bq6m8I/wRAbL76zbESI2371s32i5b1bKAgGGWp1ZGRbjVqmvhS7
+         s8IPzfODDjiEtG289b8wrQ96Rw32REsFLx4PYHoZ+JRI27gUbKr8MMncsxN/wymQ3qHh
+         /6xQCgOtKdm06JADWVkHWRjaVGbjnmHCkS+0+PRpW0jXxDIW1TPn7VcXYu3p8UzVORIX
+         6nHQ==
+X-Forwarded-Encrypted: i=1; AL+hErH9UfEzkaRPkayBRhMb/hw/OBxSaqJ34u6s9hGBGJEKCRKBCayNLkS7cuJmgmA1Ojfxk6N8MJl2C/8/hg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+IQDtRBYFfMXFd31WE3anNJ/WvGPk2QdoF0MybOjeyqnq7pvte
+	JtiNwDHZm4lVAwqLZw4e4m3KtQ4AvrSByLfbJOMKf1kfV+XVEerYE9FK
+X-Gm-Gg: AZFdTZdcSQgYWtGDziFSbL3gvrZDs0qomuLahQfalaTS1jX0+QpXetm8z3DMvKmoxgi
+	Md2lQeVFYTCNbV3ZsQ6fflzDIzdFKooYV559vBhfDEjYFYo8vfI2XgARq5M0SZoDn1nmZbhnCLh
+	9rHP89P3ZThM+KWqDR1RYaparbFSIlCkTdvex2ZLCaJZqR+InSNV7W03r524qaM4PEDChVTPr7G
+	VF0skwN0dwgtTmD9VmleDj4GgsAOZRNfAn9kJieWJq4ZpbFY286SCdt/vE5gftrtE3kZJYJY82M
+	Z2pqPZ+FySw7xvLVMm9kFZLq/U6bMu4cF5o3GWdppx2xh1nwwyCxT+dABDklvf2KfBh9j6KWiUc
+	60qlBN55xMSMcLYdWGi1+WK5uxVIvS1wfbmFxtIgRk2nHIRWe3Q4cTyEV2LKdpQz7PgP2czmWzf
+	E+VjcJxgu/UINdyVUbub/bctGvb90W7tlYJTOdQaDeajZYLPR5pXIHUDccYhoIerXVDLHliuFQP
+	QJvIc6mzFscLx1IM+tyDCBYueHLtoNtc8KkOpcowBkfLkxzk/7CJUKMblm1D0CjSNM2p7qyDbyx
+	R+dvdffbN6ASwKG3ePid1IgSn00L0jRh3fA/3ENbw6wnKDO5DAoBGmoGwhZ2okJCgzLQQum54Ns
+	0nSfL45NpiCc=
+X-Received: by 2002:a17:906:f885:b0:c4c:fd37:bb0c with SMTP id a640c23a62f3a-c513aaea94amr1456318666b.29.1795797887201;
+        Fri, 27 Nov 2026 08:44:47 -0800 (PST)
 Received: from xeon ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513b02de1dsm866092766b.85.2026.11.27.08.44.44
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513b02de1dsm866092766b.85.2026.11.27.08.44.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2026 08:44:45 -0800 (PST)
+        Fri, 27 Nov 2026 08:44:46 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -93,9 +92,9 @@ To: Liam Girdwood <lgirdwood@gmail.com>,
 Cc: linux-kernel@vger.kernel.org,
 	linux-sound@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 1/3] ASoC: tegra: Consolidate remaining separate codec machine drivers into tegra_asoc_machine
-Date: Fri, 27 Nov 2026 18:44:32 +0200
-Message-ID: <20261127164436.292585-2-clamor95@gmail.com>
+Subject: [PATCH v2 2/3] ASoC: tegra: Generalize forced DAPM pin enabling via tegra_asoc_data
+Date: Fri, 27 Nov 2026 18:44:33 +0200
+Message-ID: <20261127164436.292585-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261127164436.292585-1-clamor95@gmail.com>
 References: <20261127164436.292585-1-clamor95@gmail.com>
@@ -108,644 +107,154 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Merge individual machine drivers for WM8903, WM8962, and WM8994 codecs
-directly into tegra_asoc_machine.c, removing separate driver source files
-(tegra_wm8903.c, tegra_wm8962.c, tegra_wm8994.c) and simplifying the build
-system. This follows the unified machine driver approach used by other
-Tegra audio machines.
+Introduce a dapm_fe_pin_name field in struct tegra_asoc_data to handle
+force-enabling DAPM pins (such as "MICBIAS" or "MICBIAS1") directly inside
+the common tegra_asoc_machine_init() function.
+
+This cleanup allows the removal of repetitive, boilerplate codec-specific
+initialization functions (tegra_rt5677_init(), tegra_wm8903_init(), and
+tegra_wm8962_init()) and points their DAI link init callbacks directly to
+tegra_asoc_machine_init().
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- sound/soc/tegra/Makefile             |   6 -
- sound/soc/tegra/tegra_asoc_machine.c | 245 +++++++++++++++++++++++++--
- sound/soc/tegra/tegra_asoc_machine.h |   3 -
- sound/soc/tegra/tegra_wm8903.c       | 188 --------------------
- sound/soc/tegra/tegra_wm8962.c       | 152 -----------------
- sound/soc/tegra/tegra_wm8994.c       | 175 -------------------
- 6 files changed, 228 insertions(+), 541 deletions(-)
- delete mode 100644 sound/soc/tegra/tegra_wm8903.c
- delete mode 100644 sound/soc/tegra/tegra_wm8962.c
- delete mode 100644 sound/soc/tegra/tegra_wm8994.c
+ sound/soc/tegra/tegra_asoc_machine.c | 62 ++++++----------------------
+ sound/soc/tegra/tegra_asoc_machine.h |  1 +
+ 2 files changed, 14 insertions(+), 49 deletions(-)
 
-diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
-index b8f90149bfa63..cb9f597bca1d7 100644
---- a/sound/soc/tegra/Makefile
-+++ b/sound/soc/tegra/Makefile
-@@ -41,14 +41,8 @@ obj-$(CONFIG_SND_SOC_TEGRA210_MIXER) += snd-soc-tegra210-mixer.o
- obj-$(CONFIG_SND_SOC_TEGRA210_OPE) += snd-soc-tegra210-ope.o
- 
- # Tegra machine Support
--snd-soc-tegra-wm8903-y := tegra_wm8903.o
--snd-soc-tegra-wm8962-y := tegra_wm8962.o
--snd-soc-tegra-wm8994-y := tegra_wm8994.o
- snd-soc-tegra-machine-y := tegra_asoc_machine.o
- snd-soc-tegra-audio-graph-card-y := tegra_audio_graph_card.o
- 
--obj-$(CONFIG_SND_SOC_TEGRA_WM8903) += snd-soc-tegra-wm8903.o
--obj-$(CONFIG_SND_SOC_TEGRA_WM8962) += snd-soc-tegra-wm8962.o
--obj-$(CONFIG_SND_SOC_TEGRA_WM8994) += snd-soc-tegra-wm8994.o
- obj-$(CONFIG_SND_SOC_TEGRA_MACHINE_DRV) += snd-soc-tegra-machine.o
- obj-$(CONFIG_SND_SOC_TEGRA_AUDIO_GRAPH_CARD) += snd-soc-tegra-audio-graph-card.o
 diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
-index c4e62e2b7fd07..0e0830d2733b9 100644
+index 0e0830d2733b9..eb78c89fc5043 100644
 --- a/sound/soc/tegra/tegra_asoc_machine.c
 +++ b/sound/soc/tegra/tegra_asoc_machine.c
-@@ -138,13 +138,41 @@ static const struct snd_kcontrol_new tegra_machine_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Mic Jack"),
- };
- 
--int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd)
-+static const struct snd_kcontrol_new tegra_wm8994_controls[] = {
-+	SOC_DAPM_PIN_SWITCH("Speakers"),
-+	SOC_DAPM_PIN_SWITCH("Int Spk"),
-+	SOC_DAPM_PIN_SWITCH("Int Mic"),
-+	SOC_DAPM_PIN_SWITCH("Headset Mic"),
-+	SOC_DAPM_PIN_SWITCH("Internal Mic 1"),
-+	SOC_DAPM_PIN_SWITCH("Internal Mic 2"),
-+	SOC_DAPM_PIN_SWITCH("Headphones"),
-+	SOC_DAPM_PIN_SWITCH("Mic Jack"),
-+	SOC_DAPM_PIN_SWITCH("Line Out"),
-+	SOC_DAPM_PIN_SWITCH("FM Radio"),
-+};
-+
-+static int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd)
+@@ -154,6 +154,7 @@ static const struct snd_kcontrol_new tegra_wm8994_controls[] = {
+ static int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd)
  {
  	struct snd_soc_card *card = rtd->card;
++	struct snd_soc_dapm_context *dapm = snd_soc_card_to_dapm(card);
  	struct tegra_machine *machine = snd_soc_card_get_drvdata(card);
-+	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
-+	struct snd_soc_component *component = codec_dai->component;
- 	const char *jack_name;
-+	int shrt = 0;
- 	int err;
- 
-+	/*
-+	 * Older version of machine driver was ignoring GPIO polarity,
-+	 * forcing it to active-low. This means that all older device-trees
-+	 * which set the polarity to active-high are wrong and we need to fix
-+	 * them up.
-+	 */
-+	if (machine->asoc->hp_jack_gpio_active_low) {
-+		bool active_low = gpiod_is_active_low(machine->gpiod_hp_det);
-+
-+		machine->hp_jack_gpio->invert = !active_low;
-+	}
-+
- 	if (machine->gpiod_hp_det && machine->asoc->add_hp_jack) {
- 		if (machine->asoc->hp_jack_name)
- 			jack_name = machine->asoc->hp_jack_name;
-@@ -190,7 +218,7 @@ int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd)
- 			dev_err(rtd->dev, "Headset GPIOs not added: %d\n", err);
+ 	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
+ 	struct snd_soc_component *component = codec_dai->component;
+@@ -252,6 +253,9 @@ static int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd)
+ 		}
  	}
  
--	if (machine->gpiod_mic_det && machine->asoc->add_mic_jack) {
-+	if (machine->asoc->add_mic_jack) {
- 		err = snd_soc_card_jack_new_pins(rtd->card, "Mic Jack",
- 						 SND_JACK_MICROPHONE,
- 						 &tegra_machine_mic_jack,
-@@ -201,24 +229,45 @@ int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd)
- 			return err;
- 		}
- 
--		tegra_machine_mic_jack_gpio.data = machine;
--		tegra_machine_mic_jack_gpio.desc = machine->gpiod_mic_det;
--
--		if (of_property_read_bool(card->dev->of_node,
--					  "nvidia,coupled-mic-hp-det")) {
--			tegra_machine_mic_jack_gpio.desc = machine->gpiod_hp_det;
--			tegra_machine_mic_jack_gpio.jack_status_check = coupled_mic_hp_check;
-+		if (machine->gpiod_mic_det) {
-+			tegra_machine_mic_jack_gpio.data = machine;
-+			tegra_machine_mic_jack_gpio.desc = machine->gpiod_mic_det;
++	if (machine->asoc->dapm_fe_pin_name)
++		snd_soc_dapm_force_enable_pin(dapm, machine->asoc->dapm_fe_pin_name);
 +
-+			if (of_property_read_bool(card->dev->of_node,
-+						  "nvidia,coupled-mic-hp-det")) {
-+				tegra_machine_mic_jack_gpio.desc = machine->gpiod_hp_det;
-+				tegra_machine_mic_jack_gpio.jack_status_check = coupled_mic_hp_check;
-+			}
-+
-+			err = snd_soc_jack_add_gpios(&tegra_machine_mic_jack, 1,
-+						     &tegra_machine_mic_jack_gpio);
-+			if (err)
-+				dev_err(rtd->dev, "Mic GPIOs not added: %d\n", err);
-+		} else {
-+			if (of_property_read_bool(card->dev->of_node, "nvidia,headset"))
-+				shrt = SND_JACK_MICROPHONE;
-+
-+			snd_soc_component_set_jack(component, machine->mic_jack,
-+						   shrt ? &shrt : NULL);
- 		}
--
--		err = snd_soc_jack_add_gpios(&tegra_machine_mic_jack, 1,
--					     &tegra_machine_mic_jack_gpio);
--		if (err)
--			dev_err(rtd->dev, "Mic GPIOs not added: %d\n", err);
- 	}
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(tegra_asoc_machine_init);
-+
-+static int tegra_asoc_machine_remove(struct snd_soc_card *card)
-+{
-+	struct snd_soc_dai_link *link = &card->dai_link[0];
-+	struct snd_soc_pcm_runtime *rtd = snd_soc_get_pcm_runtime(card, link);
-+	struct tegra_machine *machine = snd_soc_card_get_drvdata(rtd->card);
-+	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
-+	struct snd_soc_component *component = codec_dai->component;
-+
-+	if (!machine->gpiod_mic_det && machine->asoc->add_mic_jack)
-+		snd_soc_component_set_jack(component, NULL, NULL);
-+
-+	return 0;
-+}
- 
- static unsigned int tegra_machine_mclk_rate_128(unsigned int srate)
- {
-@@ -445,7 +494,7 @@ static int tegra_machine_register_codec(struct device *dev, const char *name)
  	return 0;
  }
  
--int tegra_asoc_machine_probe(struct platform_device *pdev)
-+static int tegra_asoc_machine_probe(struct platform_device *pdev)
- {
- 	struct device_node *np_codec, *np_i2s, *np_ac97;
- 	const struct tegra_asoc_data *asoc;
-@@ -645,7 +694,6 @@ int tegra_asoc_machine_probe(struct platform_device *pdev)
+@@ -908,21 +912,6 @@ static const struct tegra_asoc_data tegra_trimslice_data = {
  
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(tegra_asoc_machine_probe);
+ /* RT5677 machine */
  
- /* WM8753 machine */
- 
-@@ -1039,6 +1087,157 @@ static const struct tegra_asoc_data tegra_cpcap_data = {
- 	.add_common_snd_ops = true,
- };
- 
-+/* WM8903 machine */
-+
-+static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct snd_soc_card *card = rtd->card;
-+	struct snd_soc_dapm_context *dapm = snd_soc_card_to_dapm(card);
-+	int err;
-+
-+	err = tegra_asoc_machine_init(rtd);
-+	if (err)
-+		return err;
-+
-+	snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
-+
-+	return 0;
-+}
-+
-+SND_SOC_DAILINK_DEFS(hifi,
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8903-hifi")),
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()));
-+
-+static struct snd_soc_dai_link tegra_wm8903_dai = {
-+	.name = "WM8903",
-+	.stream_name = "WM8903 PCM",
-+	.init = tegra_wm8903_init,
-+	.dai_fmt = SND_SOC_DAIFMT_I2S |
-+		   SND_SOC_DAIFMT_NB_NF |
-+		   SND_SOC_DAIFMT_CBC_CFC,
-+	SND_SOC_DAILINK_REG(hifi),
-+};
-+
-+static struct snd_soc_card snd_soc_tegra_wm8903 = {
-+	.components = "codec:wm8903",
-+	.owner = THIS_MODULE,
-+	.dai_link = &tegra_wm8903_dai,
-+	.num_links = 1,
-+	.remove = tegra_asoc_machine_remove,
-+	.fully_routed = true,
-+};
-+
-+/* older device-trees used wrong polarity for the headphones-detection GPIO */
-+static const struct tegra_asoc_data tegra_wm8903_data_legacy = {
-+	.mclk_rate = tegra_machine_mclk_rate_6mhz,
-+	.card = &snd_soc_tegra_wm8903,
-+	.hp_jack_gpio_active_low = true,
-+	.add_common_dapm_widgets = true,
-+	.add_common_controls = true,
-+	.add_common_snd_ops = true,
-+	.add_mic_jack = true,
-+	.add_hp_jack = true,
-+};
-+
-+static const struct tegra_asoc_data tegra_wm8903_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_6mhz,
-+	.card = &snd_soc_tegra_wm8903,
-+	.add_common_dapm_widgets = true,
-+	.add_common_controls = true,
-+	.add_common_snd_ops = true,
-+	.add_mic_jack = true,
-+	.add_hp_jack = true,
-+};
-+
-+/* WM8962 machine */
-+
-+static int tegra_wm8962_init(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct snd_soc_card *card = rtd->card;
-+	struct snd_soc_dapm_context *dapm = snd_soc_card_to_dapm(card);
-+	int err;
-+
-+	err = tegra_asoc_machine_init(rtd);
-+	if (err)
-+		return err;
-+
-+	snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
-+
-+	return 0;
-+}
-+
-+SND_SOC_DAILINK_DEFS(wm8962_hifi,
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8962")),
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()));
-+
-+static struct snd_soc_dai_link tegra_wm8962_dai = {
-+	.name = "WM8962",
-+	.stream_name = "WM8962 PCM",
-+	.init = tegra_wm8962_init,
-+	.dai_fmt = SND_SOC_DAIFMT_I2S |
-+		   SND_SOC_DAIFMT_NB_NF |
-+		   SND_SOC_DAIFMT_CBC_CFC,
-+	SND_SOC_DAILINK_REG(wm8962_hifi),
-+};
-+
-+static struct snd_soc_card snd_soc_tegra_wm8962 = {
-+	.components = "codec:wm8962",
-+	.owner = THIS_MODULE,
-+	.dai_link = &tegra_wm8962_dai,
-+	.num_links = 1,
-+	.fully_routed = true,
-+};
-+
-+static const struct tegra_asoc_data tegra_wm8962_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_12mhz,
-+	.card = &snd_soc_tegra_wm8962,
-+	.add_common_dapm_widgets = true,
-+	.add_common_controls = true,
-+	.add_common_snd_ops = true,
-+	.add_mic_jack = true,
-+	.add_hp_jack = true,
-+};
-+
-+/* WM8994 machine */
-+
-+SND_SOC_DAILINK_DEFS(wm8994_hifi,
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8994-aif1")),
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()));
-+
-+static struct snd_soc_dai_link tegra_wm8994_dai = {
-+	.name = "WM8994",
-+	.stream_name = "WM8994 PCM",
-+	.init = tegra_asoc_machine_init,
-+	.dai_fmt = SND_SOC_DAIFMT_I2S |
-+		   SND_SOC_DAIFMT_NB_NF |
-+		   SND_SOC_DAIFMT_CBC_CFC,
-+	SND_SOC_DAILINK_REG(wm8994_hifi),
-+};
-+
-+static struct snd_soc_card snd_soc_tegra_wm8994 = {
-+	.components = "codec:wm8994",
-+	.owner = THIS_MODULE,
-+	.dai_link = &tegra_wm8994_dai,
-+	.num_links = 1,
-+	.controls = tegra_wm8994_controls,
-+	.num_controls = ARRAY_SIZE(tegra_wm8994_controls),
-+	.remove = tegra_asoc_machine_remove,
-+	.fully_routed = true,
-+};
-+
-+static const struct tegra_asoc_data tegra_wm8994_data = {
-+	.mclk_rate = tegra_machine_mclk_rate_12mhz,
-+	.mclk_id = 1, /* WM8994_SYSCLK_MCLK1 */
-+	.card = &snd_soc_tegra_wm8994,
-+	.add_common_dapm_widgets = true,
-+	.add_common_snd_ops = true,
-+	.add_mic_jack = true,
-+	.add_hp_jack = true,
-+};
-+
- static const struct of_device_id tegra_machine_of_match[] = {
- 	{ .compatible = "nvidia,tegra-audio-trimslice", .data = &tegra_trimslice_data },
- 	{ .compatible = "nvidia,tegra-audio-max98090", .data = &tegra_max98090_data },
-@@ -1052,6 +1251,17 @@ static const struct of_device_id tegra_machine_of_match[] = {
- 	{ .compatible = "nvidia,tegra-audio-alc5632", .data = &tegra_rt5632_data },
- 	{ .compatible = "nvidia,tegra-audio-rt5631", .data = &tegra_rt5631_data },
- 	{ .compatible = "nvidia,tegra-audio-cpcap", .data = &tegra_cpcap_data },
-+	{ .compatible = "ad,tegra-audio-plutux", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "ad,tegra-audio-wm8903-medcom-wide", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "ad,tegra-audio-wm8903-tec", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "nvidia,tegra-audio-wm8903-cardhu", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "nvidia,tegra-audio-wm8903-harmony", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "nvidia,tegra-audio-wm8903-picasso", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "nvidia,tegra-audio-wm8903-seaboard", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "nvidia,tegra-audio-wm8903-ventana", .data = &tegra_wm8903_data_legacy },
-+	{ .compatible = "nvidia,tegra-audio-wm8903", .data = &tegra_wm8903_data },
-+	{ .compatible = "nvidia,tegra-audio-wm8962", .data = &tegra_wm8962_data },
-+	{ .compatible = "nvidia,tegra-audio-wm8994", .data = &tegra_wm8994_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, tegra_machine_of_match);
-@@ -1070,6 +1280,7 @@ MODULE_AUTHOR("Anatol Pomozov <anatol@google.com>");
- MODULE_AUTHOR("Andrey Danin <danindrey@mail.ru>");
- MODULE_AUTHOR("Dmitry Osipenko <digetx@gmail.com>");
- MODULE_AUTHOR("Ion Agorria <ion@agorria.com>");
-+MODULE_AUTHOR("Jonas Schwöbel <jonasschwoebel@yahoo.de>");
- MODULE_AUTHOR("Leon Romanovsky <leon@leon.nu>");
- MODULE_AUTHOR("Lucas Stach <dev@lynxeye.de>");
- MODULE_AUTHOR("Marc Dietrich <marvin24@gmx.de>");
-diff --git a/sound/soc/tegra/tegra_asoc_machine.h b/sound/soc/tegra/tegra_asoc_machine.h
-index 6f795d7dff7c1..2034ce8e0689e 100644
---- a/sound/soc/tegra/tegra_asoc_machine.h
-+++ b/sound/soc/tegra/tegra_asoc_machine.h
-@@ -45,7 +45,4 @@ struct tegra_machine {
- 	struct snd_soc_jack_gpio *hp_jack_gpio;
- };
- 
--int tegra_asoc_machine_probe(struct platform_device *pdev);
--int tegra_asoc_machine_init(struct snd_soc_pcm_runtime *rtd);
--
- #endif
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-deleted file mode 100644
-index efd46d4407e6d..0000000000000
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ /dev/null
-@@ -1,188 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * tegra_wm8903.c - Tegra machine ASoC driver for boards using WM8903 codec.
-- *
-- * Author: Stephen Warren <swarren@nvidia.com>
-- * Copyright (C) 2010-2012 - NVIDIA, Inc.
-- *
-- * Based on code copyright/by:
-- *
-- * (c) 2009, 2010 Nvidia Graphics Pvt. Ltd.
-- *
-- * Copyright 2007 Wolfson Microelectronics PLC.
-- * Author: Graeme Gregory
-- *         graeme.gregory@wolfsonmicro.com or linux@wolfsonmicro.com
-- */
--
--#include <linux/gpio/consumer.h>
--#include <linux/of.h>
--#include <linux/module.h>
--#include <linux/platform_device.h>
--
--#include <sound/core.h>
--#include <sound/jack.h>
--#include <sound/soc.h>
--
--#include "../codecs/wm8903.h"
--
--#include "tegra_asoc_machine.h"
--
--static struct snd_soc_jack_pin tegra_wm8903_mic_jack_pins[] = {
--	{ .pin = "Mic Jack", .mask = SND_JACK_MICROPHONE },
--};
--
--static unsigned int tegra_wm8903_mclk_rate(unsigned int srate)
+-static int tegra_rt5677_init(struct snd_soc_pcm_runtime *rtd)
 -{
--	unsigned int mclk;
+-	struct snd_soc_card *card = rtd->card;
+-	struct snd_soc_dapm_context *dapm = snd_soc_card_to_dapm(card);
+-	int err;
 -
--	switch (srate) {
--	case 64000:
--	case 88200:
--	case 96000:
--		mclk = 128 * srate;
--		break;
--	default:
--		mclk = 256 * srate;
--		break;
--	}
--	/* FIXME: Codec only requires >= 3MHz if OSR==0 */
--	while (mclk < 6000000)
--		mclk *= 2;
+-	err = tegra_asoc_machine_init(rtd);
+-	if (err)
+-		return err;
 -
--	return mclk;
+-	snd_soc_dapm_force_enable_pin(dapm, "MICBIAS1");
+-
+-	return 0;
 -}
 -
+ SND_SOC_DAILINK_DEFS(rt5677_aif1,
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+ 	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5677-aif1")),
+@@ -931,7 +920,7 @@ SND_SOC_DAILINK_DEFS(rt5677_aif1,
+ static struct snd_soc_dai_link tegra_rt5677_dai = {
+ 	.name = "RT5677",
+ 	.stream_name = "RT5677 PCM",
+-	.init = tegra_rt5677_init,
++	.init = tegra_asoc_machine_init,
+ 	.dai_fmt = SND_SOC_DAIFMT_I2S |
+ 		   SND_SOC_DAIFMT_NB_NF |
+ 		   SND_SOC_DAIFMT_CBC_CFC,
+@@ -948,6 +937,7 @@ static struct snd_soc_card snd_soc_tegra_rt5677 = {
+ static const struct tegra_asoc_data tegra_rt5677_data = {
+ 	.mclk_rate = tegra_machine_mclk_rate_256,
+ 	.card = &snd_soc_tegra_rt5677,
++	.dapm_fe_pin_name = "MICBIAS1",
+ 	.add_common_dapm_widgets = true,
+ 	.add_common_controls = true,
+ 	.add_common_snd_ops = true,
+@@ -998,7 +988,7 @@ SND_SOC_DAILINK_DEFS(rt5632_hifi,
+ static struct snd_soc_dai_link tegra_rt5632_dai = {
+ 	.name = "ALC5632",
+ 	.stream_name = "ALC5632 PCM",
+-	.init = tegra_rt5677_init,
++	.init = tegra_asoc_machine_init,
+ 	.dai_fmt = SND_SOC_DAIFMT_I2S |
+ 		   SND_SOC_DAIFMT_NB_NF |
+ 		   SND_SOC_DAIFMT_CBC_CFC,
+@@ -1015,6 +1005,7 @@ static struct snd_soc_card snd_soc_tegra_rt5632 = {
+ static const struct tegra_asoc_data tegra_rt5632_data = {
+ 	.mclk_rate = tegra_machine_mclk_rate_512,
+ 	.card = &snd_soc_tegra_rt5632,
++	.dapm_fe_pin_name = "MICBIAS1",
+ 	.add_common_dapm_widgets = true,
+ 	.add_common_controls = true,
+ 	.add_common_snd_ops = true,
+@@ -1089,21 +1080,6 @@ static const struct tegra_asoc_data tegra_cpcap_data = {
+ 
+ /* WM8903 machine */
+ 
 -static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
 -{
--	struct tegra_machine *machine = snd_soc_card_get_drvdata(rtd->card);
 -	struct snd_soc_card *card = rtd->card;
 -	struct snd_soc_dapm_context *dapm = snd_soc_card_to_dapm(card);
 -	int err;
 -
--	/*
--	 * Older version of machine driver was ignoring GPIO polarity,
--	 * forcing it to active-low.  This means that all older device-trees
--	 * which set the polarity to active-high are wrong and we need to fix
--	 * them up.
--	 */
--	if (machine->asoc->hp_jack_gpio_active_low) {
--		bool active_low = gpiod_is_active_low(machine->gpiod_hp_det);
--
--		machine->hp_jack_gpio->invert = !active_low;
--	}
--
 -	err = tegra_asoc_machine_init(rtd);
 -	if (err)
 -		return err;
--
--	if (!machine->gpiod_mic_det && machine->asoc->add_mic_jack) {
--		struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
--		struct snd_soc_component *component = codec_dai->component;
--		int shrt = 0;
--
--		err = snd_soc_card_jack_new_pins(rtd->card, "Mic Jack",
--						 SND_JACK_MICROPHONE,
--						 machine->mic_jack,
--						 tegra_wm8903_mic_jack_pins,
--						 ARRAY_SIZE(tegra_wm8903_mic_jack_pins));
--		if (err) {
--			dev_err(rtd->dev, "Mic Jack creation failed: %d\n", err);
--			return err;
--		}
--
--		if (of_property_read_bool(card->dev->of_node, "nvidia,headset"))
--			shrt = SND_JACK_MICROPHONE;
--
--		snd_soc_component_set_jack(component, machine->mic_jack, &shrt);
--	}
 -
 -	snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
 -
 -	return 0;
 -}
 -
--static int tegra_wm8903_remove(struct snd_soc_card *card)
--{
--	struct snd_soc_dai_link *link = &card->dai_link[0];
--	struct snd_soc_pcm_runtime *rtd = snd_soc_get_pcm_runtime(card, link);
--	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
--	struct snd_soc_component *component = codec_dai->component;
--
--	snd_soc_component_set_jack(component, NULL, NULL);
--
--	return 0;
--}
--
--SND_SOC_DAILINK_DEFS(hifi,
--	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8903-hifi")),
--	DAILINK_COMP_ARRAY(COMP_EMPTY()));
--
--static struct snd_soc_dai_link tegra_wm8903_dai = {
--	.name = "WM8903",
--	.stream_name = "WM8903 PCM",
+ SND_SOC_DAILINK_DEFS(hifi,
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+ 	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8903-hifi")),
+@@ -1112,7 +1088,7 @@ SND_SOC_DAILINK_DEFS(hifi,
+ static struct snd_soc_dai_link tegra_wm8903_dai = {
+ 	.name = "WM8903",
+ 	.stream_name = "WM8903 PCM",
 -	.init = tegra_wm8903_init,
--	.dai_fmt = SND_SOC_DAIFMT_I2S |
--		   SND_SOC_DAIFMT_NB_NF |
--		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(hifi),
--};
--
--static struct snd_soc_card snd_soc_tegra_wm8903 = {
--	.components = "codec:wm8903",
--	.owner = THIS_MODULE,
--	.dai_link = &tegra_wm8903_dai,
--	.num_links = 1,
--	.remove = tegra_wm8903_remove,
--	.fully_routed = true,
--};
--
--/* older device-trees used wrong polarity for the headphones-detection GPIO */
--static const struct tegra_asoc_data tegra_wm8903_data_legacy = {
--	.mclk_rate = tegra_wm8903_mclk_rate,
--	.card = &snd_soc_tegra_wm8903,
--	.hp_jack_gpio_active_low = true,
--	.add_common_dapm_widgets = true,
--	.add_common_controls = true,
--	.add_common_snd_ops = true,
--	.add_mic_jack = true,
--	.add_hp_jack = true,
--};
--
--static const struct tegra_asoc_data tegra_wm8903_data = {
--	.mclk_rate = tegra_wm8903_mclk_rate,
--	.card = &snd_soc_tegra_wm8903,
--	.add_common_dapm_widgets = true,
--	.add_common_controls = true,
--	.add_common_snd_ops = true,
--	.add_mic_jack = true,
--	.add_hp_jack = true,
--};
--
--static const struct of_device_id tegra_wm8903_of_match[] = {
--	{ .compatible = "ad,tegra-audio-plutux", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "ad,tegra-audio-wm8903-medcom-wide", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "ad,tegra-audio-wm8903-tec", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "nvidia,tegra-audio-wm8903-cardhu", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "nvidia,tegra-audio-wm8903-harmony", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "nvidia,tegra-audio-wm8903-picasso", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "nvidia,tegra-audio-wm8903-seaboard", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "nvidia,tegra-audio-wm8903-ventana", .data = &tegra_wm8903_data_legacy },
--	{ .compatible = "nvidia,tegra-audio-wm8903", .data = &tegra_wm8903_data },
--	{},
--};
--MODULE_DEVICE_TABLE(of, tegra_wm8903_of_match);
--
--static struct platform_driver tegra_wm8903_driver = {
--	.driver = {
--		.name = "tegra-wm8903",
--		.of_match_table = tegra_wm8903_of_match,
--		.pm = &snd_soc_pm_ops,
--	},
--	.probe = tegra_asoc_machine_probe,
--};
--module_platform_driver(tegra_wm8903_driver);
--
--MODULE_AUTHOR("Stephen Warren <swarren@nvidia.com>");
--MODULE_DESCRIPTION("Tegra+WM8903 machine ASoC driver");
--MODULE_LICENSE("GPL");
-diff --git a/sound/soc/tegra/tegra_wm8962.c b/sound/soc/tegra/tegra_wm8962.c
-deleted file mode 100644
-index 25544d6804095..0000000000000
---- a/sound/soc/tegra/tegra_wm8962.c
-+++ /dev/null
-@@ -1,152 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * tegra_wm8962.c - Tegra machine ASoC driver for boards using WM8962 codec.
-- *
-- * Copyright (C) 2021-2024 Jonas Schwöbel <jonasschwoebel@yahoo.de>
-- *			   Svyatoslav Ryhel <clamor95@gmail.com>
-- *
-- * Based on tegra_wm8903 code copyright/by:
-- *
-- * Author: Stephen Warren <swarren@nvidia.com>
-- * Copyright (C) 2010-2012 - NVIDIA, Inc.
-- *
-- * Based on code copyright/by:
-- *
-- * (c) 2009, 2010 Nvidia Graphics Pvt. Ltd.
-- *
-- * Copyright 2007 Wolfson Microelectronics PLC.
-- * Author: Graeme Gregory
-- *         graeme.gregory@wolfsonmicro.com or linux@wolfsonmicro.com
-- */
--
--#include <linux/gpio/consumer.h>
--#include <linux/of.h>
--#include <linux/module.h>
--#include <linux/platform_device.h>
--
--#include <sound/core.h>
--#include <sound/jack.h>
--#include <sound/soc.h>
--
--#include "../codecs/wm8962.h"
--
--#include "tegra_asoc_machine.h"
--
--static struct snd_soc_jack_pin tegra_wm8962_mic_jack_pins[] = {
--	{ .pin = "Mic Jack", .mask = SND_JACK_MICROPHONE },
--};
--
--static unsigned int tegra_wm8962_mclk_rate(unsigned int srate)
--{
--	unsigned int mclk;
--
--	switch (srate) {
--	case 8000:
--	case 16000:
--	case 24000:
--	case 32000:
--	case 48000:
--	case 64000:
--	case 96000:
--		mclk = 12288000;
--		break;
--	case 11025:
--	case 22050:
--	case 44100:
--	case 88200:
--		mclk = 11289600;
--		break;
--	default:
--		mclk = 12000000;
--		break;
--	}
--
--	return mclk;
--}
--
++	.init = tegra_asoc_machine_init,
+ 	.dai_fmt = SND_SOC_DAIFMT_I2S |
+ 		   SND_SOC_DAIFMT_NB_NF |
+ 		   SND_SOC_DAIFMT_CBC_CFC,
+@@ -1132,6 +1108,7 @@ static struct snd_soc_card snd_soc_tegra_wm8903 = {
+ static const struct tegra_asoc_data tegra_wm8903_data_legacy = {
+ 	.mclk_rate = tegra_machine_mclk_rate_6mhz,
+ 	.card = &snd_soc_tegra_wm8903,
++	.dapm_fe_pin_name = "MICBIAS",
+ 	.hp_jack_gpio_active_low = true,
+ 	.add_common_dapm_widgets = true,
+ 	.add_common_controls = true,
+@@ -1143,6 +1120,7 @@ static const struct tegra_asoc_data tegra_wm8903_data_legacy = {
+ static const struct tegra_asoc_data tegra_wm8903_data = {
+ 	.mclk_rate = tegra_machine_mclk_rate_6mhz,
+ 	.card = &snd_soc_tegra_wm8903,
++	.dapm_fe_pin_name = "MICBIAS",
+ 	.add_common_dapm_widgets = true,
+ 	.add_common_controls = true,
+ 	.add_common_snd_ops = true,
+@@ -1152,21 +1130,6 @@ static const struct tegra_asoc_data tegra_wm8903_data = {
+ 
+ /* WM8962 machine */
+ 
 -static int tegra_wm8962_init(struct snd_soc_pcm_runtime *rtd)
 -{
--	struct tegra_machine *machine = snd_soc_card_get_drvdata(rtd->card);
 -	struct snd_soc_card *card = rtd->card;
 -	struct snd_soc_dapm_context *dapm = snd_soc_card_to_dapm(card);
 -	int err;
@@ -754,262 +263,43 @@ index 25544d6804095..0000000000000
 -	if (err)
 -		return err;
 -
--	if (!machine->gpiod_mic_det && machine->asoc->add_mic_jack) {
--		struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
--		struct snd_soc_component *component = codec_dai->component;
--
--		err = snd_soc_card_jack_new_pins(rtd->card, "Mic Jack",
--						 SND_JACK_MICROPHONE,
--						 machine->mic_jack,
--						 tegra_wm8962_mic_jack_pins,
--						 ARRAY_SIZE(tegra_wm8962_mic_jack_pins));
--		if (err) {
--			dev_err(rtd->dev, "Mic Jack creation failed: %d\n", err);
--			return err;
--		}
--
--		snd_soc_component_set_jack(component, machine->mic_jack, NULL);
--	}
--
 -	snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
 -
 -	return 0;
 -}
 -
--SND_SOC_DAILINK_DEFS(wm8962_hifi,
--	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8962")),
--	DAILINK_COMP_ARRAY(COMP_EMPTY()));
--
--static struct snd_soc_dai_link tegra_wm8962_dai = {
--	.name = "WM8962",
--	.stream_name = "WM8962 PCM",
+ SND_SOC_DAILINK_DEFS(wm8962_hifi,
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+ 	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8962")),
+@@ -1175,7 +1138,7 @@ SND_SOC_DAILINK_DEFS(wm8962_hifi,
+ static struct snd_soc_dai_link tegra_wm8962_dai = {
+ 	.name = "WM8962",
+ 	.stream_name = "WM8962 PCM",
 -	.init = tegra_wm8962_init,
--	.dai_fmt = SND_SOC_DAIFMT_I2S |
--		   SND_SOC_DAIFMT_NB_NF |
--		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(wm8962_hifi),
--};
--
--static struct snd_soc_card snd_soc_tegra_wm8962 = {
--	.components = "codec:wm8962",
--	.owner = THIS_MODULE,
--	.dai_link = &tegra_wm8962_dai,
--	.num_links = 1,
--	.fully_routed = true,
--};
--
--static const struct tegra_asoc_data tegra_wm8962_data = {
--	.mclk_rate = tegra_wm8962_mclk_rate,
--	.card = &snd_soc_tegra_wm8962,
--	.add_common_dapm_widgets = true,
--	.add_common_controls = true,
--	.add_common_snd_ops = true,
--	.add_mic_jack = true,
--	.add_hp_jack = true,
--};
--
--static const struct of_device_id tegra_wm8962_of_match[] = {
--	{ .compatible = "nvidia,tegra-audio-wm8962", .data = &tegra_wm8962_data },
--	{},
--};
--MODULE_DEVICE_TABLE(of, tegra_wm8962_of_match);
--
--static struct platform_driver tegra_wm8962_driver = {
--	.driver = {
--		.name = "tegra-wm8962",
--		.of_match_table = tegra_wm8962_of_match,
--		.pm = &snd_soc_pm_ops,
--	},
--	.probe = tegra_asoc_machine_probe,
--};
--module_platform_driver(tegra_wm8962_driver);
--
--MODULE_AUTHOR("Jonas Schwöbel <jonasschwoebel@yahoo.de>");
--MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
--MODULE_DESCRIPTION("Tegra+WM8962 machine ASoC driver");
--MODULE_LICENSE("GPL");
-diff --git a/sound/soc/tegra/tegra_wm8994.c b/sound/soc/tegra/tegra_wm8994.c
-deleted file mode 100644
-index 11e0ad96caf40..0000000000000
---- a/sound/soc/tegra/tegra_wm8994.c
-+++ /dev/null
-@@ -1,175 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--//
--// tegra_wm8994.c - Tegra machine ASoC driver for boards using WM8994 codec.
--//
--// Copyright (C) 2026 Svyatoslav Ryhel <clamor95@gmail.com>
--//
--// Based on tegra_wm8994 code copyright/by:
--//
--// Author: Sumit Bhattacharya <sumitb@nvidia.com>
--// Copyright (C) 2010-2011 - NVIDIA, Inc.
--//
--// Based on code copyright/by:
--//
--// (c) 2009, 2010 Nvidia Graphics Pvt. Ltd.
--//
--// Copyright 2007 Wolfson Microelectronics PLC.
--// Author: Graeme Gregory
--//         graeme.gregory@wolfsonmicro.com or linux@wolfsonmicro.com
--
--#include <linux/gpio/consumer.h>
--#include <linux/of.h>
--#include <linux/module.h>
--#include <linux/platform_device.h>
--
--#include <sound/core.h>
--#include <sound/jack.h>
--#include <sound/soc.h>
--
--#include "../codecs/wm8994.h"
--
--#include "tegra_asoc_machine.h"
--
--static struct snd_soc_jack_pin tegra_wm8994_mic_jack_pins[] = {
--	{ .pin = "Mic Jack", .mask = SND_JACK_MICROPHONE },
--};
--
--static unsigned int tegra_wm8994_mclk_rate(unsigned int srate)
--{
--	unsigned int mclk;
--
--	switch (srate) {
--	case 8000:
--	case 16000:
--	case 24000:
--	case 32000:
--	case 48000:
--	case 64000:
--	case 96000:
--		mclk = 12288000;
--		break;
--	case 11025:
--	case 22050:
--	case 44100:
--	case 88200:
--		mclk = 11289600;
--		break;
--	default:
--		mclk = 12000000;
--		break;
--	}
--
--	return mclk;
--}
--
--static const struct snd_kcontrol_new tegra_wm8994_controls[] = {
--	SOC_DAPM_PIN_SWITCH("Speakers"),
--	SOC_DAPM_PIN_SWITCH("Int Spk"),
--	SOC_DAPM_PIN_SWITCH("Int Mic"),
--	SOC_DAPM_PIN_SWITCH("Headset Mic"),
--	SOC_DAPM_PIN_SWITCH("Internal Mic 1"),
--	SOC_DAPM_PIN_SWITCH("Internal Mic 2"),
--	SOC_DAPM_PIN_SWITCH("Headphones"),
--	SOC_DAPM_PIN_SWITCH("Mic Jack"),
--	SOC_DAPM_PIN_SWITCH("Line Out"),
--	SOC_DAPM_PIN_SWITCH("FM Radio"),
--};
--
--static int tegra_wm8994_init(struct snd_soc_pcm_runtime *rtd)
--{
--	struct tegra_machine *machine = snd_soc_card_get_drvdata(rtd->card);
--	int err;
--
--	err = tegra_asoc_machine_init(rtd);
--	if (err)
--		return err;
--
--	if (!machine->gpiod_mic_det && machine->asoc->add_mic_jack) {
--		struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
--		struct snd_soc_component *component = codec_dai->component;
--
--		err = snd_soc_card_jack_new_pins(rtd->card, "Mic Jack",
--						 SND_JACK_MICROPHONE,
--						 machine->mic_jack,
--						 tegra_wm8994_mic_jack_pins,
--						 ARRAY_SIZE(tegra_wm8994_mic_jack_pins));
--		if (err) {
--			dev_err(rtd->dev, "Mic Jack creation failed: %d\n", err);
--			return err;
--		}
--
--		snd_soc_component_set_jack(component, machine->mic_jack, NULL);
--	}
--
--	return 0;
--}
--
--static int tegra_wm8994_remove(struct snd_soc_card *card)
--{
--	struct snd_soc_dai_link *link = &card->dai_link[0];
--	struct snd_soc_pcm_runtime *rtd = snd_soc_get_pcm_runtime(card, link);
--	struct tegra_machine *machine = snd_soc_card_get_drvdata(rtd->card);
--	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
--	struct snd_soc_component *component = codec_dai->component;
--
--	if (!machine->gpiod_mic_det && machine->asoc->add_mic_jack)
--		snd_soc_component_set_jack(component, NULL, NULL);
--
--	return 0;
--}
--
--SND_SOC_DAILINK_DEFS(wm8994_hifi,
--	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8994-aif1")),
--	DAILINK_COMP_ARRAY(COMP_EMPTY()));
--
--static struct snd_soc_dai_link tegra_wm8994_dai = {
--	.name = "WM8994",
--	.stream_name = "WM8994 PCM",
--	.init = tegra_wm8994_init,
--	.dai_fmt = SND_SOC_DAIFMT_I2S |
--		   SND_SOC_DAIFMT_NB_NF |
--		   SND_SOC_DAIFMT_CBC_CFC,
--	SND_SOC_DAILINK_REG(wm8994_hifi),
--};
--
--static struct snd_soc_card snd_soc_tegra_wm8994 = {
--	.components = "codec:wm8994",
--	.owner = THIS_MODULE,
--	.dai_link = &tegra_wm8994_dai,
--	.num_links = 1,
--	.controls = tegra_wm8994_controls,
--	.num_controls = ARRAY_SIZE(tegra_wm8994_controls),
--	.remove = tegra_wm8994_remove,
--	.fully_routed = true,
--};
--
--static const struct tegra_asoc_data tegra_wm8994_data = {
--	.mclk_rate = tegra_wm8994_mclk_rate,
--	.mclk_id = WM8994_SYSCLK_MCLK1,
--	.card = &snd_soc_tegra_wm8994,
--	.add_common_dapm_widgets = true,
--	.add_common_snd_ops = true,
--	.add_mic_jack = true,
--	.add_hp_jack = true,
--};
--
--static const struct of_device_id tegra_wm8994_of_match[] = {
--	{ .compatible = "nvidia,tegra-audio-wm8994", .data = &tegra_wm8994_data },
--	{ },
--};
--MODULE_DEVICE_TABLE(of, tegra_wm8994_of_match);
--
--static struct platform_driver tegra_wm8994_driver = {
--	.driver = {
--		.name = "tegra-wm8994",
--		.of_match_table = tegra_wm8994_of_match,
--		.pm = &snd_soc_pm_ops,
--	},
--	.probe = tegra_asoc_machine_probe,
--};
--module_platform_driver(tegra_wm8994_driver);
--
--MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
--MODULE_DESCRIPTION("Tegra+WM8994 machine ASoC driver");
--MODULE_LICENSE("GPL");
++	.init = tegra_asoc_machine_init,
+ 	.dai_fmt = SND_SOC_DAIFMT_I2S |
+ 		   SND_SOC_DAIFMT_NB_NF |
+ 		   SND_SOC_DAIFMT_CBC_CFC,
+@@ -1193,6 +1156,7 @@ static struct snd_soc_card snd_soc_tegra_wm8962 = {
+ static const struct tegra_asoc_data tegra_wm8962_data = {
+ 	.mclk_rate = tegra_machine_mclk_rate_12mhz,
+ 	.card = &snd_soc_tegra_wm8962,
++	.dapm_fe_pin_name = "MICBIAS",
+ 	.add_common_dapm_widgets = true,
+ 	.add_common_controls = true,
+ 	.add_common_snd_ops = true,
+diff --git a/sound/soc/tegra/tegra_asoc_machine.h b/sound/soc/tegra/tegra_asoc_machine.h
+index 2034ce8e0689e..8ff39b53930c5 100644
+--- a/sound/soc/tegra/tegra_asoc_machine.h
++++ b/sound/soc/tegra/tegra_asoc_machine.h
+@@ -13,6 +13,7 @@ struct snd_soc_pcm_runtime;
+ 
+ struct tegra_asoc_data {
+ 	unsigned int (*mclk_rate)(unsigned int srate);
++	const char *dapm_fe_pin_name;
+ 	const char *codec_dev_name;
+ 	const char *hp_jack_name;
+ 	struct snd_soc_card *card;
 -- 
 2.53.0
 
