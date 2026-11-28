@@ -1,89 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795880126;
-	b=ABnoA5ocfzaagTtYcXIIkjyztKyr3gymLEGJQtaiYnSeMug9/o0SIcL97m9ky2NU5RlV
-	 v2KP6v8UdYVS2L/5+WeVN4CtDcPlHTA8otvigsNtJ/9P/48b0m70n5N9z28LxvI9Fc0ok
-	 ZTYeAx0NK1cCS0vXFrsJfpjooS3v38U3EAn5kRYkXSV4aoNBlY9J4926gCzUzck8cGUtC
-	 ty0d6f2bQ5xGv9hs5dtLWGBlY1ioD7WEEpZAItGhCjM2RvbCetR6GsfqymLYWHjYKTiL5
-	 olgiq1314eHJ9fcfS6RKe4GTMv/Zpe6pI4HTD3UyTo/io5BZHUPHDT6ke+UD4GQt9aA==
+	t=1795880128;
+	b=LxeRoz9vqLZKK9s3m92gdfuFMrRXs2+W+iF7VgMtU7Yl1FCLNfm2EDh1VRqePB6YQBIE
+	 KNPi1OEGARMsnYHfigaJe5krB5A9PvN0ndKqc1BaZFlMqWcFXgQX5u1lDiVLBju9jNHWm
+	 MQX3e2tX08sIHq/vu51FnU/7Z2pLF6pQwCmwThKvpbbZ6ZCQjwlDiF+fLFzO9SzX+HhIq
+	 wmfFLGAl+z6g1rblNq0rKYBB2ZgsdnsqPqkzN6zJAfe6wvTsxRT4dEPoYglEfEkYNLNSA
+	 OGsOzbhMZZlhsERf1NvR4deQ8jdgrIbJf60ti6CpdydKl4tUmLyzUy6qrn37zF7bSIw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795880126;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795880128;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=v+WhCOjHz9kC0UxC3aeycoT6WGib9fNFh6RWvttpfXY=;
-	b=RFv4/F8k9Ow+vOBohvoPf0S0SaB4sUgDpTgJSvDMf/ig9GNK8ucU1yBOJBKBOAeWvqCR
-	 ueaDlNSkoZjvQB4To+zmdK7a+LlQSeNjfrwzCwjnJ7iEkspRaummMoM3sMDK/SIUbgIUx
-	 L2lc0IWlgOyr9NYMEmt1SoiRbFGrsLPBzQmFHtPMcy880Y65p4ollJAlIMYdn4X5TvcUK
-	 n/Dsb/TiD33WIhl4nWX9ch6jzCRDQBYHfvaOkbstUEOQoJQriYiS61PEc8oZ7u/hBPQgx
-	 4/Fw+EGIQZssT+6H5ajOYb8ZLcrEfU1RZPNOh3P9tYs217gIx7pPNaHsr03OHhRTjxw==
+	bh=cfftNM/o6/uERx2scyV8aMPrgBR3cRX3BHVyMUstbh4=;
+	b=3ZDFk0IUNby2rZQt3ALr1t4IAawKatGOtRz6vja0BURlYP1cQ0cXJ6LbSgM1cOG5o9Eu
+	 JQ4ZF/+ouhnGhUJ/e/Da27E9lYO/EYsfIXKhG4Bw6X3JuOHmx6y1umCjDP5swmwxiwFDG
+	 oQGe5KEGPg8vhHoQBpVcI8R3DRGJGtp7rVeLXarDrIN5/wF4ErHI7Q9OKtyNVA3ukVtNk
+	 zGNZbwxHmTbKfccSODvX3is0e0PzkDT7aemM5WoKQCxW0ydRTSGKPag3PN9/kMFdRN5fF
+	 updsrmL5VZxn98UdeoAjSC4cr5s2OpL4tpWRewXNaYAfAGLJ2Sf0mjnI/kI0kCTb5bA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Lhj41ntJ;
-	arc=none smtp.remote-ip=209.85.128.49
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=pKfIYDPC;
+	arc=none smtp.remote-ip=209.85.128.46
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360FE606A31F
-	for <linux-tegra@vger.kernel.org>; Sat, 28 Nov 2026 15:35:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 360FE606A31F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A13A606A321
+	for <linux-tegra@vger.kernel.org>; Sat, 28 Nov 2026 15:35:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2A13A606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Lhj41ntJ
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4bb64ef5a00so73872635e9.3
-        for <linux-tegra@vger.kernel.org>; Sat, 28 Nov 2026 07:35:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=pKfIYDPC
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so92166385e9.2
+        for <linux-tegra@vger.kernel.org>; Sat, 28 Nov 2026 07:35:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795880124; x=1796484924; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795880126; x=1796484926; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=v+WhCOjHz9kC0UxC3aeycoT6WGib9fNFh6RWvttpfXY=;
-        b=Lhj41ntJIj6j0g+5m/PV3M0F9CFMLiYPxvxKjMLjkJWXvno68ILod9L2mpP/CsKhFg
-         I3ap1mfQ6MjWG3nnIQ6XKLaznVHiH6RwphnNkOENQl/0LLfXVEkBbDfxzJM1hjPSlCCU
-         7qan8THMN6WzaJIrL2DYepj5UCNJH7QfFhiRMaexVlnF/0pPKHqjye6PpS3NybGg3z7S
-         TVGk2GLi1jdlAjlyWU/6QQ1N0qP7sWGDhUnfLOeOnWNaygpd8OxBfDD6KPwJkdzynkjU
-         d3ME9580Dx70y7R2Ys/xEdAeLPhkuXuOYYln3RulTlwGatX4LnS+5EL+L/1nSMsIDYRq
-         Z6FA==
+        bh=cfftNM/o6/uERx2scyV8aMPrgBR3cRX3BHVyMUstbh4=;
+        b=pKfIYDPCG1CqekvZklsaC+7dg20spjbGOEwXkA0yIDKykb64+/yXCAAppvkcXwlPmC
+         wvUhxBDIlLUKTcybvMBEd0YhuFQ708HvgEK+cS+PczYut3pq6bO4RN4Tw4weSiSkkKnk
+         ilsuLWhLYf+NX7/POoDkBWcY3BR8Yq0Z+ricI++hhsOxv5bkHOYQj7pqCf4BA5FjRGq2
+         Q5reHggiCwqqzT2BdQQPfMachHtuPFXv2QLWrrNAO1UWoAiedZTz8NAK8um1sQ7QHbfA
+         A0QufZBc/5Qy6P4bclYXGHqEU2Ubag6CWP00mQ519M3Ur91vJ/zRQe2FKzDywiGhXQBS
+         tBjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795880124; x=1796484924;
+        d=1e100.net; s=20260707; t=1795880126; x=1796484926;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=v+WhCOjHz9kC0UxC3aeycoT6WGib9fNFh6RWvttpfXY=;
-        b=nO16zJvw/8v04+Yz1ns3CJj6QDilENmUdDMPLmsW16S5ja3g8wFc30shsUuTexbJDF
-         qEXXtA5a6yQ0gHr7+nC+8K2wf/B0tfU4AaCILoeReTd5PZq2ZNSh+g/6cX4vLTgjHKEm
-         7eZ2/Io/qyLqHOVDVpG7mVYTRvIIu0bDD4SZIFMzy3HUvfpKnJ/A5Qhreu9O52coumQx
-         MjeSDPGU+srcaCbvCfw4U33xYAmlUhCB8ZvGabc9OIu23naoqjfqJxghjKVjGil2rO+n
-         qRSGScMWp0zBrr1T63+LWraXMEWYNs3FFKCiVQsR28Bu2IhPpXlT+fDtNdy72ELP84e0
-         ms5w==
-X-Forwarded-Encrypted: i=1; AL+hErGZziNXHo6fks/zvK8K1/tkZZ4H/O0pRtlYjTU69FFHjhj7uMsGfy5nt+I+FubNo+0OWQsqbcCQ483Ogw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/CMbQqoUz4q0uNFk+uNcAuEYh4Wwz4OtSRixGgqeAe7P/US6Hz
-	FNCsQQsoiNLHPwQ+DKYXSP2EbBdwFPK47V+oFg9EMxKmtZKAsz+3Yf/M
-X-Gm-Gg: AZFdTZdb+B0eR5wqEM6e01ZdjBx3ePf9D+ioGcVE9hZMO2QTS7IrjyM3ctyOFWj7k4h
-	WcWuvciwWUvY0Pr+7QHJqCzi9uKHFIaRP+nJTR5imDaz4pMvSj5+9wQ/Bo6yNYmbSJ5Gt0/ubrA
-	xXOd2I1EGyq3BC5yQ2qgtsj7arnfaN01hIOpaVDZjLj8TihEdkeMo5Gnmy5pqb+Vcio7MeSflXl
-	4OwvrpJpEfDBKGbjbRLKa6Wc9H2xZ85dqJuCWurGLoP4gPqU8oJ7N5aT3ZCWKyL7/2tPtOUf8wB
-	tOxAPFo3DFD/2TeiFBfOwFt9w8xOlA3uXIsbYhajtsuO47QF+wCXL1ZQ2nnROrj6bo7LQL31XIU
-	/YTadlhGS8pVowdjdVV+q59QcqOy97TXm7eZYxa93Be56xxXElDt8i61+cLmwvq/xc/X7auj4Q2
-	OWclxDdnx/v9jVlhl327su4Z57uoWZUkdpgSm1310dFcbGwA7lk4tkAA4+nuX1YEUFk3XSWNn1V
-	EPDielOw6OOaBeT/NQ2SrkBCZvloqaEN2bomyKFxvA30iBy1Q+fkrHc7ZRFl6XUnEy4Kl2UOKYL
-	1J+EtL1XlksYIJ2uMwIzzmBulIRMy/qN+Q/p1ue1WF24vq7iTXbEwkHSRSErfQ==
-X-Received: by 2002:a05:600c:a117:b0:4bb:a5e1:7497 with SMTP id 5b1f17b1804b1-4bba5e18d83mr191413735e9.32.1795880124443;
-        Sat, 28 Nov 2026 07:35:24 -0800 (PST)
+        bh=cfftNM/o6/uERx2scyV8aMPrgBR3cRX3BHVyMUstbh4=;
+        b=tYoqmPAE2lL2M7yWvjqjAJG0ClR5EoN41fmRM7Gr/zW8JqXbU4eBJIZexvOMI0pmTH
+         WI36xUtHZMG9S+duRN8yB+kNlgRjHbFEnHuH+uLVjuXTv4pFLY46BNHm1xQR/Yw/+dPR
+         Ys1LVcV/MvTOa9MjooTHJcAhee48w+eOrofcfMJUhhOHHzqWGSnhLdJ//gy91BMx1b4Y
+         KtsSarCNK1WkGGl9ovjXprmveoPc/d5Xe2cZrSGU2L+7R5DRPQbqU7GUM3SsNC9Q5n/u
+         Q7riuNOWsWCDZrqCBTS0/mlKAJxsdOFeIcOagk39QLqgaw7L1RXVH+rDDgIEm4vywx0M
+         /noQ==
+X-Forwarded-Encrypted: i=1; AL+hErGLk0heUa4zrLyAwBBwOyT3oNV0RLKC0sQkDaPgPv40t7Z3cQEvuqiPwYBPiMwfp1GQ02dvfTpsYPGF/w==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+oMjsad81U0XmeIpHX4T1jJj18jeKeF8kfSPc6lu/866FXXV1j
+	XFz1g5cjjMOpke4RbUrF8/V5WJSUuCnX35bJDSHRnMPCfQgVK8GOTlY0
+X-Gm-Gg: AZFdTZcz3mW25qXll5BFdD2NKliTkFxsn72Pezj7xw3Drwv/wlSjiL6/6D9P2tY/wIC
+	Q0POIhfi3h9ITLVFgQti7L/OCXBTDZ33pN+BrfWTSJMPJNCjCITFwzZ9fMUsmERWTaxPnOaChdk
+	ORhJ9Atbj7l79KltHMxq19Zz2s4mroOWhwRac1OK/58bWWZlY8Kp96i4gDUipswyB2qf47pQoGR
+	Dz10LQ5ixdng3ka2RbMpoagrm0YUorsKDPt1dEdFGrvHC60pRQhnnS+47GIiJlqkUN9MxB1y/+k
+	YHqcrEUdpHSnfq2laYFURn9+xxDp4T+06TkLUwu9hrbbOPfd7HIL7jPn5tL/uNaAgDobQhnC7LR
+	hv8NAZ6HxoAvZtj6v/qrw6pREQNAyiHFNXQDTZWRtW+DjaxtHJ6M32rSCUZHn+wdT7bVsUGE4Cm
+	6JxO/RrADTB1HL9H42Yz0N9TYEiJH1nHpqIJ0yK5iplZK2/zZJCmVqY3qhK8VhJLrqPHp73YyvD
+	ujFRcxhFtGlO6CMhdGGChULOeb7L40EHc58JcvdY0jNV9w7+BwZdRnJ1HDm0L4bTUhIyUslF5Cf
+	uLTT0yEE98O5w2Bd1t+eyaogOVmOeBLDro0tamaI
+X-Received: by 2002:a05:600c:1da9:b0:4b1:2026:6b41 with SMTP id 5b1f17b1804b1-4bb88819294mr584305435e9.30.1795880126455;
+        Sat, 28 Nov 2026 07:35:26 -0800 (PST)
 Received: from [192.168.0.15] ([2a02:a312:c59b:a180:251a:f25f:80fa:af1d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb9067846esm561359015e9.4.2026.11.28.07.35.22
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb9067846esm561359015e9.4.2026.11.28.07.35.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Nov 2026 07:35:23 -0800 (PST)
+        Sat, 28 Nov 2026 07:35:26 -0800 (PST)
 From: Artur Kowalski <arturkow2000@gmail.com>
-Date: Sat, 28 Nov 2026 16:34:59 +0100
-Subject: [PATCH 3/4] soc/tegra: pmc: Power up VDE partition before
- restarting Tegra20
+Date: Sat, 28 Nov 2026 16:35:00 +0100
+Subject: [PATCH 4/4] media: tegra-vde: Drop warm restart workaround
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -95,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261128-t20-soft-reset-v1-3-0db458c5996b@gmail.com>
+Message-Id: <20261128-t20-soft-reset-v1-4-0db458c5996b@gmail.com>
 References: <20261128-t20-soft-reset-v1-0-0db458c5996b@gmail.com>
 In-Reply-To: <20261128-t20-soft-reset-v1-0-0db458c5996b@gmail.com>
 To: Lee Jones <lee@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
@@ -107,158 +106,86 @@ Cc: mfd@lists.linux.dev, linux-tegra@vger.kernel.org,
  Thierry Reding <treding@nvidia.com>, linux-media@vger.kernel.org, 
  clamor95@gmail.com, Artur Kowalski <arturkow2000@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4628;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2609;
  i=arturkow2000@gmail.com; s=default; h=from:subject:message-id;
- bh=+L9yJ+khZAxRa3E+MLPbYZHl84vHWWJzo21sWA+6TPo=;
- b=owGbwMvMwCVmYeTc/TaVxZzxtFoSQzbXl62HpkcHB/xanbbc80tjw3ThAw4qOkt7npyQ/lu1u
- npC+fOlHaUsDGJcDLJiiixmD4W+8Mzzer/h5dZOmDmsTCBDGLg4BWAi9zgY/rtM0Hm/P3KDQEOp
- dFH83KNGuxdPv947OWSlddbdP7+l95xnZLi0JjJ+86e0vNl19bnPGlaF5U61z17zdfnPaQn1va+
- ze5gB
+ bh=hFtT0U2Rwf+oq2641JSfqN8CqbYI8bYr/DwXrJChJgA=;
+ b=owGbwMvMwCVmYeTc/TaVxZzxtFoSQzbXl61MTeKt/Iwu07XrJh103vSX9VZ3R9GsO4quqvGWL
+ 32/1zB1lLIwiHExyIopspg9FPrCM8/r/YaXWzth5rAygQxh4OIUgInMdmL4Hyj/7K4PQ9Ha64fl
+ eF5M+83SvFvhoG9F5T2N1ycnihwPnM/I8Lrvy9Nfjpq1ITNNNnkcuNFn8OqkWt7MD1P3TZxx6FD
+ IGmYA
 X-Developer-Key: i=arturkow2000@gmail.com; a=openpgp;
  fpr=F60710C8D69E03A01A2801CD87A47D20C2709637
 
-The Tegra20 boot ROM hangs on a warm reset if the VDE power partition is
-power-gated or clamped. The partition is powered on after a cold boot,
-and since the PMC isn't reset by a warm reset, it keeps the state Linux
-left it in.
+The VDE driver powers the VDE power partition on from its shutdown
+callback, and leaves it powered on in remove, because the Tegra20 boot
+ROM hangs on a warm reset if the partition is power-gated or clamped.
+The PMC driver now powers the partition on right before restarting on
+Tegra20, which also covers emergency restarts and doesn't depend on the
+VDE driver being loaded.
 
-This is currently worked around by the VDE driver, which powers the
-partition on from its shutdown callback. That doesn't cover emergency
-restarts, such as on a panic, which don't run shutdown callbacks, or the
-cases where the VDE driver isn't loaded or hasn't probed yet. The PMC
-driver also powers the partition down at probe time, so the cold-boot
-state doesn't survive even without the VDE driver.
+Drop the shutdown callback, and power the hardware down on remove,
+unless user space has forbidden runtime PM through power/control.
 
-Power the partition on and remove its clamps from the PMC restart path
-instead, right before the main reset. Factor the clamp mask computation
-out of __tegra_powergate_remove_clamping() so that it can be shared.
+Tegra30, Tegra114 and Tegra124 aren't affected by the boot ROM issue, so
+they no longer get the partition powered on before a restart.
 
-Fixes: 8f0c714ad9be ("media: staging: tegra-vde: Turn ON power domain on shutdown")
 Signed-off-by: Artur Kowalski <arturkow2000@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 74 +++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 60 insertions(+), 14 deletions(-)
+ drivers/media/platform/nvidia/tegra-vde/vde.c | 24 +-----------------------
+ 1 file changed, 1 insertion(+), 23 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index fcd9a644d97f..3fe4db473905 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -377,6 +377,7 @@ struct tegra_pmc_soc {
- 	bool has_tsense_reset;
- 	bool has_gpu_clamps;
- 	bool needs_mbist_war;
-+	bool needs_vde_restart_war;
- 	bool has_io_pad_wren;
- 	bool maybe_tz_only;
- 
-@@ -711,11 +712,24 @@ static int tegra_powergate_set(struct tegra_pmc *pmc, unsigned int id,
- 	return err;
- }
- 
-+static u32 tegra_powergate_clamp_mask(unsigned int id)
-+{
-+	/*
-+	 * Tegra 2 has a bug where PCIE and VDE clamping masks are
-+	 * swapped relatively to the partition ids
-+	 */
-+	if (id == TEGRA_POWERGATE_VDEC)
-+		return BIT(TEGRA_POWERGATE_PCIE);
-+
-+	if (id == TEGRA_POWERGATE_PCIE)
-+		return BIT(TEGRA_POWERGATE_VDEC);
-+
-+	return BIT(id);
-+}
-+
- static int __tegra_powergate_remove_clamping(struct tegra_pmc *pmc,
- 					     unsigned int id)
- {
--	u32 mask;
--
- 	mutex_lock(&pmc->powergates_lock);
- 
- 	/*
-@@ -729,18 +743,7 @@ static int __tegra_powergate_remove_clamping(struct tegra_pmc *pmc,
- 		}
- 	}
+diff --git a/drivers/media/platform/nvidia/tegra-vde/vde.c b/drivers/media/platform/nvidia/tegra-vde/vde.c
+index 878a5b37846c..6546959e4069 100644
+--- a/drivers/media/platform/nvidia/tegra-vde/vde.c
++++ b/drivers/media/platform/nvidia/tegra-vde/vde.c
+@@ -394,22 +394,10 @@ static void tegra_vde_remove(struct platform_device *pdev)
+ 	tegra_vde_v4l2_deinit(vde);
+ 	tegra_vde_free_bo(vde->secure_bo);
  
 -	/*
--	 * Tegra 2 has a bug where PCIE and VDE clamping masks are
--	 * swapped relatively to the partition ids
+-	 * As it increments RPM usage_count even on errors, we don't need to
+-	 * check the returned code here.
 -	 */
--	if (id == TEGRA_POWERGATE_VDEC)
--		mask = (1 << TEGRA_POWERGATE_PCIE);
--	else if (id == TEGRA_POWERGATE_PCIE)
--		mask = (1 << TEGRA_POWERGATE_VDEC);
--	else
--		mask = (1 << id);
+-	pm_runtime_get_sync(dev);
 -
--	tegra_pmc_writel(pmc, mask, REMOVE_CLAMPING);
-+	tegra_pmc_writel(pmc, tegra_powergate_clamp_mask(id), REMOVE_CLAMPING);
++	pm_runtime_suspend(dev);
+ 	pm_runtime_dont_use_autosuspend(dev);
+ 	pm_runtime_disable(dev);
  
- out:
- 	mutex_unlock(&pmc->powergates_lock);
-@@ -1189,10 +1192,52 @@ static int tegra_pmc_reboot_notify(struct notifier_block *this,
- 	return NOTIFY_DONE;
+-	/*
+-	 * Balance RPM state, the VDE power domain is left ON and hardware
+-	 * is clock-gated. It's safe to reboot machine now.
+-	 */
+-	pm_runtime_put_noidle(dev);
+-	clk_disable_unprepare(vde->clk);
+-
+ 	tegra_vde_dmabuf_cache_unmap_all(vde);
+ 	tegra_vde_iommu_deinit(vde);
+ 
+@@ -417,15 +405,6 @@ static void tegra_vde_remove(struct platform_device *pdev)
+ 		      gen_pool_size(vde->iram_pool));
  }
  
-+/*
-+ * The Tegra20 boot ROM hangs on a warm reset if the VDE partition is
-+ * power-gated or clamped, as it is powered on after a cold boot, so power
-+ * it on before resetting. The PMC isn't reset, so the partition keeps its
-+ * state.
-+ *
-+ * This runs with interrupts disabled, so tegra_powergate_set() can't be
-+ * used, as it takes a mutex and sleeps. The partition is powered on without
-+ * enabling its clocks and deasserting its resets, which the reset takes care
-+ * of.
-+ */
-+static void tegra_pmc_restart_power_up_vde(struct tegra_pmc *pmc)
-+{
-+	const unsigned int id = TEGRA_POWERGATE_VDEC;
-+	unsigned int retries = 3;
-+	bool on;
-+	int err;
-+
-+	if (!pmc->soc || !pmc->soc->needs_vde_restart_war)
-+		return;
-+
-+	if (tegra_powergate_state(pmc, id))
-+		return;
-+
-+	do {
-+		tegra_pmc_writel(pmc, PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
-+		err = read_poll_timeout_atomic(tegra_powergate_state, on, on,
-+					       10, 100000, false, pmc, id);
-+	} while (err && --retries);
-+
-+	if (err) {
-+		pr_warn("failed to power up VDE partition: %d\n", err);
-+		return;
-+	}
-+
-+	udelay(10);
-+	tegra_pmc_writel(pmc, tegra_powergate_clamp_mask(id), REMOVE_CLAMPING);
-+	udelay(10);
-+}
-+
- static void tegra_pmc_restart(struct tegra_pmc *pmc)
+-static void tegra_vde_shutdown(struct platform_device *pdev)
+-{
+-	/*
+-	 * On some devices bootloader isn't ready to a power-gated VDE on
+-	 * a warm-reboot, machine will hang in that case.
+-	 */
+-	pm_runtime_get_sync(&pdev->dev);
+-}
+-
+ static __maybe_unused int tegra_vde_pm_suspend(struct device *dev)
  {
- 	u32 value;
- 
-+	tegra_pmc_restart_power_up_vde(pmc);
-+
- 	/* reset everything but PMC_SCRATCH0 and PMC_RST_STATUS */
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
- 	value |= PMC_CNTRL_MAIN_RST;
-@@ -3448,6 +3493,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.has_tsense_reset = false,
- 	.has_gpu_clamps = false,
- 	.needs_mbist_war = false,
-+	.needs_vde_restart_war = true,
- 	.has_io_pad_wren = true,
- 	.maybe_tz_only = false,
- 	.num_io_pads = 0,
+ 	struct tegra_vde *vde = dev_get_drvdata(dev);
+@@ -543,7 +522,6 @@ MODULE_DEVICE_TABLE(of, tegra_vde_of_match);
+ static struct platform_driver tegra_vde_driver = {
+ 	.probe		= tegra_vde_probe,
+ 	.remove		= tegra_vde_remove,
+-	.shutdown	= tegra_vde_shutdown,
+ 	.driver		= {
+ 		.name		= "tegra-vde",
+ 		.of_match_table = tegra_vde_of_match,
 
 -- 
 2.56.1
