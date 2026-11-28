@@ -1,89 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795880125;
-	b=bm6ofctB2Ms99YRZpd3XwiMps+cqI5Pps5OLSixG7R5alV6v0oVwcZKKPpLe3bfpGDOn
-	 4pJNl9wj/Bm66htgW2MUpSLqmqmClQcoOP8jJVjfLBH1dCZ8E89yon8JtmI3N7Ij+LISl
-	 Qtl3U6e9XsTET3DZWpWODo5+jH6e7VIZNFSFVfT2n1WiJZTzITD5tcZvXL+2jyDgcs9hJ
-	 Ym0ro7p+d+VG+9BCurJ/iGqQRSJZWz9WEFVlSHYaHSZ6ZJbdHzjGT2reLv7vGjphT+XJO
-	 J9HAJIjQH3Sa7ei0YONnhwWZ2zoY7WQMiHryv//4XZHeXUMnCDDwBV0YFil0uN9lE9g==
+	t=1795880126;
+	b=ABnoA5ocfzaagTtYcXIIkjyztKyr3gymLEGJQtaiYnSeMug9/o0SIcL97m9ky2NU5RlV
+	 v2KP6v8UdYVS2L/5+WeVN4CtDcPlHTA8otvigsNtJ/9P/48b0m70n5N9z28LxvI9Fc0ok
+	 ZTYeAx0NK1cCS0vXFrsJfpjooS3v38U3EAn5kRYkXSV4aoNBlY9J4926gCzUzck8cGUtC
+	 ty0d6f2bQ5xGv9hs5dtLWGBlY1ioD7WEEpZAItGhCjM2RvbCetR6GsfqymLYWHjYKTiL5
+	 olgiq1314eHJ9fcfS6RKe4GTMv/Zpe6pI4HTD3UyTo/io5BZHUPHDT6ke+UD4GQt9aA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795880125;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795880126;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=4UNIcfLh2UmARAy7gKdF7vRyfbS9uaHEze4ik/95PcQ=;
-	b=fhcw5ouuaJyw9fzpKwGSXHcHBa82hauwhYPOtcbk/uBMqa9HyYVc/dw31inmr6MYG8D/
-	 z5vucFd3fAZb2iFpFueVPWrpY9iS7EwhQ9LRbtnXRCJQwuRhc5shQoTlPWoWZk7Vz2myM
-	 DQj4fl+jNkDKFrRgH5lavoiZyNvgfobiDHdOlKUqUe8qhSpzkkyTFxifjymHlHZIp8L0Z
-	 ttKylfCONvL69WxYXv1mDalWpoeMAg3FkjdsjUjm8mjiTcJfK97wEjzqzxicO8F9RdBvs
-	 PICaV/LNtd03WthD7UUJE6KnD1/I+2dYa9NzBvHfUUSOGNKdpoPBS8PsEPRvWleOv2g==
+	bh=v+WhCOjHz9kC0UxC3aeycoT6WGib9fNFh6RWvttpfXY=;
+	b=RFv4/F8k9Ow+vOBohvoPf0S0SaB4sUgDpTgJSvDMf/ig9GNK8ucU1yBOJBKBOAeWvqCR
+	 ueaDlNSkoZjvQB4To+zmdK7a+LlQSeNjfrwzCwjnJ7iEkspRaummMoM3sMDK/SIUbgIUx
+	 L2lc0IWlgOyr9NYMEmt1SoiRbFGrsLPBzQmFHtPMcy880Y65p4ollJAlIMYdn4X5TvcUK
+	 n/Dsb/TiD33WIhl4nWX9ch6jzCRDQBYHfvaOkbstUEOQoJQriYiS61PEc8oZ7u/hBPQgx
+	 4/Fw+EGIQZssT+6H5ajOYb8ZLcrEfU1RZPNOh3P9tYs217gIx7pPNaHsr03OHhRTjxw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=X8D70t7Y;
-	arc=none smtp.remote-ip=209.85.221.54
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Lhj41ntJ;
+	arc=none smtp.remote-ip=209.85.128.49
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D122606A323
-	for <linux-tegra@vger.kernel.org>; Sat, 28 Nov 2026 15:35:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3D122606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360FE606A31F
+	for <linux-tegra@vger.kernel.org>; Sat, 28 Nov 2026 15:35:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 360FE606A31F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=X8D70t7Y
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4a5024b3c28so5683511f8f.0
-        for <linux-tegra@vger.kernel.org>; Sat, 28 Nov 2026 07:35:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Lhj41ntJ
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4bb64ef5a00so73872635e9.3
+        for <linux-tegra@vger.kernel.org>; Sat, 28 Nov 2026 07:35:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795880122; x=1796484922; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795880124; x=1796484924; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=4UNIcfLh2UmARAy7gKdF7vRyfbS9uaHEze4ik/95PcQ=;
-        b=X8D70t7YzynWqvpBu80kvugfAAPkuzNiG/M1kd1gbDUL0bl2Z03/nJQuPmVcjst3KM
-         XdU+Qw1H4I3ihxX2uUF33/2R84qK4z+/BJNYVWqX30MRGK7ROL7QRHCMLYw1Q5ho7y8R
-         AEk9oYLYAfYd+p1maz1Eff3xM9sYwbNI92j5DootxIZ3yN6vqawtSlbpTDA1aVVY8FFK
-         xt3CnjnhvIkkvZdLt1PbCGjzaBqlfH+2xZ48zFVlgKnouYm3zAzePoPFbkCdaLuFhSSk
-         s3MA4kHOjzj+SdklGwl2+ONCSvU+Y+ML6EHWaA9CiOas/dpQHJomkmZK8jbJsXYE4IKh
-         xcUw==
+        bh=v+WhCOjHz9kC0UxC3aeycoT6WGib9fNFh6RWvttpfXY=;
+        b=Lhj41ntJIj6j0g+5m/PV3M0F9CFMLiYPxvxKjMLjkJWXvno68ILod9L2mpP/CsKhFg
+         I3ap1mfQ6MjWG3nnIQ6XKLaznVHiH6RwphnNkOENQl/0LLfXVEkBbDfxzJM1hjPSlCCU
+         7qan8THMN6WzaJIrL2DYepj5UCNJH7QfFhiRMaexVlnF/0pPKHqjye6PpS3NybGg3z7S
+         TVGk2GLi1jdlAjlyWU/6QQ1N0qP7sWGDhUnfLOeOnWNaygpd8OxBfDD6KPwJkdzynkjU
+         d3ME9580Dx70y7R2Ys/xEdAeLPhkuXuOYYln3RulTlwGatX4LnS+5EL+L/1nSMsIDYRq
+         Z6FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795880122; x=1796484922;
+        d=1e100.net; s=20260707; t=1795880124; x=1796484924;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=4UNIcfLh2UmARAy7gKdF7vRyfbS9uaHEze4ik/95PcQ=;
-        b=d6XUVZ2Sbl6Y2Oa8d7HcdHob+udRZx6+FzXK76r9Xj7VWUeb9kO6ljQzekuw25q2qu
-         RzimCf2bpVvHQPca5TE4NiJOFypHlzaur8CS5k9ktMmqS7EF5CYHmmeIYEKRgexsLftj
-         XYuXSXt23OfWjZ/+liTZACYNHMnX3v4vd/rzSk9LgWQi8D2Mj5kLDVEe1ZMol8UhoMVu
-         sj4xa035RROpfdq6Y3OYOY74oJTxDQMgC1qtDAhiW9x0gv/HDDJ/kgombhGqosD/zhyg
-         5qe/2MAWwx9Q8M+U76GcZN8FzHwZUvNhPznU18HXi82SprJBd1qQmaNVCcqZIOco/ce+
-         g1Jg==
-X-Forwarded-Encrypted: i=1; AL+hErGbYUe9hfUPiqcEL3S2yvbMSNaRFekDDtukWIl3oAGSui3nRDBPHrigo6IVvuLJMSOVQFA9Mq5vf464aw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z94cSR8LAqEgo/jnVNdoUa2PyLLHOOt35wT0DpsC7EXN3BaQtoj
-	dsRTlCDF/fQ+p0yZ8e1GCWyoK8iwL4OOT5QzGMNWap97QCCGqk3kybUj
-X-Gm-Gg: AZFdTZe/+jO6TgrJGMUF7AtEZAA6MB8ApT3MmIsjf4KoxtH12nLV1EbEYovPbXjXkYu
-	eQ+SuW0WDdt19EChKmvaJWlG5Pzv/wGblSHjZ6Y8+E4jzRCV04C7jqb8WmOsuNq1q4bWLckbBE5
-	W/p6693PWZxflfstNBMyRg/4LV0GXbG/hAUpgwWf2BN21sFDw5EwAInfYNHcQRLPy/pg1m+dL50
-	43201nnNC55KzMboypzfxIpqYsnbXYcOoMTEf8jZ7MhCPVcZn1gIQScGrvkcMlH7txsHxbxEihc
-	sXKXQJYggZOlzbMdeeZQTHae1JZl4r0x1v9DJeJ3+kdmyjoy9m3POxz0w7sNjIXtiQQqNYKkMZS
-	uZFHNGlXVj8mCIWWWyQHe7xtCeuPUkgcVxiyO+r6jmbgQy2Pc3uxYJ+dpgr2Zl8ZXxuQ+DhgmF8
-	J1qy7kkLLiRJ67z9N1Bt5DeWn/UgaUmki6YYpcoAdnDAeWVVZ0oYsaNdaV8Ivn06/TebVq8StVc
-	lVfadQPEYiU+1erqo1uq3c3YyTlbTVFBaA60aB5SGTtJ8CmrrinksrwHGJvOEyVD234HjMLyq7j
-	9AYdnxWyyofn97lqwOFxuAh09QngDer2vjhdeqxy
-X-Received: by 2002:a05:600c:4504:b0:4b4:a551:681a with SMTP id 5b1f17b1804b1-4bb887fc396mr571761385e9.3.1795880122490;
-        Sat, 28 Nov 2026 07:35:22 -0800 (PST)
+        bh=v+WhCOjHz9kC0UxC3aeycoT6WGib9fNFh6RWvttpfXY=;
+        b=nO16zJvw/8v04+Yz1ns3CJj6QDilENmUdDMPLmsW16S5ja3g8wFc30shsUuTexbJDF
+         qEXXtA5a6yQ0gHr7+nC+8K2wf/B0tfU4AaCILoeReTd5PZq2ZNSh+g/6cX4vLTgjHKEm
+         7eZ2/Io/qyLqHOVDVpG7mVYTRvIIu0bDD4SZIFMzy3HUvfpKnJ/A5Qhreu9O52coumQx
+         MjeSDPGU+srcaCbvCfw4U33xYAmlUhCB8ZvGabc9OIu23naoqjfqJxghjKVjGil2rO+n
+         qRSGScMWp0zBrr1T63+LWraXMEWYNs3FFKCiVQsR28Bu2IhPpXlT+fDtNdy72ELP84e0
+         ms5w==
+X-Forwarded-Encrypted: i=1; AL+hErGZziNXHo6fks/zvK8K1/tkZZ4H/O0pRtlYjTU69FFHjhj7uMsGfy5nt+I+FubNo+0OWQsqbcCQ483Ogw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/CMbQqoUz4q0uNFk+uNcAuEYh4Wwz4OtSRixGgqeAe7P/US6Hz
+	FNCsQQsoiNLHPwQ+DKYXSP2EbBdwFPK47V+oFg9EMxKmtZKAsz+3Yf/M
+X-Gm-Gg: AZFdTZdb+B0eR5wqEM6e01ZdjBx3ePf9D+ioGcVE9hZMO2QTS7IrjyM3ctyOFWj7k4h
+	WcWuvciwWUvY0Pr+7QHJqCzi9uKHFIaRP+nJTR5imDaz4pMvSj5+9wQ/Bo6yNYmbSJ5Gt0/ubrA
+	xXOd2I1EGyq3BC5yQ2qgtsj7arnfaN01hIOpaVDZjLj8TihEdkeMo5Gnmy5pqb+Vcio7MeSflXl
+	4OwvrpJpEfDBKGbjbRLKa6Wc9H2xZ85dqJuCWurGLoP4gPqU8oJ7N5aT3ZCWKyL7/2tPtOUf8wB
+	tOxAPFo3DFD/2TeiFBfOwFt9w8xOlA3uXIsbYhajtsuO47QF+wCXL1ZQ2nnROrj6bo7LQL31XIU
+	/YTadlhGS8pVowdjdVV+q59QcqOy97TXm7eZYxa93Be56xxXElDt8i61+cLmwvq/xc/X7auj4Q2
+	OWclxDdnx/v9jVlhl327su4Z57uoWZUkdpgSm1310dFcbGwA7lk4tkAA4+nuX1YEUFk3XSWNn1V
+	EPDielOw6OOaBeT/NQ2SrkBCZvloqaEN2bomyKFxvA30iBy1Q+fkrHc7ZRFl6XUnEy4Kl2UOKYL
+	1J+EtL1XlksYIJ2uMwIzzmBulIRMy/qN+Q/p1ue1WF24vq7iTXbEwkHSRSErfQ==
+X-Received: by 2002:a05:600c:a117:b0:4bb:a5e1:7497 with SMTP id 5b1f17b1804b1-4bba5e18d83mr191413735e9.32.1795880124443;
+        Sat, 28 Nov 2026 07:35:24 -0800 (PST)
 Received: from [192.168.0.15] ([2a02:a312:c59b:a180:251a:f25f:80fa:af1d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb9067846esm561359015e9.4.2026.11.28.07.35.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb9067846esm561359015e9.4.2026.11.28.07.35.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Nov 2026 07:35:22 -0800 (PST)
+        Sat, 28 Nov 2026 07:35:23 -0800 (PST)
 From: Artur Kowalski <arturkow2000@gmail.com>
-Date: Sat, 28 Nov 2026 16:34:58 +0100
-Subject: [PATCH 2/4] soc/tegra: pmc: Register restart handler from early
- init on ARM
+Date: Sat, 28 Nov 2026 16:34:59 +0100
+Subject: [PATCH 3/4] soc/tegra: pmc: Power up VDE partition before
+ restarting Tegra20
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -95,7 +95,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261128-t20-soft-reset-v1-2-0db458c5996b@gmail.com>
+Message-Id: <20261128-t20-soft-reset-v1-3-0db458c5996b@gmail.com>
 References: <20261128-t20-soft-reset-v1-0-0db458c5996b@gmail.com>
 In-Reply-To: <20261128-t20-soft-reset-v1-0-0db458c5996b@gmail.com>
 To: Lee Jones <lee@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
@@ -107,89 +107,158 @@ Cc: mfd@lists.linux.dev, linux-tegra@vger.kernel.org,
  Thierry Reding <treding@nvidia.com>, linux-media@vger.kernel.org, 
  clamor95@gmail.com, Artur Kowalski <arturkow2000@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2874;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4628;
  i=arturkow2000@gmail.com; s=default; h=from:subject:message-id;
- bh=1FogJzqzHqWpDAjuCweRHcTK3ViL2zXlOiygHcXOspQ=;
- b=owGbwMvMwCVmYeTc/TaVxZzxtFoSQzbXl63hotdPHJj4Qa2g4NqnKVxrb9lt2dU18b8s462Xh
- vxlvRU3OkpZGMS4GGTFFFnMHgp94Znn9X7Dy62dMHNYmUCGMHBxCsBEGPIZ/vBubk5wqHlinHI8
- ufDsya5Ss9teUv8Eg26KFD/lKo6b8oaR4YyB2NSN96+zaR1YYbrL5/9Hm0luNd9yW1/s1s46mGz
- ZzgYA
+ bh=+L9yJ+khZAxRa3E+MLPbYZHl84vHWWJzo21sWA+6TPo=;
+ b=owGbwMvMwCVmYeTc/TaVxZzxtFoSQzbXl62HpkcHB/xanbbc80tjw3ThAw4qOkt7npyQ/lu1u
+ npC+fOlHaUsDGJcDLJiiixmD4W+8Mzzer/h5dZOmDmsTCBDGLg4BWAi9zgY/rtM0Hm/P3KDQEOp
+ dFH83KNGuxdPv947OWSlddbdP7+l95xnZLi0JjJ+86e0vNl19bnPGlaF5U61z17zdfnPaQn1va+
+ ze5gB
 X-Developer-Key: i=arturkow2000@gmail.com; a=openpgp;
  fpr=F60710C8D69E03A01A2801CD87A47D20C2709637
 
-On 32-bit ARM the PMC restart handler is registered at probe time, which
-is deferred until the core-supply regulator appears. If the kernel
-crashes before the PMC probes, it won't be able to reset the board.
+The Tegra20 boot ROM hangs on a warm reset if the VDE power partition is
+power-gated or clamped. The partition is powered on after a cold boot,
+and since the PMC isn't reset by a warm reset, it keeps the state Linux
+left it in.
 
-The handler only needs the PMC registers, which tegra_pmc_early_init()
-already maps. Register it there, using early_pmc, so restarting works
-from early boot, and don't register it again at probe time on ARM.
+This is currently worked around by the VDE driver, which powers the
+partition on from its shutdown callback. That doesn't cover emergency
+restarts, such as on a panic, which don't run shutdown callbacks, or the
+cases where the VDE driver isn't loaded or hasn't probed yet. The PMC
+driver also powers the partition down at probe time, so the cold-boot
+state doesn't survive even without the VDE driver.
 
-Also switch early_pmc to the new register mapping before unmapping the
-old one at probe time, as the handler doesn't take the lock.
+Power the partition on and remove its clamps from the PMC restart path
+instead, right before the main reset. Factor the clamp mask computation
+out of __tegra_powergate_remove_clamping() so that it can be shared.
 
+Fixes: 8f0c714ad9be ("media: staging: tegra-vde: Turn ON power domain on shutdown")
 Signed-off-by: Artur Kowalski <arturkow2000@gmail.com>
 ---
- drivers/soc/tegra/pmc.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ drivers/soc/tegra/pmc.c | 74 +++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 60 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 721e9596b07d..fcd9a644d97f 100644
+index fcd9a644d97f..3fe4db473905 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -3090,7 +3090,8 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+@@ -377,6 +377,7 @@ struct tegra_pmc_soc {
+ 	bool has_tsense_reset;
+ 	bool has_gpu_clamps;
+ 	bool needs_mbist_war;
++	bool needs_vde_restart_war;
+ 	bool has_io_pad_wren;
+ 	bool maybe_tz_only;
+ 
+@@ -711,11 +712,24 @@ static int tegra_powergate_set(struct tegra_pmc *pmc, unsigned int id,
+ 	return err;
+ }
+ 
++static u32 tegra_powergate_clamp_mask(unsigned int id)
++{
++	/*
++	 * Tegra 2 has a bug where PCIE and VDE clamping masks are
++	 * swapped relatively to the partition ids
++	 */
++	if (id == TEGRA_POWERGATE_VDEC)
++		return BIT(TEGRA_POWERGATE_PCIE);
++
++	if (id == TEGRA_POWERGATE_PCIE)
++		return BIT(TEGRA_POWERGATE_VDEC);
++
++	return BIT(id);
++}
++
+ static int __tegra_powergate_remove_clamping(struct tegra_pmc *pmc,
+ 					     unsigned int id)
+ {
+-	u32 mask;
+-
+ 	mutex_lock(&pmc->powergates_lock);
+ 
+ 	/*
+@@ -729,18 +743,7 @@ static int __tegra_powergate_remove_clamping(struct tegra_pmc *pmc,
  		}
  	}
  
--	if (dev_to_node(&pdev->dev) == NUMA_NO_NODE) {
-+	/* On 32-bit ARM, tegra_pmc_early_init() registers the restart handler */
-+	if (!IS_ENABLED(CONFIG_ARM) && dev_to_node(&pdev->dev) == NUMA_NO_NODE) {
- 		err = devm_register_sys_off_handler(&pdev->dev,
- 						    SYS_OFF_MODE_RESTART,
- 						    SYS_OFF_PRIO_LOW,
-@@ -3168,8 +3169,11 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- #if defined(CONFIG_ARM)
- 	mutex_lock(&early_pmc->powergates_lock);
- 	early_pmc->rate = pmc->rate;
--	iounmap(early_pmc->base);
--	early_pmc->base = pmc->base;
-+	/*
-+	 * The restart handler may use early_pmc->base without taking the
-+	 * lock, so switch to the new mapping before unmapping the old one.
-+	 */
-+	iounmap(xchg(&early_pmc->base, pmc->base));
- 	mutex_unlock(&early_pmc->powergates_lock);
- #endif
+-	/*
+-	 * Tegra 2 has a bug where PCIE and VDE clamping masks are
+-	 * swapped relatively to the partition ids
+-	 */
+-	if (id == TEGRA_POWERGATE_VDEC)
+-		mask = (1 << TEGRA_POWERGATE_PCIE);
+-	else if (id == TEGRA_POWERGATE_PCIE)
+-		mask = (1 << TEGRA_POWERGATE_VDEC);
+-	else
+-		mask = (1 << id);
+-
+-	tegra_pmc_writel(pmc, mask, REMOVE_CLAMPING);
++	tegra_pmc_writel(pmc, tegra_powergate_clamp_mask(id), REMOVE_CLAMPING);
  
-@@ -5182,6 +5186,7 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
-  */
- static int __init tegra_pmc_early_init(void)
- {
-+	struct sys_off_handler *handler;
- 	const struct of_device_id *match;
- 	struct device_node *np;
- 	struct resource regs;
-@@ -5235,6 +5240,20 @@ static int __init tegra_pmc_early_init(void)
- 		return -ENXIO;
- 	}
+ out:
+ 	mutex_unlock(&pmc->powergates_lock);
+@@ -1189,10 +1192,52 @@ static int tegra_pmc_reboot_notify(struct notifier_block *this,
+ 	return NOTIFY_DONE;
+ }
  
-+	/*
-+	 * Register the restart handler here rather than at probe time, so
-+	 * that restarting works before the PMC driver has probed, e.g. on a
-+	 * panic early during boot or while the probe is deferred waiting for
-+	 * the core regulator. The handler keeps working after the probe, as
-+	 * the driver hands its register mapping over to early_pmc.
-+	 */
-+	handler = register_sys_off_handler(SYS_OFF_MODE_RESTART,
-+					   SYS_OFF_PRIO_LOW,
-+					   tegra_pmc_restart_handler,
-+					   early_pmc);
-+	if (IS_ERR(handler))
-+		pr_warn("failed to register restart handler: %pe\n", handler);
++/*
++ * The Tegra20 boot ROM hangs on a warm reset if the VDE partition is
++ * power-gated or clamped, as it is powered on after a cold boot, so power
++ * it on before resetting. The PMC isn't reset, so the partition keeps its
++ * state.
++ *
++ * This runs with interrupts disabled, so tegra_powergate_set() can't be
++ * used, as it takes a mutex and sleeps. The partition is powered on without
++ * enabling its clocks and deasserting its resets, which the reset takes care
++ * of.
++ */
++static void tegra_pmc_restart_power_up_vde(struct tegra_pmc *pmc)
++{
++	const unsigned int id = TEGRA_POWERGATE_VDEC;
++	unsigned int retries = 3;
++	bool on;
++	int err;
 +
- 	if (of_device_is_available(np)) {
- 		early_pmc->soc = match->data;
++	if (!pmc->soc || !pmc->soc->needs_vde_restart_war)
++		return;
++
++	if (tegra_powergate_state(pmc, id))
++		return;
++
++	do {
++		tegra_pmc_writel(pmc, PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
++		err = read_poll_timeout_atomic(tegra_powergate_state, on, on,
++					       10, 100000, false, pmc, id);
++	} while (err && --retries);
++
++	if (err) {
++		pr_warn("failed to power up VDE partition: %d\n", err);
++		return;
++	}
++
++	udelay(10);
++	tegra_pmc_writel(pmc, tegra_powergate_clamp_mask(id), REMOVE_CLAMPING);
++	udelay(10);
++}
++
+ static void tegra_pmc_restart(struct tegra_pmc *pmc)
+ {
+ 	u32 value;
  
++	tegra_pmc_restart_power_up_vde(pmc);
++
+ 	/* reset everything but PMC_SCRATCH0 and PMC_RST_STATUS */
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+ 	value |= PMC_CNTRL_MAIN_RST;
+@@ -3448,6 +3493,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+ 	.has_tsense_reset = false,
+ 	.has_gpu_clamps = false,
+ 	.needs_mbist_war = false,
++	.needs_vde_restart_war = true,
+ 	.has_io_pad_wren = true,
+ 	.maybe_tz_only = false,
+ 	.num_io_pads = 0,
 
 -- 
 2.56.1
