@@ -1,63 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795826504;
-	b=yMNLw5y4cR5jOw1Jae4lTKmmliG9bTByZRmcgLDIOz0CwhqNgeHdzpAjdXhbilpFaqCt
-	 Rq8sd+tXza4q6jX/AzQ2UUrSy5Z3x+8DKqJa/VoyWL5BuHIDcarcuBoGGp+jz2Dc/ixWL
-	 AenEoljN74JXSE/XwzmgM2KYaeHSKK53Q0zLlVVWt7MRXOIF5BF5CoPaIC3dBWXAq9Vb0
-	 /L63J4M5TB2N5AVAI8JwmwcniD1nZctEEoa5t1fOI1XYYZEufN1ubhu5RxKIHLpChnUqx
-	 kb4X5amVKNCmGEnu/zAmyTMmRvf4nX8ZpQ2rAT3Rnj3E0JCQEInowfDBqqSJjmoiFfA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795826504;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=txZ40HwG5PBs2JaJtTTKqqOr9g+GgVI7bM74efqgyNM=;
-	b=yUyKMMjsV0jEHmkm4MpuYhkXU/u1ie3Sm+aOHUxwPgbopfCfqxTXroDYiJF7xQoZt2rW
-	 kBzuKY6cZTZr2w88gF5ahsAjl7iQBbY7sKwzJ/KemMbhfL0LP028KbJdIZXQFUWDHg8z9
-	 qwmnKhbFollaoUy1CmxZiprJkNjhGurnrRK72CQ7uFvIUP99N68C992Wzbdekd37F6g4L
-	 gE3H0DWmQrUSCS61vIiMfvP7rt+pPwYSnQfqcV1mW5OiOkH92sDTOBIK8jOJTxK0FJA/6
-	 rYtnnhuMA2SgmuGKUmNNUvgoJLljZ24V0wWsVvVtnCRh3yl4QTEIOdiLXyANnilyp3g==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZQMrUbQI;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.201.29
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795829335;
+	b=kvU+ysYmJJC2zo35Vj7rvVe/KaboIBS9dmRBejtvVgX/XACY+5S+yNxB8yFpqmBdOhfO
+	 d++Jtj21vWd3Uz0bvxMGPV/P/hkgNmtSus2aFkGxNBIhtTj2NY9NYmifffl7EKwbj1V1h
+	 T0rXW+BUDsuK3RfkUyoLFrd4JoP3AikMKDeeWP+jtqeXCVQ/PheJ8fiZP5TCUTktAowp+
+	 SmUIgSI+bk0qxvXKOwr1kGrmb3GYIH4Kn8Cd1qz3RvDc/DPClcl28HG2fmXTImcQw9s9j
+	 U2yDtGXuKEWXf/MVbobS118jZYL3E0ujXCHfeVWbqdTPrjPlr/g+xqswp0S6D8g5LJg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795829335;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:Content-Transfer-Encoding:
+	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:
+	 X-MS-Exchange-AntiSpam-MessageData-1:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=zGOwSFxN0edfQj/G4mEegGtWrcAmhol3Bgb5It8TljE=;
+	b=10In8+hr9rbzQhzxDA+qEOXkgo7iOD3lQu2P3TLoNgWct8zDQ78iCdEHxBFKgFsY61tI
+	 2XE1yzzx1LbTux3KGLa3ISTEMre1CLK7v6Fb6J5Vremk7ASTZSaZGPj/aeY60orFnA880
+	 5ALsLAlp8JtRpFIyZ7WjJR+lYTVHyN7yQRVvim4kSokSoR1UovI3RAiFKPhpDzTKTtvCY
+	 VAOGNdBZTW0/DwBOaNpyBNKS6ADKIi5Msi3DUOZFtkD8pBZ8lQb0A/91mJsYN/2wzv5BP
+	 Gm5SOIFs5iRnZ3RY/o8niDXjJIiWV16r/qsO1RR9eI5rO6R5CwhzYDDmA0tIUeAzq4A==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=j999Tdlc;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.201.29
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013029.outbound.protection.outlook.com [40.93.201.29])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC014606A31C;
-	Sat, 28 Nov 2026 00:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E511E606A31C;
+	Sat, 28 Nov 2026 01:28:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E511E606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZQMrUbQI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C4DC1F000C1;
-	Sat, 28 Nov 2026 00:41:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795826503;
-	bh=txZ40HwG5PBs2JaJtTTKqqOr9g+GgVI7bM74efqgyNM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=ZQMrUbQINs6zsEe+v2hZIPwrasMaaRVwJEjzp+1Ykm5Fow+ht7PqCykTyF0iaE4Cq
-	 uChBArCXJVnU1AAYn/VJBhfSgjedoxgMXRJ4dNpSYR3sjoiXI3sOCdB6YpXac1xDQw
-	 qqLyyfegWEDvvSqXEhFVjsS4bwLAltPceINTY/zvQSbW8+X1r08cBrQ1e1mt40teH7
-	 QZcB7zLVh806GNxv22UkeBfPLadiaxkXjGoDQhJJ2JrK7JPEfpKQaiYS3yHG40MWQn
-	 IvyccHCKthkSNNdUUvo3IBLrSz998jKDZ68h1tocZyhqwmbVaVft2Bj/5l/jorVDRr
-	 Dw+4yIEsd38gA==
-Date: Sat, 28 Nov 2026 00:41:39 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Patrick Fischer via B4 Relay
- <devnull+admin.tsv-stahl-riesa.de@kernel.org>
-Cc: admin@tsv-stahl-riesa.de, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, David
- Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Kevin Tsai
- <ktsai@capellamicro.com>, Svyatoslav Ryhel <clamor95@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] iio: light: Add Capella CM3217 ambient light
- sensor driver
-Message-ID: <20261128004139.4f4d3c36@jic23-hlaptop>
-In-Reply-To: <20261128-upstream-iio-cm3217-v4-2-fdab04f40bbc@tsv-stahl-riesa.de>
-References: <20261128-upstream-iio-cm3217-v4-0-fdab04f40bbc@tsv-stahl-riesa.de>
-	<20261128-upstream-iio-cm3217-v4-2-fdab04f40bbc@tsv-stahl-riesa.de>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=j999Tdlc
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZZnVRLIX7PZQB5Rf9xj0DEDw2JLAd+c5LxKYvNFWScZNg4x/eQlADCi3o+rDn4PY0Qz76iLpYgWzmz1s8Q/v+IfXIMdBfpI/0GzJqrP/d8HHxVcZP+Mxh1ooUFoNDWMdJN5l1szn9AJiGMTqmqwbk1w8KveTibSH09QbopTaUcEFTdbZG+2CXk9+2LvplAKy4ziYMSaeP1vd4ip9+U0FTlcJRvpHzuSh6PV8OvG5WVnjiiuZdvvt4OrMLowXIxGsLD1pfGR72K5Wj/pjEs+Hfzjn3q31k0uTc16wUj8jwN5ETmcQKt7CMA2pS1yxRCtoTMAP7CO6GWVMxSI5noFn6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zGOwSFxN0edfQj/G4mEegGtWrcAmhol3Bgb5It8TljE=;
+ b=PTYakuKHA49y1Q1Nn56jff9oRgelxRZlOmwAdUzhe/By7crUMTi4i5/BerAXwd0+lazYsAmhcdaevPrT8b0kdeSjEGqo8IJtQ+uKL13b+kEE5wCzludBsuHTH+8cBTfXZtAhYUP7ltL+iypsVSPlMzAI26csNFGCNkH5eTSsCZUtUCiL8JCOEJ0xCymwf9GezwujF0nxTpL6VplMFAqNl7uYEY5KuDA3IWLg1o543GrQsdAr9pS/6dkBLCqelku21RWUnuNzMmRKh+pAuZOeILFj0cqjAzSBbxpUGxPvcnpab/TDwRITNBXTeDA9YRDVxFTbUjY2qNC89HKRO7wkNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zGOwSFxN0edfQj/G4mEegGtWrcAmhol3Bgb5It8TljE=;
+ b=j999TdlcdpLjU+/Nsh9Re5i8zDJUnO8iqX/GA1fcc9Tb+2KyW4FDNq3kQZWsRvwJetpNl040n3GRuRU6izTMBVpve/ndNTTg6BBEacDC6pZJPP46VACk8pPW2h7ShjbV8pz/LCuVUui6ZDvfYNP1ED6eKT7RoAwMFMimsSl4Ya9j2fz7Sqgw4c6Fh2cnMf4zvnsi1ELcPnMXhsBwCzMMKowWKgfjIlB7F1W29+kjsMieV6eqN9QhsGwV19GWfriC8fJDjWM13Jhi4WtN7yanSqgXvbjtrJgb6Xt40YG5LP/XPiGdDzxVLKmGBPHRE9eRuHHjTp2DBsa84LdlNrs4vw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by BL3PR12MB6377.namprd12.prod.outlook.com (2603:10b6:208:3b0::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.10; Sat, 28 Nov
+ 2026 01:28:50 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0662.004; Sat, 28 Nov 2026
+ 01:28:50 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: devicetree@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jesszhan0024@gmail.com>, dri-devel@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Subject:
+ Re: [PATCH v8 10/12] drm/tegra: rgb: Parameterize configuration based on bus
+ flags
+Date: Sat, 28 Nov 2026 10:28:46 +0900
+Message-ID: <TYDAsh0fQ52x0yM4_wAp5A@nvidia.com>
+In-Reply-To:
+ <CAPVz0n2xxEG5vR4X_dZeyQfN9TVSCBn+2uW1wY7Z+P3N8BhNqQ@mail.gmail.com>
+References:
+ <20261122081820.53199-1-clamor95@gmail.com>
+ <QEeSnm4uTjq24quMQBzlfQ@nvidia.com>
+ <CAPVz0n2xxEG5vR4X_dZeyQfN9TVSCBn+2uW1wY7Z+P3N8BhNqQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0028.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:263::15) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Post: <mailto:linux-tegra@vger.kernel.org>
@@ -67,162 +112,286 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-tegra+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|BL3PR12MB6377:EE_
+X-MS-Office365-Filtering-Correlation-Id: f54bf2aa-d375-4a42-b428-08df4ceef4c5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|1800799024|376014|7416014|366016|10070799003|4143699003|6133799003|22082099003|18002099003|3023799007|11063799006|10067099003|56012099006|261026140227099003|261026121527099003|261028144727099003|261021123027099003|261021121427099003|261022105027099003|261022075727099003|261102123227099003|261009223027099003;
+X-Microsoft-Antispam-Message-Info:
+	Cp75Qhlf6dN7cL3b1wxu/njg7estD8hQBz9iffb+pdjJ6MaMxLu8FUt8ALMAdpGdbCe3Kepv3dFLdQ7XJXNeJRNbWXmDl1o3BHmM9gV8DENBDTgjgk3yAKRQdd2kFltrcwzvhUXZy+lESy1SHNXvzTkeKeg6LVV9zd+B/g7422h74A1c0jwxQTznwqboPI4q+LJk8t2RyMavVUdcY5hRoMtnWiMfPfdBgiWUHy0A8K/HK7TnEkYn2qTwzFPrM/VKFF+RZVp9yOnix73e3VrpfuML593opTDvY03oyZgeygLDETzQx5h7YRxx065F0beQsseOFe9Lxspy2pXLc3BMeL9XyEtubPVIJ6ZPbOh0PpyZo++13B5/s3GKeYF5NWRbc5a0/dqr4+FvDJcHfpg5yyM1ON1xPEoG+66+tvOJkQw8OOBIuWsXZa/Il1C/wG4DglQwisriZef3BqvdAtFOWA6bfmKEP7D8xJ+gk+KfLR8p9Vq7zTLdIZkVEueKVOIKCT4nbwu5CpXMIafM8EyybTfNewFHHxm4q72FMC8WJtgUw0fhu1m4IqwVCag/lwrG84id23yCvI94ZXIV6TAGcNGPnwoALF+O1hsEdWzy2KjhnLvHincHdFISb1JR1wXVxj1kV3/dXAU1rv1+fVaPZkw5M1OIn+igE62RYs7i6UU=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(7416014)(366016)(10070799003)(4143699003)(6133799003)(22082099003)(18002099003)(3023799007)(11063799006)(10067099003)(56012099006)(261026140227099003)(261026121527099003)(261028144727099003)(261021123027099003)(261021121427099003)(261022105027099003)(261022075727099003)(261102123227099003)(261009223027099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RHAzMWlRZExKbFhna0p3SFVCTU5MRDc0NVNTN2syMzNwbzMwVnpzQVVoNVcw?=
+ =?utf-8?B?NkFndVVFQ3cvR293WW1jWGJzZnV6UklSVDZlWTc0K1NqZE5JNkpIMlNnUDdI?=
+ =?utf-8?B?aE95Q2t0c3ZaL000TmFyWnZFcGpwdmNaWlJDKzZUKy93L1RCeEdLbUlWbWZl?=
+ =?utf-8?B?K2l1TVo1Q0kzdXNKdHV4N2p0UlU2a3BNamNlc2FjdEM1RGdMZzVCUkpFQVY3?=
+ =?utf-8?B?VGY5bVRuWFVNcWsrVjhIVllsUSt6ZUVnUWRCSHFYUUk1Q0JDcnpSdW8ycFlX?=
+ =?utf-8?B?V1YwclZucjFBekM3R0tDTSt5MU9kNGgxa3NkRGVkM1pZVjJ6bXY4eC8wVG5E?=
+ =?utf-8?B?QVAzcHJwandGejJpMk8zNWp0Q0hsYTRFdFFCR0RBUzVSbkJGMEVMYXNhVzVJ?=
+ =?utf-8?B?VGZNcVJQNk1oekR1VHJOMGFIUnNhNHJudm5Ec25pOG0zWmpsamtBVWI0YTZz?=
+ =?utf-8?B?UlRJRy9hY1lSYndxZGJndVhtNGo0RWpUUlFiWkNVd1dyclJJVUpMWWh6Z2U5?=
+ =?utf-8?B?aWVYaGlobSthVy9XNUNVcEE1SlJWdlpWYWhNcXBJS0JCeDk4Wk9vR0pRTnVl?=
+ =?utf-8?B?a09BQzZQVHhxU3FpR2pHeXl6VklsaThRZ1ZoOWhVUUd2RGNvOXlaUHNGS0pJ?=
+ =?utf-8?B?RTZQNmY4U1IyMXV5NjdTMnlMWVZ0UXYrVWJSbGtuWEZoWDNaa29MUEFqZjRp?=
+ =?utf-8?B?dStIYVJRSStFUHJaTW9OR0xYeld2RHpMM1c0Y29zQTVTbzNUUGx6VmkxS3pG?=
+ =?utf-8?B?V3pOcEg0OFdQd1pBMVZpN3cwU2YvT3hCT29yVzQzVkE4dVBGdVQ5SEJWeUl2?=
+ =?utf-8?B?Q0RjaDZtYWduYnhTTE04WlB1ZUZsUDcwZVY1S096VVVxSFB4S2tlYTJMR3ZP?=
+ =?utf-8?B?a2x3T2YxNlZoaW9OU2hnWndIYnFCY25IL3pheGdhWEluejJ1OFJMQzVtbzJB?=
+ =?utf-8?B?TEhnbFF0V1ArVzQyNDU4SnZXMGtEVDR0OGt3dXhnaHZmME1sQlQzRGJyNTlK?=
+ =?utf-8?B?eWVaMW1acWpEMlNnWWYxTTNHODE5bk41U0FrazVKWnVzYjdFQ0svYzh0dVNn?=
+ =?utf-8?B?bzl3V2gwb1ZUQVg1V3ZMb2Y3SG1lUlVjN3I4SVhvQkZDMTZTVG4vZWp3Zkhi?=
+ =?utf-8?B?cTV2OTJ5Q3RWWTlSR1lqUGZNdzV5NnZTWS9PRWhDUTQxSHhSVWltM1YwdnBC?=
+ =?utf-8?B?WmQ4bkg0SW1PN1dpeGtQdnBBMXlNSDB6YVFVM3RmOHUyWUl1RFpnUHBETncv?=
+ =?utf-8?B?RXdZWVMza1pGYi9ZZEpMMVYzK24yMm84N0pyWDlLZlFJTFFlcGpBN21zRytw?=
+ =?utf-8?B?MTBkWnBqRVptNjVFdTROaU54QkVCTFJ1Q05LM1dVL0R1VmY3RGVYQmtLeGI1?=
+ =?utf-8?B?K005cm4veEdlSkE0ZkNtaTRtM1p1T2tXdm5maXRFYzdNWXFad1BpT00zY3py?=
+ =?utf-8?B?QVpHNU51ellYem5JRkhWd1dPV2ZRK3VPNjhwQnZhU2hPcjZKT1F5aWVQL0RW?=
+ =?utf-8?B?dnJEaFNwVFNVWFN4WWg2RzRLUzAzakxsdng5ZlU1cFB0R1BadnZCVWZNWVkr?=
+ =?utf-8?B?eE9oMUtMbFdYSy9jQzJaZnZkdWRCM0MwdWI0Z3RsZmN0YjNqMmVZK3JEVDhV?=
+ =?utf-8?B?QUVKN09WS3FuQ2ZGSWVaSmI3SWNvYVc3R3RBbEVvN2Z0aFRndjBoSktOUHBE?=
+ =?utf-8?B?V1UrZm9NTmZ0UVJMSmh2YlowRTIxRjlHUENadkRyams2Y2RlbG9adDVORi9x?=
+ =?utf-8?B?NVdhR3l6alBXSUpRdVdXRzlON0tXYWVnejRjRytZdHBpcTc2VjJhTklZWmZ4?=
+ =?utf-8?B?ZFBXcEhGMktDUlJQbHJxK2dRNHBHb0JMSnFkWEsxM2J3YnlCdXhtMStTcHV3?=
+ =?utf-8?B?WmdHQmtZTjVTL0c3T0JGWjlyelAxWWxmTlEyYmJiV0g0QVV2WnRkR01MczNn?=
+ =?utf-8?B?YlNvY0puSkVZUlBhUFIxbUkzTVc4MmR4ZWdaNWV2eXFRTWwyT0grVG1GWU5x?=
+ =?utf-8?B?Y2JTdUcycTVlYjBqU2Y0T2t1VDFHUkJDbkYvalV5YkNsRS8yVnE0ZXRvRkF5?=
+ =?utf-8?B?SW16WTUvR1Z4K0hxaVRFSnpqaTVVWGZWNi8xT0kxaWk1M1FaNHZoM3lzTkJV?=
+ =?utf-8?B?dm1ka09KZUt4N3RjemxtRG05a01mVUdqdDNCVStRREZrVGdXeW02SWhobkY4?=
+ =?utf-8?B?aldLNE5WTzNZZW5lZnBoRmhVRjBDSHAxM2lmN0RPTTBSdzk4ajRsazlkYmR3?=
+ =?utf-8?B?NnRrOTM4US8wMHVNWTlMSEs1UUdTQXBUUGFoZStYSXFHT2RiZVJWT0NWekgw?=
+ =?utf-8?B?TGd4TFkxM2RNdG5paFkvNitmWEZkcFI1TStWU2pyeEdJTWp4UWZ5VFVQL1NM?=
+ =?utf-8?Q?KeI3B9nBqn+Hy1wiv8IzlWl4UzzquNZbzUBe5k53IbRGJ?=
+X-MS-Exchange-AntiSpam-MessageData-1: MingsDkVl+r21w==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f54bf2aa-d375-4a42-b428-08df4ceef4c5
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2026 01:28:50.3967
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 66ZgphdK8ZiFdkXYOIL9rNp7oedNqGhbtQe1oTtRWzBU5QedO69CIo+OcFtVgGI85Xy4tuOdfU3BFubs33D31A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6377
 
-On Sat, 28 Nov 2026 00:38:57 +0100
-Patrick Fischer via B4 Relay <devnull+admin.tsv-stahl-riesa.de@kernel.org> wrote:
+On Friday, November 27, 2026 10:21=E2=80=AFPM Svyatoslav Ryhel wrote:
+> =D0=BF=D1=82, 27 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 14=
+:35 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Friday, November 27, 2026 6:21=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > =D0=BF=D1=82, 27 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=
+=BE 08:22 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > >
+> > > > On Sunday, November 22, 2026 5:18=E2=80=AFPM Svyatoslav Ryhel wrote=
+:
+> > > > > Parameterize configuration based on bus flags passed from the bri=
+dge or
+> > > > > panel. The list of supported flags includes now pixel clock polar=
+ity,
+> > > > > display enable (DE) polarity, and data alignment.
+> > > > >
+> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/tegra/rgb.c | 39 +++++++++++++++++++++++++++++++=
+++----
+> > > > >  1 file changed, 35 insertions(+), 4 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/=
+rgb.c
+> > > > > index d48d498068ac8..faecd6f94359f 100644
+> > > > > --- a/drivers/gpu/drm/tegra/rgb.c
+> > > > > +++ b/drivers/gpu/drm/tegra/rgb.c
+> > > > > @@ -5,6 +5,7 @@
+> > > > >   */
+> > > > >
+> > > > >  #include <linux/clk.h>
+> > > > > +#include <linux/media-bus-format.h>
+> > > > >  #include <linux/of.h>
+> > > > >
+> > > > >  #include <drm/drm_atomic_helper.h>
+> > > > > @@ -106,6 +107,7 @@ static void tegra_rgb_encoder_enable(struct d=
+rm_encoder *encoder,
+> > > > >       struct tegra_output *output =3D encoder_to_output(encoder);
+> > > > >       struct tegra_rgb *rgb =3D to_rgb(output);
+> > > > >       struct drm_connector_state *conn_state;
+> > > > > +     struct drm_bridge_state *bridge_state;
+> > > > >       struct drm_crtc_state *crtc_state;
+> > > > >       struct drm_connector *connector;
+> > > > >       struct drm_display_mode *mode;
+> > > > > @@ -117,12 +119,21 @@ static void tegra_rgb_encoder_enable(struct=
+ drm_encoder *encoder,
+> > > > >       crtc_state =3D drm_atomic_get_new_crtc_state(state, conn_st=
+ate->crtc);
+> > > > >       mode =3D &crtc_state->adjusted_mode;
+> > > > >
+> > > > > +     /* Get but flags from the bridge state. */
+> > > >
+> > > > s/but/bus/
+> > > >
+> > > > > +     bridge_state =3D drm_atomic_get_new_bridge_state(state, out=
+put->bridge);
+> > > > > +     if (bridge_state)
+> > > > > +             bus_flags =3D bridge_state->input_bus_cfg.flags;
+> > > > > +     else
+> > > > > +             bus_flags =3D DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE |
+> > > > > +                         DRM_BUS_FLAG_DE_HIGH |
+> > > > > +                         DRM_BUS_FLAG_DATA_MSB_TO_LSB;
+> > > > > +
+> > > > >       tegra_dc_write_regs(rgb->dc, rgb_enable, ARRAY_SIZE(rgb_ena=
+ble));
+> > > > >
+> > > > >       value =3D DE_SELECT_ACTIVE | DE_CONTROL_NORMAL;
+> > > > >       tegra_dc_writel(rgb->dc, value, DC_DISP_DATA_ENABLE_OPTIONS=
+);
+> > > > >
+> > > > > -     /* configure H- and V-sync signal polarities */
+> > > > > +     /* configure H- and V-sync and pixel clock signal polaritie=
+s */
+> > > > >       value =3D tegra_dc_readl(rgb->dc, DC_COM_PIN_OUTPUT_POLARIT=
+Y(1));
+> > > > >
+> > > > >       if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+> > > > > @@ -135,11 +146,31 @@ static void tegra_rgb_encoder_enable(struct=
+ drm_encoder *encoder,
+> > > > >       else
+> > > > >               value &=3D ~LVS_OUTPUT_POLARITY_LOW;
+> > > > >
+> > > > > +     if (bus_flags & DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE)
+> > > > > +             value &=3D ~BIT(PIN_LSC0);
+> > > > > +     else
+> > > > > +             value |=3D BIT(PIN_LSC0);
+> > > >
+> > > > I think this is the wrong way around: SAMPLE_POSEDGE means that the
+> > > > pixel data is sampled on a rising edge. That is, it should be drive=
+n on
+> > > > the low edge so it's ready for sampling in time for the rising edge=
+.
+> > > >
+> > > > LSC0_OUTPUT_POLARITY says that the value "LOW" (a bit confusingly, =
+1)
+> > > > corresponds to a data transition on the falling edge, i.e. sampling=
+ on
+> > > > the rising edge.
+> > > >
+> > > > Section 31.9.6 states this a bit more clearly: "an active low pixel
+> > > > clock means that the data changes on the falling edge of the clock,=
+ to
+> > > > be latched on the rising edge".
+> > > >
+> > >
+> > > DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE =3D DRM_BUS_FLAG_PIXDATA_DRIVE_NE=
+GEDGE
+> > >
+> > > Should I replace with DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE?
+> >
+> > No -- with the current code, let's say
+> > DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE is set. I.e. the panel tells us tha=
+t
+> > it will be sampling pixel data on the positive (rising) edge.
+> >
+> > LSC0_OUTPUT_POLARITY will be set to 0. The TRM documents the value 0 as
+> > "active high", and "means that rising edge coincides with data
+> > transition". That is, the display controller will change the output pin
+> > state to color data on the rising edge. So the SoC pins will change
+> > state at the rising edge, and the panel will sample at the rising edge.
+> >
+> > But the pins will take some time to take their new values, so this migh=
+t
+> > not work or could be unreliable depending on all kinds of timing
+> > factors. So if the panel is sampling as the rising edge, the SoC should
+> > be driving the pins at the falling edge, that way there is time for the
+> > pins to settle before the panel samples them.
+> >
+> > So the value written to LSC0_OUTPUT_POLARITY should be the opposite of
+> > what it's now. If that breaks the panel, either it's reporting the
+> > incorrect DRM_BUS_FLAG_PIXDATA_SAMPLE_* value or something else is
+> > incorrect.
+> >
+>=20
+> This may/will cause regressions across multiple panels and devices.
 
-> From: Patrick Fischer <admin@tsv-stahl-riesa.de>
-> 
-> The CM3217 has no registers and no ID. Writing a byte to address 0x10
-> or 0x11 sets command byte 1 or 2, reading a byte from 0x10 or 0x11
-> returns the high or low byte of the 16-bit light count. The second
-> address always follows the first one. The binding lists both, but the
-> driver derives the second one from the first instead of reading it from
-> firmware, which also covers new_device.
-> 
-> Command byte 1 holds the shutdown bit and the IT_T field (1/2 T, 1 T,
-> 2 T or 4 T), command byte 2 the FD_IT field (800 ms down to 66 ms). The
-> count scales linearly with both. The driver exposes FD_IT as the
-> integration time and IT_T through the scale, so the scale list offers
-> four ranges for each integration time.
-> 
-> The datasheet is not public. The bit fields, the reserved bits that are
-> written as 1 and the startup setting of 2 T and 100 ms come from NVIDIA's
-> downstream drivers (drivers/staging/iio/light/cm3217.c in the 3.4 kernel
-> rel-tegranote-r8 and the 3.10 kernel
-> android-tegra-flounder-3.10-nougat-mr1.1). One value differs: the vendor
-> header defines 4 T as 4 << 2, which is outside the two-bit field. On a
-> Tegra Note 7 field value 3 gave four times the 1 T count, so the driver
-> uses that. For the resolution, Capella gives a range of 0.01875 to
-> 119156 lux. The driver takes 0.01875 lux per count at 4 T and 800 ms.
-> This matches both the upper end (65535 counts at 1/2 T and 66 ms) and
-> the 0.3 lux per count that the NVIDIA 3.4 driver uses at 2 T and 100 ms.
-> 
-> The sensor has no data-ready flag, and a new setting only takes effect
-> when the conversion in progress ends. A conversion takes IT_T times
-> FD_IT, up to 3.2 s. Leaving shutdown starts a new one at once, so the
-> driver passes through shutdown on every change and waits one conversion
-> period plus a margin before it reads the count. The timing was measured
-> on a Tegra Note 7.
-> 
-> Tool use: Claude Code wrote this driver from the downstream drivers and
-> from my measurements on the device.
+Looking at the panels we have, if we retain the previous behavior when=20
+neither PIXDATA_SAMPLE_POSEDGE nor PIXDATA_SAMPLE_NEGEDGE is set, then=20
+we'll retain the same programming as we've had before.
 
-As before. Unless there is something really unusual about the tooling,
-push it below the ---
+Actually, from what I can tell, the change in this patch will change the=20
+programmed polarity compared to before the patch for the panels/bridges=20
+on the Colibri/Apalis/TF700T boards, which do specify SAMPLE_POSEDGE.
 
-Otherwise, I nearly picked this up, but I won't for now as I'd like
-you to take one more look at the includes + good to leave some
-time for others to review before I apply and by conincidence you
-sent it just as I was starting reviewing today.
+So if we flip the logic around, and default to SAMPLE_POSEDGE if neither=20
+is specified, we should retain previous programming for existing panels.
 
-Thanks
+>=20
+> > >
+> > > > > +
+> > > > >       tegra_dc_writel(rgb->dc, value, DC_COM_PIN_OUTPUT_POLARITY(=
+1));
+> > > > >
+> > > > > -     /* XXX: parameterize? */
+> > > > > -     value =3D DISP_DATA_FORMAT_DF1P1C | DISP_ALIGNMENT_MSB |
+> > > > > -             DISP_ORDER_RED_BLUE;
+> > > > > +     /* configure DE signal polarities */
+> > > > > +     value =3D tegra_dc_readl(rgb->dc, DC_COM_PIN_OUTPUT_POLARIT=
+Y(3));
+> > > > > +
+> > > > > +     if (bus_flags & DRM_BUS_FLAG_DE_LOW)
+> > > > > +             value |=3D BIT(PIN_LSPI);
+> > > > > +     else
+> > > > > +             value &=3D ~BIT(PIN_LSPI);
+> > > > > +
+> > > > > +     tegra_dc_writel(rgb->dc, value, DC_COM_PIN_OUTPUT_POLARITY(=
+3));
+> > > > > +
+> > > > > +     /* configure DATA order and alignment */
+> > > > > +     value =3D DISP_DATA_FORMAT_DF1P1C | DISP_ORDER_RED_BLUE;
+> > > > > +
+> > > > > +     if (bus_flags & DRM_BUS_FLAG_DATA_LSB_TO_MSB)
+> > > > > +             value |=3D DISP_ALIGNMENT_LSB;
+> > > > > +     else
+> > > > > +             value &=3D ~DISP_ALIGNMENT_LSB;
+> > > >
+> > > > DRM_BUS_FLAG_DATA_LSB_TO_MSB does not seem the correct thing to che=
+ck
+> > > > here. According to the TRM, DISP_ALIGNMENT doesn't swap between LSB=
+/MSB
+> > > > bit ordering in a classical way, instead:
+> > > >
+> > > >   // DISP_DATA_ALIGNMENT =3D 0 (MSB)
+> > > >   LD[23:0] =3D {R[1:0], G[1:0], B[1:0],
+> > > >               R[7:2], G[7:2], B[7:2]};
+> > > >
+> > > >   // DISP_DATA_ALIGNMENT =3D 1 (LSB)
+> > > >   LD[23:0] =3D {R[7:0], G[7:0], B[7:0]};
+> > > >
+> > > > I suppose MSB is more natural for 18-bit panels and LSB for 24-bit
+> > > > panels depending on the layout. So the correct value depends on how=
+ the
+> > > > panel is wired to the SoC on the board. Hence, I think we should
+> > > > describe this with a new property in device tree under rgb/dbi or
+> > > > endpoint node. Something like 'nvidia,rgb888-wiring' for LSB? And
+> > > > document that this means the above kind of wiring - not all RGB888
+> > > > panels use it.
+> > > >
+> > >
+> > > Ugh, why is this so confusing...
+> > >
+> > > > > +
+> > > > >       tegra_dc_writel(rgb->dc, value, DC_DISP_DISP_INTERFACE_CONT=
+ROL);
+> > > > >
+> > > > >       tegra_dc_commit(rgb->dc);
+> > > > > --
+> > > > > 2.53.0
+> > > > >
+> >
+> >
+> >
+> >
 
-Jonathan
-
-> 
-> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # Tegratab P1988
-> Signed-off-by: Patrick Fischer <admin@tsv-stahl-riesa.de>
-> ---
-> Svyatoslav's Tested-by was given on v1. Since then there was no
-> functional change apart from how the driver gets the second address
-> (v1: fixed 0x11, v4: device address plus one, which gives the same
-> 0x11).
-
-> diff --git a/drivers/iio/light/cm3217.c b/drivers/iio/light/cm3217.c
-> new file mode 100644
-> index 000000000000..5edd4d21d08c
-> --- /dev/null
-> +++ b/drivers/iio/light/cm3217.c
-> @@ -0,0 +1,420 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Capella CM3217 ambient light sensor driver
-> + *
-> + * The CM3217 has no registers. It answers on two fixed I2C addresses:
-> + * writing a byte to 0x10 or 0x11 sets command byte 1 or 2, reading a byte
-> + * from 0x10 or 0x11 returns the MSB or LSB of the 16-bit light count.
-> + *
-> + * Copyright (C) 2026 Patrick Fischer <admin@tsv-stahl-riesa.de>
-> + */
-> +
-> +#include <linux/array_size.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/build_bug.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-We tend to try and avoid including that 'grab bag' style header.
-
-There are  more specific appropriate includes such
-as dev_printk.h
-
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/ktime.h>
-> +#include <linux/mod_devicetable.h>
-
-That shouldn't be needed. It is now assumed to always come via
-the appropriate bus header.
-
-
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/pm.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/time64.h>
-> +#include <linux/types.h>
-> +#include <linux/units.h>
-> +
-> +#include <linux/iio/iio.h>
-> +
-> +#define CM3217_CMD1_RSVD	BIT(5)		/* reserved, set to 1 */
-> +#define CM3217_CMD1_IT_T	GENMASK(3, 2)	/* 1/2 T, 1 T, 2 T, 4 T */
-> +#define CM3217_CMD1_WDM		BIT(1)		/* set to 1 like the vendor driver */
-
-> +
-> +static int cm3217_read_avail(struct iio_dev *indio_dev,
-> +			     struct iio_chan_spec const *chan,
-> +			     const int **vals, int *type, int *length,
-> +			     long mask)
-> +{
-> +	struct cm3217_data *data = iio_priv(indio_dev);
-> +	unsigned int fd_it;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		scoped_guard(mutex, &data->lock)
-
-For this sort of case I prefer we just take the guard for a bit longer and add
-scope for the whole statement. It generally ends up more readable.
-i.e.
-	case IIO_CHAN_INFO_SCALE: {
-		guard(mutex)(&data->lock);
-
-		fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
-		*vals = (const int *)cm3217_scale_avail[fd_it];
-		*length = 2 * ARRAY_SIZE(cm3217_scale_avail[0]);
-		*type = IIO_VAL_INT_PLUS_NANO;
-
-		return IIO_AVAIL_LIST;
-	}
-> +			fd_it = FIELD_GET(CM3217_CMD2_FD_IT, data->cmd2);
-> +		*vals = (const int *)cm3217_scale_avail[fd_it];
-> +		*length = 2 * ARRAY_SIZE(cm3217_scale_avail[0]);
-> +		*type = IIO_VAL_INT_PLUS_NANO;
-> +		return IIO_AVAIL_LIST;
-> +	case IIO_CHAN_INFO_INT_TIME:
-> +		*vals = (const int *)cm3217_int_time_avail;
-> +		*length = 2 * ARRAY_SIZE(cm3217_int_time_avail);
-> +		*type = IIO_VAL_INT_PLUS_MICRO;
-> +		return IIO_AVAIL_LIST;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
 
 
 
